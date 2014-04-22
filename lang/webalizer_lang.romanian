@@ -1,0 +1,672 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.romanian
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Romanian.
+#   17-May-1999 Translation by Mircea Ilie (mirceax@tep.ro)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   04-Feb-2000 Level 1.3 translation by Iulian Radu (iulian_r@starnets.ro)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   16-Jan-2001 Level 2.0 translation by Mircea Ilie (mirceax@tep.ro)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.french for french).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = in romana
+language_code = ro
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = inregistrari
+msg_addresses=adrese
+msg_ignored = ignorat
+msg_bad     = gresit
+msg_in      = in
+msg_seconds = secunde
+
+#/* progress and setup error messages */
+msg_log_err = Eroare: Nu pot deschide fisierul jurnal
+msg_log_use = Accesez fisierul jurnal
+msg_dir_err = Eroare: Nu pot sa ajung in directorul
+msg_dir_use = Rezultatul este salvat in
+msg_cur_dir = directorul curent
+msg_hostname= Hostname-ul pentru rapoarte este
+msg_ign_hist= Ignor fisierul de istoric precedent...
+msg_no_hist = Nu pot gasi fisierul de istoric...
+msg_get_hist= Citesc fisierul de istoric...
+msg_put_hist= Salvez informatiile in fisierul de istoric...
+msg_hist_err= Eroare: Nu pot sa scriu in fisierul de istoric
+msg_bad_hist= Eroare: Ignor inregistrarile invalide din fisierul de istoric
+msg_bad_conf= Eroare: Nu pot deschide fisierul de configurare
+msg_bad_key = Avertisment: Cuvint cheie invalid
+msg_bad_date= Eroare: Sar inregistrarea (date incorecte)
+msg_ign_nscp= Sar inregistrarea antetului Netscape
+msg_bad_rec = Sar o inregistrare gresita
+msg_no_vrec = Nu am gasit nici o inregsitare corecta!
+msg_gen_rpt = Generez un raport pentru
+msg_gen_sum = Generez cuprinsul raportului
+msg_get_data= Citesc datele rulate inainte...
+msg_put_data= Salvez datele rulate acum...
+msg_no_data = Datele rulate inainte nu au fost gasite...
+msg_bad_data= Eroare: Nu pot reface datele rulate
+msg_data_err= Eroare: Nu pot salva datele rulate acum
+msg_dup_data= Avertisment: S-ar putea sa fi gasit date duplicate
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Nu s-a specificat nici un fisier cache, renunt...
+msg_dns_nodb= Eroare: Nu pot deschide fisierul cache al DNS
+msg_dns_nolk= Eroare: Nu pot bloca fisierul cache al DNS
+msg_dns_usec= Folosesc fisierul cache al DNS
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Nu pot aloca suficienta memorie, dezactivez Top Situri!
+msg_nomem_tr= Nu pot aloca suficienta memorie, dezactivez Top Pagini referente!
+msg_nomem_tu= Nu pot aloca suficienta memorie, dezactivez Top URL-uri!
+msg_nomem_tc= Nu pot aloca suficienta memorie, dezactivez Top Tari!
+msg_nomem_ta= Nu pot aloca suficienta memorie, dezactivez Top Navigatoare vizitatori!
+msg_nomem_tsr=Nu pot aloca suficienta memorie, dezactivez Top Siruri cautate!
+msg_nomem_ti= Nu pot aloca suficienta memorie, dezactivez Top Utilizatori!
+msg_nomem_dh= Eroare adaugare nod host (zilnic), sar
+msg_nomem_mh= Eroare adaugare nod host (lunar), sar
+msg_nomem_u = Eroare adaugare nod URL, sar
+msg_nomem_a = Eroare adaugare nod Navigator client, sar
+msg_nomem_r = Eroare adaugare nod de Pagina referenta, sar
+msg_nomem_sc= Eroare adaugare nod Sir de cautare, sar
+msg_nomem_i = Eroare adaugare nod Utilizatori, sar
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Eroare: Sar o inregistrare de jurnal supradimensionata
+msg_big_host= Avertisment: Trunchiez hostname supradimensionat
+msg_big_date= Avertisment: Trunchiez cimpul data supradimensionat
+msg_big_req = Avertisment: Trunchiez cimpul cerere supradimensionat
+msg_big_ref = Avertisment: Trunchiez cimpul paginii referente supradimensionat
+msg_big_user= Avertisment: Trunchiez cimpul utilizator supradimensionat
+msg_big_one = Avertisment: Sirul depaseste dimensiunea spatiului de stocare
+
+#/* misc errors */
+msg_no_open = Eroare: Nu pot deschide fisierul
+
+#/* Help display... */
+h_usage1 = Utilizare
+h_usage2 = [optiuni] [fisier jurnal [[ fisier jurnal ]...] | report database]
+h_msg=   -h        = afiseaza acest mesaj de ajutor,
+         -v -V     = afiseaza informatii despre versiune,
+         -d        = afiseaza informatii de depanare suplimentare,
+         -F type   = Tip jurnal.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f        = eroare la secventa de fold,
+         -i        = ignora fisierul de istoric,
+         -p        = pastreaza starea (incremental),
+         -q        = elimina mesajele de informare,
+         -Q        = elimina _TOATE_ mesajele,
+         -Y        = elimina graficul tarilor,
+         -G        = elimina graficul orelor,
+         -H        = elimina starea pe ore,
+         -L        = elimina legenda graficelor color,
+         -l num    = foloseste linii numerotate pe fundalul graficelor,
+         -m num    = valoarea timeout-ului pentru vizite (secunde),
+         -T        = afiseaza informatiile despre temporizare,
+         -c file   = foloseste fisierul de configurare 'file',
+         -n name   = hostname-ul de folosit,
+         -o dir    = directorul folosit pentru rezultate,
+         -t name   = titlul raportului va fi 'name',
+         -a name   = ascunde navigatoarele clientilor de tipul 'name',
+         -r name   = ascunde pagina referenta cu numele 'name',
+         -s name   = ascunde situl 'name',
+         -u name   = ascunde URL-ul 'name',
+         -x name   = foloseste extensia de nume fisier 'name',
+         -P name   = extensia tipului de pagina va fi 'name',
+         -I name   = aliasul index-ului va fi 'name',
+         -L name   = grupeaza URL-urile dupa 'name',
+         -A num    = afiseaza numeric topul navigatoarelor clientilor,
+         -C num    = afiseaza numeric topul tarilor,
+         -R num    = afiseaza numeric topul referentilor,
+         -S num    = afiseaza numeric topul siturilor,
+         -U num    = afiseaza numeric topul URL-urilor,
+         -e num    = afiseaza numeric topul Paginilor de intrare,
+         -E num    = afiseaza numeric topul Paginilor de iesire,
+         -g num    = Grupeaza Domeniile in 'num' niveluri,
+         -X        = Ascunde siturile individuale,
+         -D name   = Foloseste fisierul cache DNS 'name',
+         -N num    = Numarul de procese DNS (0=dezactivat),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Perioada analizata
+msg_hhdr_gt = Generat in
+
+#/* main index strings */
+msg_main_us = Sumarul utilizarii lui
+msg_main_per= ultimele 12 luni
+msg_main_sum= Sumarul pe luna
+msg_main_da = Media zilnica
+msg_main_mt = Totaluri lunare
+
+#/* month HTML page strings */
+msg_hmth_du = Utilizarea zilnica pe luna
+msg_hmth_hu = Utilizarea orara pe luna
+
+#/* table header strings */
+msg_h_by    = dupa
+msg_h_avg   = Medie
+msg_h_max   = Maxim
+msg_h_total = Total
+msg_h_totals= Totaluri
+msg_h_day   = Zi
+msg_h_mth   = Luna
+msg_h_hour  = Ora
+msg_h_hits  = Accesari
+msg_h_pages = Pagini
+msg_h_visits= Vizite
+msg_h_files = Fisiere
+msg_h_hosts = Situri
+msg_h_xfer  = KBytes
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Nume
+msg_h_url   = URL
+msg_h_agent = Navigator
+msg_h_ref   = Pagina referenta
+msg_h_ctry  = Tara
+msg_h_search= Sir de cautare
+msg_h_uname = Utilizator
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Statistici zilnice
+msg_hlnk_hs = Statistici orare
+msg_hlnk_u  = URL-uri
+msg_hlnk_s  = Situri
+msg_hlnk_a  = Navigator
+msg_hlnk_c  = Tari
+msg_hlnk_r  = Pagini referente
+msg_hlnk_en = Intrari
+msg_hlnk_ex = Iesiri
+msg_hlnk_sr = Cautare
+msg_hlnk_i  = Utilizatori
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Statistici lunare pentru
+msg_mtot_th = Total accesari
+msg_mtot_tf = Total fisiere
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Total Kbytes
+msg_mtot_us = Total situri unice
+msg_mtot_ur = Total pagini referente unice
+msg_mtot_ua = Total navigatoare
+msg_mtot_uu = Total URL-uri unice
+msg_mtot_ui = Total Utilizatori unici
+msg_mtot_mhd= Vizitari pe zi
+msg_mtot_mhh= Vizitari pe ora
+msg_mtot_mfd= Fisiere pe zi
+msg_mtot_mpd= Pagini pe zi
+msg_mtot_mvd= Vizite pe zi
+msg_mtot_mkd= KBytes pe zi
+msg_mtot_rc = Accesari dupa codul de raspuns
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Statistici zilnice pe luna
+
+#/* hourly total table */
+msg_htot_hs = Statistici orare pe luna
+
+#/* country pie chart */
+msg_ctry_use= Utilizarea dupa tara pe luna
+
+#/* top tables */
+#/* Formatted as "Topul xxx din xxx total ceva" */
+msg_top_top = Top
+msg_top_of  = din
+msg_top_s   = al Siturilor
+msg_top_u   = al URL-urilor
+msg_top_r   = al Paginilor referente
+msg_top_a   = al Navigatoarelor
+msg_top_c   = al Tarilor
+msg_top_en  = total Pagini de intrare
+msg_top_ex  = total Pagini de iesire
+msg_top_sr  = total Siruri de cautare
+msg_top_i   = Total Utilizatori
+msg_v_hosts = Vizualizarea tuturor siturilor
+msg_v_urls  = Vizualizarea tuturor URL-urilor
+msg_v_refs  = Vizualizarea tuturor paginilor referente
+msg_v_agents= Vizualizarea tuturor navigatoarelor
+msg_v_search= Vizualizarea tuturor cuvintelor cheie
+msg_v_users = Vizualizarea tuturor utiltizatorilor
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Ian, Feb, Mar,
+                    Apr, Mai, Iun,
+                    Iul, Aug, Sep,
+                    Oct, Noi, Dec
+
+#/* long month names - can be any length */
+l_month=  Ianuarie,  Februarie, Martie,   Aprilie,
+                    Mai,       Iunie,     Iulie,    August,
+                    Septembrie,Octombrie, Noiembrie,Decembrie
+
+#/* response code descriptions... order IS important!      */
+response = Cod de raspuns nedefinit,
+           Cod 100 - Continua,
+           Cod 101 - Schimb de protocol,
+           Cod 200 - OK,
+           Cod 201 - Creat,
+           Cod 202 - Aceptat,
+           Cod 203 - Informatie fara autoritate,
+           Cod 204 - Fara continut,
+           Cod 205 - Initializare continut,
+           Cod 206 - Continut partial,
+           Cod 300 - Optiuni multiple,
+           Cod 301 - Mutat permanent,
+           Cod 302 - Gasit,
+           Cod 303 - Vezi alt,
+           Cod 304 - Nemodificat,
+           Cod 305 - Foloseste proxy,
+           Cod 307 - Mutat temporar,
+           Cod 400 - Cerere gresita,
+           Cod 401 - Neautorizat,
+           Cod 402 - Plata solicitata,
+           Cod 403 - Interzis,
+           Cod 404 - Lipsa,
+           Cod 405 - Metoda nepermisa,
+           Cod 406 - Inacceptabil,
+           Cod 407 - Autentificare prin proxy necesara,
+           Cod 408 - Timeout cerere,
+           Cod 409 - Conflict,
+           Cod 410 - Satisfacut,
+           Cod 411 - Lungime solicitata,
+           Cod 412 - Precondite esuata,
+           Cod 413 - Entitatea ceruta este prea mare,
+           Cod 414 - URI-ul cerut prea lung,
+           Cod 415 - Tip de mediu necunoscut,
+           Cod 416 - Domeniul cererii nerealizabil,
+           Cod 417 - Asteptare esuata,
+           Cod 500 - Eroare interna a serverului,
+           Cod 501 - Neimplementat,
+           Cod 502 - Gateway gresit,
+           Cod 503 - Serviciu indisponibil,
+           Cod 504 - Timeout la gateway,
+           Cod 505 - Versiune de HTTP nesuportata,    0   
+	 ;
+
+msg_title   = Statisticile de utilizare ale lui
+msg_h_other = Altele
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Nerezolvat/Necunoscut,
+	com,	US Commercial,
+	edu,	US Educational,
+	gov,	US Guvernamental,
+	int,	International (int),
+	mil,	US Militar,
+	net,	Retea (Network),
+	org,	Organizatie Non-Profit,
+ 	arpa,	Arpanet stilul vechi (arpa),
+ 	nato,	Cimp Nato (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	Emiratele Arabe Unite,
+	af,	Afganistan,
+	ag,	Antigua si Barbuda,
+	ai,	Anguilla,
+	al,	Albania,
+	am,	Armenia,
+	an,	Antilele olandeze,
+	ao,	Angola,
+	aq,	Antarctica,
+	ar,	Argentina,
+	as,	Samoa americana,
+	at,	Austria,
+	au,	Australia,
+	aw,	Aruba,
+	az,	Azerbaidjan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnia si Hertegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgia,
+	bf,	Burkina Faso,
+	bg,	Bulgaria,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolivia,
+	br,	Brazilia,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Insula Bouvet,
+	bw,	Botswana,
+	by,	Bielorusia,
+	bz,	Belize,
+	ca,	Canada,
+	cc,	Insulele Cocos (Keeling),
+        cd,       Congo,
+	cf,	Republica Centrafricana,
+	cg,	Congo,
+	ch,	Elvetia,
+	ci,	Cote D'Ivoire (Coasta de Fildes),
+	ck,	Insulele Cook,
+	cl,	Chile,
+	cm,	Camerun,
+	cn,	China,
+	co,	Columbia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Cuba,
+	cv,	Insulele Capului Verde,
+	cx,	Insulele Christmas,
+	cy,	Cipru,
+	cz,	Republica Ceha,
+	de,	Germania,
+	dj,	Djibouti,
+	dk,	Danemarca,
+	dm,	Dominica,
+	do,	Republica Dominicana,
+	dz,	Algeria,
+	ec,	Ecuador,
+	ee,	Estonia,
+	eg,	Egipt,
+	eh,	Sahara Occidentala,
+	er,	Eritreea,
+	es,	Spania,
+	et,	Etiopia,
+        eu,       European Union,
+	fi,	Finlanda,
+	fj,	Fiji,
+	fk,	Insulele Falkland (Malvinas),
+	fm,	Micronezia,
+	fo,	Insulele Faroe,
+	fr,	Franta,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Georgia,
+	gf,	Guiana Franceza,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Groenlanda,
+	gm,	Gambia,
+	gn,	Guineea,
+	gp,	Guadelupe,
+	gq,	Guineea Ecuatoriala,
+	gr,	Grecia,
+	gs,	Ins. S. Georgia si S. Sandwich,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guiana,
+	hk,	Hong Kong,
+	hm,	Insulele Heard si McDonald,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Ungaria,
+	id,	Indonezia,
+	ie,	Irlanda,
+	il,	Israel,
+        im,       Isle of Man,
+	in,	India,
+	io,	Teritoriul Britanic din Oceanul Indian,
+	iq,	Irak,
+	ir,	Iran,
+	is,	Islanda,
+	it,	Italia,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Iordania,
+	jp,	Japan,
+	ke,	Kenia,
+	kg,	Kirgizstan,
+	kh,	Cambodgia,
+	ki,	Kiribati,
+	km,	Insulele Comore,
+	kn,	Saint Kitts si Nevis,
+	kp,	Coreea (de Nord),
+	kr,	Coreea (de Sud),
+	kw,	Kuwait,
+	ky,	Insulele Cayman,
+	kz,	Kazahstan,
+	la,	Laos,
+	lb,	Liban,
+	lc,	Sfinta Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Lituania,
+	lu,	Luxemburg,
+	lv,	Letonia,
+	ly,	Libia,
+	ma,	Maroc,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar,
+	mh,	Insulele Marshall,
+	mk,	Macedonia,
+	ml,	Mali,
+	mm,	Myanmar (Birmania),
+	mn,	Mongolia,
+	mo,    Macao,
+	mp,	Insulele Mariane de Nord,
+	mq,	Martinica,
+	mr,	Mauritania,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldive,
+	mw,	Malawi,
+	mx,	Mexic,
+	my,	Malaezia,
+	mz,	Mozambic,
+	na,	Namibia,
+	nc,	Noua Caledonie,
+	ne,	Nigeria,
+	nf,	Insula Norfolk,
+	ng,	Nigeria,
+	ni,	Nicaragua,
+	nl,	Olanda,
+	no,	Norvegia,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Oman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Polinezia franceza,
+	pg,	Papua Noua Guinee,
+	ph,	Filipine,
+	pk,	Pakistan,
+	pl,	Polonia,
+	pm,	St. Pierre si Miquelon,
+	pn,	Pitcairn,
+	pr,	Puerto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portugalia,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Romania,
+	rs,	Serbia,
+	ru,	Rusia,
+	rw,	Rwanda,
+	sa,	Arabia Saudita,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Sudan,
+	se,	Suedia,
+	sg,	Singapore,
+	sh,	Sfinta Elena,
+	si,	Slovenia,
+	sj,	Insulele Svalbard si Jan Mayen,
+	sk,	Republica Slovaca,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somalia,
+	sr,	Surinam,
+	st,	Sao Tome si Principe,
+	su,	URSS (fosta),
+	sv,	El Salvador,
+	sy,	Siria,
+	sz,	Swaziland,
+	tc,	Insulele Turks si Caicos,
+	td,	Ciad,
+	tf,	Teritoriile Antarctice Franceze,
+	tg,	Togo,
+	th,	Tailanda,
+	tj,	Tadjikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisia,
+	to,	Tonga,
+	tp,	Timorul de Est,
+	tr,	Turcia,
+	tt,	Trinidad-Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzania,
+	ua,	Ucraina,
+	ug,	Uganda,
+	uk,	Regatul Unit,
+	um,	Insulele US Minor Outlying,
+	us,	Statele Unite ale Americii,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatican (Sfintul Scaun),
+	vc,	Sifintul Vincent si Grenadine,
+	ve,	Venezuela,
+	vg,	Insulele Virgine (britance),
+	vi,	Insulele Virgine (americane),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Insulele Wallis si Futuna,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Yugoslavia,
+	za,	Africa de Sud,
+	zm,	Zambia,
+	zw,	Zimbabwe

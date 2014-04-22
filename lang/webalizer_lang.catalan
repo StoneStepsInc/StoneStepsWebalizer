@@ -1,0 +1,676 @@
+#-------------------------------------------------------------------------
+# webalizer_lang.catalan
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Catalan.
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   19-Aug-1998 Translated by Jordi Bruguera (jordi@t800.grn.es) 
+#   21-Sep-1998 Additional corrections by Jordi Bruguera (jordi@t800.grn.es)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   05-Jul-1999 Additional corrections by Jordi Bruguera (jordi@t800.grn.es)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   18-Oct-2000 Translated new strings for version 2.01-06 (jordi@t800.grn.es)
+#   24-Feb-2006 Translated new strings for version 2.2.0.1 by Enric Naval (enric@griho.net)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Català
+language_code = ca
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = registres
+msg_addresses=adreçes
+msg_ignored = ignorats
+msg_bad     = erronis
+msg_in      = en
+msg_seconds = segons
+
+#/* progress and setup error messages */
+msg_log_err = Error: no puc obrir el fixer de registre
+msg_log_use = Usant el registre
+msg_dir_err = Error: no puc canviar al directori especificat
+msg_dir_use = Creant resultats a
+msg_cur_dir = directori actual
+msg_hostname= Resultats del servidor
+msg_ign_hist= Ignorant registre anterior...
+msg_no_hist = No trobo el fitxer històric...
+msg_get_hist= Llegint fitxer històric...
+msg_put_hist= Guardant informació a l'històric...
+msg_hist_err= Error: no puc escriure al fitxer històric
+msg_bad_hist= Error: ignorant un registre no vàlid
+msg_bad_conf= Error: no puc obrir el fitxer de configuració
+msg_bad_key = Avís: paraula clau no valida
+msg_bad_date= Error: saltant registre (data dolenta)
+msg_ign_nscp= Saltant registre de capcalera del Netscape
+msg_bad_rec = Saltant registre erroni
+msg_no_vrec = No trobo cap registre vàlid!
+msg_gen_rpt = Generant resultats per
+msg_gen_sum = Generant resultats resumits
+msg_get_data= Llegint dades d'una execució prèvia...
+msg_put_data= Guardant dades d'execució en curs...
+msg_no_data = No trobo les dades de l'execució anterior...
+#/*char *msg_bad_data= "Registre amb dades incorrectes";*/
+msg_bad_data= Error: no puc recuperar les dades de funcionament
+msg_data_err= Error: no puc guardar les dades de l'execució en curs
+msg_dup_data= Avís: He trobat dades que potser són duplicades
+msg_afm_err = Error: Invalid o erroni ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detectat. Abortant...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= El fitxer cau no ha estat especificat, plego.
+msg_dns_nodb= Error: no puc obrir el fitxer cau de servei de noms (DNS)
+msg_dns_nolk= Error: no puc bloquejar el fitxer cau de servei de noms (DNS)
+msg_dns_usec= Uso el fitxer cau de servei de noms (DNS)
+msg_dns_rslv= Recerca del nom (DNS)
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= No puc reservar prou memoria, desactivada la opció Nodes Principals
+msg_nomem_tr= No puc reservar prou memoria, desactivada la opció Vincles d'Origen
+msg_nomem_tu= No puc reservar prou memoria, desactivada la opció URLs mes visitades
+msg_nomem_tc= No puc reservar prou memoria, desactivada la opció Per País d'Origen
+msg_nomem_ta= No puc reservar prou memoria, desactivada la opció Segons Navegador
+msg_nomem_tsr=No puc reservar prou memoria, desactivada la opció Principals mots de recerca !
+msg_nomem_ti= No puc reservar prou memoria, desactivada la opció Principals noms d'usuari
+msg_nomem_dh= Error afegint el nom del node (diari), no el faig
+msg_nomem_mh= Error afegint el nom del node (mensual), no el faig
+msg_nomem_u = Error afegint la URL del node, no el faig
+msg_nomem_a = Error afegint el nom del navegador, no el faig
+msg_nomem_r = Error afegint el vincle d'origen, no el faig
+msg_nomem_sc= Error afegint el node de recerca per mots, me'l salto
+msg_nomem_i = Error afegint el node de nom d'usuari, me'l salto
+msg_nomem_rc = Error afegint el node de status de HTTP, me'l salto
+msg_nomem_dl = Error afegint el node de Treball de Descàrrega, me'l salto
+
+#/* registre record errors */
+msg_big_rec = Error: Em salto un fitxer de registre. Massa gros
+msg_big_host= Avís: El nom del servidor és massa llarg. El tallo.
+msg_big_date= Avís: La data és massa larga. La tallo.
+msg_big_req = Avís: El camp de petició és massa llarg. El tallo.
+msg_big_ref = Avís: El camp d'adrec,a d'origen és massa llarg. El tallo
+msg_big_user= Avís: Tallo un nom d'usuari massa larg
+msg_big_one = Avís: Hi ha una cadena de caràcters que supera la mida permesa
+
+#/* misc errors */
+msg_no_open = Error: No he pogut obrir el fitxer
+
+#/* Help display... */
+h_usage1 = Funcionament
+h_usage2 = [opcions] [fitxer històric (log) [[ fitxer històric (log) ]...] | report database]
+h_msg=   -h        = veure aquesta ajuda,
+         -v -V     = veure la versió del programa,
+         -d        = activar el mode trassa (depuració),
+         -F tipus  = tipus de fitxer de registre.  tipus=(clf | ftp | squid | iis | apache | w3c),
+         -f        = ignorar errors de seqüència,
+         -i        = ignorar el fitxer,
+         -p        = conservem dades actuals (incremental),
+         -q        = suprimir els missatges d'informació,
+         -Q        = suprimir TOTS els missatges,
+         -Y        = suprimir la gràfica de país,
+         -G        = suprimir gràfica per hores,
+         -H        = suprimir estadístiques per hores,
+         -L num    = suprimir les llegendes de color dels gràfics,
+         -l num    = valor de temps de visita (seconds),
+         -T        = ensenyar temps cronometratge,
+         -c fitxer = usar el fitxer de configuració 'fitxer',
+         -n nom    = nom de màquina,
+         -o dir    = directori de sortida,
+         -t titol  = títol dels resultats 'titol',
+         -a client = amagar informació relativa al navegador 'client',
+         -r origen = amagar informació relativa als enllac,os origen 'origen',
+         -s node   = amagar informació relativa al nom dels nodes 'node',
+         -u url    = amagar informació relativa a les URL visitades 'url',
+         -x nom    = usa l'extensió del tipus 'nom',
+         -P nom    = tipus de l'extensió de la plana 'nom',
+         -I alias  = Alias de l'Index 'alias',
+         -A n      = veure els n primers navegadors,
+         -C n      = veure els n primers païssos,
+         -R n      = veure els n primers enllac,os origen,
+         -S n      = veure els n primers servidors,
+         -U n      = veure els n primers URLs,
+         -e n      = veure les n primeres planes d'entrada,
+         -E n      = veure les n primeres planes de sortida,
+         -g n      = agrupar els dominis a 'n' nivells,
+         -X        = amagar els hosts individuals,
+         -D fitxer = usa el fitxer cau de noms 'fitxer',
+         -N num    = número de processos de cercadors de noms (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Període resumit
+msg_hhdr_gt = Generat el
+
+#/* main index strings */
+msg_main_us = Resumen d'accessos per
+msg_main_per= Darrers 12 mesos
+msg_main_sum= Resum per mesos
+msg_main_da = Mitjana diària
+msg_main_mt = Totals del mes
+
+#/* month HTML page strings */
+msg_hmth_du = Accessos per dia a
+msg_hmth_hu = Accessos per hores a
+
+#/* table header strings */
+msg_h_by    = Per
+msg_h_avg   = Mitjana
+msg_h_max   = Max
+msg_h_total = Total
+msg_h_totals= Totals
+msg_h_day   = Dia
+msg_h_mth   = Mes
+msg_h_hour  = Hora
+msg_h_hits  = Accessos
+msg_h_pages = Planes
+msg_h_visits= Visites
+msg_h_files = Fitxers
+msg_h_hosts = Navegadors
+msg_h_xfer  = KBytes
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Visitant
+msg_h_url   = URL
+msg_h_agent = Navegador
+msg_h_ref   = Enllaç d' origen
+msg_h_ctry  = País
+msg_h_search= Paraula de recerca
+msg_h_uname = Nom d'usuari
+msg_h_type  = Tipus
+msg_h_status= Estatus
+msg_h_duration = Duració
+msg_h_method= Métode
+msg_h_download = Descàrrega
+msg_h_count = Compte
+msg_h_time  = Temps
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Estadístiques per dia
+msg_hlnk_hs = Estadístiques per hores
+msg_hlnk_u  = URLs
+msg_hlnk_s  = Visitants
+msg_hlnk_a  = Navegadors
+msg_hlnk_c  = Païssos
+msg_hlnk_r  = Enllaços d'origen
+msg_hlnk_en = Entrada
+msg_hlnk_ex = Sortida
+msg_hlnk_sr = Recerca
+msg_hlnk_i  = Usuaris
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Estadístiques mensuals
+msg_mtot_th = Total d'Accessos
+msg_mtot_tf = Total de Fitxers
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Total de Kbytes
+msg_mtot_us = Total de Servidors
+msg_mtot_ur = Total d' Enllaços d'Origen
+msg_mtot_ua = Total de Navegadors
+msg_mtot_uu = Total d'URLs
+msg_mtot_ui = Total de noms d'usuari
+msg_mtot_mhd= Accessos per dia
+msg_mtot_mhh= Accesos per hora
+msg_mtot_mfd= Fitxers per dia
+msg_mtot_mpd= Planes per dia
+msg_mtot_mvd= Visites per dia
+msg_mtot_mkd= KBytes per dia
+msg_mtot_rc = Accesos segons codi de resposta
+msg_mtot_sph = Segons per Hit
+msg_mtot_spf = Segons per Fitxer
+msg_mtot_spp = Segons per Page
+msg_mtot_mhv = Hits per Visita
+msg_mtot_mfv = Arxius per Visita
+msg_mtot_mpv = Pàgines per Visita
+msg_mtot_mdv = Duració Visites
+msg_mtot_mkv = KBytes per Visita
+msg_mtot_dl  = Total de Descàrregues
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Estadístiques per dia a
+
+#/* hourly total table */
+msg_htot_hs = Estadístiques per hora a
+
+#/* country pie chart */
+msg_ctry_use= Accessos per país a
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Els
+msg_top_of  = primers d'un total de
+msg_top_s   = visitants
+msg_top_u   = URLs
+msg_top_r   = enllaç origen
+msg_top_a   = navegadors
+msg_top_c   = païssos
+msg_top_en  = Total de planes d'entrada
+msg_top_ex  = Total de planes de sortida
+msg_top_sr  = Total de paraules de recerca
+msg_top_i   = Total de noms d'usuari
+msg_v_hosts = Veure tots els llocs visitats
+msg_v_urls  = Veure totes les URL
+msg_v_refs  = Veure tots els enllaços d'origen
+msg_v_agents= Veure tots els navegadors
+msg_v_search= Veure totes les paraules de recerca
+msg_v_users = Veure tots els noms d'usuari
+msg_misc_pages = Pàgines - peticions de documents (e.x. html, asp, txt); Axius - peticions amb éxit de tots els tipus (e.x. html, gif, css); Hits - totes les peticions, incloent errors;
+msg_misc_visitors = Visitants són identificats per direcció IP. Dos o més visitants compartint la mateixa direcció IP (e.x. direcció de tallafocs) seràn comptats com un sol visitant.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= Veure Tots els Errors
+msg_h_downloads = Descàrregues
+msg_v_downloads = Veure Totes les Descàrregues
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+
+s_month=  Gen, Feb, Mar,
+                    Abr, Mai, Jun,
+                    Jul, Ago, Set,
+                    Oct, Nov, Dec
+
+#/* long month names - can be any length */
+l_month=  Gener,  Febrer, Març,   Abril,
+                    Maig,      Juny,     Juliol,    Agost,
+                    Setembre,Octubre,  Novembre,Desembre
+
+#/* response code descriptions... order IS important!      */
+response = Undefined response code,
+           Code 100 - Continue,
+           Code 101 - Switching Protocols,
+           Code 200 - OK,
+           Code 201 - Created,
+           Code 202 - Accepted,
+           Code 203 - Non-Authoritative Information,
+           Code 204 - No Content,
+           Code 205 - Reset Content,
+           Code 206 - Partial Content,
+           Code 300 - Multiple Choices,
+           Code 301 - Moved Permanently,
+           Code 302 - Found,
+           Code 303 - See Other,
+           Code 304 - Not Modified,
+           Code 305 - Use Proxy,
+           Code 307 - Moved Temporarily,
+           Code 400 - Bad Request,
+           Code 401 - Unauthorized,
+           Code 402 - Payment Required,
+           Code 403 - Forbidden,
+           Code 404 - Not Found,
+           Code 405 - Method Not Allowed,
+           Code 406 - Not Acceptable,
+           Code 407 - Proxy Authentication Required,
+           Code 408 - Request Timeout,
+           Code 409 - Conflict,
+           Code 410 - Gone,
+           Code 411 - Length Required,
+           Code 412 - Precondition Failed,
+           Code 413 - Request Entity Too Large,
+           Code 414 - Request-URI Too Long,
+           Code 415 - Unsupported Media Type,
+           Code 416 - Requested Range Not Satisfiable,
+           Code 417 - Expectation Failed,
+           Code 500 - Internal Server Error,
+           Code 501 - Not Implemented,
+           Code 502 - Bad Gateway,
+           Code 503 - Service Unavailable,
+           Code 504 - Gateway Timeout,
+           Code 505 - HTTP Version Not Supported,
+
+msg_title   = Estadístiques d'ús per a
+msg_h_other = Altri
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Unresolved/Unknown,
+	com,	US Commercial,
+	edu,	US Educational,
+	gov,	US Government,
+	int,	International (int),
+	mil,	US Military,
+	net,	Network,
+	org,	Non-Profit Organization,
+ 	arpa,	Old style Arpanet (arpa),
+ 	nato,	Nato field (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	United Arab Emirates,
+	af,	Afghanistan,
+	ag,	Antigua and Barbuda,
+	ai,	Anguilla,
+	al,	Albania,
+	am,	Armenia,
+	an,	Netherlands Antilles,
+	ao,	Angola,
+	aq,	Antarctica,
+	ar,	Argentina,
+	as,	American Samoa,
+	at,	Austria,
+	au,	Australia,
+	aw,	Aruba,
+	az,	Azerbaijan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnia and Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgium,
+	bf,	Burkina Faso,
+	bg,	Bulgaria,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolivia,
+	br,	Brazil,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Bouvet Island,
+	bw,	Botswana,
+	by,	Belarus,
+	bz,	Belize,
+	ca,	Canada,
+	cc,	Cocos (Keeling) Islands,
+        cd,       Congo,
+	cf,	Central African Republic,
+	cg,	Congo,
+	ch,	Switzerland,
+	ci,	Cote D'Ivoire (Ivory Coast),
+	ck,	Cook Islands,
+	cl,	Chile,
+	cm,	Cameroon,
+	cn,	China,
+	co,	Colombia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Cuba,
+	cv,	Cape Verde,
+	cx,	Christmas Island,
+	cy,	Cyprus,
+	cz,	Czech Republic,
+	de,	Germany,
+	dj,	Djibouti,
+	dk,	Denmark,
+	dm,	Dominica,
+	do,	Dominican Republic,
+	dz,	Algeria,
+	ec,	Ecuador,
+	ee,	Estonia,
+	eg,	Egypt,
+	eh,	Western Sahara,
+	er,	Eritrea,
+	es,	Spain,
+	et,	Ethiopia,
+        eu,       European Union,
+	fi,	Finland,
+	fj,	Fiji,
+	fk,	Falkland Islands (Malvinas),
+	fm,	Micronesia,
+	fo,	Faroe Islands,
+	fr,	France,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Georgia,
+	gf,	French Guiana,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Greenland,
+	gm,	Gambia,
+	gn,	Guinea,
+	gp,	Guadeloupe,
+	gq,	Equatorial Guinea,
+	gr,	Greece,
+	gs,	S. Georgia and S. Sandwich Isls.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard and McDonald Islands,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Hungary,
+	id,	Indonesia,
+	ie,	Ireland,
+	il,	Israel,
+        im,       Isle of Man,
+	in,	India,
+	io,	British Indian Ocean Territory,
+	iq,	Iraq,
+	ir,	Iran,
+	is,	Iceland,
+	it,	Italy,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Jordan,
+	jp,	Japan,
+	ke,	Kenya,
+	kg,	Kyrgyzstan,
+	kh,	Cambodia,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts and Nevis,
+	kp,	Korea (North),
+	kr,	Korea (South),
+	kw,	Kuwait,
+	ky,	Cayman Islands,
+	kz,	Kazakhstan,
+	la,	Laos,
+	lb,	Lebanon,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Lithuania,
+	lu,	Luxembourg,
+	lv,	Latvia,
+	ly,	Libya,
+	ma,	Morocco,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar,
+	mh,	Marshall Islands,
+	mk,	Macedonia,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolia,
+	mo,    Macao,
+	mp,	Northern Mariana Islands,
+	mq,	Martinique,
+	mr,	Mauritania,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldives,
+	mw,	Malawi,
+	mx,	Mexico,
+	my,	Malaysia,
+	mz,	Mozambique,
+	na,	Namibia,
+	nc,	New Caledonia,
+	ne,	Niger,
+	nf,	Norfolk Island,
+	ng,	Nigeria,
+	ni,	Nicaragua,
+	nl,	Netherlands,
+	no,	Norway,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Oman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	French Polynesia,
+	pg,	Papua New Guinea,
+	ph,	Philippines,
+	pk,	Pakistan,
+	pl,	Poland,
+	pm,	St. Pierre and Miquelon,
+	pn,	Pitcairn,
+	pr,	Puerto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portugal,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Romania,
+	rs,	Serbia,
+	ru,	Russian Federation,
+	rw,	Rwanda,
+	sa,	Saudi Arabia,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Sudan,
+	se,	Sweden,
+	sg,	Singapore,
+	sh,	St. Helena,
+	si,	Slovenia,
+	sj,	Svalbard and Jan Mayen Islands,
+	sk,	Slovak Republic,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somalia,
+	sr,	Suriname,
+	st,	Sao Tome and Principe,
+	su,	USSR (former),
+	sv,	El Salvador,
+	sy,	Syria,
+	sz,	Swaziland,
+	tc,	Turks and Caicos Islands,
+	td,	Chad,
+	tf,	French Southern Territories,
+	tg,	Togo,
+	th,	Thailand,
+	tj,	Tajikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisia,
+	to,	Tonga,
+	tp,	East Timor,
+	tr,	Turkey,
+	tt,	Trinidad and Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzania,
+	ua,	Ukraine,
+	ug,	Uganda,
+	uk,	United Kingdom,
+	um,	US Minor Outlying Islands,
+	us,	United States,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatican City State (Holy See),
+	vc,	Saint Vincent and the Grenadines,
+	ve,	Venezuela,
+	vg,	Virgin Islands (British),
+	vi,	Virgin Islands (U.S.),
+	vn,	Viet Nam,
+	vu,	Vanuatu,
+	wf,	Wallis and Futuna Islands,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Yugoslavia,
+	za,	South Africa,
+	zm,	Zambia,
+	zw,	Zimbabwe

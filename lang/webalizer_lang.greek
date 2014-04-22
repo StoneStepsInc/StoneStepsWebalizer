@@ -1,0 +1,668 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.greek
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Greek
+#   19-Aug-1999 Translated in Greek by Christos Cheretakis (xalkina@otenet.gr)
+#   22-Feb-2000 Modified for level 2.0x support (brad@mrunix.net)
+#
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Greek
+language_code = el
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = εγγραφές
+msg_addresses=addresses
+msg_ignored = αγνοήθηκαν
+msg_bad     = λάθος
+msg_in      = σε
+msg_seconds = δευτερόλεπτα
+
+#/* progress and setup error messages */
+msg_log_err = Error: Can't open log file
+msg_log_use = Using logfile
+msg_dir_err = Error: Can't change directory to
+msg_dir_use = Creating output in
+msg_cur_dir = current directory
+msg_hostname= Hostname for reports is
+msg_ign_hist= Ignoring previous history...
+msg_no_hist = History file not found...
+msg_get_hist= Reading history file...
+msg_put_hist= Saving history information...
+msg_hist_err= Error: Unable to write history file
+msg_bad_hist= Error: Ignoring invalid history record
+msg_bad_conf= Error: Unable to open configuration file
+msg_bad_key = Warning: Invalid keyword
+msg_bad_date= Error: Skipping record (bad date)
+msg_ign_nscp= Skipping Netscape header record
+msg_bad_rec = Skipping bad record
+msg_no_vrec = No valid records found!
+msg_gen_rpt = Generating report for
+msg_gen_sum = Generating summary report
+msg_get_data= Reading previous run data..
+msg_put_data= Saving current run data...
+msg_no_data = Previous run data not found...
+msg_bad_data= Error: Unable to restore run data
+msg_data_err= Error: Unable to save current run data
+msg_dup_data= Warning: Possible duplicate data found
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= No cache file specified, aborting...
+msg_dns_nodb= Error: Unable to open DNS cache file
+msg_dns_nolk= Error: Unable to lock DNS cache file
+msg_dns_usec= Using DNS cache file
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Can't allocate enough memory, Top Hosts disabled!
+msg_nomem_tr= Can't allocate enough memory, Top Referrers disabled!
+msg_nomem_tu= Can't allocate enough memory, Top URLs disabled!
+msg_nomem_tc= Can't allocate enough memory, Top Countries disabled!
+msg_nomem_ta= Can't allocate enough memory, Top User Agents disabled!
+msg_nomem_tsr=Can't allocate enough memory, Top Search Strings disabled!
+msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
+msg_nomem_dh= Error adding host node (daily), skipping
+msg_nomem_mh= Error adding host node (monthly), skipping
+msg_nomem_u = Error adding URL node, skipping
+msg_nomem_a = Error adding User Agent node, skipping
+msg_nomem_r = Error adding Referrer node, skipping
+msg_nomem_sc= Error adding Search String Node, skipping
+msg_nomem_i = Error adding Username node, skipping
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Error: Skipping oversized log record
+msg_big_host= Warning: Truncating oversized hostname
+msg_big_date= Warning: Truncating oversized date field
+msg_big_req = Warning: Truncating oversized request field
+msg_big_ref = Warning: Truncating oversized referrer field
+msg_big_user= Warning: Truncating oversized username field
+msg_big_one = Warning: String exceeds storage size
+
+#/* misc errors */
+msg_no_open = Error: Unable to open file
+
+#/* Help display... */
+h_usage1 = Usage
+h_usage2 = [options] [log file [[ log file ]...] | report database]
+h_msg=  -h        = print this help message,
+         -v -V     = print version information,
+         -d        = print additional debug info,
+         -F        = Use FTP log format,
+         -f        = Fold sequence errors,
+         -i        = ignore history file,
+         -p        = preserve state (incremental),
+         -q        = suppress informational messages,
+         -Q        = suppress _ALL_ messages,
+         -Y        = suppress country graph,
+         -G        = suppress hourly graph,
+         -H        = suppress hourly stats,
+         -L        = suppress color coded graph legends,
+         -l num    = use num background lines on graph,
+         -m num    = Visit timout value (seconds),
+         -T        = print timing information,
+         -c file   = use configuration file 'file',
+         -n name   = hostname to use,
+         -o dir    = output directory to use,
+         -t name   = report title 'name',
+         -a name   = hide user agent 'name',
+         -r name   = hide referrer 'name',
+         -s name   = hide site 'name',
+         -u name   = hide URL 'name',
+         -x name   = Use filename extension 'name',
+         -P name   = Page type extension 'name',
+         -I name   = Index alias 'name',
+         -A num    = Display num top agents,
+         -C num    = Display num top countries,
+         -R num    = Display num top referrers,
+         -S num    = Display num top hosts,
+         -U num    = Display num top URLs,
+         -e num    = Display num top Entry Pages,
+         -E num    = Display num top Exit Pages,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Use DNS Cache file 'name',
+         -N num    = Number of DNS processes (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Περίοδος αναφοράς
+msg_hhdr_gt = Ημερομηνία παραγωγής
+
+#/* main index strings */
+msg_main_us = Στατιστικά για το σύστημα
+msg_main_per= οι τελευταίοι 12 μήνες
+msg_main_sum= Συγκεντρωτικά στοιχεία ανά μήνα
+msg_main_da = Μέσοι όροι ανά ημέρα
+msg_main_mt = Μηνιαία σύνολα
+
+#/* month HTML page strings */
+msg_hmth_du = Στοιχεία ανά ημέρα για: 
+msg_hmth_hu = Στοιχεία ανά ώρα για: 
+
+#/* table header strings */
+msg_h_by    = Ανά
+msg_h_avg   = Μέσο
+msg_h_max   = Μέγιστο
+msg_h_total = Σύνολο
+msg_h_totals= Σύνολα
+msg_h_day   = Ημέρα
+msg_h_mth   = Μήνας
+msg_h_hour  = Ώρα
+msg_h_hits  = Hits
+msg_h_pages = Σελίδες
+msg_h_visits= Επισκέψεις
+msg_h_files = Αρχεία
+msg_h_hosts = Συστήματα
+msg_h_xfer  = KBytes
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Σύστημα
+msg_h_url   = URL
+msg_h_agent = Πρόγραμμα
+msg_h_ref   = Αναφέρων
+msg_h_ctry  = Χώρα
+msg_h_search= Αναζήτηση
+msg_h_uname = Username
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Ανά ημέρα
+msg_hlnk_hs = Ανά ώρα
+msg_hlnk_u  = URLs
+msg_hlnk_s  = Συστήματα
+msg_hlnk_a  = Προγράμματα
+msg_hlnk_c  = Χώρες
+msg_hlnk_r  = Αναφέροντες
+msg_hlnk_en = Σημεία εισόδου
+msg_hlnk_ex = Σημεία εξόδου
+msg_hlnk_sr = Αναζητήσεις
+msg_hlnk_i  = Users
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Συγκεντρωτικά στοιχεία για το μήνα
+msg_mtot_th = Συνολικά Hits
+msg_mtot_tf = Σύνολο αρχείων
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Σύνολο KBytes
+msg_mtot_us = Σύνολο διαφορετικών συστημάτων
+msg_mtot_ur = Σύνολο διαφορετικών αναφερόντων
+msg_mtot_ua = Σύνολο διαφορετικών προγραμμάτων
+msg_mtot_uu = Σύνολο διαφορετικών URLs
+msg_mtot_ui = Total Unique Usernames
+msg_mtot_mhd= Hits ανά ημέρα
+msg_mtot_mhh= Hits ανά ώρα
+msg_mtot_mfd= Αρχεία ανά ημέρα
+msg_mtot_mpd= Σελίδες ανά ημέρα
+msg_mtot_mvd= Επισκέψεις ανά ημέρα
+msg_mtot_mkd= KBytes ανά ημέρα
+msg_mtot_rc = Hits από το αποτέλεσμα
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Συγκεντρωτικά στοιχεία ανά ημέρα -
+
+#/* hourly total table */
+msg_htot_hs = Συγκεντρωτικά στοιχεία ανά ώρα -
+
+#/* country pie chart */
+msg_ctry_use= Συγκεντρωτικά στοιχεία ανά χώρα -
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Πρώτα
+msg_top_of  = από
+msg_top_s   = συστήματα
+msg_top_u   = URLs
+msg_top_r   = αναφέροντες
+msg_top_a   = προγράμματα
+msg_top_c   = χώρες
+msg_top_en  = σημεία εισόδου
+msg_top_ex  = σημεία εξόδου
+msg_top_sr  = αναζητήσεις
+msg_top_i   = Total Usernames
+msg_v_hosts = View All Hosts
+msg_v_urls  = View All URLs
+msg_v_refs  = View All Referrers
+msg_v_agents= View All User Agents
+msg_v_search= View All Search Strings
+msg_v_users = View All Usernames
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Ιαν, Φεβ, Μάρ,
+                    Απρ, Μάι, Ιον,
+                    Ιολ, Αύγ, Σεπ,
+                    Οκτ, Νοέ, Δεκ
+
+#/* long month names - can be any length */
+l_month=  Ιανουάριος,  Φεβρουάριος, Μάρτιος,   Απρίλιος,
+                    Μάιος,       Ιούνιος,     Ιούλιος,   Αύγουστος,
+                    Σεπτέμβριος, Οκτώβριος,   Νοέμβριος, Δεκέμβριος
+
+#/* response code descriptions... order IS important!      */
+response = Undefined response code,
+           Code 100 - Continue,
+           Code 101 - Switching Protocols,
+           Code 200 - OK,
+           Code 201 - Created,
+           Code 202 - Accepted,
+           Code 203 - Non-Authoritative Information,
+           Code 204 - No Content,
+           Code 205 - Reset Content,
+           Code 206 - Partial Content,
+           Code 300 - Multiple Choices,
+           Code 301 - Moved Permanently,
+           Code 302 - Found,
+           Code 303 - See Other,
+           Code 304 - Not Modified,
+           Code 305 - Use Proxy,
+           Code 307 - Moved Temporarily,
+           Code 400 - Bad Request,
+           Code 401 - Unauthorized,
+           Code 402 - Payment Required,
+           Code 403 - Forbidden,
+           Code 404 - Not Found,
+           Code 405 - Method Not Allowed,
+           Code 406 - Not Acceptable,
+           Code 407 - Proxy Authentication Required,
+           Code 408 - Request Timeout,
+           Code 409 - Conflict,
+           Code 410 - Gone,
+           Code 411 - Length Required,
+           Code 412 - Precondition Failed,
+           Code 413 - Request Entity Too Large,
+           Code 414 - Request-URI Too Long,
+           Code 415 - Unsupported Media Type,
+           Code 416 - Requested Range Not Satisfiable,
+           Code 417 - Expectation Failed,
+           Code 500 - Internal Server Error,
+           Code 501 - Not Implemented,
+           Code 502 - Bad Gateway,
+           Code 503 - Service Unavailable,
+           Code 504 - Gateway Timeout,
+           Code 505 - HTTP Version Not Supported,
+
+msg_title   = Στατιστικά στοιχεία για το σύστημα
+msg_h_other = Άλλο
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry =	*,	Άγνωστη,
+	com,	Εταιρεία (Η.Π.Α.),
+	edu,	Εκπαιδευτικό Ίδρυμα (Η.Π.Α.),
+	gov,	Κρατική Υπηρεσία (Η.Π.Α.),
+	int,	Διεθνής Οργανισμός,
+	mil,	Στρατιωτικό Σύστημα (Η.Π.Α.),
+	net,	Δικτυακός Οργανισμός,
+	org,	Άλλος Οργανισμός,
+ 	arpa,	Παλιές διευθύνσεις (arpa),
+ 	nato,	Ν.Α.Τ.Ο.,
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Ανδόρα,
+	ae,	Ημωνένα Αραβικά Εμιράτα,
+	af,	Αφγανιστάν,
+	ag,	Αντίγκουα και Μπαρμπούντα,
+	ai,	Ανγκουίλα,
+	al,	Αλβανία,
+	am,	Αρμενία,
+	an,	Ολλανδικές Αντίλες,
+	ao,	Ανγκόλα,
+	aq,	Ανταρκτική,
+	ar,	Αργεντινή,
+	as,	Αμερικανική Σαμόα,
+	at,	Αυστρία,
+	au,	Αυστραλία,
+	aw,	Αρούμπα,
+	az,	Αζερμπαϊτζάν,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Βοσνία και Ερζεγοβίνη,
+	bb,	Μπαρμπαντός,
+	bd,	Μπαγκλαντές,
+	be,	Βέλγιο,
+	bf,	Μπουρκίνα Φάσο,
+	bg,	Βουλγαρία,
+	bh,	Μπαχρέιν,
+	bi,	Μπουρούντι,
+	bj,	Μπενίν,
+	bm,	Βερμούδες,
+	bn,	Μπρουνέι Νταρούσαλαμ,
+	bo,	Βολιβία,
+	br,	Βραζιλία,
+	bs,	Μπαχάμες,
+	bt,	Μπουτάν,
+	bv,	Μπουβέτ,
+	bw,	Μποτσουάνα,
+	by,	Λευκορωσία,
+	bz,	Μπελίζ,
+	ca,	Καναδάς,
+	cc,	Νησιά Κόκος,
+        cd,       Congo,
+	cf,	Κεντρική Αφρικανική Δημοκρατία,
+	cg,	Κογκό,
+	ch,	Ελβετία,
+	ci,	Ακτή Ελεφαντοστού,
+	ck,	Νησιά Κούκ,
+	cl,	Χιλή,
+	cm,	Καμερούν,
+	cn,	Κίνα,
+	co,	Κολομβία,
+	cr,	Κόστα Ρίκα,
+        cs,       Serbia and Montenegro,
+	cu,	Κούβα,
+	cv,	Πράσινο Ακρωτήριο,
+	cx,	Νησιά των Χριστουγέννων,
+	cy,	Κύπρος,
+	cz,	Τσεχία,
+	de,	Γερμανία,
+	dj,	Τζιμπουτί,
+	dk,	Δανία,
+	dm,	Δομινίκα,
+	do,	Δομινικανική Δημοκρατία,
+	dz,	Αλγερία,
+	ec,	Εκουαδόρ,
+	ee,	Εσθονία,
+	eg,	Αίγυπτος,
+	eh,	Δυτική Σαχάρα,
+	er,	Ερυθραία,
+	es,	Ισπανία,
+	et,	Αιθιοπία,
+        eu,       European Union,
+	fi,	Φιλανδία,
+	fj,	Φίτζι,
+	fk,	Νησιά Φόκλαντ,
+	fm,	Μικρονησία,
+	fo,	Νησιά Φαρόε,
+	fr,	Γαλλία,
+	ga,	Γκαμπόν,
+        gb,       United Kingdom,
+	gd,	Γρενάδα,
+	ge,	Γεωργία,
+	gf,	Γαλλική Γουιάνα,
+        gg,       Guernsey,
+	gh,	Γκάνα,
+	gi,	Γιβραλτάρ,
+	gl,	Γριλανδία,
+	gm,	Γκάμπια,
+	gn,	Γουινέα,
+	gp,	Γουαδελούπη,
+	gq,	Ισημερινή Γουινέα,
+	gr,	Ελλάδα,
+	gs,	Νησιά Σάντουιτς,
+	gt,	Γουατεμάλα,
+	gu,	Γκουάμ,
+	gw,	Γουινέα Μπισάου,
+	gy,	Γουιάνα,
+	hk,	Χογκ Κογκ,
+	hm,	Νησιά ΜακΝτόναλντ,
+	hn,	Ονδούρα,
+	hr,     Croatia,
+	ht,	Αϊτή,
+	hu,	Ουγκαρία,
+	id,	Ινδονησία,
+	ie,	Ιρλανδία,
+	il,	Ισραήλ,
+        im,       Isle of Man,
+	in,	Ινδία,
+	io,	Βρετανικές Κτήσεις Ινδικού,
+	iq,	Ιράκ,
+	ir,	Ιράν,
+	is,	Ισλανδία,
+	it,	Ιταλία,
+        je,       Jersey,
+	jm,	Τζαμάικα,
+	jo,	Ιορδανία,
+	jp,	Ιαπωνία,
+	ke,	Κένυα,
+	kg,	Κιργιζία,
+	kh,	Καμπόντια,
+	ki,	Κιριμπάτι,
+	km,	Κομόρος,
+	kn,	Σαίντ Κίτς,
+	kp,	Βόρεια Κορέα,
+	kr,	Νότια Κορέα,
+	kw,	Κουβέιτ,
+	ky,	Νησιά Κάιμαν,
+	kz,	Καζακστάν,
+	la,	Λάος,
+	lb,	Λίβανος,
+	lc,	Σαίντ Λούτσια,
+	li,	Λιχτενστάιν,
+	lk,	Σρι Λάνκα,
+	lr,	Λιβερία,
+	ls,	Λεσότο,
+	lt,	Λιθουανία,
+	lu,	Λουξεμβούργο,
+	lv,	Λιθουανία,
+	ly,	Λιβύη,
+	ma,	Μαρόκο,
+	mc,	Μονακό,
+	md,	Μόλντοβα,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Μαδαγασκάρη,
+	mh,	Νησιά Μάρσαλ,
+	mk,	Σκόπια,
+	ml,	Μάλι,
+	mm,	Μιανμάρ,
+	mn,	Μογκολία,
+	mo,    Macao,
+	mp,	Νησιά Βόρεια Μαριάνα,
+	mq,	Μαρτινίκα,
+	mr,	Μαυριτανία,
+	ms,	Μοντσεράτ,
+	mt,	Μάλτα,
+	mu,	Μαυρίκιος,
+	mv,	Μαλδίβες,
+	mw,	Μαλάουι,
+	mx,	Μεξικό,
+	my,	Μαλαισία,
+	mz,	Μοαζμβίκη,
+	na,	Ναμίμπια,
+	nc,	Νέα Καληδονία,
+	ne,	Νίγηρ,
+	nf,	Νησιά Νόρφολκ,
+	ng,	Νιγηρία,
+	ni,	Νικαράγουα,
+	nl,	Ολλανδία,
+	no,	Νορβηγία,
+	np,	Νεπάλ,
+	nr,	Ναούρου,
+	nu,	Νιούε,
+        nz,       New Zealand,
+	om,	Ομάν,
+	pa,	Παναμάς,
+	pe,	Περού,
+	pf,	Γαλλική Πολυνησία,
+	pg,	Παπούα Νέα Γουινέα,
+	ph,	Φιλιππίνες,
+	pk,	Πακιστάν,
+	pl,	Πολωνία,
+	pm,	Σαίντ Πιέρ,
+	pn,	Πίτκαιρν,
+	pr,	Πόρτο Ρίκο,
+        ps,       Palestinian Territories,
+	pt,	Πορτογαλία,
+	pw,	Παλάου,
+	py,	Παραγουάη,
+	qa,	Κατάρ,
+	re,	Επανένωση,
+	ro,	Ρουμανία,
+	rs,	Serbia,
+	ru,	Ρωσία,
+	rw,	Ρουάντα,
+	sa,	Σαουδική Αραβία,
+        sb,       Solomon Islands,
+	sc,	Σεϋχέλες,
+	sd,	Σουδάν,
+	se,	Σουηδία,
+	sg,	Σιγκαπούρη,
+	sh,	Αγία Ελένη,
+	si,	Σλοβενία,
+	sj,	Νησιά Σβάλμπαρντ,
+	sk,	Σλοβακία,
+	sl,	Σίερα Λεόνε,
+	sm,	Σαν Μαρίνο,
+	sn,	Σενεγάλη,
+	so,	Σομαλία,
+	sr,	Σουρινάμ,
+	st,	Σάο Τόμε και Πριντσίπε,
+	su,	Πρώην Ε.Σ.Σ.Δ.,
+	sv,	Ελ Σαλβαδόρ,
+	sy,	Συρία,
+	sz,	Σουαζιλάνδη,
+	tc,	Νησιά Κάικος,
+	td,	Τσάντ,
+	tf,	Γαλλικές Κτήσεις,
+	tg,	Τόγκο,
+	th,	Ταϊλάνδη,
+	tj,	Τατζικιστάν,
+	tk,	Τοκελάου,
+        tl,       Timor-Leste,
+	tm,	Τουρκμενιστάν,
+	tn,	Τυνησία,
+	to,	Τόγκα,
+	tp,	Ανατλικό Τιμόρ,
+	tr,	Τουρκία,
+	tt,	Τρίνινταντ και Τομπάγκο,
+	tv,	Τουβαλού,
+	tw,	Ταϊβάν,
+	tz,	Τανζανία,
+	ua,	Ουκρανία,
+	ug,	Ουγκάντα,
+	uk,	Ηνωμένο Βασίλειο,
+	um,	Νησιά Η.Π.Α.,
+	us,	Η.Π.Α.,
+	uy,	Ουρουγουάη,
+	uz,	Ουζμπεκιστάν,
+	va,	Βατικανό,
+	vc,	Σαίντ Βίνσεντ,
+	ve,	Βενεζουέλα,
+	vg,	Βρετανικές Παρθένες Νήσοι,
+	vi,	Παρθένες Νήσοι (Η.Π.Α.),
+	vn,	Βιετνάμ,
+	vu,	Βανουάτου,
+	wf,	Νησιά Γουάλις,
+	ws,	Σαμόα,
+	ye,	Υεμένη,
+	yt,	Μαγιότ,
+	yu,	Γιουγκοσλαβία,
+	za,	Νότια Αφρική,
+	zm,	Ζάμπια,
+	zw,	Ζιμπάμπουε

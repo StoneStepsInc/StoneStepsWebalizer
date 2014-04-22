@@ -1,0 +1,96 @@
+/*
+    webalizer - a web server log analysis program
+
+    Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)
+
+    See COPYING and Copyright files for additional licensing and copyright information
+
+    dlnode.h
+*/
+#ifndef __DLNODE_H
+#define __DLNODE_H
+
+#include "hashtab.h"
+#include "types.h"
+#include "tstring.h"
+#include "basenode.h"
+#include "danode.h"
+
+struct hnode_t;
+
+// -----------------------------------------------------------------------
+//
+// download node
+//
+// -----------------------------------------------------------------------
+struct dlnode_t : public base_node<dlnode_t> {
+      // combined download job data
+      u_long      count;             // download job count
+      u_long      sumhits;           // total hits
+      double      sumxfer;           // total transfer size in KB
+      double      avgxfer;           // average transfer size KB
+      double      avgtime;				 // average job processing time (minutes)
+      double      sumtime;		       // total job processing time (minutes)
+
+      danode_t    *download;         // active download job
+      hnode_t     *hnode;            // host node
+
+      bool        ownhost : 1;       // true, if dlnode_t owns hnode
+
+      public:
+         typedef void (*s_unpack_cb_t)(dlnode_t& vnode, u_long hostid, bool active, void *arg);
+
+      public:
+         dlnode_t(void);
+         dlnode_t(const dlnode_t& tmp);
+         dlnode_t(const char *name, hnode_t *hnode);
+
+         ~dlnode_t(void);
+
+         void set_host(hnode_t *hnode);
+
+         void reset(u_long nodeid = 0);
+
+         //
+         // serialization
+         //
+         u_int s_data_size(void) const;
+         u_int s_pack_data(void *buffer, u_int bufsize) const;
+         u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
+
+         u_long s_hash_value(void) const;
+
+         int s_compare_value(const void *buffer, u_int bufsize) const;
+
+         static u_int s_data_size(const void *buffer);
+
+         static const void *s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize);
+         static const void *s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize);
+         static const void *s_field_value_mp_dlname(const void *buffer, u_int bufsize, u_int& datasize);
+         static const void *s_field_value_mp_hostid(const void *buffer, u_int bufsize, u_int& datasize);
+
+         static int s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
+         static int s_compare_xfer(const void *buf1, const void *buf2);
+};
+
+//
+// Download Jobs
+//
+class dl_hash_table : public hash_table<dlnode_t> {
+   public:
+      struct param_block {
+         const char  *name;
+         const char  *ipaddr;
+      };
+
+   private:
+      virtual bool compare(const dlnode_t *nptr, const void *param) const;
+
+      virtual bool load_array_check(const dlnode_t *nptr) const {return (nptr && !nptr->download) ? true : false;}
+
+   public:
+      dl_hash_table(void) : hash_table<dlnode_t>() {}
+};
+
+#endif // __DLNODE_H
+

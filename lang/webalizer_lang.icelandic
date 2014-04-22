@@ -1,0 +1,677 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.icelandic
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Icelandic.
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   16-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   15-Dec-2000 Translated to icelandic (isak@snerpa.is]
+#   
+#   I used as a guide an older file that Kristofer & Veigar had 
+#   Translated for 1.3.
+#   This was originally the english version...i just translated it.
+#   Still a few lines i didn't have time do dig up translations on maybe 
+#   i'll do it later...or maybe someone else will? ;)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Icelandic
+language_code = is
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = skráningar
+msg_addresses=frá
+msg_ignored = hunsağar
+msg_bad     = gallağar
+msg_in      = á
+msg_seconds = sekúndum
+
+#/* progress and setup error messages */
+msg_log_err = Villa: Get ekki opnağ annála
+msg_log_use = Nota annála
+msg_dir_err = Villa: Get ekki fariğ í möppuna:
+msg_dir_use = Bı til úttak í
+msg_cur_dir = Núverandi mappa
+msg_hostname= Nafn şjóns fyrir skırslur er:
+msg_ign_hist= Hunsa fyrri atburği...
+msg_no_hist = Finn ekki atburğaskrá...
+msg_get_hist= Les atburğaskrá...
+msg_put_hist= Vista atburğaskrá...
+msg_hist_err= Villa: Get ekki skrifağ í atburğaskrá
+msg_bad_hist= Villa: Gölluğ atburğaskráning
+msg_bad_conf= Villa: Get ekki opnağ stillingaskrá
+msg_bad_key = Varúğ: Rangt lykilorğ
+msg_bad_date= Villa: Sleppi skráningu, gölluğ dagsetning
+msg_ign_nscp= Sleppi Netscape hausskráningu
+msg_bad_rec = Sleppi gallağri skráningu
+msg_no_vrec = Engar skráningar fundnar í lagi!
+msg_gen_rpt = Bı til skráningu fyrir
+msg_gen_sum = Bı til stutta skráningu
+msg_get_data= Les eldri gögn..
+msg_put_data= Vista núverandi gögn...
+msg_no_data = Eldri gögn fundust ekki...
+msg_bad_data= Villa: Get ekki endurheimt gögn
+msg_data_err= Villa: Get ekki vistağ núverandi gögn
+msg_dup_data= Ağvörun: Möguleiki á tvískráğum gögnum
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Enginn cache skrá skilgreind, hætti viğ...
+msg_dns_nodb= Villa: Get ekki opnağ DNS cache skrá
+msg_dns_nolk= Villa: Get get ekki læsta DNS cache skrá
+msg_dns_usec= Nota DNS cache skrá
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Get ekki fundiğ nóg minni, sleppi Top Hosts!
+msg_nomem_tr= Get ekki fundiğ nóg minni, Top Referrers!
+msg_nomem_tu= Get ekki fundiğ nóg minni, Top URLs!
+msg_nomem_tc= Get ekki fundiğ nóg minni, Top Countries!
+msg_nomem_ta= Get ekki fundiğ nóg minni, Top User Agents!
+msg_nomem_tsr=Get ekki fundiğ nóg minni, Top Search Strings!
+msg_nomem_ti= Get ekki fundiğ nóg minni, Top Usernames!
+msg_nomem_dh= Error adding host node (daily), skipping
+msg_nomem_mh= Error adding host node (monthly), skipping
+msg_nomem_u = Error adding URL node, skipping
+msg_nomem_a = Error adding User Agent node, skipping
+msg_nomem_r = Error adding Referrer node, skipping
+msg_nomem_sc= Error adding Search String Node, skipping
+msg_nomem_i = Error adding Username node, skipping
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Villa: Sleppi of stórum annálum
+msg_big_host= Ağvörun: Minnka of stórt host nafn
+msg_big_date= Ağvörun: Minnka of stóra dags. línu
+msg_big_req = Ağvörun: Minnka of stóra request línu
+msg_big_ref = Ağvörun: Minnka of stóra referrer línu
+msg_big_user= Ağvörun: Minnka of stórt notandanafn
+msg_big_one = Ağvörun: Strengur er stærri en geymslupláss
+
+#/* misc errors */
+msg_no_open = Villa: Get ekki opnağ skrá
+
+#/* Help display... */
+h_usage1 = notkun
+h_usage2 = [rofar] [log file [[ log file ]...] | report database]
+h_msg=   -h        = prentar şessa hjálp,
+         -v -V     = prentar útgáfu upplısingar,
+         -d        = print additional debug info,
+         -F tegund = Annála tegund.  tegund= (clf | ftp | squid | iis | apache | w3c),
+         -f        = Fold sequence errors,
+         -i        = hunsa history skrá,
+         -p        = preserve state (incremental),
+         -q        = suppress informational messages,
+         -Q        = suppress _ALL_ messages,
+         -Y        = suppress country graph,
+         -G        = suppress hourly graph,
+         -H        = suppress hourly stats,
+         -L        = suppress color coded graph legends,
+         -l num    = use num background lines on graph,
+         -m num    = Visit timout value (seconds),
+         -T        = print timing information,
+         -c file   = use configuration file 'file',
+         -n name   = hostname to use,
+         -o dir    = output directory to use,
+         -t name   = report title 'name',
+         -a name   = hide user agent 'name',
+         -r name   = hide referrer 'name',
+         -s name   = hide site 'name',
+         -u name   = hide URL 'name',
+         -x name   = Use filename extension 'name',
+         -P name   = Page type extension 'name',
+         -I name   = Index alias 'name',
+         -A num    = Display num top agents,
+         -C num    = Display num top countries,
+         -R num    = Display num top referrers,
+         -S num    = Display num top hosts,
+         -U num    = Display num top URLs,
+         -e num    = Display num top Entry Pages,
+         -E num    = Display num top Exit Pages,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Use DNS Cache file 'name',
+         -N num    = Number of DNS processes (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Tímabil
+msg_hhdr_gt = Skırsla gerğ
+
+#/* main index strings */
+msg_main_us = Yfirlit heimsókn fyrir
+msg_main_per= Síğustu 12 mánuğir 
+msg_main_sum= Yfirlit eftir mánuğum
+msg_main_da = Dags meğaltal
+msg_main_mt = Samtals á mánuği
+
+#/* month HTML page strings */
+msg_hmth_du = Notkun á dag fyrir
+msg_hmth_hu = Notkun á klukkustund fyrir
+
+#/* table header strings */
+msg_h_by    = By
+msg_h_avg   = Meğaltal
+msg_h_max   = Mest
+msg_h_total = Samtals
+msg_h_totals= Samtals
+msg_h_day   = Dagur
+msg_h_mth   = Mánuğur
+msg_h_hour  = Klukkustund
+msg_h_hits  = Beiğnir
+msg_h_pages = Síğur
+msg_h_visits= Heimsóknir
+msg_h_files = Skrár
+msg_h_hosts = Hosts
+msg_h_xfer  = KBæti
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Host nafn
+msg_h_url   = Slóğ
+msg_h_agent = User Agent
+msg_h_ref   = Referrer
+msg_h_ctry  = Land
+msg_h_search= Leitarstrengur
+msg_h_uname = Notandanafn
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Daglegar samtölur
+msg_hlnk_hs = Klukkustundar samtölur
+msg_hlnk_u  = Slóğir
+msg_hlnk_s  = Síğur
+msg_hlnk_a  = Agents
+msg_hlnk_c  = Lönd
+msg_hlnk_r  = Referrers
+msg_hlnk_en = Byrjunar
+msg_hlnk_ex = loka
+msg_hlnk_sr = Leita
+msg_hlnk_i  = Notendur
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Mánağar Samtölur fyrir
+msg_mtot_th = Samtals Beiğnir
+msg_mtot_tf = Samtals Skrár
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Samtals KBæti
+msg_mtot_us = Samtals Einstakar Síğur
+msg_mtot_ur = Samtals Unique Referrers
+msg_mtot_ua = Samtals Unique User Agents
+msg_mtot_uu = Samtals Einstakar Slóğir
+msg_mtot_ui = Samtals Einstök Notandanöfn
+msg_mtot_mhd= Beiğnir á Dag
+msg_mtot_mhh= Beiğnir á Klukkustund
+msg_mtot_mfd= Skrár á Dag
+msg_mtot_mpd= Síğur á Dag
+msg_mtot_mvd= Heimsóknir á Dag
+msg_mtot_mkd= KBæti á Dag
+msg_mtot_rc = Hits by Response Code
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Daglegar Samtölur fyrir
+
+#/* hourly total table */
+msg_htot_hs = Klukkustundar Samtölur fyrir
+
+#/* country pie chart */
+msg_ctry_use= Notkun eftir Landi fyrir
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Efstu
+msg_top_of  = af
+msg_top_s   = Heildar Síğur
+msg_top_u   = Heildar slóğir
+msg_top_r   = Heildar Referrers
+msg_top_a   = Heildar User Agents
+msg_top_c   = Heildar Lönd
+msg_top_en  = Heildar Byrjunarsíğum
+msg_top_ex  = Heildar Lokasíğum
+msg_top_sr  = Heildar Leitarstrengir
+msg_top_i   = Heildar Notendanöfn
+msg_v_hosts = Skoğa Allar síğur
+msg_v_urls  = Skoğa Allar Slóğir
+msg_v_refs  = Skoğa Allar Referrers
+msg_v_agents= Skoğa Alla User Agents
+msg_v_search= Skoğa Alla Leitarstrengi
+msg_v_users = Skoğa Öll Notandanöfn
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Jan, Feb, Mar,
+                    Apr, Maí, Jún,
+                    Júl, Agú, Sep,
+                    Okt, Nóv, Des
+
+#/* long month names - can be any length */
+l_month=  Janúar,  Febrúar, Mars,   Apríl,
+                    Maí,      Júní,     Júlı,    Ágúst,
+                    September,Október,  Nóvember,Desember
+
+#/* response code descriptions... order IS important!      */
+response = Undefined response code,
+           Code 100 - Áfram,
+           Code 101 - Switching Protocols,
+           Code 200 - I Lagi,
+           Code 201 - Búiğ til,
+           Code 202 - Samşykkt,
+           Code 203 - Non-Authoritative Information,
+           Code 204 - Ekkert Innihald,
+           Code 205 - Reset Content,
+           Code 206 - Partial Content,
+           Code 300 - Margir Möguleikar,
+           Code 301 - Fært,
+           Code 302 - Fundiğ,
+           Code 303 - Sjá Annağ,
+           Code 304 - Ekki Breytt,
+           Code 305 - Nota Proxy,
+           Code 307 - Fært Um Stundarsakir,
+           Code 400 - Slæm Beiğni,
+           Code 401 - Óleyfilegt,
+           Code 402 - Greiğslu Krafist,
+           Code 403 - Óleyfilegt,
+           Code 404 - Fannst Ekki,
+           Code 405 - Ağferğ Ekki Leyfğ,
+           Code 406 - Ekki Ásættanlegt,
+           Code 407 - Proxy Auğkenning Nauğsynleg,
+           Code 408 - Request Timeout,
+           Code 409 - Árekstur,
+           Code 410 - Gone,
+           Code 411 - Length Required,
+           Code 412 - Precondition Failed,
+           Code 413 - Request Entity Of Stórt,
+           Code 414 - Request-URI Of Langt,
+           Code 415 - Óstudd Media Tegund,
+           Code 416 - Umbeğiğ svæği Ekki Ásættanlegt,
+           Code 417 - Expectation Failed,
+           Code 500 - Innlæg şjóna villa,
+           Code 501 - Not Implemented,
+           Code 502 - Rangur Gateway,
+           Code 503 - Şjónusta Ekki Fyrir Hendi,
+           Code 504 - Gateway Timeout,
+           Code 505 - HTTP Útgáfa Ekki Studd,
+ 
+msg_title   = Yfirlit Heimsókna fyrir
+msg_h_other = Annağ
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	óşekkt,
+	com,	US Commercial,
+	edu,	US Menntanet,
+	gov,	US Ríkisnet,
+	int,	International (int),
+	mil,	US Her,
+	net,	Network,
+	org,	Non-Profit Organization,
+ 	arpa,	Gamla Arpanet (arpa),
+ 	nato,	Nato (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	Sameiginlegu Arabísku Furstadæmin,
+	af,	Afganistan,
+	ag,	Antigua og Barbuda,
+	ai,	Anguilla,
+	al,	Albanía,
+	am,	Armenía,
+	an,	Holland,
+	ao,	Angóla,
+	aq,	Antarctica,
+	ar,	Argentína,
+	as,	Amerísku Samoa,
+	at,	Austurríki,
+	au,	Ástralía,
+	aw,	Aruba,
+	az,	Azerbaijan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnía and Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgía,
+	bf,	Burkina Faso,
+	bg,	Búlgaría,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermúda,
+	bn,	Brunei Darussalam,
+	bo,	Bólivía,
+	br,	Brasilía,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Bouvet Island,
+	bw,	Botswana,
+	by,	Belarus,
+	bz,	Belize,
+	ca,	Kanada,
+	cc,	Kókos (Keeling) Eyjur,
+        cd,       Congo,
+	cf,	Miğ Afríkulığveldiğ ,
+	cg,	Kongó,
+	ch,	Swiss,
+	ci,	Fílabeinsströndin (Ivory Coast),
+	ck,	Cook Islands,
+	cl,	Chile,
+	cm,	Kamerún,
+	cn,	Kína,
+	co,	Kólumbía,
+	cr,	Kosta Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Kúba,
+	cv,	Cape Verde,
+	cx,	Jólaeyja,
+	cy,	Kıpur,
+	cz,	Tékkneska Lığveldiğ,
+	de,	Şıskaland,
+	dj,	Djibouti,
+	dk,	Danmörk,
+	dm,	Dóminíka,
+	do,	Dóminíska Lığveldiğ,
+	dz,	Algeria,
+	ec,	Ecuador,
+	ee,	Estónía,
+	eg,	Egyptaland,
+	eh,	Vestur Sahara,
+	er,	Eritrea,
+	es,	Spánn,
+	et,	Eşíópía,
+        eu,       European Union,
+	fi,	Finland,
+	fj,	Fíjí,
+	fk,	Fálkeyjur (Malvinas),
+	fm,	Míkrónesía,
+	fo,	Faroe Islands,
+	fr,	Frakkland,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Georgía,
+	gf,	Franska Guiana,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gíbraltar,
+	gl,	Grænland,
+	gm,	Gambia,
+	gn,	Guinea,
+	gp,	Guadeloupe,
+	gq,	Equatorial Guinea,
+	gr,	Grikkland,
+	gs,	S. Georgia og S. Samloku Eyjur.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard og McDonald Eyjur,
+	hn,	Hondúras,
+	hr,     Croatia,
+	ht,	Haítí,
+	hu,	Ungverjaland,
+	id,	Indónesía,
+	ie,	Írland,
+	il,	Ísrael,
+        im,       Isle of Man,
+	in,	Indía,
+	io,	British Indian Ocean Territory,
+	iq,	Írak,
+	ir,	Íran,
+	is,	Ísland,
+	it,	Ítalía,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Jordan,
+	jp,	Japan,
+	ke,	Kenya,
+	kg,	Kyrgyzstan,
+	kh,	Kambódía,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts and Nevis,
+	kp,	Kórea (Norğur),
+	kr,	Kórea (Suğur),
+	kw,	Kúweit,
+	ky,	Cayman Eyjur,
+	kz,	Kazakhstan,
+	la,	Laos,
+	lb,	Lebanon,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Lithuania,
+	lu,	Lúxembourg,
+	lv,	Lettland,
+	ly,	Libıa,
+	ma,	Marokko,
+	mc,	Mónakó,
+	md,	Moldóvía,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagaskar,
+	mh,	Marshall Eyjur,
+	mk,	Makedónía,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongólía,
+	mo,    Macao,
+	mp,	Norğur Mariana eyjur,
+	mq,	Martinique,
+	mr,	Mauritanía,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldives,
+	mw,	Malawi,
+	mx,	Mexíko,
+	my,	Malasía,
+	mz,	Mozambík,
+	na,	Namibía,
+	nc,	Nıja Caledonia,
+	ne,	Niger,
+	nf,	Norfolk Island,
+	ng,	Nigería,
+	ni,	Nicaragua,
+	nl,	Netherlands,
+	no,	Noregur,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Óman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Franska Pólınesía,
+	pg,	Papua Nıja Guinea,
+	ph,	Filippseyjar,
+	pk,	Pakistan,
+	pl,	Pólland,
+	pm,	St. Pierre og Miquelon,
+	pn,	Pitcairn,
+	pr,	Púerto Ríko,
+        ps,       Palestinian Territories,
+	pt,	Portúgal,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Rúmenía,
+	rs,	Serbia,
+	ru,	Rússneska Sambandiğ,
+	rw,	Rúanda,
+	sa,	Saudi Arabía,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Súdan,
+	se,	Svíşjóğ,
+	sg,	Singapúr,
+	sh,	St. Helena,
+	si,	Slóvenía,
+	sj,	Svalbarği og Jan Mayen Eyjarnar,
+	sk,	Slóvenska lığveldiğ,
+	sl,	Síerra Léone,
+	sm,	San Marinó,
+	sn,	Senegal,
+	so,	Sómalía,
+	sr,	Suriname,
+	st,	Sao Tome og Principe,
+	su,	USSR (fyrrverandi),
+	sv,	El Salvador,
+	sy,	Sırland,
+	sz,	Swaziland,
+	tc,	Turks and Caicos Eyjurnar,
+	td,	Chad,
+	tf,	French Southern Territories,
+	tg,	Togo,
+	th,	Taíland,
+	tj,	Tajikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Túrkmenistan,
+	tn,	Túnis,
+	to,	Tonga,
+	tp,	Eaustur Timor,
+	tr,	Tyrkland,
+	tt,	Trinídad og Tobago,
+	tv,	Tuvalu,
+	tw,	Taíwan,
+	tz,	Tanzania,
+	ua,	Úkraíne,
+	ug,	Úganda,
+	uk,	Bretland,
+	um,	US Minor Outlying Islands,
+	us,	USA,
+	uy,	Uruguay,
+	uz,	Úsbekistan,
+	va,	Vatikaniğ (Holy See),
+	vc,	Saint Vincent og Grenadines,
+	ve,	Venesúela,
+	vg,	Jómfreyjar-eyjar (Bresku),
+	vi,	Jómfreyjar-eyjar (U.S.),
+	vn,	Víet Nam,
+	vu,	Vanuatu,
+	wf,	Wallis og Futuna Islands,
+	ws,	Samóa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	júgóslavía,
+	za,	Suğur Africa,
+	zm,	Zambía,
+	zw,	Zimbabwe

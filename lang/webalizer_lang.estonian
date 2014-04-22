@@ -1,0 +1,661 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.estonian
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Estonian.
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   11-Aug-1999 Translation into estonian by Märt Laak <Mart.Laak@active.ee>
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Estonian
+language_code = et
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = kirjet
+msg_addresses=addresses
+msg_ignored = ignoreeritud
+msg_bad     = vigast
+char *msg_in      = "";
+msg_seconds = sekundi jooksul
+
+#/* progress and setup error messages */
+msg_log_err = Viga: Ei suuda avada logifaili(e)
+msg_log_use = logifail
+msg_dir_err = Viga: Ei suuda vahetada töökataloogi
+msg_dir_use = kasutades kataloogi
+msg_cur_dir = jooksev kataloog
+msg_hostname= Serveri nimi
+msg_ign_hist= Ignoreerin eelnevat ajalooinfot...
+msg_no_hist = Ajaloofaili ei leitud...
+msg_get_hist= Loen ajaloofaili...
+msg_put_hist= Salvestan ajaloofaili...
+msg_hist_err= Viga: Ei suuda salvestada ajaloofaili
+msg_bad_hist= Viga: Ignoreerin vigast ajalookirjet
+msg_bad_conf= Viga: Ei suuda avada konfiguratsioonifaili
+msg_bad_key = Hoiatus: Vigane võtmesõna
+msg_bad_date= Viga: Ignoreerin kirjet (vigane kuupäev)
+msg_ign_nscp= Ignoreerin Netscape päiskirjet
+msg_bad_rec = Ignoreerin vigast kirjet
+msg_no_vrec = Ei leitud ühtegi arusaadavat logikirjet!
+msg_gen_rpt = Genereerin raportit
+msg_gen_sum = Genereerin kokkuvõtterapotit
+msg_get_data= Loen eelmise käivitamise andmeid...
+msg_put_data= Salvestan antud (jooksva) käivitamise andmeid...
+msg_no_data = Eelmise käivitamise andmeid ei leitud...
+msg_bad_data= Viga: Ei suuda lugeda eelmise käivitamise andmeid
+msg_data_err= Viga: Ei suuda salvestada käivitamise andmeid
+msg_dup_data= Hoiatus: Tõenäoliselt leitud topeltkirjed
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= No cache file specified, aborting...
+msg_dns_nodb= Error: Unable to open DNS cache file
+msg_dns_nolk= Error: Unable to lock DNS cache file
+msg_dns_usec= Using DNS cache file
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Ei suuda reserveerida piisavalt mälu, Arvutite edetabelit ei tee!
+msg_nomem_tr= Ei suuda reserveerida piisavalt mälu, Linkijate edetabelit ei tee!
+msg_nomem_tu= Ei suuda reserveerida piisavalt mälu, Aadresside edetabelit ei tee!
+msg_nomem_tc= Ei suuda reserveerida piisavalt mälu, Maade edetabelit ei tee!
+msg_nomem_ta= Ei suuda reserveerida piisavalt mälu, Lehitsejate edetabelit ei tee!
+msg_nomem_tsr=Ei suuda reserveerida piisavalt mälu, Otsistringide edetabelit ei tee!
+msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
+msg_nomem_dh= Arvuti lisamisel (päevade kaupa) viga, jätan vahele
+msg_nomem_mh= Arvuti lisamisel (kuude kaupa) viga, jätan vahele
+msg_nomem_u = URLi lisamisel viga, jätan vahele
+msg_nomem_a = Lehitseja lisamisel viga, jätan vahele
+msg_nomem_r = Linkija lisamisel viga, jätan vahele
+msg_nomem_sc= Otsistringi lisamisel viga, jätan vahele
+msg_nomem_i = Error adding Username node, skipping
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Viga: jätan vahele liigpika logikirje
+msg_big_host= Hoiatus: Teen lühemaks liigpika arvutinime
+msg_big_date= Hoiatus: Teen lühemaks liigpika kuupäevavälja
+msg_big_req = Hoiatus: Teen lühemaks liigpika päringuvälja
+msg_big_ref = Hoiatus: Teen lühemaks liigpika linkija-välja
+msg_big_user= Warning: Truncating oversized username
+msg_big_one = Hoiatus: Stringi pikkus ületab lubatud mälumahu
+
+#/* misc errors */
+msg_no_open = Viga: Ei suuda avada faili
+
+#/* Help display... */
+h_usage1 = Usage
+h_usage2 = [options] [log file [[ log file ]...] | report database]
+h_msg=   -h        = kuva see help,
+         -v -V     = kuva versiooniinfo,
+         -d        = kuva täiendav debug info,
+         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f        = ignoreeri kirjete järjestuse vigu,
+         -i        = ignoreeri ajaloofaili,
+         -p        = säilita olek (inkrementaalne rezhiim),
+         -q        = keela informatiivsed teated,
+         -Q        = keela KÕIK teated,
+         -Y        = keela maade graafik,
+         -G        = keela tunnigraafik,
+         -H        = keela tunnistatistika,
+         -L        = keela värvilegendide kuva,
+         -l num    = kasuta graafikutel  num  horisontaaljoont,
+         -m num    = viisidi timeout väärtus (seconds),
+         -T        = kuva ajakulu info,
+         -c file   = kasuta konfiguratsioonifaili 'file',
+         -n name   = kasuta nime  hostname ,
+         -o dir    = kasuta väljundiks kataloogi  dir ,
+         -t name   = raportite pealkiri on 'name',
+         -a name   = peida ära lehitseja 'name',
+         -r name   = peida ära linkija 'name',
+         -s name   = peida ära arvuti 'name',
+         -u name   = peida ära URL 'name',
+         -x name   = kasuta faililaiendit 'name',
+         -P name   = leheküljeks loetakse faili laiendiga 'name',
+         -I name   = indexfaili nimi on 'name',
+         -A num    = kuva esimesed  num  lehitsejat,
+         -C num    = kuva esimesed  num  maad,
+         -R num    = kuva esimesed  num  linkijat,
+         -S num    = kuva esimesed  num  arvutit,
+         -U num    = kuva esimesed  num  URL-i,
+         -e num    = kuva esimesed  num  sisendpunkti,
+         -E num    = kuva esimesed  num  väljundpunkti,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Use DNS Cache file 'name',
+         -N num    = Number of DNS processes (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Kokkuvõte perioodile
+msg_hhdr_gt = genereeritud
+
+#/* main index strings */
+msg_main_us = Kasutuse kokkuvõte
+msg_main_per= Viimased 12 kuud
+msg_main_sum= Kokkuvõtted kuude kaupa
+msg_main_da = Päeva keskm.
+msg_main_mt = Kuu kokku
+
+#/* month HTML page strings */
+msg_hmth_du = Kasutuspäevad
+msg_hmth_hu = Kasutustunnid
+
+#/* table header strings */
+char *msg_h_by    = "";
+msg_h_avg   = Keskm
+msg_h_max   = Maks
+msg_h_total = Kokku
+msg_h_totals= Kokku
+msg_h_day   = Päev
+msg_h_mth   = Kuu
+msg_h_hour  = Tund
+msg_h_hits  = Pöördumisi
+msg_h_pages = Lehekülgi
+msg_h_visits= Külastusi
+msg_h_files = Faile
+msg_h_hosts = Arvuteid
+msg_h_xfer  = KBaite
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Server
+msg_h_url   = Aadress
+msg_h_agent = Lehitseja
+msg_h_ref   = Linkija
+msg_h_ctry  = Maa
+msg_h_search= Otsistring
+msg_h_uname = Username
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Päevade statistika
+msg_hlnk_hs = Tundide statistika
+msg_hlnk_u  = Aadressid
+msg_hlnk_s  = Arvutid
+msg_hlnk_a  = Lehitsejad
+msg_hlnk_c  = Maad
+msg_hlnk_r  = Linkijad
+msg_hlnk_en = Sisendpunkt
+msg_hlnk_ex = Väljundpunkt
+msg_hlnk_sr = Otsisõna
+msg_hlnk_i  = Users
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Kuu statistika
+msg_mtot_th = Kokku Pöördumisi
+msg_mtot_tf = Kokku Faile
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Kokku KBaite
+msg_mtot_us = Kokku Erinevaid Kasutajaid
+msg_mtot_ur = Kokku Erinevaid Viitajaid
+msg_mtot_ua = Kokku Erinevaid Lehitsejaid
+msg_mtot_uu = Kokku Erinevaid Aadresse
+msg_mtot_ui = Kokku Erinevaid Kasutajaid
+msg_mtot_mhd= Pöördumisi Päevas
+msg_mtot_mhh= Pöördumisi Tunnis
+msg_mtot_mfd= Faile Päevas
+msg_mtot_mpd= Lehekülgi Päevas
+msg_mtot_mvd= Visiite Päevas
+msg_mtot_mkd= KBaite Päevas
+msg_mtot_rc = Pöördumisi vastusetüüpide kaupa
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Päevade statistika
+
+#/* hourly total table */
+msg_htot_hs = Tundide statistika
+
+#/* country pie chart */
+msg_ctry_use= Kasutus maade kaupa
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Esimesed
+msg_top_of  = kõigist
+msg_top_s   = külastajaarvutist
+msg_top_u   = külastatud aadressist
+msg_top_r   = ettetulnud linkijast
+msg_top_a   = kasutatud lehitsejast
+msg_top_c   = külastajamaast
+msg_top_en  = sisendpunktist
+msg_top_ex  = väljundpunktist
+msg_top_sr  = kasutatud otsisõnast
+msg_top_i   = erinevatest kasutajatest
+msg_v_hosts = View All Hosts
+msg_v_urls  = View All URLs
+msg_v_refs  = View All Referrers
+msg_v_agents= View All User Agents
+msg_v_search= View All Search Strings
+msg_v_users = View All Usernames
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Jan, Veb, Mär,
+                    Apr, Mai, Jun,
+                    Jul, Aug, Sep,
+                    Okt, Nov, Det
+
+#/* long month names - can be any length */
+l_month=  Jaanuar,  Veebruar, Märts,   Aprill,
+                    Mai,      Juuni,     Juuli,    August,
+                    September,Oktoober,  November,Detsember
+
+#/* response code descriptions... order IS important!      */
+response = Defineerimata vastuskood,
+           Kood 100 - Continue,
+           Kood 101 - Switching Protocols,
+           Kood 200 - OK,
+           Kood 201 - Created,
+           Kood 202 - Accepted,
+           Kood 203 - Non-Authoritative Information,
+           Kood 204 - No Content,
+           Kood 205 - Reset Content,
+           Kood 206 - Partial Content,
+           Kood 300 - Multiple Choices,
+           Kood 301 - Moved Permanently,
+           Kood 302 - Found,
+           Kood 303 - See Other,
+           Kood 304 - Not Modified,
+           Kood 305 - Use Proxy,
+           Kood 307 - Moved Temporarily,
+           Kood 400 - Bad Request,
+           Kood 401 - Unauthorized,
+           Kood 402 - Payment Required,
+           Kood 403 - Forbidden,
+           Kood 404 - Not Found,
+           Kood 405 - Method Not Allowed,
+           Kood 406 - Not Acceptable,
+           Kood 407 - Proxy Authentication Required,
+           Kood 408 - Request Timeout,
+           Kood 409 - Conflict,
+           Kood 410 - Gone,
+           Kood 411 - Length Required,
+           Kood 412 - Precondition Failed,
+           Kood 413 - Request Entity Too Large,
+           Kood 414 - Request-URI Too Long,
+           Kood 415 - Unsupported Media Type,
+           Kood 416 - Requested Range Not Satisfiable,
+           Kood 417 - Expectation Failed,
+           Kood 500 - Internal Server Error,
+           Kood 501 - Not Implemented,
+           Kood 502 - Bad Gateway,
+           Kood 503 - Service Unavailable,
+           Kood 504 - Gateway Timeout,
+           Kood 505 - HTTP Version Not Supported,
+
+msg_title   = Kasutusstatistika
+msg_h_other = Muu
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Numbriline/Tundmatu maa,
+	com,	USA Äridomeenid,
+	edu,	USA Haridusdomeenid,
+	gov,	USA Riiklikud,
+	int,	Rahvusvaheline,
+	mil,	USA Sõjaline,
+	net,	Interneti organisatsioonid,
+	org,	Mittekommertsiaalorganisatsioonid,
+ 	arpa,	Arpanet (arpa),
+ 	nato,	Nato,
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	Ühendatud Araabia Emiraadid,
+	af,	Afganistaan,
+	ag,	Antigua ja Barbuda,
+	ai,	Anguilla,
+	al,	Albaania,
+	am,	Armeenia,
+	an,	Hollandi Antillid,
+	ao,	Angoola,
+	aq,	Antarktika,
+	ar,	Argentiina,
+	as,	Ameerika Samoa,
+	at,	Austria,
+	au,	Austraalia,
+	aw,	Aruba,
+	az,	Azerbaidzan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnia ja Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgia,
+	bf,	Burkina Faso,
+	bg,	Bulgaaria,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Boliivia,
+	br,	Brasiilia,
+	bs,	Bahama saared,
+	bt,	Bhutan,
+	bv,	Bouvet Saar,
+	bw,	Botswana,
+	by,	Valgevene,
+	bz,	Belize,
+	ca,	Kanada,
+	cc,	Cocos (Keeling) Saared,
+        cd,       Congo,
+	cf,	Kesk-Aafrika Vabariik,
+	cg,	Kongo,
+	ch,	Shveits,
+	ci,	Cote D'Ivoire (Ivory Coast),
+	ck,	Cooki Saared,
+	cl,	Tshiili,
+	cm,	Kameron,
+	cn,	Hiina,
+	co,	Kolumbia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Kuuba,
+	cv,	Cape Verde,
+	cx,	Jõulusaared,
+	cy,	Küpros,
+	cz,	Tsehhi Vabariik,
+	de,	Saksamaa,
+	dj,	Djibouti,
+	dk,	Taani,
+	dm,	Dominica,
+	do,	Dominican Republic,
+	dz,	Alzheeria,
+	ec,	Ecuador,
+	ee,	Eesti,
+	eg,	Egiptus,
+	eh,	Lääne Sahhaara,
+	er,	Eritrea,
+	es,	Hispaania,
+	et,	Etioopia,
+        eu,       European Union,
+	fi,	Soome,
+	fj,	Fiji,
+	fk,	Falkland Islands (Malvinas),
+	fm,	Micronesia,
+	fo,	Faroe Islands,
+	fr,	Prantsusmaa,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenaada,
+	ge,	Gruusia,
+	gf,	Prantsuse Guiana,
+        gg,       Guernsey,
+	gh,	Gaana,
+	gi,	Gibraltar,
+	gl,	Greenland,
+	gm,	Gambia,
+	gn,	Ginea,
+	gp,	Guadeloupe,
+	gq,	Ekvatoriaal-Ginea,
+	gr,	Kreeka,
+	gs,	S. Georgia and S. Sandwich Isls.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard and McDonald Islands,
+	hn,	Honduuras,
+	hr,     Croatia,
+	ht,	Haiiti,
+	hu,	Ungari,
+	id,	Indoneesia,
+	ie,	Iirimaa,
+	il,	Iisrael,
+        im,       Isle of Man,
+	in,	India,
+	io,	British Indian Ocean Territory,
+	iq,	Iraak,
+	ir,	Iraan,
+	is,	Island,
+	it,	Itaalia,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Jordaania,
+	jp,	Jaapan,
+	ke,	Kenya,
+	kg,	Kõrgõzstan,
+	kh,	Kampuchea,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts ja Nevis,
+	kp,	Põhja-Korea,
+	kr,	Lõuna-Korea,
+	kw,	Kuveit,
+	ky,	Kaimani saared,
+	kz,	Kasahstan,
+	la,	Laos,
+	lb,	Liibanon,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Libeeria,
+	ls,	Lesotho,
+	lt,	Leedu,
+	lu,	Luksemburg,
+	lv,	Läti,
+	ly,	Liibüa,
+	ma,	Maroko,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagaskar,
+	mh,	Marshalli saared,
+	mk,	Makedoonia,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongoolia,
+	mo,    Macao,
+	mp,	Northern Mariana Islands,
+	mq,	Martinique,
+	mr,	Mauritaania,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Malediivid,
+	mw,	Malawi,
+	mx,	Mehhiko,
+	my,	Malaisia,
+	mz,	Mosambiik,
+	na,	Namiibia,
+	nc,	Uus-Kaledoonia,
+	ne,	Niger,
+	nf,	Norfolki saar,
+	ng,	Nigeeria,
+	ni,	Nicaragua,
+	nl,	Holland,
+	no,	Norra,
+	np,	Nepaal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Omaan,
+	pa,	Panama,
+	pe,	Peruu,
+	pf,	Prantsuse Polüneesia,
+	pg,	Paapua Uus-Guinea,
+	ph,	Filipiinid,
+	pk,	Pakistan,
+	pl,	Poola,
+	pm,	St. Pierre ja Miquelon,
+	pn,	Pitcairn,
+	pr,	Puerto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portugal,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Katar,
+	re,	Reunion,
+	ro,	Rumeenia,
+	rs,	Serbia,
+	ru,	Vene Föderatsioon,
+	rw,	Rwanda,
+	sa,	Saudi Araabia,
+        sb,       Solomon Islands,
+	sc,	Seishellid,
+	sd,	Sudaan,
+	se,	Rootsi,
+	sg,	Singapur,
+	sh,	St. Helena,
+	si,	Sloveenia,
+	sj,	Svalbard ja Jan Mayen saared,
+	sk,	Slovakkia,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somaalia,
+	sr,	Suriname,
+	st,	Sao Tome ja Principe,
+	su,	NSVL (endine),
+	sv,	El Salvador,
+	sy,	Süüria,
+	sz,	Svaasimaa,
+	tc,	Turks ja Caicos saared,
+	td,	Tshaad,
+	tf,	French Southern Territories,
+	tg,	Togo,
+	th,	Tai,
+	tj,	Tadzhikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmeenia,
+	tn,	Tuneesia,
+	to,	Tonga,
+	tp,	Ida Timor,
+	tr,	Türgi,
+	tt,	Trinidad ja Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tansaania,
+	ua,	Ukraina,
+	ug,	Uganda,
+	uk,	Suur Britannia,
+	um,	US Minor Outlying Islands,
+	us,	Ameerika Ühendriigid,
+	uy,	Uruguay,
+	uz,	Usbekistan,
+	va,	Vatikan,
+	vc,	Saint Vincent ja the Grenadines,
+	ve,	Venezuela,
+	vg,	Neitsi saared (Briti),
+	vi,	Neitsi saared (U.S.),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Wallis ja Futuna saared,
+	ws,	Samoa,
+	ye,	Jeemen,
+	yt,	Mayotte,
+	yu,	Jugoslaavia,
+	za,	Lõuna-Aafrika Vabariik,
+	zm,	Sambia,
+	zw,	Zimbabwe

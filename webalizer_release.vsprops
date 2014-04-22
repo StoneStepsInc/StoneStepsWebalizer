@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="webalizer_release"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="3"
+		InlineFunctionExpansion="2"
+		EnableIntrinsicFunctions="true"
+		FavorSizeOrSpeed="1"
+		OmitFramePointers="true"
+		WholeProgramOptimization="true"
+		PreprocessorDefinitions="NDEBUG;WIN32;_CONSOLE;"
+		StringPooling="true"
+		RuntimeLibrary="2"
+		FloatingPointModel="0"
+		UsePrecompiledHeader="2"
+		PrecompiledHeaderThrough="pch.h"
+		AssemblerListingLocation="$(IntDir)"
+		ObjectFile="$(IntDir)"
+		XMLDocumentationFileName="$(IntDir)"
+		BrowseInformation="1"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="1"
+		GenerateDebugInformation="true"
+		GenerateMapFile="true"
+		MapFileName="$(IntDir)\$(ProjectName).map"
+		SubSystem="1"
+		LinkTimeCodeGeneration="1"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		PreprocessorDefinitions="NDEBUG"
+	/>
+</VisualStudioPropertySheet>

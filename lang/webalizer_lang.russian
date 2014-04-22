@@ -1,0 +1,676 @@
+#-------------------------------------------------------------------------
+#
+#   webalizer_lang.russian
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Russian.
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   18-Aug-1998 Translated by Sergey Groznyh <gsm@infosite.ru>
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   10-Mar-2000 New 2.0 strings translated by Andrew A. Vasilyev (andy@demos.su)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Russian
+language_code = ru
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = записей
+msg_addresses=адресов
+msg_ignored = проигнорировано
+msg_bad     = неверных
+msg_in      = за
+msg_seconds = секунд
+
+#/* progress and setup error messages */
+msg_log_err = Ошибка: нельзя открыть учётный файл
+msg_log_use = Используется учётный файл
+msg_dir_err = Ошибка: нельзя сменить каталог на
+msg_dir_use = Результат создаётся в
+msg_cur_dir = текущем каталоге
+msg_hostname= Для отчётов используется имя хоста
+msg_ign_hist= Предыдущее состояние игнорируется...
+msg_no_hist = Файл состояния не найден...
+msg_get_hist= Читается файл состояния...
+msg_put_hist= Сохраняется информация о состоянии...
+msg_hist_err= Ошибка: нельзя записать файл состояния
+msg_bad_hist= Ошибка: игнорируется неверная запись состояния
+msg_bad_conf= Ошибка: нельзя открыть файл конфигурации
+msg_bad_key = Предупреждение: неверное ключевое слово
+msg_bad_date= Ошибка: пропускается запись (неверная дата)
+msg_ign_nscp= Пропускается запись заголовка Netscape
+msg_bad_rec = Пропускается неверная запись
+msg_no_vrec = Не найдено ни одной верной записи!
+msg_gen_rpt = Генерируется отчёт за
+msg_gen_sum = Генерируется общий отчёт
+
+#/* New for 1.1 */ /* Current state data messages */
+msg_get_data= Читаются данные предыдущего запуска...
+msg_put_data= Сохраняются данные текущего запуска...
+msg_no_data = Данные предыдущего запуска не найдены...
+msg_bad_data= Ошибка: нельзя восстановить данные предыдущего запуска
+msg_data_err= Ошибка: нельзя сохранить данные текущего запуска
+msg_dup_data= Предупреждение: обнаружено возможное дублирование данных
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Не указан кэш-файл, останов...
+msg_dns_nodb= Ошибка: нельзя открыть кэш-файл DNS
+msg_dns_nolk= Ошибка: нельзя блокировать кэш-файл DNS
+msg_dns_usec= Используется DNS кэш-файл
+msg_dns_rslv= DNS поиск
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Нельзя зарезервировать достаточно памяти, статистика сайтов отключена!
+msg_nomem_tr= Нельзя зарезервировать достаточно памяти, статистика ссылающихся страниц отключена!
+msg_nomem_tu= Нельзя зарезервировать достаточно памяти, статистика URL отключена!
+msg_nomem_tc= Нельзя зарезервировать достаточно памяти, статистика стран отключена!
+msg_nomem_ta= Нельзя зарезервировать достаточно памяти, статистика броузеров отключена!
+msg_nomem_tsr=Нельзя зарезервировать достаточно памяти, статистика строк поиска отключена!
+msg_nomem_ti= Нельзя зарезервировать достаточно памяти, статистика имён пользователей отключена!
+msg_nomem_dh= Ошибка добавления узла хоста (дневной отчёт), пропускается
+msg_nomem_mh= Ошибка добавления узла хоста (месячный отчёт), пропускается
+msg_nomem_u = Ошибка добавления узла URL, пропускается
+msg_nomem_a = Ошибка добавления узла броузера, пропускается
+msg_nomem_r = Ошибка добавления узла ссылки, пропускается
+msg_nomem_sc= Ошибка добавления узла строки поиска, пропускается
+msg_nomem_i = Ошибка добавления узла имени пользователя, пропускается
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Ошибка: пропускается слишком длинная учётная запись
+msg_big_host= Предупреждение: пропускается слишком длинное имя хоста
+msg_big_date= Предупреждение: пропускается слишком длинное поле даты
+msg_big_req = Предупреждение: пропускается слишком длинное поле запроса
+msg_big_ref = Предупреждение: пропускается слишком длинное поле ссылающейся страницы
+msg_big_user= Предупреждение: пропускается слишком длинное поле имени пользователя
+msg_big_one = Предупреждение: строка превысила зарезервированный объём
+
+#/* misc errors */
+msg_no_open = Ошибка: нельзя открыть файл
+
+#/* Help display... */
+h_usage1 = Использование
+h_usage2 = [параметры] [учётный файл [[ учётный файл ]...] | report database]
+h_msg=	 -h        = выдать это информационное сообщение,
+         -v -V     = выдать информацию о версии,
+         -d        = выдавать дополнительную отладочную информацию,
+		 -F тип    = вид исходной статистики. тип = (clf | ftp | squid | iis | apache | w3c),
+         -f        = fold sequence errors,
+         -i        = игнорировать файл состояния,
+         -p        = сохранять информацию о состоянии (последовательно),
+         -q        = не выдавать информационных сообщений,
+         -Q        = не выдавать _НИКАКИХ_ сообщений,
+		 -Y        = не выдавать график по странам,
+         -G        = не выдавать почасовой график,
+         -H        = не выдавать почасовую статистику,
+	     -L        = не выдавать описание цветов в таблицах,
+		 -l число  = размер тени в 'число' линий,
+		 -m число  = интервал для определения 'посещения' (seconds),
+         -T        = выдать информацию о затраченном времени,
+         -c файл   = использовать файл конфигурации 'файл',
+         -n имя    = использовать в качестве имени хоста,
+		 -o кат.   = использовать в качестве выходного каталога,
+         -t имя    = заголовок отчёта 'имя',
+         -a имя    = не обрабатывать броузер 'имя',
+         -r имя    = не обрабатывать ссылку 'имя',
+         -s имя    = не обрабатывать хост 'имя',
+         -u имя    = не обрабатывать URL 'имя',
+		 -x имя    = использовать расширение 'имя' для HTML-файлов,
+		 -P имя    = файлы с расширением 'имя' - страницы на сервере,
+         -I имя    = использовать как дополнительный индексный файл,
+         -A число  = Отображать 'число' записей статистики броузеров,
+         -C число  = Отображать 'число' записей статистики стран,
+         -R число  = Отображать 'число' записей статистики ссылающихся страниц,
+         -S число  = Отображать 'число' записей статистики сайтов,
+         -U число  = Отображать 'число' записей статистики URL,
+		 -e число  = Отображать 'число' записей начальных страниц,
+		 -E число  = Отображать 'число' записей последних страниц,
+		 -g число  = Группировать домены уровня 'число',
+		 -X        = Скрыть отдельные сайты,
+		 -D имя    = Использовать DNS 'имя' кэш-файл,
+		 -N число  = Число DNS процессов (0=отключить),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Период статистики
+msg_hhdr_gt = Дата создания
+
+#/* main index strings */
+msg_main_us = Суммарное использование сервера
+msg_main_per= последние 12 месяцев
+msg_main_sum= Ежемесячная статистика
+msg_main_da = В среднем за день
+msg_main_mt = Всего за месяц
+
+#/* month HTML page strings */
+msg_hmth_du = Использование по дням на
+msg_hmth_hu = Использование по часам на
+
+#/* table header strings */
+msg_h_by    = по
+msg_h_avg   = В среднем
+msg_h_max   = Max
+msg_h_total = Всего
+msg_h_totals= Всего
+msg_h_day   = День
+msg_h_mth   = Месяц
+msg_h_hour  = Час
+msg_h_hits  = запросов
+msg_h_pages = страниц
+msg_h_visits= посещений
+msg_h_files = файлов
+msg_h_hosts = сайтов
+msg_h_xfer  = Кбайт
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Имя хоста
+msg_h_url   = URL
+msg_h_agent = Броузер
+msg_h_ref   = Ссылающаяся страница
+msg_h_ctry  = Страна
+msg_h_search= Строка поиска
+msg_h_uname = Имя пользователя
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Статистика по дням
+msg_hlnk_hs = Статистика по часам
+msg_hlnk_u  = URL
+msg_hlnk_s  = Сайты
+msg_hlnk_a  = Броузеры
+msg_hlnk_c  = Страны
+msg_hlnk_r  = Ссылающиеся страницы
+msg_hlnk_en = Начальные страницы
+msg_hlnk_ex = Последние страницы
+msg_hlnk_sr = Поиск
+msg_hlnk_i  = Пользователи
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Статистика за месяц на
+msg_mtot_th = Всего запросов
+msg_mtot_tf = Всего файлов
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Всего килобайт
+msg_mtot_us = Всего уникальных сайтов
+msg_mtot_ur = Всего уникальных ссылающихся страниц
+msg_mtot_ua = Всего уникальных броузеров
+msg_mtot_uu = Всего уникальных URL
+msg_mtot_ui = Всего уникальных имён
+msg_mtot_mhd= Обращений в день
+msg_mtot_mhh= Обращений в час
+msg_mtot_mfd= Файлов в день
+msg_mtot_mpd= Страниц в день
+msg_mtot_mvd= Посещений в день
+msg_mtot_mkd= Объём в день (Кбайт)
+msg_mtot_rc = Запросы по кодам ответа
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Статистика по дням на
+
+#/* hourly total table */
+msg_htot_hs = Статистика по часам на
+
+#/* country pie chart */
+msg_ctry_use= Статистика по странам на
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Первые
+msg_top_of  = из
+msg_top_s   = сайтов
+msg_top_u   = URL
+msg_top_r   = ссылающихся страниц
+msg_top_a   = броузеров
+msg_top_c   = стран
+msg_top_en  = начальных страниц
+msg_top_ex  = последних страниц
+msg_top_sr  = строк поиска
+msg_top_i   = имён пользователей
+msg_v_hosts = Посмотреть все сайты
+msg_v_urls  = Посмотреть все URL-ы
+msg_v_refs  = Посмотреть все ссылающиеся страницы
+msg_v_agents= Посмотреть все броузеры
+msg_v_search= Посмотреть все строки поиска
+msg_v_users = Посмотреть все имена пользователей
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Янв, Фев, Мар,
+                    Апр, Май, Июн,
+                    Июл, Авг, Сен,
+                    Окт, Ноя, Дек
+
+#/* long month names - can be any length */
+l_month=  Январь,   Февраль, Март,   Апрель,
+                    Май,      Июнь,    Июль,   Август,
+                    Сентябрь, Октябрь, Ноябрь, Декабрь
+
+#/* response code descriptions... order IS important!      */
+response = Неизвестный код ответа,
+           Код 100 - Continue,
+           Код 101 - Switching Protocols,
+           Код 200 - OK,
+           Код 201 - Created,
+           Код 202 - Accepted,
+           Код 203 - Non-Authoritative Information,
+           Код 204 - No Content,
+           Код 205 - Reset Content,
+           Код 206 - Partial Content,
+           Код 300 - Multiple Choices,
+           Код 301 - Moved Permanently,
+           Код 302 - Found,
+           Код 303 - See Other,
+           Код 304 - Not Modified,
+           Код 305 - Use Proxy,
+           Код 307 - Moved Temporarily,
+           Код 400 - Bad Request,
+           Код 401 - Unauthorized,
+           Код 402 - Payment Required,
+           Код 403 - Forbidden,
+           Код 404 - Not Found,
+           Код 405 - Method Not Allowed,
+           Код 406 - Not Acceptable,
+           Код 407 - Proxy Authentication Required,
+           Код 408 - Request Timeout,
+           Код 409 - Conflict,
+           Код 410 - Gone,
+           Код 411 - Length Required,
+           Код 412 - Precondition Failed,
+           Код 413 - Request Entity Too Large,
+           Код 414 - Request-URI Too Long,
+           Код 415 - Unsupported Media Type,
+           Код 416 - Requested Range Not Satisfiable,
+           Код 417 - Expectation Failed,
+           Код 500 - Internal Server Error,
+           Код 501 - Not Implemented,
+           Код 502 - Bad Gateway,
+           Код 503 - Service Unavailable,
+           Код 504 - Gateway Timeout,
+           Код 505 - HTTP Version Not Supported
+
+msg_title   = Статистика использования сервера
+msg_h_other = Прочие
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry =	*,	Нераспознанные/неизвестные,
+	com,	США коммерческие,
+	edu,	США образовательные,
+	gov,	США правительственные,
+	int,	Интернациональные (int),
+	mil,	США военные,
+	net,	Сетевые организации,
+	org,	Некоммерческие организации,
+ 	arpa,	Старый Arpanet (arpa),
+ 	nato,	Зона НАТО (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,		Андорра,
+	ae,		Объединённые Арабские Эмираты,
+	af,		Афганистан,
+	ag,		Антигуа и Барбуда,
+	ai,		Ангуилла,
+	al,		Албания,
+	am,		Армения,
+	an,		Нидерландские Антиллы,
+	ao,		Ангола,
+	aq,		Антарктика,
+	ar,		Аргентина,
+	as,		Американское Самоа,
+	at,		Австрия,
+	au,		Австралия,
+	aw,		Аруба,
+	az,		Азербайджан,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Босния и Герцеговина,
+	bb,	Барбадос,
+	bd,	Бангладеш,
+	be,	Бельгия,
+	bf,	Буркина Фасо,
+	bg,	Болгария,
+	bh,	Бахрейн,
+	bi,	Бурунди,
+	bj,	Бенин,
+	bm,	Бермудские острова,
+	bn,	Бруней Даруссалам,
+	bo,	Боливия,
+	br,	Бразилия,
+	bs,	Багамы,
+	bt,	Бутан,
+	bv,	Остров Бувет,
+	bw,	Ботсвана,
+	by,	Беларусь,
+	bz,	Белиз,
+	ca,	Канада,
+	cc,	Кокосовые Острова,
+        cd,       Congo,
+	cf,	Центральноафриканская республика,
+	cg,	Конго,
+	ch,	Швейцария,
+	ci,	Побережье Ивори,
+	ck,	Острова Кука,
+	cl,	Чили,
+	cm,	Камерун,
+	cn,	Китай,
+	co,	Колумбия,
+	cr,	Коста-Рика,
+        cs,       Serbia and Montenegro,
+	cu,	Куба,
+	cv,	Капе-Верде,
+	cx,	Остров Рождества,
+	cy,	Кипр,
+	cz,	Республика Чехия,
+	de,	Германия,
+	dj,	Джибути,
+	dk,	Дания,
+	dm,	Доминика,
+	do,	Доминиканская Республика,
+	dz,	Алгерия,
+	ec,	Эквадор,
+	ee,	Эстония,
+	eg,	Египет,
+	eh,	Западная Сахара,
+	er,	Эритрея,
+	es,	Испания,
+	et,	Эфиопия,
+        eu,       European Union,
+	fi,	Финляндия,
+	fj,	Фиджи,
+	fk,	Фолклендские (Мальвинские) о-ва,
+	fm,	Микронезия,
+	fo,	Фарерские Острова,
+	fr,	Франция,
+	ga,	Габон,
+        gb,       United Kingdom,
+	gd,	Гренада,
+	ge,	Грузия,
+	gf,	Французская Гвиана,
+        gg,       Guernsey,
+	gh,	Гана,
+	gi,	Гибралтар,
+	gl,	Гренландия,
+	gm,	Гамбия,
+	gn,	Гвинея,
+	gp,	Гваделупа,
+	gq,	Экваториальная Гвинея,
+	gr,	Греция,
+	gs,	Южн. Георгия и Южн. Сандвичевы о-ва,
+	gt,	Гватемала,
+	gu,	Гуам,
+	gw,	Гвинея-Бисау,
+	gy,	Гайана,
+	hk,	Гонконг,
+	hm,	Острова Херда и Макдональда,
+	hn,	Гондурас,
+	hr,     Croatia,
+	ht,	Гаити,
+	hu,	Венгрия,
+	id,	Индонезия,
+	ie,	Ирландия,
+	il,	Израиль,
+        im,       Isle of Man,
+	in,	Индия,
+	io,	Британская терр. в Индийск. океане,
+	iq,	Ирак,
+	ir,	Иран,
+	is,	Исландия,
+	it,	Италия,
+        je,       Jersey,
+	jm,	Ямайка,
+	jo,	Иордания,
+	jp,	Япония,
+	ke,	Кения,
+	kg,	Кыргызстан,
+	kh,	Камбоджа,
+	ki,	Кирибати,
+	km,	Каморские острова,
+	kn,	Острова святого Китса и Невиса,
+	kp,	Северная Корея,
+	kr,	Южная Корея,
+	kw,	Кувейт,
+	ky,	Каймановые острова,
+	kz,	Казахстан,
+	la,	Лаос,
+	lb,	Лебанон,
+	lc,	Санта Лючия,
+	li,	Лихтенштейн,
+	lk,	Шри Ланка,
+	lr,	Либерия,
+	ls,	Лесото,
+	lt,	Литания,
+	lu,	Люксембург,
+	lv,	Латвия,
+	ly,	Ливия,
+	ma,	Марокко,
+	mc,	Монако,
+	md,	Молдавия,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Мадагаскар,
+	mh,	Маршалловы острова,
+	mk,	Македония,
+	ml,	Мали,
+	mm,	Майанмар,
+	mn,	Монголия,
+	mo,    Macao,
+	mp,	Северные Марианские острова,
+	mq,	Мартиника,
+	mr,	Мавритания,
+	ms,	Монсеррат,
+	mt,	Мальта,
+	mu,	Мавритания,
+	mv,	Мальдивская республика,
+	mw,	Малави,
+	mx,	Мексика,
+	my,	Малайзия,
+	mz,	Мозамбик,
+	na,	Намибия,
+	nc,	Новая Каледония,
+	ne,	Нигер,
+	nf,	Остров Норфолк,
+	ng,	Нигерия,
+	ni,	Никарагуа,
+	nl,	Нидерланды,
+	no,	Норвегия,
+	np,	Непал,
+	nr,	Науру,
+	nu,	Ниуэ,
+        nz,       New Zealand,
+	om,	Оман,
+	pa,	Панама,
+	pe,	Перу,
+	pf,	Французская Полинезия,
+	pg,	Папуа Новая Гвинея,
+	ph,	Филиппины,
+	pk,	Пакистан,
+	pl,	Польша,
+	pm,	Остров святого Пьера и Мигеля,
+	pn,	Питккерн,
+	pr,	Пуэрто Рико,
+        ps,       Palestinian Territories,
+	pt,	Португалия,
+	pw,	Палау,
+	py,	Парагвай,
+	qa,	Кватар,
+	re,	Остров Реюньон,
+	ro,	Румыния,
+	rs,	Serbia,
+	ru,	Российская Федерация,
+	rw,	Руана,
+	sa,	Саудовская Аравия,
+        sb,       Solomon Islands,
+	sc,	Сейшельские острова,
+	sd,	Судан,
+	se,	Швеция,
+	sg,	Сингапур,
+	sh,	Остров святой Елены,
+	si,	Словения,
+	sj,	Острова Свалбард и Ян-Майен,
+	sk,	Республика Словакия,
+	sl,	Сьерра Леоне,
+	sm,	Сан Марино,
+	sn,	Сенегал,
+	so,	Сомали,
+	sr,	Суринам,
+	st,	Сао Том и Принциповы острова,
+	su,	Бывший СССР (SU),
+	sv,	Сальвадор,
+	sy,	Сирия,
+	sz,	Свазиланд,
+	tc,	Острова Тюркс и Кайкос,
+	td,	Республика Чад,
+	tf,	Южные французские территории,
+	tg,	Того,
+	th,	Таиланд,
+	tj,	Таджикистан,
+	tk,	Острова Токелау,
+        tl,       Timor-Leste,
+	tm,	Туркменистан,
+	tn,	Тунис,
+	to,	Острова Тонга,
+	tp,	Восточный Тимор,
+	tr,	Турция,
+	tt,	Тринидад и Тобаго,
+	tv,	Тувалау,
+	tw,	Тайвань,
+	tz,	Танзания,
+	ua,	Украина,
+	ug,	Уганда,
+	uk,	Объединённое Королевство,
+	um,	Малые внешние острова (США),
+	us,	Соединённые Штаты,
+	uy,	Уругвай,
+	uz,	Узбекистан,
+	va,	Ватикан,
+	vc,	О-ва св. Винсента и Гренадины,
+	ve,	Венесуэла,
+	vg,	Виргинские острова (Британия),
+	vi,	Виргинские острова (США),
+	vn,	Вьетнам,
+	vu,	Вануату,
+	wf,	Острова Вэллис и Футуна,
+	ws,	Самоа,
+	ye,	Йемен,
+	yt,	Остров Майотта,
+	yu,	Югославия,
+	za,	Южная Африка,
+	zm,	Замбия,
+	zw,	Зимбабве

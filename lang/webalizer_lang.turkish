@@ -1,0 +1,671 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.turkish
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Turkish.
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   16-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   20-Aug-2000 Turkish Translation by Evren Yurtesen (yurtesen@ispro.net.tr)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Turkish
+language_code = tr
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = kayit
+msg_addresses=addres
+msg_ignored = islenmedi
+msg_bad     = kotu
+char *msg_in      = "";
+msg_seconds = saniyede
+
+#/* progress and setup error messages */
+msg_log_err = Hata: Kutuk dosyasi acilamadi
+msg_log_use = Kullanilan kutukdosyasi
+msg_dir_err = Hata: Degistirilemeyen dizin
+msg_dir_use = Ciktinin yaratildigi yer
+msg_cur_dir = su anki dizin
+msg_hostname= Raporlar icin makine adi
+msg_ign_hist= Bir onceki history dosyasi islenmiyor...
+msg_no_hist = History dosyasi bulunamadi...
+msg_get_hist= History dosyasi okunuyor...
+msg_put_hist= History bilgileri kaydediliyor...
+msg_hist_err= Hata: History dosyasi yazilamiyor
+msg_bad_hist= Hata: Gecersiz history kaydi islenmiyor
+msg_bad_conf= Hata: Konfigurasyon dosyasi acilamiyor
+msg_bad_key = Dikkat: Gecersiz anahtar kelime
+msg_bad_date= Hata: Kayit islenmeden geciliyor (kotu tarih)
+msg_ign_nscp= Netscape baslik kaydi islenmeden geciliyor
+msg_bad_rec = Kotu kayit islenmeden geciliyor
+msg_no_vrec = Hicbir gecerli kayit bulunamadi!
+msg_gen_rpt = Raporu yaratilan site
+msg_gen_sum = Ozet raporu yaratiliyor
+msg_get_data= Bir onceki calismanin bilgileri okunuyor...
+msg_put_data= Su anki calisma bilgileri kaydediliyor...
+msg_no_data = Bir onceki calismanin bilgileri bulunamadi...
+msg_bad_data= Hata: Calisma bilgileri tekrar kullanilamiyor
+msg_data_err= Hata: Su anki calisma bilgileri kaydedilemiyor
+msg_dup_data= Dikkat: Buyuk ihtimalle cift islenmis bilgi bulundu
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Onbellek dosyasi belirtilmedi, islem iptal ediliyor...
+msg_dns_nodb= Hata: DNS onbellekleme dosyasi acilamadi
+msg_dns_nolk= Hata: DNS onbellekleme dosyasi kilitlenemedi
+msg_dns_usec= Kullanilan DNS onbellekleme dosyasi
+msg_dns_rslv= DNS bakimi
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Yeterli hafiza yok, Top Istemciler kapatildi!
+msg_nomem_tr= Yeterli hafiza yok, Top Referanslar kapatildi!
+msg_nomem_tu= Yeterli hafiza yok, Top URL'ler kapatildi!
+msg_nomem_tc= Yeterli hafiza yok, Top Ulkeler kapatildi!
+msg_nomem_ta= Yeterli hafiza yok, Top Kullanici Ajanlari kapatildi!
+msg_nomem_tsr=Yeterli hafiza yok, Top Arama Girdileri kapatildi!
+msg_nomem_ti= Yeterli hafiza yok, Top Kullanici Adlari kapatildi!
+msg_nomem_dh= Hata makine nodu ekleniyor (gunluk), islenmeden geciliyor
+msg_nomem_mh= Hata makine nodu ekleniyor (aylik), islenmeden geciliyor
+msg_nomem_u = Hata URL nodu ekleniyor, islenmeden geciliyor
+msg_nomem_a = Hata Kullanici Ajani ekleniyor, islenmeden geciliyor
+msg_nomem_r = Hata Referans nodu ekleniyor, islenmeden geciliyor
+msg_nomem_sc= Hata Arama Girdileri nodu ekleniyor, islenmeden geciliyor
+msg_nomem_i = Hata Kullanici Adi nodu ekleniyor, islenmeden geciliyor
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Hata: Normalden buyuk kutuk kaydi islenmeden geciliyor
+msg_big_host= Dikkat: Normalden buyuk makine ismi kucultuluyor
+msg_big_date= Dikkat: Normalden buyuk tarih bolumu kucultuluyor
+msg_big_req = Dikkat: Normalden buyuk istek bolumu kucultuluyor
+msg_big_ref = Dikkat: Normalden buyuk referans bolumu kucultuluyor
+msg_big_user= Dikkat: Normalden buyuk kullanici adi bolumu kucultuluyor
+msg_big_one = Dikkat: Girdi saklama boyutunu asiyor
+
+#/* misc errors */
+msg_no_open = Hata: Dosya acilamadi
+
+#/* Help display... */
+h_usage1 = Kullanim
+h_usage2 = [opsiyonlar] [kutuk dosyasi [[ kutuk dosyasi ]...] | report database]
+h_msg=   -h        = bu yardim mesajini yazdir,
+         -v -V     = surum bilgilerini yazdir,
+         -d        = ek debug bilgileri yazir,
+         -F tip    = kutuk tipi. 'tip'= (clf | ftp | squid | iis | apache | w3c),
+         -f        = Siralama hatalarini duzelt,
+         -i        = history dosyasina bakma,
+         -p        = durumu koru (eklemeli),
+         -q        = bilgi mesajlarini iptal et,
+         -Q        = _BUTUN_ mesajlari iptal et,
+         -Y        = ulke grafigini iptal et,
+         -G        = saate gore grafigini iptal et,
+         -H        = saate gore istatistikleri iptal et,
+         -L        = renk kodlu grafik aciklamalarini iptal et,
+         -l sayi   = grafiklerde 'sayi' kadar cizgi kullan,
+         -m sayi   = ziyaret bitim zamani 'sayi'= (seconds),
+         -T        = islem suresi bilgisini yazdir,
+         -c dosya  = belirtilen konfigurasyon dosyasini kullan 'dosya',
+         -n ad     = kullanilacak makine adi 'ad',
+         -o dizin  = kullanilacak cikti dizini 'dizin',
+         -t ad     = rapor basligi 'ad',
+         -a ad     = kullanici ajanini sakla 'ad',
+         -r ad     = referansi sakla 'ad',
+         -s ad     = siteyi sakla 'ad',
+         -u ad     = URL'yi sakla 'ad',
+         -x ad     = Dosya uzantisini kullan 'ad',
+         -P ad     = Sayfa uzantisi 'ad',
+         -I ad     = Indeks ismi 'ad',
+         -A sayi   = sayi kadar top ajan goster,
+         -C sayi   = sayi kadar top ulke goster,
+         -R sayi   = sayi kadar top referans goster,
+         -S sayi   = sayi kadar top istemci goster,
+         -U sayi   = sayi kadar top URL goster,
+         -e sayi   = sayi kadar top giris sayfasi goster,
+         -E sayi   = sayi kadar top cikis sayfasi goster,
+         -g sayi   = alan adlarini 'sayi' kadar seviyede grupla,
+         -X        = tek siteleri gizle,
+         -D ad     = 'ad' isimli DNS onbellek dosyasini kullan,
+         -N sayi   = DNS islemcilerinin sayisi (0=iptal),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Ozet Periyodu
+msg_hhdr_gt = Yaratilma Tarihi
+
+#/* main index strings */
+msg_main_us = Kullanim Ozeti
+msg_main_per= Son 12 Ay
+msg_main_sum= Ay'a Gore Ozet
+msg_main_da = Gunluk Averaj
+msg_main_mt = Aylik Toplamlar
+
+#/* month HTML page strings */
+msg_hmth_du = Gunluk Kullanim:
+msg_hmth_hu = Saatlik Kullanim:
+
+#/* table header strings */
+msg_h_by    = 
+msg_h_avg   = Averaj
+msg_h_max   = Maksimum
+msg_h_total = Toplam
+msg_h_totals= Toplamlar
+msg_h_day   = Gun
+msg_h_mth   = Ay
+msg_h_hour  = Saat
+msg_h_hits  = HIT'ler
+msg_h_pages = Sayfa
+msg_h_visits= Ziyaret
+msg_h_files = Dosya
+msg_h_hosts = Istemci
+msg_h_xfer  = KBayt'a Gore
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Makine Adi
+msg_h_url   = URL
+msg_h_agent = Kullanici Ajani
+msg_h_ref   = Referans
+msg_h_ctry  = Ulke
+msg_h_search= Arama Girdisi
+msg_h_uname = Kullanici
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Gunluk Istatistikler
+msg_hlnk_hs = Saatlik Istatistikler
+msg_hlnk_u  = URL'ler
+msg_hlnk_s  = Istemciler
+msg_hlnk_a  = Ajanlar
+msg_hlnk_c  = Ulkeler
+msg_hlnk_r  = Referanslar
+msg_hlnk_en = Giris
+msg_hlnk_ex = Cikis
+msg_hlnk_sr = Arama
+msg_hlnk_i  = Kullanicilar
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Aylik Istatistikler:
+msg_mtot_th = Toplam HIT'ler
+msg_mtot_tf = Toplam Dosyalar
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Toplam KBaytlar
+msg_mtot_us = Toplam Ayni Istemciler
+msg_mtot_ur = Toplam Ayni Referanslar
+msg_mtot_ua = Toplam Ayni Kullanici Ajanlari
+msg_mtot_uu = Toplam Ayni URL'ler
+msg_mtot_ui = Toplam Ayni Kullanici Adlari
+msg_mtot_mhd= Gunluk HIT
+msg_mtot_mhh= Saatlik HIT
+msg_mtot_mfd= Gunluk Dosyalar
+msg_mtot_mpd= Gunluk Sayfalar
+msg_mtot_mvd= Gunluk Ziyaretler
+msg_mtot_mkd= Gunluk KBaytlar
+msg_mtot_rc = Cevap Koduna Gore HIT
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Gunluk Istatistikler:
+
+#/* hourly total table */
+msg_htot_hs = Saatlik Istatistikler:
+
+#/* country pie chart */
+msg_ctry_use= Ulkeye Gore Kullanim:
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Top
+msg_top_of  = /
+msg_top_s   = Toplam Istemciler
+msg_top_u   = Toplam URL'ler
+msg_top_r   = Toplam Referanslar
+msg_top_a   = Toplam Kullanici Ajanlari
+msg_top_c   = Toplam Ulkeler
+msg_top_en  = Toplam Giris Sayfalari
+msg_top_ex  = Toplam Cikis Sayfalari
+msg_top_sr  = Toplam Arama Girdileri
+msg_top_i   = Toplam Kullanici Adlari
+msg_v_hosts = Butun Istemcileri Goster
+msg_v_urls  = Butun URL'leri Goster
+msg_v_refs  = Butun Referanslar Goster
+msg_v_agents= Butun Kullanici Ajanlarini Goster
+msg_v_search= Butun Arama Girdilerini Goster
+msg_v_users = Butun Kullanici Adlarini Goster
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Oca, Sub, Mar,
+                    Nis, May, Haz,
+                    Tem, Agu, Eyl,
+                    Eki, Kas, Ara
+
+#/* long month names - can be any length */
+l_month=  Ocak,  Subat,  Mart,  Nisan,
+                    Mayis,  Haziran,  Temmuz,  Agustos,
+                    Eylul, Ekim,  Kasim, Aralik
+
+#/* response code descriptions... order IS important!      */
+response = Tanimlanmamis cevap kodu,
+           Kod 100 - Devam,
+           Kod 101 - Protokol Degistirme,
+           Kod 200 - TAMAM,
+           Kod 201 - Yaratildi,
+           Kod 202 - Kabul Edildi,
+           Kod 203 - Otantikasyonu Olmayan Bilgi,
+           Kod 204 - Icerik Yok,
+           Kod 205 - Icerigi Sifirla,
+           Kod 206 - Bolumsel Icerik,
+           Kod 300 - Bircok Secim,
+           Kod 301 - Tamamen Tasindi,
+           Kod 302 - Bulundu,
+           Kod 303 - Digerine Bakiniz,
+           Kod 304 - Degismedi,
+           Kod 305 - Proxy Kullaniniz,
+           Kod 307 - Gecici Olarak Tasindi,
+           Kod 400 - Kotu Istek,
+           Kod 401 - Yetkisiz,
+           Kod 402 - Odeme Gerekli,
+           Kod 403 - Yasak,
+           Kod 404 - Bulunamadi,
+           Kod 405 - Metoda Izin Verilmedi,
+           Kod 406 - Kabul Edilemez,
+           Kod 407 - Proxy Otantikasyonu Gerekli,
+           Kod 408 - Istek Zaman Asimi,
+           Kod 409 - Cakisma,
+           Kod 410 - Gitti,
+           Kod 411 - Uzunluk Gerekli,
+           Kod 412 - On Kosul Basarisiz,
+           Kod 413 - Istek Varligi Cok Buyuk,
+           Kod 414 - Istek-URI'si Cok Uzun,
+           Kod 415 - Desteklenmeyen Orta Tipi,
+           Kod 416 - Istenen Uzaklik Karsilanamaz,
+           Kod 417 - Beklenti Basarisiz,
+           Kod 500 - Ic Sunucu Hatasi,
+           Kod 501 - Tamamlanmadi,
+           Kod 502 - Kotu Gecit,
+           Kod 503 - Servis Kapali,
+           Kod 504 - Gecit Zaman Asimi,
+           Kod 505 - HTTP Surumu Desteklenmiyor,
+
+msg_title   = Kullanim Istatistikleri:
+msg_h_other = Diger
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Cozumlenemeyen/Bilinemeyen,
+	com,	US Ticari,
+	edu,	US Egitimsel,
+	gov,	US Devlet,
+	int,	Uluslarasi (.int),
+	mil,	US Askeri,
+	net,	Ag (.net),
+	org,	Organizasyon (.org),
+ 	arpa,	Eski stil Arpanet (.arpa),
+ 	nato,	Nato alani (.nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andora,
+	ae,	Birlesmis Arab Emirlikleri,
+	af,	Afganistan,
+	ag,	Antigua ve Barbuda,
+	ai,	Anguilla,
+	al,	Albanya,
+	am,	Ermenistan,
+	an,	Hollanda Antil Adalari,
+	ao,	Angola,
+	aq,	Antartik,
+	ar,	Arjantin,
+	as,	Amerikan Samoa Adalari,
+	at,	Avusturya,
+	au,	Avusturalya,
+	aw,	Aruba,
+	az,	Azerbeycan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosna ve Herzegova,
+	bb,	Barbados,
+	bd,	Banglades,
+	be,	Belcika,
+	bf,	Burkina Faso,
+	bg,	Bulgaristan,
+	bh,	Bahreyn,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolivya,
+	br,	Brezilya,
+	bs,	Bahamalar,
+	bt,	Bhutan,
+	bv,	Bouvet Adasi,
+	bw,	Botswana,
+	by,	Belarusya,
+	bz,	Belize,
+	ca,	Kanada,
+	cc,	Cocos (Keeling) Adalari,
+        cd,       Congo,
+	cf,	Orta Afrika Cumhuriyeti,
+	cg,	Kongo,
+	ch,	Isvicre,
+	ci,	Cote D'Ivoire (Ivory Sahili),
+	ck,	Cook Adalari,
+	cl,	Sile,
+	cm,	Kamerun,
+	cn,	Cin,
+	co,	Kolombiya,
+	cr,	Kosta Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Kuba,
+	cv,	Cape Verde,
+	cx,	Christmas Adalari,
+	cy,	Kibris,
+	cz,	Cek Cumhuriyeti,
+	de,	Almanya,
+	dj,	Djibuti,
+	dk,	Danimarka,
+	dm,	Dominika,
+	do,	Dominik Cumhuriyeti,
+	dz,	Algeria,
+	ec,	Ekvator,
+	ee,	Estonya,
+	eg,	Misir,
+	eh,	Bati Sahara,
+	er,	Eritrea,
+	es,	Ispanya,
+	et,	Etiyopya,
+        eu,       European Union,
+	fi,	Finlandiya,
+	fj,	Fiji,
+	fk,	Folkland Adalari (Malvinas),
+	fm,	Micronesia,
+	fo,	Faroe Adalari,
+	fr,	Fransa,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Granada,
+	ge,	Georgia,
+	gf,	Fransiz Guyanasi,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Greenland,
+	gm,	Gambia,
+	gn,	Gine,
+	gp,	Guadeloupe,
+	gq,	Ekvator Ginesi,
+	gr,	Yunanistan,
+	gs,	S. Georgia and S. Sandwich Adalari.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard and McDonald Adalari,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Macaristan,
+	id,	Endonezya,
+	ie,	Irlanda,
+	il,	Israil,
+        im,       Isle of Man,
+	in,	Hindistan,
+	io,	Ingiliz-Hint Okyanis Bolgesi,
+	iq,	Irak,
+	ir,	Iran,
+	is,	Izlanda,
+	it,	Italya,
+        je,       Jersey,
+	jm,	Jamaika,
+	jo,	Urdun,
+	jp,	Japonya,
+	ke,	Kenya,
+	kg,	Kirgizistan,
+	kh,	Kambocya,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts and Nevis,
+	kp,	Kore (Kuzey),
+	kr,	Kore (Guney),
+	kw,	Kuveyt,
+	ky,	Cayman Islands,
+	kz,	Kazakhistan,
+	la,	Laos,
+	lb,	Lubnan,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberya,
+	ls,	Lesotho,
+	lt,	Litvanya,
+	lu,	Luxemburg,
+	lv,	Latvia,
+	ly,	Libya,
+	ma,	Moroko,
+	mc,	Monako,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar,
+	mh,	Marshall Adalari,
+	mk,	Makedonya,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolya,
+	mo,    Macao,
+	mp,	Kuzey Mariana Adalari,
+	mq,	Martinik,
+	mr,	Moritanya,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldivler,
+	mw,	Malawi,
+	mx,	Meksika,
+	my,	Malezya,
+	mz,	Mozambik,
+	na,	Namibya,
+	nc,	Yeni Kaledonya,
+	ne,	Niger,
+	nf,	Norfolk Adalari,
+	ng,	Nijerya,
+	ni,	Nikaragua,
+	nl,	Hollanda,
+	no,	Norvec,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Umman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Fransiz Polinezyasi,
+	pg,	Papua Yeni Gine,
+	ph,	Filipinler,
+	pk,	Pakistan,
+	pl,	Polonya,
+	pm,	St. Pierre and Miquelon,
+	pn,	Pitcairn,
+	pr,	Porto Riko,
+        ps,       Palestinian Territories,
+	pt,	Portekiz,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Katar,
+	re,	Reunion,
+	ro,	Romanya,
+	rs,	Serbia,
+	ru,	Rus Federasyonu,
+	rw,	Ruanda,
+	sa,	Suudi Arabistan,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Sudan,
+	se,	Isvec,
+	sg,	Singapur,
+	sh,	St. Helena,
+	si,	Slovenya,
+	sj,	Svalbard ve Jan Mayen Adalari,
+	sk,	Slovak Cumhuriyeti,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somali,
+	sr,	Surinam,
+	st,	Sao Tome and Principe,
+	su,	SSCB (eski),
+	sv,	El Salvador,
+	sy,	Suriye,
+	sz,	Swaziland,
+	tc,	Turks ve Caicos Adalari,
+	td,	Cad,
+	tf,	Fransiz Guney Bolgeleri,
+	tg,	Togo,
+	th,	Tayland,
+	tj,	Tacikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunus,
+	to,	Tonga,
+	tp,	Dogu Timor,
+	tr,	Turkiye,
+	tt,	Trinidad ve Tobago,
+	tv,	Tuvalu,
+	tw,	Tayvan,
+	tz,	Tanzanya,
+	ua,	Ukrayna,
+	ug,	Uganda,
+	uk,	Ingiltere,
+	um,	US Minor Outlying Adalari,
+	us,	United States,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatican Sehiri Devleti (Kutsal Deniz),
+	vc,	Saint Vincent ve Grenadines,
+	ve,	Venezuela,
+	vg,	Virgin Adalari (British),
+	vi,	Virgin Adalari (U.S.),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Wallis ve Futuna Adalari,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Yugoslavya,
+	za,	Guney Afrika,
+	zm,	Zambia,
+	zw,	Zimbabve

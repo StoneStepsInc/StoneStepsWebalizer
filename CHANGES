@@ -1,0 +1,1241 @@
+--------------------------------------------------------------------
+3.10.3.2 [23-Jun-2013] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Added GraphType to the configuration (XML reports)
+ * Colors defined in the configuration are propagated now to the XML reports and picked up by XSL
+ * Fixed a bug causing the first log record of each file processed twice
+ * Made W3C a standalone log file type to account for differences with IIS log file format
+
+--------------------------------------------------------------------
+3.10.2.5 [12-Feb-2012] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Reworked how multiple log files are handled to prevent too many open files
+ * Added support for IE8 and IE9 in the XML report
+
+--------------------------------------------------------------------
+3.10.1.4 [28-Nov-2011] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Added --pipe-log-names to read multiple log file names from the standard input
+ * [BUG] Fixed a crash in the XML report generator when TopCountries is set to zero
+ * [BUG] Fixed a crash when processing an empty log file
+ 
+--------------------------------------------------------------------
+3.10.0.7 [07-Aug-2011] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Added support for multiple log file processing
+ * History file is updated when aa report is generated from a database
+ * Updated help text to output all options
+ * [Windows] Updated Berkeley DB to v5.1.19
+
+--------------------------------------------------------------------
+3.9.0.3 [21-Nov-2010] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Implemented time ranges to deal with multiple DST times
+ * Added visits to referrers and search string reports
+ * Removed IgnoreReferrerRedirect as redundant
+ * [BUG] Fixed a bug in the IIS log parser that caused last log field ignored
+ * [BUG] Fixed incorrect 3rd party library project references
+ * [BUG] Fixed incorrect BDB sequence references between tables
+ * [BUG] Fixed a crash bug when a non-numeric VisitTimeout value was specified
+
+--------------------------------------------------------------------
+3.8.0.4 [18-Jul-2009] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added a configuration parameter to control maximum visit length (MaxVisitLength)
+    * Added a command line option to print database information (--db-info)
+    * Added data type size and byte order indicators to the database system node
+    * [Linux] Fixed the source to compile with GCC x64
+    * [Linux] Removed -m32 from the compiler and linker options
+    * [BUG] Fixed a bug causing visits spanning more than two days lose hits
+
+--------------------------------------------------------------------
+3.7.2.3 [26-Apr-2009] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * [BUG] Non-Latin characters in URLs, user agents, etc break XML reports
+    * [BUG] Time zone names were not encoded in UTF-8 in XML reports
+    * [BUG] Fixed incorrect memory allocation when initializing XML help
+
+--------------------------------------------------------------------
+3.7.1.3 [18-Apr-2009] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added handling domain names in the IP address field (AcceptHostNames)
+    * Added context-sensitive help to the XML reports (hits, pages, visits, etc)
+    * Removed spammer hosts and visits from the conversion totals
+    * Added human totals to the monthly summary report
+    * Added spammer totals to the monthly summary report
+    * [BUG] Changed Max to Total in the Time column of the top downloads report
+
+--------------------------------------------------------------------
+3.6.2.1 [19-Feb-2009] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added a configuration parameter to specify a log directory (LogDir)
+    * [BUG] Country report includes spammer visits and the pie chart is generated as if it does not
+
+--------------------------------------------------------------------
+3.6.1.7 [11-Jan-2009] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Processing HideX parameters during report generating, so it can be used with --prepare-report
+    * Implemented View All link in the top item XML reports
+    * Implemented Ctrl-Alt-Home/End/Up/Down navigation between reports
+    * Added MaxX (e.g. MaxHosts) to control maximum number of rows in all item reports
+    * Added a transfer amount column to the user agent report
+
+--------------------------------------------------------------------
+3.5.1.1 [02-Nov-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added a few missing language variables
+    * Improved report generation speed for large databases
+    * Added a command line switch to compact the state database (--compact-db)
+    * Added a command line switch to finalize the current month (--end-month)
+    * Improved spam referrer identification logic
+    * Generating reports in XML/XSL, with three graph samples
+    * [BUG] Fixed visit count accuracy if there are too many spam referrers
+    * [BUG] Dump flags are ignored if there is no explicit output format
+
+--------------------------------------------------------------------
+3.4.4.1 [04-Aug-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added more XML/XSL reports (Top URLs, Top Entry/Exit Pages, Top Downloads)
+    * [BUG] Robot hit, file, page and transfer counters are not reset when a log file contains more than one month worth of data
+
+--------------------------------------------------------------------
+3.4.3.1 [15-Jul-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+   * [BUG] Active visits for hosts that do not have domain names are ignored in the incremental mode
+
+--------------------------------------------------------------------
+3.4.2.1 [13-Jul-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+   * [BUG] Cannot read country code incremental data produced by versions prior to v3.4.1.5
+
+--------------------------------------------------------------------
+3.4.1.5 [05-Jul-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+   * Changed history implementation to be able to process out of order months
+   * Added XSL file path configuration variable (XslPath)
+   * Added output format configuration variable (OutputFormat)
+   * Reduced database size and improved performance by eliminating the daily hosts table
+   * [BUG] The original state file (webalizer.current) is not read correctly by v3.x executables
+   * [BUG] Hourly averages in the daily report do not include the last hour of the last day
+   * [BUG] Localized country names are ignored
+   * [BUG] Exit URL report displays robot activity
+   * [BUG] Error report contains duplicate URLs when MemoryMode is set to yes
+
+--------------------------------------------------------------------
+3.3.1.6 [07-Feb-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Added hourly averages and maximums for hits, files, pages, visits, hosts and transfers in the daily report
+    * Added background color for weekend days rows
+    * Changed average/maximum visit duration in the monthly summary report not to include robot/spammer activity
+    * Added average/maximim converted visit duration to the monthly summary report
+    * Added visitor conversion section to the monthly summary report (TargetURL, TargetDownload)
+    * Added robot host counts to the montly report
+    * Changed the entry URL report to display only pages (PageEntryURL)
+    * Changed DSTEnd to be in local DST time (was local time before)
+    * [Windows] Disabled SSE2 (streaming extensions) optimization to support non-Intel and older CPUs
+    * BUG: Average visit duration in the monthly summary report was too low
+    * BUG: Fixed daily/hourly records lacking record version
+    * BUG: Replaced Status with Download in the header of the all-downloads report
+
+--------------------------------------------------------------------
+3.2.2.1 [07-Feb-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * [BUG] Fixed a bug causing gzip-ed log files fail to read properly
+    * [BUG] Fixed help message text in many language files
+
+--------------------------------------------------------------------
+3.2.1.5 [03-Feb-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Updated GeoIP library to v1.4.4
+    * Introduced mangle user agent compatibility mode (UseClassicMangeAgents)
+    * Reworked MangleAgents functionality to use user agent argument filters
+    * Added user agent argument filters (ExcludeAgentArgs/IncludeAgentArgs/GroupAgentArgs)
+    * [IIS] Changed the parser to process log files without a date field
+    * [Linux] Updated make file to compile a 32-bit build
+    * BUG: Malformed HTTP method stops log file processing
+
+--------------------------------------------------------------------
+3.1.2.6 [07-Jan-2008] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Moved notes in the report HTML to make it easier to manipulate reports from JavaScript
+    * [Windows] Moved the project to VC9 (improved performance by about 5%)
+    * BUG: Robot visits are not cleared at the end of the month
+    * BUG: Fixed a crash in the DNS resolver triggered when starting a new month
+
+--------------------------------------------------------------------
+3.1.1.2 [26-Nov-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Changed precision of URL procesing time in the monthly summary report to 3 digits
+    * [Apache] Fixed a bug causing URL processing time to be shown as 0.001
+
+--------------------------------------------------------------------
+3.1.0.5 [25-Nov-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Changed Entry/Exit URL reports not to include robot activity
+    * Implemented converting UTC time to local time and adjust for daylight saving time (UTCOffset, DSTStart, DSTEnd, DSTOffset)
+    * Added average/maximum request processing time to the user report
+    * Referrers, user agents and users are matched HideX lists only after they are seen for the first time (consistency & performance)
+    * Added maximum processing time column to the URL reports
+    * Changed the country report to exclude robot activity
+    * Updated host and user agent reports to highlight/hide robots (HideRobots)
+    * Added new configuration variable to group robots (GroupRobots)
+    * Added new configuration variable to identify robots (Robot)
+    * Added total robot hits, pages, files, transfer, errors and visits to the totals report
+    * BUG: Fixed a bug causing a memory segmentation fault
+
+--------------------------------------------------------------------
+3.0.5.1 [21-Oct-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+	* Added Visual Studio 8 project files
+	* Added a command line option to run in the batch mode (--batch)
+	* Improved database performance when processing large Squid log files
+	* [Windows] Linked against libpng v1.2.22 and freetype v2.3.5
+
+--------------------------------------------------------------------
+3.0.4.1 [30-Sep-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+	* BUG: Some versions of webalizer.current are not parsed correctly
+	* BUG: All Downloads page is not generated
+
+--------------------------------------------------------------------
+3.0.3.1 [25-Sep-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+	* Added checking for read/write access for output and database directories
+	* Fixed error/warning messages being printed in the quiet mode
+	* Resolved a build problem when compiled with GCC3
+	* Conditionally-compiled database code to work with Berkeley DB v4.3
+
+--------------------------------------------------------------------
+3.0.2.1 [25-Sep-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+	* Worked around a build problem when compiled with GCC3
+	* Merged with GeoIP v1.4.3
+    * BUG: [Linux] Fixed incorrect parsing of fully-qualified paths (command line)
+
+--------------------------------------------------------------------
+3.0.1.1 [24-Sep-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+	* Updated README to include all new configuration variables
+    * [BUG] Fixed a crash in DNS resolver when DnsCache is commented out
+
+--------------------------------------------------------------------
+3.0.0.1 [22-Sep-2007] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+    * Introduced batch processing mode to avoid generating intermediate reports (Batch)
+    * Added HTMLExtensionLang to generate language-specific HTML/PNG extensions
+    * Changed the country report to sort by Visits
+    * Added visits column to the country report
+    * Significantly reduced memory footprint
+    * Added option to indicate that there are no more logs for the current month (--last-log)
+    * Introduced on-demand, database-based, reporting functionality (--prepare-report)
+    * Replaced text-based state file with a binary equivalent based on Berkeley DB
+    * Implemented long command line options (e.g. --help)
+    * Updated German language file (courtesy of Benjamin Buhr)
+    * Removed DNSDynamicNames to eliminate unnecessary DNS lookups
+    * Changed the Entry URL report to show first non-redirected URL (redirected URL's are hidden)
+    * BUG: GroupHost ignores resolved IP addresses
+    * BUG: Exit page visits are calculated incorrectly for visits split in the incremental mode
+    * BUG: Per-visit maximums for hits/pages/files/transfers in the summary table are exaggerated (computed per visitor)
+
+--------------------------------------------------------------------
+2.7.2.1 [23-Oct-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * BUG: Crash or incorrect string comparison if non-ASCII characters were used in ignore/include/group lists
+
+--------------------------------------------------------------------
+2.7.1.2 [22-Oct-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Optimized evaluation of ignore, include and group lists, improving overall processing speed by 25%
+ * BUG: Pages/Files/Hits and Visits/Hosts on the summary page are shifted when using raster fonts
+
+--------------------------------------------------------------------
+2.7.0.5 [8-Oct-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Added variable history length (HistoryLength)
+ * Added a country column to the All Hosts report and the tab-separated hosts file
+ * BUG: Country information is missing if LanguageFile is omitted
+ * BUG: [Linux] Fixed a deadlock problem in the DNS resolver
+
+--------------------------------------------------------------------
+2.6.4.2 [28-Aug-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * [Linux] BUG: Fixed a deadlock problem in the DNS resolver
+
+--------------------------------------------------------------------
+v2.6.3.1 [20-Aug-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * [Linux] Worked around a lock-up problem in the DNS resolver (Tao Linux)
+
+--------------------------------------------------------------------
+v2.6.1.2 [13-Aug-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Added country name to the host and download reports
+ * Updated GeoIP library to v1.4.0
+ * Added DNS resolution time to the debug output
+ * BUG: [Linux] Ctrl-C did not interrupt processing in many cases
+
+--------------------------------------------------------------------
+v2.5.5.4 [05-Aug-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * Improved performance for large number of hosts and URLs
+ * Decreased memory footprint when processing large number of files
+
+--------------------------------------------------------------------
+v2.5.4.1 [24-Jul-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * BUG: Visit counts in the user report are computed for pages only
+ * BUG: [Squid] User names in Squid logs are counted incorrectly
+
+--------------------------------------------------------------------
+v2.5.3.4 [19-Jul-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * If a user configuration file is provided, the default one is no longer processed
+ * Added reporting of the name of the currently-processed configuration file
+ * BUG: Domain-specific include files were processed if there was no domain specified
+ * BUG: Ctrl-C did not interrupt processing in many cases
+ * BUG: Fixed a bug causing patterns matched incorrectly if the text was shorter than the pattern
+ * BUG: Fixed a bug in the GeoIP library causing memory corruption
+ * BUG: [Apache, CLF] Unencoded double quotes in URLs cause these URLs reported incorrectly
+ * BUG: [Apache, CLF] Malformed URLs beginning with ? corrupt webalizer.current
+ * BUG: [Linux] The executable crashes when built with some versions of GCC (e.g. v3.4.4 shipped with FC3)
+ * BUG: [Windows] Worked around a bug in the Microsoft runtime causing memory corruption
+
+
+--------------------------------------------------------------------
+v2.5.0.1 [08-Jul-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Added highlighting of spamming hosts in the host report
+ * Added a new configuration parameter to filter out spam referrers (SpamReferrer)
+ * Updated the country list to include new entries from the IANA list
+ * Added support for the GeoIP library (country report)
+
+
+--------------------------------------------------------------------
+v2.4.1.2 [18-Jun-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Replaced hard-coded -march=pentiumpro with CPUARCH in makefile.gnu
+ * BUG: Fixed an XSS vulnerability in the user agent report
+
+--------------------------------------------------------------------
+v2.4.0.3 [04-Jun-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Linked GD with the new FreeType (v2.2.1) library
+ * Made a separate section for KBytes in the hourly report
+ * Added GraphVisitsColor, GraphVolumeColor, GraphOutlineColor, GraphWeekendColor
+ * Added GraphLegendColor, GraphHitsColor, GraphFilesColor, GraphPagesColor, GraphHostsColor
+ * Added a new configuration variable to control the graph title color (GraphTitleColor)
+ * Changed HTML/CSS to allow background images in graphs (e.g. logos, gradients, etc)
+ * Added a new configuration parameter to control graph background transparency (GraphBackgroundAlpha)
+ * Changed the default graph border width to zero (no borders)
+ * Added a new configuration parameter to control graph border width (GraphBorderWidth)
+ * Implemented conversion of Apache and CLF log time stamps to UTC if GMTTime is set to yes
+ * Implemented reporting Squid log records in UTC if GMTTime is set to yes
+ * Made hard-coded empty referrer string ("- (Direct Request)") localizable
+ * Improved report generation speed for large log files
+ * Removed hard-coded rpath from makefile.gnu (courtesy of Joost van Baal)
+ * Implemented URL search string processing for Squid logs
+ * Changed the search string report to include all URLs, not only pages
+ * Removed some search engines from the default list
+ * Added a new configuration parameter to track upstream traffic (UpstreamTraffic)
+ * BUG: Non-HTTP referrers are reported as links
+ * BUG: SSW crashes when processing malformed Squid log records
+ * BUG: URLs reported incorrectly for FTP logs
+ * BUG: HideHost has no effect if a domain name pattern is specified
+
+--------------------------------------------------------------------
+v2.3.5.0 [10-Apr-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * BUG: Fixed a crash in the incremental mode handler
+
+--------------------------------------------------------------------
+v2.3.4.0 [09-Apr-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Decreased overall memory footprint
+ * Improved performance when processing large log files
+ * BUG: Fixed a bug in the Squid parser causing erroneous user names for URLs containing quotes
+ * BUG: Fixed a memory leak in the Squid parser
+
+--------------------------------------------------------------------
+v2.3.3.0 [04-Apr-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Changed makefile.gnu to work in any sub-directory (expected to be under webalizer before)
+ * BUG: URLs containing a question mark, but no query strings are reported incorrectly
+ * BUG: Fixed a crash caused by a malformed CLF record
+ * BUG: Last character of the user name is dropped (CLF)
+
+--------------------------------------------------------------------
+v2.3.2.0 [02-Apr-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * BUG: Empty lines are reported in URL domain name groups for URLs accessed by IP addresses (Squid)
+ * BUG: Fixed a bug causing only the last search term reported if the referrer contained multiple terms
+
+--------------------------------------------------------------------
+v2.3.1.0 [29-Mar-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * BUG: Fixed incorrect visit counts in the entry/exit URL report
+ * BUG: Fixed an intermittent crash when reading webalizer.current generated by a previous version
+
+--------------------------------------------------------------------
+v2.3.0.5 [29-Mar-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Added query strings to the URLs in the entry and exit reports
+ * Added a new configuration parameter to disable the monthly totals report (MonthlyTotals)
+ * Updated webalizer_lang.spanish and webalizer_lang.catalan (courtesy of Enric Naval)
+ * Implemented search string qualifiers for SearchEngine (e.g. as_q=All Words for google.com)
+ * Replaced most fixed-size buffers with dynamically-allocated ones (no more "truncating oversized field" warnings)
+ * Implemented search string name aliases for SearchEngine (e.g. as_q= and q= for google.com)
+ * Replaced HTML character entity references (e.g. &iacute;) in language files with UTF-8 characters
+ * Added a new configuration parameter to group URL domains (GroupURLDomains)
+ * Added a new configuration parameter to correct referrer counts for partial requests (IgnoreReferrerPartial)
+ * Changed default page types (ALL: htm*,txt; IIS: asp,aspx; CLF, Apache: php,cgi; Squid: all combined)
+ * Improved performance of code processing search engine referrers
+ * BUG: Incorrect entry/exit URL analysis if query strings are reported
+ * BUG: Number of lines, not downloads is reported in "Top N of M Downloads"
+
+--------------------------------------------------------------------
+v2.2.0.1 [04-Feb-2006] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+
+ * Added GraphGridlineColor to change the color of graph gridlines
+ * Changed configuration parameter name comparison to be case-insensitive
+ * Added host synonyms for all site parameters (e.g. TopHosts, HideHost, GroupHost, etc)
+ * Replaced [ip-address] in the host detail report with a titled span
+ * Added a file download report
+ * Changed the report generator not to HTML-encode grouped items
+ * Increased storage for named values from 80 to 260 bytes
+ * Implemented per-domain include config files
+ * Changed msn.com to msn. in the default search engine list
+ * Linked with the new zlib (v1.2.3) library
+ * Separated domain names and IP addresses in the host (site) tab file
+ * BUG: The last slice is shown as Others if there's less than 10 countries to report
+ * BUG: Unicode characters greater than 127 displayed incorrectly in the search strings report
+
+
+--------------------------------------------------------------------
+v2.1.10.24 [20-Dec-2005] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Improved performance of pattern matching (groups, hide lists, etc)
+ * Improved performance of the report generator
+ * Added HTTP method to the error report
+ * Removed spacer rows from the reports and changed tables to use collapsed borders
+ * Changed page links to look like a menu
+ * BUG: Added missing thead in the user agents report
+ * BUG: URLs sorted incorrectly in the HTTP error report
+ * BUG: Erroneous debug output is generated if webalizer.current is malformed
+ * BUG: If a status code cannot be restored, a user name error is reported instead
+ * BUG: SSW crashes if all log records for the current month are ignored
+
+
+--------------------------------------------------------------------
+v2.1.10.23 [23-Nov-2005] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ * Converted most language files to UTF-8
+ * Changed the default value for HTMLCharset to UTF-8
+ * Linked with v4.4.16 of the Berkeley DB library
+ * Added more search engine query identifiers to the default list
+ * Improved support for ConvURLsLowerCase when processing Apache custom log files
+ * Added support for Apache hexadecimal URL escape sequences
+ * Improved overall performance, especially for Apache and IIS log formats
+ * Moved code unescaping URLs to the report generator (allows URL filters with %xx sequences)
+ * Improved referrer search strings reporting (now punctuation characters will be reported)
+ * Changed referrer processing logic to report full URL path (i.e. up to the '?' character)
+ * Changed Squid log parser to extract request processing time
+ * Fixed a problem that caused URLs containing :// to be partially converted to lower case
+ * Changed the code handling Ctrl-C to perform a faster shutdown
+ * BUG: URLs beginning with http(s):// were not HTML-encoded (XSS)
+ * BUG: The first search string immediately following '?' is discarded (e.g. ?q=text)
+ * BUG: [Linux] Fixed incorrectly-reported log file processing time/speed
+
+--------------------------------------------------------------------
+v2.1.10.22 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Removed .com from the google.com default search engine pattern
+ o Added an option to allow spaces in group values (EnablePhraseValues)
+ o Converted the source to C++
+ o BUG: Reduced memory footprint if DNS resolution is disabled
+ o BUG: SSW hangs if DNS resolution is disabled
+
+--------------------------------------------------------------------
+v2.1.10.21 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added KBytes to the hourly report graph
+ o Changed the order of bars in the hourly report graph
+ o Improved DNS resolution for better support of domain name patterns in IgnoreHost
+ o Added php to the default list of page extensions
+ o Added IgnoreHost configuration parameter (a synonym for IgnoreSite)
+ o BUG: IgnoreSite has no effect if a domain name pattern is specified
+
+--------------------------------------------------------------------
+v2.1.10.20 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Aligned country names vertically in the middle of the pie chart image
+ o BUG: The country report shows zero percentages in the Hits and Files columns
+ o BUG: Fixed misaligned text (the Other line) in the country report chart
+
+--------------------------------------------------------------------
+v2.1.10.19 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Quoted CR/LF characters in log record fields are replaced with underscores
+ o BUG: A single country was shown as Other in the country report
+ o BUG: Backslash escape characters in Apache custom logs are ignored
+ o BUG: User agents containing quotes may render webalizer.current unusable
+ o BUG: User agents contain + characters when analyzing IIS log files
+ o BUG: A crash processing IIS log files when MangleAgents is set to 5
+
+--------------------------------------------------------------------
+v2.1.10.18 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o BUG: Non-wildcard search arguments (Ex/IncludeSearchArg) are looked up as sub-strings
+
+--------------------------------------------------------------------
+v2.1.10.17 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Updated all language files to match the English version
+ o Linked with v4.3.28 of the Berkeley DB library
+ o Implemented a Ctrl-C handler to prevent DNS DB damage
+ o Reduced memory footprint and optimized some lookup operations
+ o Added average and maximum visit length to the host report
+ o Added per-visit hits, files, pages and kbyte totals to the monthly report (average and maximum)
+ o Added page counts to the host report
+ o Added wildcard support for matching URLs with search arguments (IgnoreURL, HideURL, etc)
+ o Added wildcard support for matching search arguments (ExcludeSearchArg, IncludeSearchArg)
+ o Improved accuracy of the referrer search string report (IgnoreReferrerRedirect)
+ o Linked with the new FreeType (v2.1.10) library
+ o BUG: some average values may be displayed as very large numbers
+ o BUG: visit counts for grouped domains are output as zeros
+
+--------------------------------------------------------------------
+v2.1.10.16 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added a detailed HTTP error report
+ o Added new top-level domains (.aero, .coop, .biz, .info, .museum, .name, .pro)
+ o BUG: Last slice in the country pie chart sometimes doesn't have a border
+ o BUG: Country pie chart is rendered incorrectly when there are many small slices
+
+--------------------------------------------------------------------
+v2.1.10.15 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added reporting of errors generated by the Berkeley DB library
+ o Built with the new Berkeley DB library (v4.3.27)
+ o User agents are no longer truncated (unsafe characters are HTML-encoded)
+ o Added an option to output graphs in true color (GraphTrueColor)
+ o Modified the country pie chart (e.g. anti-aliased lines, removed white spots, etc)
+ o Increased maximum size for referrer (128 > 4K) and search arguments (512 > 4K)
+ o Removed a message reporting zero-padded end of a live IIS log file as bad records
+ o Disabled DNS lookup messages if DNSChildren is set to zero
+ o Replaced black border around images with a CSS border
+ o Changed header and footer layout in the reports
+ o Removed white corner lines from graphs
+ o Added several oversized-string messages
+ o Changed DNS debug output to report record age instead of a timestamp
+ o Added oversized URL, search arguments and user agent messages
+ o Changed the word Sites to Hosts in all language files
+ o BUG: A crash if a URL, referrer or user-agent were over 255 characters
+ o BUG: A crash if a log file contained host names instead of IP addresses
+ o BUG: A crash in libdb43.dll when running on a multi-CPU machine
+
+--------------------------------------------------------------------
+v2.1.10.14 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Search arguments may be converted to lower case with ConvURLsLowerCase
+ o BUG: Changed search argument filters to perform case-sensitive 
+   comparison
+ o BUG: Analysis data for URLs with search arguments is fragmented 
+   in the persistent mode
+
+--------------------------------------------------------------------
+v2.1.10.13 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o URLs, user agents and referrers are reported HTML-encoded to prevent 
+   XSS attacks
+ o Added an option to disallow robots to index reports (HTMLMetaNoIndex)
+ o Added search argument filters (IncludeSearchArg; ExcludeSearchArg)
+ o Added support for custom background and legend shadow colors in graphs
+ o Updated default parameter names for referrer search strings
+ o Added support for search arguments in the URL report
+ o BUG: Fixed a bug causing country names in the pie chart to collapse
+ o [Linux] Language files saved in Windows may be used with the Linux 
+   build
+
+--------------------------------------------------------------------
+v2.1.10.12 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Content returned with the status code 206 (partial content) is 
+   considered a file (was 200 only)
+
+ o BUG: Average and maximum processing time for files and pages was 
+   calculated incorrectly
+
+--------------------------------------------------------------------
+v2.1.10.11 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o [Windows] Reorganized the project to produce GD as a dynamic library (DLL)
+ o Removed centering div and changed the style to render images as block elements 
+ o Changed the default character set from us-ascii to iso-8859-1 (HTMLCharset) 
+ o Linked with the new libpng (v1.2.8) library
+ o BUG: Fixed a bug resulting in the NoDefaultIndexAlias option ignored
+ o BUG: Ignored IIS log records if the time field didn't follow the date
+
+--------------------------------------------------------------------
+v2.1.10.10 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added support for custom UTF-8 True Type fonts in charts
+ o Added UTF-8 support for language files
+ o Converted existing language files to the new format
+ o Changed host reports to display IP addresses for unresolved domain names
+ o Made reports compliant with HTML 4.01 (strict)
+ o Fixed a problem in CSS that caused tables shifted to the left in Opera
+ o Added an option to specify report character set (HTMLCharset)
+ o Increased maximum size for search strings (64 > 256) and URLs (128 > 256)
+ o Linked with new GD (v2.0.33) and FreeType (v2.1.9) libraries
+ o BUG: A crash caused by a pie chart title longer than 48 characters
+ o BUG: Some log records were ignored when a non-English language was selected
+ o BUG: Fixed a bug causing a crash on exit if the language file is malformed
+ o BUG: Fixed visit counts for user agent groups (was always zero)
+
+--------------------------------------------------------------------
+v2.1.10.9 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added an option to configure path to the webalizer.css file 
+   (HTMLCssPath) 
+
+ o Added URL type indicator to the standalone and tabbed URL 
+   reports (HTTP, HTTPS or mixed) 
+
+ o Added automatic URL scheme (http: or https:) selection based 
+   on the port number 
+
+ o Log type values are evaluated as case-insensitive strings 
+
+ o BUG: Fixed a problem in webalizer.css resulting in an 
+   erroneous 1px border in the footer table 
+
+ o BUG: Fixed minor (1 ms) rounding problem in calculating 
+   average URL processing time (Apache) 
+
+ o BUG: Reading old webalizer.current may result in erroneous 
+   visitor counts in the UA report 
+
+--------------------------------------------------------------------
+v2.1.10.8 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added an option to support Apache log format specification 
+   (ApacheLogFormat) 
+
+ o [Linux] Added missing language files to the binary distribution 
+
+--------------------------------------------------------------------
+v2.1.10.7 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added an option to change TTL of a DNS cache entry (DNSCacheTTL) 
+
+ o Added DNS cache hit ratio and hit/miss ratios to the output 
+
+ o Added an option to re-resolve domain names throughout the 
+   current month (DNSDynamicNames) 
+
+ o Added monthly hit, file and page processing time (average and 
+   maximum) to the monthly summary report 
+
+ o Added average URL processing time to the top URL report (IIS 
+   log files only) 
+
+ o [Linux] Added support for lower case conversion of URLs 
+   (ConvURLsLowerCase; IIS log files only) 
+
+--------------------------------------------------------------------
+2.1.10.6 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o One-pass domain name resolution (requires pthreads and Berkeley 
+   DB v4.3 or newer)
+
+ o Added an option to bundle groups together in the output
+
+ o Added an option to ignore the default index file (e.g. 
+   index.html, etc)
+
+ o BUG: Replaced orphaned </tfoot> with </tbody> in the generated 
+   HTML
+
+ o BUG: Countries following .ad in the language file were omitted 
+   from the top countries report
+
+ o BUG: Malformed log record fields (e.g. unbalanced parenthesis) 
+   invalidated log records
+
+--------------------------------------------------------------------
+2.1.10.5 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added makefile.gnu
+
+--------------------------------------------------------------------
+2.1.10.4 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Replaced Windows-specific code with portable equivalents
+
+--------------------------------------------------------------------
+2.1.10.3 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added dynamic language file support (no build required)
+
+ o Created webalizer_lang.english and webalizer_lang.german language 
+   files in the new format
+
+ o Added a new configuration variable (LanguageFile). The variable
+   contains a path to the selected language file. 
+
+ o Changed the logic used to locate the configuration file on 
+   Windows. The new order is (1) current directory; (2) %windir% 
+   (3); the directory from which webalizer.exe was launched;
+ 
+--------------------------------------------------------------------
+2.1.10.1 -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+Changes/Additions
+
+ o Added IIS support
+
+ o Added visitor counts to the user agents totals table
+
+ o [Windows] Added lower case URL conversion support
+
+ o Added CSS2 formatting to the reports
+
+ o Changed the way groups are reported (at the beginning of a table)
+
+ o Added user agent normalization (Mozilla)
+
+Known Problems
+
+ o DNS resolution has not been ported in this release. All DNS-based
+   features (e.g. country report) will not be available.
+
+--------------------------------------------------------------------
+2.01-xx changes from 1.30-04   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Fix posible obscure buffer overflow bug in DNS resolver code
+
+ o Added additional extended character fixes
+
+ o Let code accept partial content response codes along with 200's
+
+ o Added code to catch blank hostnames (yes, they have been found!)
+   Will convert them into 'Unknown'
+
+ o Security fix for cross-site scripting vulnerability found by
+   Flavio Veloso (www.magnux.com).
+
+ o Fixed a TOTAL_RC off by one error, which would prevent the last
+   response code from being saved when using incremental mode.
+
+ o Fixed possible segfault condition in MangleAgent code on
+   some malformed user agent names.
+
+ o Fixed DNS to prevent hangs on blank and malformed hostnames.
+
+ o Fixed problem calculating visits.  Changed timestamps to use
+   seconds since epoch (1/1/1970) which results in more accurate
+   analysis.  Also changed normal out of sequence code to handle
+   up to 1 hour of 'slop' in the timestamps.  This changed the
+   semantics of the VisitTimeout and -m configuration options, as
+   the values are now specified in number of seconds.
+
+ o Fixed hostname lowercase problem (wasn't) when using DNS lookups.
+
+ o Fixed problem with incremental datafile which could cause a read
+   error under certain circumstances (removes control characters).
+   Also changed code to now abort on a read error.
+
+ o Fixed problem with hash table node creation where objects that
+   were exactly the maximum length would wind up leaving a garbage
+   byte at the end of the memory space allocated.  This was causing
+   some very infrequent and widely different problems.
+
+ o Fixed problem where country graph could be produced incorrectly
+   if using a non-english language and the country name overlapped
+   the pie chart.
+
+ o Found and fixed a problem with a possible 32-bit wrap around
+   problem using incremental mode on large sites.  The problem
+   would cause the KBytes data on large groups to become inaccuate.
+
+Changes/Additions:
+ o Modified configure to allow specification of the default config
+   directory.  If not given, will use /etc (/etc/webalizer.conf).
+
+ o Added DailyGraph and DailyStats configuration options to enable
+   or disable the Daily usage graph and stats table from output.
+
+ o Improved visit calculation logic to reduce 'false' counts generated
+   by external image referrals.
+
+ o Added reverse DNS lookup capability.  This adds the command
+   line switchs -D and -N, and configuration keywords "DNSCache"
+   and "DNSChildren".  See the DNS.README for additional info.
+   Based in part on code submitted by Henning P. Schmiedehausen
+   (hps@tanstaafl.de).
+
+ o Added ability to dump Sites, URL's, Referrers, User Agents,
+   Usernames and Search Strings to tab delimited files, suitable
+   for import into most database and spreadsheet programs.  The
+   location of this file may be specified using the "DumpPath"
+   configuration keyword, allowing the data to be kept someplace
+   outside the web servers document tree.  The configuration
+   keywords "DumpSites", "DumpURLs", "DumpReferrers", "DumpAgents",
+   "DumpUsers" and "DumpSearchStr"  have been added to control the
+   file dumps.  Column headers can be included in the file with
+   the "DumpHeader" keyword.  Dump filename extensions may be
+   specified using the "DumpExtension" keyword (default is .tab).
+
+ o Added username analysis, based on usernames found in the log,
+   and only available if username information is present in the
+   log (ie: http authentication or wu-ftpd xferlog).  The keywords
+   'GroupUser', 'HideUser', 'IgnoreUser', 'IncludeUser', 'AllUsers',
+   and 'TopUsers' have been added to the configuration file code.
+   This change also modified the format of the incremental data file.
+
+ o Added the ability to display ALL sites, URL's, Referrers,
+   User Agents and Search Strings on a seperate HTML page from
+   the normal statistics page.  This adds the configuration
+   keywords 'AllSites', 'AllURLs', 'AllReferrers', 'AllAgents'
+   and 'AllSearchStr', which can have either a "yes" or "no"
+   value (default is "no").  Will add a "View All..." link to
+   the bottom of the appropriate "Top" table if enabled.
+
+ o Added support for squid proxy logs, thanks to code submitted
+   by Steinar H. Gunderson (sgunderson@bigfoot.com).  To use
+   squid logs, specify a LogType of 'squid' in the configuration
+   file.  This also changed the behaviour of the '-F' command
+   line switch, which now requires a second argument of either
+   'clf', 'ftp' or 'squid'.
+
+ o Completely modified the way the various TOP tables are handled
+   and sorted, which now allows extremely large top tables without
+   any performance degredation.  Previously, tables greater than
+   a few hundred elements produced a noticable perfomance penalty
+   during processing.
+
+ o Added the ability to group domains automatically and to hide
+   individual host names from the report, using the 'GroupDomains'
+   and 'HideAllSites' configuration keywords (-g and -X command
+   line options).  Domain Grouping is configurable as to the level
+   of grouping (second level domain, third, etc...).  HideAllSites
+   forces only grouped site records to be displayed if any.  Based
+   on ideas/code by Michael Klemme (mklemme@gmx.de).  This changes
+   the behaviour of the '-g' switch, which previously was used to
+   force the use of GMT time for reports.
+
+ o Added user configurable search engine specification, used for
+   search string analysis.  This adds the 'SearchEngine' keyword
+   in configuration files.  Based on idea/code by Alexey Kizilov.
+
+ o Changed code to use the latest version of GD which supports PNG
+   images instead of GIF images.  Also included changes in configure
+   script to ensure the presence of the libpng and libz libraries.
+
+ o Added ability to override log file to STDIN by use of '-' on
+   the command line.
+
+ o Added gzipped logfile support.  The program will automatically
+   detect logfiles with a '.gz' extension and uncompress on the
+   fly.  Uses gz file support of zlib, since it's required for
+   our gd/png stuff anyway.  Please note that using gzipped logs
+   will incur a small performance penality.
+
+ o Minor changes to search string code to increase accuracy.  This
+   also removes a previous condition that would occasionally cause
+   search strings to incorrectly be counted twice or to be counted
+   as different search strings when only differing by a space.
+
+ o Minor changes to URL parse code to allow additional characters.
+   Also changed unescape code to properly handle extended chars.
+
+ o Major changes to hash table node format for reduced memory usage.
+   Instead of fixed size strings, the new format will dynamically
+   allocate string memory and use pointers to existing table data
+   under certain circumstances.  The memory savings is significant
+   and will be greatly noticed with large sites.  Because of these
+   changes, the formatting of the incremental data file had to be
+   changed, therefore it is incompatable with previous versions.
+
+ o Major code reorganization and cleanup.  This was to facilitate
+   future developent and make things more managable.
+
+ o Usual documentation updates for new features/functions.
+
+--------------------------------------------------------------------
+1.30-xx changes from 1.22-06   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Fixed minor bug that would allow incorrect site totals for the
+   first day of the month under certain conditions.
+
+Changes/Additions:
+ o Added Top Entry and Exit Page tables.  Added configuration file
+   keywords TopEntry (-e command line) and TopExit (-E command line)
+   to specify the number of entries to display for each table.  The
+   default for both is 10.  See README for additional information.
+   
+ o Added 'Group' labels.  Allows display of a specified label for
+   grouped entries (in 'Top' tables).  Based on patch submitted
+   by Oliver Graf (ograf@rhein-zeitung.de).  See sample.conf for
+   examples.
+
+ o Added 'Visits' totals.  The length of time that constitutes a
+   'visit' can be set using the VisitTimeout configuration keyword
+   (-m command line option).  The value must be given in HHMMSS
+   format, you can omit leading zeros. Default is 30 minutes (3000).
+
+ o Added 'Pages' totals, based on user specified extensions.  Changes
+   made to generated graphs as well.  Configuration keyword PageType
+   (and command line -P switch) allows specification of extensions
+   to use (defaults to 'htm*' and 'cgi').  Also called "pageviews".
+
+ o Added Search String analysis.  Keyword 'TopSearch' defines how
+   many of the top search strings to display.  Default is 20. Can
+   be disabled by using zero (0).
+
+ o Added native support for ftp logs (xferlog ala wu-ftpd).  Added
+   'LogType' configuration file keyword (-F command line option)
+   to specify log type.  Values can be either 'web' or 'ftp', with
+   the default of 'web'.
+
+ o Changed graphs to handle pages and visits totals. Also  added
+   color coded legends, which can be disabled using the GraphLegend 
+   configuration keyword (-L command line option).  Default is to
+   display them.
+
+ o Added background lines to graphs.  Default is 2 lines, and can
+   be set to any number using the GraphLines configuration keyword
+   (-l command line option).  Can use anywhere from none (0) to
+   twenty lines.  They will be drawn in all but the country graph.
+
+ o Added CountryGraph configuration file keyword (-Y command line
+   option) to enable/disable display of country usage pie chart.
+
+ o Added FoldSeqErr keyword (-f command line option).  Normally,
+   the program will ignore log records that are out of sequence
+   (chronological order).  This option lets them be folded into
+   the analysis anyway, as if the were the same date/time as the
+   last good record.  Apache users can safely ignore :)
+
+ o Added additonal 'Top' tables for SITES and URL's, sorted by
+   KBytes instead of hits.  Two new configuration file keywords,
+   TopKSites and TopKURLs, can be used to specify the number of
+   entries for each (zero to disable).  Default for both is 10.
+
+ o Added additional calculations for max/avg files, pages, visits
+   and KBytes in monthly statistics.
+
+ o Updated generated HTML code to fully comply with the HTML 4.0
+   Transitional spec.  DOCTYPE header reflects this change as well.
+
+ o Changed code to use 4 digit years in filenames.  Purely for the
+   Y2K phobes who couldn't deal with only two digits (even though
+   it was _purely_ for humans, the program couldn't care less).
+   Unfortunately, this means that you will have to rename previous
+   month files to the new format.  Not a big deal if you plan on
+   re-running all your logs to take advantage of the new features.
+
+ o Major changes to both history file and incremental file formats
+   to handle additional totals (pages/visits data).  As a result,
+   this version is INCOMPATABLE with previous versions.  See the
+   file README.FIRST for important information on upgrading.
+
+ o Language files and documentation updated for new functions.
+
+--------------------------------------------------------------------
+1.22-xx changes from 1.20-11   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Fixed bug in country total generation.  Caused country table
+   to show bogus entries if logs contain hostnames that were not
+   fully qualified (ie: don't have the domain name/TLD portion).
+
+ o Changed/fixed incremental data I/O routines to better detect and
+   handle error conditions.  This involved some minor incremental
+   data file format changes as well.  Fixes problem large sites were
+   having where random tables were getting munged.
+
+ o Fixed record parse code to better detect and strip query portion
+   from URL's and Referrer strings.
+
+ o Fixed segfault condition when more than MAX_CTRY entries were
+   specified for the "Top Countries" table.
+
+Changes/Additions:
+ o Added code to detect negative byte transfer sizes in logs (another
+   netscape server kludge :)  Could cause KByte xfer sizes to become
+   corrupt.
+
+ o Several small changes (mostly ifdef/endif's) to make code compile
+   clean 'out-of-the-box' across more platforms (ala SunOS).  Also
+   added a GNU autoconf 'configure' script which helps a bit as well.
+
+ o Added Include* keywords.  Allows forcing the inclusion of specified
+   log records.  Takes precedence over counterpart Ignore* keywords.
+
+ o Added HTMLPre, HTMLBody, HTMLEnd and HTMLExtension keywords, and
+   changed behaviour of HTMLHead keyword.  Previous versions need
+   only change the 'HTMLHead' keword in existing files to 'HTMLBody'
+   to upgrade.  Thanks to Colin Viebrock <cmv@privateworld.com> for
+   the idea and code examples.
+
+ o Changed mangle agent code to support Opera and other browsers.
+   Also updated response codes to IETF HTTP/1.1 Rev 6 draft.
+   Thanks to Yves Lafon <ylafon@w3.org> for this these.
+
+ o Added HistoryName and IncrementalName keywords, which allow the
+   specification of the history and incremental data filenames.
+
+ o Added UseHTTPS keyword, which allows using 'https://' instead
+   of 'http://' for links to URLS in the 'Top URL's' table.  Also
+   added check for URL's that already have the protocol specified
+   (such as on virtual web and proxy servers), and to use unmodified
+   if found (will only force to lowercase for matching).
+
+ o Added code to ignore out-of-sequence log records.
+
+ o Added code to force hostnames to lowercase (was causing country skew).
+
+ o Disabled display of blank (zero hit) days at start of daily stat table.
+
+ o Added records per second calculation to timing totals.
+
+ o ALT= tags now use translated strings instead of forcing english.
+
+ o Updated documentation for new functions/features.
+
+--------------------------------------------------------------------
+1.20-xx changes from 1.12-10   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Modified record parse routine to not touch stuff between quotes
+   (").  Was causing problems parsing some malformed request fields.
+
+ o Fixed memory leak in MangleAgent code, and relocated to elimitate
+   un-necessary processing (causing segfault on some machines).
+
+Changes/Additions:
+ o Changed transfer totals on host/url structures to support large
+   groupings (such as *.gif) on heavly hit servers.  Hopefully, this
+   should cure the 32bit overflow problem large sites were having.
+
+ o Changed daily transfer totals to support transfers greater than
+   roughly 4.2 gigabytes a day.
+
+ o Added some missing HTML tags and altered the way totals are
+   calculated on the 'Top' tables (to correct for grouped records).
+
+ o Added incremental run capability (-p command line option or
+   "Incremental" configuration file keyword).
+
+--------------------------------------------------------------------
+1.1x-xx changes from 1.00-05   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Re-wrote the Group* logic, fixing a bug that allowed hiding of
+   objects when they shouldn't be.
+
+ o Fixed broken IgnoreReferrer code.
+
+ o Modified config parse code to handle extended characters.
+
+ o Misc. minor bug fixes/changes.  Added a missing fclose.
+
+ o Cleaned up generated HTML.
+
+ o Fixed duplicate warnings on large referrer fields.
+
+ o Fixed country table bug adding grouped records to totals.
+
+Changes/Additions:
+ o Added GroupSite, GroupReferrer and GroupAgent keywords to round
+   out the Group* configuration options.
+
+ o Added GroupShading and GroupHighlight keywords to allow selective
+   highlight and shading on grouped rows in table.
+
+ o Removed the '-L' command line option.  Groupings can now only
+   be specified from a configuration file.  Language files changed
+   to reflect change.
+
+ o Added '-V' command line option (identical to '-v') for version.
+
+ o Added additional language support.  Language files will be marked
+   /* New for 1.1 */ where changes have been made.
+
+ o Various rewrites to streamline the code, accomidate the new
+   group options and make things easier down the road when I implement
+   incremental (partial log) processing.
+
+ o Usual README and CHANGES documentation updates.
+
+--------------------------------------------------------------------
+1.00-xx changes from 0.99-06   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+Fixes:
+ o Modify record parser so that spaces in usernames (auth field)
+   don't cause record to be skipped (w/'Bad Record' message).
+
+ o Included various error conditions that were being ignored in
+   the timing statistics ('bad records' value) totals.
+
+Changes/Additions:
+ o Added GMTTime (-g) option to force display of timestamps in
+   GMT (UTC) time instead of local timezone.
+
+ o Added GroupURL (-L) option for grouping of URL's as if they
+   were a single object.  See README for details.
+
+ o Language support in the form of a language specific header
+   file containing all strings used by The Webalizer.  English
+   file is used by default unless changed.  Support for other
+   languages will be distributed as I receive them.
+
+--------------------------------------------------------------------
+0.99-xx changes from 0.98-16   (brad@mrunix.net)
+--------------------------------------------------------------------
+
+0.99 is mostly a bug-fix release, with a few added extra goodies.
+
+Fixes:
+ o Fixed monthly total transfer size (silent) overflow problem.
+
+ o Fixed the numerous fprintf format errors.  Only seemed to wreak havok
+   on non-intel machines though.
+
+ o Fixed core dump condition on certain machines when using stdin for
+   input.
+
+ o Fixed floating point code that caused divide by zero errors on some
+   platforms (most noticably on SCO OpenServer).
+
+ o Netscape server kludges:  Added code to deal with Netscape log header
+   record gracefully.  Also added workaround for timestamp error where
+   Netscape sometimes makes a day have 0-24 hours instead of 0-23.  The
+   Webalizer will now treat anything greater than 23 as 0.
+
+ o Resized some fixed field sizes to gain memory usage improvements.
+
+Changes/Additions:
+ o Ignore* config keywords added.  This allows you to completely ignore
+   certain log records based on site name, URL, user agent or referrer.
+   * Use will cause inaccurate statistics results.  See documentation.
+
+ o ReallyQuiet config keyword (-Q command line option) added.  Causes
+   The Webalizer to suppress _all_ messages.  Useful for cron jobs.
+
+ o Removed the "Sites" total at the bottom of the summary by month.
+   The total for sites is a useless number and produces a misleadingly
+   high value which detracts from the accuracy of the other totals.
+
+ o Updated README and CHANGES

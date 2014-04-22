@@ -1,0 +1,668 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.danish
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Danish.
+#   13-Jul-1999 by Michael B. Jenner (mj@kom.auc.dk)
+#   13-Nov-1999 Major update by Jonas Koch Bentzen (post@jonaskochbentzen.dk)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Danish
+language_code = da
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = poster
+msg_addresses=addresses
+msg_ignored = ignorerede
+msg_bad     = fejlagtige
+msg_in      = på
+msg_seconds = sekunder
+
+#/* progress and setup error messages */
+msg_log_err = Fejl: kan ikke åbne logfil
+msg_log_use = Anvender logfil
+msg_dir_err = Fejl: kan ikke skifte bibliotek til
+msg_dir_use = Opretter output i biblioteket
+msg_cur_dir = aktivt bibliotek
+msg_hostname= Rapporterne ligger på maskinen med værtsnavnet
+msg_ign_hist= Ignorerer tidligere historie ...
+msg_no_hist = Historiefilen findes ikke...
+msg_get_hist= Læser historiefil ...
+msg_put_hist= Gemmer historie-information ...
+msg_hist_err= Fejl: Kan ikke skrive til historiefil
+msg_bad_hist= Fejl: Ignorerer forkert historiepost
+msg_bad_conf= Fejl: Kan ikke åbne konfigurationsfil
+msg_bad_key = Advarsel: Forkert nøgleord
+msg_bad_date= Fejl: Springer over post (forkert dato)
+msg_ign_nscp= Springer over post med Netscapes hoved
+msg_bad_rec = Springer over forkert post
+msg_no_vrec = Fandt ingen korrekte poster!
+msg_gen_rpt = Genererer rapport for
+msg_gen_sum = Genererer opsummerende rapport
+msg_get_data= Læser tidligere kørselsdata..
+msg_put_data= Gemmer aktive kørselsdata...
+msg_no_data = Tidligere kørselsdata ikke fundet...
+msg_bad_data= Fejl: Kan ikke genindlæse kørselsdata
+msg_data_err= Fejl: Kan ikke gemme aktive kørselsdata
+msg_dup_data= Advarsel: Mulige dobbelte data fundet
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= No cache file specified, aborting...
+msg_dns_nodb= Error: Unable to open DNS cache file
+msg_dns_nolk= Error: Unable to lock DNS cache file
+msg_dns_usec= Using DNS cache file
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Kan ikke allokere nok hukommelse, Top Gæster slås fra!
+msg_nomem_tr= Kan ikke allokere nok hukommelse, Top Referer slås fra!
+msg_nomem_tu= Kan ikke allokere nok hukommelse, Top URL slås fra!
+msg_nomem_tc= Kan ikke allokere nok hukommelse, Top Lande slås fra!
+msg_nomem_ta= Kan ikke allokere nok hukommelse, Top Web browsere slås fra!
+msg_nomem_tsr=Kan ikke allokere nok hukommelse, Top Søgestrenge slåes fra!
+msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
+msg_nomem_dh= Fejl ved tilføjelse af host-node (daglig), skipping
+msg_nomem_mh= Fejl ved tilføjelse af host-node (månedlig), skipping
+msg_nomem_u = Fejl ved tilføjelse af URL-node, skipping
+msg_nomem_a = Fejl ved tilføjelse af Web browsere node, skipping
+msg_nomem_r = Fejl ved tilføjelse af Referer node, skipping
+msg_nomem_sc= Fejl ved tilføjelse af Søgestrenge Node, skipping
+msg_nomem_i = Error adding Username node, skipping
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Fejl: Springer over streng (for stor log-post)
+msg_big_host= Advarsel: Afkorter strengen (for stort værtsnavn)
+msg_big_date= Advarsel: Afkorter strengen (for stort datofelt)
+msg_big_req = Advarsel: Afkorter strengen (for stort forespørgsel-felt)
+msg_big_ref = Advarsel: Afkorter strengen (for stort henvisende side-felt)
+msg_big_user= Warning: Truncating oversized username
+msg_big_one = Advarsel: Strengen overstiger maksimum
+
+#/* misc errors */
+msg_no_open = Fejl: Kan ikke åbne filen
+
+#/* Help display... */
+h_usage1 = Anvendelse
+h_usage2 = [parametre] [logfil [[ logfil ]...] | report database]
+h_msg=   -h        = udskriv denne hjælpebesked,
+         -v -V     = udskriv versionsoplysninger,
+         -d        = udskriv ekstra fejlsøgningsinformation,
+         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f        = Fold sekvensfejl,
+         -i        = ignorer historiefil,
+         -p        = bevar tilstand (inkremental),
+         -q        = undertryk informationsrelaterede beskeder,
+         -Q        = undertryk _ALLE_ beskeder,
+         -Y        = undertryk landegrafer,
+         -G        = undertryk timegrafer,
+         -H        = undertryk timestatistikker,
+         -L        = undertryk farvekodede grafertekst,
+         -l num    = brug numeriske baggrundslinier på graf,
+         -m num    = Undersøg timeout-værdi (seconds),
+         -T        = udskriv timing-information,
+         -c file   = brug konfigurationsfilen 'file',
+         -n name   = værtsnavn som anvendes,
+         -o dir    = Output bibliotek som anvendes,
+         -t name   = rapport titel 'name',
+         -a name   = gem browser 'name',
+         -r name   = gem henvisende side 'name',
+         -s name   = gem gæste 'name',
+         -u name   = gem URL 'name',
+         -x name   = Brug filefternavn 'name',
+         -P name   = Side type-efternavn 'name',
+         -I name   = Indeks alias 'name',
+         -A num    = Vis antal top browsere,
+         -C num    = Vis antal top lande,
+         -R num    = Vis antal top henvisende sider,
+         -S num    = Vis antal top gæster,
+         -U num    = Vis antal top URL,
+         -e num    = Vis antal top indgangsadresser,
+         -E num    = Vis antal top udgangsadresser,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Use DNS Cache file 'name',
+         -N num    = Number of DNS processes (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Opsummeringsperiode
+msg_hhdr_gt = Sidst opdateret
+
+#/* main index strings */
+msg_main_us = Tilgang til
+msg_main_per= De sidste 12 måneder
+msg_main_sum= Opsummering / måned
+msg_main_da = Dagligt gennemsnit
+msg_main_mt = Sammenlagt pr. måned
+
+#/* month HTML page strings */
+msg_hmth_du = Daglig tilgang -
+msg_hmth_hu = Timefordelt tilgang -
+
+#/* table header strings */
+msg_h_by    = -
+msg_h_avg   = Gn.snit
+msg_h_max   = Maks
+char *msg_h_total = "";
+char *msg_h_totals= "";
+msg_h_day   = Dag
+msg_h_mth   = Måned
+msg_h_hour  = Time
+msg_h_hits  = Forespørgsler
+msg_h_pages = Sider
+msg_h_visits= Besøg
+msg_h_files = Filer
+msg_h_hosts = Gæster
+msg_h_xfer  = kB
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Navn/IP-adresse
+msg_h_url   = URL
+msg_h_agent = Browser
+msg_h_ref   = Henvisende side
+msg_h_ctry  = Land
+msg_h_search= Søgestreng
+msg_h_uname = Username
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Daglig statistik
+msg_hlnk_hs = Timestatistik
+msg_hlnk_u  = URL
+msg_hlnk_s  = Gæster
+msg_hlnk_a  = Browsere
+msg_hlnk_c  = Lande
+msg_hlnk_r  = Henvisende sider
+msg_hlnk_en = Indgangsadresse
+msg_hlnk_ex = Udgangsadresse
+msg_hlnk_sr = Søg
+msg_hlnk_i  = Users
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Månedlig statistik for
+msg_mtot_th = Forespørgsler
+msg_mtot_tf = Filer
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = kB
+msg_mtot_us = Unikke gæster
+msg_mtot_ur = Unikke henvisende sider
+msg_mtot_ua = Unikke browsere
+msg_mtot_uu = Unikke adresser
+msg_mtot_ui = Total Unique Usernames
+msg_mtot_mhd= Forespørgsler pr. dag
+msg_mtot_mhh= Forespørgsler pr. time
+msg_mtot_mfd= Filer pr. dag
+msg_mtot_mpd= Sider pr. dag
+msg_mtot_mvd= Besøg pr. dag
+msg_mtot_mkd= kB pr. dag
+msg_mtot_rc = Forespørgsler fordelt på svarkoder
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Daglig statistik for
+
+#/* hourly total table */
+msg_htot_hs = Timestatistik for
+
+#/* country pie chart */
+msg_ctry_use= Forespørgsler fordelt på lande for
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total by something" */
+msg_top_top = Top
+msg_top_of  = af
+msg_top_s   = gæster
+msg_top_u   = adresser
+msg_top_r   = henvisende sider
+msg_top_a   = browsere
+msg_top_c   = Lande
+msg_top_en  = indgangsadresser
+msg_top_ex  = udgangsadresser
+msg_top_sr  = søgestrenge
+msg_top_i   = Total Usernames
+msg_v_hosts = View All Hosts
+msg_v_urls  = View All URLs
+msg_v_refs  = View All Referrers
+msg_v_agents= View All User Agents
+msg_v_search= View All Search Strings
+msg_v_users = View All Usernames
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Jan, Feb, Mar,
+                    Apr, Maj, Jun,
+                    Jul, Aug, Sep,
+                    Okt, Nov, Dec
+
+#/* long month names - can be any length */
+l_month=  Januar,  Februar, Marts,   April,
+                    Maj,      Juni,     Juli,    August,
+                    September,Oktober,  November,December
+
+#/* response code descriptions... order IS important!      */
+response = Uidentificeret svar Kode,
+           Kode 100 - Fortsæt,
+           Kode 101 - Skift protokoller,
+           Kode 200 - OK,
+           Kode 201 - Oprettet,
+           Kode 202 - Accepteret,
+           Kode 203 - Ikke-autoritativ information,
+           Kode 204 - Intet indhold,
+           Kode 205 - Nulstil indhold,
+           Kode 206 - Delvist indhold,
+           Kode 300 - Dobbelte data,
+           Kode 301 - Flyttet permanent,
+           Kode 302 - Fundet,
+           Kode 303 - Se andet,
+           Kode 304 - Ikke ændret,
+           Kode 305 - Brug proxy,
+           Kode 307 - Flyttet midlertidigt,
+           Kode 400 - Forkert forespørgsel,
+           Kode 401 - Ingen adgang,
+           Kode 402 - Betaling påkrævet,
+           Kode 403 - Forbudt,
+           Kode 404 - Findes ikke,
+           Kode 405 - Metoden ikke tilladt,
+           Kode 406 - Ikke acceptabelt,
+           Kode 407 - Proxygodkendelse påkrævet,
+           Kode 408 - Tiden er udløbet for forespørgslen,
+           Kode 409 - Konflikt,
+           Kode 410 - Forsvundet,
+           Kode 411 - Længde påkrævet,
+           Kode 412 - Forudsætning ikke opfyldt,
+           Kode 413 - Forespørgselsenhed for stor,
+           Kode 414 - Adresse for lang,
+           Kode 415 - Medietypen understøttes ikke,
+           Kode 416 - Forespurgt område ikke tilfredsstillende,
+           Kode 417 - Det forventede skete ikke,
+           Kode 500 - Intern serverfejl,
+           Kode 501 - Ikke indbygget,
+           Kode 502 - Forkert gateway,
+           Kode 503 - Tjenesten ikke tilgængelig,
+           Kode 504 - Tiden er udløbet for gateway'en,
+           Kode 505 - HTTP-versionen understøttes ikke,
+
+msg_title   = Webstatistik for
+msg_h_other = Andre
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Ukendt,
+	com,	USA (kommerciel),
+	edu,	USA (uddannelsesinstitution),
+	gov,	USA (regeringen),
+	int,	International (int),
+	mil,	USA (militæret),
+	net,	Netværk,
+	org,	Almennyttig organisation,
+ 	arpa,	Gammel Stil Arpanet (arpa),
+ 	nato,	NATO-felt (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	De Forenede Arabiske Emirater,
+	af,	Afghanistan,
+	ag,	Antigua og Barbuda,
+	ai,	Anguilla,
+	al,	Albanien,
+	am,	Armenien,
+	an,	De Hollandske Antiller,
+	ao,	Angola,
+	aq,	Antarktis,
+	ar,	Argentina,
+	as,	Amerikansk Samoa,
+	at,	Østrig,
+	au,	Australien,
+	aw,	Aruba,
+	az,	Azerbaijan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnien og Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgien,
+	bf,	Burkina Faso,
+	bg,	Bulgarien,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolivia,
+	br,	Brasilien,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Bouvet Island,
+	bw,	Botswana,
+	by,	Belarus,
+	bz,	Belize,
+	ca,	Canada,
+	cc,	Cocos (Keeling)-øerne,
+        cd,       Congo,
+	cf,	Den Centralafrikanske Republik,
+	cg,	Congo,
+	ch,	Schweitz,
+	ci,	Cote D'Ivoire (Elfenbenskysten),
+	ck,	Cook-øerne,
+	cl,	Chile,
+	cm,	Cameroon,
+	cn,	Kina,
+	co,	Colombia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Cuba,
+	cv,	Kap Verde,
+	cx,	Juleøerne,
+	cy,	Cypern,
+	cz,	Tjekkiet,
+	de,	Tyskland,
+	dj,	Djibouti,
+	dk,	Danmark,
+	dm,	Dominica,
+	do,	Den Dominikanske Republik,
+	dz,	Algeriet,
+	ec,	Ecuador,
+	ee,	Estland,
+	eg,	Egypten,
+	eh,	Vest-Sahara,
+	er,	Eritrea,
+	es,	Spanien,
+	et,	Etiopien,
+        eu,       European Union,
+	fi,	Finland,
+	fj,	Fiji,
+	fk,	Falklandsøerne (Malvinas),
+	fm,	Mikronesien,
+	fo,	Færøerne,
+	fr,	Frankrig,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Granada,
+	ge,	Georgien,
+	gf,	Fransk Guiana,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Grønland,
+	gm,	Gambia,
+	gn,	Guinea,
+	gp,	Guadeloupe,
+	gq,	Equatorial Guinea,
+	gr,	Grækenland,
+	gs,	S. Georgia- og S. Sandwich-øerne,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard- og McDonald-øerne,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Ungarn,
+	id,	Indonesien,
+	ie,	Irland,
+	il,	Israel,
+        im,       Isle of Man,
+	in,	Indien,
+	io,	Det britiske indiske ocean-territorium,
+	iq,	Irak,
+	ir,	Iran,
+	is,	Island,
+	it,	Italien,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Jordan,
+	jp,	Japan,
+	ke,	Kenya,
+	kg,	Kyrgyzstan,
+	kh,	Cambodia,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts og Nevis,
+	kp,	Korea (Nord-),
+	kr,	Korea (Syd-),
+	kw,	Kuwait,
+	ky,	Cayman-øerne,
+	kz,	Kazakhstan,
+	la,	Laos,
+	lb,	Libanon,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Litauen,
+	lu,	Luxembourg,
+	lv,	Latvia,
+	ly,	Libyen,
+	ma,	Marokko,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagaskar,
+	mh,	Marshall-øerne,
+	mk,	Makedonien,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolien,
+	mo,    Macao,
+	mp,	Nord-Mariana-øerne,
+	mq,	Martinique,
+	mr,	Mauritanien,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldiverne,
+	mw,	Malawi,
+	mx,	Mexico,
+	my,	Malaysien,
+	mz,	Mozambique,
+	na,	Namibia,
+	nc,	Ny Kaledonien,
+	ne,	Niger,
+	nf,	Norfolk Island,
+	ng,	Nigeria,
+	ni,	Nicaragua,
+	nl,	Holland,
+	no,	Norge,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Oman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Fransk Polynesien,
+	pg,	Papua New Guinea,
+	ph,	Filippinerne,
+	pk,	Pakistan,
+	pl,	Polen,
+	pm,	St. Pierre og Miquelon,
+	pn,	Pitcairn,
+	pr,	Puerto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portugal,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Rumænien,
+	rs,	Serbia,
+	ru,	Rusland,
+	rw,	Rwanda,
+	sa,	Saudi Arabien,
+        sb,       Solomon Islands,
+	sc,	Seychellerne,
+	sd,	Sudan,
+	se,	Sverige,
+	sg,	Singapore,
+	sh,	St. Helena,
+	si,	Slovenien,
+	sj,	Svalbard og Jan Mayen-øerne,
+	sk,	Slovakiet,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somalien,
+	sr,	Suriname,
+	st,	Sao Tome og Principe,
+	su,	USSR (det tidligere),
+	sv,	El Salvador,
+	sy,	Syrien,
+	sz,	Swaziland,
+	tc,	Turks og Caicos-øerne,
+	td,	Chad,
+	tf,	"De franske, sydlige territorier",
+	tg,	Togo,
+	th,	Thailand,
+	tj,	Tajikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisien,
+	to,	Tonga,
+	tp,	Øst-Timor,
+	tr,	Tyrkiet,
+	tt,	Trinidad og Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzania,
+	ua,	Ukraine,
+	ug,	Uganda,
+	uk,	England,
+	um,	"USA's mindre, ydre øer",
+	us,	USA,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatikanstaten,
+	vc,	Saint Vincent og the Grenadines,
+	ve,	Venezuela,
+	vg,	Jomfruøerne (de britiske),
+	vi,	Jomfruøerne (de amerikanske),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Wallis og Futuna-øerne,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Jugoslavien,
+	za,	Sydafrika,
+	zm,	Zambia,
+	zw,	Zimbabwe

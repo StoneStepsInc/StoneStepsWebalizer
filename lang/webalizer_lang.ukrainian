@@ -1,0 +1,673 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.ukrainian
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for English.
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@terrmrunix.net)
+#   16-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   17-May-2001 Translated by Mike Futerko (mike@LITech.lviv.ua)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Ukrainian
+language_code = uk
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = records
+msg_addresses=addresses
+msg_ignored = ignored
+msg_bad     = bad
+msg_in      = in
+msg_seconds = seconds
+
+#/* progress and setup error messages */
+msg_log_err = Error: Can't open log file
+msg_log_use = Using logfile
+msg_dir_err = Error: Can't change directory to
+msg_dir_use = Creating output in
+msg_cur_dir = current directory
+msg_hostname= Hostname for reports is
+msg_ign_hist= Ignoring previous history...
+msg_no_hist = History file not found...
+msg_get_hist= Reading history file...
+msg_put_hist= Saving history information...
+msg_hist_err= Error: Unable to write history file
+msg_bad_hist= Error: Ignoring invalid history record
+msg_bad_conf= Error: Unable to open configuration file
+msg_bad_key = Warning: Invalid keyword
+msg_bad_date= Error: Skipping record (bad date)
+msg_ign_nscp= Skipping Netscape header record
+msg_bad_rec = Skipping bad record
+msg_no_vrec = No valid records found!
+msg_gen_rpt = Generating report for
+msg_gen_sum = Generating summary report
+msg_get_data= Reading previous run data..
+msg_put_data= Saving current run data...
+msg_no_data = Previous run data not found...
+msg_bad_data= Error: Unable to restore run data
+msg_data_err= Error: Unable to save current run data
+msg_dup_data= Warning: Possible duplicate data found
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= No cache file specified, aborting...
+msg_dns_nodb= Error: Unable to open DNS cache file
+msg_dns_nolk= Error: Unable to lock DNS cache file
+msg_dns_usec= Using DNS cache file
+msg_dns_rslv= DNS Lookup
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Can't allocate enough memory, Top Hosts disabled!
+msg_nomem_tr= Can't allocate enough memory, Top Referrers disabled!
+msg_nomem_tu= Can't allocate enough memory, Top URLs disabled!
+msg_nomem_tc= Can't allocate enough memory, Top Countries disabled!
+msg_nomem_ta= Can't allocate enough memory, Top User Agents disabled!
+msg_nomem_tsr=Can't allocate enough memory, Top Search Strings disabled!
+msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
+msg_nomem_dh= Error adding host node (daily), skipping
+msg_nomem_mh= Error adding host node (monthly), skipping
+msg_nomem_u = Error adding URL node, skipping
+msg_nomem_a = Error adding User Agent node, skipping
+msg_nomem_r = Error adding Referrer node, skipping
+msg_nomem_sc= Error adding Search String Node, skipping
+msg_nomem_i = Error adding Username node, skipping
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Error: Skipping oversized log record
+msg_big_host= Warning: Truncating oversized hostname
+msg_big_date= Warning: Truncating oversized date field
+msg_big_req = Warning: Truncating oversized request field
+msg_big_ref = Warning: Truncating oversized referrer field
+msg_big_user= Warning: Truncating oversized username
+msg_big_one = Warning: String exceeds storage size
+
+#/* misc errors */
+msg_no_open = Error: Unable to open file
+
+#/* Help display... */
+h_usage1 = Usage
+h_usage2 = [options] [log file [[ log file ]...] | report database]
+h_msg=   -h        = print this help message,
+         -v -V     = print version information,
+         -d        = print additional debug info,
+         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f        = Fold sequence errors,
+         -i        = ignore history file,
+         -p        = preserve state (incremental),
+         -q        = suppress informational messages,
+         -Q        = suppress _ALL_ messages,
+         -Y        = suppress country graph,
+         -G        = suppress hourly graph,
+         -H        = suppress hourly stats,
+         -L        = suppress color coded graph legends,
+         -l num    = use num background lines on graph,
+         -m num    = Visit timout value (seconds),
+         -T        = print timing information,
+         -c file   = use configuration file 'file',
+         -n name   = hostname to use,
+         -o dir    = output directory to use,
+         -t name   = report title 'name',
+         -a name   = hide user agent 'name',
+         -r name   = hide referrer 'name',
+         -s name   = hide site 'name',
+         -u name   = hide URL 'name',
+         -x name   = Use filename extension 'name',
+         -P name   = Page type extension 'name',
+         -I name   = Index alias 'name',
+         -A num    = Display num top agents,
+         -C num    = Display num top countries,
+         -R num    = Display num top referrers,
+         -S num    = Display num top hosts,
+         -U num    = Display num top URLs,
+         -e num    = Display num top Entry Pages,
+         -E num    = Display num top Exit Pages,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Use DNS Cache file 'name',
+         -N num    = Number of DNS processes (0=disable),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Період статистики
+msg_hhdr_gt = Створено
+
+#/* main index strings */
+msg_main_us = Сумарне використання
+msg_main_per= останні 12 місяців
+msg_main_sum= Щомісячний підсумок
+msg_main_da = В середньому за день
+msg_main_mt = Всього за місяць
+
+#/* month HTML page strings */
+msg_hmth_du = Щоденне використання за
+msg_hmth_hu = Погодинне використання за
+
+#/* table header strings */
+msg_h_by    = по
+msg_h_avg   = середн.
+msg_h_max   = макс.
+msg_h_total = всього
+msg_h_totals= Всього
+msg_h_day   = день
+msg_h_mth   = місяць
+msg_h_hour  = година
+msg_h_hits  = запитів
+msg_h_pages = стор.
+msg_h_visits= відвід.
+msg_h_files = файлів
+msg_h_hosts = сайтів
+msg_h_xfer  = КБайт
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = ім'я хоста
+msg_h_url   = URL
+msg_h_agent = агент користувача
+msg_h_ref   = посилання
+msg_h_ctry  = країна
+msg_h_search= стрічка пошуку
+msg_h_uname = ім'я користувача
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Статистика по днях
+msg_hlnk_hs = Статистика по годинах
+msg_hlnk_u  = URL'и
+msg_hlnk_s  = Сайти
+msg_hlnk_a  = Агенти користувача
+msg_hlnk_c  = Країни
+msg_hlnk_r  = Посилання
+msg_hlnk_en = Початкові сторінки
+msg_hlnk_ex = Кінцеві сторінки
+msg_hlnk_sr = Пошук
+msg_hlnk_i  = Користувачі
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Місячна статисника за
+msg_mtot_th = Всього запитів
+msg_mtot_tf = Всього файлів
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tp = Всього сторінок
+msg_mtot_tv = Всього відвідувань
+msg_mtot_tx = Всього КБайт
+msg_mtot_us = Всього унікальних сайтів
+msg_mtot_ur = Всього унікальних посилань
+msg_mtot_ua = Всього унікальних агентів користувача
+msg_mtot_uu = Всього унікальних URL'ів
+msg_mtot_ui = Всього унікальних імен
+msg_mtot_mhd= Звертань за день
+msg_mtot_mhh= Звертань за годину
+msg_mtot_mfd= Файлів за день
+msg_mtot_mpd= Сторінок за день
+msg_mtot_mvd= Відвідувань за день
+msg_mtot_mkd= KБайт за день
+msg_mtot_rc = Звертань за кодом відповіді
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Статистика по днях за
+
+#/* hourly total table */
+msg_htot_hs = Статистика по годинах за
+
+#/* country pie chart */
+msg_ctry_use= Cтатистика по країнах за
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Перші
+msg_top_of  = з
+msg_top_s   = сайтів
+msg_top_u   = URL'ів
+msg_top_r   = посилань
+msg_top_a   = агентів користувача
+msg_top_c   = країн
+msg_top_en  = початкових сторінок
+msg_top_ex  = кінцевих сторінок
+msg_top_sr  = стрічок пошуку
+msg_top_i   = імен користувача
+msg_v_hosts = Переглянути всі сайти
+msg_v_urls  = Переглянути всі URL'и
+msg_v_refs  = Переглянути всі посилання
+msg_v_agents= Переглянути всі агенти користувача
+msg_v_search= Переглянути всі cтрічки пошуку
+msg_v_users = Переглянути всі імена користувачів
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Січ, Лют, Бер,
+                    Кві, Тра, Чер,
+                    Лип, Сер, Вер,
+                    Жов, Лис, Гру
+
+#/* long month names - can be any length */
+l_month=  Січень,   Лютий,   Березень, Квітень,
+                    Травень,  Червень, Липень,   Серпень,
+                    Вересень, Жовтень, Листопад, Грудень
+
+#/* response code descriptions... order IS important!      */
+response = Невідомий код відповіді,
+           Code 100 - Continue,
+           Code 101 - Switching Protocols,
+           Code 200 - OK,
+           Code 201 - Created,
+           Code 202 - Accepted,
+           Code 203 - Non-Authoritative Information,
+           Code 204 - No Content,
+           Code 205 - Reset Content,
+           Code 206 - Partial Content,
+           Code 300 - Multiple Choices,
+           Code 301 - Moved Permanently,
+           Code 302 - Found,
+           Code 303 - See Other,
+           Code 304 - Not Modified,
+           Code 305 - Use Proxy,
+           Code 307 - Moved Temporarily,
+           Code 400 - Bad Request,
+           Code 401 - Unauthorized,
+           Code 402 - Payment Required,
+           Code 403 - Forbidden,
+           Code 404 - Not Found,
+           Code 405 - Method Not Allowed,
+           Code 406 - Not Acceptable,
+           Code 407 - Proxy Authentication Required,
+           Code 408 - Request Timeout,
+           Code 409 - Conflict,
+           Code 410 - Gone,
+           Code 411 - Length Required,
+           Code 412 - Precondition Failed,
+           Code 413 - Request Entity Too Large,
+           Code 414 - Request-URI Too Long,
+           Code 415 - Unsupported Media Type,
+           Code 416 - Requested Range Not Satisfiable,
+           Code 417 - Expectation Failed,
+           Code 500 - Internal Server Error,
+           Code 501 - Not Implemented,
+           Code 502 - Bad Gateway,
+           Code 503 - Service Unavailable,
+           Code 504 - Gateway Timeout,
+           Code 505 - HTTP Version Not Supported,
+
+msg_title   = Статистика відвідувань
+msg_h_other = Інші
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry =	*,	Нерозв'язані/Невідомі,
+	com,	Комерційні (com),
+	edu,	Освітні (edu),
+	gov,	Урядові (gov),
+	int,	Інтернаціональні (int),
+	mil,	Військові (mil),
+	net,	Мережеві (net),
+	org,	Некомерційні організації (org),
+ 	arpa,	Arpanet (arpa),
+ 	nato,	Зона Nato (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Андора (ad),
+	ae,	Об'єднані Арабські Емірати (ae),
+	af,	Афганістан (af),
+	ag,	Трінідад та Тобаго (ag),
+	ai,	Ангілья (ai),
+	al,	Албанія (al),
+	am,	Вірменія (am),
+	an,	Голандські Антильські острови (an),
+	ao,	Ангола (ao),
+	aq,	Антарктика (aq),
+	ar,	Аргентина (ar),
+	as,	Американська Самоа (as),
+	at,	Австрія (at),
+	au,	Австралія (au),
+	aw,	Аруба (aw),
+	az,	Азербайджан (az),
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Боснія та Герцоговина (ba),
+	bb,	Барбадос (bb),
+	bd,	Бангладеш (bd),
+	be,	Бельгія (be),
+	bf,	Буркіна Фасо (bf),
+	bg,	Болгарія (bg),
+	bh,	Бахрейн (bh),
+	bi,	Бурунді (bi),
+	bj,	Бенін (bj),
+	bm,	Бермуди (bm),
+	bn,	Бруней Дарусалам (bn),
+	bo,	Болівія (bo),
+	br,	Бразилія (br),
+	bs,	Багами (bs),
+	bt,	Бутан (bt),
+	bv,	Острів Бувет (bv),
+	bw,	Ботсвана (bw),
+	by,	Білорусь (by),
+	bz,	Беліз (bz),
+	ca,	Канада (ca),
+	cc,	Какосові Острови (cc),
+        cd,       Congo,
+	cf,	Центрально Африканська Республіка (cf),
+	cg,	Конго (cg),
+	ch,	Швейцарія (ch),
+	ci,	Узбережжя Іворі (ci),
+	ck,	Острови Кука (cg),
+	cl,	Чілі (cl),
+	cm,	Камерун (cm),
+	cn,	Китай (cn),
+	co,	Колумбія (co),
+	cr,	Коста Ріка (cr),
+        cs,       Serbia and Montenegro,
+	cu,	Куба (cu),
+	cv,	Кейп Верде (cv),
+	cx,	Острів Різдва (cx),
+	cy,	Кіпр (cy),
+	cz,	Чеська республіка (cz),
+	de,	Німеччина (de),
+	dj,	Джибуті (dj),
+	dk,	Данія (dk),
+	dm,	Домініка (dm),
+	do,	Домініканська республіка (do),
+	dz,	Алгерія (dz),
+	ec,	Еквадор (ec),
+	ee,	Естонія (ee),
+	eg,	Єгипет (eg),
+	eh,	Західна Сахара (eh),
+	er,	Ерітрея (er),
+	es,	Іспанія (es),
+	et,	Ефіопія (et),
+        eu,       European Union,
+	fi,	Aінляндія (fi),
+	fj,	Фіджі (fj),
+	fk,	Фолклендські Острови (fk),
+	fm,	Мікронезія (fm),
+	fo,	Фарерські Острови (fo),
+	fr,	Франція (fr),
+	ga,	Гобон (ga),
+        gb,       United Kingdom,
+	gd,	Гренада (gd),
+	ge,	Грузія (ge),
+	gf,	Французька Гаяна (gf),
+        gg,       Guernsey,
+	gh,	Гана (gh),
+	gi,	Гібралтар (gi),
+	gl,	Гренландія (gl),
+	gm,	Гамбія (gm),
+	gn,	Гвінея (gn),
+	gp,	Гваделупа (gp),
+	gq,	Екваторіальна Гвінея (gq),
+	gr,	Греція (gr),
+	gs,	Пд. Георгія і Пд. Острови Сендвіч (gs),
+	gt,	Гватемала (gt),
+	gu,	Гуам (gu),
+	gw,	Гвінею-Бісау (gw),
+	gy,	Гаяна (gy),
+	hk,	Гон Конг (hk),
+	hm,	Острови Херда і Макдональда (hm),
+	hn,	Гондурас (hn),
+	hr,     Croatia,
+	ht,	Гаїті (ht),
+	hu,	Угорщині (hu),
+	id,	Індонезія (id),
+	ie,	Ірландія (ie),
+	il,	Ізраїль (il),
+        im,       Isle of Man,
+	in,	Індія (in),
+	io,	Британські тер .в Індійському Океані (io),
+	iq,	Ірак (iq),
+	ir,	Іран (ir),
+	is,	Ісландія (is),
+	it,	Італія (it),
+        je,       Jersey,
+	jm,	Ямайка (jm),
+	jo,	Йордан (jo),
+	jp,	Японія (jp),
+	ke,	Кенія (ke),
+	kg,	Киргистан (kg),
+	kh,	Камбоджа (kh),
+	ki,	Кірібаті (ki),
+	km,	Коморські Острови (km),
+	kn,	Острови св. Кітса и Невіса (kn),
+	kp,	Корея (Північна) (kp),
+	kr,	Корея (Південна) (kr),
+	kw,	Кувейт (kw),
+	ky,	Кайманські Острови (ky),
+	kz,	Казахстан (kz),
+	la,	Лаос (la),
+	lb,	Лебанон (lb),
+	lc,	Санта Лючія (lc),
+	li,	Ліхтенштейн (li),
+	lk,	Шрі Ланка (lk),
+	lr,	Ліберія (lr),
+	ls,	Лесото (ls),
+	lt,	Литва (lt),
+	lu,	Люксембург (lu),
+	lv,	Латвія (lv),
+	ly,	Лівія (ly),
+	ma,	Мароко (ma),
+	mc,	Монако (mc),
+	md,	Молдова (md),
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Мадагаскар (mg),
+	mh,	Маршалові Острови (mh),
+	mk,	Македонія (mk),
+	ml,	Малі (ml),
+	mm,	Майанмар (mm),
+	mn,	Монголія (mn),
+	mo,    Macao,
+	mp,	Північні Маріанські Острови (mp),
+	mq,	Мартініка (mq),
+	mr,	Мавританія (mr),
+	ms,	Монтсерат (ms),
+	mt,	Мальта (mt),
+	mu,	Мавританія (mu),
+	mv,	Мальдівська Республіка (mv),
+	mw,	Малаві (mw),
+	mx,	Мексика (mx),
+	my,	Малазія (my),
+	mz,	Мозамбік (mz),
+	na,	Намібія (na),
+	nc,	Нова Каледонія (nc),
+	ne,	Нігер (ne),
+	nf,	Острів Норфолк (nf),
+	ng,	Нігерія (ng),
+	ni,	Нікарагуа (ni),
+	nl,	Нідерланди (nl),
+	no,	Норвегія (no),
+	np,	Непал (np),
+	nr,	Науру (nr),
+	nu,	Ніуе (nu),
+        nz,       New Zealand,
+	om,	Оман (om),
+	pa,	Панама (pa),
+	pe,	Перу (pr),
+	pf,	Французька Полінезія (pf),
+	pg,	Папуа Нова Гвінея (pg),
+	ph,	Філіпіни (ph),
+	pk,	Пакістан (pk),
+	pl,	Польща (pl),
+	pm,	Острів св. Пєра і Мігеля (pm),
+	pn,	Піткерн (pn),
+	pr,	Пуерто Ріко (pr),
+        ps,       Palestinian Territories,
+	pt,	Португалія (pt),
+	pw,	Палау (pw),
+	py,	Парагвай (py),
+	qa,	Катар (qa),
+	re,	Острів Реюньон (re),
+	ro,	Румунія (po),
+	rs,	Serbia,
+	ru,	Російська Федерація (ru),
+	rw,	Руана (rw),
+	sa,	Саудівська Аравія (sa),
+	sb,	Соломонові Острови (sb),
+	sc,	Сейшельські Острови (sc),
+	sd,	Судан (sd),
+	se,	Швеція (se),
+	sg,	Сінгапур (sg),
+	sh,	Острів св. Єлени (sh),
+	si,	Словенія (si),
+	sj,	Острови Свалбард і Ян-Майен (sj),
+	sk,	Республіка Словакії (sk),
+	sl,	Сієра Леоне (sl),
+	sm,	Сан Маріно (sm),
+	sn,	Сенегал (sn),
+	so,	Сомалі (so),
+	sr,	Сурінам (sr),
+	st,	Сао Том і Принципові Острови (st),
+	su,	"СРСР (колишній, su)",
+	sv,	Сальвадор (sv),
+	sy,	Сирія (sy),
+	sz,	Свазіланд (sz),
+	tc,	Острови Тюркс і Кайкос (tc),
+	td,	Чад (td),
+	tf,	Південні Французькі території (tf),
+	tg,	Того (tg),
+	th,	Таїланд (th),
+	tj,	Таджикистан (tj),
+	tk,	Острови Токелау (tk),
+        tl,       Timor-Leste,
+	tm,	Туркменистан (tm),
+	tn,	Туніс (tn),
+	to,	Острови Тонга (to),
+	tp,	Східний Тімор (tp),
+	tr,	Туреччина (tr),
+	tt,	Республіка Трінідад та Тобаго (tt),
+	tv,	Тувалу (tv),
+	tw,	Тайвань (tw),
+	tz,	Танзанія (tz),
+	ua,	Україна (ua),
+	ug,	Уганда (ug),
+	uk,	Великобританія (uk),
+	um,	Малі зовнішні острови США (um),
+	us,	Cполучені штати (us),
+	uy,	Уругвай (uy),
+	uz,	Eзбекистан (uz),
+	va,	Ватікан (va),
+	vc,	Острови св. Вінсента і Гренадіни (vc),
+	ve,	Венесуела (ve),
+	vg,	"Вірджинські Острови (Британські, vg)",
+	vi,	"Вірджинські Острови (США, vi)",
+	vn,	В'єтнам (vn),
+	vu,	Вануату (vu),
+	wf,	Острова Велліс і Футуна (wf),
+	ws,	Самоа (ws),
+	ye,	Ємен (ye),
+	yt,	Острів Майота (yt),
+	yu,	"Югославія (колишня, yu)",
+	za,	Південна Африка (za),
+	zm,	Замбія (zm),
+	zw,	Зімбабве (zw)

@@ -1,0 +1,667 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.simplified_chinese
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Simplified Chinese(used in Mainland China).
+#
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Simplified Chinese
+language_code = zh
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = 条记录
+msg_addresses=地址
+msg_ignored = 条被忽略
+msg_bad     = 条无效
+msg_in      = 共用时
+msg_seconds = 秒
+
+#/* progress and setup error messages */
+msg_log_err = 错误: 不能打开日志文件
+msg_log_use = 使用日志文件
+msg_dir_err = 错误: 不能改变目录到
+msg_dir_use = 输出结果到
+msg_cur_dir = 当前目录
+msg_hostname= 产生报表的主机名是
+msg_ign_hist= 忽略以前的历史信息...
+msg_no_hist = 没有找到历史信息文件...
+msg_get_hist= 正在读取历史信息文件...
+msg_put_hist= 正在保存历史信息文件...
+msg_hist_err= 错误: 不能写入历史信息文件
+msg_bad_hist= 错误: 忽略非法历史信息记录
+msg_bad_conf= 错误: 不能打开配置文件
+msg_bad_key = 警告: 非法关键词
+msg_bad_date= 错误: 跳过记录(日期错误)
+msg_ign_nscp= 跳过 Netscape 头记录
+msg_bad_rec = 跳过错误记录
+msg_no_vrec = 没有找到合法记录!
+msg_gen_rpt = 正在生成报表 ---- 为 
+msg_gen_sum = 正在生成综合报表
+msg_get_data= 正在读取上次运行的数据...
+msg_put_data= 正在保存当前运行的数据...
+msg_no_data = 没有找到上次运行的数据...
+msg_bad_data= 错误: 不能读取上次运行数据
+msg_data_err= 错误: 不能保存当前运行数据
+msg_dup_data= 警告: 发现可能的重复数据
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= 没有指明 DNS 缓存文件, 退出...
+msg_dns_nodb= 错误: 不能打开 DNS 缓存文件
+msg_dns_nolk= 错误: 不能锁定 DNS 缓存文件
+msg_dns_usec= 正在使用 DNS 缓存文件
+msg_dns_rslv= DNS 查找
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= 不能分配足够的内存, 取消 Top Hosts 报告项!
+msg_nomem_tr= 不能分配足够的内存, 取消 Top Referrers 报告项!
+msg_nomem_tu= 不能分配足够的内存, 取消 Top URLs 报告项!
+msg_nomem_tc= 不能分配足够的内存, 取消 Top Countries 报告项!
+msg_nomem_ta= 不能分配足够的内存, 取消 Top User Agents 报告项!
+msg_nomem_tsr=不能分配足够的内存, 取消 Top Search Strings 报告项!
+msg_nomem_ti= 不能分配足够的内存, 取消 Top Usernames 报告项!
+msg_nomem_dh= 不能增加主机节点(每日), 跳过
+msg_nomem_mh= 不能增加主机节点(每月), 跳过
+msg_nomem_u = 不能增加 URL 节点, 跳过
+msg_nomem_a = 不能增加 User Agent 节点, 跳过
+msg_nomem_r = 不能增加 Referrer 节点, 跳过
+msg_nomem_sc= 不能增加 Search String 节点, 跳过
+msg_nomem_i = 不能增加 Username 节点, 跳过
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = 错误: 跳过太长的日志记录
+msg_big_host= 警告: 截断太长的 hostname 域
+msg_big_date= 警告: 截断太长的 date 域
+msg_big_req = 警告: 截断太长的 request 域
+msg_big_ref = 警告: 截断太长的 referrer 域
+msg_big_user= 警告: 截断太长的 username 域
+msg_big_one = 警告: 太长的字符串
+
+#/* misc errors */
+msg_no_open = 错误: 不能打开文件
+
+#/* Help display... */
+h_usage1 = 用法
+h_usage2 = [选项] [日志文件 [[ 日志文件 ]...] | report database]
+h_msg=   -h        = 显示本帮助信息,
+         -v -V     = 显示本版本信息,
+         -d        = 显示附加的调试信息,
+         -F type   = 日志类型.  类型= (clf | ftp | squid | iis | apache | w3c),
+         -f        = 合并次序错误?(Fold sequence errors),
+         -i        = 忽略历史信息文件,
+         -p        = 保持状态信息(增量方式),
+         -q        = 不显示一般信息,
+         -Q        = 不显示*所有*信息,
+         -Y        = 不显示按国家分布的图表,
+         -G        = 不显示按小时分布的图表,
+         -H        = 不显示按小时分布的统计信息,
+         -L        = 不显示颜色图例,
+         -l num    = 在图表上使用 num 条背景线,
+         -m num    = 设定访问超时值(单位: 秒),
+         -T        = 显示定时信息,
+         -c file   = 指定配置文件为 'file',
+         -n name   = 指定使用的主机名为 'name',
+         -o dir    = 指定输出目录为 'dir',
+         -t name   = 指定报表标题为 'name',
+         -a name   = 隐藏名字为 'name' 的用户代理,
+         -r name   = 隐藏名字为 'name' 的引用,
+         -s name   = 隐藏名字为 'name' 的站点,
+         -u name   = 隐藏名字为 'name' 的 URL,
+         -x name   = 指定使用的文件扩展名为 'name',
+         -P name   = 指定使用的页面类型扩展名为 'name',
+         -I name   = 指定索引别名为 'name',
+         -A num    = 显示 num 个 top agents,
+         -C num    = 显示 num 个 top countries,
+         -R num    = 显示 num 个 top referrers,
+         -S num    = 显示 num 个 top hosts,
+         -U num    = 显示 num 个 top URLs,
+         -e num    = 显示 num 个 top Entry Pages,
+         -E num    = 显示 num 个 top Exit Pages,
+         -g num    = 把域按 num 个级别分组,
+         -X        = 隐藏单个站点,
+         -D name   = 使用 DNS 缓存文件 'name',
+         -N num    = 指定 DNS 解析的进程数(0 = 不进行DNS 解析),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = 摘要的时间段
+msg_hhdr_gt = 产生于
+
+#/* main index strings */
+msg_main_us = 使用摘要
+msg_main_per= 最近 12 个月
+msg_main_sum= 按月摘要
+msg_main_da = 每日平均
+msg_main_mt = 每月总计
+
+#/* month HTML page strings */
+msg_hmth_du = 每日使用情况
+msg_hmth_hu = 每小时使用情况
+
+#/* table header strings */
+msg_h_by    = 按照
+msg_h_avg   = 平均
+msg_h_max   = 最大
+msg_h_total = 总计
+msg_h_totals= 总计
+msg_h_day   = 日
+msg_h_mth   = 月
+msg_h_hour  = 小时
+msg_h_hits  = 点击
+msg_h_pages = 页面
+msg_h_visits= 访问
+msg_h_files = 文件
+msg_h_hosts = 站点
+msg_h_xfer  = 千字节
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = 主机名
+msg_h_url   = URL
+msg_h_agent = 用户代理
+msg_h_ref   = 引用
+msg_h_ctry  = 国家
+msg_h_search= 搜索字符串
+msg_h_uname = 用户名
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = 每日统计
+msg_hlnk_hs = 每小时统计
+msg_hlnk_u  = URLs
+msg_hlnk_s  = 站点
+msg_hlnk_a  = 代理
+msg_hlnk_c  = 国家
+msg_hlnk_r  = 引用
+msg_hlnk_en = 入口
+msg_hlnk_ex = 出口
+msg_hlnk_sr = 搜索
+msg_hlnk_i  = 用户
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = 月统计信息
+msg_mtot_th = 总点击数
+msg_mtot_tf = 总文件数
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = 总千字节数
+msg_mtot_us = 总站点数（不包括重复站点）
+msg_mtot_ur = 总引用者数（不包括重复引用者）
+msg_mtot_ua = 总用户代理数（不包括重复用户代理）
+msg_mtot_uu = 总 URL 数（不包括重复 URL ）
+msg_mtot_ui = 总用户名数（不包括重复用户名）
+msg_mtot_mhd= 每天点击数
+msg_mtot_mhh= 每小时点击数
+msg_mtot_mfd= 每天文件数
+msg_mtot_mpd= 每天页面数
+msg_mtot_mvd= 每天访问数
+msg_mtot_mkd= 每天流量数（单位：千字节）
+msg_mtot_rc = 按响应码的点击数
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = 每日统计
+
+#/* hourly total table */
+msg_htot_hs = 每小时统计
+
+#/* country pie chart */
+msg_ctry_use= 按国家使用情况
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = 最前
+msg_top_of  = ----
+msg_top_s   = 总站点数
+msg_top_u   = 总 URL 数
+msg_top_r   = 总引用者数
+msg_top_a   = 总用户代理数
+msg_top_c   = 总国家数
+msg_top_en  = 总进入页面数
+msg_top_ex  = 总推出页面数
+msg_top_sr  = 总搜索字符串数
+msg_top_i   = 总用户名数
+msg_v_hosts = 察看所有站点
+msg_v_urls  = 察看所有 URL
+msg_v_refs  = 察看所有引用
+msg_v_agents= 察看所有用户代理
+msg_v_search= 察看所有搜索字符串
+msg_v_users = 察看所有用户名
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  一月, 二月, 三月,
+                    四月, 五月, 六月,
+                    七月, 八月, 九月,
+                    十月, 十一月, 十二月
+
+#/* long month names - can be any length */
+l_month=   一月, 二月, 三月,
+                    四月, 五月, 六月,
+                    七月, 八月, 九月,
+                    十月, 十一月, 十二月
+
+#/* response code descriptions... order IS important!      */
+response = 未定义的响应代码,
+           响应代码 100 - 继续,
+           响应代码 101 - 改变协议,
+           响应代码 200 - 成功,
+           响应代码 201 - 已被创建,
+           响应代码 202 - 已被接受,
+           响应代码 203 - 非权威信息,
+           响应代码 204 - 无内容,
+           响应代码 205 - 重置内容,
+           响应代码 206 - 部分内容,
+           响应代码 300 - 多重选择,
+           响应代码 301 - 已被永久性转移,
+           响应代码 302 - 已被找到,
+           响应代码 303 - 看其它,
+           响应代码 304 - 没有被修改过,
+           响应代码 305 - 使用代理,
+           响应代码 307 - 已被暂时性转移,
+           响应代码 400 - 无效的请求,
+           响应代码 401 - 未被验证,
+           响应代码 402 - 需要付费,
+           响应代码 403 - 被禁止,
+           响应代码 404 - 没有找到,
+           响应代码 405 - 不容许的方法,
+           响应代码 406 - 不可接受,
+           响应代码 407 - 需要代理验证,
+           响应代码 408 - 请求超时,
+           响应代码 409 - 冲突,
+           响应代码 410 - 已过,
+           响应代码 411 - 需要长度信息,
+           响应代码 412 - 前提不满足,
+           响应代码 413 - 请求实体太大,
+           响应代码 414 - 请求 URI 太长,
+           响应代码 415 - 不支持的文件类型,
+           响应代码 416 - 请求的范围无效,
+           响应代码 417 - 期望落空,
+           响应代码 500 - 服务器内部错,
+           响应代码 501 - 没有实现,
+           响应代码 502 - 坏掉的网关,
+           响应代码 503 - 服务不可用,
+           响应代码 504 - 网关超时,
+           响应代码 505 - 不支持的 HTTP 版本,
+
+msg_title   = 使用统计
+msg_h_other = 其它
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	未解析的/未知的,
+	com,	.com,
+	edu,	.edu,
+	gov,	.gov,
+	int,	.int,
+	mil,	.mil,
+	net,	.net,
+	org,	.org,
+ 	arpa,	.arpa,
+ 	nato,	北大西洋公约组织,
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	安道尔,
+	ae,	阿联酋,
+	af,	阿富汗,
+	ag,	安提瓜和巴布达,
+	ai,	安圭拉,
+	al,	阿尔巴尼亚,
+	am,	亚美尼亚,
+	an,	荷属安的列斯,
+	ao,	安哥拉,
+	aq,	南极洲 ,
+	ar,	阿根廷,
+	as,	萨摩亚,
+	at,	奥地利,
+	au,	澳大利亚,
+	aw,	阿鲁巴,
+	az,	阿塞拜疆,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	波黑,
+	bb,	巴巴多斯,
+	bd,	孟加拉,
+	be,	比利时,
+	bf,	布其纳法索,
+	bg,	保加利亚,
+	bh,	巴林,
+	bi,	布隆迪,
+	bj,	贝宁,
+	bm,	百慕大,
+	bn,	文莱,
+	bo,	玻利维亚,
+	br,	巴西,
+	bs,	巴哈马,
+	bt,	不丹,
+	bv,	布维岛,
+	bw,	博茨瓦纳,
+	by,	白俄罗斯,
+	bz,	伯利兹,
+	ca,	加拿大,
+	cc,	可可岛,
+        cd,       Congo,
+	cf,	中非,
+	cg,	刚果,
+	ch,	瑞士,
+	ci,	象牙海岸,
+	ck,	库克群岛,
+	cl,	智利,
+	cm,	喀麦隆,
+	cn,	中国,
+	co,	哥伦比亚,
+	cr,	哥斯达黎加,
+        cs,       Serbia and Montenegro,
+	cu,	古巴,
+	cv,	佛得角,
+	cx,	圣诞岛,
+	cy,	塞浦路斯,
+	cz,	捷克共和国,
+	de,	德国,
+	dj,	吉布提,
+	dk,	丹麦,
+	dm,	多米尼加,
+	do,	多米尼加共和国,
+	dz,	阿尔及利亚,
+	ec,	厄瓜多尔,
+	ee,	爱沙尼亚,
+	eg,	埃及,
+	eh,	西撒哈拉,
+	er,	Eritrea,
+	es,	西班牙,
+	et,	埃塞俄比亚,
+        eu,       European Union,
+	fi,	芬兰,
+	fj,	斐济,
+	fk,	福克兰群岛(马尔维纳斯群岛),
+	fm,	密克罗尼西亚,
+	fo,	法罗群岛（丹麦）,
+	fr,	法国,
+	ga,	加蓬,
+        gb,       United Kingdom,
+	gd,	格林纳达,
+	ge,	格鲁吉亚,
+	gf,	法属圭亚那,
+        gg,       Guernsey,
+	gh,	加纳,
+	gi,	直布罗陀,
+	gl,	格陵兰,
+	gm,	冈比亚,
+	gn,	几内亚,
+	gp,	瓜德罗普,
+	gq,	赤道几内亚,
+	gr,	希腊,
+	gs,	S. Georgia and S. Sandwich Isls.,
+	gt,	危地马拉,
+	gu,	关岛,
+	gw,	几内亚比绍,
+	gy,	圭亚那,
+	hk,	中国香港,
+	hm,	Heard and McDonald Islands,
+	hn,	洪都拉斯,
+	hr,     Croatia,
+	ht,	海地,
+	hu,	匈牙利,
+	id,	印度尼西亚,
+	ie,	爱尔兰,
+	il,	以色列,
+        im,       Isle of Man,
+	in,	印度,
+	io,	英联邦的印度洋领域,
+	iq,	伊拉克,
+	ir,	伊朗,
+	is,	冰岛,
+	it,	意大利,
+        je,       Jersey,
+	jm,	牙买加,
+	jo,	约旦,
+	jp,	日本,
+	ke,	肯尼亚,
+	kg,	吉尔吉斯斯坦,
+	kh,	柬埔寨,
+	ki,	基里巴斯,
+	km,	科摩罗,
+	kn,	圣基茨和尼维斯,
+	kp,	朝鲜,
+	kr,	韩国,
+	kw,	科威特,
+	ky,	开曼群岛,
+	kz,	哈萨克斯坦,
+	la,	老挝,
+	lb,	黎巴嫩,
+	lc,	圣卢西亚,
+	li,	列支敦士登,
+	lk,	斯里兰卡,
+	lr,	利比里亚,
+	ls,	莱索托,
+	lt,	立陶宛,
+	lu,	卢森堡,
+	lv,	拉托维亚,
+	ly,	利比亚,
+	ma,	摩洛哥,
+	mc,	摩纳哥,
+	md,	摩尔多瓦,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	马达加斯加,
+	mh,	马绍尔群岛,
+	mk,	马其顿,
+	ml,	马里,
+	mm,	缅甸,
+	mn,	蒙古,
+	mo,    Macao,
+	mp,	北马里亚纳群岛（美）,
+	mq,	马提尼克（法）,
+	mr,	毛里塔尼亚,
+	ms,	蒙特塞拉特（英）,
+	mt,	马尔他,
+	mu,	毛里求斯,
+	mv,	马尔代夫,
+	mw,	马拉维,
+	mx,	墨西哥,
+	my,	马来西亚,
+	mz,	莫桑比克,
+	na,	纳米比亚,
+	nc,	新喀里多尼亚,
+	ne,	尼日尔,
+	nf,	Norfolk Island,
+	ng,	尼日利亚,
+	ni,	尼加拉瓜,
+	nl,	荷兰,
+	no,	挪威,
+	np,	尼泊尔,
+	nr,	瑙鲁,
+	nu,	纽埃,
+        nz,       New Zealand,
+	om,	阿曼,
+	pa,	巴拿马,
+	pe,	秘鲁,
+	pf,	法属玻里尼西亚,
+	pg,	巴布亚新几内亚,
+	ph,	菲律宾,
+	pk,	巴基斯坦,
+	pl,	波兰,
+	pm,	圣皮埃尔和密克隆（法）,
+	pn,	皮特开恩群岛,
+	pr,	波多黎各（美）,
+        ps,       Palestinian Territories,
+	pt,	葡萄牙,
+	pw,	帕劳,
+	py,	巴拉圭,
+	qa,	卡塔尔,
+	re,	留尼汪（法）,
+	ro,	罗马尼亚,
+	rs,	Serbia,
+	ru,	俄罗斯联邦,
+	rw,	卢旺达,
+	sa,	沙特阿拉伯,
+        sb,       Solomon Islands,
+	sc,	塞舌尔,
+	sd,	苏丹,
+	se,	瑞典,
+	sg,	新加坡,
+	sh,	圣赫勒那,
+	si,	斯洛文尼亚,
+	sj,	斯瓦尔巴特群岛（挪威）,
+	sk,	斯洛伐克,
+	sl,	塞拉利昂,
+	sm,	圣马力诺,
+	sn,	塞内加尔,
+	so,	索马里,
+	sr,	苏里南,
+	st,	圣多美与普林西比,
+	su,	前苏联,
+	sv,	萨尔瓦多,
+	sy,	叙利亚,
+	sz,	斯威士兰,
+	tc,	特克斯和凯科斯群岛（英）,
+	td,	乍得,
+	tf,	法属南方领土,
+	tg,	多哥,
+	th,	泰国,
+	tj,	塔吉克斯坦,
+	tk,	托克劳,
+        tl,       Timor-Leste,
+	tm,	土库曼斯坦,
+	tn,	突尼斯,
+	to,	汤加,
+	tp,	东帝,
+	tr,	土尔其,
+	tt,	特立尼达和多巴哥,
+	tv,	图瓦卢,
+	tw,	中国台湾,
+	tz,	坦桑尼亚,
+	ua,	乌克兰,
+	ug,	乌干达,
+	uk,	英国,
+	um,	美国边远小岛,
+	us,	美国,
+	uy,	乌拉圭,
+	uz,	乌兹别克斯坦,
+	va,	梵蒂冈,
+	vc,	圣文森特和格林纳丁斯,
+	ve,	委内瑞拉,
+	vg,	不列颠岛(英),
+	vi,	不列颠岛(美),
+	vn,	越南,
+	vu,	瓦努阿图,
+	wf,	瓦利斯和富图纳（法）,
+	ws,	西萨摩亚,
+	ye,	也门,
+	yt,	马约特岛,
+	yu,	南斯拉夫,
+	za,	南非,
+	zm,	赞比亚,
+	zw,	津巴布韦
+

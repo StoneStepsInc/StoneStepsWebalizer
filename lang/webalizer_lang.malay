@@ -1,0 +1,672 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.malay
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Malay
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   16-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   30-Oct-2000 Malay translation by Nazri Hussain (nazrih@mimos.my)
+#
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Malay
+language_code = ms
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = rekod
+msg_addresses=alamat
+msg_ignored = diabaikan
+msg_bad     = rosak
+msg_in      = dalam
+msg_seconds = saat
+
+#/* progress and setup error messages */
+msg_log_err = Ralat: Saya rasa log fail anda tiada
+msg_log_use = Menggunakan fail log
+msg_dir_err = Ralat: Saya tidak dapat menukar ke direktori
+msg_dir_use = Menjana hasil di dalam
+msg_cur_dir = direktori terkini
+msg_hostname= Nama Host untuk laporan ini ialah
+msg_ign_hist= Mengabaikan fail terdahulu...
+msg_no_hist = Fail terdahulu tiada...
+msg_get_hist= Baca fail terdahulu...
+msg_put_hist= Simpan maklumat terdahulu...
+msg_hist_err= Ralat: Saya tidak dapat menyimpan fail terdahulu
+msg_bad_hist= Ralat: Saya mengabaikan rekod terdahulu yang rosak
+msg_bad_conf= Ralat: Saya tidak dapat membuka fail konfigurasi
+msg_bad_key = Amaran: katakunci tidak sah
+msg_bad_date= Ralat: Satu rekod diabaikan (tarikh salah)
+msg_ign_nscp= Satu kepala rekod Netscape diabaikan
+msg_bad_rec = Satu rekod salah diabaikan
+msg_no_vrec = Tiada rekod sah dijumpai!
+msg_gen_rpt = Menjana laporan untuk
+msg_gen_sum = Menjana ringkasan laporan
+msg_get_data= Membaca data larian terdahulu..
+msg_put_data= Menimpan data larian terkini...
+msg_no_data = Data larian terdahulu tidak dijumpai...
+msg_bad_data= Ralat: Saya tidak dapat mengambil-semula data larian
+msg_data_err= Ralat: Saya tidak dapat menyimpan data larian
+msg_dup_data= Amaran: Kemungkinan data yang sama dijumpai
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Fail cache tidak dinyatakan, proses dibatalkan...
+msg_dns_nodb= Ralat: Saya tidak dapat membuka fail cache DNS
+msg_dns_nolk= Ralat: Saya tidak dapat mengunci fail cache DNS
+msg_dns_usec= Fail cache DNS sedang digunakan
+msg_dns_rslv= Carian DNS
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Tidak dapat memperuntukkan ingatan, Halaman Terbaik diabaikan!
+msg_nomem_tr= Tidak dapat memperuntukkan ingatan, Perujuk Terbaik diabaikan!
+msg_nomem_tu= Tidak dapat memperuntukkan ingatan, URL Terbaik diabaikan!
+msg_nomem_tc= Tidak dapat memperuntukkan ingatan, Negara Terbaik diabaikan!
+msg_nomem_ta= Tidak dapat memperuntukkan ingatan, Agen Pengguna Terbaik diabaikan!
+msg_nomem_tsr=Tidak dapat memperuntukkan ingatan, Katakunci Carian Terbaik diabaikan!
+msg_nomem_ti= Tidak dapat memperuntukkan ingatan, Katanama Pengguna Terbaik diabaikan!
+msg_nomem_dh= Ralat untuk menambah nod hos (harian), proses diabaikan
+msg_nomem_mh= Ralat untuk menambah nod hos (bulanan), proses diabaikan
+msg_nomem_u = Ralat untuk menambah nod URL, proses diabaikan
+msg_nomem_a = Ralat untuk menambah nod Agen Pengguna, proses diabaikan
+msg_nomem_r = Ralat untuk menambah nod Perujuk, proses diabaikan
+msg_nomem_sc= Ralat untuk menambah nod Katakunci Carian, proses diabaikan
+msg_nomem_i = Ralat untuk menambah nod Katanama Pengguna, proses diabaikan
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Ralat: Rekod log anda terlalu besar, proses diabaikan
+msg_big_host= Amaran: Nama hos yang terlalu panjang telah dipotong
+msg_big_date= Amaran: Ruangan tarikh yang terlalu panjang telah dipotong
+msg_big_req = Amaran: Ruangan pertanyaan yang terlalu panjang telah dipotong
+msg_big_ref = Amaran: Ruangan perujuk yang terlalu panjang telah dipotong
+msg_big_user= Amaran: Katanama yang terlalu panjang telah dipotong
+msg_big_one = Amaran: Perkataan melebihi saiz simpanan
+
+#/* misc errors */
+msg_no_open = Ralat: Tidak dapat membuka fail
+
+#/* Help display... */
+h_usage1 = Penggunaan
+h_usage2 = [pilihan] [fail log [[ fail log ]...] | report database]
+h_msg=   -h        = cetak mesej pertolongan ini,
+         -v -V     = cetak maklumat versi,
+         -d        = cetak maklumat tambahan berkenaan dengan debug,
+         -F type   = jenis Log.  jenis= (clf | ftp | squid | iis | apache | w3c),
+         -f        = Alas turutan ralat,
+         -i        = abaikan fail terdahulu,
+         -p        = kekalkan keadaan (secara menaik),
+         -q        = abaikan maklumat mesej,
+         -Q        = abaikan _SEMUA_ mesej,
+         -Y        = abaikan graf negara,
+         -G        = abaikan graf ikut jam,
+         -H        = abaikan statistik ikut jam,
+         -L        = abaikan graf yang berdasarkan petunjuk warna,
+         -l num    = gunakan sejumlah garisan latarbelakang pada graf,
+         -m num    = Nilai masa tamat untuk Lawatan (dalam saat),
+         -T        = cetak maklumat berkenaan masa jangkaan,
+         -c file   = gunakan fail konfigurasi ini,
+         -n name   = gunakan nama hos ini,
+         -o dir    = gunakan direktori ini untuk hasil janaan,
+         -t name   = nama laporan,
+         -a name   = sorokkan nama agen pengguna,
+         -r name   = sorokkan nama perujuk,
+         -s name   = sorokkan nama halaman,
+         -u name   = sorokkan nama URL,
+         -x name   = gunakan pengakhir ini bagi nama fail,
+         -P name   = Jenis pengakhir bagi nama fail ini,
+         -I name   = Nama lain bagi fail Index,
+         -A num    = Paparkan bilangan agen terbaik,
+         -C num    = Paparkan bilangan negara terbaik,
+         -R num    = Paparkan bilangan perujuk terbaik,
+         -S num    = Paparkan bilangan halaman terbaik,
+         -U num    = Paparkan bilangan URL terbaik,
+         -e num    = Paparkan bilangan Halaman Utama yang terbaik,
+         -E num    = Paparkan bilangan Hamalan Keluar yang terbaik,
+         -g num    = Kumpulkan tahap Domain kepada,
+         -X        = Sorokkan halaman individu ini,
+         -D name   = Gunakan fail cache DNS ini,
+         -N num    = Nombor proses bagi DNS (0=abaikan),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Jangkamasa Ringkasan
+msg_hhdr_gt = Dijanakan
+
+#/* main index strings */
+msg_main_us = Ringkasan Penggunaan untuk
+msg_main_per= 12 bulan yang lepas
+msg_main_sum= Ringkasan Bulanan
+msg_main_da = Purata harian
+msg_main_mt = Jumlah Bulanan
+
+#/* month HTML page strings */
+msg_hmth_du = Pengunaan Harian bagi
+msg_hmth_hu = Pengunaan ikut Jam bagi
+
+#/* table header strings */
+msg_h_by    = Ikut
+msg_h_avg   = Purata
+msg_h_max   = Maksima
+msg_h_total = Jumlah
+msg_h_totals= Jumlah
+msg_h_day   = Hari
+msg_h_mth   = Bulan
+msg_h_hour  = Jam
+msg_h_hits  = Capaian
+msg_h_pages = Muka
+msg_h_visits= Lawatan
+msg_h_files = Fail
+msg_h_hosts = Halaman
+msg_h_xfer  = KBait
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Nama Hos
+msg_h_url   = URL
+msg_h_agent = Agen Pengguna
+msg_h_ref   = Perujuk
+msg_h_ctry  = Negara
+msg_h_search= Perkataan Carian
+msg_h_uname = Katanama
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Statistik Harian
+msg_hlnk_hs = Statistik ikut Jam
+msg_hlnk_u  = URL
+msg_hlnk_s  = Halaman
+msg_hlnk_a  = Agen
+msg_hlnk_c  = Negara
+msg_hlnk_r  = Perujuk
+msg_hlnk_en = Masuk dari
+msg_hlnk_ex = Keluar dari
+msg_hlnk_sr = Carian
+msg_hlnk_i  = Pengguna
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Statistik Bulanan Untuk
+msg_mtot_th = Jumlah Capaian
+msg_mtot_tf = Jumlah Fail
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Jumlah KBait
+msg_mtot_us = Jumlah Halaman Unik
+msg_mtot_ur = Jumlah Perujuk Unik
+msg_mtot_ua = Jumlah Agen Pengguna Unik
+msg_mtot_uu = Jumlah URL unik
+msg_mtot_ui = Jumlah Katanama Unik
+msg_mtot_mhd= Purata Capaian Sehari
+msg_mtot_mhh= Purata Capaian Sejam
+msg_mtot_mfd= Purata Fail Sehari
+msg_mtot_mpd= Purata Halaman Sehari
+msg_mtot_mvd= Purata Lawatan Sehari
+msg_mtot_mkd= Purata KBait Sehari
+msg_mtot_rc = Purata Capaian mengikut Kod Respon
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Statistik Harian untuk
+
+#/* hourly total table */
+msg_htot_hs = Statistik mengikut Jam bagi
+
+#/* country pie chart */
+msg_ctry_use= Penggunaan mengikut Negara bagi
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Antara
+msg_top_of  = yang Terbaik dari
+msg_top_s   = Jumlah Halaman
+msg_top_u   = Jumlah URL
+msg_top_r   = Jumlah Penujuk
+msg_top_a   = Jumlah Agen Pengguna
+msg_top_c   = Jumlah Negara
+msg_top_en  = Jumlah Halaman Masukan
+msg_top_ex  = Jumlah Halaman Keluar
+msg_top_sr  = Jumlah Katakunci Carian
+msg_top_i   = Jumlah Katanama
+msg_v_hosts = Lihat Semua Halaman
+msg_v_urls  = Lihat Semua URL
+msg_v_refs  = Lihat Semua Penunjuk
+msg_v_agents= Lihat Semua Agen Pengguna
+msg_v_search= Lihat Semua Katakunci Carian
+msg_v_users = Lihat Semua Katanama
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Jan, Feb, Mar,
+                    Apr, Mei, Jun,
+                    Jul, Ogo, Sep,
+                    Okt, Nov, Dis
+
+#/* long month names - can be any length */
+l_month=  Januari,  Februari, March,   April,
+                    Mei,      Jun,     July,    Ogos,
+                    September,Oktober,  November,Disember
+
+#/* response code descriptions... order IS important!      */
+response = Kod Respon tidak dapat ditakrif,
+           Code 100 - Teruskan,
+           Code 101 - Bertukar Protokol,
+           Code 200 - OK,
+           Code 201 - Dihasilkan,
+           Code 202 - Diterima,
+           Code 203 - Maklumat yang tidak dapat disahkan,
+           Code 204 - Maklumat Tiada,
+           Code 205 - Maklumat diset semula,
+           Code 206 - Maklumat tidak lengkap,
+           Code 300 - Pilihan Pelbagai,
+           Code 301 - Telah berpindah secara tetap,
+           Code 302 - Dijumpai,
+           Code 303 - Lihat yang lain,
+           Code 304 - Tidak Diubah,
+           Code 305 - Gunakan Proxy,
+           Code 307 - Telah berpindah sementara,
+           Code 400 - Permintaan Salah,
+           Code 401 - Tidak dibenarkan,
+           Code 402 - Bayaran diperlukan,
+           Code 403 - Capaian Disekat,
+           Code 404 - Tidak Dijumpai,
+           Code 405 - Method Tidak Dibenarkan,
+           Code 406 - Tidak Boleh Diterima,
+           Code 407 - Pengesahan Proxy Diperlukan,
+           Code 408 - Masa Permintaan Tamat,
+           Code 409 - Konflik,
+           Code 410 - Hilang,
+           Code 411 - Panjang Diperlukan,
+           Code 412 - Keadaan Awal Gagal,
+           Code 413 - Permintaan Entiti Terlalu Besar,
+           Code 414 - Permintaan URI Terlalu Panjang,
+           Code 415 - Jenis Media Tidak Disokong,
+           Code 416 - Julat Permintaan Tidak Dibenarkan,
+           Code 417 - Anggapan Gagal,
+           Code 500 - Ralat Dalaman Bagi Pelayan,
+           Code 501 - Tidak Diimplemen,
+           Code 502 - Gateway Gagal,
+           Code 503 - Perkhidmatan Tiada,
+           Code 504 - Masa Tamat Bagi Gateway,
+           Code 505 - Versi HTTP Tidak Disokong,
+
+msg_title   = Statistik Penggunaan bagi
+msg_h_other = Lain-lain
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Tidak Diketahui,
+	com,	Komersil US,
+	edu,	Pendidikan US,
+	gov,	Kerajaan US,
+	int,	Antarabangsa (int),
+	mil,	Ketenteraan US,
+	net,	Rangkaian,
+	org,	Organisasi Tidak Komersil,
+ 	arpa,	Gaya Lama Arpanet (arpa),
+ 	nato,	Nato field (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	United Arab Emirates,
+	af,	Afghanistan,
+	ag,	Antigua and Barbuda,
+	ai,	Anguilla,
+	al,	Albania,
+	am,	Armenia,
+	an,	Netherlands Antilles,
+	ao,	Angola,
+	aq,	Antarctica,
+	ar,	Argentina,
+	as,	American Samoa,
+	at,	Austria,
+	au,	Australia,
+	aw,	Aruba,
+	az,	Azerbaijan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnia and Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgium,
+	bf,	Burkina Faso,
+	bg,	Bulgaria,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolivia,
+	br,	Brazil,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Bouvet Island,
+	bw,	Botswana,
+	by,	Belarus,
+	bz,	Belize,
+	ca,	Canada,
+	cc,	Pulau Cocos (Keeling),
+        cd,       Congo,
+	cf,	Republik Tengah Afrika,
+	cg,	Congo,
+	ch,	Switzerland,
+	ci,	Cote D'Ivoire (Ivory Coast),
+	ck,	Cook Islands,
+	cl,	Chile,
+	cm,	Cameroon,
+	cn,	China,
+	co,	Colombia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Cuba,
+	cv,	Cape Verde,
+	cx,	Christmas Island,
+	cy,	Cyprus,
+	cz,	Czech Republic,
+	de,	Germany,
+	dj,	Djibouti,
+	dk,	Denmark,
+	dm,	Dominica,
+	do,	Dominican Republic,
+	dz,	Algeria,
+	ec,	Ecuador,
+	ee,	Estonia,
+	eg,	Egypt,
+	eh,	Western Sahara,
+	er,	Eritrea,
+	es,	Spain,
+	et,	Ethiopia,
+        eu,       European Union,
+	fi,	Finland,
+	fj,	Fiji,
+	fk,	Falkland Islands (Malvinas),
+	fm,	Micronesia,
+	fo,	Faroe Islands,
+	fr,	France,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Georgia,
+	gf,	French Guiana,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Greenland,
+	gm,	Gambia,
+	gn,	Guinea,
+	gp,	Guadeloupe,
+	gq,	Equatorial Guinea,
+	gr,	Greece,
+	gs,	S. Georgia and S. Sandwich Isls.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Heard and McDonald Islands,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Hungary,
+	id,	Indonesia,
+	ie,	Ireland,
+	il,	Israel,
+        im,       Isle of Man,
+	in,	India,
+	io,	British Indian Ocean Territory,
+	iq,	Iraq,
+	ir,	Iran,
+	is,	Iceland,
+	it,	Italy,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Jordan,
+	jp,	Japan,
+	ke,	Kenya,
+	kg,	Kyrgyzstan,
+	kh,	Cambodia,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts and Nevis,
+	kp,	Korea (North),
+	kr,	Korea (South),
+	kw,	Kuwait,
+	ky,	Cayman Islands,
+	kz,	Kazakhstan,
+	la,	Laos,
+	lb,	Lebanon,
+	lc,	Saint Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Lithuania,
+	lu,	Luxembourg,
+	lv,	Latvia,
+	ly,	Libya,
+	ma,	Morocco,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar,
+	mh,	Marshall Islands,
+	mk,	Macedonia,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolia,
+	mo,    Macao,
+	mp,	Northern Mariana Islands,
+	mq,	Martinique,
+	mr,	Mauritania,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldives,
+	mw,	Malawi,
+	mx,	Mexico,
+	my,	Malaysia,
+	mz,	Mozambique,
+	na,	Namibia,
+	nc,	New Caledonia,
+	ne,	Niger,
+	nf,	Norfolk Island,
+	ng,	Nigeria,
+	ni,	Nicaragua,
+	nl,	Netherlands,
+	no,	Norway,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Oman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	French Polynesia,
+	pg,	Papua New Guinea,
+	ph,	Philippines,
+	pk,	Pakistan,
+	pl,	Poland,
+	pm,	St. Pierre and Miquelon,
+	pn,	Pitcairn,
+	pr,	Puerto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portugal,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Romania,
+	rs,	Serbia,
+	ru,	Russian Federation,
+	rw,	Rwanda,
+	sa,	Saudi Arabia,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Sudan,
+	se,	Sweden,
+	sg,	Singapore,
+	sh,	St. Helena,
+	si,	Slovenia,
+	sj,	Svalbard and Jan Mayen Islands,
+	sk,	Slovak Republic,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somalia,
+	sr,	Suriname,
+	st,	Sao Tome and Principe,
+	su,	USSR (former),
+	sv,	El Salvador,
+	sy,	Syria,
+	sz,	Swaziland,
+	tc,	Turks and Caicos Islands,
+	td,	Chad,
+	tf,	French Southern Territories,
+	tg,	Togo,
+	th,	Thailand,
+	tj,	Tajikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisia,
+	to,	Tonga,
+	tp,	East Timor,
+	tr,	Turkey,
+	tt,	Trinidad and Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzania,
+	ua,	Ukraine,
+	ug,	Uganda,
+	uk,	United Kingdom,
+	um,	US Minor Outlying Islands,
+	us,	United States,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatican City State (Holy See),
+	vc,	Saint Vincent and the Grenadines,
+	ve,	Venezuela,
+	vg,	Virgin Islands (British),
+	vi,	Virgin Islands (U.S.),
+	vn,	Viet Nam,
+	vu,	Vanuatu,
+	wf,	Wallis and Futuna Islands,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Yugoslavia,
+	za,	South Africa,
+	zm,	Zambia,
+	zw,	Zimbabwe

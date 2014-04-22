@@ -1,0 +1,80 @@
+/*
+    webalizer - a web server log analysis program
+
+    Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)
+
+    See COPYING and Copyright files for additional licensing and copyright information
+
+    vnode.h
+*/
+#ifndef __VNODE_H
+#define __VNODE_H
+
+#include "keynode.h"
+#include "datanode.h"
+#include "linklist.h"
+#include "types.h"
+
+struct unode_t;
+
+// -----------------------------------------------------------------------
+//
+// vnode_t
+//
+// -----------------------------------------------------------------------
+// 1. A visit node shares the node ID with the host node that owns it. 
+//
+// 2. set_lasturl is the only method that can change the reference count 
+// of the last URL. Other methods (e.g. copy constructor, reset, destructor)
+// simply manipulate object data without affecting the reference count. 
+//
+// For example, if v1 refers to a URL with vstref equal 3 and an assignment 
+// v2 = v1 is made, the reference count will remain 3 when v1 is destroyed.
+//
+// 3. Some hits in a visit may be ignored (e.g. 302 status code). If such 
+// a hit was marked as a start of a new visit, it will not be counted as 
+// an entry URL. entry_url is used to track whether an entry URL for this 
+// host has been counted or not.
+//
+struct vnode_t : public list_node_t<vnode_t>, public keynode_t<u_long>, public datanode_t<vnode_t> {
+      bool     entry_url: 1;        // entry URL set?
+      bool     robot    : 1;        // robot?
+      bool     converted: 1;        // requested target URL?
+
+      u_long   start;               // first hit timestamp
+      u_long   end;                 // last hit timestamp
+
+      u_long   hits;                // current visit hits,
+      u_long   files;               // files,
+      u_long   pages;               // pages
+
+      u_long   hostref;             // host references
+
+      unode_t  *lasturl;            // last requested URL
+
+      double   xfer;                // visit transfer amount
+
+      public:
+         typedef void (*s_unpack_cb_t)(vnode_t& vnode, u_long urlid, void *arg);
+
+      public:
+         vnode_t(u_long nodeid = 0);
+         vnode_t(const vnode_t& vnode);
+
+         ~vnode_t(void);
+
+         void reset(u_long nodeid = 0);
+
+         void set_lasturl(unode_t *unode);
+
+         //
+         // serialization
+         //
+         u_int s_data_size(void) const;
+         u_int s_pack_data(void *buffer, u_int bufsize) const;
+         u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
+
+         static u_int s_data_size(const void *buffer);
+};
+
+#endif // __VNODE_H

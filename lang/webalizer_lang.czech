@@ -1,0 +1,673 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.czech
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Czech.
+#   15-May-1998 by Bradford L. Barrett (brad@mrunix.net)
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   15-Oct-1998 Translation by Jiri T. Pelech (pes@inway.cz)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   07-Jun-2000 translation added words (Jindrich.Fucik@sh.cvut.cz)
+#   28-Mar-2002 Fixes/corrections by Pavel Kolesnikov (k@les.cz)
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Czech
+language_code = cs
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = zaznamu
+msg_addresses=adres
+msg_ignored = ignorovano
+msg_bad     = chybnych
+msg_in      = za
+msg_seconds = vterin
+
+#/* progress and setup error messages */
+msg_log_err = Chyba: Nemohu otevrit log soubor
+msg_log_use = Pouzivam log soubor
+msg_dir_err = Chyba: Nemohu prejit do adresare
+msg_dir_use = Vytvarim vystup v
+msg_cur_dir = aktualnim adresari
+msg_hostname= Jmeno pocitace pro sestavy je
+msg_ign_hist= Ignoruji predchozi historii...
+msg_no_hist = Nemohu najit soubor historie...
+msg_get_hist= Ctu soubor historie...
+msg_put_hist= Ukladam soubor historie...
+msg_hist_err= Chyba: Nemohu zapsat soubor historie
+msg_bad_hist= Chyba: Ignoruji chybny zaznam v historii
+msg_bad_conf= Chyba: Nemohu otevrit konfiguracni soubor
+msg_bad_key = Pozor: Neplatne klicove slovo
+msg_bad_date= Chyba: Preskakuji zaznam (spatne datum)
+msg_ign_nscp= Preskakuji hlavickovy zaznam z Netscape
+msg_bad_rec = Preskakuji spatny zaznam
+msg_no_vrec = Nenalezeny platne zaznamy!
+msg_gen_rpt = Vytvarim sestavu pro
+msg_gen_sum = Vytvarim sumarni sestavu
+msg_get_data= Ctu udaje z minuleho zpracovani...
+msg_put_data= Ukladam udaje aktualniho zpracovani...
+msg_no_data = Nemohu najit udaje z minuleho zpracovani...
+#/*char *msg_bad_data= "Neplatny datovy zaznam"; */
+msg_bad_data= Chyba: Nemohu obnovit data aktualniho zpracovani
+msg_data_err= Chyba: Nemohu ulozit udaje aktualniho zpracovani
+msg_dup_data= Pozor: Nalezeny pravdepodobne duplicitni udaje
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Nejsou specifikovany zadne cache soubory, koncim...
+msg_dns_nodb= Chyba: Namohu odevrit soubory DNS cache
+msg_dns_nolk= Chyba: Nemohu zamknout soubory DNS cache
+msg_dns_usec= Pouzivam soubory DNS cache
+msg_dns_rslv= DNS Kontrola
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Nemohu alokovat dost pameti, Nej mista jsou nefunkcni!
+msg_nomem_tr= Nemohu alokovat dost pameti, Nej odkazovace jsou nefunkcni!
+msg_nomem_tu= Nemohu alokovat dost pameti, Nej URL jsou nefunkcni!
+msg_nomem_tc= Nemohu alokovat dost pameti, Nej zeme jsou nefunkcni!
+msg_nomem_ta= Nemohu alokovat dost pameti, Nej prohlizece jsou nefunkcni!
+msg_nomem_tsr=Nemohu alokovat dost pameti, Nej hledane retezce jsou nefunkcni!
+msg_nomem_ti= Nemohu alokovat dost pameti, Nej uzivatele jsou nefunkcni!
+msg_nomem_dh= Chyba doplneni bloku pocitace (denni), preskakuji
+msg_nomem_mh= Chyba doplneni bloku pocitace (mesicni), preskakuji
+msg_nomem_u = Chyba doplneni bloku URL, preskakuji
+msg_nomem_a = Chyba doplneni bloku prohlizece, preskakuji
+msg_nomem_r = Chyba doplneni bloku odkazovace, preskakuji
+msg_nomem_sc= Chyba doplneni hledanych retezcu, preskakuji
+msg_nomem_i = Chyba doplneni uzivatelu, preskakuji
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Chyba: Preskakuji prilis dlouhy zaznam v logu
+msg_big_host= Pozor: Orezavam prilis dlouhe jmeno pocitace
+msg_big_date= Pozor: Orezavam prilis dlouhe pole datumu
+msg_big_req = Pozor: Orezavam prilis dlouhe pole zadosti
+msg_big_ref = Pozor: Orezavam prilis dlouhe pole odkazovace
+msg_big_user= Pozor: Orezavam prilis dlouhe jmeno uzivatele
+msg_big_one = Pozor: Retezec prekrocil velikost ukladaciho mista
+
+#/* misc errors */
+msg_no_open = Chyba: Nemohu otevrit soubor
+
+#/* Help display... */
+h_usage1 = Pouzivani
+h_usage2 = [volby] [log soubor [[ log soubor ]...] | report database]
+h_msg=   -h        = vypis tento help,
+         -v -V     = vypis informaci o verzi,
+         -d        = vypis dalsi ladici informace,
+         -F type   = typ logu.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f        = chyby v prekladu stranek,
+         -i        = ignoruj soubor historie,
+         -p        = zapamatuj stav (inkrementalne),
+         -q        = potlac informativni zpravy,
+         -Q        = potlac VSECHNY zpravy,
+         -Y        = potlac graf statu,
+         -G        = potlac hodinovy graf,
+         -H        = potlac hodinove statistiky,
+         -L        = potlac barevne kody v legendach grafu,
+         -l poc    = pouzij 'num' radek v podkladu grafu,
+         -m poc    = cas pro navstevu (seconds),
+         -T        = vypis casove informace,
+         -c file   = pouzij konfig. soubor 'file',
+         -n name   = pouzij jmeno pocitace,
+         -o adr    = vystupni adresar,
+         -t name   = nazev sestavy 'name',
+         -a name   = skryj prohlizec 'name',
+         -r name   = skryj odkazovac 'name',
+         -s name   = skryj misto 'name',
+         -u name   = skryj URL 'name',
+         -I name   = nazev Index(u) 'name',
+         -A poc    = Zobraz 'poc' Nej prohlizecu,
+         -C poc    = Zobraz 'poc' Nej zemi,
+         -R poc    = Zobraz 'poc' Nej odkazovacu,
+         -S poc    = Zobraz 'poc' Nej mist,
+         -U poc    = Zobraz 'poc' Nej URL,
+         -e poc    = Zobraz 'poc' vstupnich stranek,
+         -E poc    = Zobraz 'poc' odchozich stranek,
+         -g poc    = Seskup domeny do 'poc' urovni,
+         -X        = Skryt jednotlive site,
+         -D name   = Pouzi DNS Cache 'name',
+         -N poc    = Pocet DNS procesu (0=zakazat),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Období statistiky
+msg_hhdr_gt = Generováno
+
+#/* main index strings */
+msg_main_us = Statistiky přístupů pro
+msg_main_per= Posledních 12 měsíců
+msg_main_sum= Měsíční přehled
+msg_main_da = Denní průměr
+msg_main_mt = Měsíční součty
+
+#/* month HTML page strings */
+msg_hmth_du = Denní využití za
+msg_hmth_hu = Hodinové využití za
+
+#/* table header strings */
+msg_h_by    = podle
+msg_h_avg   = Prům
+msg_h_max   = Max
+msg_h_total = Celkem
+msg_h_totals= Celkem
+msg_h_day   = Den
+msg_h_mth   = Měsíc
+msg_h_hour  = Hodina
+msg_h_hits  = Přístupů
+msg_h_pages = Stránek
+msg_h_visits= Návštěv
+msg_h_files = Souborů
+msg_h_hosts = Míst
+msg_h_xfer  = KBytů
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Počítač
+msg_h_url   = URL
+msg_h_agent = Prohlížeč
+msg_h_ref   = Odkazovač
+msg_h_ctry  = Země
+msg_h_search= Hledání
+msg_h_uname = Uživatel
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Denní statistiky
+msg_hlnk_hs = Hodinové statistiky
+msg_hlnk_u  = URL
+msg_hlnk_s  = Místa
+msg_hlnk_a  = Prohlížeče
+msg_hlnk_c  = Země
+msg_hlnk_r  = Odkazovače
+msg_hlnk_en = Vstupy
+msg_hlnk_ex = Výstupy
+msg_hlnk_sr = Hledání
+msg_hlnk_i  = Uživatelé
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Měsíční statistiky za
+msg_mtot_th = Celkem návštěv
+msg_mtot_tf = Celkem souborů
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Celkem KBytů
+msg_mtot_us = Celkem jedinečných míst
+msg_mtot_ur = Celkem jedinečných odkazovačů
+msg_mtot_ua = Celkem jedinečných Prohlížečů
+msg_mtot_uu = Celkem jedinečných URL
+msg_mtot_ui = Celkem jedinečných uživatelů
+msg_mtot_mhd= Objektů za den
+msg_mtot_mhh= Objektů za hodinu
+msg_mtot_mfd= Souborů za den
+msg_mtot_mpd= Stránek za den
+msg_mtot_mvd= Návštěv za den
+msg_mtot_mkd= KBytú za den
+msg_mtot_rc = Návštěvy podle kódu odpovědi
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Denní statistiky za
+
+#/* hourly total table */
+msg_htot_hs = Hodinové statistiky za
+
+#/* country pie chart */
+msg_ctry_use= Využití podle země
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Nej
+msg_top_of  = z
+msg_top_s   = míst celkem
+msg_top_u   = URL celkem
+msg_top_r   = odkazovačů celkem
+msg_top_a   = prohlížečů celkem
+msg_top_c   = zemí celkem
+msg_top_en  = vstupních stránek celkem
+msg_top_ex  = výstupních stránek celkem
+msg_top_sr  = hledaných řetězců celkem
+msg_top_i   = uživatelů celkem
+msg_v_hosts = zobrazit všechny sítě
+msg_v_urls  = zobrazit všechny URL
+msg_v_refs  = zobrazit všechny referery
+msg_v_agents= zobrazit všechny uživatelské prohlížeče
+msg_v_search= zobrazit všechny hledané stránky
+msg_v_users = zobrazit všechna uživatelská jména
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Led, Úno, Bře,
+                    Dub, Kvě, Čer,
+                    Čvc, Srp, Zář,
+                    Říj, Lis, Pro
+
+#/* long month names - can be any length */
+l_month=  leden,   únor,   březen,   duben,
+                    květen,  červen, červenec, srpen,
+                    září,    říjen,  listopad, prosinec
+
+#/* response code descriptions... order IS important!      */
+response = Nedefinovaný kód odpovědi,
+           Kód 100 - Pokračovat,
+           Kód 101 - Přepínání protokolů,
+           Kód 200 - OK,
+           Kód 201 - Vytvořeno,
+           Kód 202 - Přijato,
+           Kód 203 - Neautoritativní informace,
+           Kód 204 - Žádný obsah,
+           Kód 205 - Obnovit obsah,
+           Kód 206 - Částečný obsah,
+           Kód 300 - Vícenásobné volby,
+           Kód 301 - Přesunuto trvale,
+           Kód 302 - Přítomno,
+           Kód 303 - Viz další,
+           Kód 304 - Nezměněno,
+           Kód 305 - Použij proxy,
+           Kód 307 - Přesunuto dočasně,
+           Kód 400 - Špatný požadavek,
+           Kód 401 - Neautorizován,
+           Kód 402 - Vyžadována platba,
+           Kód 403 - Zakázáno,
+           Kód 404 - Nenalezeno,
+           Kód 405 - Nepovolená Metoda,
+           Kód 406 - Nepřípustné,
+           Kód 407 - Vyžadována autentikace proxy,
+           Kód 408 - Překročen časový limit,
+           Kód 409 - Konflikt,
+           Kód 410 - Zrušeno,
+           Kód 411 - Žádost o délku,
+           Kód 412 - Podmínka nesplněna,
+           Kód 413 - Požadavek je příliš velký,
+           Kód 414 - URI je příliš dlouhé,
+           Kód 415 - Nepodporovaný typ média,
+           Kód 416 - Požadovaný rozsah neodpovídá,
+           Kód 417 - Očekávání selhalo,
+           Kód 500 - Intenrní chyba serveru,
+           Kód 501 - Nezavedeno,
+           Kód 502 - Špatná brána,
+           Kód 503 - Služba nedostupná,
+           Kód 504 - Brána neodpověděla,
+           Kód 505 - Nepodporovaná verze HTTP,
+
+msg_title   = Statistiky přístupů pro
+msg_h_other = Jiné
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Nezjištěná/neznámá,
+	com,	US komerční,
+	edu,	US akademická,
+	gov,	US vládní,
+	int,	Mezinárodní (int),
+	mil,	US vojenská,
+	net,	Síť,
+	org,	Nezisková organizace,
+ 	arpa,	Původní Arpanet (arpa),
+ 	nato,	NATO (nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andora,
+	ae,	Spojené arabské emiráty,
+	af,	Afghánistán,
+	ag,	Antigua a Barbuda,
+	ai,	Anguilla,
+	al,	Albánie,
+	am,	Arménie,
+	an,	Nizozemské Antily,
+	ao,	Angola,
+	aq,	Antarktida,
+	ar,	Argentina,
+	as,	Americká Samoa,
+	at,	Rakousko,
+	au,	Austrálie,
+	aw,	Aruba,
+	az,	Azerbajdžán,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosna a Hercegovina,
+	bb,	Barbados,
+	bd,	Bangladéš,
+	be,	Belgie,
+	bf,	Burkina Faso,
+	bg,	Bulharsko,
+	bh,	Bahrajn,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Brunei Darussalam,
+	bo,	Bolívie,
+	br,	Brazílie,
+	bs,	Bahamy,
+	bt,	Bhůtán,
+	bv,	Bouvet Island,
+	bw,	Botswana,
+	by,	Bělorusko,
+	bz,	Belize,
+	ca,	Kanada,
+	cc,	Kokosové (Keelingovy) ostrovy,
+        cd,       Congo,
+	cf,	Středoafrická republika,
+	cg,	Kongo,
+	ch,	Švýcarsko,
+	ci,	Pobřeží slonoviny,
+	ck,	Cookovy ostrovy,
+	cl,	Chile,
+	cm,	Kamerun,
+	cn,	Cina,
+	co,	Kolumbie,
+	cr,	Kostarika,
+        cs,       Serbia and Montenegro,
+	cu,	Kuba,
+	cv,	Cape Verde,
+	cx,	Vánoční ostrovy,
+	cy,	Kypr,
+	cz,	Česká republika,
+	de,	Německo,
+	dj,	Džibuti,
+	dk,	Dánsko,
+	dm,	Dominica,
+	do,	Dominikánská republika,
+	dz,	Alžírsko,
+	ec,	Ekvádor,
+	ee,	Estonsko,
+	eg,	Egypt,
+	eh,	Západní Sahara,
+	er,	Eritrea,
+	es,	Španělsko,
+	et,	Etiopie,
+        eu,       European Union,
+	fi,	Finsko,
+	fj,	Fidži,
+	fk,	Falklandské ostrovy (Malvíny),
+	fm,	Mikronézie,
+	fo,	Faerské ostrovy,
+	fr,	Francie,
+	ga,	Gabun,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Gruzie,
+	gf,	Francouzská Guajana,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibraltar,
+	gl,	Grónsko,
+	gm,	Gambie,
+	gn,	Guinea,
+	gp,	Guadeloupe,
+	gq,	Rovníková Guinea,
+	gr,	Řecko,
+	gs,	Sv. Georgia a Sv. Sandwich ostr.,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hongkong,
+	hm,	Heardovy a McDonaldovy ostrovy,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Maďarsko,
+	id,	Indonésie,
+	ie,	Irsko,
+	il,	Izrael,
+        im,       Isle of Man,
+	in,	Indie,
+	io,	British Indian Ocean Territory,
+	iq,	Irák,
+	ir,	Irán,
+	is,	Island,
+	it,	Itálie,
+        je,       Jersey,
+	jm,	Jamajka,
+	jo,	Jordánsko,
+	jp,	Japonsko,
+	ke,	Keňa,
+	kg,	Kyrgyzstan,
+	kh,	Kambodža,
+	ki,	Kiribati,
+	km,	Komory,
+	kn,	Svatý Kitts a Nevis,
+	kp,	Korea (Severní),
+	kr,	Korea (Jižní),
+	kw,	Kuvajt,
+	ky,	Kajmanské ostrovy,
+	kz,	Kazachstan,
+	la,	Laos,
+	lb,	Libanon,
+	lc,	Santa Lucia,
+	li,	Lichtenštejnsko,
+	lk,	Srí Lanka,
+	lr,	Libérie,
+	ls,	Lesotho,
+	lt,	Litva,
+	lu,	Lucembursko,
+	lv,	Lotyšsko,
+	ly,	Libie,
+	ma,	Maroko,
+	mc,	Monako,
+	md,	Moldávie,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagaskar,
+	mh,	Marshallovy ostrovy,
+	mk,	Makedonie,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolsko,
+	mo,    Macao,
+	mp,	Northern Mariana Islands,
+	mq,	Martinik,
+	mr,	Mauretánie,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauricius,
+	mv,	Maledivy,
+	mw,	Malawi,
+	mx,	Mexiko,
+	my,	Malajsie,
+	mz,	Mozambik,
+	na,	Namíbie,
+	nc,	Nová Kaledonie,
+	ne,	Niger,
+	nf,	Norfolk Island,
+	ng,	Nigerie,
+	ni,	Nikaragua,
+	nl,	Nizozemsko,
+	no,	Norsko,
+	np,	Nepál,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Omán,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Francouzská Polynésie,
+	pg,	Papua Nová Guinea,
+	ph,	Filipíny,
+	pk,	Pakistán,
+	pl,	Polsko,
+	pm,	St. Pierre and Miquelon,
+	pn,	Pitcairn,
+	pr,	Portoriko,
+        ps,       Palestinian Territories,
+	pt,	Portugalsko,
+	pw,	Palau,
+	py,	Paraguaj,
+	qa,	Katar,
+	re,	Reunion,
+	ro,	Rumunsko,
+	rs,	Serbia,
+	ru,	Ruská federace,
+	rw,	Rwanda,
+	sa,	Saudská Arábie,
+	sb,	Šalamounovy ostrovy,
+	sc,	Seychely,
+	sd,	Sůdán,
+	se,	Švédsko,
+	sg,	Singapur,
+	sh,	Sv. Helena,
+	si,	Slovinsko,
+	sj,	Svalbard and Jan Mayen Islands,
+	sk,	Slovenská republika,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somálsko,
+	sr,	Surinam,
+	st,	Sao Tome and Principe,
+	su,	SSSR,
+	sv,	Salvádor,
+	sy,	Sýrie,
+	sz,	Svazijsko,
+	tc,	Turks and Caicos Islands,
+	td,	Čad,
+	tf,	Francouzská jižní teritoria,
+	tg,	Togo,
+	th,	Thajsko,
+	tj,	Tadžikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisko,
+	to,	Tongo,
+	tp,	Východní Timur,
+	tr,	Turecko,
+	tt,	Trinidad a Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzánie,
+	ua,	Ukrajina,
+	ug,	Uganda,
+	uk,	Velká Británie (UK),
+	um,	US Minor Outlying Islands,
+	us,	USA (US),
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Vatikán,
+	vc,	Saint Vincent and the Grenadines,
+	ve,	Venezuela,
+	vg,	Panenské ostrovy (Britské),
+	vi,	Panenske ostrovy (US),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Wallis and Futuna Islands,
+	ws,	Samoa,
+	ye,	Jemen,
+	yt,	Mayotte,
+	yu,	Jugoslávie,
+	za,	Jihoafrická republika,
+	zm,	Zambie,
+	zw,	Zimbabwe

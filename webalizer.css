@@ -1,0 +1,165 @@
+/* -----------------------------------------------------------------------
+   webalizer - a web server log analysis program
+
+   Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)
+
+   See COPYING and Copyright files for additional licensing and copyright information 
+*/
+
+/*
+ * Basic HTML Styles
+ */
+body {background-color: white; color: black; font: 10pt Arial, sans-serif; margin: 0; padding: 0;}
+table {font: 9pt Arial, sans-serif;}
+h1 {font-size: 14pt; margin: 0.5em 0;}
+a {color: blue;}
+a:visited {color: red;}
+img {margin: 0 auto; display: block;}
+
+/*
+ * Shared Classes
+ */
+pre.details_pre {font-size: 8pt; margin-left: 5px;}
+p.note_p {margin: auto 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
+span.help_span {cursor: help;}
+
+div#helpbox {display: none; position: absolute; width: 400px; right: 0; top: 0; padding: 3px 5px; border: 1px solid black; background-color: #FFFFE0; font: 10pt Arial, sans-serif;}
+div#helpbox div.title {color: #AFEEEE; border-bottom: 1px solid #CCC; margin: -3px -5px .3em; background-color: #4682B4; padding: 2px 3px 3px 5px; font: bold 9pt Verdana, sans-serif;}
+div#helpbox div.title div.x {float: right; border-style: none; cursor: pointer; padding: 0; margin: 0; font: normal 16px/14px Arial, sans-serif;}
+div#helpbox p {margin: .3em 0;}
+div#helpbox a, div#helpbox a:visited {color: black;}
+div#helpbox samp {color: maroon;}
+
+/*
+ *
+ */
+td.spammer, span.spammer {color: red;}
+td.robot, span.robot {color: green;}
+td.converted, span.converted {color: inherit;}
+td.target, span.target {color: inherit;}
+
+/*
+ * Graph Holders
+ */
+div.graph_holder {margin: 1em auto; padding: 0; border: 1px solid #333333; background-color: #E3E3E3;}
+div#monthly_summary_graph {}
+div#daily_usage_graph, div#hourly_usage_graph, div#country_usage_graph {width: 512px;}
+
+/*
+ * Colorized Header Cells (Hits, Pages, Visits, etc)
+ */
+th.counter_th, .counter {background-color: #C0C0C0;}
+th.hits_th, .hits		   {background-color: #008040;}
+th.files_th, .files		{background-color: #0080FF;}
+th.pages_th, .pages		{background-color: #00E0FF;}
+th.visits_th, .visits	{background-color: #FFFF00;}
+th.duration_th, .duration {background-color: #FFD700;}
+th.hosts_th, .hosts		{background-color: #FF8000;}
+th.kbytes_th, .xfer	   {background-color: #FF2F2F;} 
+th.time_th, .time		   {background-color: #66A1FF;}
+th.errors_th, .errors	{background-color: #FFD700;}
+th.count_th, .count		{background-color: #FFD700;}
+th.item_th, .item		   {background-color: #00E0FF;}
+th.method_th, .method	{background-color: #8FBC8F;}
+th.dlname_th, .dlname	{background-color: #8FBC8F;}
+th.country_th, .country	{background-color: #B0E0E6;}
+
+tr.weekend_tr, .weekend  {background-color: #D2EDF1;}
+
+/* 
+ * Highlight the row under the mouse pointer (IE doesn't support this) 
+ */
+tbody.summary_data_tbody tr:hover th, 
+tbody.summary_data_tbody tr:hover td, 
+tbody.totals_data_tbody tr:hover th, 
+tbody.totals_data_tbody tr:hover td,
+tbody.stats_data_tbody tr:hover td, 
+tbody.stats_data_tbody tr:hover th {background-color: #FFFFD4;}
+tbody tr.group_shade_tr:hover td,
+tbody tr.group_shade_tr:hover th {background-color: #ADD8E6;}
+
+/*
+ * Search Type Span
+ */
+span.search_type {color: gray;}
+ 
+/*
+ * Page Header & Footer Classes
+ */
+div.page_header_div {background-color: #E5E5E5; border-bottom: 1px solid #CCCCCC; margin: 0; padding: .5em;}
+
+div.usage_summary_div {font-size: 8pt; margin: 0;}
+div.usage_summary_div em {font-size: 10pt; font-weight: bold; font-style: normal;}
+
+div.page_footer_div {border-top: 1px solid #CCCCCC; margin-top: 1em; padding: .5em 1em;}
+div.page_footer_div div {float: right;}
+div.page_footer_div a, 
+div.page_footer_div a:visited {color: black;}
+div.page_footer_div a:hover {color: red;}
+
+/*
+ * Page Links
+ */
+table.page_links_table {font-size: 9pt; margin: 1em auto 0; border-collapse: collapse; text-align: center; border-style: none;}
+table.page_links_table td {padding: 0; border: 1px solid #578EBE; background: #EEE url("page-links-bg.png") repeat-x;}
+table.page_links_table a {color: blue; text-decoration: none; border-style: none; display: block; padding: 1px 5px; margin: 0;}
+table.page_links_table a:visited {color: blue;}
+table.page_links_table a:hover {color: red; background: #FFF6BF url("page-links-hover-bg.png") repeat-x;}
+
+/*
+ * Report table base classes
+ */
+table.report_table {border-collapse: collapse; background-color: #FAFAFA; margin: 1em auto; border-spacing: 1px;}
+table.report_table thead {background-color: #CCC;}
+table.report_table th,
+table.report_table td {padding: 2px 4px; border: 1px solid #888;}
+table.report_table thead th {border-color: #333;}
+table.report_table tr.table_title_tr {text-align: center; font-size: 12pt; background-color: #DDD;}
+table.report_table tr.table_footer_tr {background-color: #DDD;}
+table.report_table tr.all_items_tr {background-color: #D8D9E6;}
+/* anchors are not links in XML reports, so style them to look like links */
+table.report_table tr.all_items_tr a {cursor: pointer;}
+table.report_table tr.all_items_tr a:hover {text-decoration: underline;}
+/* turn off highlighting for the max-items-displayed row */
+table.report_table tr.max_items_tr {background-color: #D8D9E6;}
+table.report_table tr.max_items_tr:hover th {background-color: inherit;}
+
+table.report_table th.small_font_th {font-size: 7pt;}
+table.report_table tr.group_shade_tr {background-color: #D8D9E6;}
+
+/*
+ * Monthly Summary Table
+ */
+table.monthly_summary_table {width: 600px;}
+table.monthly_summary_table tbody.summary_data_tbody {text-align: right;}
+table.monthly_summary_table tbody.summary_data_tbody th {text-align: left; font-weight: normal; white-space: nowrap;}
+table.monthly_summary_table tbody.summary_footer_tbody td {text-align: right; font-weight: bold;}
+table.monthly_summary_table tbody.summary_footer_tbody th {text-align: left;}
+
+/*
+ * Monthly Totals Table
+ */
+table.monthly_totals_table {width: 510px;}
+table.monthly_totals_table tbody.totals_data_tbody th {text-align: left; font-weight: normal;}
+table.monthly_totals_table tbody.totals_data_tbody td {text-align: right; font-weight: bold;}
+table.monthly_totals_table tbody.totals_header_tbody {background-color: #DDD;}
+table.monthly_totals_table tbody.totals_header_tbody th {text-align: left;}
+table.monthly_totals_table tbody.totals_header_tbody td {text-align: right; font-weight: bold;}
+table.monthly_totals_table col.totals_data_col {width: 65px;}
+
+/*
+ * Daily and Hourly Totals Tables
+ */
+table.totals_table {width: 510px;}
+table.totals_table tbody.totals_data_tbody td {text-align: right; font-weight: bold;}
+table.totals_table tbody.totals_data_tbody td.data_percent_td {font-size: 7pt; font-weight: normal;}
+
+/*
+ * Stats Table
+ */
+table.stats_table {width: 510px;}
+table.stats_table tbody.stats_data_tbody td {text-align: right; font-weight: bold;}
+table.stats_table tbody.stats_data_tbody td.data_percent_td {font-size: 7pt; font-weight: normal;}
+table.stats_table tbody.stats_data_tbody td.stats_data_item_td {font-weight: normal; text-align: left; white-space: nowrap;}
+table.stats_table tbody.stats_footer_tbody td {text-align: center;}
+table.stats_table tbody.all_items_tbody {display: none;}

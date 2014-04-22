@@ -1,0 +1,687 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.dutch
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Dutch.
+#   02-Jun-1998 Translated by J.Q. la Poutre (jlpoutre@inter.nl.net)
+#   02-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   03-Jun-1998 Translation Level 1.1 by J.Q. La Poutre
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   15-Jul-1999 Changes in translation by M. Mackenbach (marcom@websource.nl)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   02-May-2000 Translation level 2.0 by Richard Huveneers (richard@hacom.nl)
+#
+#   ### Nederlandstalige versie aangepast vanwege de snelle vertaling
+#   ### M. Mackenbach (marcom@websource.nl)
+#   ### versie 1.2/01
+#
+#   ### Nederlandse versie (1.00 - 2 juni 1998)
+#   ### J.Q. la Poutre' <jlpoutre@inter.nl.net> of <joe@arthouse.nl>
+#   ### versie 1.1/01 - 03 jun 1998
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Nederlands
+language_code = nl
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = records
+msg_addresses=adressen
+msg_ignored = genegeerd
+msg_bad     = fout
+msg_in      = in
+msg_seconds = seconden
+
+#/* progress and setup error messages */
+msg_log_err = Fout: kan het logbestand niet openen
+msg_log_use = Gebruik logbestand
+msg_dir_err = Fout: kan werk-directory niet veranderen naar
+msg_dir_use = Schrijf gegevens naar
+msg_cur_dir = werk-directory
+msg_hostname= De 'Hostname' voor het rapport is
+msg_ign_hist= Negeer oude history...
+msg_no_hist = History bestand niet gevonden...
+msg_get_hist= Lees history bestand...
+msg_put_hist= Bewaar history informatie...
+msg_hist_err= Fout: kan history bestand niet schrijven
+msg_bad_hist= Fout: ongeldig history record (wordt genegeerd)
+msg_bad_conf= Fout: kan configuratie-bestand niet openen
+msg_bad_key = Waarschuwing: ongeldig 'keyword'
+msg_bad_date= Fout: foute datum (record overgeslagen)
+msg_ign_nscp= Netscape header record (wordt genegeerd)
+msg_bad_rec = Foutief record (wordt genegeerd)
+msg_no_vrec = Geen geldige records gevonden!
+msg_gen_rpt = Genereer rapport voor
+msg_gen_sum = Genereer samenvattingsrapport
+msg_get_data= Lees gegevens van eerdere sessie...
+msg_put_data= Bewaar gegevens huidige sessie...
+msg_no_data = Gegevens eerdere sessie niet gevonden...
+#/*char *msg_bad_data= "Ongeldig record (gegevenstype)";*/
+msg_bad_data= Fout: kan sessie (gegevens) niet inlezen
+msg_data_err= Fout: kan sessie (gegevens) niet bewaren
+msg_dup_data= Waarschuwing: mogelijk dubbele gegevens gevonden
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Geen cache bestand opgegeven, programma wordt afgebroken...
+msg_dns_nodb= Fout: kan het DNS cache bestand niet openen
+msg_dns_nolk= Fout: kan het DNS cache bestand niet reserveren
+msg_dns_usec= Het DNS cache bestand wordt gebruikt
+msg_dns_rslv= DNS Aanvraag
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Onvoldoende geheugen beschikbaar, Top hosts overgeslagen!
+msg_nomem_tr= Onvoldoende geheugen beschikbaar, Top verwijzende pagina's overgeslagen!
+msg_nomem_tu= Onvoldoende geheugen beschikbaar, Top URL's overgeslagen!
+msg_nomem_tc= Onvoldoende geheugen beschikbaar, Top landen overgeslagen!
+msg_nomem_ta= Onvoldoende geheugen beschikbaar, Top browsers overgeslagen!
+msg_nomem_tsr=Onvoldoende geheugen beschikbaar, Top zoekopdrachten overgeslagen!
+msg_nomem_ti= Onvoldoende geheugen beschikbaar, Top gebruikersnamen overgeslagen!
+msg_nomem_dh= Fout bij toevoegen van host (dagrapport), overgeslagen!
+msg_nomem_mh= Fout bij toevoegen van host (maandrapport), overgeslagen!
+msg_nomem_u = Fout bij toevoegen van URL, overgeslagen!
+msg_nomem_a = Fout bij toevoegen van browser, overgeslagen!
+msg_nomem_r = Fout bij toevoegen van verwijzende pagina, overgeslagen!
+msg_nomem_sc= Fout bij toevoegen van tekst-node, overgeslagen!
+msg_nomem_i = Fout bij toevoegen van Gebruikersnaam, overgeslagen!
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Fout: te groot log-record (overgeslagen)
+msg_big_host= Waarschuwing: te lange hostnaam: ingekort
+msg_big_date= Waarschuwing: te lang datum veld: ingekort
+msg_big_req = Waarschuwing: te lang aanvraag veld: ingekort
+msg_big_ref = Waarschuwing: te lang veld voor verwijzende pagina: ingekort
+msg_big_user= Waarschuwing: te lang veld voor gebruikersnaam: ingekort
+msg_big_one = Waarschuwing: regel past niet in beschikbare geheugenruimte
+
+#/* misc errors */
+msg_no_open = Fout: kan bestand niet openen!
+
+#/* Help display... */
+h_usage1 = Gebruiksaanwijzing
+h_usage2 = [opties] [log-bestand [[ log-bestand ]...] | report database]
+h_msg=   -h         = Deze helptekst,
+         -v -V      = Toon versie-informatie,
+         -d         = Debug informatie,
+         -F type    = Log formaat type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -f         = Forceer chronologische volgorde,
+         -g         = Gebruik GMT (UTC) tijd,
+         -i         = Negeer 'history' bestand,
+         -p         = Bewaar status (incremental),
+         -q         = Geen informatieve info, wel foutmeldingen,
+         -Q         = Geen enkele info, ook geen foutmeldingen,
+         -Y         = Geen land-grafieken,
+         -G         = Geen uur-grafieken,
+         -H         = Geen uur-statistieken,
+         -L         = Geen legenda,
+         -l num     = Gebruik [num] achtergrondregels in grafiek,
+         -m num     = Bezoeker-onderbreking waarde (seconds),
+         -T         = Geef verwerkingstijd informatie,
+         -c bestand = Gebruik configuratie 'bestand',
+         -n naam    = Gebruik host 'naam',
+         -o dir     = Schrijf bestanden naar directory 'dir',
+         -t naam    = Rapporttitel 'naam',
+         -a naam    = Laat browser 'naam' weg,
+         -r naam    = Laat verwijzende pagina 'naam' weg,
+         -s naam    = Laat host 'naam' weg,
+         -u naam    = Laat URL 'naam' weg,
+         -x naam    = Gebruik bestands-extensie 'naam',
+         -P naam    = Paginatype-extensie 'naam',
+         -I naam    = Index alias 'naam',
+         -L naam    = Groepeer URL's op 'naam',
+         -A num     = Toon top 'num' browsers,
+         -C num     = Toon top 'num' landen,
+         -R num     = Toon top 'num' verwijzende pagina's,
+         -S num     = Toon top 'num' hosts,
+         -U num     = Toon top 'num' URL's,
+         -e num     = Toon top 'num' eerste pagina's van bezoekers,
+         -E num     = Toon top 'num' laatste pagina's van bezoekers,
+         -g num     = Groepeer Domeinen op 'num' niveaus,
+         -X         = Laat alle individuele hosts weg,
+         -D name    = Gebruik DNS Cache bestand 'name',
+         -N num     = Aantal DNS processen (0=uitschakelen),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Samenvatting periode
+msg_hhdr_gt = Gegenereerd op
+
+#/* main index strings */
+msg_main_us = Samenvatting -
+msg_main_per= afgelopen 12 maanden
+msg_main_sum= Samenvatting per maand
+msg_main_da = Dagelijks gemiddelde
+msg_main_mt = Totalen per maand
+
+#/* month HTML page strings */
+msg_hmth_du = Dagelijks bezoek -
+msg_hmth_hu = Bezoek per uur -
+
+#/* table header strings */
+msg_h_by    = gesorteerd op
+msg_h_avg   = Gem.
+msg_h_max   = Max.
+msg_h_total = Totaal
+msg_h_totals= Totalen
+msg_h_day   = Dag
+msg_h_mth   = Maand
+msg_h_hour  = Uur
+char *msg_h_hits  = "Hits"; /* "Aanvragen" is te lang en minder duidelijk */
+msg_h_pages = Pagina's
+msg_h_visits= Bezoeken
+msg_h_files = Bestanden
+msg_h_hosts = Hosts
+char *msg_h_xfer  = "kB"; /* afgekort i.v.m. onderschrift grafiek */
+msg_h_hname = Host(naam)
+msg_h_url   = URL
+msg_h_agent = Browser
+msg_h_ref   = Verwijzing
+msg_h_ctry  = Land
+msg_h_search= Zoekopdracht
+msg_h_uname = Gebruikersnaam
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Overzicht per dag
+msg_hlnk_hs = Overzicht per uur
+msg_hlnk_u  = URL's
+msg_hlnk_s  = Hosts
+msg_hlnk_a  = Browsers
+msg_hlnk_c  = Landen
+msg_hlnk_r  = Verwijzers
+msg_hlnk_en = Eerste
+msg_hlnk_ex = Laatste
+msg_hlnk_sr = Zoekopdrachten
+msg_hlnk_i  = Gebruikersnamen
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Maandoverzicht -
+msg_mtot_th = Totaal hits
+msg_mtot_tf = Totaal bestanden
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = Totaal kilobytes
+msg_mtot_us = Totaal verschillende hosts
+msg_mtot_ur = Totaal verschillende verwijzers
+msg_mtot_ua = Totaal verschillende browsers
+msg_mtot_uu = Totaal verschillende URL's
+msg_mtot_ui = Totaal verschillende gebruikersnamen
+msg_mtot_mhd= Hits per dag
+msg_mtot_mhh= Hits per uur
+msg_mtot_mfd= Bestanden per dag
+msg_mtot_mpd= Pagina's per dag
+msg_mtot_mvd= Bezoeken per dag
+msg_mtot_mkd= Kilobytes per dag
+msg_mtot_rc = Hits per 'Response Code'
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Overzicht per dag -
+
+#/* hourly total table */
+msg_htot_hs = Overzicht per uur -
+
+#/* country pie chart */
+msg_ctry_use= Overzicht per land -
+ 
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Top
+msg_top_of  = van
+msg_top_s   = hosts
+msg_top_u   = URL's
+msg_top_r   = verwijzende pagina's
+msg_top_a   = browsers
+msg_top_c   = landen
+msg_top_en  = eerste pagina's
+msg_top_ex  = laatste pagina's
+msg_top_sr  = zoekopdrachten
+msg_top_i   = gebruikersnamen
+msg_v_hosts = Toon alle hosts
+msg_v_urls  = Toon alle URL's
+msg_v_refs  = Toon alle verwijzende pagina's
+msg_v_agents= Toon alle browsers
+msg_v_search= Toon alle zoekopdrachten
+msg_v_users = Toon alle gebruikersnamen
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  jan, feb, mar,
+                    apr, mei, jun,
+                    jul, aug, sep,
+                    okt, nov, dec
+
+#/* long month names - can be any length */
+l_month=  januari,  februari, maart,   april,
+                    mei,      juni,     juli,    augustus,
+                    september,oktober,  november,december
+
+#/* response code descriptions... order IS important!      */
+#/* NIET vertaald omdat m.i. de Engelse benaming meer
+#   bekendheid heeft dan een mogelijk onduidelijke
+#   Nederlandse vertaling - Joe, 05 jun 1998 */
+response = Onbekende 'response code',
+           Code 100 - Continue,
+           Code 101 - Switching Protocols,
+           Code 200 - OK,
+           Code 201 - Created,
+           Code 202 - Accepted,
+           Code 203 - Non-Authoritative Information,
+           Code 204 - No Content,
+           Code 205 - Reset Content,
+           Code 206 - Partial Content,
+           Code 300 - Multiple Choices,
+           Code 301 - Moved Permanently,
+           Code 302 - Found,
+           Code 303 - See Other,
+           Code 304 - Not Modified,
+           Code 305 - Use Proxy,
+           Code 307 - Moved Temporarily,
+           Code 400 - Bad Request,
+           Code 401 - Unauthorized,
+           Code 402 - Payment Required,
+           Code 403 - Forbidden,
+           Code 404 - Not Found,
+           Code 405 - Method Not Allowed,
+           Code 406 - Not Acceptable,
+           Code 407 - Proxy Authentication Required,
+           Code 408 - Request Timeout,
+           Code 409 - Conflict,
+           Code 410 - Gone,
+           Code 411 - Length Required,
+           Code 412 - Precondition Failed,
+           Code 413 - Request Entity Too Large,
+           Code 414 - Request-URI Too Long,
+           Code 415 - Unsupported Media Type,
+           Code 416 - Requested Range Not Satisfiable,
+           Code 417 - Expectation Failed,
+           Code 500 - Internal Server Error,
+           Code 501 - Not Implemented,
+           Code 502 - Bad Gateway,
+           Code 503 - Service Unavailable,
+           Code 504 - Gateway Timeout,
+           Code 505 - HTTP Version Not Supported,
+
+msg_title   = Rapport voor website
+msg_h_other = Anders
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Numeriek IP/onbekend,
+	com,	Commercieel (.com),
+	edu,	Onderwijs/onderzoek (.edu),
+	gov,	Overheid (.gov),
+	int,	Internationaal (.int),
+	mil,	Militair (.mil),
+	net,	'Netwerk' (.net),
+	org,	Non-Profit organisatie (.org),
+ 	arpa,	"Arpanet (arpa, oude stijl)",
+ 	nato,	Nato (.nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra (.ad),
+	ae,	Ver. Arab. Emiraten (.ae),
+	af,	Afghanistan (.af),
+	ag,	Antigua en Barbuda (.ag),
+	ai,	Anguilla (.ai),
+	al,	Albanie (.al),
+	am,	Armenie (.am),
+	an,	Nederlandse Antillen (.an),
+	ao,	Angola (.ao),
+	aq,	Antarctica (.aq),
+	ar,	Argentinie (.ar),
+	as,	Amerikaans Samoa (.as),
+	at,	Oostenrijk (.at),
+	au,	Australie (.au),
+	aw,	Aruba (.aw),
+	az,	Azarbadzjan (.az),
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnie / Herzegovina (.ba),
+	bb,	Barbados (.bb),
+	bd,	Bangladesh (.bd),
+	be,	Belgie (.be),
+	bf,	Burkina Faso (.bf),
+	bg,	Bulgarije (.bg),
+	bh,	Bahrijn (.bh),
+	bi,	Burundi (.bi),
+	bj,	Benin (.bj),
+	bm,	Bermuda (.bm),
+	bn,	Brunei Darussalam (.bn),
+	bo,	Bolivie (.bo),
+	br,	Brazilie (.br),
+	bs,	Bahamas (.bs),
+	bt,	Bhutan (.bt),
+	bv,	Bouvet Eiland (.bv),
+	bw,	Botswana (.bw),
+	by,	Belarus (.by),
+	bz,	Belize(.bz),
+	ca,	Canada (.ca),
+	cc,	Cocos (Keeling) Eilanden (.cc),
+        cd,       Congo,
+	cf,	Central Afrikaanse Republiek (.cf),
+	cg,	Congo (.cg),
+	ch,	Zwitserland (.ch),
+	ci,	Cote D'Ivoire (Ivoorkust) (.ci),
+	ck,	Cook Eilanden (.ck),
+	cl,	Chili (.cl),
+	cm,	Kameroen (.cm),
+	cn,	China (.cn),
+	co,	Colombia (.co),
+	cr,	Costa Rica (.cr),
+        cs,       Serbia and Montenegro,
+	cu,	Cuba (.cu),
+	cv,	Kaapverdie (.cv),
+	cx,	Christmas Island (.cx),
+	cy,	Cyprus (.cy),
+	cz,	Tsjechische republiek (.cz),
+	de,	Duitsland (.de),
+	dj,	Djibouti (.dj),
+	dk,	Denemarken (.dk),
+	dm,	Dominica (.dm),
+	do,	Dominikaanse Republiek (.do),
+	dz,	Algarije (.dz),
+	ec,	Ecuador (.ec),
+	ee,	Estland (.ee),
+	eg,	Egypte (.eg),
+	eh,	Westelijke Sahara (.eh),
+	er,	Eritrea (.er),
+	es,	Spanje (.es),
+	et,	Ethiopie (.et),
+        eu,       European Union,
+	fi,	Finland (.fi),
+	fj,	Fiji (.fj),
+	fk,	"Falkland Eilanden (Malvinas, .fk)",
+	fm,	Micronesie (.fm),
+	fo,	Faroe Eilanden (.fo),
+	fr,	Frankrijk (.fr),
+	ga,	Gabon (.ga),
+        gb,       United Kingdom,
+	gd,	Grenada (.gd),
+	ge,	Georgie (.ge),
+	gf,	Frans Guiana (.gf),
+        gg,       Guernsey,
+	gh,	Ghana (.gh),
+	gi,	Gibraltar (.gi),
+	gl,	Groenland (.gl),
+	gm,	Gambia (.gm),
+	gn,	Guinea (.gn),
+	gp,	Guadeloupe (.gp),
+	gq,	Equatoriaal Guinea (.gq),
+	gr,	Griekenland (.gr),
+	gs,	S. Georgia en S. Sandwich Eil. (.gs),
+	gt,	Guatemala (.gt),
+	gu,	Guam (.gu),
+	gw,	Guinea-Bissau (.gw),
+	gy,	Guyana (.gy),
+	hk,	Hong Kong (.hk),
+	hm,	Heard en McDonald Eilanden (.hm),
+	hn,	Honduras (.hn),
+	hr,     Croatia,
+	ht,	Haiti (.ht),
+	hu,	Hongarije (.hu),
+	id,	Indonesie (.id),
+	ie,	Ierland (.ie),
+	il,	Israel (.il),
+        im,       Isle of Man,
+	in,	India (.in),
+	io,	British Indian Ocean Territory (.io),
+	iq,	Iraq (.iq),
+	ir,	Iran (.ir),
+	is,	IJsland (.is),
+	it,	Italie (.it),
+        je,       Jersey,
+	jm,	Jamaica (.jm),
+	jo,	Jordanie (.jo),
+	jp,	Japan (.jp),
+	ke,	Kenia (.ke),
+	kg,	Kyrgyzstan (.kg),
+	kh,	Cambodja (.kh),
+	ki,	Kiribati (.ki),
+	km,	Comoros (.km),
+	kn,	Saint Kitts en Nevis (.kn),
+	kp,	"Korea (Noord, .kp)",
+	kr,	"Korea (Zuid, .kr)",
+	kw,	Koeweit (.kw),
+	ky,	Kaaiman Eilanden (.ky),
+	kz,	Kazachstan (.kz),
+	la,	Laos (.la),
+	lb,	Libanon (.lb),
+	lc,	Sint Lucia (.lc),
+	li,	Liechtenstein (.li),
+	lk,	Sri Lanka (.lk),
+	lr,	Liberie (.lr),
+	ls,	Lesotho (.ls),
+	lt,	Litauwen (.lt),
+	lu,	Luxemburg (.lu),
+	lv,	Latvia (.lv),
+	ly,	Libie (.ly),
+	ma,	Marokko (.ma),
+	mc,	Monaco (.mc),
+	md,	Moldova (.md),
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar (.mg),
+	mh,	Marshall Eilanden (.mh),
+	mk,	Macedonie (.mk),
+	ml,	Mali (.ml),
+	mm,	Myanmar (.mm),
+	mn,	Mongolie (.mn),
+	mo,    Macao,
+	mp,	Noordelijke Mariana Eilanden (.mp),
+	mq,	Martinique (.mq),
+	mr,	Mauritanie (.mr),
+	ms,	Montserrat (.ms),
+	mt,	Malta (.mt),
+	mu,	Mauritius (.mu),
+	mv,	Maldiven (.mv),
+	mw,	Malawi (.mw),
+	mx,	Mexico (.mx),
+	my,	Maleisie (.my),
+	mz,	Mozambique (.mz),
+	na,	Namibie (.na),
+	nc,	New Caledonia (.nc),
+	ne,	Niger (.ne),
+	nf,	Norfolk Eiland (.nf),
+	ng,	Nigeria (.ng),
+	ni,	Nicaragua (.ni),
+	nl,	Nederland (.nl),
+	no,	Noorwegen (.no),
+	np,	Nepal (.np),
+	nr,	Nauru (.nr),
+	nu,	Niue (.nu),
+        nz,       New Zealand,
+	om,	Oman (.om),
+	pa,	Panama (.pa),
+	pe,	Peru (.pe),
+	pf,	Frans Polynesie (.pf),
+	pg,	Papua Nieuw Guinea (.pg),
+	ph,	Philippijnen (.ph),
+	pk,	Pakistan (.pk),
+	pl,	Polen (.pl),
+	pm,	St. Pierre en Miquelon (.pm),
+	pn,	Pitcairn (.pn),
+	pr,	Puerto Rico (.pr),
+        ps,       Palestinian Territories,
+	pt,	Portugal (.pt),
+	pw,	Palau (.pw),
+	py,	Paraguay (.py),
+	qa,	Qatar (.qa),
+	re,	Reunion (.re),
+	ro,	Romania (.ro),
+	rs,	Serbia,
+	ru,	Russische Federatie (.ru),
+	rw,	Rwanda (.rs),
+	sa,	Saudi Arabie (.sa),
+        sb,       Solomon Islands,
+	sc,	Seychellen (.sc),
+	sd,	Soedan (.sd),
+	se,	Zweden (.se),
+	sg,	Singapore (.sg),
+	sh,	St. Helena (.sh),
+	si,	Slovenie (.si),
+	sj,	Svalbard en Jan Mayen Eilanden (.sj),
+	sk,	Slovakije (.sk),
+	sl,	Sierra Leone (.sl),
+	sm,	San Marino (.sm),
+	sn,	Senegal (.sn),
+	so,	Somalie (.so),
+	sr,	Suriname (.sr),
+	st,	Sao Tome en Principe (.st),
+	su,	"USSR (voorheen, .su)",
+	sv,	El Salvador (.sv),
+	sy,	Syrie (.sy),
+	sz,	Swaziland (.sz),
+	tc,	Turkse- en Caicos Eilanden (.tc),
+	td,	Tsjaad (.td),
+	tf,	Zuidelijke Franse Terr. (.tf),
+	tg,	Togo (.tg),
+	th,	Thailand (.th),
+	tj,	Tadzjikistan (.tj),
+	tk,	Tokelau (.tk),
+        tl,       Timor-Leste,
+	tm,	Turkmenistan (.tm),
+	tn,	Tunesie (.tn),
+	to,	Tonga (.to),
+	tp,	Oost Timor (.tp),
+	tr,	Turkije (.tr),
+	tt,	Trinidad en Tobago (.tt),
+	tv,	Tuvalu (.tv),
+	tw,	Taiwan (.tw),
+	tz,	Tanzania (.tz),
+	ua,	Ukraine (.ua),
+	ug,	Uganda (.ug),
+	uk,	"Ver. Koninkrijk (UK, .uk)",
+	um,	US Minor buitenliggende eilanden (.um),
+	us,	"Verenigde Staten (USA, .us)",
+	uy,	Uruguay (.uy),
+	uz,	Uzbekistan (.uz),
+	va,	Vatikaanstad (.va),
+	vc,	Saint Vincent en de Grenadinen (.vc),
+	ve,	Venezuela (.ve),
+	vg,	"Virgin Islands (British, .vg)",
+	vi,	"Virgin Islands (U.S., .vi)",
+	vn,	Vietnam (.vn),
+	vu,	Vanuatu (.vu),
+	wf,	Wallis en Futuna Eilanden (.wf),
+	ws,	Samoa (.ws),
+	ye,	Jemen (.ye),
+	yt,	Mayotte (.yt),
+	yu,	Joegoslavie (.yu),
+	za,	Zuid Africa (.za),
+	zm,	Zambia (.zm),
+	zw,	Zimbabwe (.zw)

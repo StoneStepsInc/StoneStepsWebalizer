@@ -1,0 +1,673 @@
+#-------------------------------------------------------------------------
+#   webalizer_lang.italian
+#
+# Stone Steps Webalizer language file. See description of the file
+# format in webalizer_lang.english.
+#
+#   Webalizer V2.0x Language Support file for Italian.
+#   31-May-1998 Modified for level 1.1 support (brad@mrunix.net)
+#   12-Jun-1998 Translation Level 1.1 by Alberto Benati (a_benati@4net.com)
+#   23-Jul-1998 Modified for level 1.2 support (brad@mrunix.net)
+#   08-Mar-1999 Updated HTTP 1.1 response codes by Yves Lafon (ylafon@w3.org)
+#   28-Jun-1999 Modified for level 1.3 support (brad@mrunix.net)
+#   10-Jul-1999 Update for 1.3 by Massimiliano Masserelli (masserelli@interim.it)
+#   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
+#   25-Sep-2000 Total Rewrite by Mattia Coatti (xkaos@galactica.it)
+#
+#
+#   Language files are named using the following convention:
+#
+#   webalizer_lang.LANGUAGE
+#
+#   where 'LANGUAGE' is the name of the language the file is
+#   translated into (ie: webalizer_lang.russian for russian).
+#
+# Copyright (c) 2004, Stone Steps Inc. (www.stonesteps.ca)
+#-------------------------------------------------------------------------
+
+#/***********************************************************************/
+#/* DEFINE LANGUAGE NAME here                                           */
+#/***********************************************************************/
+
+language  = Italian
+language_code = it
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* Informational messages                                              */
+#/*                                                                     */
+#/* These messages are only displayed while The Webalizer is being run, */
+#/* usually to the screen, and are not part of the HTML output.         */
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* these are only used in timing totals */
+#/* Format:   XXX records (XXX ignored, XXX bad) in X.XX seconds        */
+msg_records = record
+msg_addresses=indirizzi
+msg_ignored = ignorato/i
+msg_bad     = errato/i
+msg_in      = in
+msg_seconds = secondi
+
+#/* progress and setup error messages */
+msg_log_err = Errore: Impossibile elaborare il file di log
+msg_log_use = Utilizzo il file di log
+msg_dir_err = Errore: Impossibile accedere alla directory
+msg_dir_use = Creo i file di output nella directory
+msg_cur_dir = Directory attuale
+msg_hostname= Il nome dell'host per il riepilogo e'
+msg_ign_hist= Ignoro il precedente file di history
+msg_no_hist = Impossibile trovare il file di history
+msg_get_hist= Elaboro il file di history
+msg_put_hist= Salvo le statistiche degli accessi nel file di history
+msg_hist_err= Errore: Impossibile modificare il file di history
+msg_bad_hist= Errore: Tralascio il record non valido nel file di history
+msg_bad_conf= Errore: Impossibile accedere al file di configurazione
+msg_bad_key = Attenzione: Keyword non valida
+msg_bad_date= Errore: Tralascio il record (data errata)
+msg_ign_nscp= Tralascio il record dell'header di Netscape
+msg_bad_rec = Tralascio il record errato
+msg_no_vrec = Nessun record valido rilevato
+msg_gen_rpt = Creo l'analisi statistica per
+msg_gen_sum = Creo il riassunto statistico
+msg_get_data= Elaboro i dati sull'esecuzione precedente
+msg_put_data= Salvo i dati sull'esecuzione attuale
+msg_no_data = Impossibile trovare i dati sull'esecuzione precedente
+msg_bad_data= Errore: Impossibile ripristinare i dati dell'esecuzione precedente
+msg_data_err= Errore: Impossibile salvare i dati dell'esecuzione attuale
+msg_dup_data= Attenzione: Possibile individuazione di dati duplicati
+msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_ctrl_c  = Ctrl-C detected. Aborting...
+msg_pars_err= Cannot initialize log file parser
+msg_use_conf= Processed configuration file
+msg_use_lang= Processed language file
+msg_use_db  = Using database
+msg_runtime = Total run time is
+msg_dnstime = DNS wait time is
+msg_mnttime = Maintenance time is
+msg_rpttime = Generated reports in
+msg_cmpctdb = Finished compacting the database
+msg_nofile  = File not found
+msg_file_err= Cannot read file
+msg_use_help= Using XML help file
+msg_fpos_err= Cannot retrieve current file position for
+
+#/* DNS Stuff */
+msg_dns_nocf= Nessun file di cache specificato
+msg_dns_nodb= Errore: Impossibile accedere al file contenente la cache DNS
+msg_dns_nolk= Errore: Impossibile effettuare il locking del file contenente la cache DNS
+msg_dns_usec= Utilizzo il file di cache DNS
+msg_dns_rslv= Risoluzione DNS
+msg_dns_init= Error: Cannot initialize DNS resolver
+msg_dns_htrt= DNS cache hit ratio
+msg_dns_geoe= Cannot open GeoIP database
+msg_dns_useg= Using GeoIP database
+
+#/* memory allocation errors */
+msg_nomem_ts= Impossibile allocare abbastanza memoria, classifica degli host disabilitata
+msg_nomem_tr= Impossibile allocare abbastanza memoria, classifica dei referrer disabilitata
+msg_nomem_tu= Impossibile allocare abbastanza memoria, classifica degli URL disabilitata
+msg_nomem_tc= Impossibile allocare abbastanza memoria, classifica dei paesi disabilitata
+msg_nomem_ta= Impossibile allocare abbastanza memoria, classifica dei browser disabilitata
+msg_nomem_tsr=Impossibile allocare abbastanza memoria, classifica dei termini di ricerca disabilitata
+msg_nomem_ti= Impossibile allocare abbastanza memoria, classifica degli username disabilitata
+msg_nomem_dh= Errore nell'aggiungere il nome dell'host (giornaliero), tralasciato
+msg_nomem_mh= Errore nell'aggiungere il nome dell'host (mensile), tralasciato
+msg_nomem_u = Errore nell'aggiungere l'URL, tralasciato
+msg_nomem_a = Errore nell'aggiungere il browser, tralasciato
+msg_nomem_r = Errore nell'aggiungere il referrer, tralasciato
+msg_nomem_sc= Errore nell'aggiungere la stringa di ricerca, tralasciato
+msg_nomem_i = Errore nell'aggiungere l'username, tralasciato
+msg_nomem_rc = Error adding HTTP status node, skipping
+msg_nomem_dl = Error adding Download Job node, skipping
+
+#/* log record errors */
+msg_big_rec = Attenzione: Tralascio il record di dimensione eccessiva
+msg_big_host= Attenzione: Troncato il record dell'hostname in quanto di dimensione eccessiva
+msg_big_date= Attenzione: Troncata il record della data in quanto di dimensione eccessiva
+msg_big_req = Attenzione: Troncato il record della richiesta in quanto di dimensione eccessiva
+msg_big_ref = Attenzione: Troncato il record del referrer in quanto di dimensione eccessiva
+msg_big_user= Attenzione: Troncato il record dell'username in quanto di dimensione eccessiva
+msg_big_one = Attenzione: La stringa e' di dimensione eccessiva
+
+#/* misc errors */
+msg_no_open = Errore: Impossibile accedere al file
+
+#/* Help display... */
+h_usage1 = Sintassi
+h_usage2 = [parametri] [file di log [[ file di log ]...] | report database]
+h_msg=	 -h        = visualizza questa schermata,
+         -v -V     = mostra il numero di versione,
+         -d        = visualizza informazioni di debug addizionali,
+         -F tipo   = specifica il tipo di log (clf | ftp | squid | iis | apache | w3c),
+         -f        = elenca sequenzialmente gli errori,
+         -i        = tralascia il file di history,
+         -p        = conserva le statistiche (modalita' incrementale),
+         -q        = non visualizza i messaggi informativi,
+         -Q        = non visualizza alcun messaggio,
+         -Y        = non visualizza il grafico relativo ai paesi,
+         -G        = non visualizza il grafico orario,
+         -H        = non visualizza le statistiche orarie,
+         -L        = non visualizza le legende policromatiche nei grafici,
+         -l num    = utilizza num linee nello sfondo dei grafici,
+         -m num    = valore di timeout per gli accessi (seconds),
+         -T        = visualizza informazioni sul tempo di esecuzione,
+         -c file   = utilizza 'file' per le impostazioni di configurazione,
+         -n nome   = nome dell'host da utilizzare,
+         -o dir    = directory in cui collocare i file di output,
+         -t nome   = nome da utilizzare per il titolo del rapporto statistico,
+         -a nome   = ignora il browser specificato,
+         -r nome   = ignora il referrer specificato,
+         -s nome   = ignora l'host specificato,
+         -u nome   = ignora l'URL specificato,
+         -x ext    = utilizza 'ext' come estensione per i file,
+         -P ext    = utilizza 'ext' come estensione per le pagine,
+         -I nome   = utilizza 'nome' come file di indice,
+         -A num    = visualizza 'num' browser nella classifica,
+         -C num    = visualizza 'num' paesi nella classifica,
+         -R num    = visualizza 'num' referrer nella classifica,
+         -S num    = visualizza 'num' nomi di host nella classifica,
+         -U num    = visualizza 'num' URL nella classifica,
+         -e num    = visualizza 'num' pagine in ingresso nella classifica,
+         -E num    = visualizza 'num' pagine in uscita nella classifica,
+         -g num    = raggruppa i domini fino a 'num' livelli,
+         -X        = non visualizza i singoli hostname,
+         -D nome   = utilizza 'nome' come file di cache DNS,
+         -N num    = numero massimo di thread per la risoluzione DNS (0=non abilitata),
+         ,
+         Long options:,
+         --help              print this help message,
+         --last-log          last log file for the current month,
+         --prepare-report    prepare a report using a state database,
+         --warranty          print warranty information,
+         --version           print version information,
+         --batch             just update the database (no report),
+         --end-month         end active visits and close the database,
+         --compact-db        compact the database,
+         --db-info           print database information,
+         --pipe-log-names    read log file names from standard input
+
+#/***********************************************************************/
+#/*                                                                     */
+#/* HTML strings                                                        */
+#/*                                                                     */
+#/* These strings are used as part of the HTML output generated by The  */
+#/* Webalizer.                                                          */ 
+#/*                                                                     */
+#/***********************************************************************/
+
+#/* header strings */
+msg_hhdr_sp = Riepilogo per il periodo
+msg_hhdr_gt = Generato
+
+#/* main index strings */
+msg_main_us = Riepilogo statistico per
+msg_main_per= Ultimi 12 mesi
+msg_main_sum= Riepilogo mensile
+msg_main_da = Media giornaliera
+msg_main_mt = Totale mensile
+
+#/* month HTML page strings */
+msg_hmth_du = Contatti giornalieri per
+msg_hmth_hu = Contatti orari per
+
+#/* table header strings */
+msg_h_by    = Per
+msg_h_avg   = Media
+msg_h_max   = Max
+msg_h_total = Totale
+msg_h_totals= Totali
+msg_h_day   = Giorno
+msg_h_mth   = Mese
+msg_h_hour  = Ora
+msg_h_hits  = Contatti
+msg_h_pages = Pagine
+msg_h_visits= Visite
+msg_h_files = File
+msg_h_hosts = Siti
+msg_h_xfer  = KBytes
+msg_h_avgtime = AvgTime
+msg_h_maxtime = MaxTime
+msg_h_hname = Nomi di Host
+msg_h_url   = URL
+msg_h_agent = Browser
+msg_h_ref   = Referrer
+msg_h_ctry  = Paese
+msg_h_search= Termini di Ricerca
+msg_h_uname = Username
+msg_h_type  = Type
+msg_h_status= Status
+msg_h_duration = Duration
+msg_h_method= Method
+msg_h_download = Download
+msg_h_count = Count
+msg_h_time  = Time
+msg_h_spammer = Spammer
+msg_h_urls = URLs
+msg_h_refs = Referrers
+msg_h_agents = User Agents
+msg_h_chosts = Converted Hosts
+msg_h_cvisits = Converted Visits
+
+#/* links along top of page */
+msg_hlnk_sum= Summary
+msg_hlnk_ds = Statistiche Giornaliere
+msg_hlnk_hs = Statistiche Orarie
+msg_hlnk_u  = URL
+msg_hlnk_s  = Nomi di Host
+msg_hlnk_a  = Browser
+msg_hlnk_c  = Paesi
+msg_hlnk_r  = Referrer
+msg_hlnk_en = Ingressi
+msg_hlnk_ex = Uscite
+msg_hlnk_sr = Ricerca
+msg_hlnk_i  = Utenti
+msg_hlnk_err= Errors
+
+#/* monthly total table */
+msg_mtot_ms = Statistiche Mensili per
+msg_mtot_th = Contatti
+msg_mtot_tf = File
+msg_mtot_tp = Total Pages
+msg_mtot_tv = Total Visits
+msg_mtot_tx = KBytes
+msg_mtot_us = Nomi di Host
+msg_mtot_ur = Referrer
+msg_mtot_ua = Browser
+msg_mtot_uu = URL
+msg_mtot_ui = Username
+msg_mtot_mhd= Contatti Giornalieri
+msg_mtot_mhh= Contatti Orari
+msg_mtot_mfd= File Giornalieri
+msg_mtot_mpd= Pagine Giornaliere
+msg_mtot_mvd= Visite Giornaliere
+msg_mtot_mkd= KBytes Giornalieri
+msg_mtot_rc = Contatti per Codice di Risposta
+msg_mtot_sph = Seconds per Hit
+msg_mtot_spf = Seconds per File
+msg_mtot_spp = Seconds per Page
+msg_mtot_mhv = Hits per Visit
+msg_mtot_mfv = Files per Visit
+msg_mtot_mpv = Pages per Visit
+msg_mtot_mdv = Visit Duration
+msg_mtot_mkv = KBytes per Visit
+msg_mtot_dl  = Total Downloads
+msg_mtot_terr = Total Errors
+msg_mtot_tcv = Total Converted Visits
+msg_mtot_tch = Total Converted Hosts
+msg_mtot_hcr = Host Converstion Rate
+msg_mtot_cvd = Visit Duration (Converted)
+msg_mtot_conv = Conversion
+msg_mtot_rtot = Robot Totals
+msg_mtot_perf = Performance
+msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_htot = Human Totals
+
+#/* daily total table */
+msg_dtot_ds = Statistiche Giornaliere per
+
+#/* hourly total table */
+msg_htot_hs = Statistiche Orarie per
+
+#/* country pie chart */
+msg_ctry_use= Riepilogo dei Paesi per
+
+#/* top tables */
+#/* Formatted as "Top xxx of xxx Total something" */
+msg_top_top = Top
+msg_top_of  = di
+msg_top_s   = Nomi di Host Totali
+msg_top_u   = URL Totali
+msg_top_r   = Referrer Totali
+msg_top_a   = Browser Totali
+msg_top_c   = Paesi Totali
+msg_top_en  = Pagine in Ingresso Totali
+msg_top_ex  = Pagine in Uscita Totali
+msg_top_sr  = Total Search Strings
+msg_top_i   = Total Usernames
+msg_v_hosts = Visualizza ogni Nome di Host
+msg_v_urls  = Visualizza ogni URL
+msg_v_refs  = Visualizza ogni Referrer
+msg_v_agents= Visualizza ogni Browser
+msg_v_search= Visualizza ogni Termine di Ricerca
+msg_v_users = Visualizza ogni Username
+msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
+msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
+msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
+msg_h_errors = Errors
+msg_v_errors= View All Errors
+msg_h_downloads = Downloads
+msg_v_downloads = View All Downloads
+msg_ref_dreq = - (Direct Request)
+msg_max_items = Maximum number of items is displayed
+
+#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+s_month=  Gen, Feb, Mar,
+                    Apr, Mag, Giu,
+                    Lug, Ago, Set,
+                    Ott, Nov, Dic
+
+#/* long month names - can be any length */
+l_month=  Gennaio,  Febbraio, Marzo,   Aprile,
+                    Maggio,      Giugno,     Luglio,    Agosto,
+                    Settembre,Ottobre,  Novembre,Dicembre
+
+#/* response code descriptions... order IS important!      */
+response = Undefined response code,
+           Code 100 - Continua,
+           Code 101 - Scambio di Protocollo,
+           Code 200 - OK,
+           Code 201 - Creato,
+           Code 202 - Accettato,
+           Code 203 - Informazione non Autoritativa,
+           Code 204 - Nessun Contenuto,
+           Code 205 - Contenuto Reimpostato,
+           Code 206 - Contenuto Parziale,
+           Code 300 - Scelta Multipla,
+           Code 301 - Spostato Permanentemente,
+           Code 302 - Trovato,
+           Code 303 - Vedere Altro,
+           Code 304 - Non Modificato,
+           Code 305 - Utilizzare Proxy,
+           Code 307 - Spostato Temporaneamente,
+           Code 400 - Richiesta Errata,
+           Code 401 - Non Autorizzato,
+           Code 402 - Richiesto Pagamento,
+           Code 403 - Proibito,
+           Code 404 - Non Trovato,
+           Code 405 - Metodo Non Permesso,
+           Code 406 - Non Accettabile,
+           Code 407 - Il Proxy Richiede Autenticazione,
+           Code 408 - Richiesta Scaduta,
+           Code 409 - Conflitto,
+           Code 410 - Abbandonato,
+           Code 411 - Lunghezza Richiesta,
+           Code 412 - Prerequisito Fallito,
+           Code 413 - Entita' Richiesta Troppo Estesa,
+           Code 414 - Indirizzo Richiesto Troppo Lungo,
+           Code 415 - Media Non Supportato,
+           Code 416 - Intervallo di Richiesta Non Soddisfabile,
+           Code 417 - Aspettativa non Soddisfatta,
+           Code 500 - Errore Interno del Server,
+           Code 501 - Non Implementato,
+           Code 502 - Gateway Errato,
+           Code 503 - Servizio non Disponibile,
+           Code 504 - Timeout nell'Accesso al Gateway,
+           Code 505 - Versione HTTP Non Supportata,
+
+msg_title   = Statistiche per
+msg_h_other = Altri
+
+#/* Country codes (previously in ctry.h header file) */
+
+ctry = *,	Non Risolto/Sconosciuto,
+	com,	Commerciali (.com),
+	edu,	Universita' (.edu),
+	gov,	Enti Governativo (.gov),
+	int,	Enti Internazionali (.int),
+	mil,	Enti Militari (.mil),
+	net,	Reti (.net),
+	org,	Organizzazioni Generiche (.org),
+ 	arpa,	Arpanet (.arpa),
+ 	nato,	Nato (.nato),
+        aero,   Air Transport Industry,
+        coop,   Cooperative Associations,
+        info,   Generic Top-Level Domains,
+        museum, Museums,
+        name,   Personal Domains,
+        biz,    Generic Businesses,
+        pro,    Credentialed Professionals,
+        ac,       Ascension Island,
+	ad,	Andorra,
+	ae,	Emirati Arabi,
+	af,	Afghanistan,
+	ag,	Antigua e Barbuda,
+	ai,	Anguilla,
+	al,	Albania,
+	am,	Armenia,
+	an,	Antille Olandesi,
+	ao,	Angola,
+	aq,	Antartica,
+	ar,	Argentina,
+	as,	Samoa Americana,
+	at,	Austria,
+	au,	Australia,
+	aw,	Aruba,
+	az,	Azerbaijan,
+        ax,       Aland Islands,
+	bl,     Saint Barthelemy,
+	ba,	Bosnia e Herzegovina,
+	bb,	Barbados,
+	bd,	Bangladesh,
+	be,	Belgio,
+	bf,	Burkina Faso,
+	bg,	Bulgaria,
+	bh,	Bahrain,
+	bi,	Burundi,
+	bj,	Benin,
+	bm,	Bermuda,
+	bn,	Sultanato del Brunei,
+	bo,	Bolivia,
+	br,	Brasile,
+	bs,	Bahamas,
+	bt,	Bhutan,
+	bv,	Isole Bouvet,
+	bw,	Botswana,
+	by,	Belarus,
+	bz,	Belize,
+	ca,	Canada,
+	cc,	Isole Cocos,
+        cd,       Congo,
+	cf,	Africa Centrale,
+	cg,	Congo,
+	ch,	Svizzera,
+	ci,	Costa D'Avorio,
+	ck,	Isole Cook,
+	cl,	Cile,
+	cm,	Camerun,
+	cn,	Cina,
+	co,	Colombia,
+	cr,	Costa Rica,
+        cs,       Serbia and Montenegro,
+	cu,	Cuba,
+	cv,	Capo Verde,
+	cx,	Isola di Natale,
+	cy,	Cipro,
+	cz,	Repubblica Ceca,
+	de,	Germania,
+	dj,	Djibouti,
+	dk,	Danimarca,
+	dm,	Dominica,
+	do,	Repubblica Dominicana,
+	dz,	Algeria,
+	ec,	Ecuador,
+	ee,	Estonia,
+	eg,	Egitto,
+	eh,	Sahara Occidentale,
+	er,	Eritrea,
+	es,	Spagna,
+	et,	Etiopia,
+        eu,       European Union,
+	fi,	Finlandia,
+	fj,	Fiji,
+	fk,	Isole Falkland (Malvine),
+	fm,	Micronesia,
+	fo,	Isole Faroe,
+	fr,	Francia,
+	ga,	Gabon,
+        gb,       United Kingdom,
+	gd,	Grenada,
+	ge,	Georgia,
+	gf,	Guiana Francese,
+        gg,       Guernsey,
+	gh,	Ghana,
+	gi,	Gibilterra,
+	gl,	Groenlandia,
+	gm,	Gambia,
+	gn,	Guinea,
+	gp,	Guadalupa,
+	gq,	Guinea Equatoriale,
+	gr,	Grecia,
+	gs,	Isole di S. Georgia e S. Sandwich,
+	gt,	Guatemala,
+	gu,	Guam,
+	gw,	Guinea-Bissau,
+	gy,	Guyana,
+	hk,	Hong Kong,
+	hm,	Isole Heard e McDonald,
+	hn,	Honduras,
+	hr,     Croatia,
+	ht,	Haiti,
+	hu,	Ungaria,
+	id,	Indonesia,
+	ie,	Irlanda,
+	il,	Israele,
+        im,       Isle of Man,
+	in,	India,
+	io,	Territori Britannici nell'Oceano Indiano,
+	iq,	Iraq,
+	ir,	Iran,
+	is,	Islanda,
+	it,	Italia,
+        je,       Jersey,
+	jm,	Jamaica,
+	jo,	Giordania,
+	jp,	Giappone,
+	ke,	Kenya,
+	kg,	Kyrgyzstan,
+	kh,	Cambodia,
+	ki,	Kiribati,
+	km,	Comoros,
+	kn,	Saint Kitts e Nevis,
+	kp,	Corea (Nord),
+	kr,	Corea (Sud),
+	kw,	Kuwait,
+	ky,	Isole Cayman,
+	kz,	Kazakhstan,
+	la,	Laos,
+	lb,	Libano,
+	lc,	Santa Lucia,
+	li,	Liechtenstein,
+	lk,	Sri Lanka,
+	lr,	Liberia,
+	ls,	Lesotho,
+	lt,	Lituania,
+	lu,	Lussemburgo,
+	lv,	Latvia,
+	ly,	Libia,
+	ma,	Marocco,
+	mc,	Monaco,
+	md,	Moldova,
+	me,    Montenegro,
+	mf,    Saint Martin,
+	mg,	Madagascar,
+	mh,	Isole Marshall,
+	mk,	Macedonia,
+	ml,	Mali,
+	mm,	Myanmar,
+	mn,	Mongolia,
+	mo,    Macao,
+	mp,	Isole Mariana del Nord,
+	mq,	Martinica,
+	mr,	Mauritania,
+	ms,	Montserrat,
+	mt,	Malta,
+	mu,	Mauritius,
+	mv,	Maldive,
+	mw,	Malawi,
+	mx,	Messico,
+	my,	Malaysia,
+	mz,	Mozambico,
+	na,	Namibia,
+	nc,	Nuova Caledonia,
+	ne,	Nigeria,
+	nf,	Isole Norfolk,
+	ng,	Nigeria,
+	ni,	Nicaragua,
+	nl,	Olanda,
+	no,	Norvegia,
+	np,	Nepal,
+	nr,	Nauru,
+	nu,	Niue,
+        nz,       New Zealand,
+	om,	Oman,
+	pa,	Panama,
+	pe,	Peru,
+	pf,	Polinesia Francese,
+	pg,	Papua e Nuova Guinea,
+	ph,	Filippine,
+	pk,	Pakistan,
+	pl,	Polonia,
+	pm,	St. Pierre and Miquelon,
+	pn,	Pitcairn,
+	pr,	Porto Rico,
+        ps,       Palestinian Territories,
+	pt,	Portogallo,
+	pw,	Palau,
+	py,	Paraguay,
+	qa,	Qatar,
+	re,	Reunion,
+	ro,	Romania,
+	rs,	Serbia,
+	ru,	Federazione Russa,
+	rw,	Ruanda,
+	sa,	Arabia Saudita,
+        sb,       Solomon Islands,
+	sc,	Seychelles,
+	sd,	Sudan,
+	se,	Svezia,
+	sg,	Singapore,
+	sh,	St. Helena,
+	si,	Slovenia,
+	sj,	Isole Svalbard e Jan Mayen,
+	sk,	Repubblica Slovacca,
+	sl,	Sierra Leone,
+	sm,	San Marino,
+	sn,	Senegal,
+	so,	Somalia,
+	sr,	Suriname,
+	st,	Sao Tome e Principe,
+	su,	Ex USSR,
+	sv,	El Salvador,
+	sy,	Siria,
+	sz,	Swaziland,
+	tc,	Isole Turks e Caicos,
+	td,	Chad,
+	tf,	Territori Francesi Meridionali,
+	tg,	Togo,
+	th,	Thailandia,
+	tj,	Tajikistan,
+	tk,	Tokelau,
+        tl,       Timor-Leste,
+	tm,	Turkmenistan,
+	tn,	Tunisia,
+	to,	Tonga,
+	tp,	Timor Est,
+	tr,	Turchia,
+	tt,	Trinidad e Tobago,
+	tv,	Tuvalu,
+	tw,	Taiwan,
+	tz,	Tanzania,
+	ua,	Ucraina,
+	ug,	Uganda,
+	uk,	Regno Unito,
+	um,	Isole US Minori,
+	us,	Stati Uniti,
+	uy,	Uruguay,
+	uz,	Uzbekistan,
+	va,	Citta' del Vaticano,
+	vc,	Saint Vincent e Grenadines,
+	ve,	Venezuela,
+	vg,	Isole Vergini (Britanniche),
+	vi,	Isole Vergini (Statunitensi),
+	vn,	Vietnam,
+	vu,	Vanuatu,
+	wf,	Isole Wallis e Futuna,
+	ws,	Samoa,
+	ye,	Yemen,
+	yt,	Mayotte,
+	yu,	Yugoslavia,
+	za,	Sud Africa,
+	zm,	Zambia,
+	zw,	Zimbabwe
