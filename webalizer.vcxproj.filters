@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7900dabe-38df-4e97-ad56-c855009c4854}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\nodes">
+      <UniqueIdentifier>{5cf2d737-e59e-47a7-9364-313e7551d12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform">
+      <UniqueIdentifier>{bd3beaa6-db9a-44fd-bec7-f4703e4c6913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{bf5d4b42-f5bf-482a-9d06-00c5d94f4be9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{172363da-957b-47ec-9d45-17c7a536af2a}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Header Files\nodes-h">
+      <UniqueIdentifier>{759bb623-e842-4f5b-a561-8be6695349c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{14056bfb-9222-49d0-9c0b-849bf3c6d6e7}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{5fb64b85-8852-4da4-8831-17b0a093b9ad}</UniqueIdentifier>
+      <Extensions>lib</Extensions>
+    </Filter>
+    <Filter Include="Libraries\Debug">
+      <UniqueIdentifier>{6e9faf0e-a2ed-4c5c-ba97-914511abe1de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\Release">
+      <UniqueIdentifier>{1d77b9e4-104a-4d43-ba6f-310eac894a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Language">
+      <UniqueIdentifier>{4f4240ca-517c-4d5d-8715-75ea21e39b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stylesheets">
+      <UniqueIdentifier>{947b78c9-94c9-4c5e-9f16-bf4c12ce4fbf}</UniqueIdentifier>
+      <Extensions>xsl;css</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dns_resolv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dump_output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="history.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="html_output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="linklist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="logfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="logrec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="preserve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="serialize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="webalizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xml_output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="anode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="ccnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="daily.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="danode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="dlnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="hashtab.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="hashtab_nodes.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="hnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="hourly.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="inode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="keynode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="queue_nodes.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="rcnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="rnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="scnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="snode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="spnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="sysnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="tnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="totals.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="unode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="vnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="event_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="mutex_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\sys\utsname.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoIP.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="tmranges.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="tstamp.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="tstring.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dns_resolv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dump_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graphs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hashtab.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="history.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lang.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="linklist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="logfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="logrec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="preserve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tmranges.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tstamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="webalizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xml_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="anode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="basenode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="ccnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="daily.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="danode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="dlnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="hnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="hourly.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="inode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="rcnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="rnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="snode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="spnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="sysnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="tnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="totals.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="unode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+    <ClInclude Include="vnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="webalizer.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lang\webalizer_help.english">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.catalan">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.chinese">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.croatian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.czech">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.danish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.dutch">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.english">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.estonian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.finnish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.french">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.galician">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.german">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.greek">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.hungarian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.icelandic">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.indonesian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.italian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.japanese">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.korean">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.latvian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.malay">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.norwegian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.polish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.portuguese">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.portuguese_brazil">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.portuguese_brazilian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.romanian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.russian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.serbian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.simplified_chinese">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.slovak">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.slovene">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.spanish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.swedish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.turkish">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="lang\webalizer_lang.ukrainian">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="webalizer.css">
+      <Filter>Stylesheets</Filter>
+    </None>
+    <None Include="CHANGES" />
+    <None Include="README" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="graphs-amc.xsl">
+      <Filter>Stylesheets</Filter>
+    </Xml>
+    <Xml Include="graphs-ofc.xsl">
+      <Filter>Stylesheets</Filter>
+    </Xml>
+    <Xml Include="index.xsl">
+      <Filter>Stylesheets</Filter>
+    </Xml>
+    <Xml Include="usage.xsl">
+      <Filter>Stylesheets</Filter>
+    </Xml>
+    <Xml Include="webalizer.xsl">
+      <Filter>Stylesheets</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\common\gd\libgd-2.1.0\windows\Debug\gd2.lib">
+      <Filter>Libraries\Debug</Filter>
+    </Library>
+    <Library Include="..\common\gd\libgd-2.1.0\windows\Release\gd2.lib">
+      <Filter>Libraries\Release</Filter>
+    </Library>
+    <Library Include="..\common\db\db-6.0.20\build_windows\Win32\Debug\libdb60d.lib">
+      <Filter>Libraries\Debug</Filter>
+    </Library>
+    <Library Include="..\common\db\db-6.0.20\build_windows\Win32\Release\libdb60.lib">
+      <Filter>Libraries\Release</Filter>
+    </Library>
+    <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
+      <Filter>Libraries\Release</Filter>
+    </Library>
+    <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
+      <Filter>Libraries\Debug</Filter>
+    </Library>
+    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Debug\libmaxminddbd.lib">
+      <Filter>Libraries\Debug</Filter>
+    </Library>
+    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Release\libmaxminddb.lib">
+      <Filter>Libraries\Release</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

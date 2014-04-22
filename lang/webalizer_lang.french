@@ -375,8 +375,8 @@ msg_max_items = Le nombre maximum d'éléments est affiché
 
 #/* short month names MUST BE 3 CHARS in size... pad if needed*/
 s_month=  Jan, Fev, Mar,
-                    Avr, Mai, Juin,
-                    Juil, Aou, Sep,
+                    Avr, Mai, Jun,
+                    Jul, Aou, Sep,
                     Oct, Nov, Dec
 
 #/* long month names - can be any length */

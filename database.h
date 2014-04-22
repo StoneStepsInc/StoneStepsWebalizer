@@ -33,8 +33,8 @@ class database_t {
       // Define BDB callback types (bt_compare_fcn_type, etc are deprecated)
       //
       typedef int (*sc_extract_cb_t)(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
-      typedef int (*bt_compare_cb_t)(Db *db, const Dbt *dbt1, const Dbt *dbt2);
-      typedef int (*dup_compare_cb_t)(Db *, const Dbt *, const Dbt *);
+      typedef int (*bt_compare_cb_t)(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+      typedef int (*dup_compare_cb_t)(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 
       //
       // When a pointer to a template function is used in a conditional

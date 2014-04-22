@@ -1,0 +1,23 @@
+syntax: glob
+
+CVS/*
+Debug/*
+Release/*
+logfiles/*
+logfiles2/*
+reports/*
+temp/*
+
+_g_logfiles/*
+
+webalizer.ncb
+webalizer.suo
+webalizer.sdf
+webalizer.plg
+webalizer.opt
+webalizer.v12.suo
+webalizer.opensdf
+
+webalizer.conf
+
+webalizer.vcxproj.user

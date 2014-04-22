@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A9C517BF-D624-47CB-BC93-16B4C9FE6956}</ProjectGuid>
+    <RootNamespace>webalizer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="webalizer.props" />
+    <Import Project="webalizer_release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="webalizer.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Debug\</OutDir>
+    <IntDir>$(ProjectDir)Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Release\</OutDir>
+    <IntDir>$(ProjectDir)Release\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <TypeLibraryName>.\Debug/webalizer.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/FIXED:NO %(AdditionalOptions)</AdditionalOptions>
+      <OutputFile>$(OutDir)webalizer.exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Debug/webalizer.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\Debug/webalizer.map</MapFileName>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug/webalizer.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <TypeLibraryName>.\Release/webalizer.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)webalizer.exe</OutputFile>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="database.cpp" />
+    <ClCompile Include="dns_resolv.cpp" />
+    <ClCompile Include="dump_output.cpp" />
+    <ClCompile Include="graphs.cpp" />
+    <ClCompile Include="history.cpp" />
+    <ClCompile Include="html_output.cpp" />
+    <ClCompile Include="lang.cpp" />
+    <ClCompile Include="linklist.cpp" />
+    <ClCompile Include="logfile.cpp" />
+    <ClCompile Include="logrec.cpp" />
+    <ClCompile Include="output.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="preserve.cpp" />
+    <ClCompile Include="serialize.cpp" />
+    <ClCompile Include="webalizer.cpp" />
+    <ClCompile Include="xml_output.cpp" />
+    <ClCompile Include="anode.cpp" />
+    <ClCompile Include="ccnode.cpp" />
+    <ClCompile Include="daily.cpp" />
+    <ClCompile Include="danode.cpp" />
+    <ClCompile Include="dlnode.cpp" />
+    <ClCompile Include="hashtab.cpp" />
+    <ClCompile Include="hashtab_nodes.cpp" />
+    <ClCompile Include="hnode.cpp" />
+    <ClCompile Include="hourly.cpp" />
+    <ClCompile Include="inode.cpp" />
+    <ClCompile Include="keynode.cpp" />
+    <ClCompile Include="queue_nodes.cpp" />
+    <ClCompile Include="rcnode.cpp" />
+    <ClCompile Include="rnode.cpp" />
+    <ClCompile Include="scnode.cpp" />
+    <ClCompile Include="snode.cpp" />
+    <ClCompile Include="spnode.cpp" />
+    <ClCompile Include="sysnode.cpp" />
+    <ClCompile Include="tnode.cpp" />
+    <ClCompile Include="totals.cpp" />
+    <ClCompile Include="unode.cpp" />
+    <ClCompile Include="vnode.cpp" />
+    <ClCompile Include="event_win.cpp" />
+    <ClCompile Include="mutex_win.cpp" />
+    <ClCompile Include="thread_win.cpp" />
+    <ClCompile Include="platform\sys\utsname.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="GeoIP.cpp" />
+    <ClCompile Include="tmranges.cpp" />
+    <ClCompile Include="tstamp.cpp" />
+    <ClCompile Include="tstring.cpp" />
+    <ClCompile Include="util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h" />
+    <ClInclude Include="database.h" />
+    <ClInclude Include="dns_resolv.h" />
+    <ClInclude Include="dump_output.h" />
+    <ClInclude Include="event.h" />
+    <ClInclude Include="graphs.h" />
+    <ClInclude Include="hashtab.h" />
+    <ClInclude Include="history.h" />
+    <ClInclude Include="lang.h" />
+    <ClInclude Include="linklist.h" />
+    <ClInclude Include="logfile.h" />
+    <ClInclude Include="logrec.h" />
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="output.h" />
+    <ClInclude Include="parser.h" />
+    <ClInclude Include="preserve.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="serialize.h" />
+    <ClInclude Include="thread.h" />
+    <ClInclude Include="tmranges.h" />
+    <ClInclude Include="tstamp.h" />
+    <ClInclude Include="tstring.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="vector.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="webalizer.h" />
+    <ClInclude Include="xml_output.h" />
+    <ClInclude Include="anode.h" />
+    <ClInclude Include="basenode.h" />
+    <ClInclude Include="ccnode.h" />
+    <ClInclude Include="daily.h" />
+    <ClInclude Include="danode.h" />
+    <ClInclude Include="dlnode.h" />
+    <ClInclude Include="hnode.h" />
+    <ClInclude Include="hourly.h" />
+    <ClInclude Include="inode.h" />
+    <ClInclude Include="rcnode.h" />
+    <ClInclude Include="rnode.h" />
+    <ClInclude Include="snode.h" />
+    <ClInclude Include="spnode.h" />
+    <ClInclude Include="sysnode.h" />
+    <ClInclude Include="tnode.h" />
+    <ClInclude Include="totals.h" />
+    <ClInclude Include="unode.h" />
+    <ClInclude Include="vnode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="webalizer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lang\webalizer_help.english" />
+    <None Include="lang\webalizer_lang.catalan" />
+    <None Include="lang\webalizer_lang.chinese" />
+    <None Include="lang\webalizer_lang.croatian" />
+    <None Include="lang\webalizer_lang.czech" />
+    <None Include="lang\webalizer_lang.danish" />
+    <None Include="lang\webalizer_lang.dutch" />
+    <None Include="lang\webalizer_lang.english" />
+    <None Include="lang\webalizer_lang.estonian" />
+    <None Include="lang\webalizer_lang.finnish" />
+    <None Include="lang\webalizer_lang.french" />
+    <None Include="lang\webalizer_lang.galician" />
+    <None Include="lang\webalizer_lang.german" />
+    <None Include="lang\webalizer_lang.greek" />
+    <None Include="lang\webalizer_lang.hungarian" />
+    <None Include="lang\webalizer_lang.icelandic" />
+    <None Include="lang\webalizer_lang.indonesian" />
+    <None Include="lang\webalizer_lang.italian" />
+    <None Include="lang\webalizer_lang.japanese" />
+    <None Include="lang\webalizer_lang.korean" />
+    <None Include="lang\webalizer_lang.latvian" />
+    <None Include="lang\webalizer_lang.malay" />
+    <None Include="lang\webalizer_lang.norwegian" />
+    <None Include="lang\webalizer_lang.polish" />
+    <None Include="lang\webalizer_lang.portuguese" />
+    <None Include="lang\webalizer_lang.portuguese_brazil" />
+    <None Include="lang\webalizer_lang.portuguese_brazilian" />
+    <None Include="lang\webalizer_lang.romanian" />
+    <None Include="lang\webalizer_lang.russian" />
+    <None Include="lang\webalizer_lang.serbian" />
+    <None Include="lang\webalizer_lang.simplified_chinese" />
+    <None Include="lang\webalizer_lang.slovak" />
+    <None Include="lang\webalizer_lang.slovene" />
+    <None Include="lang\webalizer_lang.spanish" />
+    <None Include="lang\webalizer_lang.swedish" />
+    <None Include="lang\webalizer_lang.turkish" />
+    <None Include="lang\webalizer_lang.ukrainian" />
+    <None Include="webalizer.css" />
+    <None Include="CHANGES" />
+    <None Include="README" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="graphs-amc.xsl" />
+    <Xml Include="graphs-ofc.xsl" />
+    <Xml Include="index.xsl" />
+    <Xml Include="usage.xsl" />
+    <Xml Include="webalizer.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\common\db\db-6.0.20\build_windows\Win32\Debug\libdb60d.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\db\db-6.0.20\build_windows\Win32\Release\libdb60.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\gd\libgd-2.1.0\windows\Debug\gd2.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\gd\libgd-2.1.0\windows\Release\gd2.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Debug\libmaxminddbd.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Release\libmaxminddb.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Library>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
