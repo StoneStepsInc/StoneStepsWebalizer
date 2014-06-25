@@ -8,13 +8,10 @@ syntax: regexp
 ^Debug/
 ^Release/
 ^logfiles/
-^logfiles2/
 ^reports/
 ^temp/
 ^reports_/
 ^release_/
-
-^_g_logfiles/
 
 ^webalizer\.ncb$
 ^webalizer\.suo$
