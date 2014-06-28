@@ -1,7 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2014, Stone Steps Inc. (www.stonesteps.ca)
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
@@ -2023,7 +2023,7 @@ void xml_output_t::write_xml_head(bool index)
 
    /* Standard header comments */
    fputs("<!--                                          -->\n", out_fp);
-   fputs("<!-- Copyright (c) 2004-2013 Stone Steps Inc. -->\n", out_fp);
+   fputs("<!-- Copyright (c) 2004-2014, Stone Steps Inc. -->\n", out_fp);
    fputs("<!--         http://www.stonesteps.ca         -->\n", out_fp);
    fputs("<!--                                          -->\n", out_fp);
    fputs("<!-- Distributed under the GNU GPL  Version 2 -->\n", out_fp);

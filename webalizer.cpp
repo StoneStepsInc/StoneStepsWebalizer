@@ -1,7 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2014, Stone Steps Inc. (www.stonesteps.ca)
    Copyright (C) 1997-2001  Bradford L. Barrett (brad@mrunix.net)
 
    See COPYING and Copyright files for additional licensing and copyright information 
@@ -86,7 +86,7 @@ const char *version     = MAKE_VERSION(VERSION_MAJOR, VERSION_MINOR);/* program 
 const char *editlvl     = MAKE_EDITION_LEVEL(EDITION_LEVEL);			/* edit level               */
 const char *buildnum    = MAKE_BUILD_NUMBER(BUILD_NUMBER);				/* build number             */
 const char *moddate     = __DATE__;										      /* modification date        */
-const char *copyright   = "Copyright (c) 2004-2013, Stone Steps Inc. (www.stonesteps.ca)";
+const char *copyright   = "Copyright (c) 2004-2014, Stone Steps Inc. (www.stonesteps.ca)";
 
 static bool abort_signal = false;   // true if Ctrl-C was pressed
 
