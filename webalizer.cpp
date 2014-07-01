@@ -1488,8 +1488,9 @@ int webalizer_t::proc_logfile(void)
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, log_rec.hostname.c_str());
          }
 
-         // add the node to the resolver queue
-			dns_resolver.put_dnode(hptr, &log_rec.addr);
+         // add new hosts to the resolver queue
+         if(newhost)
+			   dns_resolver.put_dnode(hptr, &log_rec.addr);
 
          // use the visit robot flag (ignore mid-visit ragent)
          robot = hptr->visit && hptr->visit->robot;

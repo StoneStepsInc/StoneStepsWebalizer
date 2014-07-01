@@ -32,7 +32,6 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    spammer = false;
    robot = false;
    resolved = false;
-   scheduled = false;
    ccode[0] = ccode[1] = ccode[2] = 0;
    visit = NULL;
    dlref = 0;
@@ -45,7 +44,6 @@ hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
    spammer = hnode.spammer;
    robot = hnode.robot;
    resolved = hnode.resolved;
-   scheduled = false;                        // new node isn't scheduled
    count = hnode.count;
    files = hnode.files;
    pages = hnode.pages;
@@ -83,7 +81,6 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
    spammer = false;
    robot = false;
    resolved = false;
-   scheduled = false;
    count = 0;
    files = pages = visits = visits_conv = 0;
    visit_avg = .0;
@@ -284,7 +281,6 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    
    // if the name or ccode is not empty, set the resolved flag
    resolved = !name.isempty() || *ccode;
-   scheduled = false;
 
    if(upcb)
       upcb(*this, active, arg);

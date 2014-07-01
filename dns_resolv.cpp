@@ -143,12 +143,7 @@ bool dns_resolver_t::put_dnode(hnode_t *hnode, struct in_addr *addr)
    if(!hnode || hnode->string.isempty() || hnode->string[0] == ' ') 
       return false;
    
-   // check if the address has already been resolved or scheduled
    mutex_lock(dnode_mutex);
-   if(hnode->resolved || hnode->scheduled) {
-      mutex_unlock(dnode_mutex);
-      return true;
-   }
    
    //
    // If we are accepting host names in place of IP addresses, derive 
@@ -163,13 +158,11 @@ bool dns_resolver_t::put_dnode(hnode_t *hnode, struct in_addr *addr)
       dns_derive_ccode(hnode->name, ccode);
       
       hnode->resolved = true;
-      hnode->scheduled = false;
       
       mutex_unlock(dnode_mutex);
       return true;
    }
    
-   hnode->scheduled = true;
    mutex_unlock(dnode_mutex);
 
    // create a new DNS node
@@ -467,15 +460,13 @@ bool dns_resolver_t::resolve_domain_name(void)
 
 	mutex_unlock(dnode_mutex);
 
-   // if the node hasn't been resolved yet, look it up
-	if(!nptr->hnode.resolved) {
-		lookup = true;
-		if(dns_db_get(nptr, false)) 
-			cached = true;
-		else {
-			process_dnode(nptr);
-			dns_db_put(nptr);
-		}
+   // look it up in the database and if not found, resolve it
+	lookup = true;
+	if(dns_db_get(nptr, false)) 
+		cached = true;
+	else {
+		process_dnode(nptr);
+		dns_db_put(nptr);
 	}
 
 	mutex_lock(dnode_mutex);
@@ -485,7 +476,6 @@ bool dns_resolver_t::resolve_domain_name(void)
 
    // update DNS state of the host node
    nptr->hnode.resolved = true;
-   nptr->hnode.scheduled = false;
 
    // done with dnode, can be deleted
    delete nptr;

@@ -35,18 +35,12 @@
 //    lock();
 //    host->name = resolved_name;
 //    host->resolved = true;
-//    hnode->scheduled = false;
 //    unlock();
 //
 // IMPORTANT: name and ccode must not be evaluated until resolved is set 
 // to true.
 //
 // $$$ Check if instruction reordering breaks this !!!
-//
-// 3. scheduled is set to true to indicate that this node has been scheduled
-// with the DNS resolver for name resulution. This data member is intended 
-// only for name resolution and should not be modified or evaluated outside
-// the DNS resolver.
 //
 // 4. grp_visit is a linked list of ended visits that have not been grouped
 // because the host name has not been resolved. Visit nodes in this list 
@@ -97,7 +91,6 @@ typedef struct hnode_t : public base_node<hnode_t> {
       bool     spammer  : 1;         // caught spamming?
       bool     robot    : 1;         // robot?
       bool     resolved : 1;         // is name resolved?
-      bool     scheduled: 1;         // is name resolution in progress?
 
       char     ccode[3];             // two-character country code
 
