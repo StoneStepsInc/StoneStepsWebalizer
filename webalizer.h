@@ -145,8 +145,8 @@ class webalizer_t {
       void print_version(void);
 
       void srch_string(const string_t& refer, const string_t& srchargs, u_int& scount, bool newvisit);
-      void group_host(const hnode_t& hnode, const vnode_t& vnode);
-      void group_hosts(void);
+      void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
+      void group_hosts_by_name(void);
       void filter_srchargs(string_t& srchargs);
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);

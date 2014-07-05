@@ -26,21 +26,9 @@
 // into the host data, which requires the current log timestamp and cannot 
 // be done at the hnode_t level.
 //
-// 2. resolved is set to true by the DNS resolver when name is resolved and 
-// can be accessed. Because resolved is set only once, it can be accessed
-// for reading without locking. When it is being set to true, locking must 
-// be used and setting its value has to be the last operation in the 
-// sequence:
-//
-//    lock();
-//    host->name = resolved_name;
-//    host->resolved = true;
-//    unlock();
-//
-// IMPORTANT: name and ccode must not be evaluated until resolved is set 
-// to true.
-//
-// $$$ Check if instruction reordering breaks this !!!
+// 2. Host name and country code may only be accessed when the host node 
+// is not being processed by the DNS resolver, which is any time between 
+// dns_resolver_t::put_hnode and dns_resolver_t::get_hnode calls.
 //
 // 4. grp_visit is a linked list of ended visits that have not been grouped
 // because the host name has not been resolved. Visit nodes in this list 
@@ -90,7 +78,6 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
       bool     spammer  : 1;         // caught spamming?
       bool     robot    : 1;         // robot?
-      bool     resolved : 1;         // is name resolved?
 
       char     ccode[3];             // two-character country code
 

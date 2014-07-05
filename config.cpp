@@ -1505,6 +1505,11 @@ bool config_t::is_maintenance(void) const
    return compact_db || end_month || prep_report || db_info;   // is it a maintenance run?
 }
 
+bool config_t::is_dns_enabled(void) const
+{
+   return dns_children != 0;
+}
+
 void config_t::set_dst_range(const string_t *start, const string_t *end)
 {
    // get the last element (guaranteed t be there)

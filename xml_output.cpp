@@ -1079,7 +1079,7 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       while(i < top_num && iter.prev(h_array[i])) {
          if(h_array[i].flag == OBJ_REG) {
             // ignore hosts matching any of the hiding patterns
-            if(config.hide_hosts || h_array[i].robot && config.hide_robots || config.hidden_hosts.isinlist(h_array[i].string) || h_array[i].resolved && config.hidden_hosts.isinlist(h_array[i].name))
+            if(config.hide_hosts || h_array[i].robot && config.hide_robots || config.hidden_hosts.isinlist(h_array[i].string) || config.hidden_hosts.isinlist(h_array[i].name))
                continue;
          }
          else if(h_array[i].flag == OBJ_GRP) {
@@ -1143,7 +1143,7 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       if(i >= top_num) {
          if(hptr->flag == OBJ_REG) {
             // ignore hosts matching any of the hiding patterns
-            if(config.hide_hosts || hptr->robot && config.hide_robots || config.hidden_hosts.isinlist(hptr->string) || hptr->resolved && config.hidden_hosts.isinlist(hptr->name))
+            if(config.hide_hosts || hptr->robot && config.hide_robots || config.hidden_hosts.isinlist(hptr->string) || config.hidden_hosts.isinlist(hptr->name))
                continue;
          }
          else if(hptr->flag == OBJ_GRP) {

@@ -128,7 +128,7 @@ class dns_resolver_t {
 
       string_t dns_resolve_name(const string_t& ipaddr);
 
-      bool put_dnode(hnode_t *hnode, struct in_addr *addr);
+      bool put_hnode(hnode_t *hnode, struct in_addr *addr);
 
       hnode_t *get_hnode(void);
 };

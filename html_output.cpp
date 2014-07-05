@@ -805,7 +805,7 @@ void html_output_t::top_hosts_table(int flag)
       while(i < tot_num && iter.prev(h_array[i])) {
          if(h_array[i].flag == OBJ_REG) {
             // ignore hosts matching any of the hiding patterns
-            if(config.hide_hosts || h_array[i].robot && config.hide_robots || config.hidden_hosts.isinlist(h_array[i].string) || h_array[i].resolved && config.hidden_hosts.isinlist(h_array[i].name))
+            if(config.hide_hosts || h_array[i].robot && config.hide_robots || config.hidden_hosts.isinlist(h_array[i].string) || config.hidden_hosts.isinlist(h_array[i].name))
                continue;
          }
          else if(h_array[i].flag == OBJ_GRP) {
@@ -1005,7 +1005,7 @@ int html_output_t::all_hosts_page(void)
 
       while(iter.prev(hnode)) {
          if(hnode.flag == OBJ_REG) {
-            if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || hnode.resolved && config.hidden_hosts.isinlist(hnode.name))
+            if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || config.hidden_hosts.isinlist(hnode.name))
                continue;
 
             fprintf(out_fp, "%-8lu %6.02f%%  %8lu %6.02f%%  %8lu %6.02f%%  %8.0f %6.02f%%  %8lu %6.02f%%  %7.02f %7.02f",

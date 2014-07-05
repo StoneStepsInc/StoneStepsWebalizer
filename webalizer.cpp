@@ -392,10 +392,10 @@ void webalizer_t::print_version()
 }
 
 //
-// group_host
+// group_host_by_name
 //
 //
-void webalizer_t::group_host(const hnode_t& hnode, const vnode_t& vnode)
+void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 {
    ccnode_t *ccptr;
 	const string_t *group;
@@ -454,7 +454,7 @@ void webalizer_t::group_host(const hnode_t& hnode, const vnode_t& vnode)
    }
 }
 
-void webalizer_t::group_hosts(void)
+void webalizer_t::group_hosts_by_name(void)
 {
    vnode_t *vptr;
    hnode_t *hptr;
@@ -464,7 +464,7 @@ void webalizer_t::group_hosts(void)
    
       // factor host visits into host data
       while((vptr = hptr->get_grp_visit()) != NULL) {
-         group_host(*hptr, *vptr);
+         group_host_by_name(*hptr, *vptr);
          delete vptr;
       }
    }
@@ -1331,7 +1331,7 @@ int webalizer_t::proc_logfile(void)
             // state_t::set_tstamp is called later, so update hourly stats now
             state.update_hourly_stats();
 
-				group_hosts();
+				group_hosts_by_name();
 
             // save run data for the report generator
             stime = msecs();
@@ -1431,7 +1431,7 @@ int webalizer_t::proc_logfile(void)
             /* 
             // If IgnoreHost contains domain patterns, wait for DNS results
             */
-            if (config.dns_children && config.ignored_domain_names) {
+            if (config.is_dns_enabled() && config.ignored_domain_names) {
                stime = msecs();
                dns_resolver.dns_wait();
                dns_time += elapsed(stime, msecs());
@@ -1490,7 +1490,7 @@ int webalizer_t::proc_logfile(void)
 
          // add new hosts to the resolver queue
          if(newhost)
-			   dns_resolver.put_dnode(hptr, &log_rec.addr);
+			   dns_resolver.put_hnode(hptr, &log_rec.addr);
 
          // use the visit robot flag (ignore mid-visit ragent)
          robot = hptr->visit && hptr->visit->robot;
@@ -1751,9 +1751,9 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-         group_hosts();
+         group_hosts_by_name();
          
-         // update group counts (host counts are updated in group_hosts)
+         // update group counts (host counts are updated in group_hosts_by_name)
          if(newugrp) state.t_grp_urls++;
          if(newigrp) state.t_grp_users++;
          if(newrgrp) state.t_grp_refs++;
@@ -1813,7 +1813,7 @@ int webalizer_t::proc_logfile(void)
 
          update_downloads(rec_tstamp);
 
-			group_hosts();
+			group_hosts_by_name();
 
          // save run data for the report generator
          stime = msecs();
@@ -2806,11 +2806,11 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
       visit->storage = false;
    }
 
-   // if the domain name has been resolved or DNS is disabled, update host groups
-   if(hptr->resolved || !config.dns_children)
-      group_host(*hptr, *visit);
+   // if DNS resolution is disabled, update host groups now
+   if(!config.is_dns_enabled())
+      group_host_by_name(*hptr, *visit);
    else {
-      // otherwise, queue a copy of the visit for grouping
+      // otherwise, queue a copy of the visit for grouping when the host name is available
       hptr->add_grp_visit(new vnode_t(*visit));
    }
 

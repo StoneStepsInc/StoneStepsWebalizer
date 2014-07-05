@@ -412,6 +412,8 @@ class config_t {
       void report_config(void) const;
       
       bool is_maintenance(void) const;
+
+      bool is_dns_enabled(void) const;
       
       const char *get_log_type_desc(void) const;
 };

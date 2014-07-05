@@ -131,7 +131,7 @@ dns_resolver_t::~dns_resolver_t(void)
 /*********************************************/
 /* PUT_HNODE - insert/update dns host node   */
 /*********************************************/
-bool dns_resolver_t::put_dnode(hnode_t *hnode, struct in_addr *addr)
+bool dns_resolver_t::put_hnode(hnode_t *hnode, struct in_addr *addr)
 {
    bool retval = false;
    DNODEPTR nptr;
@@ -156,8 +156,6 @@ bool dns_resolver_t::put_dnode(hnode_t *hnode, struct in_addr *addr)
 
       hnode->name = hnode->string;
       dns_derive_ccode(hnode->name, ccode);
-      
-      hnode->resolved = true;
       
       mutex_unlock(dnode_mutex);
       return true;
@@ -473,9 +471,6 @@ bool dns_resolver_t::resolve_domain_name(void)
 
    // recover the host node
    hnode = &nptr->hnode;
-
-   // update DNS state of the host node
-   nptr->hnode.resolved = true;
 
    // done with dnode, can be deleted
    delete nptr;
