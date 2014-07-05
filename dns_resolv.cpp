@@ -105,7 +105,7 @@ dnode_t::~dnode_t(void)
 // DNS resolver
 //
 
-dns_resolver_t::dns_resolver_t(void)
+dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 {
    buffer = new u_char[DBBUFSIZE];
 
@@ -117,7 +117,6 @@ dns_resolver_t::dns_resolver_t(void)
    dns_live_workers = 0;
    dns_unresolved = 0;
 
-   dns_children = 0;
    dns_cache_ttl = 0;
    
    accept_host_names = false;
@@ -256,17 +255,12 @@ bool dns_resolver_t::dns_geoip_db(void) const
 //
 //	dns_init
 //
-bool dns_resolver_t::dns_init(const config_t& config)
+bool dns_resolver_t::dns_init(void)
 {
-   // check if already initialized
-   if(dns_children)
-      return true;
-
    // check if needs to initialize
-   if(!config.dns_children)
+   if(!config.is_dns_enabled())
       return true;
 
-   dns_children = config.dns_children;
    dns_cache_ttl = config.dns_cache_ttl;
    
    accept_host_names = config.accept_host_names && config.ntop_ctrys;
@@ -334,7 +328,7 @@ bool dns_resolver_t::dns_init(const config_t& config)
 
    if (verbose > 1) {
 		/* DNS Lookup (#children): */
-		printf("%s (%d)\n",lang_t::msg_dns_rslv, dns_children);
+		printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
    }
 
 	return (dns_db || geoip_db) ? true : false;
@@ -350,14 +344,14 @@ void dns_resolver_t::dns_clean_up(void)
 
 	dns_thread_stop = true;
 
-   if(!dns_children)
+   if(!config.is_dns_enabled())
       return;
 
 	while(get_live_workers() && waitcnt--)
 		msleep(50);
 
    if(dnode_threads) {
-		for(index = 0; index < dns_children; index++) 
+		for(index = 0; index < config.dns_children; index++) 
 			thread_destroy(dnode_threads[index]);
       delete [] dnode_threads;
       dnode_threads = NULL;
@@ -410,7 +404,7 @@ void dns_resolver_t::dns_wait(void)
    bool done = false;
 
    // if there are no workers, return right away
-	if(!dns_children)
+	if(!config.is_dns_enabled())
       return;
 
    // otherwise wait for all of them to finish
@@ -556,8 +550,8 @@ void dns_resolver_t::dns_create_worker_threads(void)
 {
 	u_int index;
 
-	dnode_threads = new thread_t[dns_children];
-	for(index = 0; index < dns_children; index++) {
+	dnode_threads = new thread_t[config.dns_children];
+	for(index = 0; index < config.dns_children; index++) {
 		inc_live_workers();
 		dnode_threads[index] = thread_create(dns_worker_thread_proc, this);
 	}

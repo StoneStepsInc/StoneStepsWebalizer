@@ -55,6 +55,7 @@ class dns_resolver_t {
       u_long  dns_resolved;						// Number of IP addresses resolved by a DNS lookup
 
    private:
+      const config_t& config;
       GeoIP *geoip_db;                       // GeoIP database
       DB *dns_db;							         // DNS cache database
 
@@ -70,7 +71,6 @@ class dns_resolver_t {
       thread_t *dnode_threads;
       bool dns_thread_stop;
 
-      u_int dns_children;
       u_int dns_cache_ttl;
 
       DNODEPTR dnode_list;
@@ -118,11 +118,11 @@ class dns_resolver_t {
       #endif
 
    public:
-      dns_resolver_t(void);
+      dns_resolver_t(const config_t& config);
 
       ~dns_resolver_t(void);
 
-      bool dns_init(const config_t& config);
+      bool dns_init(void);
       void dns_clean_up(void);
       void dns_wait(void);
 

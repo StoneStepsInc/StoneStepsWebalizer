@@ -90,15 +90,13 @@ const char *copyright   = "Copyright (c) 2004-2014, Stone Steps Inc. (www.stones
 
 static bool abort_signal = false;   // true if Ctrl-C was pressed
 
-dns_resolver_t dns_resolver;
-
 int     verbose      = 2;                     /* 2=verbose,1=err, 0=none  */ 
 int     debug_mode   = 0;                     /* debug mode flag          */
 
 //
 //
 //
-webalizer_t::webalizer_t(void) : config(_config), parser(config), state(config)
+webalizer_t::webalizer_t(void) : config(_config), parser(config), state(config), dns_resolver(config)
 {
    check_dup = false;                         /* check for dup flag       */
 
@@ -187,11 +185,11 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    //
    // Initialize DNS resolver
    //
-   if(!config.is_maintenance()) {
+   if(config.is_dns_enabled() && !config.is_maintenance()) {
       // initialize the DNS processor
-	   if(dns_resolver.dns_init(config) == false) {
+      if(dns_resolver.dns_init() == false) {
          if(verbose)
-		      printf("%s\n", lang_t::msg_dns_init);
+            printf("%s\n", lang_t::msg_dns_init);
       }
 
       if(!parser.init_parser(config.log_type)) {
@@ -245,7 +243,8 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
 
 bool webalizer_t::cleanup(void)
 {
-	dns_resolver.dns_clean_up();
+   if(config.is_dns_enabled())
+      dns_resolver.dns_clean_up();
 
    parser.cleanup_parser();
    
@@ -454,6 +453,9 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    }
 }
 
+//
+// group_hosts_by_name should be called only when DNS resolution is enabled
+//
 void webalizer_t::group_hosts_by_name(void)
 {
    vnode_t *vptr;
@@ -970,10 +972,10 @@ int webalizer_t::run(void)
          else  
             printf("\n");
 
-		   if(verbose) {
-			   if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
-				   printf("%s: %d%% (%d:%d)\n", lang_t::msg_dns_htrt, (u_long) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
-		   }
+         if(verbose && config.is_dns_enabled()) {
+            if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
+               printf("%s: %d%% (%d:%d)\n", lang_t::msg_dns_htrt, (u_long) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
+         }
 
          // report total DNS time
          printf("%s %.2f %s\n", config.lang.msg_dnstime, dns_time/1000., config.lang.msg_seconds);
@@ -1314,9 +1316,11 @@ int webalizer_t::proc_logfile(void)
          //
          if (state.cur_year != log_rec.tstamp.year || state.cur_month != log_rec.tstamp.month)
          {
-            stime = msecs();
-				dns_resolver.dns_wait();
-            dns_time += elapsed(stime, msecs());
+            if(config.is_dns_enabled()) {
+               stime = msecs();
+				   dns_resolver.dns_wait();
+               dns_time += elapsed(stime, msecs());
+            }
 
             //
             // Terminate all visits for the current month. This operation splits 
@@ -1331,7 +1335,8 @@ int webalizer_t::proc_logfile(void)
             // state_t::set_tstamp is called later, so update hourly stats now
             state.update_hourly_stats();
 
-				group_hosts_by_name();
+            if(config.is_dns_enabled())
+				   group_hosts_by_name();
 
             // save run data for the report generator
             stime = msecs();
@@ -1435,6 +1440,7 @@ int webalizer_t::proc_logfile(void)
                stime = msecs();
                dns_resolver.dns_wait();
                dns_time += elapsed(stime, msecs());
+
                if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname)) != NULL) {
                   total_ignore++; 
                   continue; 
@@ -1489,7 +1495,7 @@ int webalizer_t::proc_logfile(void)
          }
 
          // add new hosts to the resolver queue
-         if(newhost)
+         if(config.is_dns_enabled() && newhost)
 			   dns_resolver.put_hnode(hptr, &log_rec.addr);
 
          // use the visit robot flag (ignore mid-visit ragent)
@@ -1751,7 +1757,8 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-         group_hosts_by_name();
+         if(config.is_dns_enabled())
+            group_hosts_by_name();
          
          // update group counts (host counts are updated in group_hosts_by_name)
          if(newugrp) state.t_grp_urls++;
@@ -1795,9 +1802,11 @@ int webalizer_t::proc_logfile(void)
 
       if (total_rec > (total_ignore+total_bad))                         /* did we process any?   */
       {
-         stime = msecs();
-			dns_resolver.dns_wait();
-         dns_time += elapsed(stime, msecs());
+         if(config.is_dns_enabled()) {
+            stime = msecs();
+			   dns_resolver.dns_wait();
+            dns_time += elapsed(stime, msecs());
+         }
 
          //
          // In the non-incremental mode or if processing the last log for
@@ -1813,7 +1822,8 @@ int webalizer_t::proc_logfile(void)
 
          update_downloads(rec_tstamp);
 
-			group_hosts_by_name();
+         if(config.is_dns_enabled())
+			   group_hosts_by_name();
 
          // save run data for the report generator
          stime = msecs();

@@ -106,6 +106,7 @@ class webalizer_t {
       
       parser_t    parser;
       state_t     state;
+      dns_resolver_t dns_resolver;
 
       vector_t<output_t*> output;
 
