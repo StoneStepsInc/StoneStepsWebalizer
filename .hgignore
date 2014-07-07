@@ -1,17 +1,19 @@
 syntax: glob
 
 CVS/*
-*.ipch
 
 syntax: regexp
 
 ^Debug/
 ^Release/
+
 ^logfiles/
 ^reports/
 ^temp/
 ^reports_/
 ^release_/
+
+^ipch/
 
 ^webalizer\.ncb$
 ^webalizer\.suo$
