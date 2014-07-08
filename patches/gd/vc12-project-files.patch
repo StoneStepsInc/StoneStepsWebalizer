@@ -1,0 +1,524 @@
+# HG changeset patch
+# Parent 8cd3b759aa21846d0873bef2f927e92560098010
+VS12 project files
+
+diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/windows/gd.props	Fri Mar 07 08:55:45 2014 -0500
+@@ -0,0 +1,14 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup />
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <AdditionalIncludeDirectories>..\..\..\libpng\libpng-1.6.9;..\..\..\zlib\zlib-1.2.8;..\..\..\freetype\freetype-2.4.10\include;</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>HAVE_LIBPNG;BGDWIN32;HAVE_LIBFREETYPE;HAVE_FT2BUILD_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ExceptionHandling>Async</ExceptionHandling>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.sln
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/windows/gd.sln	Fri Mar 07 08:55:45 2014 -0500
+@@ -0,0 +1,22 @@
++﻿
++Microsoft Visual Studio Solution File, Format Version 12.00
++# Visual Studio Express 2013 for Windows Desktop
++VisualStudioVersion = 12.0.21005.1
++MinimumVisualStudioVersion = 10.0.40219.1
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gd2", "gd.vcxproj", "{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Win32 = Debug|Win32
++		Release|Win32 = Release|Win32
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|Win32.ActiveCfg = Debug|Win32
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|Win32.Build.0 = Debug|Win32
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|Win32.ActiveCfg = Release|Win32
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|Win32.Build.0 = Release|Win32
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal
+diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/windows/gd.vcxproj	Fri Mar 07 08:55:45 2014 -0500
+@@ -0,0 +1,231 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <ProjectName>gd2</ProjectName>
++    <ProjectGuid>{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}</ProjectGuid>
++    <RootNamespace>gd2</RootNamespace>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v120</PlatformToolset>
++    <UseOfMfc>false</UseOfMfc>
++    <CharacterSet>MultiByte</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v120</PlatformToolset>
++    <UseOfMfc>false</UseOfMfc>
++    <CharacterSet>MultiByte</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
++    <Import Project="gd.props" />
++  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
++    <Import Project="gd.props" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup>
++    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <OutDir>.\Debug\</OutDir>
++    <IntDir>.\Debug\</IntDir>
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <OutDir>.\Release\</OutDir>
++    <IntDir>.\Release\</IntDir>
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Midl>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <MkTypLibCompatible>true</MkTypLibCompatible>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <TargetEnvironment>Win32</TargetEnvironment>
++      <TypeLibraryName>.\Debug/gd.tlb</TypeLibraryName>
++      <HeaderFileName />
++    </Midl>
++    <ClCompile>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
++      <PrecompiledHeaderOutputFile>.\Debug/gd.pch</PrecompiledHeaderOutputFile>
++      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
++      <ObjectFileName>.\Debug/</ObjectFileName>
++      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
++      <BrowseInformation>true</BrowseInformation>
++      <WarningLevel>Level3</WarningLevel>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++      <CompileAs>CompileAsC</CompileAs>
++    </ClCompile>
++    <ResourceCompile>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <Culture>0x0409</Culture>
++    </ResourceCompile>
++    <Link>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <ProgramDatabaseFile>.\Debug/gd.pdb</ProgramDatabaseFile>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention />
++      <TargetMachine>MachineX86</TargetMachine>
++    </Link>
++    <Bscmake>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <OutputFile>.\Debug/gd.bsc</OutputFile>
++    </Bscmake>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Midl>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <MkTypLibCompatible>true</MkTypLibCompatible>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <TargetEnvironment>Win32</TargetEnvironment>
++      <TypeLibraryName>.\Release/gd.tlb</TypeLibraryName>
++      <HeaderFileName />
++    </Midl>
++    <ClCompile>
++      <Optimization>MaxSpeed</Optimization>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <PreprocessorDefinitions>NDEBUG;WIN32;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <StringPooling>true</StringPooling>
++      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <PrecompiledHeaderOutputFile>.\Release/gd.pch</PrecompiledHeaderOutputFile>
++      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
++      <ObjectFileName>.\Release/</ObjectFileName>
++      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
++      <WarningLevel>Level3</WarningLevel>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <ResourceCompile>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <Culture>0x0409</Culture>
++    </ResourceCompile>
++    <Link>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <ProgramDatabaseFile>.\Release/gd.pdb</ProgramDatabaseFile>
++      <GenerateMapFile>true</GenerateMapFile>
++      <MapFileName>.\Release/gd.map</MapFileName>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention />
++      <TargetMachine>MachineX86</TargetMachine>
++    </Link>
++    <Bscmake>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <OutputFile>.\Release/gd.bsc</OutputFile>
++    </Bscmake>
++  </ItemDefinitionGroup>
++  <ItemGroup>
++    <ClInclude Include="config.h" />
++    <ClInclude Include="gd.h" />
++    <ClInclude Include="gd_io.h" />
++    <ClInclude Include="gdcache.h" />
++    <ClInclude Include="gdfontg.h" />
++    <ClInclude Include="gdfontl.h" />
++    <ClInclude Include="gdfontmb.h" />
++    <ClInclude Include="gdfonts.h" />
++    <ClInclude Include="gdfontt.h" />
++    <ClInclude Include="gdfx.h" />
++    <ClInclude Include="gdhelpers.h" />
++    <ClInclude Include="jisx0208.h" />
++    <ClInclude Include="wbmp.h" />
++  </ItemGroup>
++  <ItemGroup>
++    <ResourceCompile Include="libgd.rc" />
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\src\gd.c" />
++    <ClCompile Include="..\src\gd2togif.c" />
++    <ClCompile Include="..\src\gdcache.c" />
++    <ClCompile Include="..\src\gdfontg.c" />
++    <ClCompile Include="..\src\gdfontl.c" />
++    <ClCompile Include="..\src\gdfontmb.c" />
++    <ClCompile Include="..\src\gdfonts.c" />
++    <ClCompile Include="..\src\gdfontt.c" />
++    <ClCompile Include="..\src\gdft.c" />
++    <ClCompile Include="..\src\gdhelpers.c" />
++    <ClCompile Include="..\src\gdkanji.c" />
++    <ClCompile Include="..\src\gdtables.c" />
++    <ClCompile Include="..\src\gdxpm.c" />
++    <ClCompile Include="..\src\gd_bmp.c" />
++    <ClCompile Include="..\src\gd_color.c" />
++    <ClCompile Include="..\src\gd_color_map.c" />
++    <ClCompile Include="..\src\gd_color_match.c" />
++    <ClCompile Include="..\src\gd_crop.c" />
++    <ClCompile Include="..\src\gd_filter.c" />
++    <ClCompile Include="..\src\gd_gd.c" />
++    <ClCompile Include="..\src\gd_gd2.c" />
++    <ClCompile Include="..\src\gd_gif_in.c" />
++    <ClCompile Include="..\src\gd_gif_out.c" />
++    <ClCompile Include="..\src\gd_interpolation.c" />
++    <ClCompile Include="..\src\gd_io.c" />
++    <ClCompile Include="..\src\gd_io_dp.c" />
++    <ClCompile Include="..\src\gd_io_file.c" />
++    <ClCompile Include="..\src\gd_io_ss.c" />
++    <ClCompile Include="..\src\gd_jpeg.c" />
++    <ClCompile Include="..\src\gd_matrix.c" />
++    <ClCompile Include="..\src\gd_nnquant.c" />
++    <ClCompile Include="..\src\gd_png.c" />
++    <ClCompile Include="..\src\gd_rotate.c" />
++    <ClCompile Include="..\src\gd_security.c" />
++    <ClCompile Include="..\src\gd_ss.c" />
++    <ClCompile Include="..\src\gd_tga.c" />
++    <ClCompile Include="..\src\gd_tiff.c" />
++    <ClCompile Include="..\src\gd_topal.c" />
++    <ClCompile Include="..\src\gd_transform.c" />
++    <ClCompile Include="..\src\gd_wbmp.c" />
++    <ClCompile Include="..\src\gd_webp.c" />
++    <ClCompile Include="..\src\gd_xbm.c" />
++    <ClCompile Include="..\src\wbmp.c" />
++    <ClCompile Include="..\src\webpimg.c" />
++  </ItemGroup>
++  <ItemGroup>
++    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410_D.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Debug Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Release Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlibwapi.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlibwapi.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++    </Library>
++  </ItemGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj.filters
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/windows/gd.vcxproj.filters	Fri Mar 07 08:55:45 2014 -0500
+@@ -0,0 +1,222 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{b2f64b8a-81e7-44a4-8052-54442e43168f}</UniqueIdentifier>
++      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{e3ab3167-b72c-4aa8-8d29-823a00fbad07}</UniqueIdentifier>
++      <Extensions>h;hpp;hxx;hm;inl</Extensions>
++    </Filter>
++    <Filter Include="Libraries">
++      <UniqueIdentifier>{0ef54083-fe19-4d39-8cab-b835b7d064e7}</UniqueIdentifier>
++    </Filter>
++    <Filter Include="Libraries\Debug">
++      <UniqueIdentifier>{276ee0cf-449b-402f-8a00-68cd3e4315f9}</UniqueIdentifier>
++    </Filter>
++    <Filter Include="Libraries\Release">
++      <UniqueIdentifier>{73053ad2-b261-4892-9857-414ad971c4ae}</UniqueIdentifier>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="config.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gd.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gd_io.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdcache.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfontg.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfontl.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfontmb.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfonts.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfontt.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdfx.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="gdhelpers.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="jisx0208.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="wbmp.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++  </ItemGroup>
++  <ItemGroup>
++    <ResourceCompile Include="libgd.rc">
++      <Filter>Source Files</Filter>
++    </ResourceCompile>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\src\webpimg.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_bmp.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_color.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_color_map.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_color_match.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_crop.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_filter.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_gd.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_gd2.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_gif_in.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_gif_out.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_interpolation.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_io.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_io_dp.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_io_file.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_io_ss.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_jpeg.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_matrix.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_nnquant.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_png.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_rotate.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_security.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_ss.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_tga.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_tiff.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_topal.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_transform.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_wbmp.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_webp.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd_xbm.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gd2togif.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdcache.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdfontg.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdfontl.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdfontmb.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdfonts.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdfontt.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdft.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdhelpers.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdtables.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdxpm.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\wbmp.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\src\gdkanji.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++  <ItemGroup>
++    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlibwapi.lib">
++      <Filter>Libraries\Debug</Filter>
++    </Library>
++    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlibwapi.lib">
++      <Filter>Libraries\Release</Filter>
++    </Library>
++    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410_D.lib">
++      <Filter>Libraries\Debug</Filter>
++    </Library>
++    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410.lib">
++      <Filter>Libraries\Release</Filter>
++    </Library>
++    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Debug Library\libpng16.lib">
++      <Filter>Libraries\Debug</Filter>
++    </Library>
++    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Release Library\libpng16.lib">
++      <Filter>Libraries\Release</Filter>
++    </Library>
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff -r 8cd3b759aa21 -r b7d72d41647f windows/libgd.rc
+--- a/windows/libgd.rc	Tue Mar 04 08:39:44 2014 -0500
++++ b/windows/libgd.rc	Fri Mar 07 08:55:45 2014 -0500
+@@ -6,7 +6,7 @@
+ #endif
+ 
+ #include "winres.h"
+-#include "../gd.h"
++#include "../src/gd.h"
+ 
+ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+ #pragma code_page(1252)
