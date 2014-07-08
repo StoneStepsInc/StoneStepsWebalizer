@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent e5bfe81895c5a6a79b1c7c996887f9247226ea3b
+Added .hgignore
+
+diff -r e5bfe81895c5 .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Wed Mar 05 09:05:23 2014 -0500
+@@ -0,0 +1,7 @@
++syntax: glob
++
++objs/
++
++*.sdf
++*.opensdf
++*.suo
