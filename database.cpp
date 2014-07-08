@@ -40,10 +40,18 @@
 #define BUFDATAOFFSET         ((BUFKEYOFFSET) + (BUFKEYSIZE))
 
 //
-// B-Tree comparison function template
+// B-Tree comparison function template for BDB v6 and up (top) and for prior versions 
+// (bottom). Only one will be used in any build, but it's cleaner without having to 
+// use conditional blocks.
 //
 template <s_compare_cb_t compare>
 static int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
+{
+   return compare(dbt1->get_data(), dbt2->get_data());
+}
+
+template <s_compare_cb_t compare>
+static int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
    return compare(dbt1->get_data(), dbt2->get_data());
 }
@@ -53,6 +61,12 @@ static int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
 //
 template <s_compare_cb_t compare>
 static int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
+{
+   return -compare(dbt1->get_data(), dbt2->get_data());
+}
+
+template <s_compare_cb_t compare>
+static int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
    return -compare(dbt1->get_data(), dbt2->get_data());
 }
@@ -1980,11 +1994,15 @@ bool database_t::fix_v3_8_0_4(void)
 
 // keynode_t
 template int bt_compare_cb<keynode_t<u_long>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<keynode_t<u_long>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 // URLs
 template int bt_compare_cb<unode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<unode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<unode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<unode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<unode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<unode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<unode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<unode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2002,6 +2020,9 @@ template class database_t::node_value_handler_t<unode_t>;
 template int bt_compare_cb<hnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<hnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<hnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<hnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<hnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<hnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<hnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<hnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2022,6 +2043,7 @@ template class database_t::iterator<vnode_t>;
 
 // downloads
 template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<dlnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<dlnode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2040,6 +2062,8 @@ template class database_t::iterator<danode_t>;
 // user agents
 template int bt_compare_cb<anode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<anode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<anode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<anode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<anode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<anode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2054,6 +2078,8 @@ template class database_t::node_value_handler_t<anode_t>;
 // referrers
 template int bt_compare_cb<rnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<rnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<rnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<rnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<rnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<rnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2068,6 +2094,8 @@ template class database_t::node_value_handler_t<rnode_t>;
 // search strings
 template int bt_compare_cb<snode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<snode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<snode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<snode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<snode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<snode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2081,6 +2109,8 @@ template class database_t::node_value_handler_t<snode_t>;
 // users
 template int bt_compare_cb<inode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<inode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<inode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<inode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<inode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<inode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2094,6 +2124,7 @@ template class database_t::node_value_handler_t<inode_t>;
 
 // errors
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<rcnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<rcnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -2106,6 +2137,7 @@ template class database_t::reverse_iterator<rcnode_t>;
 
 // daily hosts
 template int bt_compare_cb<tnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<tnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template class database_t::node_handler_t<tnode_t>;
 template class database_t::node_value_handler_t<tnode_t>;
