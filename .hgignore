@@ -4,6 +4,8 @@ CVS/*
 
 syntax: regexp
 
+^build/
+
 ^Debug/
 ^Release/
 
