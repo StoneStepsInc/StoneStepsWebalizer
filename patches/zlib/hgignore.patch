@@ -1,0 +1,18 @@
+# HG changeset patch
+# Parent d4684cb2db533d65e677edf19bdd1be0e8c75650
+Added .hgignore
+
+diff -r d4684cb2db53 .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Sun Mar 02 23:23:21 2014 -0500
+@@ -0,0 +1,10 @@
++syntax: glob
++
++*.sdf
++*.opensdf
++*.suo
++
++contrib/vstudio/vc12/x86/
++
++contrib/masmx86/*.lst
++contrib/masmx86/*.obj

@@ -1,0 +1,118 @@
+# HG changeset patch
+# Parent a5a51a7e262f8a4c697833eb7aabb330282a7a4b
+Changed zlib to build for Windows 7; changed library name
+
+diff -r a5a51a7e262f -r b95e7f66d95e contrib/minizip/iowin32.c
+--- a/contrib/minizip/iowin32.c	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/minizip/iowin32.c	Sun Mar 09 13:46:37 2014 -0400
+@@ -25,12 +25,14 @@
+ #define INVALID_SET_FILE_POINTER ((DWORD)-1)
+ #endif
+ 
+-
++// WINRT is only available on Windows 8 and newer
++#if (_WIN32_WINNT >= 0x0602)
+ #if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+ #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+ #define IOWIN32_USING_WINRT_API 1
+ #endif
+ #endif
++#endif
+ 
+ voidpf  ZCALLBACK win32_open_file_func  OF((voidpf opaque, const char* filename, int mode));
+ uLong   ZCALLBACK win32_read_file_func  OF((voidpf opaque, voidpf stream, void* buf, uLong size));
+diff -r a5a51a7e262f -r b95e7f66d95e contrib/vstudio/vc12/zlib.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/contrib/vstudio/vc12/zlib.props	Sun Mar 09 13:46:37 2014 -0400
+@@ -0,0 +1,14 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup>
++    <TargetName>zlib12</TargetName>
++  </PropertyGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r a5a51a7e262f -r b95e7f66d95e contrib/vstudio/vc12/zlibvc.vcxproj
+--- a/contrib/vstudio/vc12/zlibvc.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/zlibvc.vcxproj	Sun Mar 09 13:46:37 2014 -0400
+@@ -99,12 +99,14 @@
+   </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
+   </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
+   </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Itanium'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+@@ -190,9 +192,6 @@
+     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">zlibwapi</TargetName>
+-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|Win32'">zlibwapi</TargetName>
+-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">zlibwapi</TargetName>
+     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlibwapi</TargetName>
+     <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|x64'">zlibwapi</TargetName>
+     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlibwapi</TargetName>
+@@ -229,7 +228,6 @@
+     <Link>
+       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+       <AdditionalDependencies>..\..\masmx86\match686.obj;..\..\masmx86\inffas32.obj;%(AdditionalDependencies)</AdditionalDependencies>
+-      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
+       <SuppressStartupBanner>true</SuppressStartupBanner>
+       <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+@@ -240,7 +238,6 @@
+       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+       <DataExecutionPrevention>
+       </DataExecutionPrevention>
+-      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
+       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+     </Link>
+     <PreBuildEvent>
+@@ -281,7 +278,6 @@
+     </ResourceCompile>
+     <Link>
+       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+-      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
+       <SuppressStartupBanner>true</SuppressStartupBanner>
+       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+       <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
+@@ -292,7 +288,6 @@
+       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+       <DataExecutionPrevention>
+       </DataExecutionPrevention>
+-      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+@@ -329,7 +324,6 @@
+     <Link>
+       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+       <AdditionalDependencies>..\..\masmx86\match686.obj;..\..\masmx86\inffas32.obj;%(AdditionalDependencies)</AdditionalDependencies>
+-      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
+       <SuppressStartupBanner>true</SuppressStartupBanner>
+       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+       <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
+@@ -340,7 +334,6 @@
+       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+       <DataExecutionPrevention>
+       </DataExecutionPrevention>
+-      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
+       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+     </Link>
+     <PreBuildEvent>
