@@ -1,0 +1,23 @@
+# HG changeset patch
+# Parent e2a95773940a11b5e8a3474a86941a13a25b49f6
+Added .hgignore
+
+diff -r e2a95773940a .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Thu Mar 06 09:02:29 2014 -0500
+@@ -0,0 +1,15 @@
++syntax: glob
++
++projects\vstudio\ipch
++
++projects\vstudio\libpng\libpng.vcxproj.user
++pnglibconf.h
++
++Debug Library/
++Release Library/
++Debug/
++Release/
++
++*.opensdf
++*.sdf
++*.suo

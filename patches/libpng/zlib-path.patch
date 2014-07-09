@@ -1,0 +1,16 @@
+# HG changeset patch
+# Parent dbcb7e8c188e280cd5fbed8469b21ef3fe284ef6
+Changed zlib path to 1.2.8
+
+diff -r dbcb7e8c188e -r 591ff42d08a4 projects/vstudio/zlib.props
+--- a/projects/vstudio/zlib.props	Tue Mar 04 01:11:41 2014 -0500
++++ b/projects/vstudio/zlib.props	Tue Mar 04 01:12:26 2014 -0500
+@@ -32,7 +32,7 @@
+ 	 versions do not match.  The zlib version used in this build is recorded
+ 	 below:
+      -->
+-    <ZLibSrcDir>..\..\..\..\zlib-1.2.5</ZLibSrcDir>
++    <ZLibSrcDir>..\..\..\..\..\zlib\zlib-1.2.8</ZLibSrcDir>
+ 
+     <!-- The following line allows compilation for an ARM target with Visual
+          Studio 2012.  Notice that this is not supported by the Visual Studio
