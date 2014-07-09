@@ -1,0 +1,338 @@
+# HG changeset patch
+# Parent 896606fdbf762a190e4d00c7a00958f132cac38f
+Added VS12 project files; ported source to Windows
+
+diff -r 896606fdbf76 -r 91bc4c316cfa include/maxminddb.h
+--- a/include/maxminddb.h	Tue Mar 25 08:55:51 2014 -0400
++++ b/include/maxminddb.h	Tue Mar 25 08:57:09 2014 -0400
+@@ -6,15 +6,41 @@
+ #endif
+ 
+ #include <maxminddb_config.h>
++
++/* platform includes */
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#include <winsock2.h>
++#include <ws2tcpip.h>
++#else   /* _WIN32 */
+ #include <netdb.h>
+ #include <netinet/in.h>
++#include <sys/socket.h>
++#endif
++
++/* standard includes */
+ #include <stdarg.h>
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
+-#include <sys/socket.h>
+ #include <sys/types.h>
+ 
++/* Windows-specific definitions */
++#ifdef _WIN32
++/* libmaxminddb package version from configure */
++#define PACKAGE_VERSION "0.5.3"
++
++/* translate Windows socket address family */
++typedef ADDRESS_FAMILY sa_family_t;
++
++/* MSVC doesn't define signed size_t, copy it from configure */
++#define ssize_t int
++
++/* MSVC doesn't support restricted pointers */
++#define restrict
++#endif
++
+ #define MMDB_DATA_TYPE_EXTENDED (0)
+ #define MMDB_DATA_TYPE_POINTER (1)
+ #define MMDB_DATA_TYPE_UTF8_STRING (2)
+diff -r 896606fdbf76 -r 91bc4c316cfa projects/VS12/libmaxminddb.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb.props	Tue Mar 25 08:57:09 2014 -0400
+@@ -0,0 +1,20 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup>
++    <IntDir>$(Configuration)\obj\</IntDir>
++  </PropertyGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>MMDB_UINT128_IS_BYTE_ARRAY=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++    </ClCompile>
++    <PreBuildEvent>
++      <Command>if NOT EXIST (..\..\include\maxminddb_config.h) (
++copy ..\..\include\maxminddb_config.h.in ..\..\include\maxminddb_config.h
++)</Command>
++    </PreBuildEvent>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r 896606fdbf76 -r 91bc4c316cfa projects/VS12/libmaxminddb.sln
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb.sln	Tue Mar 25 08:57:09 2014 -0400
+@@ -0,0 +1,22 @@
++﻿
++Microsoft Visual Studio Solution File, Format Version 12.00
++# Visual Studio Express 2013 for Windows Desktop
++VisualStudioVersion = 12.0.21005.1
++MinimumVisualStudioVersion = 10.0.40219.1
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmaxminddb", "libmaxminddb.vcxproj", "{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Win32 = Debug|Win32
++		Release|Win32 = Release|Win32
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}.Debug|Win32.ActiveCfg = Debug|Win32
++		{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}.Debug|Win32.Build.0 = Debug|Win32
++		{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}.Release|Win32.ActiveCfg = Release|Win32
++		{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}.Release|Win32.Build.0 = Release|Win32
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal
+diff -r 896606fdbf76 -r 91bc4c316cfa projects/VS12/libmaxminddb.vcxproj
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb.vcxproj	Tue Mar 25 08:57:09 2014 -0400
+@@ -0,0 +1,89 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\maxminddb.c" />
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\include\maxminddb.h" />
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <ProjectGuid>{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}</ProjectGuid>
++    <Keyword>Win32Proj</Keyword>
++    <RootNamespace>libmaxminddb</RootNamespace>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>StaticLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v120</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>StaticLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v120</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="libmaxminddb.props" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="libmaxminddb.props" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <TargetName>$(ProjectName)d</TargetName>
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <ClCompile>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++    </Link>
++    <PreBuildEvent />
++    <Lib />
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <Optimization>MaxSpeed</Optimization>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++    </Link>
++    <PreBuildEvent />
++  </ItemDefinitionGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff -r 896606fdbf76 -r 91bc4c316cfa projects/VS12/libmaxminddb.vcxproj.filters
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb.vcxproj.filters	Tue Mar 25 08:57:09 2014 -0400
+@@ -0,0 +1,23 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
++      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
++      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\maxminddb.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\include\maxminddb.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff -r 896606fdbf76 -r 91bc4c316cfa src/maxminddb.c
+--- a/src/maxminddb.c	Tue Mar 25 08:55:51 2014 -0400
++++ b/src/maxminddb.c	Tue Mar 25 08:57:09 2014 -0400
+@@ -2,14 +2,16 @@
+ #include <config.h>
+ #endif
+ #include "maxminddb.h"
++#ifndef _WIN32
+ #include <arpa/inet.h>
++#include <sys/mman.h>
++#include <unistd.h>
++#endif 
+ #include <fcntl.h>
+ #include <inttypes.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <sys/mman.h>
+ #include <sys/stat.h>
+-#include <unistd.h>
+ 
+ #define MMDB_DATA_SECTION_SEPARATOR (16)
+ 
+@@ -215,7 +217,11 @@
+ 
+   /* Sanity check, otherwise the loop might search through the whole
+      memory.  */
++#ifdef _WIN32
++  if (haystack_len < needle_len)
++#else
+   if (__builtin_expect (haystack_len < needle_len, 0))
++#endif
+     return NULL;
+ 
+   for (begin = (const char *) haystack; begin <= last_possible; ++begin)
+@@ -270,6 +276,17 @@
+         return MMDB_OUT_OF_MEMORY_ERROR;
+     }
+ 
++    ssize_t size = 0;
++
++#ifdef _WIN32
++   HANDLE fd = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++    if (fd == INVALID_HANDLE_VALUE) {
++        free_mmdb_struct(mmdb);
++        return MMDB_FILE_OPEN_ERROR;
++    }
++
++    size = GetFileSize(fd, NULL);
++#else
+     int fd = open(filename, O_RDONLY);
+     if (fd < 0) {
+         free_mmdb_struct(mmdb);
+@@ -278,20 +295,35 @@
+ 
+     struct stat s;
+     fstat(fd, &s);
++    size = s.st_size;
++#endif
+ 
+     if ((flags & MMDB_MODE_MASK) == 0) {
+         flags |= MMDB_MODE_MMAP;
+     }
+     mmdb->flags = flags;
+-    ssize_t size;
+-    mmdb->file_size = size = s.st_size;
++    mmdb->file_size = size;
+ 
++#ifdef _WIN32
++    HANDLE fm = CreateFileMapping(fd, NULL, PAGE_READONLY, 0, size, NULL);
++    if(fm == NULL) {
++        free_mmdb_struct(mmdb);
++        return MMDB_IO_ERROR;
++    }
++
++    uint8_t *file_content = MapViewOfFile(fm, FILE_MAP_READ, 0, 0, 0);
++    if (file_content == NULL) {
++        free_mmdb_struct(mmdb);
++        return MMDB_IO_ERROR;
++    }
++#else
+     uint8_t *file_content =
+         (uint8_t *)mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+     if (MAP_FAILED == file_content) {
+         free_mmdb_struct(mmdb);
+         return MMDB_IO_ERROR;
+     }
++#endif
+ 
+     uint32_t metadata_size = 0;
+     const uint8_t *metadata = find_metadata(file_content, size, &metadata_size);
+@@ -313,7 +345,12 @@
+         return MMDB_UNKNOWN_DATABASE_FORMAT_ERROR;
+     }
+ 
++#ifdef _WIN32
++    CloseHandle(fm);
++    CloseHandle(fd);
++#else
+     close(fd);
++#endif
+ 
+     uint32_t search_tree_size = mmdb->metadata.node_count *
+                                 mmdb->full_record_byte_size;
+@@ -1521,7 +1558,11 @@
+         free((void *)mmdb->filename);
+     }
+     if (NULL != mmdb->file_content) {
++#ifdef _WIN32
++        UnmapViewOfFile(mmdb->file_content);
++#else
+         munmap((void *)mmdb->file_content, mmdb->file_size);
++#endif
+     }
+ 
+     if (NULL != mmdb->metadata.database_type) {
