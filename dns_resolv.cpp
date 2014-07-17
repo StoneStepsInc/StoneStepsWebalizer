@@ -109,8 +109,11 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 {
    buffer = new u_char[DBBUFSIZE];
 
+   dnode_list = dnode_end = NULL;
+
    geoip_db = NULL;
    dns_db   = NULL;
+
    dnode_threads = NULL;
    dns_thread_stop = false;
 
@@ -120,6 +123,12 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
    dns_cache_ttl = 0;
    
    accept_host_names = false;
+
+   dns_live_workers = 0;
+
+   dns_unresolved = 0;
+   dns_resolved = 0;
+   dns_cached = 0;
 }
 
 dns_resolver_t::~dns_resolver_t(void)
