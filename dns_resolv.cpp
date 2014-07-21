@@ -111,6 +111,11 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
    dnode_list = dnode_end = NULL;
 
+   dnode_mutex = NULL;
+   hqueue_mutex = NULL;
+
+   dns_done_event = NULL;
+
    geoip_db = NULL;
    dns_db   = NULL;
 
@@ -721,12 +726,10 @@ void dns_resolver_t::dns_db_put(DNODEPTR dnode)
    v.data = recPtr;
    v.size = recSize;
 
-   mutex_lock(db_mutex);
    if((dberror = dns_db->put(dns_db, NULL, &k, &v, 0)) < 0) {
       if(verbose)
          fprintf(stderr,"dns_db_put failed (%04x - %s)!\n", dberror, db_strerror(dberror));
    }
-   mutex_unlock(db_mutex);
 }
 
 /*********************************************/
@@ -777,8 +780,6 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
       return false;                  /* disable cache */
    }
 
-   db_mutex = mutex_create();
-
    return true;
 }
 
@@ -791,10 +792,6 @@ bool dns_resolver_t::dns_db_close(void)
 	if(dns_db)
 		dns_db->close(dns_db, 0);
    dns_db = NULL;
-
-   if(db_mutex)
-      mutex_destroy(db_mutex);
-   db_mutex = NULL;
 
    return true;
 }

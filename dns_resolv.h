@@ -64,7 +64,6 @@ class dns_resolver_t {
       bool accept_host_names;
 
       mutex_t dnode_mutex;
-      mutex_t db_mutex;
       mutex_t hqueue_mutex;
       event_t dns_done_event;
 
