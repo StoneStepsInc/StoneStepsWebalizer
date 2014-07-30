@@ -443,7 +443,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    // Update country counters, ignoring robot and spammer activity
    //
-   if(!vnode.robot && !hnode.spammer) {
+   if(!hnode.robot && !hnode.spammer) {
       ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode());
 
       ccptr->count += vnode.hits;
@@ -830,6 +830,12 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
       agent = '-';                              // reset to an empty agent string
 }
 
+//
+// --end-month option handler
+//
+// When called, no record processing is being done - just end active visits and 
+// downloads and then save the state.
+//
 int webalizer_t::end_month(void)
 {
    u_long stime = msecs();
@@ -1396,15 +1402,13 @@ int webalizer_t::proc_logfile(void)
          // 4. A visit is marked as a robot visit when the user agent 
          // matches one of the Robot entries and a vnode is created, 
          // regardless whether the host is marked as a robot or not.
+         // The robot flag in the visit is purely informational. See
+         // vnode_t for details.
          //
          // 5. A user agent is marked as a robot if the current visit is 
          // marked as a robot.
          //
-         // 6. Robot totals are updated only if the current visit is 
-         // marked as a robot.
-         //
-         // 7. Country totals do not include robot activity, based on whether 
-         // the ended visit is a robot visit or not.
+         // 7. Country totals do not include robot activity.
          //
          
          // if robots can be ignored, set ragent now, otherwise, do it after the ignore check
@@ -1498,8 +1502,8 @@ int webalizer_t::proc_logfile(void)
          if(config.is_dns_enabled() && newhost)
 			   dns_resolver.put_hnode(hptr, &log_rec.addr);
 
-         // use the visit robot flag (ignore mid-visit ragent)
-         robot = hptr->visit && hptr->visit->robot;
+         // use the host robot flag (ignore mid-visit ragent)
+         robot = hptr->robot;
 
          //
          // Entry URL may be not the first URL in the visit either because the
@@ -2796,7 +2800,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
    // update the last URL, if any
    if(visit->lasturl) {
       // update exit URL for non-robots
-      if(!visit->robot) {
+      if(!hptr->robot) {
          if(!visit->lasturl->exit)
             state.u_exit++;                  // unique exit URLs
          state.t_exit++;                     // total exit URLs
@@ -2827,8 +2831,9 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
 //
 // update_visits
 //
-// Process all ended visits, update the state and dispose of the
-// visit nodes.
+// Scan all host nodes and check each whether it has an active visit that can
+// be ended. Delete returned ended visits, as we have no use for them at
+// this point. 
 //
 void webalizer_t::update_visits(u_long tstamp)
 {
@@ -2883,8 +2888,9 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, u_long tstamp)
 //
 // update_downloads
 //
-// Factors active download job data into the combined stats and
-// then resets the active job.
+// Scan all download nodes and check each whether it has an active job that can
+// be ended. Delete returned ended download jobs, as we have no use for them at
+// this point. 
 //
 void webalizer_t::update_downloads(u_long tstamp)
 {

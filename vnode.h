@@ -36,6 +36,17 @@ struct unode_t;
 // an entry URL. entry_url is used to track whether an entry URL for this 
 // host has been counted or not.
 //
+// 4. The robot flag in the visit node is purely informational and should 
+// not affect the value of the robot flag in the host node. For example, 
+// two different robots may operate from the same IP address and if one of 
+// these robots is not listed in the robot configuration and the robot flag 
+// in the visit node overrides the robot flag in the host node, host and 
+// country visit counters will be miscounted when the active visit node is
+// gone because visitors and hosts are tightly coupled in the current design.
+// A better approach is to split hosts onto hosts and visitors, so multiple
+// visitors can share the same IP address, but are tracked independent of
+// their IP address alone.
+//
 struct vnode_t : public list_node_t<vnode_t>, public keynode_t<u_long>, public datanode_t<vnode_t> {
       bool     entry_url: 1;        // entry URL set?
       bool     robot    : 1;        // robot?

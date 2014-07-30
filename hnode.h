@@ -42,10 +42,12 @@
 // (hits, xfer, etc) for robot and non-robot users using a particular IP 
 // address.
 //
-// 6. If there is an active visit, is_robot returns true if the visitor is
-// a robot, regardless whether the host is a robot or not. If there's no  
-// active visit, host's robot flag is returned. This provides better robot 
-// tracking for IP addresses shared between robots and humans.
+// 6. It is possible for hnode_t::robot and vnode_t::robot to have different 
+// values. For example, different robots may operate from the same IP address
+// and some of these robots may not be listed in the configuration. Robot flag
+// in the visit node should always be ignored to make sure all counters are in
+// sync regardless whether there is a visit active or not. See vnode_t for
+// details.
 //
 typedef struct hnode_t : public base_node<hnode_t> {
       static const u_int ccode_size;
@@ -108,8 +110,6 @@ typedef struct hnode_t : public base_node<hnode_t> {
          void reset_ccode(void);
 
          const string_t& hostname(void) const {return name.isempty() ? string : name;}
-
-         bool is_robot(void) const {return visit ? visit->robot : robot;}
 
          void add_grp_visit(vnode_t *vnode);
 
