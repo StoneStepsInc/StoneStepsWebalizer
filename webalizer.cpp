@@ -1757,9 +1757,6 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-         if(config.is_dns_enabled())
-            group_hosts_by_name();
-         
          // update group counts (host counts are updated in group_hosts_by_name)
          if(newugrp) state.t_grp_urls++;
          if(newigrp) state.t_grp_users++;
