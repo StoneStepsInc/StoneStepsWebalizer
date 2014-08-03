@@ -1821,7 +1821,10 @@ void xml_output_t::write_top_countries(void)
    if(config.html_ext_lang)
       pie_fname = pie_fname + '.' + config.lang.language_code;
 
-   for (i=0;i<10;i++) pie_data[i]=0;             /* init data array      */
+   for (i=0;i<10;i++) {
+      pie_data[i]=0;                             /* init data array      */
+      pie_legend[i] = NULL;
+   }
    j = MIN(tot_num, 10);                         /* ensure data size     */
 
    for(i = 0; i < j; i++) {

@@ -2637,7 +2637,10 @@ void html_output_t::top_ctry_table()
    /* generate pie chart if needed */
    if (config.ctry_graph)
    {
-      for (i=0;i<10;i++) pie_data[i]=0;             /* init data array      */
+      for (i=0;i<10;i++) {
+         pie_data[i] = 0;                           /* init data array      */
+         pie_legend[i] = NULL;
+      }
       j = MIN(tot_num, 10);                         /* ensure data size     */
 
       for(i = 0; i < j; i++) {
