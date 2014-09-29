@@ -13,12 +13,17 @@
 #include "util.h"
 #include <ctype.h>
 
-tstamp_t::tstamp_t(int y, int mo, int d, int h, int mi, int s)
+tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of)
+{
+   reset(y, mo, d, h, mi, s, of);
+}
+
+tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s)
 {
    reset(y, mo, d, h, mi, s);
 }
 
-void tstamp_t::reset(int y, int mo, int d, int h, int mi, int s)
+void tstamp_t::reset(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of)
 {
    year = y;
    month = mo;
@@ -26,113 +31,210 @@ void tstamp_t::reset(int y, int mo, int d, int h, int mi, int s)
    hour = h;
    min = mi;
    sec = s;
+   offset = of;
+   utc = false;
+   null = false;
+}
+
+void tstamp_t::reset(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s)
+{
+   year = y;
+   month = mo;
+   day = d;
+   hour = h;
+   min = mi;
+   sec = s;
+   offset = 0;
+   utc = true;
+   null = false;
+}
+
+//
+// Extracts the number of seconds correspondng to the last day within the specified time 
+// value, converts this number to the time components and uses the remaining whole number 
+// of days expressed in seconds to compute the Julian day number of that day, regardless 
+// of the time zone offset. Consequently, the returned value is a Julian day number either 
+// in UTC or local time. 
+//
+u_int tstamp_t::reset_time(int64_t time)
+{
+   int64_t t;
+
+   time -= (t = time % 60ll);
+   sec = t;
+
+   time -= (t = time % 3600ll);
+   min = t / 60ll;
+
+   time -= (t = time % 86400ll);
+   hour = t / 3600ll;
+
+   //
+   // The remaining time value at this point is the number of days since midnight 
+   // 1970-01-01 UTC. Adding the Julian day number for noon 1970-01-01 UTC (2440588), 
+   // produces a Julian day number either in UTC or in local time.
+   //
+   return (u_int) (time / 86400ll + 2440588ll);
+}
+
+void tstamp_t::reset_date(u_int jdn)
+{
+   uint64_t a, b, c, d, e, m;
+
+   a = jdn + 32044ull;
+   b = (4ull*a + 3ull)/146097ull;
+   c = a - (b*146097ull)/4ull;
+   d = (4ull*c + 3ull)/1461ull;
+   e = c - (1461ull*d)/4ull;
+   m = (5ull*e + 2ull)/153ull;
+
+   year = (u_int) (b*100ull + d - 4800ull + m/10ull);
+   month = (u_int) (m + 3ull - 12ull*(m/10ull));
+   day = (u_int) (e - (153ull*m+2ull)/5ull + 1ull);
 }
 
 void tstamp_t::reset(time_t time)
 {
-   u_long a, b, c, d, e, m, t;
+   reset_date(reset_time(time));
 
-   time -= (t = time % 60ul);
-   sec = t;
-
-   time -= (t = time % 3600ul);
-   min = t / 60ul;
-
-   time -= (t = time % 86400ul);
-   hour = t / 3600ul;
-
-   time = time / 86400ul + 2440588ul;
-
-   a = time + 32044;
-   b = (4*a+3)/146097;
-   c = a - (b*146097)/4;
-   d = (4*c+3)/1461;
-   e = c - (1461*d)/4;
-   m = (5*e+2)/153;
-
-   year = b*100 + d - 4800 + m/10;
-   month = m + 3 - 12*(m/10);
-   day = e - (153*m+2)/5 + 1;
+   offset = 0;
+   utc = true;
+   null = false;
 }
 
-void tstamp_t::reset(const char *str)
+void tstamp_t::reset(time_t time, int of)
 {
-   u_int num;
-   const char *cp1, *cp2;
-   u_int ti = 0, di = 0, dp[3], tp[3];
-   bool time = false;
+   reset_date(reset_time(time + of * 60ll));
 
-   reset();
+   offset = of;
+   utc = false;
+   null = false;
+}
+
+//
+// Parses a time stamp string and returns true if the input is a valid time stamp. 
+// If the method returns false, then data members are left unchanged. This method
+// only assigns date/time components and does not change the time stamp state.
+//
+//    2007-11-17 12:30:01
+//    2007-11-17 2:00
+//    2007-11-17
+//
+bool tstamp_t::parse_tstamp(const char *str)
+{
+   static const struct {
+      bool status;            // parse status 
+      const char *delim;      // valid delimiters
+   } desc[] = {{false, "-/"}, {false, "-/"}, {true, " T"}, {false, ":"}, {true, ":"}, {true, NULL}};
+
+   const char *cp1, *cp2;
+   u_int i = 0;
+   u_int p[6];
 
    cp1 = str;
 
-   // 2007-11-17 12:30:01
-   // 2007-11-17
-   //      11-17 12:30
-   //            12:30:01
-   while(*cp1) {
-      // get the longest number and update the arrays
-      num = str2ul(cp1, &cp2);
+   while (cp1 && *cp1 && i < sizeof(desc)/sizeof(desc[0])) {
+      p[i] = str2ul(cp1, &cp2);
       
-      // $$$ change reset to return bool !!!
+      // check if we got a number
       if(!cp2)
-         return;
+         return false;
 
-      if(*cp2 == ':') {
-         // part of time
-         tp[ti++] = num;
-         time = true;
-         cp1 = cp2+1;
-      }
-      else if(*cp2 == '/' || *cp2 == '-') {
-         // part of date
-         dp[di++] = num;
-         time = false;
-         cp1 = cp2+1;
-      }
-      else if(*cp2 == ' ') {
-         // if it's a trailing space after time, we are done
-         if(time) {
-            tp[ti++] = num;
-            break;
-         }
-         
-         // otherwise, finish the date
-         time = true;
-         dp[di++] = num;
-         cp1 = cp2+1;
-      }
-      else {
-         // a single number is ambiguous - return
-         if(!di && !ti) return;
-
-         // complete the current part and break out
-         if(time)
-            tp[ti++] = num;
-         else
-            dp[di++] = num;
+      // break out if there's no more input
+      if(!*cp2)
          break;
-      }
+
+      // otherwise check for excess of input or if we got a bad delimiter
+      if(!desc[i].delim || !strchr(desc[i].delim, *cp2))
+         return false;
+
+      // move past the last delimiter and select the next element in the date parts array
+      cp1 = cp2 + 1;
+      i++;
    }
 
-   if(di) {
-      // use the date parts to populate the date (day, month, year)
-      day = dp[--di];
-      if(di) month = dp[--di];
-      if(di) year = dp[--di];
+   // check if we stopped at a point that produces a valid time stamp
+   if(!desc[i].status)
+      return false;
+
+   // we got a valid timestamp and i at this point may only be 2, 4 and 5
+   if(i >= 2) {
+      year = p[0];
+      month = p[1];
+      day = p[2];
    }
 
-   if(ti) {
-      // use the time parts to populate the time (hour, minute, second)
-      hour = tp[0]; ti--;
-      if(ti) {min = tp[1]; ti--;}
-      if(ti) {sec = tp[2]; ti--;}
+   if(i >= 4) {
+      hour = p[3];
+      min = p[4];
    }
+   else
+      hour = min = sec = 0;
+
+   if(i == 5)
+      sec = p[5];
+   else
+      sec = 0;
+
+   // reset the offset because we never expect it in the input
+   offset = 0;
+
+   return true;
 }
 
-int tstamp_t::compare(const tstamp_t& tstamp) const
+bool tstamp_t::parse(const char *str)
+{
+   reset();
+
+   if(!parse_tstamp(str))
+      return false;
+
+   utc = true;
+   null = false;
+
+   return true;
+}
+
+bool tstamp_t::parse(const char *str, int of)
+{
+   reset();
+
+   if(!parse_tstamp(str))
+      return false;
+
+   offset = of;
+   utc = false;
+   null = false;
+
+   return true;
+}
+
+void tstamp_t::shift(int secs) 
+{
+   utc ?
+      reset(mktime() + secs) :
+      reset(mktime() + secs, offset);
+}
+
+void tstamp_t::toutc(void) 
+{
+   if(!null && !utc) 
+      reset(mktime());
+}
+
+void tstamp_t::tolocal(int offset) 
+{
+   if(!null && (utc || offset != this->offset)) 
+      reset(mktime(), offset);
+}
+
+int64_t tstamp_t::compare(const tstamp_t& tstamp) const
 {
    int diff;
+
+   // if either time is in different time zone, compare both as time values
+   if(utc != tstamp.utc || offset != tstamp.offset)
+      return mktime() - tstamp.mktime();
 
    // compare part by part for performance reasons
    if((diff = year - tstamp.year) != 0)
@@ -156,22 +258,54 @@ int tstamp_t::compare(const tstamp_t& tstamp) const
    return 0;
 }
 
-//
-// Returns the number of seconds since midnight 1/1/1970 (2440588)
-//
-time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec)
+string_t tstamp_t::format(void) const
 {
-   return ((jdate(year, month, day)-2440588ul)*86400ul) + hour*3600ul + min*60ul + sec;
+   // output only non-zero seconds
+   if(sec) return utc ? 
+      string_t::_format("%04d-%02d-%02d %02d:%02d:%02dZ", year, month, day, hour, min, sec) :
+      string_t::_format("%04d-%02d-%02d %02d:%02d:%02d%+05d", year, month, day, hour, min, sec, ((offset / 60) * 100 + offset % 60));
+   else return utc ? 
+      string_t::_format("%04d-%02d-%02d %02d:%02dZ", year, month, day, hour, min) :
+      string_t::_format("%04d-%02d-%02d %02d:%02d%+05d", year, month, day, hour, min, ((offset / 60) * 100 + offset % 60));
+}
+
+time_t tstamp_t::mktime(void) const 
+{
+   return utc ? 
+      mktime(year, month, day, hour, min, sec) : 
+      mktime(year, month, day, hour, min, sec, offset);
+}
+
+time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec, int offset)
+{
+   //
+   // Convert local time as if it's UTC and then subtract the offset (i.e. negative offsets 
+   // will be added) to produce actual UTC time.
+   //
+   return mktime(year, month, day, hour, min, sec) - (offset * 60ll);
 }
 
 //
-// Returns the number of days from noon UTC, January 1st, 4713 B.C.E. (Julian day number)
+// Returns the number of seconds since midnight 1/1/1970, UTC
 //
-u_long tstamp_t::jdate(int year, int month, int day)
+time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec)
 {
-   u_long a, y, m;
-   a = (14-month)/12;
+   //
+   // Julian day number for noon 1970-01-01 (UTC) is 2440588. Subtracting this value
+   // from the value returned from jday produces midnight UTC time for the specified 
+   // date.
+   //
+   return ((time_t) (jday(year, month, day) - 2440588) * 86400ll) + hour*3600ll + min*60ll + sec;
+}
+
+//
+// Returns a Julian day number - number of days from noon January 1st, 4713 BC (UTC)
+//
+u_int tstamp_t::jday(u_int year, u_int month, u_int day)
+{
+   u_int a, y, m;
+   a = (14 - month)/12;
    y = year+4800-a;
    m = month + 12*a - 3;
-   return day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045ul;
+   return day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045;
 }

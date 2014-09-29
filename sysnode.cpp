@@ -29,9 +29,12 @@ sysnode_t::sysnode_t(void) : keynode_t<u_long>(1)
    sizeof_double = sizeof(double);
    
    byte_order = 0x12345678u;
+
+   utc_time = true;
+   utc_offset = 0; 
 }
 
-void sysnode_t::reset(void)
+void sysnode_t::reset(const config_t& config)
 {
    keynode_t<u_long>::reset(1);
 
@@ -49,6 +52,9 @@ void sysnode_t::reset(void)
    sizeof_double = sizeof(double);
    
    byte_order = 0x12345678u;
+
+   utc_time = !config.local_time;
+   utc_offset = config.utc_offset; 
 }
 
 bool sysnode_t::check_size_of(void) const
@@ -71,6 +77,11 @@ bool sysnode_t::check_size_of(void) const
    return true;
 }
 
+bool sysnode_t::check_time_settings(const config_t& config)
+{
+   return utc_time == !config.local_time && utc_offset == config.utc_offset;
+}
+
 u_int sysnode_t::s_data_size(void) const
 {
    return datanode_t<sysnode_t>::s_data_size() + 
@@ -82,7 +93,9 @@ u_int sysnode_t::s_data_size(void) const
             s_size_of(logformat) +     // log format line
             sizeof(u_short) * 5  +     // sizeof char, short, int, long and double
             sizeof(u_int)        +     // byte_order
-            sizeof(u_int)        ;     // appvar_last
+            sizeof(u_int)        +     // appvar_last
+            sizeof(u_char)       +     // utc_time
+            sizeof(short)        ;     // utc_offset
 }
 
 u_int sysnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -115,6 +128,9 @@ u_int sysnode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = serialize(ptr, byte_order);
    
    ptr = serialize(ptr, appver_last);
+
+   ptr = serialize(ptr, utc_time);
+         serialize<short>(ptr, utc_offset);
 
    return datasize;
 }
@@ -173,6 +189,16 @@ u_int sysnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t 
       appver_last = 0;
    }
 
+   //
+   // Leave time settings at their initial values for older versions of 
+   // sysnode_t, which assumes that the database is in sync with time
+   // settings in the configuration file. 
+   //
+   if(version >= 5) {
+      ptr = deserialize(ptr, utc_time);
+      ptr = deserialize<short>(ptr, utc_offset);
+   }
+
    if(upcb)
       upcb(*this, arg);
 
@@ -184,12 +210,15 @@ u_int sysnode_t::s_data_size(const void *buffer)
    u_short version = s_node_ver(buffer);
    u_int basesize, datasize;
 
-   basesize = datanode_t<sysnode_t>::s_data_size(buffer) + sizeof(u_int) + sizeof(u_char) + sizeof(u_long); // appver, incremental, filepos
+   basesize = datanode_t<sysnode_t>::s_data_size(buffer) + 
+            sizeof(u_int)        +        // appver
+            sizeof(u_char)       +        // incremental
+            sizeof(u_long);               // filepos
 
    if(version >= 2)
       basesize += sizeof(u_char);         // batch mode
       
-   datasize = basesize + s_size_of<string_t>((u_char*) buffer + basesize);
+   datasize = basesize + s_size_of<string_t>((u_char*) buffer + basesize);    // logformat
    
    if(version < 3)
       return datasize;
@@ -199,7 +228,14 @@ u_int sysnode_t::s_data_size(const void *buffer)
    if(version < 4)
       return datasize;
       
-   return datasize + 
+   datasize += 
       sizeof(u_short) * 5  +  // sizeof char, short, int, long and double 
       sizeof(u_int) * 2;      // byte_order, appver_last
+
+   if(version < 5)
+      return datasize;
+
+   return datasize +
+            sizeof(u_char)       +        // utc_time
+            sizeof(short);                // utc_offset
 }

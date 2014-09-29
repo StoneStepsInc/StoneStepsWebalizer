@@ -393,6 +393,9 @@ bool state_t::initialize(void)
 {
    u_int index;
 
+   // reset sysnode now that we have configuration available 
+   sysnode.reset(config);
+
    // add response codes for which we have localized descriptions
    for(index = 0; index < config.lang.resp_code_count(); index++)
       response.add_status_code(config.lang.get_resp_code_by_index(index).code);
@@ -472,6 +475,10 @@ bool state_t::initialize(void)
       if(!sysnode.check_byte_order())
          throw exception_t(0, "Incompatible database format (byte order)");
 
+      // do not enforce time settings if we just need to print database information
+      if(!config.db_info && !sysnode.check_time_settings(config))
+         throw exception_t(0, "Incompatible database format (time settings)");
+
       // nothing to do if just compacting the database or printing information
       if(!config.compact_db && !config.db_info) {
          // attach indexes to generate a report or to end the current month
@@ -493,7 +500,7 @@ bool state_t::initialize(void)
             if(!config.incremental || !sysnode.incremental) {
                if(!database.truncate())
                   throw exception_t(0, "Cannot truncate the database\n");
-               sysnode.reset();
+               sysnode.reset(config);
             }
          }
       }
@@ -1482,7 +1489,7 @@ void state_t::clear_month()
          throw exception_t(0, "Cannot roll over the current state database");
       
       // it's a new database - reset the system node
-      sysnode.reset();
+      sysnode.reset(config);
    }
 
    init_counters();            /* reset monthly counters  */

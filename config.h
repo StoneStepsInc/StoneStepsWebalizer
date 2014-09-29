@@ -171,7 +171,8 @@ class config_t {
       bool all_errors;                           // List All Errors          
       bool all_downloads;                        // List All Downloads
       
-      bool accept_host_names;
+      bool accept_host_names;                   // accept host names instead of IP addresses in the logs?
+      bool local_utc_offset;                    // assign utc_offset using local time zone?
 
       u_long max_hosts;                         // maximum hosts   
       u_long max_hosts_kb; 
@@ -362,8 +363,8 @@ class config_t {
       nlist output_formats;                      // Report formats (HTML, CSV, XML)
 
       tm_ranges_t dst_ranges;                    // DST time ranges
-      int dst_offset;                            // DST offset (seconds)
-      int utc_offset;                            // UTC offset, not including DST (seconds)
+      int dst_offset;                            // DST offset in minutes
+      int utc_offset;                            // UTC offset in minutes, not including DST
 
       lang_t lang;
       
@@ -380,7 +381,7 @@ class config_t {
 
       u_long get_db_cache_size(const char *value) const;
 
-      int get_interval(const char *value) const;
+      int get_interval(const char *value, int div = 1) const;
 
       void process_includes(void);
 

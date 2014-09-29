@@ -402,7 +402,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    const string_t *hostname;
    string_t str;
    bool newhgrp = false;
-   u_long vlen = vnode.end-vnode.start;
+   u_long vlen = (u_long) (vnode.end-vnode.start);
 
    if(hnode.flag == OBJ_GRP)
       return;
@@ -866,8 +866,8 @@ int webalizer_t::database_info(void)
    printf("\n");
    
    printf("Database        : %s\n", config.get_db_path().c_str());
-   printf("Created by      : %d.%d.%d.%d\n", VER_PART(state.sysnode.appver, 3), VER_PART(state.sysnode.appver, 2), VER_PART(state.sysnode.appver, 1), VER_PART(state.sysnode.appver, 0));
-   printf("Last updated by : %d.%d.%d.%d\n", VER_PART(state.sysnode.appver_last, 3), VER_PART(state.sysnode.appver_last, 2), VER_PART(state.sysnode.appver_last, 1), VER_PART(state.sysnode.appver_last, 0));
+   printf("Created by      : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver, 3), VER_PART(state.get_sysnode().appver, 2), VER_PART(state.get_sysnode().appver, 1), VER_PART(state.get_sysnode().appver, 0));
+   printf("Last updated by : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver_last, 3), VER_PART(state.get_sysnode().appver_last, 2), VER_PART(state.get_sysnode().appver_last, 1), VER_PART(state.get_sysnode().appver_last, 0));
    
    // output the first day of the month and the last timestamp
    printf("First day       : %04d/%02d/%02d\n", state.cur_year, state.cur_month, state.f_day);
@@ -877,13 +877,18 @@ int webalizer_t::database_info(void)
    printf("Active visits   : %ld\n", state.database.get_vcount());
    printf("Active downloads: %ld\n", state.database.get_dacount());
 
-   printf("Incremental     : %s\n", state.sysnode.incremental ? "yes" : "no");
-   printf("Batch           : %s\n", state.sysnode.batch ? "yes" : "no");
+   printf("Incremental     : %s\n", state.get_sysnode().incremental ? "yes" : "no");
+   printf("Batch           : %s\n", state.get_sysnode().batch ? "yes" : "no");
+
+   printf("Local time      : %s\n", state.get_sysnode().utc_time ? "no" : "yes");
+
+   if(!state.get_sysnode().utc_time)
+      printf("UTC offset      : %d min\n", state.get_sysnode().utc_offset);
 
    // output numeric storage sizes and byte order in debug mode
    if(debug_mode) {
-      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", state.sysnode.sizeof_char, state.sysnode.sizeof_short, state.sysnode.sizeof_int, state.sysnode.sizeof_long, state.sysnode.sizeof_double);
-      printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&state.sysnode.byte_order, (u_int)*((u_char*)&state.sysnode.byte_order+1), (u_int)*((u_char*)&state.sysnode.byte_order+2), (u_int)*((u_char*)&state.sysnode.byte_order+3));
+      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", state.get_sysnode().sizeof_char, state.get_sysnode().sizeof_short, state.get_sysnode().sizeof_int, state.get_sysnode().sizeof_long, state.get_sysnode().sizeof_double);
+      printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&state.get_sysnode().byte_order, (u_int)*((u_char*)&state.get_sysnode().byte_order+1), (u_int)*((u_char*)&state.get_sysnode().byte_order+2), (u_int)*((u_char*)&state.get_sysnode().byte_order+3));
    }
 
    printf("\n");
@@ -1021,7 +1026,7 @@ int webalizer_t::proc_logfile(void)
    bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
 
-   u_long  rec_tstamp=0;  
+   time_t rec_tstamp=0;  
 
    u_long total_good = 0;
 
@@ -1218,19 +1223,21 @@ int webalizer_t::proc_logfile(void)
 
          // check if need to convert log time stamp to local time
          if(config.local_time) {
-            // first, convert UTC to local time
-            if(config.utc_offset)
-               log_rec.tstamp.shift(config.utc_offset);
+            // grab the base UTC offset
+            int utc_offset = config.utc_offset;
 
-            // then check if need to adjust for daylight saving time
+            // then check if we need to add the DST offset
             if(config.dst_offset) {
                if(config.dst_ranges.is_in_range(log_rec.tstamp, dst_iter))
-                  log_rec.tstamp.shift(config.dst_offset);
+                  utc_offset += config.dst_offset;
             }
+
+            // and finally apply the resulting UTC offset
+            log_rec.tstamp.tolocal(utc_offset);
          }
 
          /* get current records timestamp (seconds since epoch) */
-         rec_tstamp = tstamp_t::mktime(log_rec.tstamp.year, log_rec.tstamp.month, log_rec.tstamp.day, log_rec.tstamp.hour, log_rec.tstamp.min, log_rec.tstamp.sec);
+         rec_tstamp = log_rec.tstamp.mktime();
 
          /* Do we need to check for duplicate records? (incremental mode)   */
          if (check_dup)
@@ -2078,7 +2085,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
 hnode_t *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
-               u_long   tstamp,                 // timestamp 
+               time_t   tstamp,                 // timestamp 
                double   xfer,                   // xfer size 
                bool     fileurl,                // file count
                bool     pageurl,
@@ -2526,7 +2533,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
                u_int    type,       /* obj type  */
                bool     fileurl,    /* File flag */
                double   xfer,       /* xfer size */
-               u_long   tstamp,     /* timestamp */
+               time_t   tstamp,     /* timestamp */
                double   proctime,
                bool&    newnode)
 {
@@ -2587,7 +2594,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 //
 //
 //
-dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, u_long tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode)
+dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, time_t tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode)
 {
    bool found = true;
    u_long hashval;
@@ -2691,7 +2698,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
 // visit from the host node. Return the detached and reset visit 
 // to the caller, which is expected to dispose of the visit node.
 //
-vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
+vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
 {
    vnode_t *visit;
    u_long vlen;
@@ -2723,7 +2730,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
    hptr->xfer +=visit->xfer;
 
    // get visit length
-   vlen = visit->end - visit->start;
+   vlen = (u_long) (visit->end - visit->start);
 
    // update maximum and average visit duration for this host
    hptr->visit_avg = AVG(hptr->visit_avg, vlen, hptr->visits);
@@ -2835,7 +2842,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, u_long tstamp)
 // be ended. Delete returned ended visits, as we have no use for them at
 // this point. 
 //
-void webalizer_t::update_visits(u_long tstamp)
+void webalizer_t::update_visits(time_t tstamp)
 {
    vnode_t *visit;
    hash_table<hnode_t>::iterator h_iter = state.hm_htab.begin();
@@ -2846,7 +2853,7 @@ void webalizer_t::update_visits(u_long tstamp)
    }
 }
 
-danode_t *webalizer_t::update_download(dlnode_t *dlnode, u_long tstamp)
+danode_t *webalizer_t::update_download(dlnode_t *dlnode, time_t tstamp)
 {
    danode_t *download;
    double value;
@@ -2892,7 +2899,7 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, u_long tstamp)
 // be ended. Delete returned ended download jobs, as we have no use for them at
 // this point. 
 //
-void webalizer_t::update_downloads(u_long tstamp)
+void webalizer_t::update_downloads(time_t tstamp)
 {
    danode_t *download;
    dlnode_t *nptr;

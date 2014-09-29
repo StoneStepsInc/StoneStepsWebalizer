@@ -178,7 +178,11 @@ u_int hnode_t::s_data_size(void) const
 {
    return base_node<hnode_t>::s_data_size() + 
                sizeof(u_char) * 3 +             // spammer, active, robot
-               sizeof(u_long) * 11+ 
+               sizeof(u_long) * 3 +             // count, files, pages
+               sizeof(u_long) * 3 +             // visits, visit_max, visits_conv
+               sizeof(u_long) * 3 +             // max_v_hits, max_v_files, max_v_pages
+               sizeof(u_long)     +             // hash(value)  
+               sizeof(int64_t)    +             // tstamp 
                sizeof(double) * 3 +             // xfer, visit_avg, max_v_xfer
                s_size_of(name)    + 
                ccode_size;                      // country code
@@ -218,7 +222,7 @@ u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
 
    ptr = serialize(ptr, robot);
    ptr = serialize(ptr, visits_conv);
-         serialize(ptr, tstamp);
+         serialize<int64_t>(ptr, tstamp);
 
    return datasize;
 }
@@ -239,6 +243,8 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    version = s_node_ver(buffer);
    base_node<hnode_t>::s_unpack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
+
+   compatibility_deserializer<5, u_long, int64_t, time_t> deserialize_time_t(version);
 
    ptr = deserialize(ptr, tmp); spammer = tmp;
    ptr = deserialize(ptr, count);
@@ -270,7 +276,7 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
       visits_conv = 0;
 
    if(version >= 4)
-      ptr = deserialize(ptr, tstamp);
+      ptr = deserialize_time_t(ptr, tstamp);
    else
       tstamp = 0;
 
@@ -287,9 +293,13 @@ u_int hnode_t::s_data_size(const void *buffer)
    u_short version = s_node_ver(buffer);
    u_int datasize = base_node<hnode_t>::s_data_size(buffer) + 
                sizeof(u_char) * 2 +    // spammer, active
-               sizeof(u_long) * 9 + 
-               sizeof(double) * 3; 
+               sizeof(u_long) * 3 +    // count, files, pages 
+               sizeof(u_long) * 2 +    // visits, visit_max
+               sizeof(u_long) * 3 +    // max_v_hits, max_v_files, max_v_pages
+               sizeof(u_long)     +    // hash(value)
+               sizeof(double) * 3;     // xfer, visit_avg, max_v_xfer
 
+   // host address and country code
    datasize += s_size_of<string_t>((u_char*) buffer + datasize) + ccode_size;
 
    if(version < 2)
@@ -305,25 +315,37 @@ u_int hnode_t::s_data_size(const void *buffer)
    if(version < 4)
       return datasize;
  
-   return datasize + sizeof(u_long);    // tstamp
+   if(version < 5)
+      return datasize + 
+               sizeof(u_long);         // tstamp
+
+   return datasize + sizeof(int64_t);  // tstamp
 }
 
 const void *hnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
    datasize = sizeof(u_long);
-   return (u_char*)buffer + base_node<hnode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_long) * 8 + sizeof(double) * 3;
+   return (u_char*)buffer + base_node<hnode_t>::s_data_size(buffer) + 
+            sizeof(u_char) * 2 +       // spammer, active
+            sizeof(u_long) * 3 +       // count, files, pages
+            sizeof(u_long) * 2 +       // visits, visit_max
+            sizeof(u_long) * 3 +       // max_v_hits, max_v_files, max_v_pages
+            sizeof(double) * 3;        // xfer, visit_avg, max_v_xfer
 }
 
 const void *hnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
 {
    datasize = sizeof(double);
-   return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_long) * 3;
+   return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 
+            sizeof(u_char) +           // spammer 
+            sizeof(u_long) * 3;        // count, files, pages
 }
 
 const void *hnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
    datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + sizeof(u_char);
+   return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 
+            sizeof(u_char);            // spammer
 }
 
 int hnode_t::s_compare_xfer(const void *buf1, const void *buf2)

@@ -47,7 +47,11 @@ inode_t::inode_t(const char *ident) : base_node<inode_t>(ident)
 
 u_int inode_t::s_data_size(void) const
 {
-   return base_node<inode_t>::s_data_size() + sizeof(u_long) * 5 + sizeof(double) * 3;
+   return base_node<inode_t>::s_data_size() + 
+            sizeof(u_long) * 3 +    // count, files, visit
+            sizeof(u_long)     +    // hash(value)
+            sizeof(int64_t)    +    // tstamp 
+            sizeof(double) * 3;     // xfer, avgtime, maxtime
 }
 
 u_int inode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -67,7 +71,7 @@ u_int inode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = serialize(ptr, count);
    ptr = serialize(ptr, files);
    ptr = serialize(ptr, visit);
-   ptr = serialize(ptr, tstamp);
+   ptr = serialize<int64_t>(ptr, tstamp);
    ptr = serialize(ptr, xfer);
 
    ptr = serialize(ptr, s_hash_value());
@@ -80,6 +84,7 @@ u_int inode_t::s_pack_data(void *buffer, u_int bufsize) const
 
 u_int inode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
 {
+   u_short version;
    u_int datasize, basesize;
    const void *ptr;
 
@@ -89,18 +94,21 @@ u_int inode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    if(bufsize < datasize)
       return 0;
 
+   version = s_node_ver(buffer);
    base_node<inode_t>::s_unpack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
+
+   compatibility_deserializer<3, u_long, int64_t, time_t> deserialize_time_t(version);
 
    ptr = deserialize(ptr, count);
    ptr = deserialize(ptr, files);
    ptr = deserialize(ptr, visit);
-   ptr = deserialize(ptr, tstamp);
+   ptr = deserialize_time_t(ptr, tstamp);
    ptr = deserialize(ptr, xfer);
 
    ptr = s_skip_field<u_long>(ptr);      // value hash
 
-   if(s_node_ver(buffer) >= 2) {
+   if(version >= 2) {
       ptr = deserialize(ptr, avgtime);
       ptr = deserialize(ptr, maxtime);
    }
@@ -117,18 +125,41 @@ u_int inode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 
 u_int inode_t::s_data_size(const void *buffer)
 {
-   u_int datasize = base_node<inode_t>::s_data_size(buffer) + sizeof(u_long) * 5 + sizeof(double);
+   u_short version = s_node_ver(buffer);
+   u_int datasize = base_node<inode_t>::s_data_size(buffer) + 
+            sizeof(u_long) * 3 +          // count, files, visit 
+            sizeof(u_long)     +          // hash(value)
+            sizeof(double);               // xfer
 
-   if(s_node_ver(buffer) < 2)
-      return datasize;
+   // tstamp was switched from u_long to int64_t in version 3
+   if(version < 2)
+      return datasize + sizeof(u_long);   // tstamp
 
-   return datasize + sizeof(double) * 2;  // avgsize, maxsize
+   datasize += sizeof(double) * 2;        // avgsize, maxsize 
+
+   if(version < 3)
+      return datasize + sizeof(u_long);   // tsatmp 
+
+   datasize += sizeof(int64_t);           // tstamp
+
+   return datasize;
 }
 
 const void *inode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
+   u_short version = s_node_ver(buffer);
+   u_int offset = base_node<inode_t>::s_data_size(buffer) + 
+            sizeof(u_long) * 3 +    // count, files, visit
+            sizeof(double);         // xfer
+
    datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<inode_t>::s_data_size(buffer) + sizeof(u_long) * 4 + sizeof(double);
+
+   if(version < 3)
+      return (u_char*) buffer + offset +
+            sizeof(u_long);         // tstamp
+
+   return (u_char*) buffer + offset + 
+            sizeof(int64_t);        // tstamp
 }
 
 const void *inode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)

@@ -217,6 +217,7 @@ bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc,
 bool parser_t::parse_clf_tstamp(const char *dt, tstamp_t& ts)
 {
    int offset; // UTC offset (+/-hhmm)
+   int month;
 
    if(dt == NULL || *dt == 0)
       return false;
@@ -224,33 +225,26 @@ bool parser_t::parse_clf_tstamp(const char *dt, tstamp_t& ts)
 	if(dt[0] != '[' || dt[27] != ']' || dt[28] != 0)
       return false;
 
-   ts.month = 0;
+   month = 0;
 
    for(int index = 0; index < 12; index++) {
       if(strncasecmp(log_month[index], &dt[4], 3) == 0) { 
-         ts.month = index + 1; 
+         month = index + 1; 
          break; 
       }
    }
 
-   if(ts.month == 0)
+   if(month == 0)
       return false;
 
-   ts.year = atoi(&dt[8]);
-   ts.day  = atoi(&dt[1]);
-   ts.hour = atoi(&dt[13]);
-   ts.min  = atoi(&dt[16]);
-   ts.sec  = atoi(&dt[19]);
+   offset = atoi(&dt[22]);
+
+   // set up the time stamp as local time
+   ts.reset(atoi(&dt[8]), month, atoi(&dt[1]), atoi(&dt[13]), atoi(&dt[16]), atoi(&dt[19]), (offset/100) * 60 + offset % 100);
 
    if(ts.year < 1900 || ts.month > 12 || ts.hour > 23 || ts.min > 59 || ts.sec > 59)
       return false;
    
-   //
-   // Convert to UTC, if requested
-   //
-   if(!config.local_time && (offset = atoi(&dt[22])) != 0) 
-      ts.reset(ts.mktime() + (offset / 100) * 3600ul + (offset % 100) * 60ul);
-
    return true;
 }
 
@@ -907,7 +901,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
       if(!*cptr) 
          return PARSE_CODE_ERROR;
          
-      iis_tstamp.reset(cptr);
+      iis_tstamp.parse(cptr);
       return PARSE_CODE_IGNORE;
    }
 
@@ -1020,6 +1014,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 	u_int fldindex = 0, fieldcnt;
 	const char *cp1, *cp2;
 	bool tsdate = false, tstime = false;
+   u_int year, month, day, hour, min, sec;
 
 	if(buffer == NULL || *buffer == 0)
 		return PARSE_CODE_ERROR;
@@ -1048,20 +1043,20 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 		switch (log_rec_fields[fldindex]) {
 			case eDate:
             // <date>  = 4<digit> "-" 2<digit> "-" 2<digit>
-				log_rec.tstamp.year = str2ul(cp1, &cp1);
+				year = str2ul(cp1, &cp1);
 				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				log_rec.tstamp.month = str2ul(cp1, &cp1);
+				month = str2ul(cp1, &cp1);
 				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				log_rec.tstamp.day = str2ul(cp1);
+				day = str2ul(cp1);
             tsdate = true;
 				break;
 
          case eTime:
             // <time>  = 2<digit> ":" 2<digit> [":" 2<digit> ["." *<digit>]
-            log_rec.tstamp.hour = str2ul(cp1, &cp1);
+            hour = str2ul(cp1, &cp1);
             if(!cp1 || *cp1++ != ':') return PARSE_CODE_ERROR;
-            log_rec.tstamp.min = str2ul(cp1, &cp1);
-            log_rec.tstamp.sec = (cp1 && *cp1 == ':') ? str2ul(++cp1) : 0;
+            min = str2ul(cp1, &cp1);
+            sec = (cp1 && *cp1 == ':') ? str2ul(++cp1) : 0;
             tstime = true;
 				break;
 
@@ -1143,18 +1138,16 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 		fldindex++;
 	}
 
-   // if there was no date, use the one from the header
-   if(!tsdate && iis_tstamp.year) {
-      log_rec.tstamp.year = iis_tstamp.year;
-      log_rec.tstamp.month = iis_tstamp.month;
-      log_rec.tstamp.day = iis_tstamp.day;
-      tsdate = true;
+   // check if we got both, date and time
+   if(tsdate && tstime)
+      log_rec.tstamp.reset(year, month, day, hour, min, sec);
+   else if(tstime && !tsdate && !iis_tstamp.null) {
+      // if there's time, but no date, use the one from the header
+      log_rec.tstamp.reset(iis_tstamp.year, iis_tstamp.month, iis_tstamp.day, hour, min, sec);
    }
-
-   // if there's no date or time, return an error
-   if(!tsdate || !tstime)
+   else
       return PARSE_CODE_ERROR;
-
+      
 	return fldindex == log_rec_fields.size() ? PARSE_CODE_OK : PARSE_CODE_ERROR;
 }
 
@@ -1166,7 +1159,6 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
 {
    u_int fldindex = 0;
    time_t i;
-   const tm *tmptr;
    const char *cp1, *cpx, *eob;
 
    if(fields == NULL)
@@ -1184,17 +1176,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    i=atoi(cp1);		/* get timestamp */
 
    /* format date/time field */
-   if(config.local_time) {
-      tmptr = localtime(&i);
-      log_rec.tstamp.year = tmptr->tm_year + 1900;
-      log_rec.tstamp.month = tmptr->tm_mon + 1;
-      log_rec.tstamp.day = tmptr->tm_mday;
-      log_rec.tstamp.hour = tmptr->tm_hour;
-      log_rec.tstamp.min = tmptr->tm_min;
-      log_rec.tstamp.sec = tmptr->tm_sec;
-   }
-   else 
-      log_rec.tstamp.reset(i);
+   log_rec.tstamp.reset(i);
 
    /* processing time */
    cp1 = fields[++fldindex].field;

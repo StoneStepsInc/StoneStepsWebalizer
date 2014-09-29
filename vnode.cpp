@@ -91,7 +91,12 @@ void vnode_t::set_lasturl(unode_t *unode)
 
 u_int vnode_t::s_data_size(void) const
 {
-   return datanode_t<vnode_t>::s_data_size() + sizeof(u_char) * 3 + sizeof(u_long) * 5 + sizeof(double) + sizeof(u_long);
+   return datanode_t<vnode_t>::s_data_size() + 
+            sizeof(u_char)  * 3 +   // entry_url, robot, converted
+            sizeof(u_long)  * 3 +   // hits, files, pages
+            sizeof(int64_t) * 2 +   // start, end
+            sizeof(double)      +   // xfer 
+            sizeof(u_long);         // lasturl->nodeid
 }
 
 u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -109,8 +114,8 @@ u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = (u_char*) buffer + basesize;
 
    ptr = serialize(ptr, entry_url);
-   ptr = serialize(ptr, start);
-   ptr = serialize(ptr, end);
+   ptr = serialize<int64_t>(ptr, start);
+   ptr = serialize<int64_t>(ptr, end);
    ptr = serialize(ptr, hits);
    ptr = serialize(ptr, files);
    ptr = serialize(ptr, pages);
@@ -145,9 +150,11 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    datanode_t<vnode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
+   compatibility_deserializer<4, u_long, int64_t, time_t> deserialize_time_t(version);
+
    ptr = deserialize(ptr, tmp); entry_url = tmp;
-   ptr = deserialize(ptr, start);
-   ptr = deserialize(ptr, end);
+   ptr = deserialize_time_t(ptr, start);
+   ptr = deserialize_time_t(ptr, end);
    ptr = deserialize(ptr, hits);
    ptr = deserialize(ptr, files);
    ptr = deserialize(ptr, pages);
@@ -173,16 +180,28 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 u_int vnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = datanode_t<vnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_long) * 5 + sizeof(double) + sizeof(u_long);
+   u_int datasize = datanode_t<vnode_t>::s_data_size(buffer) + 
+            sizeof(u_char)     +    // entry_url
+            sizeof(u_long) * 3 +    // hits, files, pages
+            sizeof(double)     +    // xfer
+            sizeof(u_long);         // urlid (last URL)
 
    if(version < 2)
-      return datasize;
+      return datasize + 
+            sizeof(u_long) * 2;     // start, end
 
-   datasize += sizeof(u_char);         // robot
+   datasize += sizeof(u_char);      // robot
    
    if(version < 3)
-      return datasize;
-      
-   return datasize + sizeof(u_char);   // converted
-}
+      return datasize + 
+            sizeof(u_long) * 2;     // start, end
+   
+   datasize += sizeof(u_char);      // converted   
 
+   if(version < 4)
+      return datasize + 
+            sizeof(u_long) * 2;     // start, end
+
+   return datasize + 
+            sizeof(int64_t) * 2;    // start, end
+}

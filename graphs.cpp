@@ -470,7 +470,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    u_long julday;
 
    /* calc julian date for month */
-   julday = tstamp_t::wday(tstamp_t::jdate(year, month, 1));
+   julday = tstamp_t::wday(tstamp_t::jday(year, month, 1));
 
    /* initalize the graph */
    init_graph(title,512,400);

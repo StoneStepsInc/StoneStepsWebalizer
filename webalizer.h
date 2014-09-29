@@ -167,7 +167,7 @@ class webalizer_t {
       //
       // put_xnode methods
       //
-      hnode_t *put_hnode(const string_t& ipaddr, u_long tstamp, double xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
+      hnode_t *put_hnode(const string_t& ipaddr, time_t tstamp, double xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
       hnode_t *put_hnode(const string_t& grpname, u_long hits, u_long files, u_long pages, double xfer, u_long visitlen, bool& newnode);
 
       rnode_t *put_rnode(const string_t&, int, u_long, bool newvisit, bool& newnode);
@@ -178,11 +178,11 @@ class webalizer_t {
 
       snode_t *put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode);
 
-      inode_t *put_inode(const string_t& str, u_int type, bool fileurl, double xfer, u_long tstamp, double proctime, bool& newnode);
+      inode_t *put_inode(const string_t& str, u_int type, bool fileurl, double xfer, time_t tstamp, double proctime, bool& newnode);
 
       rcnode_t *put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, u_long count, bool *newnode = NULL);
 
-      dlnode_t *put_dlnode(const string_t& name, u_int respcode, u_long tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode);
+      dlnode_t *put_dlnode(const string_t& name, u_int respcode, time_t tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode);
 
       //
       //
@@ -203,13 +203,13 @@ class webalizer_t {
       //
       //
       //
-      vnode_t *update_visit(hnode_t *hptr, u_long tstamp);
+      vnode_t *update_visit(hnode_t *hptr, time_t tstamp);
 
-      void update_visits(u_long tstamp);
+      void update_visits(time_t tstamp);
 
-      danode_t *update_download(dlnode_t *dlnode, u_long tstamp);
+      danode_t *update_download(dlnode_t *dlnode, time_t tstamp);
 
-      void update_downloads(u_long tstamp);
+      void update_downloads(time_t tstamp);
 
       spnode_t *put_spnode(const string_t& host);
 };

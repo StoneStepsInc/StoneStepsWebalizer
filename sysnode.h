@@ -43,17 +43,21 @@ struct sysnode_t : public keynode_t<u_long>, datanode_t<sysnode_t> {
    
    u_int       byte_order;
 
+   bool        utc_time;            // UTC or local time?
+   int         utc_offset;          // UTC offset in minutes if local time
+
    public:
       typedef void (*s_unpack_cb_t)(sysnode_t& sysnode, void *arg);
 
    public:
       sysnode_t(void);
       
-      void reset(void);
+      void reset(const config_t& config);
       
       bool check_size_of(void) const;
       bool check_byte_order(void) const {return byte_order == 0x12345678u;}
-      
+      bool check_time_settings(const config_t& config);
+
       //
       // serialization
       //

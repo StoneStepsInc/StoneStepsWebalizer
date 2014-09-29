@@ -11,6 +11,8 @@
 #ifndef __TYPES_H
 #define __TYPES_H
 
+#include <cstdint>
+
 #ifndef __BIT_TYPES_DEFINED__
 typedef unsigned char  u_char;
 typedef unsigned short u_short;

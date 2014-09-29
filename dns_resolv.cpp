@@ -65,6 +65,7 @@
 //
 //
 #define DNS_DB_REC_V1      ((u_int) 1)          // version[4], tstamp[4], ccode[2], hostname[]
+#define DNS_DB_REC_V2      ((u_int) 2)          // version[4], tstamp[8], ccode[2], hostname[]
 #define DNS_DB_REC_VER     DNS_DB_REC_V1        // current version
 #define DBBUFSIZE          8192                 // database buffer size
 
@@ -660,7 +661,7 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
          dnsrec = (dns_db_record*) recdata.data;
          tstamp = (dnsrec->version >= DNS_DB_REC_V1) ? dnsrec->tstamp : ((struct dnsRecord *)recdata.data)->timeStamp;
 
-			if(nocheck || (u_long) (runtime - tstamp) <= dns_cache_ttl) {
+			if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
             if(dnsrec->version >= DNS_DB_REC_V1) {
                dnode->tstamp = tstamp;
                dnode->hnode.name = dnsrec->hostname;
@@ -676,7 +677,7 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
             }
 
 				if (debug_mode)
-					fprintf(stderr,"[%04x] ... found: %s (age: %0.2lf days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400);
+					fprintf(stderr,"[%04x] ... found: %s (age: %0.2lf days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
 				retval = true;
 			}
 			break;
@@ -718,7 +719,6 @@ void dns_resolver_t::dns_db_put(DNODEPTR dnode)
    memcpy(&recPtr->ccode, dnode->hnode.ccode, sizeof(recPtr->ccode));
 
    memcpy(&recPtr->hostname, dnode->hnode.name, nameLen);
-   recPtr->hostname[nameLen] = 0;
 
    k.data = (void*) dnode->hnode.string.c_str();
    k.size = dnode->hnode.string.length();

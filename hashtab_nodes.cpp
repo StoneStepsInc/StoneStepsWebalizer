@@ -25,24 +25,24 @@
 //
 // initialize specialized node versions
 //
-template<> const u_short datanode_t<hnode_t> ::__version = 4;
+template<> const u_short datanode_t<hnode_t> ::__version = 5;
 template<> const u_short datanode_t<unode_t> ::__version = 3;
 template<> const u_short datanode_t<tnode_t> ::__version = 1;
 template<> const u_short datanode_t<rnode_t> ::__version = 2;
 template<> const u_short datanode_t<anode_t> ::__version = 3;
 template<> const u_short datanode_t<snode_t> ::__version = 2;
-template<> const u_short datanode_t<inode_t> ::__version = 2;
-template<> const u_short datanode_t<vnode_t> ::__version = 3;
+template<> const u_short datanode_t<inode_t> ::__version = 3;
+template<> const u_short datanode_t<vnode_t> ::__version = 4;
 template<> const u_short datanode_t<rcnode_t>::__version = 1;
 template<> const u_short datanode_t<dlnode_t>::__version = 1;
 template<> const u_short datanode_t<spnode_t>::__version = 1;
 template<> const u_short datanode_t<ccnode_t>::__version = 2;
-template<> const u_short datanode_t<totals_t>::__version = 5;
-template<> const u_short datanode_t<danode_t>::__version = 1;
+template<> const u_short datanode_t<totals_t>::__version = 6;
+template<> const u_short datanode_t<danode_t>::__version = 2;
 template<> const u_short datanode_t<scnode_t>::__version = 1;
 template<> const u_short datanode_t<daily_t> ::__version = 2;
 template<> const u_short datanode_t<hourly_t>::__version = 1;
-template<> const u_short datanode_t<sysnode_t>::__version = 4;
+template<> const u_short datanode_t<sysnode_t>::__version = 5;
 
 //
 // hash table base webalizer nodes

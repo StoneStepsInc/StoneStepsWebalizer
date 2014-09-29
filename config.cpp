@@ -198,6 +198,9 @@ config_t::config_t(void) : config_fnames(1)
    
    accept_host_names = false;
 
+   // use the local machine's UTC offset by default
+   local_utc_offset = true;
+
    // push the initial DST pair into the vector
    dst_pairs.push(dst_pair_t());
 }
@@ -301,6 +304,25 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    }
 
    //
+   // If the UTC offset wasn't set and we weren't asked to skip this step, 
+   // find out and use the UTC offset of the local machine.
+   //
+   if(local_utc_offset) {
+      // get current UTC time
+      time_t now = time(NULL);
+      struct tm *utctm = gmtime(&now);
+
+      //
+      // mktime takes a tm structure containing local time, but we pass one
+      // with UTC time, so the resulting time_t value will be offset from 
+      // the actual UTC time_t by the number of seconds for this time zone. 
+      // Note that tm::tm_isdst is set by gmtime to zero, which tells mktime 
+      // to treat the argument as standard (non-DST) local time.
+      //
+      utc_offset = (int) (now - mktime(utctm)) / 60;
+   }
+
+   //
    // Make sure group_sites does not contain bare IP addresses, as it
    // would cause collisions in hm_htab and the database. In order to
    // group by a single address, give this group a name that is not an
@@ -384,20 +406,29 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       if(dst_pair.dst_start.isempty() && dst_pair.dst_end.isempty())
          continue;
       
-      // check if the range is usable
-      if(dst_pair.dst_start.isempty() || dst_pair.dst_end.isempty())
-         throw exception_t(0, string_t::_format("Ivalid DST start/end timestamp: %s", !dst_pair.dst_start.isempty() ? dst_pair.dst_start.c_str() : dst_pair.dst_end.c_str()));
+      // report if either start or end timestamp is missing
+      if(dst_pair.dst_start.isempty())
+         throw exception_t(0, string_t::_format("Missing DST start time this end time: %s", dst_pair.dst_end.c_str()));
+
+      if(dst_pair.dst_end.isempty())
+         throw exception_t(0, string_t::_format("Missing DST end time for this start time: %s", dst_pair.dst_start.c_str()));
       
-      // create actual timestamps
-      tstamp_t dst_start(dst_pair.dst_start), dst_end(dst_pair.dst_end);
+      // create actual timestamps (always in local time)
+      tstamp_t dst_start, dst_end;
+
+      if(!dst_start.parse(dst_pair.dst_start, utc_offset))
+         throw exception_t(0, string_t::_format("Ivalid DST start timestamp: %s", dst_pair.dst_start.c_str()));
+
+      if(!dst_end.parse(dst_pair.dst_end, utc_offset))
+         throw exception_t(0, string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
 
       // and adjust the DST end time stamp to local time
       if(local_time && dst_offset)
-         dst_end.shift(-dst_offset);
+         dst_end.tolocal(utc_offset-dst_offset);
 
       // add the range if there's nothing wrong with it
       if(!dst_ranges.add_range(dst_start, dst_end))
-         throw exception_t(0, string_t::_format("Cannot add a DST range %s-%s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
+         throw exception_t(0, string_t::_format("Cannot add a DST range from %s to %s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
    }
    
    // clean up a bit and clear the text timestamps
@@ -645,7 +676,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 187; empty slots: 
+                     // max key: 188; empty slots: 
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -805,6 +836,7 @@ void config_t::get_config(const char *fname)
                      {"MemoryMode",          147},       // Memory or database mode?
                      {"MonthlyTotals",       127},       // Output monthly totals report?
                      {"NoDefaultIndexAlias", 92},		   // Ignore default index alias?
+                     {"NoLocalUTCOffset",    188},       // Do not use local UTC offset?
                      {"OutputDir",		      1},		   // Output directory
                      {"OutputFormat",        171},       // Output format
                      {"PageEntryURL",        170},       // Show only pages in the entry report?
@@ -1070,10 +1102,10 @@ void config_t::get_config(const char *fname)
          case 157: hide_robots = (tolower(value[0]) == 'y') ? true : false; break;
          case 158: ignore_robots = (tolower(value[0]) == 'y') ? true : false; break;
          case 159: group_robots = (tolower(value[0]) == 'y') ? true : false; break;
-         case 160: utc_offset = get_interval(value); break;
+         case 160: utc_offset = get_interval(value, 60); local_utc_offset = false; break;
          case 161: set_dst_range(&value, NULL); break;
          case 162: set_dst_range(NULL, &value); break;
-         case 163: dst_offset = get_interval(value); break;
+         case 163: dst_offset = get_interval(value, 60); break;
          case 164: excl_agent_args.add_nlist(value); break;
          case 165: incl_agent_args.add_nlist(value); break;
          case 166: use_classic_mangler = (tolower(value[0]) == 'y'); break;
@@ -1098,6 +1130,7 @@ void config_t::get_config(const char *fname)
          case 185: use_ext_ent = (tolower(value[0]) == 'y'); break;
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
+         case 188: local_utc_offset =  (tolower(value[0]) != 'y'); break;
       }
    }
    fclose(fp);
@@ -1405,7 +1438,7 @@ bool config_t::is_default_db(void) const
    return !prep_report && !compact_db && !db_info;
 }
 
-int config_t::get_interval(const char *value) const
+int config_t::get_interval(const char *value, int div) const
 {
    int time;
    const char *cp;
@@ -1424,15 +1457,21 @@ int config_t::get_interval(const char *value) const
    // process optional suffixes
    switch (tolower(*cp)) {
       case 'h':
-         time *= 3600;  // hours
+         if(div == 3600)
+            return time;
+
+         time *= 3600;
          break;
 
       case 'm':
-         time *= 60;    // minutes
+         if(div == 60)
+            return time;
+
+         time *= 60;
          break;
    }
 
-   return time;
+   return div > 1 ? time / div : time;
 }
 
 void config_t::read_help_xml(const char *fname)
@@ -1512,7 +1551,7 @@ bool config_t::is_dns_enabled(void) const
 
 void config_t::set_dst_range(const string_t *start, const string_t *end)
 {
-   // get the last element (guaranteed t be there)
+   // get the last element (guaranteed to be there)
    dst_pair_t& dst_pair = dst_pairs[dst_pairs.size()-1];
    
    // set the start/end timestamps (overwrite, if more than one of same kind is found)

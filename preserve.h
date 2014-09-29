@@ -145,6 +145,8 @@ class state_t : public totals_t {
 
       void swap_out(void);
 
+      const sysnode_t& get_sysnode(void) const {return sysnode;}
+
       static void unpack_dlnode_const_cb(dlnode_t& dlnode, u_long hostid, bool active, void *_this);
 
       static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);

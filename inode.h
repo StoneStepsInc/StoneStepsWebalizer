@@ -19,7 +19,7 @@ typedef struct inode_t : public base_node<inode_t> {
       u_long   count;
       u_long   files;
       u_long   visit;
-      u_long   tstamp;
+      time_t   tstamp;               // last request time
       double   xfer;
       double   avgtime;				    // average processing time (sec)
       double   maxtime;              // maximum processing time (sec)

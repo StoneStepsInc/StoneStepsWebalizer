@@ -51,7 +51,9 @@ void danode_t::reset(u_long _nodeid)
 
 u_int danode_t::s_data_size(void) const
 {
-   return datanode_t<danode_t>::s_data_size() + sizeof(u_long) * 4;
+   return datanode_t<danode_t>::s_data_size() + 
+            sizeof(u_long) * 3 +       // hits, proctime, xfer
+            sizeof(int64_t);           // tstamp
 }
 
 u_int danode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -69,7 +71,7 @@ u_int danode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = (u_char*) buffer + basesize;
 
    ptr = serialize(ptr, hits);
-   ptr = serialize(ptr, tstamp);
+   ptr = serialize<int64_t>(ptr, tstamp);
    ptr = serialize(ptr, proctime);
    ptr = serialize(ptr, xfer);
 
@@ -78,6 +80,7 @@ u_int danode_t::s_pack_data(void *buffer, u_int bufsize) const
 
 u_int danode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
 {
+   u_short version;
    u_int datasize, basesize;
    const void *ptr;
 
@@ -87,11 +90,14 @@ u_int danode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    if(bufsize < datasize)
       return 0;
 
+   version = s_node_ver(buffer);
    datanode_t<danode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
+   compatibility_deserializer<2, u_long, int64_t, time_t> deserialize_time_t(version);
+
    ptr = deserialize(ptr, hits);
-   ptr = deserialize(ptr, tstamp);
+   ptr = deserialize_time_t(ptr, tstamp);
    ptr = deserialize(ptr, proctime);
    ptr = deserialize(ptr, xfer);
    
@@ -103,6 +109,14 @@ u_int danode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
 
 u_int danode_t::s_data_size(const void *buffer)
 {
-   return datanode_t<danode_t>::s_data_size(buffer) + sizeof(u_long) * 4;
+   u_short version = s_node_ver(buffer);
+
+   u_int datasize = datanode_t<danode_t>::s_data_size(buffer) + 
+            sizeof(u_long) * 3;           // hits, proctime, xfer
+   
+   if(version < 2)
+      return datasize + sizeof(u_long);   // tstamp
+
+   return datasize + sizeof(int64_t);     // tstamp
 }
 
