@@ -14,10 +14,10 @@
 /*
  * Version definitions
  */
-#define VERSION_MAJOR           3
-#define VERSION_MINOR           10
-#define EDITION_LEVEL           3
-#define BUILD_NUMBER            2
+#define VERSION_MAJOR           4
+#define VERSION_MINOR           0
+#define EDITION_LEVEL           0
+#define BUILD_NUMBER            0
 
 #define VERSION_2_1_10_0	0x02010a00ul
 #define VERSION_2_1_10_1	0x02010a01ul
@@ -35,6 +35,7 @@
 #define VERSION_3_5_1_1    0x03050101ul
 #define VERSION_3_8_0_1    0x03080001ul
 #define VERSION_3_8_0_4    0x03080004ul
+#define VERSION_3_10_3_2   0x030A0302ul
 
 /*
  * Version macros
