@@ -417,6 +417,8 @@ class config_t {
       bool is_dns_enabled(void) const;
       
       const char *get_log_type_desc(void) const;
+
+      int get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_iter) const;
 };
 
 #endif // __CONFIG_H

@@ -1609,3 +1609,10 @@ const char *config_t::get_log_type_desc(void) const
    }
 }
 
+int config_t::get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_iter) const
+{
+   if(dst_offset && dst_ranges.is_in_range(tstamp, dst_iter))
+      return utc_offset + dst_offset;
+
+   return utc_offset;
+}

@@ -1222,19 +1222,8 @@ int webalizer_t::proc_logfile(void)
          good_rec = true;
 
          // check if need to convert log time stamp to local time
-         if(config.local_time) {
-            // grab the base UTC offset
-            int utc_offset = config.utc_offset;
-
-            // then check if we need to add the DST offset
-            if(config.dst_offset) {
-               if(config.dst_ranges.is_in_range(log_rec.tstamp, dst_iter))
-                  utc_offset += config.dst_offset;
-            }
-
-            // and finally apply the resulting UTC offset
-            log_rec.tstamp.tolocal(utc_offset);
-         }
+         if(config.local_time)
+            log_rec.tstamp.tolocal(config.get_utc_offset(log_rec.tstamp, dst_iter));
 
          /* get current records timestamp (seconds since epoch) */
          rec_tstamp = log_rec.tstamp.mktime();
