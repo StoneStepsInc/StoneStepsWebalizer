@@ -69,7 +69,7 @@ u_int hourly_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    if(bufsize < datasize)
       return 0;
 
-   // see the comment in state_t::restore_state_ex
+   // see the comment in state_t::upgrade_database
    if(fixver) {
       version = 1;
       ptr = (u_char*) buffer;

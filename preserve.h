@@ -133,10 +133,10 @@ class state_t : public totals_t {
 
       int save_state(void);
 
-      int restore_state_ex(void);
-
       int restore_state(void);
-      
+
+      int upgrade_database(void);
+
       void clear_month(void);
       
       void update_hourly_stats(void);

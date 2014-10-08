@@ -521,6 +521,12 @@ bool state_t::initialize(void)
    else
       history.get_history();
 
+   // fix any issues with the database to make it compatible with the latest version
+   if(sysnode.appver_last != VERSION) {
+      if(upgrade_database())
+         throw exception_t(0, "Cannot upgrade the database to the latest version");
+   }
+
    return true;
 }
 
@@ -545,11 +551,10 @@ void state_t::cleanup(void)
 /* RESTORE_STATE - reload internal run data  */
 /*********************************************/
 
-int state_t::restore_state_ex(void)
+int state_t::restore_state(void)
 {
    string_t str;
    u_int i;
-   void *fixver;
    vnode_t vnode;
    danode_t danode;
    hnode_t hnode;
@@ -567,86 +572,24 @@ int state_t::restore_state_ex(void)
    if(!sysnode.appver)
       return 0;
 
-   //
-   // Prior to v3.3.1.5, daily and hourly nodes lacked record version, but
-   // stored correct record size, so it was not possible to determine the
-   // version from the size (i.e. if 2 bytes short, bad version). Use the
-   // application version in the sysnode and the callback object pointer 
-   // to instruct these nodes to fix the version. If the callback is needed
-   // a new argument would need to be created to include both, unpacking
-   // instructions (i.e. fix version) and new callback data.
-   //
-   fixver = (sysnode.appver < VERSION_3_3_1_5 && !sysnode.fixed_dhv) ? (void*) -1 : NULL;
-
    // restore current totals
    if(!database.get_tgnode_by_id(*this, NULL, NULL))
       return 3;
    
-   //
-   // Recover missing record counts, if necessary
-   //   
-   if(sysnode.appver < VERSION_3_5_1_1) {
-      // if there are search string hits, but no record count, get it from the database
-      if(t_srchits && !t_search)
-         t_search = database.get_scount();
-      
-      // if there are downloads, but no record count, get it from the database   
-      if(t_dlcount && !t_downloads)
-         t_downloads = database.get_dlcount();
-      
-      // set the group counts
-      if(!t_grp_hosts)
-         t_grp_hosts = database.get_hcount() - t_hosts;
-         
-      if(!t_grp_urls)
-         t_grp_urls = database.get_ucount() - t_url;
-         
-      if(!t_grp_users)
-         t_grp_users = database.get_icount() - t_user;
-         
-      if(!t_grp_refs)
-         t_grp_refs = database.get_rcount() - t_ref;
-         
-      if(!t_grp_agents)
-         t_grp_agents = database.get_acount() - t_agent;
-
-   }
-   
-   //
-   // Some sequence IDs in v3.8.0.4 and before were drawn from the wrong 
-   // sequence tables. Adjust the affected sequences so we can start using
-   // them without running into duplicate IDs.
-   //
-   if(sysnode.appver_last <= VERSION_3_8_0_4) {
-      if(!database.fix_v3_8_0_4())
-         return 25;
-   }
-
    // get daily totals
    for(i = 0; i < 31; i++) {
       // nodeid has already been set in init_counters
-      if(!database.get_tdnode_by_id(t_daily[i], NULL, fixver))
+      if(!database.get_tdnode_by_id(t_daily[i], NULL, NULL))
          return 5;
    }
 
    // get hourly totals
    for(i = 0; i < 24; i++) {
       // nodeid has already been set in init_counters
-      if(!database.get_thnode_by_id(t_hourly[i], NULL, fixver))
+      if(!database.get_thnode_by_id(t_hourly[i], NULL, NULL))
          return 6;
    }
    
-   //
-   // Update sysnode to indicate that we have fixed daily/hourly version,
-   // so the correct record saved by this version of the code will be 
-   // processed correctly. Note that the application version in sysnode
-   // indicates the version of the application that created the database
-   // and we need another Boolean to indicate that the daily/hourly node
-   // versions have already been fixed.
-   //
-   if(fixver)
-      sysnode.fixed_dhv = true;
-
    // get response code totals
    for(i = 0; i < response.size(); i++) {
       // nodeid has already been set in the constructor
@@ -675,37 +618,6 @@ int state_t::restore_state_ex(void)
    //
    if(config.prep_report)
       return 0;
-
-   //
-   // Versions prior 3.4 didn't store timestamps in the host nodes. Use
-   // the beginning of the current day as a timestamp for all host nodes
-   // in the daily hosts table. All other host nodes will have the last
-   // hit time stamp set to zero.
-   //
-   if(sysnode.appver < VERSION_3_4_1_1) {
-      // loop through the current daily hosts table
-      database_t::iterator<tnode_t> iter = database.begin_dhosts();
-      while(iter.next(tnode)) {
-         hnode.string = tnode.string;
-         
-         // do not use callbacks, just get the node,
-         if(!database.get_hnode_by_value(hnode, NULL, NULL))
-            return 25;
-         
-         // fix the last hit time stamp
-         if(hnode.tstamp == 0)
-            hnode.tstamp = cur_tstamp / 86400 * 86400;
-         
-         // and put it back into the database
-         if(!database.put_hnode(hnode))
-            return 25;
-      }
-      iter.close();
-      
-      // all done - truncate the daily hosts table
-      if(!database.clear_daily_hosts())
-         return 25;
-   }
 
    //
    // In the database mode, just read those nodes that must be in memory
@@ -827,564 +739,154 @@ int state_t::restore_state_ex(void)
    return 0;
 }
 
-//
-// read the plain-text state file to restore the state
-//
-int state_t::restore_state(void)
+int state_t::upgrade_database(void)
 {
-   FILE *fp;
-   u_int  i;
-   hnode_t t_hnode, *hptr;   /* Temporary hash nodes */
-   rnode_t t_rnode;
-   anode_t t_anode;
-   snode_t t_snode;
-   inode_t t_inode;
-   unode_t t_unode;
-   tnode_t t_tnode;
-   rcnode_t t_rcnode;
-   dlnode_t t_dlnode;
-   vnode_t t_vnode;
-   danode_t t_danode;
+   vnode_t vnode;
+   danode_t danode;
+   hnode_t hnode;
+   dlnode_t dlnode;
+   tnode_t tnode;
+   totals_t totals;
 
-   char   *cptr;
+   // sysnode is not populated if the databases is new or has been truncated
+   if(!sysnode.appver)
+      return 0;
 
-   u_long filever = 0;
-   u_long ul_bogus=0;
-   u_int  ui, flag, urltype, spammer;
-
-   string_t str2, str3, ccode, fpath, ipaddr;
-
-   // if there's no old state file, restore from the database
-   if((stfile = is_state_file()) == false)
-      return restore_state_ex();
-
-   fpath = make_path(config.out_dir, config.state_fname);
-
-   if((fp=fopen(fpath,"r")) == NULL) {
-      /* Previous run data not found... */
-      if (verbose>1) printf("%s\n", config.lang.msg_no_data);
-      return 0;   /* return with ok code */
+   //
+   // Some sequence IDs in v3.8.0.4 and before were drawn from the wrong 
+   // sequence tables. Adjust the affected sequences so we can start using
+   // them without running into duplicate IDs.
+   //
+   if(sysnode.appver_last <= VERSION_3_8_0_4) {
+      if(!database.fix_v3_8_0_4())
+         return 25;
    }
 
-   /* Reading previous run data... */
-   if (verbose>1) printf("%s %s\n", config.lang.msg_get_data, fpath.c_str());
-
-   /* get easy stuff */
-   if((fgets(buffer,BUFSIZE,fp)) == NULL)                    // Header record
-      return 1;                                              // error exit
-
    //
-   // check if the original state file is being read
+   // Prior to v3.3.1.5, daily and hourly nodes lacked record version, but
+   // stored correct record size, so it was not possible to determine the
+   // version from the size (i.e. if 2 bytes short, bad version). Use the
+   // application version in the sysnode and the callback object pointer 
+   // to instruct these nodes to fix the version. If the callback is needed
+   // a new argument would need to be created to include both, unpacking
+   // instructions (i.e. fix version) and new callback data.
    //
-   if(!strncmp(buffer, "# Stone Steps Webalizer", 23)) {     // bad magic?
-      if((cptr = strchr(buffer, 'v')) != NULL) {
-         filever = atoi(++cptr) << 24;
-         while(*cptr && *cptr++ != '.');
-         filever |= atoi(cptr) << 16;
-         while(*cptr && *cptr++ != '.');
-         filever |= atoi(cptr) << 8;
-         while(*cptr && *cptr++ != '.');
-         filever |= atoi(cptr);
+   if(sysnode.appver < VERSION_3_3_1_5 && !sysnode.fixed_dhv) {
+      // fix daily totals one day at a time
+      for(int i = 0; i < 31; i++) {
+         daily_t daily_totals(i);
+
+         // read the node from the database
+         if(!database.get_tdnode_by_id(daily_totals, NULL, (void*) -1))
+            return 5;
+
+         // and save it back, so it's saved with a node version
+         if(!database.put_tdnode(daily_totals))
+            return 5;
       }
-   }
-   else if(!strncmp(buffer, "# Webalizer V2.01", 17)) 
-      filever = VERSION_2_1_10_0;
-   else
-      return 99;
 
-   /* Get current timestamp */
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      sscanf(buffer,"%d %d %d %d %d %d",
-       &cur_year, &cur_month, &cur_day,
-       &cur_hour, &cur_min, &cur_sec);
-   } else return 2;  /* error exit */
+      // fix hourly totals one hour at a time
+      for(int i = 0; i < 24; i++) {
+         hourly_t hourly_totals(i);
 
-   /* calculate current timestamp (seconds since epoch) */
-   cur_tstamp=tstamp_t::mktime(cur_year, cur_month, cur_day, cur_hour, cur_min, cur_sec);
+         // read the node from the database
+         if(!database.get_thnode_by_id(hourly_totals, NULL, (void*) -1))
+            return 6;
 
-   /* Get monthly totals */
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-		if(filever >= VERSION_2_1_10_16) 
-			sscanf(buffer,"%lu %lu %lu %lu %lu %lu %lf %lu %lu %lu %lu %lf %lf %lf %lf %lf %lf",
-				 &t_hit, &t_file, &t_hosts, &t_url,
-				 &t_ref, &t_agent, &t_xfer, &t_page, &t_visits, &t_user, &t_err,
-				 &a_hitptime, &m_hitptime, &a_fileptime, &m_fileptime, &a_pageptime, &m_pageptime);
-		else if(filever >= VERSION_2_1_10_7) 
-			sscanf(buffer,"%lu %lu %lu %lu %lu %lu %lf %lu %lu %lu %lf %lf %lf %lf %lf %lf",
-				 &t_hit, &t_file, &t_hosts, &t_url,
-				 &t_ref, &t_agent, &t_xfer, &t_page, &t_visits, &t_user,
-				 &a_hitptime, &m_hitptime, &a_fileptime, &m_fileptime, &a_pageptime, &m_pageptime);
-		else {
-			a_hitptime = m_hitptime = a_fileptime = m_fileptime = a_pageptime = m_pageptime = 0;
-			sscanf(buffer,"%lu %lu %lu %lu %lu %lu %lf %lu %lu %lu",
-				 &t_hit, &t_file, &t_hosts, &t_url,
-				 &t_ref, &t_agent, &t_xfer, &t_page, &t_visits, &t_user);
-		}
-   } else return 3;  /* error exit */
-     
-   /* Get daily totals */
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      sscanf(buffer,"%lu %lu %lu %d %d",
-       &dt_hosts, &ht_hits, &hm_hit, &f_day, &l_day);
-   } else return 4;  /* error exit */
-
-   /* get daily totals */
-   for (i=0;i<31;i++)
-   {
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-      {
-         sscanf(buffer,"%lu %lu %lf %lu %lu %lu",
-          &t_daily[i].tm_hits, &t_daily[i].tm_files,&t_daily[i].tm_xfer, &t_daily[i].tm_hosts, &t_daily[i].tm_pages,
-          &t_daily[i].tm_visits);
-      } else return 5;  /* error exit */
-   }
-
-   /* get hourly totals */
-   for (i=0;i<24;i++)
-   {
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-      {
-         sscanf(buffer,"%lu %lu %lf %lu",
-          &t_hourly[i].th_hits,&t_hourly[i].th_files,&t_hourly[i].th_xfer,&t_hourly[i].th_pages);
-      } else return 6;  /* error exit */
-   }
-
-   /* get response code totals */
-   for(i = 0; i < response.size(); i++) {
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL)
-         sscanf(buffer,"%lu",&response[i].count);
-      else 
-         return 7;  /* error exit */
-   }
-
-   /* Kludge for V2.01-06 TOTAL_RC off by one bug */
-   if (!strncmp(buffer,"# -urls- ",9)) 
-      response[response.size()-1].count=0;
-   else
-   {
-      /* now do hash tables */
+         // and save it back, so it's saved with a node version
+         if(!database.put_thnode(hourly_totals))
+            return 6;
+      }
 
       //
-      // url table 
+      // Update sysnode to indicate that we have fixed daily/hourly version, so 
+      // the fixed node saved in this run will be read correctly next time. Note 
+      // that sysnode.appver_last was only added in v3-8-0-4 and fixed_dhv in 
+      // sysnode fills this gap.
       //
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL) {            /* Table header */
-         if (strncmp(buffer,"# -urls- ",9))                /* (url)        */ 
-            return 10; 
-      }  
-      else 
-         return 10;   /* error exit */
-   }
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_unode.pathlen = url_path_len(buffer, &ui);
-      if(t_unode.pathlen == ui)
-         t_unode.pathlen--;         // '\n'
-      ui--;                         // '\n'
-
-      if(t_unode.pathlen)
-         t_unode.string.assign(buffer, ui);
-      else
-         t_unode.string = '/';
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 10;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 10;  /* error exit */
-
-      t_unode.urltype = URL_TYPE_UNKNOWN;
- 
-		/* load temporary node data */
-		if(filever >= VERSION_2_1_10_7) {
-			if(filever >= VERSION_2_1_10_9) {
-				sscanf(buffer,"%u %lu %lu %lf %lf %lu %lu %u",
-					&flag,&t_unode.count,
-					&t_unode.files, &t_unode.xfer, &t_unode.avgtime,
-					&t_unode.entry, &t_unode.exit, &urltype);
-            t_unode.urltype = urltype;
-			}
-			else {
-				sscanf(buffer,"%u %lu %lu %lf %lf %lu %lu",
-					&flag,&t_unode.count,
-					&t_unode.files, &t_unode.xfer, &t_unode.avgtime,
-					&t_unode.entry, &t_unode.exit);
-			}
-		} else {
-			t_unode.avgtime = 0.0;
-			sscanf(buffer,"%u %lu %lu %lf %lu %lu",
-				&flag,&t_unode.count,
-				&t_unode.files, &t_unode.xfer,
-				&t_unode.entry, &t_unode.exit);
-		}
-      t_unode.flag = (u_char) flag;
-      
-      t_unode.nodeid = database.get_unode_id();
-
-      /* Good record, insert into hash table */
-      if(!put_unode(t_unode))
-      {
-         if (verbose)
-         /* Error adding URL node, skipping ... */
-         fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, t_unode.string.c_str());
-      }
+      sysnode.fixed_dhv = true;
    }
 
    //
-   // monthly hosts table
+   // Read current totals into a separate node, so we don't have any 
+   // upgrade data lingering in the state's totals after the database
+   // is upgraded.
    //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL) {               // Table header
-      if (strncmp(buffer,"# -sites- ",10))                 // (monthly)
-         return 8; 
-   }                                                       
-   else 
-      return 8;                                            // error exit
-
-   str2.reset();
-   ccode.reset();
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      /* Check for end of table */
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_hnode.string.assign(buffer, strlen(buffer)-1);
-
-      // domain name
-		if(filever >= VERSION_2_1_10_7) {
-			if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 8;  /* error exit */
-         if(buffer[0] == '-')
-            str2.reset();
-         else
-            str2.assign(buffer, strlen(buffer)-1);
-		}
-
-      // country code
-      if(filever >= VERSION_2_5_0_1) {
-			if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 8;
-         if(buffer[0] == '-')
-            ccode.reset();
-         else
-            ccode.assign(buffer, strlen(buffer)-1);
-      }
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) 
-         return 8;                                          /* error exit */
-      if (!isdigitex(buffer[0])) 
-         return 8;                                          /* error exit */
-
-      t_vnode.reset();
-
-      /* load temporary node data */
-      if(filever >= VERSION_3_0_1_1) {
-         sscanf(buffer,"%u %lu %lu %lu %lf %lu %lu %lu %lf %lu %u %lu %lu %lu %lf",
-            &flag,&t_hnode.count,
-            &t_hnode.files, &t_hnode.pages, &t_hnode.xfer,
-            &t_hnode.visits,
-            &t_vnode.end, &t_vnode.start,
-            &t_hnode.visit_avg, &t_hnode.visit_max, &spammer,
-            &t_vnode.hits, &t_vnode.files, &t_vnode.pages, &t_vnode.xfer);
-      }
-      else if(filever >= VERSION_2_5_0_1) {
-         sscanf(buffer,"%u %lu %lu %lu %lf %lu %lu %lu %lf %lu %u",
-            &flag,&t_hnode.count,
-            &t_hnode.files, &t_hnode.pages, &t_hnode.xfer,
-            &t_hnode.visits, 
-            &t_vnode.end, &t_vnode.start, 
-            &t_hnode.visit_avg, &t_hnode.visit_max, &spammer);
-      }
-      else if(filever >= VERSION_2_1_10_17) {
-         sscanf(buffer,"%u %lu %lu %lu %lf %lu %lu %lu %lf %lu",
-            &flag,&t_hnode.count,
-            &t_hnode.files, &t_hnode.pages, &t_hnode.xfer,
-            &t_hnode.visits, 
-            &t_vnode.end, &t_vnode.start, 
-            &t_hnode.visit_avg, &t_hnode.visit_max);
-         spammer = false;
-      }
-      else {
-         sscanf(buffer,"%u %lu %lu %lf %lu %lu",
-            &flag,&t_hnode.count,
-            &t_hnode.files, &t_hnode.xfer,
-            &t_hnode.visits, &t_vnode.end);
-         t_vnode.start = t_vnode.end;
-         spammer = false;
-      }
-      t_hnode.flag = (u_char) flag;
-      t_hnode.spammer = spammer ? true : false;
-
-      /* get last url */
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) 
-         return 8;                                          /* error exit */
-
-      if (buffer[0]=='-') 
-         t_vnode.set_lasturl(NULL);
-      else
-         t_vnode.set_lasturl(find_url(str3.hold(buffer, strlen(buffer)-1)));
-
-      // check the last URL to see if the visit is still active
-      if(t_vnode.lasturl)
-         t_hnode.set_visit(new vnode_t(t_vnode));
-      else
-         t_hnode.set_visit(NULL);
-
-      if(spammer)
-         put_spnode(t_hnode.string);
-
-      t_hnode.nodeid = database.get_hnode_id();
-
-      /* Good record, insert into hash table */
-      if(!put_hnode(t_hnode)) {
-         /* Error adding host node (monthly), skipping .... */
-         if (verbose) 
-            fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, t_hnode.string.c_str());
-      }
-   }
-
+   if(!database.get_tgnode_by_id(totals, NULL, NULL))
+      return 3;
+   
    //
-   // daily hosts table
+   // Versions prior 3.4 didn't store timestamps in the host nodes. Use
+   // the beginning of the current day as a timestamp for all host nodes
+   // in the daily hosts table. All other host nodes will have the last
+   // hit time stamp set to zero.
    //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-   { if (strncmp(buffer,"# -sites- ",10)) return 9; }    /* (daily)      */
-   else return 9;   /* error exit */
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      /* Check for end of table */
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_tnode.string.assign(buffer, strlen(buffer)-1);
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 9;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 9;  /* error exit */
-
-      /* load temporary node data */
-      sscanf(buffer,"%u", &flag);
-      t_tnode.flag = (u_char) flag;
-
-      if(filever < VERSION_2_1_10_17) {
-         /* get last url */
-         if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 9;  /* error exit */
-      }
-
-      // find the host node in the monthly hosts hash table
-      if((hptr = hm_htab.find_node(hash_ex(0, t_tnode.string), t_tnode.string, OBJ_REG)) == NULL)
-         return 9;
-      
-      // and update the last hit timestamp to the start of the current day
-      if(hptr->tstamp == 0)
-         hptr->tstamp = cur_tstamp / 86400 * 86400;
-   }
-
-   //
-   // referrers table
-   //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-   { if (strncmp(buffer,"# -referrers- ",14)) return 11; } /* (referrers)*/
-   else return 11;   /* error exit */
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_rnode.string.assign(buffer, strlen(buffer)-1);
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 11;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 11;  /* error exit */
-
-      /* load temporary node data */
-      sscanf(buffer,"%u %lu",&flag,&t_rnode.count);
-      t_rnode.flag = (u_char) flag;
-
-      t_rnode.nodeid = database.get_rnode_id();
-      
-      /* insert node */
-      if(!put_rnode(t_rnode)) {
-         if (verbose) fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, t_rnode.string.c_str());
-      }
-   }
-
-   //
-   // user agents table
-   //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-   { if (strncmp(buffer,"# -agents- ",11)) return 12; } /* (agents)*/
-   else return 12;   /* error exit */
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_anode.string.assign(buffer, strlen(buffer)-1);
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 12;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 12;  /* error exit */
-
-      /* load temporary node data */
-      if(filever >= VERSION_2_1_10_1)
-         sscanf(buffer,"%u %lu %ul",&flag, &t_anode.count, &t_anode.visits);
-      else
-         sscanf(buffer,"%u %lu", &flag, &t_anode.count);
-      t_anode.flag = (u_char) flag;
-
-      t_anode.nodeid = database.get_anode_id();
-
-      /* insert node */
-      if(!put_anode(t_anode)) {
-         if (verbose) fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, t_anode.string.c_str());
-      }
-   }
-
-   //
-   // search strings table
-   //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-   { if (strncmp(buffer,"# -search string",16)) return 13; }  /* (search)*/
-   else return 13;   /* error exit */
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_snode.string.assign(buffer, strlen(buffer)-1);
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 13;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 13;  /* error exit */
-
-      /* load temporary node data */
-      if(filever >= VERSION_2_3_0_5)
-         sscanf(buffer,"%lu %hu",&t_snode.count, &t_snode.termcnt);
-      else 
-         sscanf(buffer,"%lu",&t_snode.count);
-
-      t_snode.nodeid = database.get_snode_id();
-
-      /* insert node */
-      if(!put_snode(t_snode)) {
-         if (verbose) fprintf(stderr,"%s %s\n", config.lang.msg_nomem_sc, t_snode.string.c_str());
-      }
-   }
-
-   //
-   // user names table
-   //
-   if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-   { if (strncmp(buffer,"# -usernames- ",10)) return 14; }
-   else return 14;   /* error exit */
-
-   while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-   {
-      /* Check for end of table */
-      if (!strncmp(buffer,"# End Of Table ",15)) break;
-      t_inode.string.assign(buffer, strlen(buffer)-1);
-
-      if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 14;  /* error exit */
-      if (!isdigitex((int)buffer[0])) return 14;  /* error exit */
-
-      /* load temporary node data */
-      sscanf(buffer,"%u %lu %lu %lf %lu %lu",
-         &flag,&t_inode.count,
-         &t_inode.files, &t_inode.xfer,
-         &t_inode.visit, &t_inode.tstamp);
-      t_inode.flag = (u_char) flag;
-
-      t_inode.nodeid = database.get_inode_id();
-      
-      /* Good record, insert into hash table */
-      if(!put_inode(t_inode)) {
-         if (verbose)
-         /* Error adding username node, skipping .... */
-         fprintf(stderr,"%s %s\n", config.lang.msg_nomem_i, t_inode.string.c_str());
-      }
-   }
-
-   //
-   // errors
-   //
-	if(filever >= VERSION_2_1_10_16) {
-      /* HTTP errors table */
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-      { if (strncmp(buffer,"# -errors- ",10)) return 15; }
-      else return 15;   /* error exit */
-
-      t_rcnode.method = "GET";
-      while ((fgets(buffer,BUFSIZE,fp)) != NULL)
-      {
-         /* Check for end of table */
-         if (!strncmp(buffer,"# End Of Table ",15)) break;
-         t_rcnode.string.assign(buffer, strlen(buffer)-1);
-
-         if(filever >= VERSION_2_1_10_24) {
-            if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 15;  /* error exit */
-               t_rcnode.method.assign(buffer, strlen(buffer)-1);
-
-         }
-
-         if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 15;  /* error exit */
-         if (!isdigitex((int)buffer[0])) return 15;  /* error exit */
-
-         /* load temporary node data */
-         sscanf(buffer,"%u %hu %lu", &flag, &t_rcnode.respcode, &t_rcnode.count);
-         t_rcnode.flag = (u_char) flag;
-
-         t_rcnode.nodeid = database.get_rcnode_id();
-
-         /* Good record, insert into hash table */
-         if (!put_rcnode(t_rcnode))
-         {
-            if (verbose)
-            /* Error adding status code node, skipping .... */
-            fprintf(stderr,"%s %s\n", config.lang.msg_nomem_rc, t_rcnode.string.c_str());
-         }
-      }
-   }
-
-   //
-   // downloads
-   //
-   if(filever >= VERSION_2_2_0_1) {
-      if ((fgets(buffer,BUFSIZE,fp)) != NULL)               /* Table header */
-      { if (strncmp(buffer,"# -downloads- ",10)) return 16; }
-      else return 16;   /* error exit */
-
-      while ((fgets(buffer,BUFSIZE,fp)) != NULL) {
-         /* Check for end of table */
-         if (!strncmp(buffer,"# End Of Table ",15)) break;
-            t_dlnode.string.assign(buffer, strlen(buffer)-1);
-
-         if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 16;  /* error exit */
-            ipaddr.assign(buffer, strlen(buffer)-1);
-
-         if ((fgets(buffer,BUFSIZE,fp)) == NULL) return 16;  /* error exit */
-         if (!isdigitex((int)buffer[0])) return 16;  /* error exit */
-
-         /* load temporary node data */
-         sscanf(buffer,"%lu %lu %lu %lu %lu %lu %lf %lf %lf %lf\n", 
-           &t_danode.hits, &t_danode.tstamp, &t_danode.proctime, &t_danode.xfer,
-           &t_dlnode.count, &t_dlnode.sumhits, 
-           &t_dlnode.sumxfer, &t_dlnode.avgxfer, 
-           &t_dlnode.avgtime, &t_dlnode.sumtime);
-
-         // use the value of hits as an indicator (zero if no active download job)
-         if(t_danode.hits)
-            t_dlnode.download = new danode_t(t_danode);
-         else
-            t_dlnode.download = NULL;
-
-         if((hptr = hm_htab.find_node(ipaddr)) != NULL)
-            t_dlnode.set_host(hptr);
-
-         t_dlnode.nodeid = database.get_dlnode_id();
+   if(sysnode.appver < VERSION_3_4_1_1) {
+      // loop through the current daily hosts table
+      database_t::iterator<tnode_t> iter = database.begin_dhosts();
+      while(iter.next(tnode)) {
+         hnode.string = tnode.string;
          
-         /* Good record, insert into hash table */
-         if(!put_dlnode(t_dlnode)) {
-            if (verbose)
-            // Error download job node, skipping .... 
-            fprintf(stderr,"%s %s\n", config.lang.msg_nomem_rc, t_dlnode.string.c_str());
-         }
-
-         t_dlnode.string.reset();
-         ipaddr.reset();
+         // do not use callbacks, just get the node,
+         if(!database.get_hnode_by_value(hnode, NULL, NULL))
+            return 25;
+         
+         // fix the last hit time stamp
+         if(hnode.tstamp == 0)
+            hnode.tstamp = totals.cur_tstamp / 86400 * 86400;
+         
+         // and put it back into the database
+         if(!database.put_hnode(hnode))
+            return 25;
       }
+      iter.close();
+      
+      // all done - truncate the daily hosts table
+      if(!database.clear_daily_hosts())
+         return 25;
    }
 
-   fclose(fp);
-   return 0;                   /* return with ok code       */
+   //
+   // Recover missing record counts
+   //   
+   if(sysnode.appver < VERSION_3_5_1_1) {
+      // if there are search string hits, but no record count, get it from the database
+      if(totals.t_srchits && !totals.t_search)
+         totals.t_search = database.get_scount();
+      
+      // if there are downloads, but no record count, get it from the database   
+      if(totals.t_dlcount && !totals.t_downloads)
+         totals.t_downloads = database.get_dlcount();
+      
+      // set the group counts
+      if(!totals.t_grp_hosts)
+         totals.t_grp_hosts = database.get_hcount() - totals.t_hosts;
+         
+      if(!totals.t_grp_urls)
+         totals.t_grp_urls = database.get_ucount() - totals.t_url;
+         
+      if(!totals.t_grp_users)
+         totals.t_grp_users = database.get_icount() - totals.t_user;
+         
+      if(!totals.t_grp_refs)
+         totals.t_grp_refs = database.get_rcount() - totals.t_ref;
+         
+      if(!totals.t_grp_agents)
+         totals.t_grp_agents = database.get_acount() - totals.t_agent;
+
+   }
+   
+   // update the totals in the database
+   if(!database.put_tgnode(totals))
+      return 1;
+
+   // update the last application version and save sysnode
+   sysnode.appver_last = VERSION;
+
+   if(!database.put_sysnode(sysnode))
+      throw exception_t(0, "Cannot write the system node to the database");
+
+   return 0;
 }
 
 /*********************************************/
