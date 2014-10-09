@@ -29,10 +29,10 @@ class webalizer_t;
 // state_t
 //
 // 1. Represents the entire processing state for the current month. The state
-// consists of all totals (total hits, files, etc), hourly totals across all
-// days in the current month and lookup hash tables contaning totals for 
-// individual items, such as URLs or hosts. The state is stored in the database
-// between runs.
+// consists of all time totals (total hits, files, etc), daily and hourly totals 
+// in the current month and lookup hash tables contaning totals for individual 
+// items, such as URLs or hosts. The state is stored in the database between 
+// runs.
 //
 // 2. While the history is a data member, it's not a part of the monthly state
 // and it's restored and saved outside of the state restore/save methods. History 
@@ -41,10 +41,12 @@ class webalizer_t;
 // being saved. The former case works even when there is no history file available, 
 // which means that a new history file will be created. 
 //
-class state_t : public totals_t {
+class state_t {
    friend class webalizer_t;
 
    public:
+      totals_t totals;
+
       daily_t t_daily[31];                       // daily totals
 
       hourly_t t_hourly[24];                     // hourly totals

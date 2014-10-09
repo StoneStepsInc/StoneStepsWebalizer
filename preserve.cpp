@@ -179,7 +179,7 @@ int state_t::save_state(void)
    /* Saving current run data... */
    if (verbose>1)
    {
-      sprintf(buffer,"%02d/%02d/%04d %02d:%02d:%02d",cur_month,cur_day,cur_year,cur_hour,cur_min,cur_sec);
+      sprintf(buffer,"%02d/%02d/%04d %02d:%02d:%02d",totals.cur_month,totals.cur_day,totals.cur_year,totals.cur_hour,totals.cur_min,totals.cur_sec);
       printf("%s [%s]\n", config.lang.msg_put_data,buffer);
    }
 
@@ -221,7 +221,7 @@ int state_t::save_state(void)
    dl_ended.clear();
 
    // save totals
-   if(!database.put_tgnode(*this))
+   if(!database.put_tgnode(totals))
       return 1;
 
    /* Monthly (by day) total array */
@@ -308,7 +308,7 @@ int state_t::save_state(void)
    um_htab.clear();
 
    /* Referrer list */
-   if (t_ref != 0) {
+   if (totals.t_ref != 0) {
       r_iter = rm_htab.begin();
       while(r_iter.next()) {
          rptr = r_iter.item();
@@ -321,7 +321,7 @@ int state_t::save_state(void)
    rm_htab.clear();
 
    /* User agent list */
-   if (t_agent != 0) {
+   if (totals.t_agent != 0) {
       a_iter = am_htab.begin();
       while(a_iter.next()) {
          aptr = a_iter.item();
@@ -370,7 +370,7 @@ int state_t::save_state(void)
    // Update history for the current month. If the history file was missing, 
    // a new one will be created with this data. 
    //
-   history.update(cur_year, cur_month, t_hit, t_file, t_page, t_visits, t_hosts, t_xfer/1024., f_day, l_day);
+   history.update(totals.cur_year, totals.cur_month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
    history.put_history();
 
    //
@@ -573,7 +573,7 @@ int state_t::restore_state(void)
       return 0;
 
    // restore current totals
-   if(!database.get_tgnode_by_id(*this, NULL, NULL))
+   if(!database.get_tgnode_by_id(totals, NULL, NULL))
       return 3;
    
    // get daily totals
@@ -611,7 +611,7 @@ int state_t::restore_state(void)
    // from the current database file. In the worse cae scenario we just 
    // write same data twice (i.e. the line created from the current state).
    //
-   history.update(cur_year, cur_month, t_hit, t_file, t_page, t_visits, t_hosts, t_xfer/1024., f_day, l_day);
+   history.update(totals.cur_year, totals.cur_month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
 
    //
    // No need to restore the rest in the report-only mode
@@ -746,7 +746,7 @@ int state_t::upgrade_database(void)
    hnode_t hnode;
    dlnode_t dlnode;
    tnode_t tnode;
-   totals_t totals;
+   totals_t totals_node;
 
    // sysnode is not populated if the databases is new or has been truncated
    if(!sysnode.appver)
@@ -772,7 +772,7 @@ int state_t::upgrade_database(void)
    // instructions (i.e. fix version) and new callback data.
    //
    if(sysnode.appver < VERSION_3_3_1_5 && !sysnode.fixed_dhv) {
-      // fix daily totals one day at a time
+      // fix daily totals_node one day at a time
       for(int i = 0; i < 31; i++) {
          daily_t daily_totals(i);
 
@@ -785,7 +785,7 @@ int state_t::upgrade_database(void)
             return 5;
       }
 
-      // fix hourly totals one hour at a time
+      // fix hourly totals_node one hour at a time
       for(int i = 0; i < 24; i++) {
          hourly_t hourly_totals(i);
 
@@ -808,11 +808,10 @@ int state_t::upgrade_database(void)
    }
 
    //
-   // Read current totals into a separate node, so we don't have any 
-   // upgrade data lingering in the state's totals after the database
-   // is upgraded.
+   // Read current totals into a separate node, so we don't have any upgrade 
+   // data lingering in the state's totals_node after the database is upgraded.
    //
-   if(!database.get_tgnode_by_id(totals, NULL, NULL))
+   if(!database.get_tgnode_by_id(totals_node, NULL, NULL))
       return 3;
    
    //
@@ -833,7 +832,7 @@ int state_t::upgrade_database(void)
          
          // fix the last hit time stamp
          if(hnode.tstamp == 0)
-            hnode.tstamp = totals.cur_tstamp / 86400 * 86400;
+            hnode.tstamp = totals_node.cur_tstamp / 86400 * 86400;
          
          // and put it back into the database
          if(!database.put_hnode(hnode))
@@ -851,33 +850,33 @@ int state_t::upgrade_database(void)
    //   
    if(sysnode.appver < VERSION_3_5_1_1) {
       // if there are search string hits, but no record count, get it from the database
-      if(totals.t_srchits && !totals.t_search)
-         totals.t_search = database.get_scount();
+      if(totals_node.t_srchits && !totals_node.t_search)
+         totals_node.t_search = database.get_scount();
       
       // if there are downloads, but no record count, get it from the database   
-      if(totals.t_dlcount && !totals.t_downloads)
-         totals.t_downloads = database.get_dlcount();
+      if(totals_node.t_dlcount && !totals_node.t_downloads)
+         totals_node.t_downloads = database.get_dlcount();
       
       // set the group counts
-      if(!totals.t_grp_hosts)
-         totals.t_grp_hosts = database.get_hcount() - totals.t_hosts;
+      if(!totals_node.t_grp_hosts)
+         totals_node.t_grp_hosts = database.get_hcount() - totals_node.t_hosts;
          
-      if(!totals.t_grp_urls)
-         totals.t_grp_urls = database.get_ucount() - totals.t_url;
+      if(!totals_node.t_grp_urls)
+         totals_node.t_grp_urls = database.get_ucount() - totals_node.t_url;
          
-      if(!totals.t_grp_users)
-         totals.t_grp_users = database.get_icount() - totals.t_user;
+      if(!totals_node.t_grp_users)
+         totals_node.t_grp_users = database.get_icount() - totals_node.t_user;
          
-      if(!totals.t_grp_refs)
-         totals.t_grp_refs = database.get_rcount() - totals.t_ref;
+      if(!totals_node.t_grp_refs)
+         totals_node.t_grp_refs = database.get_rcount() - totals_node.t_ref;
          
-      if(!totals.t_grp_agents)
-         totals.t_grp_agents = database.get_acount() - totals.t_agent;
+      if(!totals_node.t_grp_agents)
+         totals_node.t_grp_agents = database.get_acount() - totals_node.t_agent;
 
    }
    
-   // update the totals in the database
-   if(!database.put_tgnode(totals))
+   // update the totals_node in the database
+   if(!database.put_tgnode(totals_node))
       return 1;
 
    // update the last application version and save sysnode
@@ -898,7 +897,7 @@ void state_t::init_counters(void)
    u_int i;
 
    // totals
-   totals_t::init_counters();
+   totals.init_counters();
 
    // status codes
    for (i=0; i < response.size(); i++) 
@@ -986,8 +985,8 @@ void state_t::del_htabs()
 void state_t::clear_month()
 {
    // if there's any data in the database, rename the file
-   if(cur_tstamp) {
-      if(!database.rollover(cur_tstamp))
+   if(totals.cur_tstamp) {
+      if(!database.rollover(totals.cur_tstamp))
          throw exception_t(0, "Cannot roll over the current state database");
       
       // it's a new database - reset the system node
@@ -1023,65 +1022,65 @@ void state_t::update_hourly_stats(void)
    // not. If there's no data, skip updating hourly stats (e.g. first 
    // hit of the month).
    //
-   if(!ht_hits) return;
+   if(!totals.ht_hits) return;
       
-   daily_t& daily = t_daily[cur_day-1];
+   daily_t& daily = t_daily[totals.cur_day-1];
 
    // update the number of hours in the current day
    daily.td_hours++;
          
    // update hourly average/maximum stats
-   update_avg_max(daily.h_hits_avg, daily.h_hits_max, ht_hits, daily.td_hours);
-   update_avg_max(daily.h_files_avg, daily.h_files_max, ht_files, daily.td_hours);
-   update_avg_max(daily.h_pages_avg, daily.h_pages_max, ht_pages, daily.td_hours);
-   update_avg_max(daily.h_xfer_avg, daily.h_xfer_max, ht_xfer, daily.td_hours);
-   update_avg_max(daily.h_visits_avg, daily.h_visits_max, ht_visits, daily.td_hours);
-   update_avg_max(daily.h_hosts_avg, daily.h_hosts_max, ht_hosts, daily.td_hours);
+   update_avg_max(daily.h_hits_avg, daily.h_hits_max, totals.ht_hits, daily.td_hours);
+   update_avg_max(daily.h_files_avg, daily.h_files_max, totals.ht_files, daily.td_hours);
+   update_avg_max(daily.h_pages_avg, daily.h_pages_max, totals.ht_pages, daily.td_hours);
+   update_avg_max(daily.h_xfer_avg, daily.h_xfer_max, totals.ht_xfer, daily.td_hours);
+   update_avg_max(daily.h_visits_avg, daily.h_visits_max, totals.ht_visits, daily.td_hours);
+   update_avg_max(daily.h_hosts_avg, daily.h_hosts_max, totals.ht_hosts, daily.td_hours);
 
    // update hourly maximum hits
-   if (ht_hits > hm_hit) hm_hit = ht_hits;
+   if (totals.ht_hits > totals.hm_hit) totals.hm_hit = totals.ht_hits;
    
    // reset hourly counters
-   ht_hits = ht_files = ht_pages = 0;
-   ht_xfer = .0;
-   ht_visits = ht_hosts = 0;
+   totals.ht_hits = totals.ht_files = totals.ht_pages = 0;
+   totals.ht_xfer = .0;
+   totals.ht_visits = totals.ht_hosts = 0;
 }
 
 void state_t::set_tstamp(const tstamp_t& tstamp)
 {
-   if (cur_year != tstamp.year || cur_month != tstamp.month) {
-      cur_month = tstamp.month;
-      cur_year  = tstamp.year;
-      f_day = l_day = tstamp.day;
+   if (totals.cur_year != tstamp.year || totals.cur_month != tstamp.month) {
+      totals.cur_month = tstamp.month;
+      totals.cur_year  = tstamp.year;
+      totals.f_day = totals.l_day = tstamp.day;
    }
 
    /* adjust last day processed if different */
-   if (tstamp.day > l_day) l_day = tstamp.day;
+   if (tstamp.day > totals.l_day) totals.l_day = tstamp.day;
 
    /* update min/sec stuff */
-   if (cur_sec != tstamp.sec) cur_sec = tstamp.sec;
-   if (cur_min != tstamp.min) cur_min = tstamp.min;
+   if (totals.cur_sec != tstamp.sec) totals.cur_sec = tstamp.sec;
+   if (totals.cur_min != tstamp.min) totals.cur_min = tstamp.min;
 
    /* check for hour change  */
-   if (cur_hour != tstamp.hour)
+   if (totals.cur_hour != tstamp.hour)
    {
       update_hourly_stats();
       
       /* if yes, init hourly stuff */
-      cur_hour = tstamp.hour;
+      totals.cur_hour = tstamp.hour;
    }
 
    /* check for day change   */
-   if (cur_day != tstamp.day)
+   if (totals.cur_day != tstamp.day)
    {
       /* if yes, init daily stuff */
-      t_daily[cur_day-1].tm_hosts = dt_hosts; 
-      dt_hosts = 0;
-      cur_day = tstamp.day;
+      t_daily[totals.cur_day-1].tm_hosts = totals.dt_hosts; 
+      totals.dt_hosts = 0;
+      totals.cur_day = tstamp.day;
    }
 
    // update current timestamp
-   cur_tstamp = tstamp.mktime();
+   totals.cur_tstamp = tstamp.mktime();
 }
 
 /*********************************************/

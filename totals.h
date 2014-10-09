@@ -128,14 +128,13 @@ class totals_t : public keynode_t<u_long>, public datanode_t<totals_t> {
       u_long ht_visits;
       u_long ht_hosts;
 
-   protected:
-      void init_counters(void);
-
    public:
       typedef void (*s_unpack_cb_t)(totals_t& state, void *arg);
 
    public:
       totals_t(void);
+
+      void init_counters(void);
 
       //
       // serialization

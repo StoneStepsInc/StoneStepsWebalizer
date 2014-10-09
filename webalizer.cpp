@@ -339,7 +339,7 @@ void webalizer_t::write_monthly_report(void)
       optr = iter.item();
       
       if(verbose > 1)
-         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.cur_month-1], state.cur_year, optr->get_output_type());
+         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year, optr->get_output_type());
       
       optr->write_monthly_report();
    }
@@ -438,7 +438,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 	
 	// update the host group count
 	if(newhgrp)
-	   state.t_grp_hosts++;
+	   state.totals.t_grp_hosts++;
 
    //
    // Update country counters, ignoring robot and spammer activity
@@ -870,8 +870,8 @@ int webalizer_t::database_info(void)
    printf("Last updated by : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver_last, 3), VER_PART(state.get_sysnode().appver_last, 2), VER_PART(state.get_sysnode().appver_last, 1), VER_PART(state.get_sysnode().appver_last, 0));
    
    // output the first day of the month and the last timestamp
-   printf("First day       : %04d/%02d/%02d\n", state.cur_year, state.cur_month, state.f_day);
-   printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", state.cur_year, state.cur_month, state.cur_day, state.cur_hour, state.cur_min, state.cur_sec);
+   printf("First day       : %04d/%02d/%02d\n", state.totals.cur_year, state.totals.cur_month, state.totals.f_day);
+   printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", state.totals.cur_year, state.totals.cur_month, state.totals.cur_day, state.totals.cur_hour, state.totals.cur_min, state.totals.cur_sec);
 
    // output active visits and downloads
    printf("Active visits   : %ld\n", state.database.get_vcount());
@@ -1232,7 +1232,7 @@ int webalizer_t::proc_logfile(void)
          if (check_dup)
          {
             /* check if less than/equal to last record processed            */
-            if ( rec_tstamp <= state.cur_tstamp )
+            if ( rec_tstamp <= state.totals.cur_tstamp )
             {
                /* if it is, assume we have already processed and ignore it  */
                total_ignore++;
@@ -1256,39 +1256,39 @@ int webalizer_t::proc_logfile(void)
             // and a new report must be generated at the end of the month.
             //
 
-            if(state.cur_year != log_rec.tstamp.year || state.cur_month != log_rec.tstamp.month) {
+            if(state.totals.cur_year != log_rec.tstamp.year || state.totals.cur_month != log_rec.tstamp.month) {
                // check if there are active visits
-               if(state.t_visits == state.t_visits_end) {
+               if(state.totals.t_visits == state.totals.t_visits_end) {
                      // if there are none, clear the month and
                      state.clear_month();
 
                      // reset the current state timestamp
-                     state.cur_sec   = log_rec.tstamp.sec;
-                     state.cur_min   = log_rec.tstamp.min;
-                     state.cur_hour  = log_rec.tstamp.hour;
-                     state.cur_day   = log_rec.tstamp.day;
-                     state.cur_month = log_rec.tstamp.month;
-                     state.cur_year  = log_rec.tstamp.year;
-                     state.cur_tstamp= rec_tstamp;
-                     state.f_day=state.l_day=log_rec.tstamp.day;
+                     state.totals.cur_sec   = log_rec.tstamp.sec;
+                     state.totals.cur_min   = log_rec.tstamp.min;
+                     state.totals.cur_hour  = log_rec.tstamp.hour;
+                     state.totals.cur_day   = log_rec.tstamp.day;
+                     state.totals.cur_month = log_rec.tstamp.month;
+                     state.totals.cur_year  = log_rec.tstamp.year;
+                     state.totals.cur_tstamp= rec_tstamp;
+                     state.totals.f_day=state.totals.l_day=log_rec.tstamp.day;
                }
             }
          }
 
          /* check for out of sequence records */
-         if (rec_tstamp/3600 < state.cur_tstamp/3600) {
-            if (!config.fold_seq_err && ((rec_tstamp+SLOP_VAL)/3600 < state.cur_tstamp/3600) ) { 
+         if (rec_tstamp/3600 < state.totals.cur_tstamp/3600) {
+            if (!config.fold_seq_err && ((rec_tstamp+SLOP_VAL)/3600 < state.totals.cur_tstamp/3600) ) { 
                total_ignore++; 
                continue; 
             }
             else {
-               log_rec.tstamp.sec   = state.cur_sec;             // if folding sequence
-               log_rec.tstamp.min   = state.cur_min;             // errors, just make it
-               log_rec.tstamp.hour  = state.cur_hour;            // look like the last
-               log_rec.tstamp.day   = state.cur_day;             // good records timestamp
-               log_rec.tstamp.month = state.cur_month;
-               log_rec.tstamp.year  = state.cur_year;
-               rec_tstamp = state.cur_tstamp;
+               log_rec.tstamp.sec   = state.totals.cur_sec;             // if folding sequence
+               log_rec.tstamp.min   = state.totals.cur_min;             // errors, just make it
+               log_rec.tstamp.hour  = state.totals.cur_hour;            // look like the last
+               log_rec.tstamp.day   = state.totals.cur_day;             // good records timestamp
+               log_rec.tstamp.month = state.totals.cur_month;
+               log_rec.tstamp.year  = state.totals.cur_year;
+               rec_tstamp = state.totals.cur_tstamp;
             }
          }
 
@@ -1303,20 +1303,20 @@ int webalizer_t::proc_logfile(void)
          //
 
          /* first time through? */
-         if (state.cur_month == 0)
+         if (state.totals.cur_month == 0)
          {
              /* if yes, init our date vars */
-             state.cur_month=log_rec.tstamp.month; state.cur_year=log_rec.tstamp.year;
-             state.cur_day=log_rec.tstamp.day; state.cur_hour=log_rec.tstamp.hour;
-             state.cur_min=log_rec.tstamp.min; state.cur_sec=log_rec.tstamp.sec;
-             state.f_day=log_rec.tstamp.day;
+             state.totals.cur_month=log_rec.tstamp.month; state.totals.cur_year=log_rec.tstamp.year;
+             state.totals.cur_day=log_rec.tstamp.day; state.totals.cur_hour=log_rec.tstamp.hour;
+             state.totals.cur_min=log_rec.tstamp.min; state.totals.cur_sec=log_rec.tstamp.sec;
+             state.totals.f_day=log_rec.tstamp.day;
          }
 
          //
          // Check for month change. The state timestamp must not be updated 
          // until reports are generated and the database is rolled over.
          //
-         if (state.cur_year != log_rec.tstamp.year || state.cur_month != log_rec.tstamp.month)
+         if (state.totals.cur_year != log_rec.tstamp.year || state.totals.cur_month != log_rec.tstamp.month)
          {
             if(config.is_dns_enabled()) {
                stime = msecs();
@@ -1332,7 +1332,7 @@ int webalizer_t::proc_logfile(void)
             // no longer match for both months. 
             //
             update_visits(0);
-            update_downloads(state.cur_tstamp);
+            update_downloads(state.totals.cur_tstamp);
             
             // state_t::set_tstamp is called later, so update hourly stats now
             state.update_hourly_stats();
@@ -1628,68 +1628,68 @@ int webalizer_t::proc_logfile(void)
          //
          // bump monthly/daily/hourly totals
          //
-         state.t_hit++; state.ht_hits++;                                      /* daily/hourly hits    */
-         state.t_xfer += log_rec.xfer_size; state.ht_xfer += log_rec.xfer_size;// total/hourly xfer size
+         state.totals.t_hit++; state.totals.ht_hits++;                                      /* daily/hourly hits    */
+         state.totals.t_xfer += log_rec.xfer_size; state.totals.ht_xfer += log_rec.xfer_size;// total/hourly xfer size
          state.t_daily[log_rec.tstamp.day-1].tm_xfer += log_rec.xfer_size;    /* daily xfer total     */
          state.t_daily[log_rec.tstamp.day-1].tm_hits++;                       /* daily hits total     */
          state.t_hourly[log_rec.tstamp.hour].th_xfer += log_rec.xfer_size;    /* hourly xfer total    */
          state.t_hourly[log_rec.tstamp.hour].th_hits++;                       /* hourly hits total    */
 
          // update total host/URL/etc counters (htab size, minus group count)
-         if(newhost) {state.t_hosts++; state.ht_hosts++;}
-         if(newthost) state.dt_hosts++;
-         if(newurl) state.t_url++;
-         if(newagent) state.t_agent++;
-         if(newuser) state.t_user++;
-         if(newerr) state.t_err++;
-         if(newref) state.t_ref++;
-         if(newdl) state.t_downloads++;
+         if(newhost) {state.totals.t_hosts++; state.totals.ht_hosts++;}
+         if(newthost) state.totals.dt_hosts++;
+         if(newurl) state.totals.t_url++;
+         if(newagent) state.totals.t_agent++;
+         if(newuser) state.totals.t_user++;
+         if(newerr) state.totals.t_err++;
+         if(newref) state.totals.t_ref++;
+         if(newdl) state.totals.t_downloads++;
          
          if(robot) {
-            state.t_rhits++; 
-            state.t_rxfer += log_rec.xfer_size;
-            if(httperr) state.t_rerrors++;
-            if(newhost) state.t_rhosts++;
+            state.totals.t_rhits++; 
+            state.totals.t_rxfer += log_rec.xfer_size;
+            if(httperr) state.totals.t_rerrors++;
+            if(newhost) state.totals.t_rhosts++;
          }
 
          if(newvisit) {
-            state.t_daily[state.cur_day-1].tm_visits++;
-            state.t_visits++;
-            if(robot) state.t_rvisits++;
-            state.ht_visits++;
+            state.t_daily[state.totals.cur_day-1].tm_visits++;
+            state.totals.t_visits++;
+            if(robot) state.totals.t_rvisits++;
+            state.totals.ht_visits++;
          }
 
-         if(config.ntop_search) state.t_search += newsrch;
+         if(config.ntop_search) state.totals.t_search += newsrch;
 
 			/* 
 			// Monthly average and maximum hit/file/page processing time 
 			*/
-			state.a_hitptime = AVG(state.a_hitptime, ((double) log_rec.proc_time / 1000.), state.t_hit);
-			state.m_hitptime = MAX(state.m_hitptime, ((double) log_rec.proc_time / 1000.));
+			state.totals.a_hitptime = AVG(state.totals.a_hitptime, ((double) log_rec.proc_time / 1000.), state.totals.t_hit);
+			state.totals.m_hitptime = MAX(state.totals.m_hitptime, ((double) log_rec.proc_time / 1000.));
 
          /* if RC_OK, increase file counters */
          if (fileurl)
          {
-            state.t_file++; state.ht_files++;
+            state.totals.t_file++; state.totals.ht_files++;
             state.t_daily[log_rec.tstamp.day-1].tm_files++;
             state.t_hourly[log_rec.tstamp.hour].th_files++;
 
-				state.a_fileptime = AVG(state.a_fileptime, ((double) log_rec.proc_time / 1000.), state.t_file);
-				state.m_fileptime = MAX(state.m_fileptime, ((double) log_rec.proc_time / 1000.));
+				state.totals.a_fileptime = AVG(state.totals.a_fileptime, ((double) log_rec.proc_time / 1000.), state.totals.t_file);
+				state.totals.m_fileptime = MAX(state.totals.m_fileptime, ((double) log_rec.proc_time / 1000.));
 
-            if(robot) state.t_rfiles++;
+            if(robot) state.totals.t_rfiles++;
          }
 
          /* Pages (pageview) calculation */
          if (pageurl) {
-            state.t_page++; state.ht_pages++;
+            state.totals.t_page++; state.totals.ht_pages++;
             state.t_daily[log_rec.tstamp.day-1].tm_pages++;
             state.t_hourly[log_rec.tstamp.hour].th_pages++;
 
-				state.a_pageptime = AVG(state.a_pageptime, ((double) log_rec.proc_time / 1000.), state.t_page);
-				state.m_pageptime = MAX(state.m_pageptime, ((double) log_rec.proc_time / 1000.));
+				state.totals.a_pageptime = AVG(state.totals.a_pageptime, ((double) log_rec.proc_time / 1000.), state.totals.t_page);
+				state.totals.m_pageptime = MAX(state.totals.m_pageptime, ((double) log_rec.proc_time / 1000.));
 
-            if(robot) state.t_rpages++;
+            if(robot) state.totals.t_rpages++;
          }
 
          /*********************************************/
@@ -1758,10 +1758,10 @@ int webalizer_t::proc_logfile(void)
          }
 
          // update group counts (host counts are updated in group_hosts_by_name)
-         if(newugrp) state.t_grp_urls++;
-         if(newigrp) state.t_grp_users++;
-         if(newrgrp) state.t_grp_refs++;
-         if(newagrp) state.t_grp_agents++;
+         if(newugrp) state.totals.t_grp_urls++;
+         if(newigrp) state.totals.t_grp_users++;
+         if(newrgrp) state.totals.t_grp_refs++;
+         if(newagrp) state.totals.t_grp_agents++;
 
          //
          // swap out hash tables in the database mode
@@ -1794,8 +1794,8 @@ int webalizer_t::proc_logfile(void)
 
    if(good_rec)                                                         /* were any good records?   */
    {
-      state.t_daily[state.cur_day-1].tm_hosts = state.dt_hosts;         /* If yes, clean up a bit   */
-      if (state.ht_hits > state.hm_hit) state.hm_hit = state.ht_hits;
+      state.t_daily[state.totals.cur_day-1].tm_hosts = state.totals.dt_hosts;         /* If yes, clean up a bit   */
+      if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
 
       if (total_rec > (total_ignore+total_bad))                         /* did we process any?   */
       {
@@ -2333,8 +2333,8 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, u
                cptr->flag=OBJ_GRP;
 
             if(entryurl) {
-               state.u_entry++;
-               state.t_entry++;
+               state.totals.u_entry++;
+               state.totals.t_entry++;
                cptr->entry = 1;
             }
             
@@ -2348,8 +2348,8 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, u
    if(found) {
       if(entryurl) {
          if(!cptr->entry)
-            state.u_entry++;
-         state.t_entry++;
+            state.totals.u_entry++;
+         state.totals.t_entry++;
          cptr->entry++;
       }
       cptr->count++;
@@ -2506,7 +2506,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisi
          nptr->visits++;
    }
 
-   state.t_srchits++;
+   state.totals.t_srchits++;
 
    if(!nptr->dirty)
       nptr->dirty = true;
@@ -2732,19 +2732,19 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
    hptr->max_v_xfer = MAX(visit->xfer, hptr->max_v_xfer);
 
    // update total maximum hits, pages, files and transfer
-   state.max_v_hits = MAX(hptr->max_v_hits, state.max_v_hits);
-   state.max_v_files = MAX(hptr->max_v_files, state.max_v_files);
-   state.max_v_pages = MAX(hptr->max_v_pages, state.max_v_pages);
-   state.max_v_xfer = MAX(hptr->max_v_xfer, state.max_v_xfer);
+   state.totals.max_v_hits = MAX(hptr->max_v_hits, state.totals.max_v_hits);
+   state.totals.max_v_files = MAX(hptr->max_v_files, state.totals.max_v_files);
+   state.totals.max_v_pages = MAX(hptr->max_v_pages, state.totals.max_v_pages);
+   state.totals.max_v_xfer = MAX(hptr->max_v_xfer, state.totals.max_v_xfer);
 
    // update ended visits counters
-   state.t_visits_end++;
+   state.totals.t_visits_end++;
 
    // update the counters for each visitor type (robots, spammers and humans)
    if(hptr->spammer) {
       visit->converted = false;              // clear the converted flag
 
-      state.t_svisits_end++;
+      state.totals.t_svisits_end++;
       
       //
       // Spammer totals can only be updated at the end of a visit to make
@@ -2754,42 +2754,42 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
       
       // if it's the first visit, increment spammer host count
       if(hptr->visits == 1)
-         state.t_shosts++;
+         state.totals.t_shosts++;
 
-      state.t_spmhits += visit->hits;
-      state.t_sfiles += visit->files;
-      state.t_spages += visit->pages;
-      state.t_sxfer += visit->xfer;
+      state.totals.t_spmhits += visit->hits;
+      state.totals.t_sfiles += visit->files;
+      state.totals.t_spages += visit->pages;
+      state.totals.t_sxfer += visit->xfer;
    }
    else if(hptr->robot) {
       visit->converted = false;              // clear the converted flag
-      state.t_rvisits_end++;
+      state.totals.t_rvisits_end++;
    }
    else { 
       // update ended human visits
-      state.t_hvisits_end++;
+      state.totals.t_hvisits_end++;
 
       // update total maximum hits, pages, files and transfer
-      state.max_hv_hits = MAX(hptr->max_v_hits, state.max_hv_hits);
-      state.max_hv_files = MAX(hptr->max_v_files, state.max_hv_files);
-      state.max_hv_pages = MAX(hptr->max_v_pages, state.max_hv_pages);
-      state.max_hv_xfer = MAX(hptr->max_v_xfer, state.max_hv_xfer);
+      state.totals.max_hv_hits = MAX(hptr->max_v_hits, state.totals.max_hv_hits);
+      state.totals.max_hv_files = MAX(hptr->max_v_files, state.totals.max_hv_files);
+      state.totals.max_hv_pages = MAX(hptr->max_v_pages, state.totals.max_hv_pages);
+      state.totals.max_hv_xfer = MAX(hptr->max_v_xfer, state.totals.max_hv_xfer);
    
       // update total maximum and average visit durations
-      state.t_visit_avg = AVG(state.t_visit_avg, vlen, state.t_hvisits_end);
-      state.t_visit_max = MAX(hptr->visit_max, state.t_visit_max);
+      state.totals.t_visit_avg = AVG(state.totals.t_visit_avg, vlen, state.totals.t_hvisits_end);
+      state.totals.t_visit_max = MAX(hptr->visit_max, state.totals.t_visit_max);
 
       // update counters for converted visits
       if(visit->converted) {
          // if it's the first converted visit, increment converted host count
          if(!hptr->visits_conv)
-            state.t_hosts_conv++;            // total converted hosts
+            state.totals.t_hosts_conv++;            // total converted hosts
          
-         state.t_visits_conv++;              // total converted visits
+         state.totals.t_visits_conv++;              // total converted visits
          hptr->visits_conv++;                // and for this host
 
-         state.t_vconv_avg = AVG(state.t_vconv_avg, vlen, state.t_visits_conv);
-         state.t_vconv_max = MAX(hptr->visit_max, state.t_vconv_max);
+         state.totals.t_vconv_avg = AVG(state.totals.t_vconv_avg, vlen, state.totals.t_visits_conv);
+         state.totals.t_vconv_max = MAX(hptr->visit_max, state.totals.t_vconv_max);
       }
    }
 
@@ -2798,8 +2798,8 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
       // update exit URL for non-robots
       if(!hptr->robot) {
          if(!visit->lasturl->exit)
-            state.u_exit++;                  // unique exit URLs
-         state.t_exit++;                     // total exit URLs
+            state.totals.u_exit++;                  // unique exit URLs
+         state.totals.t_exit++;                     // total exit URLs
 
          visit->lasturl->exit++;
          visit->lasturl->dirty = true;
@@ -2870,7 +2870,7 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, time_t tstamp)
    dlnode->sumtime += value;
    dlnode->avgtime = AVG(dlnode->avgtime, value, dlnode->count);
 
-   state.t_dlcount++;
+   state.totals.t_dlcount++;
 
    // if the download node was read from the database, queue it for deletion
    if(download->storage) {
