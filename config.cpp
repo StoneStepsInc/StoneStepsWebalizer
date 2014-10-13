@@ -422,9 +422,9 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       if(!dst_end.parse(dst_pair.dst_end, utc_offset))
          throw exception_t(0, string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
 
-      // and adjust the DST end time stamp to local time
+      // and make sure the end time stamp has the DST offset from UTC
       if(local_time && dst_offset)
-         dst_end.tolocal(utc_offset-dst_offset);
+         dst_end.tolocal(utc_offset+dst_offset);
 
       // add the range if there's nothing wrong with it
       if(!dst_ranges.add_range(dst_start, dst_end))
