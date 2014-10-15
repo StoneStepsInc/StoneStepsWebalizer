@@ -32,7 +32,29 @@ struct tstamp_t {
     bool    null  : 1;                 // not initialized?
    u_int          : 2;                 // padding
 
+   public:
+      // time stamp component identifiers
+      struct tm_parts {
+         static const u_int YEAR      = 64;
+         static const u_int MONTH     = 32;
+         static const u_int DAY       = 16;
+         static const u_int HOUR      = 8;
+         static const u_int MINUTE    = 4;
+         static const u_int SECOND    = 2;
+         static const u_int MLSEC     = 1;   // not used
+         static const u_int DATE      = YEAR | MONTH | DAY; 
+         static const u_int TIME      = HOUR | MINUTE | SECOND; 
+         static const u_int TIMESTAMP = DATE | TIME; 
+      };
+
    private:
+      enum uninitialized_t {
+         uninitialized
+      };
+
+   private:
+      tstamp_t(uninitialized_t) {}
+
       u_int reset_time(int64_t time);
       void reset_date(u_int jdn);
       bool parse_tstamp(const char *str);
@@ -57,7 +79,7 @@ struct tstamp_t {
       void toutc(void);
       void tolocal(int offset);
 
-      int64_t compare(const tstamp_t& tstamp) const;
+      int64_t compare(const tstamp_t& tstamp, int mode = tm_parts::TIMESTAMP) const;
 
       bool operator == (const tstamp_t& tstamp) const {return compare(tstamp) == 0;}
       bool operator != (const tstamp_t& tstamp) const {return compare(tstamp) != 0;}

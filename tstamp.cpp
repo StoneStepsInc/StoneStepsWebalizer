@@ -228,32 +228,51 @@ void tstamp_t::tolocal(int offset)
       reset(mktime(), offset);
 }
 
-int64_t tstamp_t::compare(const tstamp_t& tstamp) const
+int64_t tstamp_t::compare(const tstamp_t& other, int mode) const
 {
-   int diff;
+   tstamp_t temp(uninitialized);
+   const tstamp_t& tstamp = (utc == other.utc || offset == other.offset) ? other : temp;
 
-   // if either time is in different time zone, compare both as time values
-   if(utc != tstamp.utc || offset != tstamp.offset)
-      return mktime() - tstamp.mktime();
+   // check if we need to convert the other time stamp into our time zone
+   if(&tstamp == &temp) {
+      temp = other;
+      utc ? temp.toutc() : temp.tolocal(offset);
+   }
 
-   // compare part by part for performance reasons
-   if((diff = year - tstamp.year) != 0)
-      return diff;
+   //
+   // Compare the selected components of both time stamps. Make sure to cast each 
+   // component to int, so we avoid negative results converted to u_int and then 
+   // to large int64_t values (i.e. no sign extension in this case).
+   //
+   if(mode & tm_parts::YEAR) {
+      if(year != tstamp.year)
+         return (int) year - (int) tstamp.year;
+   }
 
-   if((diff = month - tstamp.month) != 0)
-      return diff;
+   if(mode & tstamp_t::tm_parts::MONTH) {
+      if(month != tstamp.month)
+         return (int) month - (int) tstamp.month;
+   }
 
-   if((diff = day - tstamp.day) != 0)
-      return diff;
+   if(mode & tstamp_t::tm_parts::DAY) {
+      if(day != tstamp.day)
+         return (int) day - (int) tstamp.day;
+   }
 
-   if((diff = hour - tstamp.hour) != 0)
-      return diff;
+   if(mode & tstamp_t::tm_parts::HOUR) {
+      if(hour != tstamp.hour)
+         return (int) hour - (int) tstamp.hour;
+   }
 
-   if((diff = min - tstamp.min) != 0)
-      return diff;
+   if(mode & tstamp_t::tm_parts::MINUTE) {
+      if(min != tstamp.min)
+         return (int) min - (int) tstamp.min;
+   }
 
-   if((diff = sec - tstamp.sec) != 0)
-      return diff;
+   if(mode & tstamp_t::tm_parts::SECOND) {
+      if(sec != tstamp.sec)
+         return (int) sec - (int) tstamp.sec;
+   }
 
    return 0;
 }
