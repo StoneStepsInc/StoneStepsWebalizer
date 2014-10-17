@@ -120,6 +120,14 @@ inline const void *deserialize(const void *ptr, char chars[], u_int length)
 // read strings as a character count followed by string characters
 const void *deserialize(const void *ptr, string_t& value);
 
+// read a serialized value whose storage type is the same as the run time type
+template <typename type_t>
+inline const void *deserialize(const void *ptr, type_t& value)
+{
+   value = *((type_t*) ptr);
+   return (u_char*)ptr + sizeof(type_t);
+}
+
 // read a serialized value whose storage type differs from the run time type
 template <typename storage_t, typename runtime_t>
 const void *deserialize(const void *buf, runtime_t& value)
@@ -130,14 +138,6 @@ const void *deserialize(const void *buf, runtime_t& value)
    value = (runtime_t) stored_value;
 
    return ptr;
-}
-
-// read a serialized value whose storage type is the same as the run time type
-template <typename type_t>
-inline const void *deserialize(const void *ptr, type_t& value)
-{
-   value = *((type_t*) ptr);
-   return (u_char*)ptr + sizeof(type_t);
 }
 
 // read bool as u_char because bool is defined differently on many platforms

@@ -112,6 +112,7 @@ CCFLAGS  = -DHAVE_CXX_STDHEADERS \
      -DETCDIR=\"$(ETCDIR)\" \
      -fexceptions -fno-implicit-templates \
      -Wno-multichar -Winvalid-pch \
+     -std=c++11 \
      $(MYCCFLAGS)
 
 # turn on optimization for non-debug builds
