@@ -1276,20 +1276,9 @@ int webalizer_t::proc_logfile(void)
          }
 
          /* check for out of sequence records */
-         if (rec_tstamp/3600 < state.totals.cur_tstamp/3600) {
-            if (!config.fold_seq_err && ((rec_tstamp+SLOP_VAL)/3600 < state.totals.cur_tstamp/3600) ) { 
-               total_ignore++; 
-               continue; 
-            }
-            else {
-               log_rec.tstamp.sec   = state.totals.cur_sec;             // if folding sequence
-               log_rec.tstamp.min   = state.totals.cur_min;             // errors, just make it
-               log_rec.tstamp.hour  = state.totals.cur_hour;            // look like the last
-               log_rec.tstamp.day   = state.totals.cur_day;             // good records timestamp
-               log_rec.tstamp.month = state.totals.cur_month;
-               log_rec.tstamp.year  = state.totals.cur_year;
-               rec_tstamp = state.totals.cur_tstamp;
-            }
+         if (rec_tstamp < state.totals.cur_tstamp) {                        -
+            total_ignore++; 
+            continue; 
          }
 
          total_good++;

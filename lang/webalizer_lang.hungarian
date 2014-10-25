@@ -139,7 +139,6 @@ h_msg=   -h        = Kiírja ezt a sugó üzenetet,
          -v -V     = Kiírja a verziószámot
          -d        = Kiírja a további debug infót
          -F type   = Log type.  type= (clf | ftp | squid)
-         -f        = Összefogja a sorozatos hibákat
          -i        = Mellőzi a history file-t
          -p        = Megőrzi az állapotott  (incremental)
          -q        = suppress informational messages

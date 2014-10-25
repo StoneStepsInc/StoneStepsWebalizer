@@ -676,7 +676,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 188; empty slots: 
+                     // max key: 188; empty slots: 53
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -728,7 +728,6 @@ void config_t::get_config(const char *fname)
                      {"EnablePhraseValues",  117},		   // Enable phrases in configuration values
                      {"ExcludeAgentArgs",    164},       // Exclude user agent arguments
                      {"ExcludeSearchArg",	   109},			// Exclude a search argument
-                     {"FoldSeqErr",		      53},			// Fold sequence errors
                      {"GeoIPDBPath",         141},       // Path to the GeoIP database file
                      {"GMTTime",		         30},			// Local or UTC time?
                      {"GraphBackgroundAlpha",130},       // Graph background transparency
@@ -990,7 +989,6 @@ void config_t::get_config(const char *fname)
          case 50: visit_timeout=get_interval(value); break;       // VisitTimeout
          case 51: graph_legend=(tolower(value[0])=='y'); break;   // GraphLegend
          case 52: graph_lines = atoi(value); break;               // GraphLines
-         case 53: fold_seq_err=(tolower(value[0])=='y'); break;   // FoldSeqErr
          case 54: ctry_graph=(tolower(value[0])=='y'); break;     // CountryGraph
          case 55: ntop_sitesK = atoi(value); break;               // TopKSites (KB)
          case 56: ntop_urlsK  = atoi(value); break;               // TopKUrls (KB)
@@ -1335,7 +1333,6 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'D': dns_cache=vptr; break;                           // DNS Cache filename
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
-          case 'f': fold_seq_err=true; break;                        // Fold sequence errs
           case 'F': log_type=(tolower(vptr[0])=='f')?
                LOG_FTP:(tolower(vptr[0])=='s')?
                LOG_SQUID: (tolower(vptr[0])=='c')?

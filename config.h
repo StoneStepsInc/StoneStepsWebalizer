@@ -39,8 +39,6 @@
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
 #define HALFBUFSIZE  (BUFSIZE >> 1)
 
-#define SLOP_VAL 3600                  /* out of sequence slop (seconds)   */
-
 /* Request types (bit field) */
 #define URL_TYPE_UNKNOWN	0x00
 #define URL_TYPE_HTTP		0x01
