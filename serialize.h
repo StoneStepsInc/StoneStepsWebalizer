@@ -85,6 +85,9 @@ inline void *serialize(void *ptr, const char chars[], u_int length)
 // serialize strings as a character count followed by string characters
 void *serialize(void *ptr, const string_t& value);
 
+// serialize time stamp components one by one
+void *serialize(void *ptr, const tstamp_t& tstamp);
+
 template <typename type_t>
 inline void *serialize(void *ptr, type_t value)
 {
@@ -119,6 +122,9 @@ inline const void *deserialize(const void *ptr, char chars[], u_int length)
 
 // read strings as a character count followed by string characters
 const void *deserialize(const void *ptr, string_t& value);
+
+// read time stamp components one at a time
+const void *deserialize(const void *ptr, tstamp_t& tstamp);
 
 // read a serialized value whose storage type is the same as the run time type
 template <typename type_t>
@@ -226,6 +232,9 @@ inline void *s_skip_field<string_t>(const void *ptr)
    return (u_char*) ptr + sizeof(u_int) + *(u_int*)ptr;
 }
 
+template <>
+inline void *s_skip_field<tstamp_t>(const void *ptr);
+
 // -----------------------------------------------------------------------
 //
 // size-of functions (value)
@@ -249,6 +258,8 @@ inline size_t s_size_of(const string_t& value)
    return sizeof(u_int) + value.length();
 }
 
+size_t s_size_of(const tstamp_t& tstamp);
+
 // -----------------------------------------------------------------------
 //
 // size-of functions (buffer)
@@ -270,6 +281,26 @@ template <>
 inline size_t s_size_of<string_t>(const void *ptr)
 {
    return sizeof(u_int) + (*(u_int*)ptr);
+}
+
+template <> 
+size_t s_size_of<tstamp_t>(const void *ptr);
+
+// -----------------------------------------------------------------------
+//
+// size-of functions that don't depend on instance or storage data
+//
+// -----------------------------------------------------------------------
+template <typename type_t>
+inline size_t s_size_of(void)
+{
+   return sizeof(type_t);
+}
+
+template <>
+inline size_t s_size_of<bool>(void)
+{
+   return sizeof(u_char);
 }
 
 // -----------------------------------------------------------------------
