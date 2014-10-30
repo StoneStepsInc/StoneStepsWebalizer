@@ -25,24 +25,9 @@
 // visit. Other types of visits may only be identified during the visit, 
 // given the types of URLs requested and browsing patterns.
 //
-// 2. cur_tstamp is a 64-bit time_t value, which is the number os seconds 
-// since midnight 1970, UTC.  
-//
-// 3. Current time stamp components are saved with the time zone offset that 
-// was active at the time of the last run, including the daylight saving time 
-// offset. It is expected that the same settings are used for all incremental 
-// runs for a given database.
-//
 class totals_t : public keynode_t<u_long>, public datanode_t<totals_t> {
    public:
-      time_t cur_tstamp;                         // current timestamp
-
-      u_int cur_year;                            // year/month/day/hour
-      u_int cur_month;                           // tracking variables
-      u_int cur_day;                             // see #3 above
-      u_int cur_hour;
-      u_int cur_min;
-      u_int cur_sec;
+      tstamp_t cur_tstamp;                       // current timestamp
 
       u_int f_day;                               // first day of the month
       u_int l_day;                               // last day of the month

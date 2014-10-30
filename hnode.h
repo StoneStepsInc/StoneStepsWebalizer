@@ -67,7 +67,7 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
       u_long   dlref;                // download node reference count
       
-      time_t  tstamp;                // last request timestamp
+      tstamp_t tstamp;               // last request timestamp
 
       vnode_t  *visit;               // current visit (NULL if none)
       vnode_t  *grp_visit;           // visits queued for name grouping

@@ -52,8 +52,8 @@ struct vnode_t : public list_node_t<vnode_t>, public keynode_t<u_long>, public d
       bool     robot    : 1;        // robot?
       bool     converted: 1;        // requested target URL?
 
-      time_t   start;               // first hit timestamp
-      time_t   end;                 // last hit timestamp
+      tstamp_t start;               // first hit timestamp
+      tstamp_t end;                 // last hit timestamp
 
       u_long   hits;                // current visit hits,
       u_long   files;               // files,

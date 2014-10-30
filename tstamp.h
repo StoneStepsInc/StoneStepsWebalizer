@@ -76,6 +76,8 @@ struct tstamp_t {
 
       void shift(int secs);
 
+      int64_t elapsed(const tstamp_t& tstamp) const;
+
       void toutc(void);
       void tolocal(int offset);
 

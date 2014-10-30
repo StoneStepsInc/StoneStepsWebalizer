@@ -102,28 +102,6 @@ const void *deserialize(const void *ptr, tstamp_t& tstamp)
    return ptr;
 }
 
-template <>
-void *s_skip_field<tstamp_t>(const void *ptr)
-{
-   // check first if it's a null time stamp
-   if(*(u_char*) ptr)
-      return (u_char*) ptr + 
-            sizeof(u_char);               // null
-
-   // add the sizes of all fields in front
-   size_t tsize = 
-            sizeof(u_char)          +     // null
-            sizeof(u_char)          +     // utc
-            sizeof(u_short)         +     // year
-            sizeof(u_char) * 5;           // month, day, hour, min, sec 
-   
-   // check the UTC flag and add the offset to the size for local times
-   if(*((u_char*) ptr + 1))
-      tsize += sizeof(short);
-
-   return (u_char*) ptr + tsize;
-}
-
 size_t s_size_of(const tstamp_t& tstamp)
 {
    size_t datasize = sizeof(u_char);      // null

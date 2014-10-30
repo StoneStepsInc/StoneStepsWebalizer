@@ -106,7 +106,7 @@ void dump_output_t::dump_all_hosts()
 
    /* generate file name */
    sprintf(filename,"%s/site_%04d%02d.%s",
-      (!config.dump_path.isempty())? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty())? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -150,7 +150,7 @@ void dump_output_t::dump_all_urls()
 
    /* generate file name */
    sprintf(filename,"%s/url_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -192,7 +192,7 @@ void dump_output_t::dump_all_refs()
 
    /* generate file name */
    sprintf(filename,"%s/ref_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -228,7 +228,7 @@ void dump_output_t::dump_all_downloads(void)
 
    /* generate file name */
    sprintf(filename,"%s/dl_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -278,7 +278,7 @@ void dump_output_t::dump_all_errors(void)
 
    /* generate file name */
    sprintf(filename,"%s/err_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -315,7 +315,7 @@ void dump_output_t::dump_all_agents()
 
    /* generate file name */
    sprintf(filename,"%s/agent_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -351,7 +351,7 @@ void dump_output_t::dump_all_users()
 
    /* generate file name */
    sprintf(filename,"%s/user_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;
@@ -393,7 +393,7 @@ void dump_output_t::dump_all_search()
 
    /* generate file name */
    sprintf(filename,"%s/search_%04d%02d.%s",
-      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_year,state.totals.cur_month,config.dump_ext.c_str());
+      (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
    if ( (out_fp=open_out_file(filename))==NULL ) return;

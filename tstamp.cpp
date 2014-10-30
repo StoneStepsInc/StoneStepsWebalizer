@@ -216,6 +216,11 @@ void tstamp_t::shift(int secs)
       reset(mktime() + secs, offset);
 }
 
+int64_t tstamp_t::elapsed(const tstamp_t& tstamp) const
+{
+   return mktime() - tstamp.mktime();
+}
+
 void tstamp_t::toutc(void) 
 {
    if(!null && !utc) 

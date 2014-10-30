@@ -286,9 +286,9 @@ int html_output_t::write_monthly_report()
    string_t dtitle, htitle;
 
    /* fill in filenames */
-   html_fname.format("usage_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
-   png1_fname.format("daily_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
-   png2_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
+   html_fname.format("usage_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
+   png1_fname.format("daily_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
+   png2_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
    if(config.html_ext_lang) {
       html_fname_lang = html_fname + '.' + config.lang.language_code;
@@ -304,14 +304,14 @@ int html_output_t::write_monthly_report()
    /* create PNG images for web page */
    if (config.daily_graph)
    {
-      dtitle.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+      dtitle.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
       if(makeimgs)
-         graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_month, state.totals.cur_year, state.t_daily);
+         graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
    }
 
    if (config.hourly_graph)
    {
-      htitle.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
+      htitle.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
       if(makeimgs)
          graph.day_graph3(png2_fname_lang, htitle, state.t_hourly);
    }
@@ -320,7 +320,7 @@ int html_output_t::write_monthly_report()
    /* first, open the file */
    if ( (out_fp=open_out_file(html_fname_lang))==NULL ) return 1;
 
-   sprintf(buffer,"%s %d", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
+   sprintf(buffer,"%s %d", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
    write_html_head(buffer, out_fp);
 
    month_links();
@@ -446,7 +446,7 @@ void html_output_t::month_total_table()
 	fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
 
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"3\">%s %s %d</th></tr>\n", config.lang.msg_mtot_ms, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"3\">%s %s %d</th></tr>\n", config.lang.msg_mtot_ms, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 	fputs("</thead>\n", out_fp);
 
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
@@ -649,17 +649,17 @@ void html_output_t::daily_total_table()
    int i;
    const hist_month_t *hptr;
 
-   if((hptr = state.history.find_month(state.totals.cur_year, state.totals.cur_month)) == NULL)
+   if((hptr = state.history.find_month(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month)) == NULL)
       return;
       
-   jday = tstamp_t::wday(state.totals.cur_year, state.totals.cur_month, 1);
+   jday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
 
    /* Daily stats */
    fputs("\n<!-- Daily Totals Table -->\n", out_fp);
    fputs("<table class=\"report_table totals_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    /* Daily statistics for ... */
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
    fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"								\
                   "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"						\
@@ -727,7 +727,7 @@ void html_output_t::hourly_total_table()
    fputs("<table class=\"report_table totals_table\">\n", out_fp);
 
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
    fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"	\
                   "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"				\
@@ -927,7 +927,7 @@ void html_output_t::top_hosts_table(int flag)
             fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
             fputs("<tr class=\"all_items_tr\">", out_fp);
             fprintf(out_fp, "<td colspan=\"%d\">\n", config.ntop_ctrys?16:15);
-            fprintf(out_fp,"<a href=\"./site_%04d%02d.%s\">", state.totals.cur_year, state.totals.cur_month, config.html_ext.c_str());
+            fprintf(out_fp,"<a href=\"./site_%04d%02d.%s\">", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.html_ext.c_str());
             fprintf(out_fp,"%s</a></td></tr>\n", config.lang.msg_v_hosts);
             fputs("</tbody>\n", out_fp);
          }
@@ -949,7 +949,7 @@ int html_output_t::all_hosts_page(void)
    string_t ccode;
 
    /* generate file name */
-   site_fname.format("site_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   site_fname.format("site_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       site_fname = site_fname + '.' + config.lang.language_code;
@@ -957,7 +957,7 @@ int html_output_t::all_hosts_page(void)
    /* open file */
    if ( (out_fp=open_out_file(site_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_hosts);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -1196,7 +1196,7 @@ void html_output_t::top_urls_table(int flag)
             fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
             fputs("<tr class=\"all_items_tr\">", out_fp);
             fputs("<td colspan=\"8\">", out_fp);
-            fprintf(out_fp,"<a href=\"url_%04d%02d.%s\">", state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+            fprintf(out_fp,"<a href=\"url_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
             fprintf(out_fp,"%s</a></td></tr>\n", config.lang.msg_v_urls);
             fputs("</tbody>\n", out_fp);
          }
@@ -1219,7 +1219,7 @@ int html_output_t::all_urls_page(void)
    string_t str;
 
    /* generate file name */
-   url_fname.format("url_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   url_fname.format("url_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       url_fname = url_fname + '.' + config.lang.language_code;
@@ -1227,7 +1227,7 @@ int html_output_t::all_urls_page(void)
    /* open file */
    if ( (out_fp=open_out_file(url_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_url);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -1557,7 +1557,7 @@ void html_output_t::top_refs_table()
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
          fputs("<td colspan=\"6\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./ref_%04d%02d.%s\">", state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./ref_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n",config.lang.msg_v_refs);
          fputs("</tbody>\n", out_fp);
       }
@@ -1671,7 +1671,7 @@ void html_output_t::top_dl_table(void)
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
          fputs("<td colspan=\"11\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./dl_%04d%02d.%s\">", state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./dl_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n", config.lang.msg_v_downloads);
          fputs("</tbody>\n", out_fp);
       }
@@ -1697,7 +1697,7 @@ int html_output_t::all_downloads_page(void)
    database_t::reverse_iterator<dlnode_t> iter = state.database.rbegin_downloads("downloads.xfer");
 
    /* generate file name */
-   dl_fname.format("dl_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   dl_fname.format("dl_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       dl_fname = dl_fname + '.' + config.lang.language_code;
@@ -1705,7 +1705,7 @@ int html_output_t::all_downloads_page(void)
    /* open file */
    if ( (out_fp=open_out_file(dl_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_download);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -1825,7 +1825,7 @@ void html_output_t::top_err_table(void)
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
          fputs("<td colspan=\"6\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./err_%04d%02d.%s\">", state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./err_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n",config.lang.msg_v_errors);
          fputs("</tbody>\n", out_fp);
       }
@@ -1846,7 +1846,7 @@ int html_output_t::all_errors_page(void)
    string_t str;
 
    /* generate file name */
-   err_fname.format("err_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   err_fname.format("err_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       err_fname = err_fname + '.' + config.lang.language_code;
@@ -1854,7 +1854,7 @@ int html_output_t::all_errors_page(void)
    /* open file */
    if ( (out_fp=open_out_file(err_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_status);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -1899,7 +1899,7 @@ int html_output_t::all_refs_page(void)
    string_t str;
 
    /* generate file name */
-   ref_fname.format("ref_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   ref_fname.format("ref_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       ref_fname = ref_fname + '.' + config.lang.language_code;
@@ -1907,7 +1907,7 @@ int html_output_t::all_refs_page(void)
    /* open file */
    if ( (out_fp=open_out_file(ref_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_ref);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2097,7 +2097,7 @@ void html_output_t::top_agents_table()
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
          fputs("<td colspan=\"8\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./agent_%04d%02d.%s\">", state.totals.cur_year, state.totals.cur_month, config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./agent_%04d%02d.%s\">", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n",config.lang.msg_v_agents);
          fputs("</tbody>\n", out_fp);
       }
@@ -2117,7 +2117,7 @@ int html_output_t::all_agents_page(void)
    FILE     *out_fp;
 
    /* generate file name */
-   agent_fname.format("agent_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   agent_fname.format("agent_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       agent_fname = agent_fname + '.' + config.lang.language_code;
@@ -2125,7 +2125,7 @@ int html_output_t::all_agents_page(void)
    /* open file */
    if ( (out_fp=open_out_file(agent_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_agent);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2276,7 +2276,7 @@ void html_output_t::top_search_table(void)
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
          fputs("<td colspan=\"6\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./search_%04d%02d.%s\">", state.totals.cur_year, state.totals.cur_month, config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./search_%04d%02d.%s\">", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n", config.lang.msg_v_search);
          fputs("</tbody>\n", out_fp);
       }
@@ -2303,7 +2303,7 @@ int html_output_t::all_search_page(void)
       return 0;
 
    /* generate file name */
-   search_fname.format("search_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   search_fname.format("search_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       search_fname = search_fname + '.' + config.lang.language_code;
@@ -2311,7 +2311,7 @@ int html_output_t::all_search_page(void)
    /* open file */
    if ( (out_fp=open_out_file(search_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_search);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
    write_html_head(buffer, out_fp);
 
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
@@ -2488,7 +2488,7 @@ void html_output_t::top_users_table()
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">\n", out_fp);
          fputs("<td colspan=\"12\">\n", out_fp);
-         fprintf(out_fp,"<a href=\"./user_%04d%02d.%s\">", state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+         fprintf(out_fp,"<a href=\"./user_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n",config.lang.msg_v_users);
          fputs("</tbody>\n", out_fp);
       }
@@ -2508,7 +2508,7 @@ int html_output_t::all_users_page(void)
    FILE     *out_fp;
 
    /* generate file name */
-   user_fname.format("user_%04d%02d.%s",state.totals.cur_year,state.totals.cur_month,config.html_ext.c_str());
+   user_fname.format("user_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
 
    if(config.html_ext_lang)
       user_fname = user_fname + '.' + config.lang.language_code;
@@ -2516,7 +2516,7 @@ int html_output_t::all_users_page(void)
    /* open file */
    if ( (out_fp=open_out_file(user_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year,config.lang.msg_h_uname);
+   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
    write_html_head(buffer, out_fp);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2648,8 +2648,8 @@ void html_output_t::top_ctry_table()
          pie_legend[i]=ccarray[i]->cdesc;
       }
 
-      pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
-      pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
+      pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+      pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
       if(config.html_ext_lang)
          pie_fname_lang = pie_fname + '.' + config.lang.language_code;

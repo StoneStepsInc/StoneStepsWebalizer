@@ -18,7 +18,6 @@ vnode_t::vnode_t(u_long nodeid) : keynode_t<u_long>(nodeid)
    entry_url = false;
    robot = false;
    converted = false;
-   start = end = 0;
    hits = files = pages = 0; 
    xfer = .0;
    lasturl = NULL;
@@ -65,7 +64,8 @@ void vnode_t::reset(u_long nodeid)
    entry_url = false;
    robot = false;
    converted = false;
-   start = end = 0;
+   start.reset();
+   end.reset();
    hits = files = pages = 0; 
    xfer = .0;
    set_lasturl(NULL);
@@ -94,7 +94,8 @@ u_int vnode_t::s_data_size(void) const
    return datanode_t<vnode_t>::s_data_size() + 
             sizeof(u_char)  * 3 +   // entry_url, robot, converted
             sizeof(u_long)  * 3 +   // hits, files, pages
-            sizeof(int64_t) * 2 +   // start, end
+            s_size_of(start)    +   // start
+            s_size_of(end)      +   // end
             sizeof(double)      +   // xfer 
             sizeof(u_long);         // lasturl->nodeid
 }
@@ -114,8 +115,8 @@ u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = (u_char*) buffer + basesize;
 
    ptr = serialize(ptr, entry_url);
-   ptr = serialize<int64_t>(ptr, start);
-   ptr = serialize<int64_t>(ptr, end);
+   ptr = serialize(ptr, start);
+   ptr = serialize(ptr, end);
    ptr = serialize(ptr, hits);
    ptr = serialize(ptr, files);
    ptr = serialize(ptr, pages);
@@ -150,11 +151,22 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    datanode_t<vnode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   compatibility_deserializer<4, u_long, int64_t, time_t> deserialize_time_t(version);
-
    ptr = deserialize(ptr, tmp); entry_url = tmp;
-   ptr = deserialize_time_t(ptr, start);
-   ptr = deserialize_time_t(ptr, end);
+
+   if(version >= 4) {
+      ptr = deserialize(ptr, start);
+      ptr = deserialize(ptr, end);
+   }
+   else {
+      u_long tmp;
+
+      ptr = deserialize(ptr, tmp); 
+      start.reset((time_t) tmp);
+
+      ptr = deserialize(ptr, tmp);
+      end.reset((time_t) tmp);
+   }
+
    ptr = deserialize(ptr, hits);
    ptr = deserialize(ptr, files);
    ptr = deserialize(ptr, pages);
@@ -180,28 +192,30 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 u_int vnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = datanode_t<vnode_t>::s_data_size(buffer) + 
-            sizeof(u_char)     +    // entry_url
+   size_t datasize = datanode_t<vnode_t>::s_data_size(buffer) + 
+            sizeof(u_char);         // entry_url
+
+   if(version < 4)
+      datasize += sizeof(u_long) * 2;  // start, end
+   else {
+      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // start
+      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // end
+   }
+    
+   datasize +=
             sizeof(u_long) * 3 +    // hits, files, pages
             sizeof(double)     +    // xfer
             sizeof(u_long);         // urlid (last URL)
 
    if(version < 2)
-      return datasize + 
-            sizeof(u_long) * 2;     // start, end
+      return datasize;
 
    datasize += sizeof(u_char);      // robot
    
    if(version < 3)
-      return datasize + 
-            sizeof(u_long) * 2;     // start, end
+      return datasize;
    
    datasize += sizeof(u_char);      // converted   
 
-   if(version < 4)
-      return datasize + 
-            sizeof(u_long) * 2;     // start, end
-
-   return datasize + 
-            sizeof(int64_t) * 2;    // start, end
+   return datasize;
 }

@@ -34,7 +34,6 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    ccode[0] = ccode[1] = ccode[2] = 0;
    visit = NULL;
    dlref = 0;
-   tstamp = 0;
    grp_visit = NULL;
 }
 
@@ -88,7 +87,6 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
    ccode[0] = ccode[1] = ccode[2] = 0;
    visit = NULL;
    dlref = 0;
-   tstamp = 0;
    grp_visit = NULL;
 }
 
@@ -153,7 +151,7 @@ void hnode_t::reset(u_long nodeid)
    max_v_xfer = .0;
    ccode[0] = ccode[1] = ccode[2] = 0;
    dlref = 0;
-   tstamp = 0;
+   tstamp.reset();
 
    set_visit(NULL);
 }
@@ -182,7 +180,7 @@ u_int hnode_t::s_data_size(void) const
                sizeof(u_long) * 3 +             // visits, visit_max, visits_conv
                sizeof(u_long) * 3 +             // max_v_hits, max_v_files, max_v_pages
                sizeof(u_long)     +             // hash(value)  
-               sizeof(int64_t)    +             // tstamp 
+               s_size_of(tstamp)  +             // tstamp 
                sizeof(double) * 3 +             // xfer, visit_avg, max_v_xfer
                s_size_of(name)    + 
                ccode_size;                      // country code
@@ -222,7 +220,7 @@ u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
 
    ptr = serialize(ptr, robot);
    ptr = serialize(ptr, visits_conv);
-         serialize<int64_t>(ptr, tstamp);
+         serialize(ptr, tstamp);
 
    return datasize;
 }
@@ -243,8 +241,6 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    version = s_node_ver(buffer);
    base_node<hnode_t>::s_unpack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
-
-   compatibility_deserializer<5, u_long, int64_t, time_t> deserialize_time_t(version);
 
    ptr = deserialize(ptr, tmp); spammer = tmp;
    ptr = deserialize(ptr, count);
@@ -275,10 +271,17 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    else
       visits_conv = 0;
 
-   if(version >= 4)
-      ptr = deserialize_time_t(ptr, tstamp);
+   if(version >= 4) {
+      if(version >= 5)
+         ptr = deserialize(ptr, tstamp);
+      else {
+         u_long tmp;
+         ptr = deserialize(ptr, tmp);
+         tstamp.reset((time_t) tmp);
+      }
+   }
    else
-      tstamp = 0;
+      tstamp.reset();
 
    visit = NULL;
    
@@ -316,10 +319,11 @@ u_int hnode_t::s_data_size(const void *buffer)
       return datasize;
  
    if(version < 5)
-      return datasize + 
-               sizeof(u_long);         // tstamp
+      datasize += sizeof(u_long);      // tstamp
+   else
+      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // tstamp
 
-   return datasize + sizeof(int64_t);  // tstamp
+   return datasize; 
 }
 
 const void *hnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)

@@ -248,7 +248,7 @@ void xml_output_t::write_monthly_totals(void)
       if (state.t_daily[i].tm_xfer > max_xfer)     max_xfer  = state.t_daily[i].tm_xfer;
    }
 
-	fprintf(out_fp, "<report id=\"monthly_totals\" help=\"monthly_summary_report\" title=\"%s %s %d\">\n", xml_encode_ex(config.lang.msg_mtot_ms), xml_encode_ex(lang_t::l_month[state.totals.cur_month-1]), state.totals.cur_year);
+	fprintf(out_fp, "<report id=\"monthly_totals\" help=\"monthly_summary_report\" title=\"%s %s %d\">\n", xml_encode_ex(config.lang.msg_mtot_ms), xml_encode_ex(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 	
 	fputs("<section>\n", out_fp);
 	fprintf(out_fp,"<columns><col help=\"totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_h_totals));
@@ -440,30 +440,30 @@ void xml_output_t::write_daily_totals(void)
    int i;
    const hist_month_t *hptr;
 
-   if((hptr = state.history.find_month(state.totals.cur_year, state.totals.cur_month)) == NULL)
+   if((hptr = state.history.find_month(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month)) == NULL)
       return;
 
    //
    //
    //
-   png_fname.format("daily_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
+   png_fname.format("daily_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
    if(config.html_ext_lang)
       png_fname = png_fname + '.' + config.lang.language_code;
 
-   title.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   title.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
    
    if(makeimgs)
-      graph.month_graph6(png_fname, title, state.totals.cur_month, state.totals.cur_year, state.t_daily);
+      graph.month_graph6(png_fname, title, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
 
    //
    //
    //   
-   jday = tstamp_t::wday(state.totals.cur_year, state.totals.cur_month, 1);
+   jday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
 
-	fprintf(out_fp, "<report id=\"daily_totals\" help=\"daily_totals_report\" title=\"%s %s %d\">\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+	fprintf(out_fp, "<report id=\"daily_totals\" help=\"daily_totals_report\" title=\"%s %s %d\">\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 	
-   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
    
    fprintf(out_fp, "<image filename=\"%s\" width=\"%d\" height=\"%d\"/>\n", png_fname.c_str(), 512, 400);
 
@@ -523,12 +523,12 @@ void xml_output_t::write_hourly_totals(void)
    //
    //
    //
-   png_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
+   png_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
    if(config.html_ext_lang)
       png_fname = png_fname + '.' + config.lang.language_code;
 
-   title.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
+   title.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
    
    if(makeimgs)
       graph.day_graph3(png_fname, title, state.t_hourly);
@@ -538,9 +538,9 @@ void xml_output_t::write_hourly_totals(void)
    //
    days_in_month=(state.totals.l_day-state.totals.f_day)+1;
 
-	fprintf(out_fp, "<report id=\"hourly_totals\" help=\"hourly_totals_report\" title=\"%s %s %d\">\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+	fprintf(out_fp, "<report id=\"hourly_totals\" help=\"hourly_totals_report\" title=\"%s %s %d\">\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
-   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
+   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "<image filename=\"%s\" width=\"%d\" height=\"%d\"/>\n", png_fname.c_str(), 512, 340);
 
@@ -1815,8 +1815,8 @@ void xml_output_t::write_top_countries(void)
    //
    //
    //
-   pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_month-1],state.totals.cur_year);
-   pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_year,state.totals.cur_month);
+   pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+   pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
    if(config.html_ext_lang)
       pie_fname = pie_fname + '.' + config.lang.language_code;
@@ -1842,7 +1842,7 @@ void xml_output_t::write_top_countries(void)
    fprintf(out_fp, "<report id=\"top_countries\" help=\"countries_report\" title=\"%s %d %s %d %s\" top=\"%d\" total=\"%d\">\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c, tot_num, tot_ctry);
 
    // create and populate the graph element
-   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year);
+   fprintf(out_fp, "<graph title=\"%s %s %d\">\n", config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "<image filename=\"%s\" width=\"%d\" height=\"%d\"/>\n", pie_fname.c_str(), 512, 300);
 
@@ -1938,7 +1938,7 @@ int xml_output_t::write_monthly_report(void)
    string_t xml_fname, period;
 
    /* fill in filenames */
-   xml_fname.format("usage_%04d%02d.xml",state.totals.cur_year, state.totals.cur_month);
+   xml_fname.format("usage_%04d%02d.xml",state.totals.cur_tstamp.year, state.totals.cur_tstamp.month);
 
    if((out_fp = open_out_file(xml_fname)) == NULL)
       return 1;
@@ -2106,11 +2106,11 @@ void xml_output_t::write_xml_head(bool index)
       fputs("<period months=\"1\">\n", out_fp);
       
       fputs("<start>\n", out_fp);
-      fprintf(out_fp,"<year>%d</year>\n<month name=\"%s\">%d</month>\n<day>%d</day>\n", state.totals.cur_year, xml_encode(lang_t::l_month[state.totals.cur_month-1]), state.totals.cur_month, state.totals.f_day);
+      fprintf(out_fp,"<year>%d</year>\n<month name=\"%s\">%d</month>\n<day>%d</day>\n", state.totals.cur_tstamp.year, xml_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.month, state.totals.f_day);
       fputs("</start>\n", out_fp);
       
       fputs("<end>\n", out_fp);
-      fprintf(out_fp,"<year>%d</year>\n<month name=\"%s\">%d</month>\n<day>%d</day>\n", state.totals.cur_year, xml_encode(lang_t::l_month[state.totals.cur_month-1]), state.totals.cur_month, state.totals.l_day);
+      fprintf(out_fp,"<year>%d</year>\n<month name=\"%s\">%d</month>\n<day>%d</day>\n", state.totals.cur_tstamp.year, xml_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.month, state.totals.l_day);
       fputs("</end>\n", out_fp);
       
       fputs("</period>\n", out_fp);

@@ -16,7 +16,6 @@
 danode_t::danode_t(u_long _nodeid) : keynode_t<u_long>(_nodeid)
 {
    hits = 0; 
-   tstamp = 0; 
    xfer = 0; 
    proctime = 0;
 
@@ -38,7 +37,7 @@ void danode_t::reset(u_long _nodeid)
    keynode_t<u_long>::reset(_nodeid);
 
    hits = 0; 
-   tstamp = 0; 
+   tstamp.reset(); 
    xfer = 0; 
    proctime = 0;
 
@@ -53,7 +52,7 @@ u_int danode_t::s_data_size(void) const
 {
    return datanode_t<danode_t>::s_data_size() + 
             sizeof(u_long) * 3 +       // hits, proctime, xfer
-            sizeof(int64_t);           // tstamp
+            s_size_of(tstamp);         // tstamp
 }
 
 u_int danode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -71,7 +70,7 @@ u_int danode_t::s_pack_data(void *buffer, u_int bufsize) const
    ptr = (u_char*) buffer + basesize;
 
    ptr = serialize(ptr, hits);
-   ptr = serialize<int64_t>(ptr, tstamp);
+   ptr = serialize(ptr, tstamp);
    ptr = serialize(ptr, proctime);
    ptr = serialize(ptr, xfer);
 
@@ -94,10 +93,16 @@ u_int danode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    datanode_t<danode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   compatibility_deserializer<2, u_long, int64_t, time_t> deserialize_time_t(version);
-
    ptr = deserialize(ptr, hits);
-   ptr = deserialize_time_t(ptr, tstamp);
+
+   if(version >= 2)
+      ptr = deserialize(ptr, tstamp);
+   else {
+      u_long tmp;
+      ptr = deserialize(ptr, tmp);
+      tstamp.reset((time_t) tmp);
+   }
+      
    ptr = deserialize(ptr, proctime);
    ptr = deserialize(ptr, xfer);
    
@@ -111,12 +116,15 @@ u_int danode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
 
-   u_int datasize = datanode_t<danode_t>::s_data_size(buffer) + 
-            sizeof(u_long) * 3;           // hits, proctime, xfer
-   
-   if(version < 2)
-      return datasize + sizeof(u_long);   // tstamp
+   size_t datasize = datanode_t<danode_t>::s_data_size(buffer) + 
+            sizeof(u_long);               // hits
 
-   return datasize + sizeof(int64_t);     // tstamp
+   if(version < 2)
+      datasize += sizeof(u_long);         // tstamp
+   else
+      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);   // tstamp
+
+   return datasize + 
+            sizeof(u_long) * 2;           // proctime, xfer;
 }
 

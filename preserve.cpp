@@ -179,7 +179,7 @@ int state_t::save_state(void)
    /* Saving current run data... */
    if (verbose>1)
    {
-      sprintf(buffer,"%02d/%02d/%04d %02d:%02d:%02d",totals.cur_month,totals.cur_day,totals.cur_year,totals.cur_hour,totals.cur_min,totals.cur_sec);
+      sprintf(buffer,"%02d/%02d/%04d %02d:%02d:%02d",totals.cur_tstamp.month,totals.cur_tstamp.day,totals.cur_tstamp.year,totals.cur_tstamp.hour,totals.cur_tstamp.min,totals.cur_tstamp.sec);
       printf("%s [%s]\n", config.lang.msg_put_data,buffer);
    }
 
@@ -370,7 +370,7 @@ int state_t::save_state(void)
    // Update history for the current month. If the history file was missing, 
    // a new one will be created with this data. 
    //
-   history.update(totals.cur_year, totals.cur_month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
+   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
    history.put_history();
 
    //
@@ -461,13 +461,21 @@ bool state_t::initialize(void)
       printf("%s %s\n", config.lang.msg_use_db, database.get_dbpath().c_str());
 
    //
-   // Check if there is a system node. If there is, check if there's 
-   // anything to do, given state of the database and current run 
-   // parameters.
+   // If there is a system node, check if we have anything to do, given state of 
+   // the database and current run parameters.
    //
    if(database.is_sysnode()) {
       if(!database.get_sysnode_by_id(sysnode, NULL, NULL))
          throw exception_t(0, "Cannot read the system node from the database");
+   
+      //
+      // Time stamps in the databases prior to v4 were saved without UTC offsets and
+      // cannot be interpreted without having to propagate current UTC offset from 
+      // the configuration to all the nodes, which would require a significant effort. 
+      // Instead, let's just cut off access to old databases here. 
+      //
+      if(sysnode.appver_last < VERSION_4_0_0_0)
+         throw exception_t(0, "Cannot open a database with a version prior to v4.0");
          
       if(!sysnode.check_size_of())
          throw exception_t(0, "Incompatible database format (data type sizes)");
@@ -611,7 +619,7 @@ int state_t::restore_state(void)
    // from the current database file. In the worse cae scenario we just 
    // write same data twice (i.e. the line created from the current state).
    //
-   history.update(totals.cur_year, totals.cur_month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
+   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
 
    //
    // No need to restore the rest in the report-only mode
@@ -821,6 +829,13 @@ int state_t::upgrade_database(void)
    // hit time stamp set to zero.
    //
    if(sysnode.appver < VERSION_3_4_1_1) {
+      tstamp_t cur_tstamp = totals_node.cur_tstamp;
+
+      // reset time components of the current time stamp
+      cur_tstamp.hour = 0;
+      cur_tstamp.min = 0;
+      cur_tstamp.sec = 0;
+      
       // loop through the current daily hosts table
       database_t::iterator<tnode_t> iter = database.begin_dhosts();
       while(iter.next(tnode)) {
@@ -831,8 +846,8 @@ int state_t::upgrade_database(void)
             return 25;
          
          // fix the last hit time stamp
-         if(hnode.tstamp == 0)
-            hnode.tstamp = totals_node.cur_tstamp / 86400 * 86400;
+         if(hnode.tstamp.null)
+            hnode.tstamp = cur_tstamp;
          
          // and put it back into the database
          if(!database.put_hnode(hnode))
@@ -985,7 +1000,7 @@ void state_t::del_htabs()
 void state_t::clear_month()
 {
    // if there's any data in the database, rename the file
-   if(totals.cur_tstamp) {
+   if(!totals.cur_tstamp.null) {
       if(!database.rollover(totals.cur_tstamp))
          throw exception_t(0, "Cannot roll over the current state database");
       
@@ -1024,7 +1039,7 @@ void state_t::update_hourly_stats(void)
    //
    if(!totals.ht_hits) return;
       
-   daily_t& daily = t_daily[totals.cur_day-1];
+   daily_t& daily = t_daily[totals.cur_tstamp.day-1];
 
    // update the number of hours in the current day
    daily.td_hours++;
@@ -1048,9 +1063,9 @@ void state_t::update_hourly_stats(void)
 
 void state_t::set_tstamp(const tstamp_t& tstamp)
 {
-   if (totals.cur_year != tstamp.year || totals.cur_month != tstamp.month) {
-      totals.cur_month = tstamp.month;
-      totals.cur_year  = tstamp.year;
+   if (totals.cur_tstamp.year != tstamp.year || totals.cur_tstamp.month != tstamp.month) {
+      totals.cur_tstamp.month = tstamp.month;
+      totals.cur_tstamp.year  = tstamp.year;
       totals.f_day = totals.l_day = tstamp.day;
    }
 
@@ -1058,29 +1073,29 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
    if (tstamp.day > totals.l_day) totals.l_day = tstamp.day;
 
    /* update min/sec stuff */
-   if (totals.cur_sec != tstamp.sec) totals.cur_sec = tstamp.sec;
-   if (totals.cur_min != tstamp.min) totals.cur_min = tstamp.min;
+   if (totals.cur_tstamp.sec != tstamp.sec) totals.cur_tstamp.sec = tstamp.sec;
+   if (totals.cur_tstamp.min != tstamp.min) totals.cur_tstamp.min = tstamp.min;
 
    /* check for hour change  */
-   if (totals.cur_hour != tstamp.hour)
+   if (totals.cur_tstamp.hour != tstamp.hour)
    {
       update_hourly_stats();
       
       /* if yes, init hourly stuff */
-      totals.cur_hour = tstamp.hour;
+      totals.cur_tstamp.hour = tstamp.hour;
    }
 
    /* check for day change   */
-   if (totals.cur_day != tstamp.day)
+   if (totals.cur_tstamp.day != tstamp.day)
    {
       /* if yes, init daily stuff */
-      t_daily[totals.cur_day-1].tm_hosts = totals.dt_hosts; 
+      t_daily[totals.cur_tstamp.day-1].tm_hosts = totals.dt_hosts; 
       totals.dt_hosts = 0;
-      totals.cur_day = tstamp.day;
+      totals.cur_tstamp.day = tstamp.day;
    }
 
    // update current timestamp
-   totals.cur_tstamp = tstamp.mktime();
+   totals.cur_tstamp = tstamp;
 }
 
 /*********************************************/

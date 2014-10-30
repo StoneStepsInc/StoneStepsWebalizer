@@ -211,32 +211,6 @@ class compatibility_deserializer<switch_version, org_storage_t, new_storage_t, n
 
 // -----------------------------------------------------------------------
 //
-// skip functions
-//
-// -----------------------------------------------------------------------
-template <typename type_t>
-inline void *s_skip_field(const void *ptr)
-{
-   return (u_char*) ptr + sizeof(type_t);
-}
-
-template <>
-inline void *s_skip_field<bool>(const void *ptr)
-{
-   return (u_char*) ptr + sizeof(u_char);
-}
-
-template <>
-inline void *s_skip_field<string_t>(const void *ptr)
-{
-   return (u_char*) ptr + sizeof(u_int) + *(u_int*)ptr;
-}
-
-template <>
-inline void *s_skip_field<tstamp_t>(const void *ptr);
-
-// -----------------------------------------------------------------------
-//
 // size-of functions (value)
 //
 // -----------------------------------------------------------------------
@@ -301,6 +275,36 @@ template <>
 inline size_t s_size_of<bool>(void)
 {
    return sizeof(u_char);
+}
+
+// -----------------------------------------------------------------------
+//
+// skip functions
+//
+// -----------------------------------------------------------------------
+
+template <typename type_t>
+inline void *s_skip_field(const void *ptr)
+{
+   return (u_char*) ptr + sizeof(type_t);
+}
+
+template <>
+inline void *s_skip_field<bool>(const void *ptr)
+{
+   return (u_char*) ptr + sizeof(u_char);
+}
+
+template <>
+inline void *s_skip_field<string_t>(const void *ptr)
+{
+   return (u_char*) ptr + sizeof(u_int) + *(u_int*)ptr;
+}
+
+template <>
+inline void *s_skip_field<tstamp_t>(const void *ptr)
+{
+   return (u_char*) ptr + s_size_of<tstamp_t>(ptr);
 }
 
 // -----------------------------------------------------------------------

@@ -36,6 +36,7 @@
 #define VERSION_3_8_0_1    0x03080001ul
 #define VERSION_3_8_0_4    0x03080004ul
 #define VERSION_3_10_3_2   0x030A0302ul
+#define VERSION_4_0_0_0    0x04000000ul
 
 /*
  * Version macros

@@ -339,7 +339,7 @@ void webalizer_t::write_monthly_report(void)
       optr = iter.item();
       
       if(verbose > 1)
-         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_month-1], state.totals.cur_year, optr->get_output_type());
+         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year, optr->get_output_type());
       
       optr->write_monthly_report();
    }
@@ -402,7 +402,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    const string_t *hostname;
    string_t str;
    bool newhgrp = false;
-   u_long vlen = (u_long) (vnode.end-vnode.start);
+   u_long vlen = (u_long) vnode.end.elapsed(vnode.start);
 
    if(hnode.flag == OBJ_GRP)
       return;
@@ -870,8 +870,8 @@ int webalizer_t::database_info(void)
    printf("Last updated by : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver_last, 3), VER_PART(state.get_sysnode().appver_last, 2), VER_PART(state.get_sysnode().appver_last, 1), VER_PART(state.get_sysnode().appver_last, 0));
    
    // output the first day of the month and the last timestamp
-   printf("First day       : %04d/%02d/%02d\n", state.totals.cur_year, state.totals.cur_month, state.totals.f_day);
-   printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", state.totals.cur_year, state.totals.cur_month, state.totals.cur_day, state.totals.cur_hour, state.totals.cur_min, state.totals.cur_sec);
+   printf("First day       : %04d/%02d/%02d\n", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, state.totals.f_day);
+   printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, state.totals.cur_tstamp.day, state.totals.cur_tstamp.hour, state.totals.cur_tstamp.min, state.totals.cur_tstamp.sec);
 
    // output active visits and downloads
    printf("Active visits   : %ld\n", state.database.get_vcount());
@@ -1026,7 +1026,7 @@ int webalizer_t::proc_logfile(void)
    bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
 
-   time_t rec_tstamp=0;  
+   tstamp_t rec_tstamp;  
 
    u_long total_good = 0;
 
@@ -1226,7 +1226,7 @@ int webalizer_t::proc_logfile(void)
             log_rec.tstamp.tolocal(config.get_utc_offset(log_rec.tstamp, dst_iter));
 
          /* get current records timestamp (seconds since epoch) */
-         rec_tstamp = log_rec.tstamp.mktime();
+         rec_tstamp = log_rec.tstamp;
 
          /* Do we need to check for duplicate records? (incremental mode)   */
          if (check_dup)
@@ -1256,19 +1256,19 @@ int webalizer_t::proc_logfile(void)
             // and a new report must be generated at the end of the month.
             //
 
-            if(state.totals.cur_year != log_rec.tstamp.year || state.totals.cur_month != log_rec.tstamp.month) {
+            if(state.totals.cur_tstamp.year != log_rec.tstamp.year || state.totals.cur_tstamp.month != log_rec.tstamp.month) {
                // check if there are active visits
                if(state.totals.t_visits == state.totals.t_visits_end) {
                      // if there are none, clear the month and
                      state.clear_month();
 
                      // reset the current state timestamp
-                     state.totals.cur_sec   = log_rec.tstamp.sec;
-                     state.totals.cur_min   = log_rec.tstamp.min;
-                     state.totals.cur_hour  = log_rec.tstamp.hour;
-                     state.totals.cur_day   = log_rec.tstamp.day;
-                     state.totals.cur_month = log_rec.tstamp.month;
-                     state.totals.cur_year  = log_rec.tstamp.year;
+                     state.totals.cur_tstamp.sec   = log_rec.tstamp.sec;
+                     state.totals.cur_tstamp.min   = log_rec.tstamp.min;
+                     state.totals.cur_tstamp.hour  = log_rec.tstamp.hour;
+                     state.totals.cur_tstamp.day   = log_rec.tstamp.day;
+                     state.totals.cur_tstamp.month = log_rec.tstamp.month;
+                     state.totals.cur_tstamp.year  = log_rec.tstamp.year;
                      state.totals.cur_tstamp= rec_tstamp;
                      state.totals.f_day=state.totals.l_day=log_rec.tstamp.day;
                }
@@ -1276,7 +1276,7 @@ int webalizer_t::proc_logfile(void)
          }
 
          /* check for out of sequence records */
-         if (rec_tstamp < state.totals.cur_tstamp) {                        -
+         if (rec_tstamp < state.totals.cur_tstamp) {
             total_ignore++; 
             continue; 
          }
@@ -1292,12 +1292,12 @@ int webalizer_t::proc_logfile(void)
          //
 
          /* first time through? */
-         if (state.totals.cur_month == 0)
+         if (state.totals.cur_tstamp.month == 0)
          {
              /* if yes, init our date vars */
-             state.totals.cur_month=log_rec.tstamp.month; state.totals.cur_year=log_rec.tstamp.year;
-             state.totals.cur_day=log_rec.tstamp.day; state.totals.cur_hour=log_rec.tstamp.hour;
-             state.totals.cur_min=log_rec.tstamp.min; state.totals.cur_sec=log_rec.tstamp.sec;
+             state.totals.cur_tstamp.month=log_rec.tstamp.month; state.totals.cur_tstamp.year=log_rec.tstamp.year;
+             state.totals.cur_tstamp.day=log_rec.tstamp.day; state.totals.cur_tstamp.hour=log_rec.tstamp.hour;
+             state.totals.cur_tstamp.min=log_rec.tstamp.min; state.totals.cur_tstamp.sec=log_rec.tstamp.sec;
              state.totals.f_day=log_rec.tstamp.day;
          }
 
@@ -1305,7 +1305,7 @@ int webalizer_t::proc_logfile(void)
          // Check for month change. The state timestamp must not be updated 
          // until reports are generated and the database is rolled over.
          //
-         if (state.totals.cur_year != log_rec.tstamp.year || state.totals.cur_month != log_rec.tstamp.month)
+         if (state.totals.cur_tstamp.year != log_rec.tstamp.year || state.totals.cur_tstamp.month != log_rec.tstamp.month)
          {
             if(config.is_dns_enabled()) {
                stime = msecs();
@@ -1642,7 +1642,7 @@ int webalizer_t::proc_logfile(void)
          }
 
          if(newvisit) {
-            state.t_daily[state.totals.cur_day-1].tm_visits++;
+            state.t_daily[state.totals.cur_tstamp.day-1].tm_visits++;
             state.totals.t_visits++;
             if(robot) state.totals.t_rvisits++;
             state.totals.ht_visits++;
@@ -1783,7 +1783,7 @@ int webalizer_t::proc_logfile(void)
 
    if(good_rec)                                                         /* were any good records?   */
    {
-      state.t_daily[state.totals.cur_day-1].tm_hosts = state.totals.dt_hosts;         /* If yes, clean up a bit   */
+      state.t_daily[state.totals.cur_tstamp.day-1].tm_hosts = state.totals.dt_hosts;         /* If yes, clean up a bit   */
       if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
 
       if (total_rec > (total_ignore+total_bad))                         /* did we process any?   */
@@ -2063,7 +2063,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
 hnode_t *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
-               time_t   tstamp,                 // timestamp 
+               const tstamp_t& tstamp,          // timestamp 
                double   xfer,                   // xfer size 
                bool     fileurl,                // file count
                bool     pageurl,
@@ -2152,7 +2152,7 @@ hnode_t *webalizer_t::put_hnode(
 		cptr->visit->end = tstamp;
 		
 		// check if the last hit was in the same day
-		if(tstamp/86400 > cptr->tstamp/86400)
+		if(tstamp.compare(cptr->tstamp, tstamp_t::tm_parts::DATE) > 0)
 		   newthost = true;
    }
 
@@ -2511,7 +2511,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
                u_int    type,       /* obj type  */
                bool     fileurl,    /* File flag */
                double   xfer,       /* xfer size */
-               time_t   tstamp,     /* timestamp */
+               const tstamp_t& tstamp, /* timestamp */
                double   proctime,
                bool&    newnode)
 {
@@ -2561,7 +2561,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 		nptr->avgtime = AVG(nptr->avgtime, proctime, nptr->count);
 		nptr->maxtime = MAX(nptr->maxtime, proctime);
 
-      if ((tstamp - nptr->tstamp) >= config.visit_timeout)
+      if(tstamp.elapsed(nptr->tstamp) >= config.visit_timeout)
          nptr->visit++;
       nptr->tstamp=tstamp;
    }
@@ -2572,7 +2572,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 //
 //
 //
-dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, time_t tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode)
+dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode)
 {
    bool found = true;
    u_long hashval;
@@ -2676,7 +2676,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
 // visit from the host node. Return the detached and reset visit 
 // to the caller, which is expected to dispose of the visit node.
 //
-vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
+vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 {
    vnode_t *visit;
    u_long vlen;
@@ -2688,11 +2688,11 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
       return NULL;
 
    // end the visit if tstamp is zero (e.g. end of month)
-   if(tstamp) {
+   if(!tstamp.null) {
       // or the time since the last request exceeds the visit timeout
-      if(tstamp - visit->end < config.visit_timeout) {
+      if(tstamp.elapsed(visit->end) < config.visit_timeout) {
          // or visit length exceeds the allowed maximum (e.g. site pinging)
-         if(!config.max_visit_length || visit->end - visit->start < config.max_visit_length)
+         if(!config.max_visit_length || visit->end.elapsed(visit->start) < config.max_visit_length)
             return NULL;
       }
    }
@@ -2708,7 +2708,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
    hptr->xfer +=visit->xfer;
 
    // get visit length
-   vlen = (u_long) (visit->end - visit->start);
+   vlen = (u_long) visit->end.elapsed(visit->start);
 
    // update maximum and average visit duration for this host
    hptr->visit_avg = AVG(hptr->visit_avg, vlen, hptr->visits);
@@ -2820,7 +2820,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, time_t tstamp)
 // be ended. Delete returned ended visits, as we have no use for them at
 // this point. 
 //
-void webalizer_t::update_visits(time_t tstamp)
+void webalizer_t::update_visits(const tstamp_t& tstamp)
 {
    vnode_t *visit;
    hash_table<hnode_t>::iterator h_iter = state.hm_htab.begin();
@@ -2831,18 +2831,19 @@ void webalizer_t::update_visits(time_t tstamp)
    }
 }
 
-danode_t *webalizer_t::update_download(dlnode_t *dlnode, time_t tstamp)
+danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
 {
    danode_t *download;
    double value;
 
-   if(!dlnode || dlnode->flag == OBJ_GRP || !tstamp)
+   if(!dlnode || dlnode->flag == OBJ_GRP || tstamp.null)
       return NULL;
 
    if((download = dlnode->download) == NULL)
       return NULL;
 
-   if(tstamp && (tstamp - download->tstamp) < config.download_timeout)
+   // the elapsed time is always positive, so usual arithmetic conversions work
+   if(tstamp.elapsed(download->tstamp) < config.download_timeout)
       return NULL;
 
    dlnode->download = NULL;
@@ -2877,7 +2878,7 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, time_t tstamp)
 // be ended. Delete returned ended download jobs, as we have no use for them at
 // this point. 
 //
-void webalizer_t::update_downloads(time_t tstamp)
+void webalizer_t::update_downloads(const tstamp_t& tstamp)
 {
    danode_t *download;
    dlnode_t *nptr;
