@@ -365,7 +365,7 @@ int database_t::table_t::truncate(u_int32_t *count)
 
 int database_t::table_t::compact(u_int& bytes)
 {
-#if DB_VERSION_MAJOR >= 4 && DB_VERSION_MINOR >= 4
+#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
    DB_COMPACT c_data;
    int error;
    u_int32_t pagesize;
@@ -1147,7 +1147,7 @@ bool database_t::open(void)
 
    // enable write-through I/O, if requested
    if(config.db_dsync) {
-#if DB_VERSION_MAJOR >= 4 && DB_VERSION_MINOR >= 4
+#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
       if(dbenv.set_flags(DB_DSYNC_DB, 1))
          return false;
 #else
@@ -1480,7 +1480,7 @@ bool database_t::truncate(void)
 
 int database_t::compact(u_int& bytes)
 {
-#if DB_VERSION_MAJOR >= 4 && DB_VERSION_MINOR >= 4
+#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
    int error;
    u_int tbytes;
 
