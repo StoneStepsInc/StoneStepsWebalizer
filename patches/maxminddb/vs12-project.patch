@@ -4,7 +4,7 @@ Added VS12 project files; ported source to Windows
 
 diff -r 7b2ce3ac245b include/maxminddb.h
 --- a/include/maxminddb.h	Sat Nov 08 11:01:13 2014 -0500
-+++ b/include/maxminddb.h	Sat Nov 08 17:09:39 2014 -0500
++++ b/include/maxminddb.h	Sat Nov 08 23:51:30 2014 -0500
 @@ -15,7 +15,18 @@
  #ifdef _WIN32
  #include <WinSock2.h>
@@ -26,7 +26,7 @@ diff -r 7b2ce3ac245b include/maxminddb.h
  #include <netinet/in.h>
 diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.props	Sat Nov 08 17:09:39 2014 -0500
++++ b/projects/VS12/libmaxminddb.props	Sat Nov 08 23:51:30 2014 -0500
 @@ -0,0 +1,20 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -51,7 +51,7 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.props
 \ No newline at end of file
 diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.sln	Sat Nov 08 17:09:39 2014 -0500
++++ b/projects/VS12/libmaxminddb.sln	Sat Nov 08 23:51:30 2014 -0500
 @@ -0,0 +1,22 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
@@ -77,7 +77,7 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.sln
 +EndGlobal
 diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj	Sat Nov 08 17:09:39 2014 -0500
++++ b/projects/VS12/libmaxminddb.vcxproj	Sat Nov 08 23:51:30 2014 -0500
 @@ -0,0 +1,90 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -172,7 +172,7 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj
 \ No newline at end of file
 diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sat Nov 08 17:09:39 2014 -0500
++++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sat Nov 08 23:51:30 2014 -0500
 @@ -0,0 +1,23 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -198,3 +198,15 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj.filters
 +  </ItemGroup>
 +</Project>
 \ No newline at end of file
+diff -r 7b2ce3ac245b src/maxminddb.c
+--- a/src/maxminddb.c	Sat Nov 08 11:01:13 2014 -0500
++++ b/src/maxminddb.c	Sat Nov 08 23:51:30 2014 -0500
+@@ -238,7 +238,7 @@ int MMDB_open(const char *const filename
+     mmdb->file_size = size;
+ 
+ #ifdef _WIN32
+-    HANDLE mmh = CreateFileMappingA(fd, NULL, PAGE_READONLY, 0, size, filename);
++    HANDLE mmh = CreateFileMappingA(fd, NULL, PAGE_READONLY, 0, size, NULL);
+     uint8_t *file_content =
+         (uint8_t *)MapViewOfFile(mmh, FILE_MAP_READ, 0, 0, 0);
+     CloseHandle(fd);
