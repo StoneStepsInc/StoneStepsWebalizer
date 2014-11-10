@@ -1,25 +1,28 @@
 # HG changeset patch
-# Parent 9c08decd345a1e68edd854ca6cf0ec250e55433c
+# Parent 724286615987b5a8950c408c8212119dd3407fb7
 Added .hgignore
 
-diff -r 9c08decd345a .hgignore
+diff -r 724286615987 .hgignore
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgignore	Tue Mar 25 08:55:51 2014 -0400
-@@ -0,0 +1,17 @@
++++ b/.hgignore	Sun Nov 09 12:21:28 2014 -0500
+@@ -0,0 +1,20 @@
 +syntax: glob
 +
++# VS maintenance files
 +*.sdf
 +*.opensdf
 +*.suo
 +
-+include\maxminddb_config.h
++syntax: regexp
 +
-+projects/VS12/Debug
-+projects/VS12/Release
++# build directories
++^projects/VS12/Debug/
++^projects/VS12/Release/
++^projects/VS12/x64/
 +
-+projects\VS12\example.c
++# user settings
++^projects/VS12/libmaxminddb\.vcxproj\.user$
 +
-+projects\VS12\libmaxminddb.vcxproj.user
++^include/maxminddb_config\.h$
 +
-+projects\VS12\mmdblookup.vcxproj
-+projects\VS12\mmdblookup.vcxproj.filters
++^projects/VS12/example\.c$
