@@ -172,6 +172,8 @@ class config_t {
       bool accept_host_names;                   // accept host names instead of IP addresses in the logs?
       bool local_utc_offset;                    // assign utc_offset using local time zone?
 
+      bool geoip_city;                          // output city name in the reports?
+
       u_long max_hosts;                         // maximum hosts   
       u_long max_hosts_kb; 
       u_long max_urls;                          // maximum URL's

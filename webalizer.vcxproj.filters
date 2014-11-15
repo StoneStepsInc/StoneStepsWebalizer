@@ -176,9 +176,6 @@
     <ClCompile Include="platform\sys\utsname.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
-    <ClCompile Include="GeoIP.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="tmranges.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
@@ -491,11 +488,11 @@
     <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
       <Filter>Libraries\Debug</Filter>
     </Library>
-    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Debug\libmaxminddbd.lib">
-      <Filter>Libraries\Debug</Filter>
-    </Library>
-    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Release\libmaxminddb.lib">
+    <Library Include="..\common\GeoIP\libmaxminddb\projects\VS12\Release\libmaxminddb.lib">
       <Filter>Libraries\Release</Filter>
+    </Library>
+    <Library Include="..\common\GeoIP\libmaxminddb\projects\VS12\Debug\libmaxminddbd.lib">
+      <Filter>Libraries\Debug</Filter>
     </Library>
   </ItemGroup>
 </Project>

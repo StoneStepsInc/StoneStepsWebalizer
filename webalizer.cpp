@@ -1485,7 +1485,7 @@ int webalizer_t::proc_logfile(void)
 
          // add new hosts to the resolver queue
          if(config.is_dns_enabled() && newhost)
-			   dns_resolver.put_hnode(hptr, &log_rec.addr);
+			   dns_resolver.put_hnode(hptr);
 
          // use the host robot flag (ignore mid-visit ragent)
          robot = hptr->robot;

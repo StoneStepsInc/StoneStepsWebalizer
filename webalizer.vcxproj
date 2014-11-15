@@ -154,7 +154,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="GeoIP.cpp" />
     <ClCompile Include="tmranges.cpp" />
     <ClCompile Include="tstamp.cpp" />
     <ClCompile Include="tstring.cpp" />
@@ -273,10 +272,10 @@
     <Library Include="..\common\gd\libgd-2.1.0\windows\Release\gd2.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Library>
-    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Debug\libmaxminddbd.lib">
+    <Library Include="..\common\GeoIP\libmaxminddb\projects\VS12\Debug\libmaxminddbd.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Library>
-    <Library Include="..\common\GeoIP\libmaxminddb-0.5.3\projects\VS12\Release\libmaxminddb.lib">
+    <Library Include="..\common\GeoIP\libmaxminddb\projects\VS12\Release\libmaxminddb.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Library>
     <Library Include="..\common\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">

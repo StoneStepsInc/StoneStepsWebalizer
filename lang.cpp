@@ -773,6 +773,8 @@ lang_t::lang_t(void)
 
    msg_title   = "Usage Statistics for";
    msg_h_other = "Other";
+
+   msg_h_city = "City";
 }
 
 lang_t::~lang_t(void)
@@ -1081,6 +1083,8 @@ void lang_t::init_lang_htab(void)
 	put_lang_var("msg_h_other", LANG_VAR_CHAR, &msg_h_other, 1, sizeof(char*));
 
 	put_lang_var("ctry", LANG_VAR_CCARR, ctry, CCODE_ARRAY_SIZE, sizeof(ctry[0]));
+
+	put_lang_var("msg_h_city", LANG_VAR_CHAR, &msg_h_city, 1, sizeof(char*));
 }
 
 //

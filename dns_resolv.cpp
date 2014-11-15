@@ -51,8 +51,6 @@
 
 #include <db.h>                                /* DB header ****************/
 
-#include "GeoIP.h"
-
 #include "lang.h"                              /* language declares        */
 #include "hashtab.h"                           /* hash table functions     */
 #include "dns_resolv.h"                        /* our header               */
@@ -95,7 +93,9 @@ dnode_t::dnode_t(hnode_t& hnode) : hnode(hnode)
 {
    llist = NULL; 
    tstamp = 0; 
+
    memset(&addr, 0, sizeof(addr));
+   addr.sa_family = AF_UNSPEC;
 }
 
 dnode_t::~dnode_t(void) 
@@ -117,9 +117,10 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
    dns_done_event = NULL;
 
+   memset(&mmdb, 0, sizeof(MMDB_s));
    geoip_db = NULL;
-   dns_db   = NULL;
 
+   dns_db   = NULL;
    dnode_threads = NULL;
    dns_thread_stop = false;
 
@@ -145,7 +146,7 @@ dns_resolver_t::~dns_resolver_t(void)
 /*********************************************/
 /* PUT_HNODE - insert/update dns host node   */
 /*********************************************/
-bool dns_resolver_t::put_hnode(hnode_t *hnode, struct in_addr *addr)
+bool dns_resolver_t::put_hnode(hnode_t *hnode)
 {
    bool retval = false;
    DNODEPTR nptr;
@@ -178,12 +179,8 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode, struct in_addr *addr)
    mutex_unlock(dnode_mutex);
 
    // create a new DNS node
-   if((nptr = new dnode_t(*hnode)) != NULL) {
-      if (addr) 
-			memcpy(&nptr->addr, addr, sizeof(struct in_addr));
-      else   
-			memset(&nptr->addr, 0, sizeof(struct in_addr));
-   }
+   if((nptr = new dnode_t(*hnode)) != NULL)
+      memset(&nptr->addr, 0, sizeof(struct in_addr));
 
    // and insert it to the end of the list
    mutex_lock(dnode_mutex);
@@ -230,8 +227,11 @@ void dns_resolver_t::process_dnode(DNODEPTR dnode)
    if(!dnode)
       goto funcexit;
 
-	if((dnode->addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
+	if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
 		goto funcexit;
+
+   // we got an IPv4 address and set the family identifier
+   dnode->addr.sa_family = AF_INET;
 
 	dnode->tstamp = time(NULL);
 
@@ -239,11 +239,11 @@ void dns_resolver_t::process_dnode(DNODEPTR dnode)
    ccode.hold(dnode->hnode.ccode, 0, true, hnode_t::ccode_size+1);
 
    // try GeoIP first
-   goodcc = geoip_get_ccode(dnode->addr.s_addr, dnode->hnode.string, ccode);
+   goodcc = geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
 
    // resolve the domain name
    if(dns_db) {
-      if((res_ent = gethostbyaddr((const char*) &dnode->addr.s_addr, sizeof(dnode->addr.s_addr), AF_INET)) == NULL)
+      if((res_ent = gethostbyaddr((const char*) &dnode->addr_ipv4().sin_addr.s_addr, sizeof(dnode->addr_ipv4().sin_addr.s_addr), AF_INET)) == NULL)
 		   goto funcexit;
 
 	   // make sure it's not empty
@@ -325,13 +325,30 @@ bool dns_resolver_t::dns_init(void)
 
    // open the GeoIP database
    if(!config.geoip_db_path.isempty()) {
-      if((geoip_db = GeoIP_open(config.geoip_db_path, GEOIP_MEMORY_CACHE)) == NULL) {
+      int mmdb_error;
+      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS) {
          if(verbose)
-            fprintf(stderr, "%s %s\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str());
+            fprintf(stderr, "%s %s (%d - %s)\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
       }
       else {
          if (verbose > 1) 
             printf("%s %s\n", lang_t::msg_dns_useg, config.geoip_db_path.c_str());
+
+         geoip_db = &mmdb;
+
+         //
+         // Find out if the selected language is in the list of languages provided in
+         // the GeoIP database. If we didn't find one, but there's English available, 
+         // use it.
+         //
+         for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
+            if(!strncasecmp(mmdb.metadata.languages.names[i], config.lang.language_code, 2)) {
+               geoip_language.assign(config.lang.language_code, 2);
+               break;
+            }
+            else if(geoip_language.isempty() && !strncasecmp(mmdb.metadata.languages.names[i], "en", 2))
+               geoip_language.assign("en", 2);
+         }
       }
 
    }
@@ -377,8 +394,9 @@ void dns_resolver_t::dns_clean_up(void)
    dns_db = NULL;
 
    if(geoip_db) 
-      GeoIP_delete(geoip_db);
+      MMDB_close(geoip_db);
    geoip_db = NULL;
+   memset(&mmdb, 0, sizeof(MMDB_s));
 
    event_destroy(dns_done_event);
 	mutex_destroy(dnode_mutex);
@@ -572,24 +590,54 @@ void dns_resolver_t::dns_create_worker_threads(void)
 	}
 }
 
-bool dns_resolver_t::geoip_get_ccode(u_long ipnum, const string_t& ipaddr, string_t& ccode)
+bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city)
 {
-   if(!geoip_db) {
-      ccode.reset();
+   static const char *ccode_path[] = {"country", "iso_code", NULL};
+   const char *city_path[] = {"city", "names", geoip_language.c_str(), NULL};
+
+   int mmdb_error;
+   MMDB_lookup_result_s result;
+   MMDB_entry_data_s entry_data;
+
+   ccode.reset();
+   city.reset();
+
+   if(!geoip_db)
+      return false;
+
+   // look up the IP address
+   result = MMDB_lookup_sockaddr(geoip_db, (sockaddr*) &ipaddr, &mmdb_error);
+
+   if(mmdb_error != MMDB_SUCCESS) {
+      if(debug_mode)
+         fprintf(stderr, "Cannot lookup IP address %s (%d - %s)\n", hostaddr.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
+      return false;
+   }
+   
+   if(!result.found_entry) {
+      if(debug_mode)
+         fprintf(stderr, "Cannot find IP address %s\n", hostaddr.c_str());
       return false;
    }
 
-   if(ipnum == INADDR_NONE || ipnum == INADDR_ANY)
-      ccode = GeoIP_country_code_by_addr(geoip_db, ipaddr);
-   else
-      ccode = GeoIP_country_code_by_ipnum(geoip_db, ntohl(ipnum));
+   // get the country code first and make sure it fits the storage in hnode_t
+   if(MMDB_aget_value(&result.entry, &entry_data, ccode_path) == MMDB_SUCCESS) {
+      if(entry_data.has_data) {
+         if(entry_data.data_size != 2)
+            return false;
 
-   if(ccode.length() != 2) {
-      ccode.reset();
-      return false;
+         ccode.assign(entry_data.utf8_string, entry_data.data_size);
+         ccode.tolower();
+      }
    }
 
-   ccode.tolower();
+   // get the city if requested and is available either in the selected language or English
+   if(config.geoip_city && !geoip_language.isempty()) {
+      if(MMDB_aget_value(&result.entry, &entry_data, city_path) == MMDB_SUCCESS) {
+         if(entry_data.has_data)
+            city.assign(entry_data.utf8_string, entry_data.data_size);
+      }
+   }
 
    return true;
 }
@@ -668,12 +716,12 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
                if(*dnsrec->ccode)
                   dnode->hnode.set_ccode(dnsrec->ccode);
                else
-                  geoip_get_ccode(dnode->addr.s_addr, dnode->hnode.string, ccode);
+                  geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
             else {
 				   dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
                dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
-               geoip_get_ccode(dnode->addr.s_addr, dnode->hnode.string, ccode);
+               geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
 
 				if (debug_mode)

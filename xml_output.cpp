@@ -891,7 +891,7 @@ void xml_output_t::write_top_downloads(void)
       fprintf(stderr, "Failed to retrieve download records (%d)", iter.get_error());
 
    // generate the report
-   fprintf(out_fp, "<report id=\"top_downloads\" help=\"downloads_report\" title=\"%s %lu %s %lu %s\" top=\"%d\" total=\"%d\" max=\"%lu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads, top_num, state.totals.t_downloads, config.max_downloads);
+   fprintf(out_fp, "<report id=\"top_downloads\" help=\"downloads_report\" colspan=\"%d\" title=\"%s %lu %s %lu %s\" top=\"%d\" total=\"%d\" max=\"%lu\">\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads, top_num, state.totals.t_downloads, config.max_downloads);
 
    // output the top element for the top downloads section
    fputs("<top>", out_fp);
@@ -908,8 +908,11 @@ void xml_output_t::write_top_downloads(void)
    fprintf(out_fp,"<col help=\"download_count\" title=\"%s\" class=\"count\"/>\n", config.lang.msg_h_count);
    fprintf(out_fp,"<col help=\"download\" title=\"%s\" class=\"dlname\"/>\n", config.lang.msg_h_download);
    
-   if(config.ntop_ctrys)
+   if(config.ntop_ctrys) {
       fprintf(out_fp,"<col help=\"country\" title=\"%s\" class=\"country\"/>\n", config.lang.msg_h_ctry);
+      if(config.geoip_city)
+         fprintf(out_fp,"<col help=\"city\" title=\"%s\" class=\"country\"/>\n", config.lang.msg_h_city);
+   }
    
    fprintf(out_fp,"<col help=\"host\" title=\"%s\" class=\"item\"/>\n", config.lang.msg_h_hname);
 
@@ -946,8 +949,11 @@ void xml_output_t::write_top_downloads(void)
           nptr->count,
           nptr->string.c_str());
           
-          if(config.ntop_ctrys)
-            fprintf(out_fp, "<data ccode=\"%s\"><value>%s</value></data>\n", nptr->hnode->get_ccode().c_str(), config.ntop_ctrys ? cdesc : "");
+          if(config.ntop_ctrys) {
+            fprintf(out_fp, "<data ccode=\"%s\"><value>%s</value></data>\n", nptr->hnode->get_ccode().c_str(), xml_encode(cdesc));
+            if(config.geoip_city)
+               fprintf(out_fp, "<data ccode=\"%s\"><value>%s</value></data>\n", nptr->hnode->get_ccode().c_str(), xml_encode(nptr->hnode->city.c_str()));
+          }
           
           fprintf(out_fp, "<data ipaddr=\"%s\"><value>%s</value></data>\n", nptr->hnode->string.c_str(), xml_encode(nptr->hnode->hostname().c_str()));
 
@@ -1107,9 +1113,9 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       top_num = i;
 
    if(s_xfer)
-      fprintf(out_fp, "<report id=\"top_host_xfer\" help=\"hosts_report\" title=\"%s %lu %s %lu %s %s %s\" top=\"%d\" total=\"%d\" max=\"%lu\" groups=\"%d\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
+      fprintf(out_fp, "<report id=\"top_host_xfer\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %lu %s %lu %s %s %s\" top=\"%d\" total=\"%d\" max=\"%lu\" groups=\"%d\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
    else
-      fprintf(out_fp, "<report id=\"top_host_hits\" help=\"hosts_report\" title=\"%s %lu %s %lu %s\" top=\"%d\" total=\"%d\" max=\"%lu\" groups=\"%d\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
+      fprintf(out_fp, "<report id=\"top_host_hits\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %lu %s %lu %s\" top=\"%d\" total=\"%d\" max=\"%lu\" groups=\"%d\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
 
    // output the top element for the top hosts section
    fputs("<top>", out_fp);
@@ -1127,8 +1133,11 @@ void xml_output_t::write_top_hosts(bool s_xfer)
    fprintf(out_fp,"<col help=\"visits\" title=\"%s\" class=\"visits\" percent=\"yes\"/>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<col help=\"visit_duration\" title=\"%s\" class=\"duration\"><columns><col title=\"%s\"/><col title=\"%s\"/></columns></col>\n", config.lang.msg_h_duration, config.lang.msg_h_avg, config.lang.msg_h_max);
    
-   if(config.ntop_ctrys)
+   if(config.ntop_ctrys) {
       fprintf(out_fp,"<col help=\"country\" title=\"%s\" class=\"country\"/>\n", config.lang.msg_h_ctry);
+      if(config.geoip_city)
+         fprintf(out_fp,"<col help=\"city\" title=\"%s\" class=\"country\"/>\n", config.lang.msg_h_city);
+   }
       
    fprintf(out_fp,"<col help=\"host\" title=\"%s\" class=\"item\"/>\n", config.lang.msg_h_hname);
 
@@ -1186,8 +1195,11 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       }
       else {
          // country code and name
-         if(config.ntop_ctrys)
+         if(config.ntop_ctrys) {
             fprintf(out_fp, "<data ccode=\"%s\"><value>%s</value></data>\n", hptr->get_ccode().c_str(), xml_encode(cdesc));
+            if(config.geoip_city)
+               fprintf(out_fp, "<data ccode=\"%s\"><value>%s</value></data>\n", hptr->get_ccode().c_str(), xml_encode(hptr->city.c_str()));
+         }
 
          // output the span with the IP address as a title
          fprintf(out_fp, 

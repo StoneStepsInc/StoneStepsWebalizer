@@ -182,8 +182,9 @@ u_int hnode_t::s_data_size(void) const
                sizeof(u_long)     +             // hash(value)  
                s_size_of(tstamp)  +             // tstamp 
                sizeof(double) * 3 +             // xfer, visit_avg, max_v_xfer
-               s_size_of(name)    + 
-               ccode_size;                      // country code
+               s_size_of(name)    +             // name
+               ccode_size         +             // country code
+               s_size_of(city);                 // city
 }
 
 u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -220,7 +221,9 @@ u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
 
    ptr = serialize(ptr, robot);
    ptr = serialize(ptr, visits_conv);
-         serialize(ptr, tstamp);
+   ptr = serialize(ptr, tstamp);
+
+         serialize(ptr, city);
 
    return datasize;
 }
@@ -283,6 +286,11 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    else
       tstamp.reset();
 
+   if(version >= 6)
+      deserialize(ptr, city);
+   else
+      city.clear();
+
    visit = NULL;
    
    if(upcb)
@@ -302,7 +310,7 @@ u_int hnode_t::s_data_size(const void *buffer)
                sizeof(u_long)     +    // hash(value)
                sizeof(double) * 3;     // xfer, visit_avg, max_v_xfer
 
-   // host address and country code
+   // host name and country code
    datasize += s_size_of<string_t>((u_char*) buffer + datasize) + ccode_size;
 
    if(version < 2)
@@ -322,6 +330,11 @@ u_int hnode_t::s_data_size(const void *buffer)
       datasize += sizeof(u_long);      // tstamp
    else
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // tstamp
+
+   if(version < 6)
+      return datasize;
+
+   datasize += s_size_of<string_t>((u_char*) buffer + datasize);     // city
 
    return datasize; 
 }

@@ -15,7 +15,7 @@
 #include "tstamp.h"
 
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <netinet/in.h>                // needed for in_addr structure definition
 #endif
@@ -50,8 +50,6 @@ struct  log_struct  {
       tstamp_t   tstamp;               // time stamp
       u_short    port;					   // HTTP port
       u_short    resp_code;            // HTTP response code
-
-      struct in_addr addr;             // IP address structure
 
    public:
       log_struct(void);

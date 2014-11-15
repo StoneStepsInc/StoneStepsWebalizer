@@ -83,6 +83,8 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
       char     ccode[3];             // two-character country code
 
+      string_t city;
+
       public:
          typedef void (*s_unpack_cb_t)(hnode_t& hnode, bool active, void *arg);
 

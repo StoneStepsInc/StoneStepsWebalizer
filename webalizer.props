@@ -9,8 +9,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\common\GeoIP\libmaxminddb-0.5.3\include;..\common\gd\libgd-2.1.0\src;..\common\zlib\zlib-1.2.8;..\common\db\db-6.0.20\build_windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BGDWIN32;_CRT_SECURE_NO_WARNINGS;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\common\GeoIP\libmaxminddb\include;..\common\gd\libgd-2.1.0\src;..\common\zlib\zlib-1.2.8;..\common\db\db-6.0.20\build_windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MMDB_UINT128_IS_BYTE_ARRAY=1;BGDWIN32;_CRT_SECURE_NO_WARNINGS;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>

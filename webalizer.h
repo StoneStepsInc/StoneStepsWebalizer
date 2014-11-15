@@ -28,15 +28,12 @@
 
 #include <zlib.h>
 
-#ifdef _WIN32
-#	include <winsock.h>
-#else
+#ifndef _WIN32
 #	include <netinet/in.h>       /* needed for in_addr structure definition   */
 #	ifndef INADDR_NONE
 #	define INADDR_NONE 0xFFFFFFFF
 #	endif  /* INADDR_NONE */
 #endif
-
 
 #ifdef _WIN32
 #define F_OK 00

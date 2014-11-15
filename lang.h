@@ -318,6 +318,8 @@ class lang_t {
 
       const char *msg_title   ;
       const char *msg_h_other ;
+
+      const char *msg_h_city;
       
    private:
       string_t lang_fname;

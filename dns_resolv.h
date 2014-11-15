@@ -19,10 +19,17 @@
 #include "hashtab.h"
 #include "mutex.h"
 #include "event.h"
-#include "GeoIP.h"
 #include "queue.h"
 
 #include <db.h>                                /* DB header ****************/
+
+#ifdef _WIN32
+#	include <winsock2.h>
+#endif
+
+extern "C" {
+#include <maxminddb.h>
+}
 
 struct hnode_t;
 
@@ -32,7 +39,7 @@ struct hnode_t;
 typedef struct dnode_t {
       hnode_t&       hnode;               // host node reference
       time_t         tstamp;              // when the name was resolved
-      struct in_addr addr;
+      sockaddr       addr;
       struct dnode_t *llist;
 
    public:
@@ -43,6 +50,9 @@ typedef struct dnode_t {
       const string_t& key(void) const {return hnode.string;}
 
       bool istype(u_int type) const {return true;}
+
+      sockaddr_in& addr_ipv4(void) {return (sockaddr_in&) addr;}
+      const sockaddr_in& addr_ipv4(void) const {return (const sockaddr_in&) addr;}
 
 } *DNODEPTR;                               /* DNS hash table node struct   */
 
@@ -56,7 +66,10 @@ class dns_resolver_t {
 
    private:
       const config_t& config;
-      GeoIP *geoip_db;                       // GeoIP database
+
+      MMDB_s mmdb;
+      MMDB_s *geoip_db;                      // GeoIP database
+
       DB *dns_db;							         // DNS cache database
 
       time_t runtime;
@@ -81,6 +94,8 @@ class dns_resolver_t {
 
       u_char *buffer;
 
+      string_t geoip_language;
+
    private:
       bool dns_geoip_db(void) const;
 
@@ -92,7 +107,7 @@ class dns_resolver_t {
 
       void dns_create_worker_threads(void);
 
-      bool geoip_get_ccode(u_long ipnum, const string_t& ipaddr, string_t& ccode);
+      bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city);
 
       bool dns_db_get(DNODEPTR dnode, bool nocheck);
 
@@ -127,7 +142,7 @@ class dns_resolver_t {
 
       string_t dns_resolve_name(const string_t& ipaddr);
 
-      bool put_hnode(hnode_t *hnode, struct in_addr *addr);
+      bool put_hnode(hnode_t *hnode);
 
       hnode_t *get_hnode(void);
 };

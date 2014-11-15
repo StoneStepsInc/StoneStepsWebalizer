@@ -201,6 +201,8 @@ config_t::config_t(void) : config_fnames(1)
    // use the local machine's UTC offset by default
    local_utc_offset = true;
 
+   geoip_city = true;
+
    // push the initial DST pair into the vector
    dst_pairs.push(dst_pair_t());
 }
@@ -676,7 +678,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 188; empty slots: 53
+                     // max key: 188; empty slots: 
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -728,6 +730,7 @@ void config_t::get_config(const char *fname)
                      {"EnablePhraseValues",  117},		   // Enable phrases in configuration values
                      {"ExcludeAgentArgs",    164},       // Exclude user agent arguments
                      {"ExcludeSearchArg",	   109},			// Exclude a search argument
+                     {"GeoIPCity",           53},        // Output city name in reports?
                      {"GeoIPDBPath",         141},       // Path to the GeoIP database file
                      {"GMTTime",		         30},			// Local or UTC time?
                      {"GraphBackgroundAlpha",130},       // Graph background transparency
@@ -989,6 +992,7 @@ void config_t::get_config(const char *fname)
          case 50: visit_timeout=get_interval(value); break;       // VisitTimeout
          case 51: graph_legend=(tolower(value[0])=='y'); break;   // GraphLegend
          case 52: graph_lines = atoi(value); break;               // GraphLines
+         case 53: geoip_city = (tolower(value[0])=='y'); break;   // GeoIPCity
          case 54: ctry_graph=(tolower(value[0])=='y'); break;     // CountryGraph
          case 55: ntop_sitesK = atoi(value); break;               // TopKSites (KB)
          case 56: ntop_urlsK  = atoi(value); break;               // TopKUrls (KB)

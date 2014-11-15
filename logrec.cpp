@@ -34,8 +34,6 @@ void log_struct::reset(void)
    xfer_size = 0;
    proc_time = 0;
    port = 0;
-
-   memset(&addr, 0, sizeof(in_addr));
 }
 
 void log_struct::normalize(u_int log_type)

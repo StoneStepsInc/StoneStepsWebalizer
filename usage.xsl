@@ -567,7 +567,12 @@
 
 <table class="report_table stats_table">
 <thead>
-<tr class="table_title_tr"><th colspan="11"><xsl:value-of select="attribute::title"/></th></tr>
+<tr class="table_title_tr">
+   <th>
+      <xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
+      <xsl:value-of select="attribute::title"/>
+   </th>
+</tr>
 <xsl:call-template name="output_two_row_header"/>
 </thead>
 <tbody class="stats_data_tbody">
@@ -590,7 +595,7 @@
    <!-- output the row with the link to view all items -->
    <tbody class="stats_footer_tbody">
       <tr class="all_items_tr">
-         <td colspan="11">
+         <td><xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
             <a>
             <xsl:attribute name="onclick">showAllItems(this, <xsl:value-of select="$report/attribute::top"/>, <xsl:value-of select="count($rows/row)"/>)</xsl:attribute>
             <xsl:value-of select="key(&quot;text&quot;, &quot;html_view_all_downloads&quot;)"/></a>
@@ -613,7 +618,11 @@
    </xsl:for-each>
    <!-- report if we reached the maximum -->
    <xsl:if test="count($rows/row) = $report/attribute::max">
-   <tr class="max_items_tr"><th colspan="11"><xsl:value-of select="key(&quot;text&quot;, &quot;html_max_items&quot;)"/></th></tr>
+   <tr class="max_items_tr">
+		<th><xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
+			<xsl:value-of select="key(&quot;text&quot;, &quot;html_max_items&quot;)"/>
+		</th>
+	</tr>
    </xsl:if>
    </tbody>
 </xsl:if>   
@@ -822,7 +831,11 @@
 
 <table class="report_table stats_table">
 <thead>
-<tr class="table_title_tr"><th colspan="15"><xsl:value-of select="attribute::title"/></th></tr>
+<tr class="table_title_tr">
+	<th><xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
+		<xsl:value-of select="attribute::title"/>
+	</th>
+</tr>
 <xsl:call-template name="output_two_row_header"/>
 </thead>
 
@@ -845,7 +858,7 @@
    <!-- output the row with the link to view all items -->
    <tbody class="stats_footer_tbody">
       <tr class="all_items_tr">
-         <td colspan="15">
+         <td><xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
             <a>
             <xsl:attribute name="onclick">showAllItems(this, <xsl:value-of select="$report/attribute::top"/>, <xsl:value-of select="count($rows/row)"/>)</xsl:attribute>
             <xsl:value-of select="key(&quot;text&quot;, &quot;html_view_all_hosts&quot;)"/></a>
@@ -867,7 +880,11 @@
    </xsl:for-each>   
    <!-- report if we reached the maximum -->
    <xsl:if test="count($rows/row) = $report/attribute::max">
-   <tr class="max_items_tr"><th colspan="15"><xsl:value-of select="key(&quot;text&quot;, &quot;html_max_items&quot;)"/></th></tr>
+   <tr class="max_items_tr">
+	   <th><xsl:attribute name="colspan"><xsl:value-of select="attribute::colspan"/></xsl:attribute>
+	   <xsl:value-of select="key(&quot;text&quot;, &quot;html_max_items&quot;)"/>
+		   </th>
+	   </tr>
    </xsl:if>
    </tbody>
 </xsl:if>

@@ -114,8 +114,8 @@ void dump_output_t::dump_all_hosts()
    /* need a header? */
    if (config.dump_header)
    {
-      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-       config.lang.msg_h_hits,config.lang.msg_h_files,config.lang.msg_h_pages,config.lang.msg_h_xfer,config.lang.msg_h_visits,config.lang.msg_h_duration,config.lang.msg_h_duration,config.lang.msg_h_ctry,config.lang.msg_h_type,config.lang.msg_h_hname,config.lang.msg_h_hname);
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+       config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration, config.lang.msg_h_duration, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_type, config.lang.msg_h_hname, config.lang.msg_h_hname);
    }
 
    /* dump 'em */
@@ -125,10 +125,11 @@ void dump_output_t::dump_all_hosts()
       if (hnode.flag != OBJ_GRP)
       {
          fprintf(out_fp,
-         "%lu\t%lu\t%lu\t%.0f\t%lu\t%.2f\t%.2f\t%s\t%c\t%s\t%s\n",
+         "%lu\t%lu\t%lu\t%.0f\t%lu\t%.2f\t%.2f\t%s\t%s\t%c\t%s\t%s\n",
             hnode.count, hnode.files, hnode.pages, hnode.xfer/1024.,
             hnode.visits, hnode.visit_avg/60., hnode.visit_max/60.,
             state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str(),
+            hnode.city.c_str(),
             hnode.spammer?'*':hnode.robot?'#':' ', hnode.string.c_str(), hnode.hostname().c_str());
       }
    }
@@ -236,7 +237,7 @@ void dump_output_t::dump_all_downloads(void)
    /* need a header? */
    if (config.dump_header)
    {
-      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_time, config.lang.msg_h_time, config.lang.msg_h_count, config.lang.msg_h_download, config.lang.msg_h_ctry, config.lang.msg_h_hname, config.lang.msg_h_hname);
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_time, config.lang.msg_h_time, config.lang.msg_h_count, config.lang.msg_h_download, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_hname, config.lang.msg_h_hname);
    }
 
    // create a reverse state.database iterator (xfer-ordered)
@@ -256,12 +257,13 @@ void dump_output_t::dump_all_downloads(void)
       else
          cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
 
-      fprintf(out_fp,"%lu\t%8.02f\t%6.02f\t%6.02f\t%lu\t%s\t%s\t%s\t%s\n", 
+      fprintf(out_fp,"%lu\t%8.02f\t%6.02f\t%6.02f\t%lu\t%s\t%s\t%s\t%s\t%s\n", 
          nptr->sumhits, nptr->sumxfer, 
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
          nptr->string.c_str(),
          cdesc,
+         nptr->hnode ? nptr->hnode->city.c_str() : "",
          nptr->hnode->string.c_str(),
          nptr->hnode->hostname().c_str());
    }
