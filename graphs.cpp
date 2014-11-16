@@ -658,7 +658,7 @@ int graph_t::day_graph3(const char *fname,
    u_int offset, textsize;
    u_long xfer_ul[24];
    u_long data1[24], data2[24], data3[24];
-   int colors[] = {c_hits, c_files, c_pages};
+   u_int colors[] = {c_hits, c_files, c_pages};
    const u_long *data[] = {data1, data2, data3};
 
    /* initalize the graph */
