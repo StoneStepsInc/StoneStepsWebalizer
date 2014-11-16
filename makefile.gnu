@@ -99,7 +99,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	    html_output.cpp xml_output.cpp dump_output.cpp \
 	    database.cpp logfile.cpp
 
-LIBS     := stdc++ dl pthread db_cxx gd z
+LIBS     := stdc++ dl pthread db_cxx gd z maxminddb
 
 DEPLIBS  :=
 
