@@ -198,8 +198,8 @@ config_t::config_t(void) : config_fnames(1)
    
    accept_host_names = false;
 
-   // use the local machine's UTC offset by default
-   local_utc_offset = true;
+   // do not use the local machine's UTC offset by default
+   local_utc_offset = false;
 
    geoip_city = true;
 
@@ -820,6 +820,7 @@ void config_t::get_config(const char *fname)
                      {"IncrementalName",     38},			// Filename for state data
                      {"IndexAlias",		      20},			// Aliases for index.html
                      {"LanguageFile",	      90},			//	Language file
+                     {"LocalUTCOffset",      188},       // Do not use local UTC offset?
                      {"LogDir",              183},       // Log directory
                      {"LogFile",		         2},		   // Log file to use for input
                      {"LogType",		         60},			// Log Type (clf/ftp/squid/iis)
@@ -838,7 +839,6 @@ void config_t::get_config(const char *fname)
                      {"MemoryMode",          147},       // Memory or database mode?
                      {"MonthlyTotals",       127},       // Output monthly totals report?
                      {"NoDefaultIndexAlias", 92},		   // Ignore default index alias?
-                     {"NoLocalUTCOffset",    188},       // Do not use local UTC offset?
                      {"OutputDir",		      1},		   // Output directory
                      {"OutputFormat",        171},       // Output format
                      {"PageEntryURL",        170},       // Show only pages in the entry report?
@@ -1104,7 +1104,7 @@ void config_t::get_config(const char *fname)
          case 157: hide_robots = (tolower(value[0]) == 'y') ? true : false; break;
          case 158: ignore_robots = (tolower(value[0]) == 'y') ? true : false; break;
          case 159: group_robots = (tolower(value[0]) == 'y') ? true : false; break;
-         case 160: utc_offset = get_interval(value, 60); local_utc_offset = false; break;
+         case 160: utc_offset = get_interval(value, 60); break;
          case 161: set_dst_range(&value, NULL); break;
          case 162: set_dst_range(NULL, &value); break;
          case 163: dst_offset = get_interval(value, 60); break;
@@ -1132,7 +1132,7 @@ void config_t::get_config(const char *fname)
          case 185: use_ext_ent = (tolower(value[0]) == 'y'); break;
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
-         case 188: local_utc_offset =  (tolower(value[0]) != 'y'); break;
+         case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;
       }
    }
    fclose(fp);
