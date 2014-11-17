@@ -42,6 +42,9 @@
       <UniqueIdentifier>{947b78c9-94c9-4c5e-9f16-bf4c12ce4fbf}</UniqueIdentifier>
       <Extensions>xsl;css</Extensions>
     </Filter>
+    <Filter Include="Source Files\templates">
+      <UniqueIdentifier>{edb4d8ba-9fda-4d44-98b2-1470a8fe28bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp">
@@ -187,6 +190,21 @@
     </ClCompile>
     <ClCompile Include="util.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="basenode_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="datanode_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="hashtab_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="linklist_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="queue_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
