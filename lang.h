@@ -51,7 +51,7 @@ class lang_t {
 
                const string_t& key(void) const {return varname;}
 
-               bool istype(u_int type) const {return true;}
+               nodetype_t get_type(void) const {return OBJ_REG;}
       };
 
       // -----------------------------------------------------------------------

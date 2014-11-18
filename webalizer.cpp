@@ -2235,7 +2235,7 @@ hnode_t *webalizer_t::put_hnode(
    return cptr;
 }
 
-rnode_t *webalizer_t::put_rnode(const string_t& str, int type, u_long count, bool newvisit, bool& newnode)
+rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, u_long count, bool newvisit, bool& newnode)
 {
    bool found = true;
    u_long hashval;
@@ -2285,7 +2285,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, int type, u_long count, boo
 /* PUT_UNODE - insert/update URL node        */
 /*********************************************/
 
-unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, u_int type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
+unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
 {
    bool found = true;
    u_long hashval;
@@ -2405,7 +2405,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
 /* PUT_ANODE - insert/update user agent node */
 /*********************************************/
 
-anode_t *webalizer_t::put_anode(const string_t& str, u_int type, double xfer, bool newvisit, bool robot, bool& newnode)
+anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, double xfer, bool newvisit, bool robot, bool& newnode)
 {
    bool found = true;
    u_long hashval;
@@ -2508,7 +2508,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisi
 /*********************************************/
 
 inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
-               u_int    type,       /* obj type  */
+               nodetype_t    type,       /* obj type  */
                bool     fileurl,    /* File flag */
                double   xfer,       /* xfer size */
                const tstamp_t& tstamp, /* timestamp */

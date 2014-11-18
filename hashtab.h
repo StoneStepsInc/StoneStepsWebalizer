@@ -18,6 +18,16 @@
 #define MAXHASH      16384ul
 #define SMAXHASH     1024ul
 
+//
+// Hash tables may contain primary objects, such as user agents or URLs, and 
+// object groups, such all versions of a particular browser or all URLs in a 
+// selected directory.
+//
+enum nodetype_t {
+   OBJ_REG = 0,                     /* Regular object               */
+   OBJ_GRP = 2                      /* Grouped object               */
+};
+
 // -----------------------------------------------------------------------
 //
 // hash functions
@@ -49,7 +59,7 @@ struct htab_node_t {
 
          virtual const key_t& key(void) const = 0;
 
-         virtual bool istype(u_int type) const = 0;
+         virtual nodetype_t get_type(void) const = 0;
 };
 
 // -----------------------------------------------------------------------
@@ -218,7 +228,7 @@ class hash_table {
 
       node_t *find_node(u_long hashval, const key_t& key) {return const_cast<node_t*>(const_cast<const hash_table<node_t, key_t>*>(this)->find_node(hashval, key));}
 
-      node_t *find_node(u_long hashval, const key_t& str, u_int type);
+      node_t *find_node(u_long hashval, const key_t& str, nodetype_t type);
 
       node_t *find_node(u_long hashval, const void *params);
 
@@ -233,7 +243,7 @@ class hash_table {
       //
       u_long load_array(const node_t *array[]) const;
 
-      u_long load_array(const node_t *array[], u_int type, u_long& typecnt) const;
+      u_long load_array(const node_t *array[], nodetype_t type, u_long& typecnt) const;
 };
 
 #endif  /* _HASHTAB_H */

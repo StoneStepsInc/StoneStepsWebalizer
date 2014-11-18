@@ -16,10 +16,6 @@
 #include "keynode.h"
 #include "datanode.h"
 
-/* Object flags */
-#define OBJ_REG      0                     /* Regular object               */
-#define OBJ_GRP      2                     /* Grouped object               */
-
 // -----------------------------------------------------------------------
 //
 // base_node
@@ -28,7 +24,7 @@
 template <typename node_t> 
 struct base_node : public htab_node_t<node_t>, public keynode_t<u_long>, public datanode_t<node_t> {
       string_t string;              // node value (URL, user agent, etc)
-      u_char   flag;                // object type (REG, GRP)
+      nodetype_t flag;              // object type (REG, GRP)
 
       public:
          base_node(u_long nodeid = 0);
@@ -42,7 +38,7 @@ struct base_node : public htab_node_t<node_t>, public keynode_t<u_long>, public 
 
          const string_t& key(void) const {return string;}
 
-         bool istype(u_int type) const {return (type == flag || (type != OBJ_GRP && flag != OBJ_GRP));}
+         nodetype_t get_type(void) const {return flag;}
 
          //
          // serialization

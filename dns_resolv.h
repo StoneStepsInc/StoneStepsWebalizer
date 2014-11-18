@@ -49,7 +49,7 @@ typedef struct dnode_t {
 
       const string_t& key(void) const {return hnode.string;}
 
-      bool istype(u_int type) const {return true;}
+      nodetype_t get_type(void) const {return OBJ_REG;}
 
       sockaddr_in& addr_ipv4(void) {return (sockaddr_in&) addr;}
       const sockaddr_in& addr_ipv4(void) const {return (const sockaddr_in&) addr;}

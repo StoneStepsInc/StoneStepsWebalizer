@@ -181,7 +181,7 @@ const node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& 
 }
 
 template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key, u_int type)
+node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key, nodetype_t type)
 {
    node_t **pptr, *nptr, *prev;
 
@@ -189,7 +189,7 @@ node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key, u
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
-      if(nptr->istype(type)) {
+      if(nptr->get_type() == type) {
          if(nptr->key() == key) {
             if(index > NO_SWAP_COUNT)
                move_node(nptr, prev, pptr);
@@ -270,7 +270,7 @@ u_long hash_table<node_t, key_t>::load_array(const node_t *array[]) const
 }
 
 template <typename node_t, typename key_t>
-u_long hash_table<node_t, key_t>::load_array(const node_t *array[], u_int type, u_long& typecnt) const
+u_long hash_table<node_t, key_t>::load_array(const node_t *array[], nodetype_t type, u_long& typecnt) const
 {
    const node_t *nptr, **pptr;
    u_int hashidx, arridx1, arridx2, skipcnt;
@@ -282,7 +282,7 @@ u_long hash_table<node_t, key_t>::load_array(const node_t *array[], u_int type, 
       nptr = htab[hashidx].head;
       while(nptr) {
          if(load_array_check(nptr)) {
-            if(nptr->istype(type))
+            if(nptr->get_type() == type)
                array[arridx1++] = nptr;
             else
                array[--arridx2] = nptr;

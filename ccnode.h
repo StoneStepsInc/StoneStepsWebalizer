@@ -42,7 +42,7 @@ struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<u_long>, public
 
       const string_t& key(void) const {return ccode;}
 
-      bool istype(u_int type) const {return true;}
+      nodetype_t get_type(void) const {return OBJ_REG;}
 
       void reset(void) {count = 0; files = 0; xfer = .0; visits = 0;}
       

@@ -167,15 +167,15 @@ class webalizer_t {
       hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, double xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
       hnode_t *put_hnode(const string_t& grpname, u_long hits, u_long files, u_long pages, double xfer, u_long visitlen, bool& newnode);
 
-      rnode_t *put_rnode(const string_t&, int, u_long, bool newvisit, bool& newnode);
+      rnode_t *put_rnode(const string_t&, nodetype_t type, u_long, bool newvisit, bool& newnode);
 
-      unode_t *put_unode(const string_t& url, const string_t& srchargs, u_int type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
+      unode_t *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
 
-      anode_t *put_anode(const string_t& str, u_int type, double xfer, bool newvisit, bool robot, bool& newnode);
+      anode_t *put_anode(const string_t& str, nodetype_t type, double xfer, bool newvisit, bool robot, bool& newnode);
 
       snode_t *put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode);
 
-      inode_t *put_inode(const string_t& str, u_int type, bool fileurl, double xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
+      inode_t *put_inode(const string_t& str, nodetype_t type, bool fileurl, double xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
 
       rcnode_t *put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, u_long count, bool *newnode = NULL);
 

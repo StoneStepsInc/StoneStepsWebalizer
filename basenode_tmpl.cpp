@@ -55,7 +55,9 @@ void base_node<node_t>::reset(u_long nodeid)
 template <typename node_t> 
 u_int base_node<node_t>::s_data_size(void) const
 {
-   return datanode_t<node_t>::s_data_size() + sizeof(flag) + s_size_of(string);
+   return datanode_t<node_t>::s_data_size()  + 
+            sizeof(u_char)                   +     // flag 
+            s_size_of(string);                     // string
 }
 
 template <typename node_t> 
@@ -73,7 +75,7 @@ u_int base_node<node_t>::s_pack_data(void *buffer, u_int bufsize) const
    datanode_t<node_t>::s_pack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = serialize(ptr, flag);
+   ptr = serialize<u_char>(ptr, flag);
    ptr = serialize(ptr, string);
 
    return datasize;
@@ -94,7 +96,7 @@ u_int base_node<node_t>::s_unpack_data(const void *buffer, u_int bufsize)
    datanode_t<node_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = deserialize(ptr, flag);
+   ptr = deserialize<u_char>(ptr, flag);
    ptr = deserialize(ptr, string);
 
    return datasize;
@@ -123,14 +125,20 @@ int base_node<node_t>::s_compare_value(const void *buffer, u_int bufsize) const
 template <typename node_t> 
 u_int base_node<node_t>::s_data_size(const void *buffer)
 {
-   u_int datasize = s_size_of<string_t>((u_char*) buffer + datanode_t<node_t>::s_data_size(buffer) + sizeof(u_char));
-   return datanode_t<node_t>::s_data_size(buffer) + sizeof(u_char) + datasize;
+   u_int datasize = datanode_t<node_t>::s_data_size(buffer)    +
+            sizeof(u_char);                                             // flag
+   
+   return datasize + 
+            s_size_of<string_t>((u_char*) buffer + datasize);           // string
 }
 
 template <typename node_t> 
 const void *base_node<node_t>::s_field_value(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   const void *ptr = (u_char*) buffer + datanode_t<node_t>::s_data_size(buffer) + sizeof(u_char);
+   const void *ptr = (u_char*) buffer                          + 
+            datanode_t<node_t>::s_data_size(buffer)            + 
+            sizeof(u_char);                                             // flag
+
    datasize = s_size_of<string_t>(ptr);
    return ptr;
 }
