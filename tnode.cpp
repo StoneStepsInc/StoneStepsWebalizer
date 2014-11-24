@@ -17,7 +17,7 @@
 //
 u_int tnode_t::s_data_size(void) const
 {
-   return base_node<tnode_t>::s_data_size() + sizeof(u_long);
+   return base_node<tnode_t>::s_data_size() + sizeof(uint64_t);
 }
 
 u_int tnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -53,7 +53,7 @@ u_int tnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    base_node<tnode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
 
    if(upcb)
       upcb(*this, arg);
@@ -63,7 +63,7 @@ u_int tnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 
 u_int tnode_t::s_data_size(const void *buffer)
 {
-   return base_node<tnode_t>::s_data_size(buffer) + sizeof(u_long);
+   return base_node<tnode_t>::s_data_size(buffer) + sizeof(uint64_t);
 }
 
 const void *tnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)

@@ -47,13 +47,15 @@
 template <s_compare_cb_t compare>
 static int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
 {
-   return compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   return diff < 0ll ? -1 : diff > 0ll ? 1 : 0;
 }
 
 template <s_compare_cb_t compare>
 static int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
-   return compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   return diff < 0ll ? -1 : diff > 0ll ? 1 : 0;
 }
 
 //
@@ -545,11 +547,11 @@ db_seq_t database_t::table_t::query_seq_id(void)
    return cur_seq_id;
 }
 
-u_long database_t::table_t::count(const char *dbname) const
+uint64_t database_t::table_t::count(const char *dbname) const
 {
    DB_BTREE_STAT *stats;
    const Db *dbptr = &table;
-   u_long nkeys;
+   uint64_t nkeys;
 
    if(dbname && *dbname) {
       if((dbptr = secondary_db(dbname)) == NULL)
@@ -559,7 +561,7 @@ u_long database_t::table_t::count(const char *dbname) const
    if(const_cast<Db*>(dbptr)->stat(NULL, &stats, 0) != 0)
       return 0;
 
-   nkeys = (u_long) stats->bt_nkeys;
+   nkeys = (uint64_t) stats->bt_nkeys;
 
    free(stats);
 
@@ -752,14 +754,14 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
    const Db *scdb;
    Dbt key, pkey, data;
    u_int keysize;
-   u_long hashkey;
+   uint64_t hashkey;
 
    if((scdb = table.values_db()) == NULL)
       return false;
 
    // make a value key
    hashkey = node.s_hash_value();
-   keysize = sizeof(u_long);
+   keysize = sizeof(uint64_t);
 
    key.set_data(&hashkey);
    key.set_size(keysize);
@@ -811,7 +813,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
 }
 
 template <typename node_t>
-bool database_t::node_handler_t<node_t>::delete_node(table_t& table, u_char *buffer, const keynode_t<u_long>& node)
+bool database_t::node_handler_t<node_t>::delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node)
 {
    Dbt key;
    u_int keysize;
@@ -1558,7 +1560,7 @@ void *database_t::trickle_thread_proc(void *arg)
 void database_t::trickle_thread_proc(void)
 {
    int nwrote, error;
-   u_long eventrc, count = 0;
+   uint64_t eventrc, count = 0;
 
    trickle_thread_stopped = false;
 
@@ -1657,7 +1659,7 @@ bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, co
    return node_handler_t<vnode_t>::get_node_by_id(visits, buffer, vnode, upcb, const_cast<void*>(arg));
 }
 
-bool database_t::delete_visit(const keynode_t<u_long>& vnode)
+bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 {
    return node_handler_t<vnode_t>::delete_node(visits, buffer, vnode);
 }
@@ -1682,7 +1684,7 @@ bool database_t::get_dlnode_by_value(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t u
    return node_value_handler_t<dlnode_t>::get_node_by_value(downloads, buffer, dlnode, upcb, arg);
 }
 
-bool database_t::delete_download(const keynode_t<u_long>& danode)
+bool database_t::delete_download(const keynode_t<uint64_t>& danode)
 {
    return node_handler_t<danode_t>::delete_node(active_downloads, buffer, danode);
 }
@@ -1993,8 +1995,8 @@ bool database_t::fix_v3_8_0_4(void)
 #endif
 
 // keynode_t
-template int bt_compare_cb<keynode_t<u_long>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
-template int bt_compare_cb<keynode_t<u_long>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 // URLs
 template int bt_compare_cb<unode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);

@@ -164,12 +164,15 @@ u_int ucs2utf8(const wchar_t *str, u_int slen, char *out, u_int bsize);
 //
 //
 //
-inline double AVG(double curavg, double value, double newcnt) {return curavg+(value-curavg)/newcnt;}
-inline double AVG2(double a1, double n1, double a2, double n2) {return a1+(a2-a1)*(n2/(n1+n2));}
+inline double AVG(double curavg, double value, uint64_t newcnt) {return curavg+(value-curavg)/(double)newcnt;}
+inline double AVG(double curavg, uint64_t value, uint64_t newcnt) {return AVG(curavg, (double) value, newcnt);}
 
-inline double PCENT(double val, double max) {return val ? (val/max)*100.0 : 0.0;}
+inline double AVG2(double a1, uint64_t n1, double a2, uint64_t n2) {return a1+(a2-a1)*((double)n2/((double)n1+(double)n2));}
 
-u_long usec2msec(u_long usec);
+inline double PCENT(double val, double max) {return max ? (val/max)*100.0 : 0.0;}
+inline double PCENT(uint64_t val, uint64_t max) {return PCENT((double) val, (double) max);}
+
+uint64_t usec2msec(uint64_t usec);
 
 bool is_secure_url(u_int urltype, bool use_https);
 u_int url_path_len(const char *url, u_int *urllen);
@@ -192,15 +195,15 @@ const u_char *from_hex(const u_char *cp1, u_char *cp2);
 
 const char *cstr2str(const char *cp, string_t& str);
 
-u_int ul2str(u_long value, char *str);
-u_long str2ul(const char *str, const char **eptr = NULL, u_int len = ~0);
-long str2l(const char *str, const char **eptr = NULL, u_int len = ~0);
+u_int ul2str(uint64_t value, char *str);
+uint64_t str2ul(const char *str, const char **eptr = NULL, u_int len = ~0);
+int64_t str2l(const char *str, const char **eptr = NULL, u_int len = ~0);
 
 string_t cur_time(bool local_time);
 void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzname);
 
-u_long ctry_idx(const char *);
-string_t idx_ctry(u_long idx);
+uint64_t ctry_idx(const char *);
+string_t idx_ctry(uint64_t idx);
 
 const char *get_domain(const char *, u_int);       /* return domain name  */
 char *get_url_domain(const char *url, char *buffer, u_int bsize);
@@ -211,7 +214,7 @@ string_t make_path(const char *base, const char *path);
 
 bool is_ip4_address(const char *str);
 
-u_long elapsed(u_long stime, u_long etime);
+uint64_t elapsed(uint64_t stime, uint64_t etime);
 
 bool isinstrex(const char *str, const char *cp, u_int slen, u_int cplen, bool substr, const bmh_delta_table *deltas);
 

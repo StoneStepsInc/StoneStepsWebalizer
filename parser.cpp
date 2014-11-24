@@ -1043,20 +1043,20 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 		switch (log_rec_fields[fldindex]) {
 			case eDate:
             // <date>  = 4<digit> "-" 2<digit> "-" 2<digit>
-				year = str2ul(cp1, &cp1);
+				year = (u_int) str2ul(cp1, &cp1);
 				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				month = str2ul(cp1, &cp1);
+				month = (u_int) str2ul(cp1, &cp1);
 				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				day = str2ul(cp1);
+				day = (u_int) str2ul(cp1);
             tsdate = true;
 				break;
 
          case eTime:
             // <time>  = 2<digit> ":" 2<digit> [":" 2<digit> ["." *<digit>]
-            hour = str2ul(cp1, &cp1);
+            hour = (u_int) str2ul(cp1, &cp1);
             if(!cp1 || *cp1++ != ':') return PARSE_CODE_ERROR;
-            min = str2ul(cp1, &cp1);
-            sec = (cp1 && *cp1 == ':') ? str2ul(++cp1) : 0;
+            min = (u_int) str2ul(cp1, &cp1);
+            sec = (cp1 && *cp1 == ':') ? (u_int) str2ul(++cp1) : 0;
             tstime = true;
 				break;
 
@@ -1111,7 +1111,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 			   if(iis) 
 				   log_rec.proc_time = strtoul(cp1, NULL, 10);                    // IIS logs time in milliseconds
 				else
-				   log_rec.proc_time = (u_long) (strtod(cp1, NULL) * 1000. + .5); // W3C requires time logged in seconds
+				   log_rec.proc_time = (uint64_t) (strtod(cp1, NULL) * 1000. + .5); // W3C requires time logged in seconds
 				break;
 
 			case eUserAgent:

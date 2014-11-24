@@ -47,7 +47,7 @@ struct unode_t;
 // visitors can share the same IP address, but are tracked independent of
 // their IP address alone.
 //
-struct vnode_t : public list_node_t<vnode_t>, public keynode_t<u_long>, public datanode_t<vnode_t> {
+struct vnode_t : public list_node_t<vnode_t>, public keynode_t<uint64_t>, public datanode_t<vnode_t> {
       bool     entry_url: 1;        // entry URL set?
       bool     robot    : 1;        // robot?
       bool     converted: 1;        // requested target URL?
@@ -55,26 +55,26 @@ struct vnode_t : public list_node_t<vnode_t>, public keynode_t<u_long>, public d
       tstamp_t start;               // first hit timestamp
       tstamp_t end;                 // last hit timestamp
 
-      u_long   hits;                // current visit hits,
-      u_long   files;               // files,
-      u_long   pages;               // pages
+      uint64_t   hits;                // current visit hits,
+      uint64_t   files;               // files,
+      uint64_t   pages;               // pages
 
-      u_long   hostref;             // host references
+      uint64_t   hostref;             // host references
 
       unode_t  *lasturl;            // last requested URL
 
-      double   xfer;                // visit transfer amount
+      uint64_t  xfer;                // visit transfer amount
 
       public:
-         typedef void (*s_unpack_cb_t)(vnode_t& vnode, u_long urlid, void *arg);
+         typedef void (*s_unpack_cb_t)(vnode_t& vnode, uint64_t urlid, void *arg);
 
       public:
-         vnode_t(u_long nodeid = 0);
+         vnode_t(uint64_t nodeid = 0);
          vnode_t(const vnode_t& vnode);
 
          ~vnode_t(void);
 
-         void reset(u_long nodeid = 0);
+         void reset(uint64_t nodeid = 0);
 
          void set_lasturl(unode_t *unode);
 

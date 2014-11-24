@@ -61,8 +61,8 @@ typedef struct dnode_t {
 //
 class dns_resolver_t {
    public:
-      u_long  dns_cached;					      // Number of IP addresses found in the DNS cache
-      u_long  dns_resolved;						// Number of IP addresses resolved by a DNS lookup
+      uint64_t  dns_cached;					      // Number of IP addresses found in the DNS cache
+      uint64_t  dns_resolved;						// Number of IP addresses resolved by a DNS lookup
 
    private:
       const config_t& config;
@@ -88,7 +88,7 @@ class dns_resolver_t {
       DNODEPTR dnode_list;
       DNODEPTR dnode_end;
       int dns_live_workers;                  // total number of DNS threads
-      u_long dns_unresolved;                 // number of addresses to resolve
+      uint64_t dns_unresolved;                 // number of addresses to resolve
 
       queue_t<hnode_t>  hqueue;              // resolved host node queue
 

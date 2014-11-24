@@ -19,7 +19,7 @@
 typedef struct rcnode_t : public base_node<rcnode_t> { 
       bool           hexenc;           // any %xx sequences?
       u_short        respcode;         // HTTP status code
-      u_long         count;
+      uint64_t         count;
       string_t       method;           // HTTP method
 
       public:
@@ -37,9 +37,9 @@ typedef struct rcnode_t : public base_node<rcnode_t> {
          u_int s_pack_data(void *buffer, u_int bufsize) const;
          u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
 
-         u_long s_hash_value(void) const;
+         uint64_t s_hash_value(void) const;
 
-         int s_compare_value(const void *buffer, u_int bufsize) const;
+         int64_t s_compare_value(const void *buffer, u_int bufsize) const;
 
          static u_int s_data_size(const void *buffer);
 
@@ -49,8 +49,8 @@ typedef struct rcnode_t : public base_node<rcnode_t> {
          static const void *s_field_value_mp_method(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_value_mp_respcode(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
-         static int s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *RCNODEPTR;
 
 //

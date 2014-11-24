@@ -56,7 +56,7 @@ bool rc_hash_table::compare(const rcnode_t *nptr, const void *param) const
 
 u_int rcnode_t::s_data_size(void) const
 {
-   return base_node<rcnode_t>::s_data_size() + sizeof(u_char) + sizeof(u_short) + sizeof(u_long) * 2 + s_size_of(method);
+   return base_node<rcnode_t>::s_data_size() + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of(method);
 }
 
 u_int rcnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -102,7 +102,7 @@ u_int rcnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    ptr = deserialize(ptr, count);
    ptr = deserialize(ptr, method);
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
    
    if(upcb)
       upcb(*this, arg);
@@ -110,7 +110,7 @@ u_int rcnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_long rcnode_t::s_hash_value(void) const
+uint64_t rcnode_t::s_hash_value(void) const
 {
    return hash_str(hash_num(base_node<rcnode_t>::s_hash_value(), respcode), method, method.length());
 }
@@ -119,7 +119,7 @@ u_int rcnode_t::s_data_size(const void *buffer)
 {
    u_int basesize = base_node<rcnode_t>::s_data_size(buffer);
    // value hash follows the method when serialized
-   return basesize + sizeof(u_char) + sizeof(u_short) + sizeof(u_long) * 2 + s_size_of<string_t>((u_char*)buffer + basesize + sizeof(u_char) + sizeof(u_short) + sizeof(u_long));
+   return basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of<string_t>((u_char*)buffer + basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t));
 }
 
 const void *rcnode_t::s_field_value_mp_url(const void *buffer, u_int bufsize, u_int& datasize)
@@ -129,7 +129,7 @@ const void *rcnode_t::s_field_value_mp_url(const void *buffer, u_int bufsize, u_
 
 const void *rcnode_t::s_field_value_mp_method(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(u_long);
+   const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
    datasize = s_size_of<string_t>(ptr);
    return ptr;
 }
@@ -143,17 +143,17 @@ const void *rcnode_t::s_field_value_mp_respcode(const void *buffer, u_int bufsiz
 const void *rcnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
    const void *ptr;
-   datasize = sizeof(u_long);
-   ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(u_long);
+   datasize = sizeof(uint64_t);
+   ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
    return (u_char*) ptr + s_size_of<string_t>(ptr);
 }
 
-int rcnode_t::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t rcnode_t::s_compare_value(const void *buffer, u_int bufsize) const
 {
    u_int datasize;
    string_t tstr;
    u_short tcode;
-   int diff;
+   int64_t diff;
 
    if(bufsize < s_data_size(buffer))
       throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %d; expected: %d)", typeid(*this).name(), bufsize, s_data_size()));
@@ -174,11 +174,11 @@ int rcnode_t::s_compare_value(const void *buffer, u_int bufsize) const
 
 const void *rcnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short);
 }
 
-int rcnode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t rcnode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }

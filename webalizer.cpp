@@ -402,7 +402,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    const string_t *hostname;
    string_t str;
    bool newhgrp = false;
-   u_long vlen = (u_long) vnode.end.elapsed(vnode.start);
+   uint64_t vlen = (uint64_t) vnode.end.elapsed(vnode.start);
 
    if(hnode.flag == OBJ_GRP)
       return;
@@ -838,7 +838,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
 //
 int webalizer_t::end_month(void)
 {
-   u_long stime = msecs();
+   uint64_t stime = msecs();
    
    update_visits(0);
    update_downloads(0);
@@ -861,7 +861,7 @@ int webalizer_t::end_month(void)
 
 int webalizer_t::database_info(void)
 {
-   u_long stime = msecs();
+   uint64_t stime = msecs();
 
    printf("\n");
    
@@ -900,7 +900,7 @@ int webalizer_t::database_info(void)
 
 int webalizer_t::prep_report(void)
 {
-   u_long stime = msecs();
+   uint64_t stime = msecs();
 
    write_monthly_report();
    write_main_index();
@@ -915,7 +915,7 @@ int webalizer_t::compact_database(void)
    u_int bytes;
    int error;
 
-   u_long stime = msecs();
+   uint64_t stime = msecs();
    
    if((error = state.database.compact(bytes)) == 0) {
       if(verbose > 1)
@@ -931,7 +931,7 @@ int webalizer_t::compact_database(void)
 
 int webalizer_t::run(void)
 {
-   u_long tot_time, proc_time;                    /* temporary time storage      */
+   uint64_t tot_time, proc_time;                    /* temporary time storage      */
    u_int rps;
    int retcode;
 
@@ -958,16 +958,16 @@ int webalizer_t::run(void)
 
       if(!config.prep_report && !config.compact_db && !config.end_month && !config.db_info) {
          // output number of processed, ignored and bad records
-         printf("%s %lu %s ", config.lang.msg_processed, total_rec, config.lang.msg_records);
+         printf("%s %llu %s ", config.lang.msg_processed, total_rec, config.lang.msg_records);
          if (total_ignore) {
-            printf("(%lu %s",total_ignore, config.lang.msg_ignored);
+            printf("(%llu %s",total_ignore, config.lang.msg_ignored);
             if (total_bad) 
-               printf(", %lu %s) ",total_bad, config.lang.msg_bad);
+               printf(", %llu %s) ",total_bad, config.lang.msg_bad);
             else
                printf(") ");
          }
          else if (total_bad) 
-            printf("(%lu %s) ",total_bad, config.lang.msg_bad);
+            printf("(%llu %s) ",total_bad, config.lang.msg_bad);
 
          // output processing time
          printf("%s %.2f %s", config.lang.msg_in, proc_time/1000., config.lang.msg_seconds);
@@ -985,7 +985,7 @@ int webalizer_t::run(void)
 
          if(verbose && config.is_dns_enabled()) {
             if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
-               printf("%s: %d%% (%d:%d)\n", lang_t::msg_dns_htrt, (u_long) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
+               printf("%s: %llu%% (%d:%d)\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
          }
 
          // report total DNS time
@@ -1022,13 +1022,13 @@ int webalizer_t::proc_logfile(void)
    size_t reclen;
    const string_t *sptr, empty, *ragent;
    string_t str;
-   u_long stime;
+   uint64_t stime;
    bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
 
    tstamp_t rec_tstamp;  
 
-   u_long total_good = 0;
+   uint64_t total_good = 0;
 
    bool good_rec = false;                /* true if we had a good record*/
 
@@ -1569,7 +1569,7 @@ int webalizer_t::proc_logfile(void)
             if(!spammer) {
                // check if it's a partial request and ignore the referrer if requested
                if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
-                  if(!put_rnode(log_rec.refer, OBJ_REG, (u_long)1, newvisit, newref)) {
+                  if(!put_rnode(log_rec.refer, OBJ_REG, (uint64_t)1, newvisit, newref)) {
                      if (verbose) 
                         fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, log_rec.refer.c_str());
                   }
@@ -1617,8 +1617,9 @@ int webalizer_t::proc_logfile(void)
          //
          // bump monthly/daily/hourly totals
          //
-         state.totals.t_hit++; state.totals.ht_hits++;                                      /* daily/hourly hits    */
-         state.totals.t_xfer += log_rec.xfer_size; state.totals.ht_xfer += log_rec.xfer_size;// total/hourly xfer size
+         state.totals.t_hit++; state.totals.ht_hits++;                        /* daily/hourly hits    */
+         state.totals.t_xfer += log_rec.xfer_size;                            // total xfer size
+         state.totals.ht_xfer += log_rec.xfer_size;                           // hourly xfer size
          state.t_daily[log_rec.tstamp.day-1].tm_xfer += log_rec.xfer_size;    /* daily xfer total     */
          state.t_daily[log_rec.tstamp.day-1].tm_hits++;                       /* daily hits total     */
          state.t_hourly[log_rec.tstamp.hour].th_xfer += log_rec.xfer_size;    /* hourly xfer total    */
@@ -2064,7 +2065,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 hnode_t *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
                const tstamp_t& tstamp,          // timestamp 
-               double   xfer,                   // xfer size 
+               uint64_t xfer,                   // xfer size 
                bool     fileurl,                // file count
                bool     pageurl,
                bool     spammer,
@@ -2076,7 +2077,7 @@ hnode_t *webalizer_t::put_hnode(
                )
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    HNODEPTR cptr;
    vnode_t *visit;
 
@@ -2175,15 +2176,15 @@ hnode_t *webalizer_t::put_hnode(
 
 hnode_t *webalizer_t::put_hnode(
                const string_t& grpname,         // Hostname  
-               u_long    hits,                  // hit count 
-               u_long    files,                 // file count
-               u_long    pages,
-               double    xfer,                  // xfer size 
-               u_long    visitlen,              // visit length
+               uint64_t    hits,                  // hit count 
+               uint64_t    files,                 // file count
+               uint64_t    pages,
+               uint64_t    xfer,                  // xfer size 
+               uint64_t    visitlen,              // visit length
                bool&     newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    HNODEPTR cptr;
 
    newnode = false;
@@ -2206,7 +2207,7 @@ hnode_t *webalizer_t::put_hnode(
             cptr->pages = pages;
             cptr->xfer  = xfer;
 
-            cptr->visit_avg = visitlen;
+            cptr->visit_avg = (double) visitlen;
             cptr->visit_max = visitlen;
             cptr->visits = 1;
 
@@ -2235,10 +2236,10 @@ hnode_t *webalizer_t::put_hnode(
    return cptr;
 }
 
-rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, u_long count, bool newvisit, bool& newnode)
+rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t count, bool newvisit, bool& newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    RNODEPTR nptr;
 
    newnode = false;
@@ -2285,10 +2286,10 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, u_long cou
 /* PUT_UNODE - insert/update URL node        */
 /*********************************************/
 
-unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
+unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    UNODEPTR cptr;
    u_hash_table::param_block param;
 
@@ -2354,11 +2355,11 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    return cptr;
 }
 
-rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, u_long count, bool *newnode)
+rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode)
 {
    bool found = true;
    rcnode_t *nptr;
-   u_long hashval;
+   uint64_t hashval;
    rc_hash_table::param_block param;
 
    if(newnode)
@@ -2405,10 +2406,10 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
 /* PUT_ANODE - insert/update user agent node */
 /*********************************************/
 
-anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, double xfer, bool newvisit, bool robot, bool& newnode)
+anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    ANODEPTR cptr;
 
    newnode = false;
@@ -2458,7 +2459,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, double xfe
 snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    SNODEPTR nptr;
 
    newnode = false;
@@ -2510,13 +2511,13 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisi
 inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
                nodetype_t    type,       /* obj type  */
                bool     fileurl,    /* File flag */
-               double   xfer,       /* xfer size */
+               uint64_t xfer,       /* xfer size */
                const tstamp_t& tstamp, /* timestamp */
                double   proctime,
                bool&    newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    INODEPTR nptr;
 
    newnode = false;
@@ -2572,10 +2573,10 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 //
 //
 //
-dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode)
+dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, hnode_t& hnode, bool& newnode)
 {
    bool found = true;
-   u_long hashval;
+   uint64_t hashval;
    danode_t *download;
    dlnode_t *nptr;
    dl_hash_table::param_block params;
@@ -2655,7 +2656,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
 spnode_t *webalizer_t::put_spnode(const string_t& host) 
 {
    spnode_t *spnode;
-   u_long hashval;
+   uint64_t hashval;
 
    hashval = hash_ex(0, host);
 
@@ -2679,7 +2680,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
 vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 {
    vnode_t *visit;
-   u_long vlen;
+   uint64_t vlen;
 
    if(!hptr || hptr->flag == OBJ_GRP || !hptr->visits)
       return NULL;
@@ -2708,7 +2709,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
    hptr->xfer +=visit->xfer;
 
    // get visit length
-   vlen = (u_long) visit->end.elapsed(visit->start);
+   vlen = (uint64_t) visit->end.elapsed(visit->start);
 
    // update maximum and average visit duration for this host
    hptr->visit_avg = AVG(hptr->visit_avg, vlen, hptr->visits);
@@ -2852,9 +2853,8 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
    dlnode->count++;
    dlnode->sumhits += download->hits;
 
-   value = (double) download->xfer / 1024.;
-   dlnode->sumxfer += value;
-   dlnode->avgxfer = AVG(dlnode->avgxfer, value, dlnode->count);
+   dlnode->sumxfer += download->xfer;
+   dlnode->avgxfer = AVG(dlnode->avgxfer, download->xfer, dlnode->count);
 
    value = (double) download->proctime/60000.;
    dlnode->sumtime += value;
@@ -3116,7 +3116,7 @@ int webalizer_t::read_log_line(logfile_t& logfile)
       // full buffer - report record number, file name and the record if running in debug mode
       if (verbose) {
          
-         fprintf(stderr,"%s (%d - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
+         fprintf(stderr,"%s (%llu - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
          if (debug_mode) 
             fprintf(stderr,":\n%s",buffer);
          else 
@@ -3163,7 +3163,7 @@ int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logre
       /* really bad record... */
       if (verbose)
       {
-         fprintf(stderr,"%s (%lu)", config.lang.msg_bad_rec, total_rec);
+         fprintf(stderr,"%s (%llu)", config.lang.msg_bad_rec, total_rec);
          if (debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
          else fprintf(stderr,"\n");
       }

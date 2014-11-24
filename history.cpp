@@ -24,10 +24,10 @@ hist_month_t::hist_month_t(void)
    month = year = 0;
    fday = lday = 0;
    hits = files = hosts = pages = visits = 0;
-   xfer = 0.0;
+   xfer = 0;
 }
 
-hist_month_t::hist_month_t(u_int nyear, u_int nmonth, u_long nhits, u_long nfiles, u_long npages, u_long nvisits, u_long nhosts, double nxfer, u_int nfday, u_int nlday)
+hist_month_t::hist_month_t(u_int nyear, u_int nmonth, uint64_t nhits, uint64_t nfiles, uint64_t npages, uint64_t nvisits, uint64_t nhosts, uint64_t nxfer, u_int nfday, u_int nlday)
 {
    year = nyear;
    month = nmonth;
@@ -176,7 +176,7 @@ bool history_t::update(const hist_month_t *month)
    return true;
 }
 
-bool history_t::update(u_int year, u_int month, u_long hits, u_long files, u_long pages, u_long visits, u_long hosts, double xfer, u_int fday, u_int lday)
+bool history_t::update(u_int year, u_int month, uint64_t hits, uint64_t files, uint64_t pages, uint64_t visits, uint64_t hosts, uint64_t xfer, u_int fday, u_int lday)
 {
    hist_month_t hist(year, month, hits, files, pages, visits, hosts, xfer, fday, lday);
    return update(&hist);
@@ -215,7 +215,7 @@ bool history_t::get_history(void)
    while ((fgets(buffer,BUFSIZE,hist_fp)) != NULL)
    {
       /* month# year# requests files sites xfer firstday lastday visits */
-      numfields = sscanf(buffer,"%d %d %lu %lu %lu %lf %d %d %lu %lu",
+      numfields = sscanf(buffer,"%d %d %llu %llu %llu %llu %d %d %llu %llu",
                     &hnode.month,
                     &hnode.year,
                     &hnode.hits,
@@ -297,7 +297,7 @@ void history_t::put_history(void)
    while(iter.more()) {
       hptr = &iter.next();
       if(hptr->hits != 0) {
-         fprintf(hist_fp,"%d %d %lu %lu %lu %.0f %d %d %lu %lu\n",
+         fprintf(hist_fp,"%d %d %llu %llu %llu %llu %d %d %llu %llu\n",
                          hptr->month,
                          hptr->year,
                          hptr->hits,

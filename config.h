@@ -24,8 +24,8 @@
 
 #define DNS_MAX_THREADS   100						   // Maximum number of DNS threads
 
-#define DB_DEF_CACHE_SIZE  ((u_long) 0)         // Default cache size (ignored)
-#define DB_MIN_CACHE_SIZE  ((u_long) 20 * 1024) // Minimum cache size (20K)
+#define DB_DEF_CACHE_SIZE  ((uint32_t) 0)         // Default cache size (ignored)
+#define DB_MIN_CACHE_SIZE  ((uint32_t) 20 * 1024) // Minimum cache size (20K)
 #define DB_DEF_TRICKLE_RATE ((u_int) 5)         // Default database trickle rate
 
 #define FONT_SIZE_SMALL       8.                // points
@@ -174,16 +174,16 @@ class config_t {
 
       bool geoip_city;                          // output city name in the reports?
 
-      u_long max_hosts;                         // maximum hosts   
-      u_long max_hosts_kb; 
-      u_long max_urls;                          // maximum URL's
-      u_long max_urls_kb;
-      u_long max_refs;                          // maximum referrers       
-      u_long max_agents;                        // maximum user Agents     
-      u_long max_search;                        // maximum search Strings  
-      u_long max_users;                         // maximum usernames       
-      u_long max_errors;                        // maximum errors          
-      u_long max_downloads;                     // maximum downloads
+      uint64_t max_hosts;                         // maximum hosts   
+      uint64_t max_hosts_kb; 
+      uint64_t max_urls;                          // maximum URL's
+      uint64_t max_urls_kb;
+      uint64_t max_refs;                          // maximum referrers       
+      uint64_t max_agents;                        // maximum user Agents     
+      uint64_t max_search;                        // maximum search Strings  
+      uint64_t max_users;                         // maximum usernames       
+      uint64_t max_errors;                        // maximum errors          
+      uint64_t max_downloads;                     // maximum downloads
 
       bool dump_hosts;                           // Dump tab delimited hosts 
       bool dump_urls;                            // URL's                    
@@ -214,48 +214,48 @@ class config_t {
 
       u_int graph_background_alpha;
 
-      u_int graph_background;
-      u_int graph_gridline;
-      u_int graph_shadow;
-      u_int graph_title_color;
-      u_int graph_hits_color;
-      u_int graph_files_color;
-      u_int graph_hosts_color;
-      u_int graph_pages_color;
-      u_int graph_visits_color;
-      u_int graph_volume_color;
-      u_int graph_outline_color;
-      u_int graph_legend_color;
-      u_int graph_weekend_color;
+      uint32_t graph_background;
+      uint32_t graph_gridline;
+      uint32_t graph_shadow;
+      uint32_t graph_title_color;
+      uint32_t graph_hits_color;
+      uint32_t graph_files_color;
+      uint32_t graph_hosts_color;
+      uint32_t graph_pages_color;
+      uint32_t graph_visits_color;
+      uint32_t graph_volume_color;
+      uint32_t graph_outline_color;
+      uint32_t graph_legend_color;
+      uint32_t graph_weekend_color;
 
       u_int max_hist_length;
 
-      u_long db_cache_size;                      // database cache size, in bytes
-      u_int db_seq_cache_size;                   // database sequence cache size
-      u_int db_trickle_rate;                     // database trickle rate
+      uint32_t db_cache_size;                    // database cache size, in bytes
+      uint32_t db_seq_cache_size;                // database sequence cache size
+      uint32_t db_trickle_rate;                  // database trickle rate
       bool db_direct;                            // use system buffering?
       bool db_dsync;                             // write-through?
 
       u_int swap_first_record;                   // first record to start swapping
       u_int swap_frequency;                      // swap every n'th record
 
-      u_long visit_timeout;                      // visit timeout, in seconds (30 min)   
-      u_long max_visit_length;                   // maximum visit length, in seconds
-      u_long download_timeout;                   // download job timeout (seconds)
+      u_int visit_timeout;                      // visit timeout, in seconds (30 min)   
+      u_int max_visit_length;                   // maximum visit length, in seconds
+      u_int download_timeout;                   // download job timeout (seconds)
 
-      u_long ntop_sites;                         // top n sites to display   
-      u_long ntop_sitesK;                        // top n sites (by kbytes)  
-      u_long ntop_urls;                          // top n url's to display   
-      u_long ntop_urlsK;                         // top n url's (by kbytes)  
-      u_long ntop_entry;                         // top n entry url's        
-      u_long ntop_exit;                          // top n exit url's         
-      u_long ntop_refs;                          // top n referrers ""       
-      u_long ntop_agents;                        // top n user agents ""     
-      u_long ntop_ctrys;                         // top n countries   ""     
-      u_long ntop_search;                        // top n search strings     
-      u_long ntop_users;                         // top n users to display   
-      u_long ntop_errors;                        // top n HTTP errors        
-      u_long ntop_downloads;                     // top n downlaods
+      uint32_t ntop_sites;                         // top n sites to display   
+      uint32_t ntop_sitesK;                        // top n sites (by kbytes)  
+      uint32_t ntop_urls;                          // top n url's to display   
+      uint32_t ntop_urlsK;                         // top n url's (by kbytes)  
+      uint32_t ntop_entry;                         // top n entry url's        
+      uint32_t ntop_exit;                          // top n exit url's         
+      uint32_t ntop_refs;                          // top n referrers ""       
+      uint32_t ntop_agents;                        // top n user agents ""     
+      uint32_t ntop_ctrys;                         // top n countries   ""     
+      uint32_t ntop_search;                        // top n search strings     
+      uint32_t ntop_users;                         // top n users to display   
+      uint32_t ntop_errors;                        // top n HTTP errors        
+      uint32_t ntop_downloads;                     // top n downlaods
 
       double font_size_small;
       double font_size_medium;
@@ -379,7 +379,7 @@ class config_t {
 
       void set_enable_phrase_values(bool enable);
 
-      u_long get_db_cache_size(const char *value) const;
+      uint32_t get_db_cache_size(const char *value) const;
 
       int get_interval(const char *value, int div = 1) const;
 

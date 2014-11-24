@@ -13,7 +13,7 @@
 #include "serialize.h"
 
 
-danode_t::danode_t(u_long _nodeid) : keynode_t<u_long>(_nodeid)
+danode_t::danode_t(uint64_t _nodeid) : keynode_t<uint64_t>(_nodeid)
 {
    hits = 0; 
    xfer = 0; 
@@ -22,7 +22,7 @@ danode_t::danode_t(u_long _nodeid) : keynode_t<u_long>(_nodeid)
    dirty = true;
 }
 
-danode_t::danode_t(const danode_t& danode) : keynode_t<u_long>(danode)
+danode_t::danode_t(const danode_t& danode) : keynode_t<uint64_t>(danode)
 {
    hits = danode.hits; 
    tstamp = danode.tstamp; 
@@ -32,9 +32,9 @@ danode_t::danode_t(const danode_t& danode) : keynode_t<u_long>(danode)
    dirty = true;
 }
 
-void danode_t::reset(u_long _nodeid)
+void danode_t::reset(uint64_t _nodeid)
 {
-   keynode_t<u_long>::reset(_nodeid);
+   keynode_t<uint64_t>::reset(_nodeid);
 
    hits = 0; 
    tstamp.reset(); 
@@ -51,7 +51,7 @@ void danode_t::reset(u_long _nodeid)
 u_int danode_t::s_data_size(void) const
 {
    return datanode_t<danode_t>::s_data_size() + 
-            sizeof(u_long) * 3 +       // hits, proctime, xfer
+            sizeof(uint64_t) * 3 +       // hits, proctime, xfer
             s_size_of(tstamp);         // tstamp
 }
 
@@ -98,7 +98,7 @@ u_int danode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    if(version >= 2)
       ptr = deserialize(ptr, tstamp);
    else {
-      u_long tmp;
+      uint64_t tmp;
       ptr = deserialize(ptr, tmp);
       tstamp.reset((time_t) tmp);
    }
@@ -117,14 +117,14 @@ u_int danode_t::s_data_size(const void *buffer)
    u_short version = s_node_ver(buffer);
 
    size_t datasize = datanode_t<danode_t>::s_data_size(buffer) + 
-            sizeof(u_long);               // hits
+            sizeof(uint64_t);               // hits
 
    if(version < 2)
-      datasize += sizeof(u_long);         // tstamp
+      datasize += sizeof(uint64_t);         // tstamp
    else
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);   // tstamp
 
    return datasize + 
-            sizeof(u_long) * 2;           // proctime, xfer;
+            sizeof(uint64_t) * 2;           // proctime, xfer;
 }
 

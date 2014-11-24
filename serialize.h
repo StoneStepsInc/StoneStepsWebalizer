@@ -23,7 +23,7 @@
 // buf1 and buf2 point to the beginning of two values being compared, as 
 // returned by one of the field extractor/pointer functions.
 //
-typedef int (*s_compare_cb_t)(const void *buf1, const void *buf2);
+typedef int64_t (*s_compare_cb_t)(const void *buf1, const void *buf2);
 
 // -----------------------------------------------------------------------
 //
@@ -49,7 +49,7 @@ typedef const void *(*s_field_cb_t)(const void *buffer, u_int bufsize, u_int& da
 // valid value. When the last part of the value is evaluated, lastpart
 // will be set by the function to true.
 //
-typedef int (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
+typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
 
 // -----------------------------------------------------------------------
 //
@@ -162,9 +162,9 @@ inline const void *deserialize(const void *ptr, bool& value)
 //    runtime_t      - run time data type
 //
 // For example, a time_t value, which was often defined as a 32-bit value in the past, 
-// was stored in the database as a u_long value, which also is a 32-bit value on many 
+// was stored in the database as a uint64_t value, which also is a 32-bit value on many 
 // platforms. Now time_t is defined as a 64-bit value by many compilers, so we need to 
-// read a u_long value, convert it to time_t so we can use it at run time, save as a 
+// read a uint64_t value, convert it to time_t so we can use it at run time, save as a 
 // 64-bit value in the updated database and then read this 64-bit value in subsequent 
 // runs.
 //
@@ -313,13 +313,13 @@ inline void *s_skip_field<tstamp_t>(const void *ptr)
 //
 // -----------------------------------------------------------------------
 template <typename type_t>
-inline int s_compare(const void *buf1, const void *buf2)
+inline int64_t s_compare(const void *buf1, const void *buf2)
 {
    return *(type_t*) buf1 == *(type_t*) buf2 ? 0 : *(type_t*) buf1 > *(type_t*) buf2 ? 1 : -1;
 }
 
 template <>
-inline int s_compare<string_t>(const void *buf1, const void *buf2)
+inline int64_t s_compare<string_t>(const void *buf1, const void *buf2)
 {
    const char *cp1, *cp2;
    u_int slen1, slen2;

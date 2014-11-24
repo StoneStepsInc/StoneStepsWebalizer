@@ -167,7 +167,7 @@ int state_t::save_state(void)
    hash_table<dlnode_t>::iterator dl_iter;
    hash_table<ccnode_t>::iterator cc_iter;
 
-   vector_t<u_long>::iterator iter;
+   vector_t<uint64_t>::iterator iter;
    
    u_int  i;
 
@@ -207,7 +207,7 @@ int state_t::save_state(void)
    while(iter.next(0)) {
       vnode.reset(*iter);
       if(!database.delete_visit(vnode))
-         throw exception_t(0, string_t::_format("Cannot detele an ended visit from the database (ID: %d)", vnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot detele an ended visit from the database (ID: %llu)", vnode.nodeid));
    }
    v_ended.clear();
 
@@ -216,7 +216,7 @@ int state_t::save_state(void)
    while(iter.next(0)) {
       dlnode.reset(*iter);
       if(!database.delete_download(dlnode))
-         throw exception_t(0, string_t::_format("Cannot detele a finished download job from the database (ID: %d)", dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot detele a finished download job from the database (ID: %llu)", dlnode.nodeid));
    }
    dl_ended.clear();
 
@@ -370,10 +370,11 @@ int state_t::save_state(void)
    // Update history for the current month. If the history file was missing, 
    // a new one will be created with this data. 
    //
-   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
+   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
    history.put_history();
 
    //
+
    // If there's an old state file, delete it
    //
    if (config.incremental) {
@@ -619,7 +620,7 @@ int state_t::restore_state(void)
    // from the current database file. In the worse cae scenario we just 
    // write same data twice (i.e. the line created from the current state).
    //
-   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer/1024., totals.f_day, totals.l_day);
+   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
 
    //
    // No need to restore the rest in the report-only mode
@@ -1014,7 +1015,7 @@ void state_t::clear_month()
 }
 
 template <typename type_t>
-void state_t::update_avg_max(double& avgval, type_t& maxval, type_t value, u_long newcnt) const
+void state_t::update_avg_max(double& avgval, type_t& maxval, type_t value, uint64_t newcnt) const
 {
    avgval = AVG(avgval, value, newcnt);
    if(value > maxval)
@@ -1057,7 +1058,7 @@ void state_t::update_hourly_stats(void)
    
    // reset hourly counters
    totals.ht_hits = totals.ht_files = totals.ht_pages = 0;
-   totals.ht_xfer = .0;
+   totals.ht_xfer = 0;
    totals.ht_visits = totals.ht_hosts = 0;
 }
 
@@ -1116,7 +1117,7 @@ unode_t *state_t::find_url(const string_t& url)
 //
 //
 //
-void state_t::unpack_dlnode_cb(dlnode_t& dlnode, u_long hostid, bool active, void *arg)
+void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
 {
    hnode_t hnode, *hptr;
    autoptr_t<danode_t> daptr;
@@ -1128,7 +1129,7 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, u_long hostid, bool active, voi
 
       // read the active download node from the database
       if(!_this->database.get_danode_by_id(*daptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the active download job (ID: %d)", dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the active download job (ID: %llu)", dlnode.nodeid));
 
       dlnode.download = daptr.release();
    }
@@ -1139,7 +1140,7 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, u_long hostid, bool active, voi
 
       // read the active host node from the database
       if(!_this->database.get_hnode_by_id(hnode, unpack_hnode_cb, _this))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %d)", hostid, dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %llu)", hostid, dlnode.nodeid));
 
       // check if the node is already in the hash table
       if((hptr = _this->hm_htab.find_node(hnode.string)) != NULL)
@@ -1159,13 +1160,13 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, u_long hostid, bool active, voi
 //
 // A better declaration for this method would be to take a const pointer:
 //
-// void unpack_dlnode_const_cb(dlnode_t& dlnode, u_long hostid, bool active, const void *_this)
+// void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, const void *_this)
 //
 // This, however, would require all node unpack callbacks duplicated. 
 // Instead, just make sure unpack_dlnode_const_cb is used for reporting 
 // purposes only.
 //
-void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, u_long hostid, bool active, void *arg)
+void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
 {
    autoptr_t<hnode_t> hptr;
    const state_t *_this = (const state_t*) arg;
@@ -1176,14 +1177,14 @@ void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, u_long hostid, bool activ
 
       // look up the host node in the database
       if(!_this->database.get_hnode_by_id(*hptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %d)", hostid, dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %llu)", hostid, dlnode.nodeid));
 
        dlnode.set_host(hptr.release());
        dlnode.ownhost = true;
    }
 }
 
-void state_t::unpack_vnode_cb(vnode_t& vnode, u_long urlid, void *arg)
+void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
 {
    unode_t unode, *uptr;
    state_t *_this = (state_t*) arg;
@@ -1193,7 +1194,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, u_long urlid, void *arg)
 
       // look up a URL node in the database
       if(!_this->database.get_unode_by_id(unode, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %d)", urlid, vnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %llu)", urlid, vnode.nodeid));
 
       // find the URL node or create a new one
       if((uptr = _this->find_url(unode.string)) != NULL)
@@ -1221,7 +1222,7 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 
       // look up the active visit in the database
       if(!_this->database.get_vnode_by_id(*vptr, unpack_vnode_cb, _this))
-         throw exception_t(0, string_t::_format("Cannot find the active visit of a host (ID: %d)", hnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the active visit of a host (ID: %llu)", hnode.nodeid));
 
       hnode.set_visit(vptr.release());
    }
@@ -1248,5 +1249,5 @@ void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
 //
 // insteantiate templates
 //
-template void state_t::update_avg_max<u_long>(double& avgval, u_long& maxval, u_long value, u_long newcnt) const;
-template void state_t::update_avg_max<double>(double& avgval, double& maxval, double value, u_long newcnt) const;
+template void state_t::update_avg_max<uint64_t>(double& avgval, uint64_t& maxval, uint64_t value, uint64_t newcnt) const;
+template void state_t::update_avg_max<double>(double& avgval, double& maxval, double value, uint64_t newcnt) const;

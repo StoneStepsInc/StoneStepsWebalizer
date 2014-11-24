@@ -36,7 +36,7 @@ typedef struct event_imp_t {
 
 event_t event_create(bool manual, bool signalled);
 void event_destroy(event_t event);
-u_long event_wait(event_t event, u_long timeout);
+uint64_t event_wait(event_t event, uint32_t timeout);
 bool event_set(event_t event);
 bool event_reset(event_t event);
 

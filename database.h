@@ -231,7 +231,7 @@ class database_t {
             
             db_seq_t query_seq_id(void);
 
-            u_long count(const char *dbname = NULL) const;
+            uint64_t count(const char *dbname = NULL) const;
       };
 
       // -----------------------------------------------------------------
@@ -246,7 +246,7 @@ class database_t {
 
             static bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
 
-            static bool delete_node(table_t& table, u_char *buffer, const keynode_t<u_long>& node);
+            static bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
       };
 
       // -----------------------------------------------------------------
@@ -464,7 +464,7 @@ class database_t {
       bool attach_indexes(bool rebuild);
 
       // urls
-      u_long get_unode_id(void) {return (u_long) urls.get_seq_id();}
+      uint64_t get_unode_id(void) {return (uint64_t) urls.get_seq_id();}
 
       iterator<unode_t> begin_urls(const char *dbname) const {return iterator<unode_t>(urls, dbname);}
 
@@ -476,10 +476,10 @@ class database_t {
 
       bool get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      u_long get_ucount(const char *dbname = NULL) const {return urls.count(dbname);}
+      uint64_t get_ucount(const char *dbname = NULL) const {return urls.count(dbname);}
 
       // hosts
-      u_long get_hnode_id(void) {return (u_long) hosts.get_seq_id();}
+      uint64_t get_hnode_id(void) {return (uint64_t) hosts.get_seq_id();}
 
       iterator<hnode_t> begin_hosts(const char *dbname) const {return iterator<hnode_t>(hosts, dbname);}
 
@@ -491,7 +491,7 @@ class database_t {
 
       bool get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      u_long get_hcount(const char *dbname = NULL) const {return hosts.count(dbname);}
+      uint64_t get_hcount(const char *dbname = NULL) const {return hosts.count(dbname);}
 
       // visits
       bool put_vnode(const vnode_t& vnode);
@@ -502,14 +502,14 @@ class database_t {
 
       bool get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, const void *arg) const;
 
-      bool delete_visit(const keynode_t<u_long>& vnode);
+      bool delete_visit(const keynode_t<uint64_t>& vnode);
 
-      u_long get_vcount(const char *dbname = NULL) const {return visits.count(dbname);}
+      uint64_t get_vcount(const char *dbname = NULL) const {return visits.count(dbname);}
 
       //
       // downloads
       //
-      u_long get_dlnode_id(void) {return (u_long) downloads.get_seq_id();}
+      uint64_t get_dlnode_id(void) {return (uint64_t) downloads.get_seq_id();}
 
       iterator<dlnode_t> begin_downloads(const char *dbname) const {return iterator<dlnode_t>(downloads, dbname);}
 
@@ -521,9 +521,9 @@ class database_t {
 
       bool get_dlnode_by_value(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      u_long get_dlcount(const char *dbname = NULL) const {return downloads.count(dbname);}
+      uint64_t get_dlcount(const char *dbname = NULL) const {return downloads.count(dbname);}
 
-      bool delete_download(const keynode_t<u_long>& danode);
+      bool delete_download(const keynode_t<uint64_t>& danode);
 
       //
       // active downloads
@@ -534,12 +534,12 @@ class database_t {
 
       bool get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      u_long get_dacount(const char *dbname = NULL) const {return active_downloads.count(dbname);}
+      uint64_t get_dacount(const char *dbname = NULL) const {return active_downloads.count(dbname);}
 
       //
       // agents
       //
-      u_long get_anode_id(void) {return (u_long) agents.get_seq_id();}
+      uint64_t get_anode_id(void) {return (uint64_t) agents.get_seq_id();}
 
       iterator<anode_t> begin_agents(const char *dbname) const {return iterator<anode_t>(agents, dbname);}
 
@@ -551,12 +551,12 @@ class database_t {
 
       bool get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      u_long get_acount(const char *dbname = NULL) const {return agents.count(dbname);}
+      uint64_t get_acount(const char *dbname = NULL) const {return agents.count(dbname);}
 
       //
       // referrers
       //
-      u_long get_rnode_id(void) {return (u_long) referrers.get_seq_id();}
+      uint64_t get_rnode_id(void) {return (uint64_t) referrers.get_seq_id();}
 
       iterator<rnode_t> begin_referrers(const char *dbname) const {return iterator<rnode_t>(referrers, dbname);}
 
@@ -568,12 +568,12 @@ class database_t {
 
       bool get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      u_long get_rcount(const char *dbname = NULL) const {return referrers.count(dbname);}
+      uint64_t get_rcount(const char *dbname = NULL) const {return referrers.count(dbname);}
 
       //
       // search strings
       //
-      u_long get_snode_id(void) {return (u_long) search.get_seq_id();}
+      uint64_t get_snode_id(void) {return (uint64_t) search.get_seq_id();}
 
       iterator<snode_t> begin_search(const char *dbname) const {return iterator<snode_t>(search, dbname);}
 
@@ -585,12 +585,12 @@ class database_t {
 
       bool get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      u_long get_scount(const char *dbname = NULL) const {return search.count(dbname);}
+      uint64_t get_scount(const char *dbname = NULL) const {return search.count(dbname);}
 
       //
       // users
       //
-      u_long get_inode_id(void) {return (u_long) users.get_seq_id();}
+      uint64_t get_inode_id(void) {return (uint64_t) users.get_seq_id();}
 
       iterator<inode_t> begin_users(const char *dbname) const {return iterator<inode_t>(users, dbname);}
 
@@ -602,12 +602,12 @@ class database_t {
 
       bool get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      u_long get_icount(const char *dbname = NULL) const {return users.count(dbname);}
+      uint64_t get_icount(const char *dbname = NULL) const {return users.count(dbname);}
 
       //
       // errors
       //
-      u_long get_rcnode_id(void) {return (u_long) errors.get_seq_id();}
+      uint64_t get_rcnode_id(void) {return (uint64_t) errors.get_seq_id();}
 
       iterator<rcnode_t> begin_errors(const char *dbname) const {return iterator<rcnode_t>(errors, dbname);}
 
@@ -619,12 +619,12 @@ class database_t {
 
       bool get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      u_long get_errcount(const char *dbname = NULL) const {return errors.count(dbname);}
+      uint64_t get_errcount(const char *dbname = NULL) const {return errors.count(dbname);}
 
       //
       // daily hosts
       //
-      u_long get_tnode_id(void) {return (u_long) dhosts.get_seq_id();}
+      uint64_t get_tnode_id(void) {return (uint64_t) dhosts.get_seq_id();}
 
       bool clear_daily_hosts(void) {return !dhosts.truncate() ? true : false;}
 

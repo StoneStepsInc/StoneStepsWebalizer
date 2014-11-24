@@ -15,16 +15,16 @@
 hourly_t::hourly_t(u_int hour) : keynode_t<u_int>(hour)
 {
 	th_hits = th_files = th_pages = 0;
-	th_xfer = .0;
+	th_xfer = 0;
 }
 
-void hourly_t::reset(u_long nodeid)
+void hourly_t::reset(u_int nodeid)
 {
    keynode_t<u_int>::reset(nodeid);
    datanode_t<hourly_t>::reset();
 
 	th_hits = th_files = th_pages = 0;
-	th_xfer = .0;
+	th_xfer = 0;
 }
 
 //
@@ -33,7 +33,9 @@ void hourly_t::reset(u_long nodeid)
 
 u_int hourly_t::s_data_size(void) const
 {
-   return datanode_t<hourly_t>::s_data_size() + sizeof(u_long) * 3 + sizeof(double);
+   return datanode_t<hourly_t>::s_data_size() + 
+            sizeof(uint64_t) * 3 + 
+            sizeof(uint64_t);          // th_xfer
 }
 
 u_int hourly_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -92,5 +94,7 @@ u_int hourly_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
 
 u_int hourly_t::s_data_size(const void *buffer, bool fixver)
 {
-   return datanode_t<hourly_t>::s_data_size(buffer) + sizeof(u_long) * 3 + sizeof(double);
+   return datanode_t<hourly_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 3 + 
+            sizeof(uint64_t);          // th_xfer
 }

@@ -58,8 +58,8 @@ class webalizer_t {
       // search argument descriptor
       struct arginfo_t {
          const char  *name;
-         u_long      namelen; 
-         u_long      arglen;
+         u_int       namelen; 
+         u_int       arglen;
          
          arginfo_t(void) {name = NULL; namelen = arglen = 0;}
       };
@@ -87,10 +87,10 @@ class webalizer_t {
       // user agent string descriptor
       struct ua_token_t {
          const char  *start;     // argument start in the user agent string
-         u_long      namelen;    // name length (e.g. 7 for Mozilla/5.0)
-         u_long      mjverlen;   // major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
-         u_long      mnverlen;   // minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
-         u_long      arglen;     // entire argument length (e.g. 10 for Opera/9.25)
+         u_int       namelen;    // name length (e.g. 7 for Mozilla/5.0)
+         u_int       mjverlen;   // major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
+         u_int       mnverlen;   // minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
+         u_int       arglen;     // entire argument length (e.g. 10 for Opera/9.25)
          toktype_t   argtype;
          
          ua_token_t(void) {start = NULL; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
@@ -115,16 +115,16 @@ class webalizer_t {
       char        *f_cp;                           // pointer into the buffer
       int         f_end;                           // count to end of buffer
 
-      u_long      total_rec;                       // Total Records Processed
-      u_long      total_ignore;                    // Total Records Ignored
-      u_long      total_bad;                       // Total Bad Records
+      uint64_t      total_rec;                       // Total Records Processed
+      uint64_t      total_ignore;                    // Total Records Ignored
+      uint64_t      total_bad;                       // Total Bad Records
 
-      u_long      start_ts;                        // start of the run
-      u_long      end_ts;                          // end of the run
+      uint64_t      start_ts;                        // start of the run
+      uint64_t      end_ts;                          // end of the run
 
-      u_long      dns_time;                        // DNS wait time
-      u_long      mnt_time;                        // maintenance time (saving state, etc)
-      u_long      rpt_time;                        // report time
+      uint64_t      dns_time;                        // DNS wait time
+      uint64_t      mnt_time;                        // maintenance time (saving state, etc)
+      uint64_t      rpt_time;                        // report time
       
       vector_t<ua_token_t> ua_args;                // user agent argument tokens
       vector_t<u_int>      ua_groups;              // user ageng group indexes (ua_args)
@@ -164,22 +164,22 @@ class webalizer_t {
       //
       // put_xnode methods
       //
-      hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, double xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
-      hnode_t *put_hnode(const string_t& grpname, u_long hits, u_long files, u_long pages, double xfer, u_long visitlen, bool& newnode);
+      hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
+      hnode_t *put_hnode(const string_t& grpname, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
 
-      rnode_t *put_rnode(const string_t&, nodetype_t type, u_long, bool newvisit, bool& newnode);
+      rnode_t *put_rnode(const string_t&, nodetype_t type, uint64_t, bool newvisit, bool& newnode);
 
-      unode_t *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, double xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
+      unode_t *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
 
-      anode_t *put_anode(const string_t& str, nodetype_t type, double xfer, bool newvisit, bool robot, bool& newnode);
+      anode_t *put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode);
 
       snode_t *put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode);
 
-      inode_t *put_inode(const string_t& str, nodetype_t type, bool fileurl, double xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
+      inode_t *put_inode(const string_t& str, nodetype_t type, bool fileurl, uint64_t xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
 
-      rcnode_t *put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, u_long count, bool *newnode = NULL);
+      rcnode_t *put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode = NULL);
 
-      dlnode_t *put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, u_long proctime, u_long xfer, hnode_t& hnode, bool& newnode);
+      dlnode_t *put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, hnode_t& hnode, bool& newnode);
 
       //
       //

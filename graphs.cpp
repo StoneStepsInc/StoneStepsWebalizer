@@ -239,8 +239,8 @@ int graph_t::year_graph6x(const history_t& history,
    int x1,y1,x2;
    u_int s_mth;
    u_int textsize, offset;
-   u_long maxval=1;
-   double fmaxval=0.0;
+   uint64_t maxval=1;
+   uint64_t fmaxval=0;
    u_int sleft, sright, msleft, msright;
    const hist_month_t *hptr;
    history_t::const_iterator iter;
@@ -297,7 +297,7 @@ int graph_t::year_graph6x(const history_t& history,
 
    // y-axis legend
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%lu", maxval);
+   sprintf(maxvaltxt, "%llu", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, ML-font_size_small_px-1, MT+GBW, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                          /* print color coded legends? */
@@ -383,7 +383,7 @@ int graph_t::year_graph6x(const history_t& history,
       if (hptr->visits > maxval) maxval = hptr->visits;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%lu", maxval);
+   sprintf(maxvaltxt, "%llu", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, MT, maxvaltxt, c_legend, false, NULL);
 
    /* visits */
@@ -414,14 +414,14 @@ int graph_t::year_graph6x(const history_t& history,
       draw_graph_bar(im, x1, y1, x2, MT+GBW+MSPT+MSPH-1, c_hosts);
    }
 
-   fmaxval=0.0;
+   fmaxval=0;
    iter = history.begin();
    while(iter.more()) {
       hptr = &iter.next();
       if(hptr->xfer > fmaxval) fmaxval = hptr->xfer;         /* get max val    */
    }
-   if (fmaxval <= 0.0) fmaxval = 1.0;
-   sprintf(maxvaltxt, "%.0f", fmaxval);
+   if (fmaxval <= 0) fmaxval = 1;
+   sprintf(maxvaltxt, "%.0f", fmaxval/1024.);
    _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, YGHH, maxvaltxt, c_legend, false, NULL);
 
    /* transfer */
@@ -464,10 +464,10 @@ int graph_t::month_graph6(const char *fname,          // filename
 {
    u_int i;
    int x1,y1,x2;
-   u_long maxval=0;
-   double fmaxval=0.0;
+   uint64_t maxval=0;
+   uint64_t fmaxval=0;
    u_int offset, textsize;
-   u_long julday;
+   uint64_t julday;
 
    /* calc julian date for month */
    julday = tstamp_t::wday(tstamp_t::jday(year, month, 1));
@@ -509,7 +509,7 @@ int graph_t::month_graph6(const char *fname,          // filename
        if (daily[i].tm_pages > maxval) maxval = daily[i].tm_pages;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%lu", maxval);
+   sprintf(maxvaltxt, "%llu", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                           /* Print color coded legends? */
@@ -587,7 +587,7 @@ int graph_t::month_graph6(const char *fname,          // filename
       if (daily[i].tm_visits > maxval) maxval = daily[i].tm_visits;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%lu", maxval);
+   sprintf(maxvaltxt, "%llu", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 180, maxvaltxt, c_legend, false, NULL);
    
    /* data 6 */
@@ -613,16 +613,16 @@ int graph_t::month_graph6(const char *fname,          // filename
    }
 
    /* data4 */
-   fmaxval=0.0;
+   fmaxval=0;
    for (i=0; i<31; i++)
       if (daily[i].tm_xfer > fmaxval) fmaxval = daily[i].tm_xfer;
-   if (fmaxval <= 0.0) fmaxval = 1.0;
-   sprintf(maxvaltxt, "%.0f", fmaxval/1024);
+   if (fmaxval <= 0) fmaxval = 1;
+   sprintf(maxvaltxt, "%.0f", fmaxval/1024.);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 280, maxvaltxt, c_legend, false, NULL);
    
    for (i=0; i<31; i++)
    {
-      percent = daily[i].tm_xfer / fmaxval;
+      percent = (double) daily[i].tm_xfer / (double) fmaxval;
       if (percent <= 0.0) continue;
       x1 = 26 + (i*15);
       x2 = x1 + 10;
@@ -654,12 +654,12 @@ int graph_t::day_graph3(const char *fname,
 {
    u_int i;
    int x1,y1,x2, baridx;
-   u_long maxval=0, maxfer = 0;
+   uint64_t maxval=0, maxfer = 0;
    u_int offset, textsize;
-   u_long xfer_ul[24];
-   u_long data1[24], data2[24], data3[24];
+   uint64_t xfer_ul[24];
+   uint64_t data1[24], data2[24], data3[24];
    u_int colors[] = {c_hits, c_files, c_pages};
-   const u_long *data[] = {data1, data2, data3};
+   const uint64_t *data[] = {data1, data2, data3};
 
    /* initalize the graph */
    init_graph(title, 512, 340);
@@ -669,7 +669,7 @@ int graph_t::day_graph3(const char *fname,
       data1[i] = hourly[i].th_hits;
       data2[i] = hourly[i].th_files;
       data3[i] = hourly[i].th_pages;
-      xfer_ul[i] = (u_long) (hourly[i].th_xfer / 1024. + 0.5);
+      xfer_ul[i] = (uint64_t) (hourly[i].th_xfer / 1024. + 0.5);
    }
 
    draw_section_line(im, 512, 220);
@@ -700,10 +700,10 @@ int graph_t::day_graph3(const char *fname,
    if (maxval <= 0) maxval = 1;
    if (maxfer <= 0) maxfer = 1;
 
-   sprintf(maxvaltxt, "%lu", maxval);
+   sprintf(maxvaltxt, "%llu", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
    
-   sprintf(maxvaltxt, "%lu", maxfer);
+   sprintf(maxvaltxt, "%llu", maxfer);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                          /* print color coded legends? */
@@ -771,7 +771,7 @@ int graph_t::day_graph3(const char *fname,
 /*                                                               */
 /*****************************************************************/
 
-int graph_t::pie_chart(const char *fname, const char *title, u_long t_val, const u_long data1[], const char *legend[])
+int graph_t::pie_chart(const char *fname, const char *title, uint64_t t_val, const uint64_t data1[], const char *legend[])
 {
    u_int *pie_colors[] = {&green, &orange, &blue, &red, &cyan, &yellow, &purple, &ltgreen, &ltpurple, &brown};
    double percent, t_percent = 0.;
@@ -936,12 +936,12 @@ void graph_t::init_graph(const char *title, int xsize, int ysize)
    return;
 }
 
-u_long graph_t::make_color(const char *str)
+uint32_t graph_t::make_color(const char *str)
 {
    return (str && *str) ? strtoul(str, NULL, 16) : DEFCOLOR;
 }
 
-bool graph_t::is_default_color(u_long color)
+bool graph_t::is_default_color(uint64_t color)
 {
    return (color & DEFCOLOR) ? true : false;
 }

@@ -107,7 +107,7 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen)
 	return destlen;
 }
 
-u_long usec2msec(u_long usec)
+uint64_t usec2msec(uint64_t usec)
 {
 	return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
 }
@@ -474,14 +474,14 @@ u_char from_hex(u_char c)
 /*                                                               */
 /*****************************************************************/
 
-u_long jdate1(int year, int month, int day)
+uint64_t jdate1(int year, int month, int day)
 {
-   u_long days;                      /* value returned */
+   uint64_t days;                      /* value returned */
    static const int mtable[] = {0,31,59,90,120,151,181,212,243,273,304,334};
 
    /* First, calculate base number including leap and Centenial year stuff */
 
-   days = ((u_long)year*365) + day + mtable[month-1] + year/4 - year/100 + year/400;
+   days = ((uint64_t)year*365) + day + mtable[month-1] + year/4 - year/100 + year/400;
 
    /* now adjust for leap year before March 1st */
 
@@ -519,7 +519,7 @@ const char *cstr2str(const char *cp, string_t& str)
 // Converts unsigned long value to a decimal string. Returns the
 // number of characters in the resulting string
 //
-u_int ul2str(u_long value, char *str)
+u_int ul2str(uint64_t value, char *str)
 {
    char *cp1, *cp2, *cp3, tmp;
 
@@ -544,10 +544,10 @@ u_int ul2str(u_long value, char *str)
    return cp3-str;
 }
 
-u_long str2ul(const char *str, const char **eptr, u_int len)
+uint64_t str2ul(const char *str, const char **eptr, u_int len)
 {
    const char *cp = str;
-   u_long value;
+   uint64_t value;
 
    if(eptr)
       *eptr = NULL;
@@ -568,10 +568,10 @@ u_long str2ul(const char *str, const char **eptr, u_int len)
    return value;
 }
 
-long str2l(const char *str, const char **eptr, u_int len)
+int64_t str2l(const char *str, const char **eptr, u_int len)
 {
    const char *cp = str;
-   u_long value;
+   uint64_t value;
    bool neg = false;
 
    if(str == NULL)
@@ -587,7 +587,7 @@ long str2l(const char *str, const char **eptr, u_int len)
 
    value = str2ul(cp, eptr, len);
 
-   return neg ? -((long)value) : value;
+   return neg ? -((int64_t)value) : value;
 }
 
 /*********************************************/
@@ -677,9 +677,9 @@ void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzna
 /* CTRY_IDX - create unique # from domain    */
 /*********************************************/
 
-u_long ctry_idx(const char *str)
+uint64_t ctry_idx(const char *str)
 {
-   u_long idx=0;
+   uint64_t idx=0;
    const char *cp1=str;
 
    if(str) {
@@ -694,7 +694,7 @@ u_long ctry_idx(const char *str)
    return idx;
 }
 
-string_t idx_ctry(u_long idx)
+string_t idx_ctry(uint64_t idx)
 {
    char ch, buf[7], *cp;
    string_t ccode;
@@ -878,7 +878,7 @@ bool is_ip4_address(const char *cp)
    return gcnt == 4 ? true : false;
 }
 
-u_long elapsed(u_long stime, u_long etime)
+uint64_t elapsed(uint64_t stime, uint64_t etime)
 {
    return stime < etime ? etime-stime : (~stime+1)+etime;
 }

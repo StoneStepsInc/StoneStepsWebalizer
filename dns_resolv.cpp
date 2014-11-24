@@ -259,7 +259,7 @@ void dns_resolver_t::process_dnode(DNODEPTR dnode)
 
 funcexit:
 	if(debug_mode)
-		fprintf(stderr, "[%04x] DNS lookup: %s: %s (%d sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), time(NULL)-dnode->tstamp);
+		fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -441,7 +441,7 @@ void dns_resolver_t::dns_wait(void)
       return;
 
    // otherwise wait for all of them to finish
-   if(event_wait(dns_done_event, (u_long) -1) == EVENT_OK)
+   if(event_wait(dns_done_event, (uint32_t) -1) == EVENT_OK)
       return;
 
    if(verbose)
@@ -725,7 +725,7 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
             }
 
 				if (debug_mode)
-					fprintf(stderr,"[%04x] ... found: %s (age: %0.2lf days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
+					fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
 				retval = true;
 			}
 			break;

@@ -20,19 +20,19 @@
 //
 // -----------------------------------------------------------------------
 struct daily_t : public keynode_t<u_int>, public datanode_t<daily_t> {
-      u_long tm_hits;
-      u_long tm_files;
-      u_long tm_pages;
-      u_long tm_hosts;
-      u_long tm_visits;
+      uint64_t tm_hits;
+      uint64_t tm_files;
+      uint64_t tm_pages;
+      uint64_t tm_hosts;
+      uint64_t tm_visits;
       
-      u_long h_hits_max;         // maximum hits per hour
-      u_long h_files_max;        // maximum files per hour
-      u_long h_pages_max;        // maximum pages per hour
-      u_long h_visits_max;       // maximum visits per hour
-      u_long h_hosts_max;        // maximum hosts per hour
+      uint64_t h_hits_max;         // maximum hits per hour
+      uint64_t h_files_max;        // maximum files per hour
+      uint64_t h_pages_max;        // maximum pages per hour
+      uint64_t h_visits_max;       // maximum visits per hour
+      uint64_t h_hosts_max;        // maximum hosts per hour
 
-      double h_xfer_max;         // maximum transfer per hour
+      uint64_t h_xfer_max;         // maximum transfer per hour
       
       double h_hits_avg;         // average hits per hour
       double h_files_avg;        // average files per hour
@@ -42,7 +42,7 @@ struct daily_t : public keynode_t<u_int>, public datanode_t<daily_t> {
       
       double h_xfer_avg;
       
-      double tm_xfer;
+      uint64_t tm_xfer;
       
       u_short td_hours;
 
@@ -52,7 +52,7 @@ struct daily_t : public keynode_t<u_int>, public datanode_t<daily_t> {
       public:
          daily_t(u_int month = 0);
 
-         void reset(u_long nodeid);
+         void reset(u_int nodeid);
 
          //
          // serialization

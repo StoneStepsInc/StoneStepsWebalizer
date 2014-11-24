@@ -13,7 +13,7 @@
 #include "serialize.h"
 #include "preserve.h"
 
-totals_t::totals_t(void) : keynode_t<u_long>(1)
+totals_t::totals_t(void) : keynode_t<uint64_t>(1)
 {
    a_hitptime = 0.0;							       /* average hit processing time */
    m_hitptime = 0.0;							       /* maximum hit processing time */
@@ -22,13 +22,13 @@ totals_t::totals_t(void) : keynode_t<u_long>(1)
    a_pageptime = 0.0;
    m_pageptime = 0.0;
 
-   max_v_xfer = 0.;
+   max_v_xfer = 0;
 
    max_v_hits = 0;
    max_v_files = 0;
    max_v_pages = 0;
 
-   max_hv_xfer = 0.;
+   max_hv_xfer = 0;
 
    max_hv_hits = 0;
    max_hv_files = 0;
@@ -45,7 +45,7 @@ totals_t::totals_t(void) : keynode_t<u_long>(1)
    ht_hits = 0;                                /* hourly hits totals       */
    ht_files = 0;
    ht_pages = 0;
-   ht_xfer = .0;
+   ht_xfer = 0;
    ht_visits = 0;
    ht_hosts = 0;
    hm_hit = 0;                               
@@ -81,16 +81,16 @@ totals_t::totals_t(void) : keynode_t<u_long>(1)
    u_entry = 0;
    u_exit = 0;
 
-   t_xfer = 0.0;                              /* monthly total xfer value */
+   t_xfer = 0;                              /* monthly total xfer value */
 
    t_rhits = t_rfiles = t_rpages = t_rerrors = 0;
    t_rvisits = 0;
    t_rhosts = 0;
-   t_rxfer = 0.0;
+   t_rxfer = 0;
    
    t_shosts = 0;
    t_spmhits = t_sfiles = t_spages = 0;
-   t_sxfer = .0;
+   t_sxfer = 0;
 
    t_grp_hosts = 0;
    t_grp_urls = 0;
@@ -111,10 +111,10 @@ void totals_t::init_counters(void)
    t_visit_avg = t_vconv_avg = .0;
    t_visit_max = t_vconv_max = 0;
    
-   max_v_xfer = 0.;
-   max_hv_xfer = 0.;
+   max_v_xfer = 0;
+   max_hv_xfer = 0;
 	a_hitptime = m_hitptime = a_fileptime = m_fileptime = a_pageptime = m_pageptime = 0.0;
-   t_xfer = 0.0;
+   t_xfer = 0;
    
    dt_hosts = 0;
    
@@ -130,14 +130,14 @@ void totals_t::init_counters(void)
    
    ht_hits = ht_files = ht_pages = 0;
    ht_visits = ht_hosts = 0;
-   ht_xfer = .0;
+   ht_xfer = 0;
    hm_hit = 0;
    
    t_rhits = t_rfiles = t_rpages = t_rerrors = 0;
-   t_rxfer = 0.0;
+   t_rxfer = 0;
    
    t_spmhits = t_sfiles = t_spages = 0;
-   t_sxfer = .0;
+   t_sxfer = 0;
 
    t_grp_hosts = 0;
    t_grp_urls = 0;
@@ -155,31 +155,31 @@ u_int totals_t::s_data_size(void) const
    return datanode_t<totals_t>::s_data_size() + 
             s_size_of(cur_tstamp)+     // cur_tstamp
             sizeof(u_int)  * 2   +     // f_day, l_day
-            sizeof(u_long) * 3   +     // max_v_hits, max_v_files, max_v_pages
-            sizeof(double)       +     // max_v_xfer
-            sizeof(u_long) * 8   +     // t_hit, t_file, t_page, t_hosts, t_url, t_ref, t_agent, t_user
-            sizeof(u_long) * 5   +     // t_err, t_dlcount, t_srchits, t_entry, t_exit
-            sizeof(u_long) * 2   +     // u_entry, u_exit
-            sizeof(u_long) * 3   +     // dt_hosts, ht_hits, hm_hit
-            sizeof(u_long)       +     // t_visits
-            sizeof(double)       +     // t_xfer
+            sizeof(uint64_t) * 3   +     // max_v_hits, max_v_files, max_v_pages
+            sizeof(uint64_t)       +     // max_v_xfer
+            sizeof(uint64_t) * 8   +     // t_hit, t_file, t_page, t_hosts, t_url, t_ref, t_agent, t_user
+            sizeof(uint64_t) * 5   +     // t_err, t_dlcount, t_srchits, t_entry, t_exit
+            sizeof(uint64_t) * 2   +     // u_entry, u_exit
+            sizeof(uint64_t) * 3   +     // dt_hosts, ht_hits, hm_hit
+            sizeof(uint64_t)       +     // t_visits
+            sizeof(uint64_t)       +     // t_xfer
             sizeof(double)       +     // t_visit_avg
             sizeof(double) * 6   +     // a_hitptime, m_hitptime, a_fileptime, m_fileptime, a_pageptime, m_pageptime
-            sizeof(u_long) * 2   +     // t_visits_end, t_visit_max
-            sizeof(u_long) * 2   +     // t_visits_conv, t_hosts_conv
-            sizeof(u_long) * 6   +     // t_rhits, t_rfiles, t_rpages, t_rerrors, t_rvisits, t_rhosts
-            sizeof(double)       +     // t_rxfer
+            sizeof(uint64_t) * 2   +     // t_visits_end, t_visit_max
+            sizeof(uint64_t) * 2   +     // t_visits_conv, t_hosts_conv
+            sizeof(uint64_t) * 6   +     // t_rhits, t_rfiles, t_rpages, t_rerrors, t_rvisits, t_rhosts
+            sizeof(uint64_t)       +     // t_rxfer
             sizeof(double)       +     // t_vconv_avg
-            sizeof(u_long)       +     // t_vconv_max
-            sizeof(u_long) * 4   +     // ht_files, ht_pages, ht_visits, ht_hosts
-            sizeof(double)       +     // ht_xfer
-            sizeof(u_long) * 5   +     // t_hvisits_end, t_rvisits_end, t_svisits_end, t_search, t_downloads
-            sizeof(u_long) * 5   +     // t_grp_hosts, t_grp_urls, t_grp_users, t_grp_refs, t_grp_agents
-            sizeof(u_long)       +     // t_shosts
-            sizeof(u_long) * 3   +     // t_spmhits, t_sfiles, t_spages
-            sizeof(double)       +     // t_sxfer
-            sizeof(u_long) * 3   +     // max_hv_hits, max_hv_files, max_hv_pages
-            sizeof(double)       ;     // max_hv_xfer            
+            sizeof(uint64_t)       +     // t_vconv_max
+            sizeof(uint64_t) * 4   +     // ht_files, ht_pages, ht_visits, ht_hosts
+            sizeof(uint64_t)       +     // ht_xfer
+            sizeof(uint64_t) * 5   +     // t_hvisits_end, t_rvisits_end, t_svisits_end, t_search, t_downloads
+            sizeof(uint64_t) * 5   +     // t_grp_hosts, t_grp_urls, t_grp_users, t_grp_refs, t_grp_agents
+            sizeof(uint64_t)       +     // t_shosts
+            sizeof(uint64_t) * 3   +     // t_spmhits, t_sfiles, t_spages
+            sizeof(uint64_t)       +     // t_sxfer
+            sizeof(uint64_t) * 3   +     // max_hv_hits, max_hv_files, max_hv_pages
+            sizeof(uint64_t)       ;     // max_hv_xfer            
 }
 
 u_int totals_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -303,7 +303,7 @@ u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    if(version >= 6)
       ptr = deserialize(ptr, cur_tstamp);
    else {
-      u_long tmp;
+      uint64_t tmp;
       ptr = deserialize(ptr, tmp);
       cur_tstamp.reset((time_t) tmp);
    }
@@ -364,7 +364,7 @@ u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
       t_rpages = 0;
       t_rerrors = 0;
       t_rvisits = 0;
-      t_rxfer = .0;
+      t_rxfer = 0;
    }
    
    if(version >= 3) {
@@ -386,7 +386,7 @@ u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
       t_vconv_avg = .0;
       t_vconv_max = 0;
       ht_files = ht_pages = 0;
-      ht_xfer = .0;
+      ht_xfer = 0;
       ht_visits = 0;
       ht_hosts = 0;
    }
@@ -438,7 +438,7 @@ u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
       t_sfiles = 0;
       t_spages = 0;
       t_shosts = 0;
-      t_sxfer = .0;
+      t_sxfer = 0;
 
       max_hv_hits = 0;
       max_hv_files = 0;
@@ -460,53 +460,53 @@ u_int totals_t::s_data_size(const void *buffer)
    if(version >= 6)
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // cur_tstamp
    else
-      datasize += sizeof(u_long);   // cur_tstamp
+      datasize += sizeof(uint64_t);   // cur_tstamp
   
    datasize += 
             sizeof(u_int)  *  2  +  // first, last day
-            sizeof(u_long) *  3  +  // max hits, files, pages
-            sizeof(double)       +  // max_v_xfer
-            sizeof(u_long) *  8  +  // t_hit, t_file, t_page, t_hosts, t_url, t_ref, t_agent, t_user 
-            sizeof(u_long) *  5  +  // t_err, t_dlcount, t_srchits, t_entry, t_exit
-            sizeof(u_long) *  2  +  // tvisits, t_visits_end
-            sizeof(u_long) *  2  +  // u_entry, u_exit
-            sizeof(double)       +  // t_xfer
+            sizeof(uint64_t) *  3  +  // max hits, files, pages
+            sizeof(uint64_t)       +  // max_v_xfer
+            sizeof(uint64_t) *  8  +  // t_hit, t_file, t_page, t_hosts, t_url, t_ref, t_agent, t_user 
+            sizeof(uint64_t) *  5  +  // t_err, t_dlcount, t_srchits, t_entry, t_exit
+            sizeof(uint64_t) *  2  +  // tvisits, t_visits_end
+            sizeof(uint64_t) *  2  +  // u_entry, u_exit
+            sizeof(uint64_t)       +  // t_xfer
             sizeof(double)       +  // t_visit_avg
-            sizeof(u_long)       +  // t_visit_max
+            sizeof(uint64_t)       +  // t_visit_max
             sizeof(double) *  6  +  // a_hitptime, m_hitptime, a_fileptime, m_fileptime, a_pageptime, m_pageptime 
-            sizeof(u_long)       +  // dt_hosts
-            sizeof(u_long) *  2  ;  // ht_hits, hm_hit 
+            sizeof(uint64_t)       +  // dt_hosts
+            sizeof(uint64_t) *  2  ;  // ht_hits, hm_hit 
 
    if(version < 2)
       return datasize;
 
-   datasize += sizeof(u_long) * 5 + // t_rhits, t_rfiles, t_rpages, t_rerrors, t_rvisits 
-            sizeof(double);         // t_rxfer (v2)
+   datasize += sizeof(uint64_t) * 5 + // t_rhits, t_rfiles, t_rpages, t_rerrors, t_rvisits 
+            sizeof(uint64_t);         // t_rxfer (v2)
    
    if(version < 3)
       return datasize;
       
    datasize += sizeof(double)    +  // t_vconv_avg 
-            sizeof(u_long) * 4   +  // t_visits_conv, t_hosts_conv, t_rhosts, t_vconv_max 
-            sizeof(u_long) * 4   +  // ht_files, ht_pages, ht_visits, ht_hosts
-            sizeof(double);         // ht_xfer
+            sizeof(uint64_t) * 4   +  // t_visits_conv, t_hosts_conv, t_rhosts, t_vconv_max 
+            sizeof(uint64_t) * 4   +  // ht_files, ht_pages, ht_visits, ht_hosts
+            sizeof(uint64_t);         // ht_xfer
 
    if(version < 4)
       return datasize;
    
    datasize += 
-            sizeof(u_long) * 5   +  // t_hvisits_end, t_rvisits_end, t_svisits_end, t_search, t_downloads
-            sizeof(u_long) * 5   ;  // t_grp_hosts, t_grp_urls, t_grp_users, t_grp_refs, t_grp_agents
+            sizeof(uint64_t) * 5   +  // t_hvisits_end, t_rvisits_end, t_svisits_end, t_search, t_downloads
+            sizeof(uint64_t) * 5   ;  // t_grp_hosts, t_grp_urls, t_grp_users, t_grp_refs, t_grp_agents
             
    if(version < 5)
       return datasize;
    
    datasize += 
-            sizeof(u_long)       +  // t_shosts
-            sizeof(u_long) * 3   +  // t_spmhits, t_sfiles, t_spages
-            sizeof(double)       +  // t_sxfer
-            sizeof(u_long) * 3   +  // max_hv_hits, max_vh_files, max_vh_pages
-            sizeof(double)       ;  // max_hv_xfer
+            sizeof(uint64_t)       +  // t_shosts
+            sizeof(uint64_t) * 3   +  // t_spmhits, t_sfiles, t_spages
+            sizeof(uint64_t)       +  // t_sxfer
+            sizeof(uint64_t) * 3   +  // max_hv_hits, max_vh_files, max_vh_pages
+            sizeof(uint64_t)       ;  // max_hv_xfer
 
    return datasize;
 }

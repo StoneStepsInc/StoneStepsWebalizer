@@ -24,7 +24,7 @@
 //
 
 template <typename node_t, typename key_t>
-hash_table<node_t, key_t>::hash_table(u_long maxhash, eval_cb_t evalcb, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), evalcb(evalcb), swapcb(swapcb), cbarg(cbarg)
+hash_table<node_t, key_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), evalcb(evalcb), swapcb(swapcb), cbarg(cbarg)
 {
    count = 0;
    emptycnt = maxhash;
@@ -108,9 +108,9 @@ bool hash_table<node_t, key_t>::swap_out_bucket(bucket_t& bucket)
 }
 
 template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::put_node(u_long hashval, node_t *nptr)
+node_t *hash_table<node_t, key_t>::put_node(uint64_t hashval, node_t *nptr)
 {
-   u_long hashidx;
+   uint64_t hashidx;
    node_t **hptr;
 
    if(nptr == NULL)
@@ -134,9 +134,9 @@ node_t *hash_table<node_t, key_t>::put_node(u_long hashval, node_t *nptr)
 }
 
 template <typename node_t, typename key_t>
-void hash_table<node_t, key_t>::pop_node(u_long hashval, node_t *nptr)
+void hash_table<node_t, key_t>::pop_node(uint64_t hashval, node_t *nptr)
 {
-   u_long hashidx;
+   uint64_t hashidx;
    node_t **pptr, *cptr;
 
    if(nptr == NULL)
@@ -160,7 +160,7 @@ void hash_table<node_t, key_t>::pop_node(u_long hashval, node_t *nptr)
 }
 
 template <typename node_t, typename key_t>
-const node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key) const
+const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key) const
 {
    node_t **pptr, *nptr, *prev;
 
@@ -181,7 +181,7 @@ const node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& 
 }
 
 template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key, nodetype_t type)
+node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key, nodetype_t type)
 {
    node_t **pptr, *nptr, *prev;
 
@@ -204,7 +204,7 @@ node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const key_t& key, n
 }
 
 template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(u_long hashval, const void *params)
+node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const void *params)
 {
    node_t **pptr, *nptr, *prev;
 
@@ -229,7 +229,7 @@ void hash_table<node_t, key_t>::clear(void)
 {
    /* free memory used by hash table */
    node_t *nptr, *tptr;
-   u_long index;
+   uint64_t index;
 
    for(index = 0; index < maxhash; index++) {
       if((nptr = htab[index].head) == NULL)
@@ -251,7 +251,7 @@ void hash_table<node_t, key_t>::clear(void)
 }
 
 template <typename node_t, typename key_t>
-u_long hash_table<node_t, key_t>::load_array(const node_t *array[]) const
+uint64_t hash_table<node_t, key_t>::load_array(const node_t *array[]) const
 {
    node_t *nptr;
    u_int hashidx, arridx;
@@ -270,7 +270,7 @@ u_long hash_table<node_t, key_t>::load_array(const node_t *array[]) const
 }
 
 template <typename node_t, typename key_t>
-u_long hash_table<node_t, key_t>::load_array(const node_t *array[], nodetype_t type, u_long& typecnt) const
+uint64_t hash_table<node_t, key_t>::load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const
 {
    const node_t *nptr, **pptr;
    u_int hashidx, arridx1, arridx2, skipcnt;

@@ -22,19 +22,19 @@
 //
 // -----------------------------------------------------------------------
 template <typename node_t> 
-struct base_node : public htab_node_t<node_t>, public keynode_t<u_long>, public datanode_t<node_t> {
+struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, public datanode_t<node_t> {
       string_t string;              // node value (URL, user agent, etc)
       nodetype_t flag;              // object type (REG, GRP)
 
       public:
-         base_node(u_long nodeid = 0);
+         base_node(uint64_t nodeid = 0);
          base_node(const base_node& node);
          base_node(const char *str);
          base_node(const string_t& str);
 
          virtual ~base_node(void) {}
 
-         void reset(u_long nodeid = 0);
+         void reset(uint64_t nodeid = 0);
 
          const string_t& key(void) const {return string;}
 
@@ -43,24 +43,24 @@ struct base_node : public htab_node_t<node_t>, public keynode_t<u_long>, public 
          //
          // serialization
          //
-         //    key  : nodeid (u_long)
+         //    key  : nodeid (uint64_t)
          //    data : flag (u_char), string (string_t)
-         //    value: hash(string) (u_long)
+         //    value: hash(string) (uint64_t)
          //
          u_int s_data_size(void) const;
 
          u_int s_pack_data(void *buffer, u_int bufsize) const;
          u_int s_unpack_data(const void *buffer, u_int bufsize);
 
-         u_long s_hash_value(void) const;
+         uint64_t s_hash_value(void) const;
 
-         int s_compare_value(const void *buffer, u_int bufsize) const;
+         int64_t s_compare_value(const void *buffer, u_int bufsize) const;
 
          static u_int s_data_size(const void *buffer);
 
          static const void *s_field_value(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_value_hash(const void *buf1, const void *buf2);
+         static int64_t s_compare_value_hash(const void *buf1, const void *buf2);
 
          static bool s_is_group(const void *buffer, u_int bufsize);
 };

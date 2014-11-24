@@ -29,14 +29,14 @@ typedef struct unode_t : public base_node<unode_t> {
       bool     target : 1;           // Target URL?
       u_char   urltype;					 /* URL type (e.g. URL_TYPE_HTTP)*/
       u_short  pathlen;              /* URL path length              */
-      u_long   count;                /* requests counter             */
-      u_long   files;                /* files counter                */
-      u_long   entry;                /* entry page counter           */
-      u_long   exit;                 /* exit page counter            */
+      uint64_t   count;                /* requests counter             */
+      uint64_t   files;                /* files counter                */
+      uint64_t   entry;                /* entry page counter           */
+      uint64_t   exit;                 /* exit page counter            */
 
-      u_long   vstref;               // visit references
+      uint64_t   vstref;               // visit references
 
-      double   xfer;                 /* xfer size in bytes           */
+      uint64_t xfer;                 /* xfer size in bytes           */
       double   avgtime;				    // average processing time (sec)
       double   maxtime;              // maximum processing time (sec)
 
@@ -45,11 +45,11 @@ typedef struct unode_t : public base_node<unode_t> {
          typedef void (*s_unpack_cb_t)(unode_t& unode, void *arg);
 
       public:
-         unode_t(u_long nodeid = 0);
+         unode_t(uint64_t nodeid = 0);
          unode_t(const unode_t& unode);
          unode_t(const char *urlpath, const char *srchargs);
 
-         void reset(u_long nodeid = 0);
+         void reset(uint64_t nodeid = 0);
 
          //
          // serialization
@@ -66,10 +66,10 @@ typedef struct unode_t : public base_node<unode_t> {
          static const void *s_field_entry(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_exit(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_xfer(const void *buf1, const void *buf2);
-         static int s_compare_hits(const void *buf1, const void *buf2);
-         static int s_compare_entry(const void *buf1, const void *buf2);
-         static int s_compare_exit(const void *buf1, const void *buf2);
+         static int64_t s_compare_xfer(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_entry(const void *buf1, const void *buf2);
+         static int64_t s_compare_exit(const void *buf1, const void *buf2);
 } *UNODEPTR;
 
 //

@@ -17,8 +17,8 @@
 /* referrer hash table struct   */
 typedef struct rnode_t : public base_node<rnode_t> {   
       bool     hexenc;               // any %xx sequences?
-      u_long   count;
-      u_long   visits;
+      uint64_t   count;
+      uint64_t   visits;
 
       public:
          typedef void (*s_unpack_cb_t)(rnode_t& rnode, void *arg);
@@ -40,7 +40,7 @@ typedef struct rnode_t : public base_node<rnode_t> {
          static const void *s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *RNODEPTR;
 
 //

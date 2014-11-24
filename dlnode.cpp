@@ -25,7 +25,8 @@ dlnode_t::dlnode_t(void) : base_node<dlnode_t>()
 {
    count = 0;
    sumhits = 0;
-   sumxfer = avgxfer = 0;
+   sumxfer = 0;
+   avgxfer = 0.;
    avgtime = sumtime = 0;
 
    download = NULL;
@@ -38,7 +39,8 @@ dlnode_t::dlnode_t(const char *name, hnode_t *nptr) : base_node<dlnode_t>(name)
 {
    count = 0;
    sumhits = 0;
-   sumxfer = avgxfer = 0;
+   sumxfer = 0;
+   avgxfer = 0.;
    avgtime = sumtime = 0;
 
    download = NULL;
@@ -70,13 +72,14 @@ dlnode_t::~dlnode_t(void)
    set_host(NULL);
 }
 
-void dlnode_t::reset(u_long nodeid)
+void dlnode_t::reset(uint64_t nodeid)
 {
    base_node<dlnode_t>::reset(nodeid);
 
    count = 0;
    sumhits = 0;
-   sumxfer = avgxfer = 0;
+   sumxfer = 0;
+   avgxfer = 0.;
    avgtime = sumtime = 0;
 
    download = NULL;
@@ -107,11 +110,12 @@ void dlnode_t::set_host(hnode_t *nptr)
 u_int dlnode_t::s_data_size(void) const
 {
    return base_node<dlnode_t>::s_data_size() + 
-            sizeof(u_long) * 2 +
-            sizeof(double) * 4 +
-            sizeof(u_long)     +
+            sizeof(uint64_t) * 2 +
+            sizeof(double) * 3 +
+            sizeof(uint64_t) +        // sumxfer
+            sizeof(uint64_t)     +
             sizeof(u_char)     +
-            sizeof(u_long);         // host name
+            sizeof(uint64_t);         // host name
 }
 
 u_int dlnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -143,7 +147,7 @@ u_int dlnode_t::s_pack_data(void *buffer, u_int bufsize) const
 
 u_int dlnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
 {
-   u_long hostid;
+   uint64_t hostid;
    bool active;
    u_int basesize, datasize;
    const void *ptr = buffer;
@@ -163,7 +167,7 @@ u_int dlnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    ptr = deserialize(ptr, avgxfer);
    ptr = deserialize(ptr, avgtime);
    ptr = deserialize(ptr, sumtime);
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
    ptr = deserialize(ptr, active);
 
    ptr = deserialize(ptr, hostid);
@@ -176,16 +180,16 @@ u_int dlnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_long dlnode_t::s_hash_value(void) const
+uint64_t dlnode_t::s_hash_value(void) const
 {
    return hash_num(base_node<dlnode_t>::s_hash_value(), hnode ? hnode->nodeid : 0);
 }
 
-int dlnode_t::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t dlnode_t::s_compare_value(const void *buffer, u_int bufsize) const
 {
-   u_long hostid;
+   uint64_t hostid;
    u_int datasize;
-   int diff;
+   int64_t diff;
 
    if(bufsize < s_data_size(buffer))
       throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %d; expected: %d)", typeid(*this).name(), bufsize, s_data_size()));
@@ -205,11 +209,12 @@ u_int dlnode_t::s_data_size(const void *buffer)
 {
    u_int basesize = base_node<dlnode_t>::s_data_size(buffer);
    return basesize + 
-            sizeof(u_long) * 2 + 
-            sizeof(double) * 4 + 
-            sizeof(u_long)     + 
+            sizeof(uint64_t) * 2 + 
+            sizeof(double) * 3 + 
+            sizeof(uint64_t)  +          // sumxfer
+            sizeof(uint64_t)     + 
             sizeof(u_char)     + 
-            sizeof(u_long);            // host name
+            sizeof(uint64_t);            // host name
 }
 
 const void *dlnode_t::s_field_value_mp_dlname(const void *buffer, u_int bufsize, u_int& datasize)
@@ -219,25 +224,33 @@ const void *dlnode_t::s_field_value_mp_dlname(const void *buffer, u_int bufsize,
 
 const void *dlnode_t::s_field_value_mp_hostid(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*)buffer + base_node<dlnode_t>::s_data_size(buffer) + sizeof(u_long) * 2 + sizeof(double) * 4 + sizeof(u_long) + sizeof(u_char);
+   datasize = sizeof(uint64_t);
+   return (u_char*)buffer + base_node<dlnode_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 2 + 
+            sizeof(double) * 3 + 
+            sizeof(uint64_t) +         // sumxfer
+            sizeof(uint64_t) + 
+            sizeof(u_char);
 }
 
 const void *dlnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + sizeof(u_long) * 2 + sizeof(double) * 4;
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 2 + 
+            sizeof(double) * 3 + 
+            sizeof(uint64_t);          // sumxfer
 }
 
 const void *dlnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(double);
-   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + sizeof(u_long) * 2;
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + sizeof(uint64_t) * 2;
 }
 
-int dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
 {
-   return s_compare<double>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
 //

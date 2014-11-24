@@ -37,8 +37,8 @@ u_int rnode_t::s_data_size(void) const
 {
    return base_node<rnode_t>::s_data_size() + 
                sizeof(u_char) +                 // hexenc
-               sizeof(u_long) * 2 +             // value hash, count
-               sizeof(u_long);                  // visits
+               sizeof(uint64_t) * 2 +             // value hash, count
+               sizeof(uint64_t);                  // visits
 }
 
 u_int rnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -85,7 +85,7 @@ u_int rnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    ptr = deserialize(ptr, hexenc);
    ptr = deserialize(ptr, count);
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
    
    if(version >= 2)
       ptr = deserialize(ptr, visits);
@@ -101,27 +101,27 @@ u_int rnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 u_int rnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_long) * 2;
+   u_int datasize = base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t) * 2;
    
    if(version < 2)
       return datasize;
       
-   return datasize + sizeof(u_long);   // visits
+   return datasize + sizeof(uint64_t);   // visits
 }
 
 const void *rnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_long);
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t);
 }
 
 const void *rnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return &((u_char*)buffer)[base_node<rnode_t>::s_data_size(buffer)];
 }
 
-int rnode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t rnode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
-   return *(u_long*) buf1 - *(u_long*) buf2;
+   return s_compare<uint64_t>(buf1, buf2);
 }

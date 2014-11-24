@@ -86,7 +86,7 @@ output_t::graphinfo_t *output_t::alloc_graphinfo(void)
 
 int output_t::qs_cc_cmpv(const void *cp1, const void *cp2)
 {
-   u_long  t1, t2;
+   uint64_t  t1, t2;
 
    // compare visits first
    t1=(*(ccnode_t**)cp1)->visits;

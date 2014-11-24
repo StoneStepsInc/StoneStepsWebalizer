@@ -25,7 +25,7 @@
 /* HASH - return hash value for string       */
 /*********************************************/
 
-u_long hash_bin(u_long hashval, const u_char *buf, u_int blen)
+uint64_t hash_bin(uint64_t hashval, const u_char *buf, u_int blen)
 {
    for(; blen; buf++, blen--)
       hashval = hash_byte(hashval, *buf);
@@ -33,7 +33,7 @@ u_long hash_bin(u_long hashval, const u_char *buf, u_int blen)
    return hashval;
 }
 
-u_long hash_str(u_long hashval, const char *str, u_int slen)
+uint64_t hash_str(uint64_t hashval, const char *str, u_int slen)
 {
    if(str == NULL)
       return hashval;
@@ -51,7 +51,7 @@ u_long hash_str(u_long hashval, const char *str, u_int slen)
 }
 
 template <typename type_t>
-u_long hash_num(u_long hashval, type_t num)
+uint64_t hash_num(uint64_t hashval, type_t num)
 {
    int index;
 
@@ -64,5 +64,5 @@ u_long hash_num(u_long hashval, type_t num)
 //
 // Instantiate numeric hash functions
 //
-template u_long hash_num<u_short>(u_long hashval, u_short num);
-template u_long hash_num<u_long>(u_long hashval, u_long num);
+template uint64_t hash_num<u_short>(uint64_t hashval, u_short num);
+template uint64_t hash_num<uint64_t>(uint64_t hashval, uint64_t num);

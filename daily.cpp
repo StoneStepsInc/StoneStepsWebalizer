@@ -17,12 +17,13 @@ daily_t::daily_t(u_int month) : keynode_t<u_int>(month)
    td_hours = 0;
    tm_hits = tm_files = tm_hosts = tm_pages = tm_visits = 0;
    h_hits_max = h_files_max = h_pages_max = h_visits_max = h_hosts_max = 0;
-   h_xfer_max = h_xfer_avg = .0;
-   tm_xfer = .0;
+   h_xfer_max = 0;
+   h_xfer_avg = .0;
+   tm_xfer = 0;
    h_hits_avg = h_files_avg = h_pages_avg = h_visits_avg = h_hosts_avg = .0;
 }
 
-void daily_t::reset(u_long nodeid)
+void daily_t::reset(u_int nodeid)
 {
    keynode_t<u_int>::reset(nodeid);
    datanode_t<daily_t>::reset();
@@ -30,8 +31,9 @@ void daily_t::reset(u_long nodeid)
    td_hours = 0;
    tm_hits = tm_files = tm_hosts = tm_pages = tm_visits = 0;
    h_hits_max = h_files_max = h_pages_max = h_visits_max = h_hosts_max = 0;
-   h_xfer_max = h_xfer_avg = .0;
-   tm_xfer = .0;
+   h_xfer_max = 0;
+   h_xfer_avg = .0;
+   tm_xfer = 0;
    h_hits_avg = h_files_avg = h_pages_avg = h_visits_avg = h_hosts_avg = .0;
 }
 
@@ -41,7 +43,12 @@ void daily_t::reset(u_long nodeid)
 
 u_int daily_t::s_data_size(void) const
 {
-   return datanode_t<daily_t>::s_data_size() + sizeof(u_long) * 10 + sizeof(double) * 8 + sizeof(u_short);
+   return datanode_t<daily_t>::s_data_size() + 
+            sizeof(uint64_t) * 10   + 
+            sizeof(double)   * 6    +        // h_hits_avg, h_files_avg, h_pages_avg, h_visits_avg, h_hosts_avg, hxfer_avg
+            sizeof(uint64_t)        +        // h_xfer_max
+            sizeof(uint64_t)        +        // tm_xfer  
+            sizeof(u_short);
 }
 
 u_int daily_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -131,7 +138,8 @@ u_int daily_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    }
    else {
       h_hits_max = h_files_max = h_pages_max = h_visits_max = 0;
-      h_hits_avg = h_files_avg = h_pages_avg = h_visits_avg = h_xfer_max = h_xfer_avg = .0;
+      h_hits_avg = h_files_avg = h_pages_avg = h_visits_avg = h_xfer_avg = .0;
+      h_xfer_max = 0;
       td_hours = 0;
    }
    
@@ -144,13 +152,16 @@ u_int daily_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 u_int daily_t::s_data_size(const void *buffer, bool fixver)
 {
    u_short version = s_node_ver(buffer);
-   u_long datasize = datanode_t<daily_t>::s_data_size(buffer) + sizeof(u_long) * 5 + sizeof(double);
+   u_int datasize = datanode_t<daily_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 5 + 
+            sizeof(uint64_t);       // tm_xfer
    
    if(fixver || version < 2)
       return datasize;
       
    return datasize + 
             sizeof(u_short)      +  // td_hours 
-            sizeof(u_long) * 5   +  // h_hits_max, h_files_max, h_pages_max, h_visits_max, h_hosts_max
-            sizeof(double) * 7;     // h_hits_avg, h_files_avg, h_pages_avg, h_visits_avg, h_hosts_avg, h_xfer_max, hxfer_avg
+            sizeof(uint64_t) * 5 +  // h_hits_max, h_files_max, h_pages_max, h_visits_max, h_hosts_max
+            sizeof(double) * 6   +  // h_hits_avg, h_files_avg, h_pages_avg, h_visits_avg, h_hosts_avg, hxfer_avg
+            sizeof(uint64_t);       // h_xfer_max
 }

@@ -36,7 +36,7 @@ void msleep(unsigned long timeout)
    Sleep(timeout);
 }
 
-u_long msecs(void)
+uint64_t msecs(void)
 {
    return GetTickCount();
 }

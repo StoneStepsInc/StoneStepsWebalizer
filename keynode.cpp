@@ -71,7 +71,7 @@ u_int keynode_t<type_t>::s_key_size(const void *buffer)
 }
 
 template <typename type_t>
-int keynode_t<type_t>::s_compare_key(const void *buf1, const void *buf2)
+int64_t keynode_t<type_t>::s_compare_key(const void *buf1, const void *buf2)
 {
    return s_compare<type_t>(buf1, buf2);
 }
@@ -79,7 +79,7 @@ int keynode_t<type_t>::s_compare_key(const void *buf1, const void *buf2)
 //
 // instantiate key nodes of known types
 //
-template struct keynode_t<u_long>;
+template struct keynode_t<uint64_t>;
 template struct keynode_t<u_int>;
 
 

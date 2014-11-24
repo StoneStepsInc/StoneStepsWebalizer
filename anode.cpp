@@ -16,7 +16,7 @@ anode_t::anode_t(void) : base_node<anode_t>()
 {
    count = 0;
    visits = 0; 
-   xfer = .0;
+   xfer = 0;
    robot = false;
 }
 
@@ -24,7 +24,7 @@ anode_t::anode_t(const string_t& agent, bool robot) : base_node<anode_t>(agent),
 {
    count = 1;
    visits = 0; 
-   xfer = .0;
+   xfer = 0;
 }
 
 anode_t::anode_t(const anode_t& anode) : base_node<anode_t>(anode)
@@ -41,7 +41,7 @@ anode_t::anode_t(const anode_t& anode) : base_node<anode_t>(anode)
 
 u_int anode_t::s_data_size(void) const
 {
-   return base_node<anode_t>::s_data_size() + sizeof(u_long) * 3 + sizeof(u_char) + sizeof(double);
+   return base_node<anode_t>::s_data_size() + sizeof(uint64_t) * 3 + sizeof(u_char) + sizeof(double);
 }
 
 u_int anode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -88,7 +88,7 @@ u_int anode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    ptr = deserialize(ptr, count);
    ptr = deserialize(ptr, visits);
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
 
    if(s_node_ver(buffer) >= 2) {
       ptr = deserialize(ptr, tmp); robot = tmp;
@@ -99,7 +99,7 @@ u_int anode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    if(s_node_ver(buffer) >= 3)
       ptr = deserialize(ptr, xfer);
    else
-      xfer = .0;
+      xfer = 0;
 
    if(upcb)
       upcb(*this, arg);
@@ -109,7 +109,7 @@ u_int anode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 
 u_int anode_t::s_data_size(const void *buffer)
 {
-   u_long datasize = base_node<anode_t>::s_data_size(buffer) + sizeof(u_long) * 3;
+   u_int datasize = base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t) * 3;
 
    if(s_node_ver(buffer) < 2)
       return datasize;
@@ -119,33 +119,33 @@ u_int anode_t::s_data_size(const void *buffer)
    if(s_node_ver(buffer) < 3)
       return datasize;
       
-   return datasize + sizeof(double);   // xfer
+   return datasize + sizeof(uint64_t);   // xfer
 }
 
 const void *anode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(u_long) * 2;
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t) * 2;
 }
 
 const void *anode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer);
 }
 
 const void *anode_t::s_field_visits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(u_long);
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t);
 }
 
-int anode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t anode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
-int anode_t::s_compare_visits(const void *buf1, const void *buf2)
+int64_t anode_t::s_compare_visits(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }

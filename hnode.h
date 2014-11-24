@@ -52,20 +52,20 @@
 typedef struct hnode_t : public base_node<hnode_t> {
       static const u_int ccode_size;
 
-      u_long   count;
-      u_long   files;
-      u_long   pages;
+      uint64_t   count;
+      uint64_t   files;
+      uint64_t   pages;
 
-      u_long   visits;               // visits started
-      u_long   visits_conv;          // visits converted
+      uint64_t   visits;               // visits started
+      uint64_t   visits_conv;          // visits converted
 
-      u_long   visit_max;            // maximum visit length (in seconds)
+      uint64_t   visit_max;            // maximum visit length (in seconds)
 
-      u_long   max_v_hits;           // maximum number of hits
-      u_long   max_v_files;          // files
-      u_long   max_v_pages;          // pages per visit
+      uint64_t   max_v_hits;           // maximum number of hits
+      uint64_t   max_v_files;          // files
+      uint64_t   max_v_pages;          // pages per visit
 
-      u_long   dlref;                // download node reference count
+      uint64_t   dlref;                // download node reference count
       
       tstamp_t tstamp;               // last request timestamp
 
@@ -74,8 +74,8 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
       string_t name;                 // host name
 
-      double   max_v_xfer;           // maximum transfer amount per visit
-      double   xfer;
+      uint64_t max_v_xfer;           // maximum transfer amount per visit
+      uint64_t xfer;
       double   visit_avg;            // average visit length (in seconds)
 
       bool     spammer  : 1;         // caught spamming?
@@ -97,7 +97,7 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
          void set_visit(vnode_t *vnode);
 
-         void reset(u_long nodeid = 0);
+         void reset(uint64_t nodeid = 0);
 
          bool entry_url_set(void) const {return visit && visit->entry_url;}
 
@@ -130,8 +130,8 @@ typedef struct hnode_t : public base_node<hnode_t> {
          static const void *s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_xfer(const void *buf1, const void *buf2);
-         static int s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_xfer(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *HNODEPTR;
 
 //

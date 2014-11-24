@@ -16,11 +16,11 @@
 
 /* host hash table struct    */
 typedef struct inode_t : public base_node<inode_t> {
-      u_long   count;
-      u_long   files;
-      u_long   visit;
+      uint64_t   count;
+      uint64_t   files;
+      uint64_t   visit;
       tstamp_t tstamp;               // last request time
-      double   xfer;
+      uint64_t xfer;
       double   avgtime;				    // average processing time (sec)
       double   maxtime;              // maximum processing time (sec)
 
@@ -44,7 +44,7 @@ typedef struct inode_t : public base_node<inode_t> {
          static const void *s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *INODEPTR;
 
 //

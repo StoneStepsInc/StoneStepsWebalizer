@@ -13,7 +13,7 @@
 #include "version.h"
 #include "serialize.h"
 
-sysnode_t::sysnode_t(void) : keynode_t<u_long>(1)
+sysnode_t::sysnode_t(void) : keynode_t<uint64_t>(1)
 {
    appver = 0;
    appver_last = 0;
@@ -36,7 +36,7 @@ sysnode_t::sysnode_t(void) : keynode_t<u_long>(1)
 
 void sysnode_t::reset(const config_t& config)
 {
-   keynode_t<u_long>::reset(1);
+   keynode_t<uint64_t>::reset(1);
 
    appver = 0;
    appver_last = 0;
@@ -89,7 +89,7 @@ u_int sysnode_t::s_data_size(void) const
             sizeof(u_char)       +     // incremental database?
             sizeof(u_char)       +     // batch mode?
             sizeof(u_char)       +     // fixed_dhv
-            sizeof(u_long)       +     // log file position
+            sizeof(uint64_t)       +     // log file position
             s_size_of(logformat) +     // log format line
             sizeof(u_short) * 5  +     // sizeof char, short, int, long and double
             sizeof(u_int)        +     // byte_order
@@ -213,7 +213,7 @@ u_int sysnode_t::s_data_size(const void *buffer)
    basesize = datanode_t<sysnode_t>::s_data_size(buffer) + 
             sizeof(u_int)        +        // appver
             sizeof(u_char)       +        // incremental
-            sizeof(u_long);               // filepos
+            sizeof(uint64_t);               // filepos
 
    if(version >= 2)
       basesize += sizeof(u_char);         // batch mode

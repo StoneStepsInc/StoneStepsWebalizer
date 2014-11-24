@@ -43,12 +43,12 @@ void msleep(unsigned long timeout)
 		req = rem;
 }
 
-unsigned long msecs(void)
+uint64_t msecs(void)
 {
    static unsigned long clocks_per_sec = sysconf(_SC_CLK_TCK);
    struct tms mytms;    /* bogus tms structure         */
 
-   return (times(&mytms) * 1000ul) / clocks_per_sec;
+   return ((uint64_t) times(&mytms) * 1000ull) / clocks_per_sec;
 }
 
 unsigned long thread_id(void)

@@ -197,6 +197,7 @@
     <ClInclude Include="parser.h" />
     <ClInclude Include="preserve.h" />
     <ClInclude Include="queue.h" />
+    <ClInclude Include="scnode.h" />
     <ClInclude Include="serialize.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="tmranges.h" />

@@ -12,10 +12,10 @@
 #include <errno.h>
 #include "event.h"
 
-static timespec *get_abs_time(u_long timeout, timespec *abstime) 
+static timespec *get_abs_time(uint32_t timeout, timespec *abstime) 
 {
    struct timeval now;
-   u_long sec, nsec;
+   uint32_t sec, nsec;
 
    if(abstime == NULL)
       return NULL;
@@ -61,7 +61,7 @@ void event_destroy(event_t event)
    }
 }
 
-u_long event_wait(event_t event, u_long timeout)
+uint32_t event_wait(event_t event, uint32_t timeout)
 {
 	timespec abstime;
 	int retval = 0;

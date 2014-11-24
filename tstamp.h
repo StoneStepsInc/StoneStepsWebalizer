@@ -100,7 +100,7 @@ struct tstamp_t {
 
       static u_int jday(u_int year, u_int month, u_int day);
 
-      static inline u_int wday(u_long days) {return (days + 1) % 7;}
+      static inline u_int wday(uint64_t days) {return (days + 1) % 7;}
 
       static inline u_int wday(int year, int month, int day) {return wday(jday(year, month, day));}
 };

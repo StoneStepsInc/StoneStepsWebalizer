@@ -134,7 +134,7 @@ bool tstamp_t::parse_tstamp(const char *str)
    cp1 = str;
 
    while (cp1 && *cp1 && i < sizeof(desc)/sizeof(desc[0])) {
-      p[i] = str2ul(cp1, &cp2);
+      p[i] = (u_int) str2ul(cp1, &cp2);
       
       // check if we got a number
       if(!cp2)

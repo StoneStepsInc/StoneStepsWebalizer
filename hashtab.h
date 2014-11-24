@@ -33,15 +33,15 @@ enum nodetype_t {
 // hash functions
 //
 // -----------------------------------------------------------------------
-u_long hash_bin(u_long hashval, const u_char *buf, u_int blen);
-u_long hash_str(u_long hashval, const char *str, u_int slen);
-template <typename type_t> u_long hash_num(u_long hashval, type_t num);
+uint64_t hash_bin(uint64_t hashval, const u_char *buf, u_int blen);
+uint64_t hash_str(uint64_t hashval, const char *str, u_int slen);
+template <typename type_t> uint64_t hash_num(uint64_t hashval, type_t num);
 
-inline u_long hash_byte(u_long hashval, u_char b) {return ((hashval & (~0ul << (32-5))) >> (32-5)) ^ (hashval << 5) ^ b;}
+inline uint64_t hash_byte(uint64_t hashval, u_char b) {return ((hashval & (~0ul << (32-5))) >> (32-5)) ^ (hashval << 5) ^ b;}
 
-inline u_long hash_ex(u_long hashval, const char *str) {return (str && *str) ? hash_str(hashval, str, strlen(str)) : 0;}
-inline u_long hash_ex(u_long hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
-inline u_long hash_ex(u_long hashval, u_int data) {return hash_num(hashval, data);}
+inline uint64_t hash_ex(uint64_t hashval, const char *str) {return (str && *str) ? hash_str(hashval, str, strlen(str)) : 0;}
+inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
+inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, data);}
 
 // -----------------------------------------------------------------------
 //
@@ -101,12 +101,12 @@ class hash_table {
 
          private:
             bucket_t *htab;
-            u_long   index;
-            u_long   maxhash;
+            uint64_t   index;
+            uint64_t   maxhash;
             node_t   *nptr;
 
          protected:
-            iterator(bucket_t _htab[], u_long _maxhash) {htab = _htab; index = 0; maxhash = _maxhash; nptr = NULL;}
+            iterator(bucket_t _htab[], uint64_t _maxhash) {htab = _htab; index = 0; maxhash = _maxhash; nptr = NULL;}
 
          public:
             iterator(void) {htab = NULL; nptr = NULL; index = 0; maxhash = 0;}
@@ -136,7 +136,7 @@ class hash_table {
          friend class hash_table<node_t, key_t>;
 
          private:
-            const_iterator(bucket_t _htab[], u_long _maxhash) : iterator(_htab, _maxhash) {}
+            const_iterator(bucket_t _htab[], uint64_t _maxhash) : iterator(_htab, _maxhash) {}
 
          public:
             const_iterator(void) : iterator() {}
@@ -147,9 +147,9 @@ class hash_table {
       };
 
    private:
-      u_long      count;      // number of hash table entries
-      u_long      maxhash;    // number of buckets in the hash table
-      u_long      emptycnt;   // number of empty buckets
+      size_t      count;      // number of hash table entries
+      size_t      maxhash;    // number of buckets in the hash table
+      size_t      emptycnt;   // number of empty buckets
       bucket_t    *htab;      // buckets
 
       bool        swap;       // true, if some data is swapped out
@@ -178,18 +178,18 @@ class hash_table {
       virtual bool load_array_check(const node_t *) const {return true;}
 
    public:
-      hash_table(u_long maxhash = MAXHASH, eval_cb_t evalcb = NULL, swap_cb_t swapcb = NULL, void *cbarg = NULL);
+      hash_table(size_t maxhash = MAXHASH, eval_cb_t evalcb = NULL, swap_cb_t swapcb = NULL, void *cbarg = NULL);
 
       ~hash_table(void);
 
       //
       // informational
       //
-      u_long size(void) const {return count;}
+      size_t size(void) const {return count;}
 
-      u_long buckets(void) const {return maxhash;} 
+      size_t buckets(void) const {return maxhash;} 
 
-      u_long empty_buckets(void) const {return emptycnt;}
+      size_t empty_buckets(void) const {return emptycnt;}
 
       //
       // swap-out interface
@@ -224,26 +224,26 @@ class hash_table {
 
       node_t *find_node(const key_t& key) {return find_node(hash_ex(0, key), key);}
 
-      const node_t *find_node(u_long hashval, const key_t& key) const;
+      const node_t *find_node(uint64_t hashval, const key_t& key) const;
 
-      node_t *find_node(u_long hashval, const key_t& key) {return const_cast<node_t*>(const_cast<const hash_table<node_t, key_t>*>(this)->find_node(hashval, key));}
+      node_t *find_node(uint64_t hashval, const key_t& key) {return const_cast<node_t*>(const_cast<const hash_table<node_t, key_t>*>(this)->find_node(hashval, key));}
 
-      node_t *find_node(u_long hashval, const key_t& str, nodetype_t type);
+      node_t *find_node(uint64_t hashval, const key_t& str, nodetype_t type);
 
-      node_t *find_node(u_long hashval, const void *params);
+      node_t *find_node(uint64_t hashval, const void *params);
 
       node_t *put_node(const key_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
 
-      node_t *put_node(u_long hashval, node_t *nptr);
+      node_t *put_node(uint64_t hashval, node_t *nptr);
 
-      void pop_node(u_long hashval, node_t *nptr);
+      void pop_node(uint64_t hashval, node_t *nptr);
 
       //
       // miscellaneous
       //
-      u_long load_array(const node_t *array[]) const;
+      uint64_t load_array(const node_t *array[]) const;
 
-      u_long load_array(const node_t *array[], nodetype_t type, u_long& typecnt) const;
+      uint64_t load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const;
 };
 
 #endif  /* _HASHTAB_H */

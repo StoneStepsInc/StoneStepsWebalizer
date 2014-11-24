@@ -219,8 +219,8 @@ config_t::~config_t(void)
 void config_t::initialize(const string_t& basepath, int argc, const char * const argv[])
 {
    const char *cp1;
-   u_long max_ctry;                      /* max countries defined       */
-   u_long i;
+   uint32_t max_ctry;                      /* max countries defined       */
+   uint32_t i;
    string_t fpath;
    utsname system_info;
 
@@ -1397,9 +1397,9 @@ void config_t::set_enable_phrase_values(bool enable)
    group_agent_args.set_enable_phrase_values(enable);
 }
 
-u_long config_t::get_db_cache_size(const char *value) const
+uint32_t config_t::get_db_cache_size(const char *value) const
 {
-   u_long cachesize;
+   uint32_t cachesize;
    char *cp1;
 
    if(value == NULL)
@@ -1447,7 +1447,7 @@ int config_t::get_interval(const char *value, int div) const
    if(!value)
       return 0;
 
-   time = str2l(value, &cp);
+   time = (int) str2l(value, &cp);
    
    if(!cp)
       throw exception_t(0, string_t::_format("Invalid time interval value (%s)", value));

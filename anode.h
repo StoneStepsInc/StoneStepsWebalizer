@@ -15,10 +15,10 @@
 #include "types.h"
 
 typedef struct anode_t : public base_node<anode_t> {
-      u_long   count;
-      u_long   visits;
+      uint64_t   count;
+      uint64_t   visits;
       
-      double   xfer;
+      uint64_t   xfer;
       
       bool     robot : 1;
 
@@ -43,8 +43,8 @@ typedef struct anode_t : public base_node<anode_t> {
          static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_visits(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_hits(const void *buf1, const void *buf2);
-         static int s_compare_visits(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_visits(const void *buf1, const void *buf2);
 } *ANODEPTR;
 
 //

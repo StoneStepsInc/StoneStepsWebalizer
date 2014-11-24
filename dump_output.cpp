@@ -125,7 +125,7 @@ void dump_output_t::dump_all_hosts()
       if (hnode.flag != OBJ_GRP)
       {
          fprintf(out_fp,
-         "%lu\t%lu\t%lu\t%.0f\t%lu\t%.2f\t%.2f\t%s\t%s\t%c\t%s\t%s\n",
+         "%llu\t%llu\t%llu\t%.0f\t%llu\t%.2f\t%.2f\t%s\t%s\t%c\t%s\t%s\n",
             hnode.count, hnode.files, hnode.pages, hnode.xfer/1024.,
             hnode.visits, hnode.visit_avg/60., hnode.visit_max/60.,
             state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str(),
@@ -168,7 +168,7 @@ void dump_output_t::dump_all_urls()
    while (iter.prev(unode)) {
       if (unode.flag != OBJ_GRP)
       {
-         fprintf(out_fp,"%lu\t%.0f\t%.03f\t%.03f\t%c\t%s\n",
+         fprintf(out_fp,"%llu\t%.0f\t%.03f\t%.03f\t%c\t%s\n",
             unode.count,unode.xfer/1024.,
             unode.avgtime, unode.maxtime,
             (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
@@ -209,7 +209,7 @@ void dump_output_t::dump_all_refs()
    /* dump 'em */
    while(iter.prev(rnode)) {
       if (rnode.flag != OBJ_GRP)
-         fprintf(out_fp,"%lu\t%lu\t%s\n", rnode.count, rnode.visits, rnode.string[0] == '-' ? config.lang.msg_ref_dreq : rnode.string.c_str());
+         fprintf(out_fp,"%llu\t%llu\t%s\n", rnode.count, rnode.visits, rnode.string[0] == '-' ? config.lang.msg_ref_dreq : rnode.string.c_str());
    }
    iter.close();
 
@@ -250,15 +250,15 @@ void dump_output_t::dump_all_downloads(void)
       nptr = &dlnode;
 
       if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %d)", nptr->nodeid));
+         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %llu)", nptr->nodeid));
 
       if(!nptr->hnode)
          cdesc = "";
       else
          cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
 
-      fprintf(out_fp,"%lu\t%8.02f\t%6.02f\t%6.02f\t%lu\t%s\t%s\t%s\t%s\t%s\n", 
-         nptr->sumhits, nptr->sumxfer, 
+      fprintf(out_fp,"%llu\t%8.02f\t%6.02f\t%6.02f\t%llu\t%s\t%s\t%s\t%s\t%s\n", 
+         nptr->sumhits, nptr->sumxfer/1024., 
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
          nptr->string.c_str(),
@@ -297,7 +297,7 @@ void dump_output_t::dump_all_errors(void)
    /* dump 'em */
    while(iter.prev(rcnode))
    {
-      fprintf(out_fp,"%lu\t%d\t%s\t%s\n",rcnode.count, rcnode.respcode, rcnode.method.c_str(), rcnode.string.c_str());
+      fprintf(out_fp,"%llu\t%d\t%s\t%s\n",rcnode.count, rcnode.respcode, rcnode.method.c_str(), rcnode.string.c_str());
    }
 
    iter.close();
@@ -333,7 +333,7 @@ void dump_output_t::dump_all_agents()
    /* dump 'em */
    while(iter.prev(anode)) {
       if (anode.flag != OBJ_GRP)
-         fprintf(out_fp,"%lu\t%.0f\t%c\t%s\n", anode.count, anode.xfer/1024., anode.robot ? '#' : ' ', anode.string.c_str());
+         fprintf(out_fp,"%llu\t%.0f\t%c\t%s\n", anode.count, anode.xfer/1024., anode.robot ? '#' : ' ', anode.string.c_str());
    }
    iter.close();
 
@@ -370,7 +370,7 @@ void dump_output_t::dump_all_users()
    /* dump 'em */
    while(iter.prev(inode)) {
       if (inode.flag != OBJ_GRP) {
-         fprintf(out_fp, "%lu\t%lu\t%.0f\t%lu\t%.3f\t%.3f\t%s\n",
+         fprintf(out_fp, "%llu\t%llu\t%.0f\t%llu\t%.3f\t%.3f\t%s\n",
             inode.count, inode.files, inode.xfer/1024.,
             inode.visit, 
             inode.avgtime, inode.maxtime,
@@ -411,7 +411,7 @@ void dump_output_t::dump_all_search()
    /* dump 'em */
    while(iter.prev(snode))
    {
-      fprintf(out_fp,"%lu\t%lu\t%s\n", snode.count, snode.visits, snode.string.c_str());
+      fprintf(out_fp,"%llu\t%llu\t%s\n", snode.count, snode.visits, snode.string.c_str());
    }
    iter.close();
    fclose(out_fp);

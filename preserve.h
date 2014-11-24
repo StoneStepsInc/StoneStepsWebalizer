@@ -66,8 +66,8 @@ class state_t {
 
       cc_hash_table cc_htab;                     // countries
 
-      vector_t<u_long> v_ended;                  // ended active visit node IDs
-      vector_t<u_long> dl_ended;                 // ended active download node IDs
+      vector_t<uint64_t> v_ended;                  // ended active visit node IDs
+      vector_t<uint64_t> dl_ended;                 // ended active download node IDs
 
       history_t   history;
                                                  // see note #2 above
@@ -97,7 +97,7 @@ class state_t {
       spnode_t *put_spnode(const string_t& host);
       
       template <typename type_t>
-      void update_avg_max(double& avg, type_t& max, type_t value, u_long newcnt) const;
+      void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
 
       unode_t *find_url(const string_t& url);
 
@@ -109,9 +109,9 @@ class state_t {
 
       bool del_state_file(void);
 
-      static void unpack_dlnode_cb(dlnode_t& dlnode, u_long hostid, bool active, void *_this);
+      static void unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
-      static void unpack_vnode_cb(vnode_t& vnode, u_long urlid, void *_this);
+      static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this);
 
       static void unpack_hnode_cb(hnode_t& hnode, bool active, void *_this);
 
@@ -149,7 +149,7 @@ class state_t {
 
       const sysnode_t& get_sysnode(void) const {return sysnode;}
 
-      static void unpack_dlnode_const_cb(dlnode_t& dlnode, u_long hostid, bool active, void *_this);
+      static void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);
 };

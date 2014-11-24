@@ -25,10 +25,10 @@ struct hnode_t;
 // -----------------------------------------------------------------------
 struct dlnode_t : public base_node<dlnode_t> {
       // combined download job data
-      u_long      count;             // download job count
-      u_long      sumhits;           // total hits
-      double      sumxfer;           // total transfer size in KB
-      double      avgxfer;           // average transfer size KB
+      uint64_t      count;             // download job count
+      uint64_t      sumhits;           // total hits
+      uint64_t    sumxfer;           // total transfer size
+      double      avgxfer;           // average transfer size
       double      avgtime;				 // average job processing time (minutes)
       double      sumtime;		       // total job processing time (minutes)
 
@@ -38,7 +38,7 @@ struct dlnode_t : public base_node<dlnode_t> {
       bool        ownhost : 1;       // true, if dlnode_t owns hnode
 
       public:
-         typedef void (*s_unpack_cb_t)(dlnode_t& vnode, u_long hostid, bool active, void *arg);
+         typedef void (*s_unpack_cb_t)(dlnode_t& vnode, uint64_t hostid, bool active, void *arg);
 
       public:
          dlnode_t(void);
@@ -49,7 +49,7 @@ struct dlnode_t : public base_node<dlnode_t> {
 
          void set_host(hnode_t *hnode);
 
-         void reset(u_long nodeid = 0);
+         void reset(uint64_t nodeid = 0);
 
          //
          // serialization
@@ -58,9 +58,9 @@ struct dlnode_t : public base_node<dlnode_t> {
          u_int s_pack_data(void *buffer, u_int bufsize) const;
          u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
 
-         u_long s_hash_value(void) const;
+         uint64_t s_hash_value(void) const;
 
-         int s_compare_value(const void *buffer, u_int bufsize) const;
+         int64_t s_compare_value(const void *buffer, u_int bufsize) const;
 
          static u_int s_data_size(const void *buffer);
 
@@ -69,8 +69,8 @@ struct dlnode_t : public base_node<dlnode_t> {
          static const void *s_field_value_mp_dlname(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_value_mp_hostid(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
-         static int s_compare_xfer(const void *buf1, const void *buf2);
+         static int64_t s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
+         static int64_t s_compare_xfer(const void *buf1, const void *buf2);
 };
 
 //

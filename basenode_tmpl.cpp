@@ -15,36 +15,36 @@
 #include <typeinfo>
 
 template <typename node_t> 
-base_node<node_t>::base_node(u_long nodeid) : keynode_t<u_long>(nodeid) 
+base_node<node_t>::base_node(uint64_t nodeid) : keynode_t<uint64_t>(nodeid) 
 {
    flag = OBJ_REG;
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(const base_node& node) : keynode_t<u_long>(node) 
+base_node<node_t>::base_node(const base_node& node) : keynode_t<uint64_t>(node) 
 {
    flag = node.flag; 
    string = node.string;
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(const char *str) : keynode_t<u_long>(0) 
+base_node<node_t>::base_node(const char *str) : keynode_t<uint64_t>(0) 
 {
    string = str; 
    flag = OBJ_REG;
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(const string_t& str) : keynode_t<u_long>(0) 
+base_node<node_t>::base_node(const string_t& str) : keynode_t<uint64_t>(0) 
 {
    string = str; 
    flag = OBJ_REG;
 }
 
 template <typename node_t>
-void base_node<node_t>::reset(u_long nodeid)
+void base_node<node_t>::reset(uint64_t nodeid)
 {
-   keynode_t<u_long>::reset(nodeid);
+   keynode_t<uint64_t>::reset(nodeid);
    datanode_t<node_t>::reset();
 }
 
@@ -103,13 +103,13 @@ u_int base_node<node_t>::s_unpack_data(const void *buffer, u_int bufsize)
 }
 
 template <typename node_t> 
-u_long base_node<node_t>::s_hash_value(void) const
+uint64_t base_node<node_t>::s_hash_value(void) const
 {
    return hash_str(0, string, string.length());
 }
 
 template <typename node_t>
-int base_node<node_t>::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t base_node<node_t>::s_compare_value(const void *buffer, u_int bufsize) const
 {
    u_int datasize;
    string_t tstr;
@@ -144,9 +144,9 @@ const void *base_node<node_t>::s_field_value(const void *buffer, u_int bufsize, 
 }
 
 template <typename node_t> 
-int base_node<node_t>::s_compare_value_hash(const void *buf1, const void *buf2)
+int64_t base_node<node_t>::s_compare_value_hash(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
 template <typename node_t> 

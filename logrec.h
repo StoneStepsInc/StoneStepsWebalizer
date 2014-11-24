@@ -45,8 +45,8 @@ struct  log_struct  {
       string_t   srchargs;             // search string
       string_t   ident;                // ident string (user)
       string_t   xsrchstr;             // referrer search string
-      u_long     xfer_size;            // xfer size in bytes
-      u_long     proc_time;            // URL processing time (ms)
+      uint64_t     xfer_size;            // xfer size in bytes
+      uint64_t     proc_time;            // URL processing time (ms)
       tstamp_t   tstamp;               // time stamp
       u_short    port;					   // HTTP port
       u_short    resp_code;            // HTTP response code

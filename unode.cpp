@@ -19,12 +19,13 @@
 //
 // -----------------------------------------------------------------------
 
-unode_t::unode_t(u_long nodeid) : base_node<unode_t>(nodeid) 
+unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid) 
 {
    hexenc = false; 
    target = false;
    count = files = entry = exit = 0; 
-   xfer = avgtime = maxtime = .0; 
+   xfer = 0;
+   avgtime = maxtime = .0; 
    urltype = URL_TYPE_HTTP; 
    pathlen = 0;
    vstref = 0;
@@ -67,19 +68,21 @@ unode_t::unode_t(const char *urlpath, const char *srchargs) : base_node<unode_t>
 
    count = 0;
    files = entry = exit = 0; 
-   xfer = avgtime = maxtime = .0; 
+   xfer = 0;
+   avgtime = maxtime = .0; 
 
    vstref = 0;
 }
 
-void unode_t::reset(u_long nodeid)
+void unode_t::reset(uint64_t nodeid)
 {
    base_node<unode_t>::reset(nodeid);
 
    hexenc = false;
    target = false; 
    count = files = entry = exit = 0; 
-   xfer = avgtime = maxtime = .0; 
+   xfer = 0;
+   avgtime = maxtime = .0; 
    urltype = URL_TYPE_HTTP; 
    pathlen = 0;
    vstref = 0;
@@ -90,7 +93,12 @@ void unode_t::reset(u_long nodeid)
 //
 u_int unode_t::s_data_size(void) const
 {
-   return base_node<unode_t>::s_data_size() + sizeof(u_char) * 3 + sizeof(u_short) + sizeof(u_long) * 5 + sizeof(double) * 3;
+   return base_node<unode_t>::s_data_size() + 
+            sizeof(u_char) * 3 + 
+            sizeof(u_short) + 
+            sizeof(uint64_t) * 5 + 
+            sizeof(double) * 2 + 
+            sizeof(uint64_t);          // xfer
 }
 
 u_int unode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -152,7 +160,7 @@ u_int unode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    ptr = deserialize(ptr, xfer);
    ptr = deserialize(ptr, avgtime);
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
 
    if(version >= 2)
       ptr = deserialize(ptr, maxtime);
@@ -173,7 +181,12 @@ u_int unode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
 u_int unode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(u_long) * 5 + sizeof(double) * 2;
+   u_int datasize = base_node<unode_t>::s_data_size(buffer) + 
+            sizeof(u_char) * 2 + 
+            sizeof(u_short) + 
+            sizeof(uint64_t) * 5 + 
+            sizeof(double) +
+            sizeof(uint64_t);          // xfer
 
    if(version < 2)
       return datasize;
@@ -188,52 +201,60 @@ u_int unode_t::s_data_size(const void *buffer)
 
 const void *unode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(u_long) * 4 + sizeof(double) * 2;
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
+            sizeof(u_char) * 2 + 
+            sizeof(u_short) + 
+            sizeof(uint64_t) * 4 + 
+            sizeof(double) +
+            sizeof(uint64_t);          // xfer
 }
 
 const void *unode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(double);
-   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(u_long) * 4;
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
+            sizeof(u_char) * 2 + 
+            sizeof(u_short) + 
+            sizeof(uint64_t) * 4;
 }
 
 const void *unode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short);
 }
 
 const void *unode_t::s_field_entry(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(u_long) * 2;
+   datasize = sizeof(uint64_t);
+   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 2;
 }
 
 const void *unode_t::s_field_exit(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
-   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(u_long) * 3;
+   datasize = sizeof(uint64_t);
+   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 3;
 }
 
-int unode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_xfer(const void *buf1, const void *buf2)
 {
-   return s_compare<double>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
-int unode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
-int unode_t::s_compare_entry(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_entry(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
-int unode_t::s_compare_exit(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_exit(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
 //

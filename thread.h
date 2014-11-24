@@ -28,7 +28,7 @@ typedef void *(*start_routine_t)(void*);
 thread_t thread_create(start_routine_t start_routine, void *arg);
 void thread_destroy(thread_t thread);
 void msleep(unsigned long timeout);
-unsigned long msecs(void);
+uint64_t msecs(void);
 unsigned long thread_id(void);
 
 #endif /* __THREAD_H */

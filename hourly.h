@@ -20,10 +20,10 @@
 //
 // -----------------------------------------------------------------------
 struct hourly_t : public keynode_t<u_int>, public datanode_t<hourly_t> {
-      u_long th_hits;
-      u_long th_files;
-      u_long th_pages;
-      double th_xfer;
+      uint64_t th_hits;
+      uint64_t th_files;
+      uint64_t th_pages;
+      uint64_t th_xfer;
 
       public:
          typedef void (*s_unpack_cb_t)(hourly_t& hourly, void *arg);
@@ -31,7 +31,7 @@ struct hourly_t : public keynode_t<u_int>, public datanode_t<hourly_t> {
       public:
          hourly_t(u_int hour = 0);
 
-         void reset(u_long nodeid);
+         void reset(u_int nodeid);
 
          //
          // serialization

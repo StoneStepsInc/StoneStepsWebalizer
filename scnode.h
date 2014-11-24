@@ -27,7 +27,7 @@
 //
 struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
    const u_int&   code;          // a reference to nodeid 
-   u_long         count;         // number of hits
+   uint64_t       count;         // number of hits
 
    public:
       typedef void (*s_unpack_cb_t)(scnode_t& scnode, void *arg);

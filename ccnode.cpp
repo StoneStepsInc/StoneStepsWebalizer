@@ -13,20 +13,20 @@
 #include "serialize.h"
 #include "exception.h"
 
-ccnode_t::ccnode_t(void) : htab_node_t<ccnode_t>(), keynode_t<u_long>(0)
+ccnode_t::ccnode_t(void) : htab_node_t<ccnode_t>(), keynode_t<uint64_t>(0)
 {
    count = files = visits = 0; 
-   xfer = .0;
+   xfer = 0;
 }
 
-ccnode_t::ccnode_t(const char *cc, const char *desc) : htab_node_t<ccnode_t>(), keynode_t<u_long>(ctry_idx(cc))
+ccnode_t::ccnode_t(const char *cc, const char *desc) : htab_node_t<ccnode_t>(), keynode_t<uint64_t>(ctry_idx(cc))
 {
    ccode = cc;
    cdesc = desc; 
    count = 0; 
    files = 0; 
    visits = 0;
-   xfer = .0;
+   xfer = 0;
 }
 
 void ccnode_t::update(const ccnode_t& ccnode)
@@ -43,7 +43,10 @@ void ccnode_t::update(const ccnode_t& ccnode)
 
 u_int ccnode_t::s_data_size(void) const
 {
-   return datanode_t<ccnode_t>::s_data_size() + sizeof(u_long) * 3 + sizeof(double) + s_size_of(ccode);
+   return datanode_t<ccnode_t>::s_data_size() + 
+            sizeof(uint64_t) * 3 +     // count, files, visits
+            sizeof(uint64_t) +         // xfer 
+            s_size_of(ccode);
 }
 
 u_int ccnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -105,7 +108,9 @@ u_int ccnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
 u_int ccnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = datanode_t<ccnode_t>::s_data_size(buffer) + sizeof(u_long) * 3 + sizeof(double);
+   u_int datasize = datanode_t<ccnode_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 3 +     // count, files, visits
+            sizeof(uint64_t);          // xfer
    
    if(version < 2)
       return datasize;

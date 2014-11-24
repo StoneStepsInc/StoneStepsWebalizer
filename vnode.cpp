@@ -13,20 +13,20 @@
 #include "unode.h"
 #include "serialize.h"
 
-vnode_t::vnode_t(u_long nodeid) : keynode_t<u_long>(nodeid)
+vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid)
 {
    entry_url = false;
    robot = false;
    converted = false;
    hits = files = pages = 0; 
-   xfer = .0;
+   xfer = 0;
    lasturl = NULL;
    hostref = 0;
 
    dirty = true;
 }
 
-vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<u_long>(vnode)
+vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode)
 {
    entry_url = vnode.entry_url;
    robot = vnode.robot;
@@ -56,9 +56,9 @@ vnode_t::~vnode_t(void)
    set_lasturl(NULL);
 }
 
-void vnode_t::reset(u_long nodeid)
+void vnode_t::reset(uint64_t nodeid)
 {
-   keynode_t<u_long>::reset(nodeid);
+   keynode_t<uint64_t>::reset(nodeid);
    datanode_t<vnode_t>::reset();
 
    entry_url = false;
@@ -67,7 +67,7 @@ void vnode_t::reset(u_long nodeid)
    start.reset();
    end.reset();
    hits = files = pages = 0; 
-   xfer = .0;
+   xfer = 0;
    set_lasturl(NULL);
 
    dirty = true;
@@ -93,11 +93,11 @@ u_int vnode_t::s_data_size(void) const
 {
    return datanode_t<vnode_t>::s_data_size() + 
             sizeof(u_char)  * 3 +   // entry_url, robot, converted
-            sizeof(u_long)  * 3 +   // hits, files, pages
+            sizeof(uint64_t) * 3 +  // hits, files, pages
             s_size_of(start)    +   // start
             s_size_of(end)      +   // end
-            sizeof(double)      +   // xfer 
-            sizeof(u_long);         // lasturl->nodeid
+            sizeof(uint64_t)    +   // xfer 
+            sizeof(uint64_t);       // lasturl->nodeid
 }
 
 u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -125,7 +125,7 @@ u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
    if(lasturl)
       ptr = serialize(ptr, lasturl->nodeid);
    else
-      ptr = serialize(ptr, (u_long) 0);
+      ptr = serialize(ptr, (uint64_t) 0);
 
    ptr = serialize(ptr, robot);
    ptr = serialize(ptr, converted);
@@ -136,7 +136,7 @@ u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
 u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool tmp;
-   u_long urlid;
+   uint64_t urlid;
    u_int datasize, basesize;
    u_short version;
    const void *ptr;
@@ -158,7 +158,7 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
       ptr = deserialize(ptr, end);
    }
    else {
-      u_long tmp;
+      uint64_t tmp;
 
       ptr = deserialize(ptr, tmp); 
       start.reset((time_t) tmp);
@@ -196,16 +196,16 @@ u_int vnode_t::s_data_size(const void *buffer)
             sizeof(u_char);         // entry_url
 
    if(version < 4)
-      datasize += sizeof(u_long) * 2;  // start, end
+      datasize += sizeof(uint64_t) * 2;  // start, end
    else {
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // start
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // end
    }
     
    datasize +=
-            sizeof(u_long) * 3 +    // hits, files, pages
-            sizeof(double)     +    // xfer
-            sizeof(u_long);         // urlid (last URL)
+            sizeof(uint64_t) * 3 +    // hits, files, pages
+            sizeof(uint64_t)     +    // xfer
+            sizeof(uint64_t);         // urlid (last URL)
 
    if(version < 2)
       return datasize;

@@ -25,17 +25,17 @@ struct hist_month_t {
    int     fday;           // first day
    int     lday;           // last day
 
-   u_long  hits; 
-   u_long  files;
-   u_long  hosts;
-   double  xfer; 
-   u_long  pages;
-   u_long  visits;
+   uint64_t  hits; 
+   uint64_t  files;
+   uint64_t  hosts;
+   uint64_t  xfer; 
+   uint64_t  pages;
+   uint64_t  visits;
 
    public:
       hist_month_t(void);
 
-      hist_month_t(u_int year, u_int month, u_long hits, u_long files, u_long pages, u_long visits, u_long hosts, double xfer, u_int fday, u_int lday);
+      hist_month_t(u_int year, u_int month, uint64_t hits, uint64_t files, uint64_t pages, uint64_t visits, uint64_t hosts, uint64_t xfer, u_int fday, u_int lday);
 };
 
 //
@@ -88,7 +88,7 @@ class history_t {
 
       bool update(const hist_month_t *month);
 
-      bool update(u_int year, u_int month, u_long hits, u_long files, u_long pages, u_long visits, u_long hosts, double xfer, u_int fday, u_int lday);
+      bool update(u_int year, u_int month, uint64_t hits, uint64_t files, uint64_t pages, uint64_t visits, uint64_t hosts, uint64_t xfer, u_int fday, u_int lday);
 
       bool get_history(void);
 

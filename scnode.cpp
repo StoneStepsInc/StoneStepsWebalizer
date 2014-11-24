@@ -78,7 +78,7 @@ const scnode_t& sc_hash_table::operator [] (u_int index) const
 
 u_int scnode_t::s_data_size(void) const
 {
-   return datanode_t<scnode_t>::s_data_size() + sizeof(u_long);
+   return datanode_t<scnode_t>::s_data_size() + sizeof(uint64_t);
 }
 
 u_int scnode_t::s_pack_data(void *buffer, u_int bufsize) const
@@ -111,5 +111,5 @@ u_int scnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
 
 u_int scnode_t::s_data_size(const void *buffer)
 {
-   return datanode_t<scnode_t>::s_data_size(buffer) + sizeof(u_long);
+   return datanode_t<scnode_t>::s_data_size(buffer) + sizeof(uint64_t);
 }

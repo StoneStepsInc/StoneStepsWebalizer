@@ -22,20 +22,20 @@
 // 1. An active download node shares the node ID with the download job
 // node.
 //
-struct danode_t : public keynode_t<u_long>, public datanode_t<danode_t> {
-      u_long      hits;              // request count (if zero, no active job)
+struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
+      uint64_t      hits;              // request count (if zero, no active job)
       tstamp_t    tstamp;            // last request timestamp
-      u_long      proctime;		    // download job time (msec)
-      u_long      xfer;              // xfer size in bytes
+      uint64_t      proctime;		    // download job time (msec)
+      uint64_t      xfer;              // xfer size in bytes
 
       public:
          typedef void (*s_unpack_cb_t)(danode_t& vnode, void *arg);
 
       public:
-         danode_t(u_long _nodeid = 0);
+         danode_t(uint64_t _nodeid = 0);
          danode_t(const danode_t& danode);
 
-         void reset(u_long _nodeid = 0);
+         void reset(uint64_t _nodeid = 0);
 
          //
          // serialization

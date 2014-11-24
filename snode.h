@@ -17,8 +17,8 @@
 /* search string struct      */
 typedef struct snode_t : public base_node<snode_t> {     
       u_short        termcnt;
-      u_long         count;
-      u_long         visits;
+      uint64_t         count;
+      uint64_t         visits;
 
       public:
          typedef void (*s_unpack_cb_t)(snode_t& snode, void *arg);
@@ -40,7 +40,7 @@ typedef struct snode_t : public base_node<snode_t> {
          static const void *s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize);
          static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
 
-         static int s_compare_hits(const void *buf1, const void *buf2);
+         static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *SNODEPTR;
 
 //

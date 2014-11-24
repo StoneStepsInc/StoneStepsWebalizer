@@ -26,13 +26,13 @@
 // In other words, appver indicates the version of the application that  
 // created the database.
 //
-struct sysnode_t : public keynode_t<u_long>, datanode_t<sysnode_t> {
+struct sysnode_t : public keynode_t<uint64_t>, datanode_t<sysnode_t> {
    u_int       appver;              // application version
    u_int       appver_last;         // last application version
    bool        incremental;         // incremetal database?
    bool        batch;               // batch processing?
    bool        fixed_dhv;           // fixed daily/hourly records?
-   u_long      filepos;             // log file position (not used)
+   uint64_t      filepos;             // log file position (not used)
    string_t    logformat;           // log format line (not used)
    
    u_short     sizeof_char;

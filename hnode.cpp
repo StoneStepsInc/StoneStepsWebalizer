@@ -26,9 +26,9 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    count = files = pages = visits = visits_conv = 0;
    visit_avg = .0;
    visit_max = 0;
-   xfer = .0;
+   xfer = 0;
    max_v_hits = max_v_files = max_v_pages = 0;
-   max_v_xfer = .0;
+   max_v_xfer = 0;
    spammer = false;
    robot = false;
    ccode[0] = ccode[1] = ccode[2] = 0;
@@ -81,9 +81,9 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
    files = pages = visits = visits_conv = 0;
    visit_avg = .0;
    visit_max = 0; 
-   xfer = 0.;
+   xfer = 0;
    max_v_hits = max_v_files = max_v_pages = 0;
-   max_v_xfer = .0;
+   max_v_xfer = 0;
    ccode[0] = ccode[1] = ccode[2] = 0;
    visit = NULL;
    dlref = 0;
@@ -137,7 +137,7 @@ vnode_t *hnode_t::get_grp_visit(void)
    return vnode;
 }
 
-void hnode_t::reset(u_long nodeid)
+void hnode_t::reset(uint64_t nodeid)
 {
    base_node<hnode_t>::reset(nodeid);
 
@@ -146,9 +146,9 @@ void hnode_t::reset(u_long nodeid)
    files = pages = visits = visits_conv = 0;
    visit_avg = .0;
    visit_max = 0; 
-   xfer = 0.;
+   xfer = 0;
    max_v_hits = max_v_files = max_v_pages = 0;
-   max_v_xfer = .0;
+   max_v_xfer = 0;
    ccode[0] = ccode[1] = ccode[2] = 0;
    dlref = 0;
    tstamp.reset();
@@ -176,12 +176,13 @@ u_int hnode_t::s_data_size(void) const
 {
    return base_node<hnode_t>::s_data_size() + 
                sizeof(u_char) * 3 +             // spammer, active, robot
-               sizeof(u_long) * 3 +             // count, files, pages
-               sizeof(u_long) * 3 +             // visits, visit_max, visits_conv
-               sizeof(u_long) * 3 +             // max_v_hits, max_v_files, max_v_pages
-               sizeof(u_long)     +             // hash(value)  
+               sizeof(uint64_t) * 3 +             // count, files, pages
+               sizeof(uint64_t) * 3 +             // visits, visit_max, visits_conv
+               sizeof(uint64_t) * 3 +             // max_v_hits, max_v_files, max_v_pages
+               sizeof(uint64_t)     +             // hash(value)  
                s_size_of(tstamp)  +             // tstamp 
-               sizeof(double) * 3 +             // xfer, visit_avg, max_v_xfer
+               sizeof(double)  +                // visit_avg
+               sizeof(uint64_t) * 2 +           // xfer, max_v_xfer
                s_size_of(name)    +             // name
                ccode_size         +             // country code
                s_size_of(city);                 // city
@@ -259,7 +260,7 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    ptr = deserialize(ptr, max_v_xfer);
    ptr = deserialize(ptr, active);
 
-   ptr = s_skip_field<u_long>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);      // value hash
 
    ptr = deserialize(ptr, name);
    ptr = deserialize(ptr, ccode, ccode_size);
@@ -278,7 +279,7 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
       if(version >= 5)
          ptr = deserialize(ptr, tstamp);
       else {
-         u_long tmp;
+         uint64_t tmp;
          ptr = deserialize(ptr, tmp);
          tstamp.reset((time_t) tmp);
       }
@@ -304,11 +305,12 @@ u_int hnode_t::s_data_size(const void *buffer)
    u_short version = s_node_ver(buffer);
    u_int datasize = base_node<hnode_t>::s_data_size(buffer) + 
                sizeof(u_char) * 2 +    // spammer, active
-               sizeof(u_long) * 3 +    // count, files, pages 
-               sizeof(u_long) * 2 +    // visits, visit_max
-               sizeof(u_long) * 3 +    // max_v_hits, max_v_files, max_v_pages
-               sizeof(u_long)     +    // hash(value)
-               sizeof(double) * 3;     // xfer, visit_avg, max_v_xfer
+               sizeof(uint64_t) * 3 +    // count, files, pages 
+               sizeof(uint64_t) * 2 +    // visits, visit_max
+               sizeof(uint64_t) * 3 +    // max_v_hits, max_v_files, max_v_pages
+               sizeof(uint64_t)     +    // hash(value)
+               sizeof(double)       +    // visit_avg
+               sizeof(uint64_t) * 2;     // xfer, max_v_xfer
 
    // host name and country code
    datasize += s_size_of<string_t>((u_char*) buffer + datasize) + ccode_size;
@@ -321,13 +323,13 @@ u_int hnode_t::s_data_size(const void *buffer)
    if(version < 3)
       return datasize;
 
-   datasize += sizeof(u_long);         // visits_conv
+   datasize += sizeof(uint64_t);         // visits_conv
 
    if(version < 4)
       return datasize;
  
    if(version < 5)
-      datasize += sizeof(u_long);      // tstamp
+      datasize += sizeof(uint64_t);      // tstamp
    else
       datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // tstamp
 
@@ -341,38 +343,39 @@ u_int hnode_t::s_data_size(const void *buffer)
 
 const void *hnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return (u_char*)buffer + base_node<hnode_t>::s_data_size(buffer) + 
             sizeof(u_char) * 2 +       // spammer, active
-            sizeof(u_long) * 3 +       // count, files, pages
-            sizeof(u_long) * 2 +       // visits, visit_max
-            sizeof(u_long) * 3 +       // max_v_hits, max_v_files, max_v_pages
-            sizeof(double) * 3;        // xfer, visit_avg, max_v_xfer
+            sizeof(uint64_t) * 3 +     // count, files, pages
+            sizeof(uint64_t) * 2 +     // visits, visit_max
+            sizeof(uint64_t) * 3 +     // max_v_hits, max_v_files, max_v_pages
+            sizeof(double)       +     // visit_avg
+            sizeof(uint64_t) * 2;      // xfer, max_v_xfer
 }
 
 const void *hnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(double);
+   datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 
             sizeof(u_char) +           // spammer 
-            sizeof(u_long) * 3;        // count, files, pages
+            sizeof(uint64_t) * 3;      // count, files, pages
 }
 
 const void *hnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
 {
-   datasize = sizeof(u_long);
+   datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 
             sizeof(u_char);            // spammer
 }
 
-int hnode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t hnode_t::s_compare_xfer(const void *buf1, const void *buf2)
 {
-   return s_compare<double>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
-int hnode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t hnode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
-   return s_compare<u_long>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf2);
 }
 
 

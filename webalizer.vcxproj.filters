@@ -346,6 +346,9 @@
     <ClInclude Include="vnode.h">
       <Filter>Header Files\nodes-h</Filter>
     </ClInclude>
+    <ClInclude Include="scnode.h">
+      <Filter>Header Files\nodes-h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="webalizer.rc">
