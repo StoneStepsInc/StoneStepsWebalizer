@@ -17,6 +17,8 @@
 #include <pthread.h>
 #endif
 
+#include "types.h"
+
 #if defined(_WIN32)
 typedef HANDLE thread_t;
 typedef unsigned (__stdcall *start_routine_t)(void*); 

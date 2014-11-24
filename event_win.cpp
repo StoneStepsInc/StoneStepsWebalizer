@@ -23,7 +23,7 @@ void event_destroy(event_t event)
       CloseHandle(event);
 }
 
-uint64_t event_wait(event_t event, uint32_t timeout)
+uint32_t event_wait(event_t event, uint32_t timeout)
 {
    if(!event)
       return EVENT_ERROR;
