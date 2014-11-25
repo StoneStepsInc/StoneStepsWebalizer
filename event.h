@@ -29,14 +29,16 @@ typedef struct event_imp_t {
    bool              signalled;
 } *event_t;
 #endif
-		  
-#define EVENT_OK        0
-#define EVENT_ERROR     1
-#define EVENT_TIMEOUT   2
+
+enum event_result_t {
+   EVENT_OK       = 0,
+   EVENT_ERROR    = 1,
+   EVENT_TIMEOUT  = 2
+};
 
 event_t event_create(bool manual, bool signalled);
 void event_destroy(event_t event);
-uint32_t event_wait(event_t event, uint32_t timeout);
+event_result_t event_wait(event_t event, uint32_t timeout);
 bool event_set(event_t event);
 bool event_reset(event_t event);
 

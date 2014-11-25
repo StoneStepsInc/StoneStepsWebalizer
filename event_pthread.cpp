@@ -61,7 +61,7 @@ void event_destroy(event_t event)
    }
 }
 
-uint32_t event_wait(event_t event, uint32_t timeout)
+event_result_t event_wait(event_t event, uint32_t timeout)
 {
 	timespec abstime;
 	int retval = 0;
