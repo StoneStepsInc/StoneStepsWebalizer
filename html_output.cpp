@@ -1701,7 +1701,7 @@ void html_output_t::top_dl_table(void)
       {
          fputs("<tbody class=\"stats_footer_tbody\">\n", out_fp);
          fputs("<tr class=\"all_items_tr\">", out_fp);
-         fputs("<td colspan=\"11\">\n", out_fp);
+         fprintf(out_fp,"<td colspan=\"%u\">\n", config.ntop_ctrys?config.geoip_city?12:11:10);
          fprintf(out_fp,"<a href=\"./dl_%04d%02d.%s\">", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
          fprintf(out_fp,"%s</a></td></tr>\n", config.lang.msg_v_downloads);
          fputs("</tbody>\n", out_fp);
