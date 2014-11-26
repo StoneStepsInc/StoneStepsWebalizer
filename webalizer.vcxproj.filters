@@ -18,9 +18,6 @@
       <UniqueIdentifier>{172363da-957b-47ec-9d45-17c7a536af2a}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
-    <Filter Include="Header Files\nodes-h">
-      <UniqueIdentifier>{759bb623-e842-4f5b-a561-8be6695349c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{14056bfb-9222-49d0-9c0b-849bf3c6d6e7}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
@@ -45,6 +42,21 @@
     <Filter Include="Source Files\templates">
       <UniqueIdentifier>{edb4d8ba-9fda-4d44-98b2-1470a8fe28bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\platform">
+      <UniqueIdentifier>{607ebc22-a0ff-43f0-bc44-ec2c882f48e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nodes">
+      <UniqueIdentifier>{759bb623-e842-4f5b-a561-8be6695349c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\output">
+      <UniqueIdentifier>{0937fac1-baa6-4e19-84a8-8dd8d4321def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\output">
+      <UniqueIdentifier>{ad4b79f2-c2bc-4fdb-ba58-8f469460262a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{611c384c-bedb-4ce2-9901-8aa6384a8861}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp">
@@ -56,16 +68,10 @@
     <ClCompile Include="dns_resolv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dump_output.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="history.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="html_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lang.cpp">
@@ -80,9 +86,6 @@
     <ClCompile Include="logrec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="output.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -92,13 +95,7 @@
     <ClCompile Include="preserve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="serialize.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="webalizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xml_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="anode.cpp">
@@ -114,9 +111,6 @@
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
     <ClCompile Include="dlnode.cpp">
-      <Filter>Source Files\nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="hashtab.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
     <ClCompile Include="hashtab_nodes.cpp">
@@ -167,9 +161,6 @@
     <ClCompile Include="vnode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="event_win.cpp">
-      <Filter>Source Files\platform</Filter>
-    </ClCompile>
     <ClCompile Include="mutex_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
@@ -206,6 +197,27 @@
     <ClCompile Include="queue_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
+    <ClCompile Include="serialize.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="html_output.cpp">
+      <Filter>Source Files\output</Filter>
+    </ClCompile>
+    <ClCompile Include="dump_output.cpp">
+      <Filter>Source Files\output</Filter>
+    </ClCompile>
+    <ClCompile Include="xml_output.cpp">
+      <Filter>Source Files\output</Filter>
+    </ClCompile>
+    <ClCompile Include="output.cpp">
+      <Filter>Source Files\output</Filter>
+    </ClCompile>
+    <ClCompile Include="event_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="hashtab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -215,12 +227,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dns_resolv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dump_output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphs.h">
@@ -244,43 +250,13 @@
     <ClInclude Include="logrec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="preserve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="queue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="serialize.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="thread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tmranges.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tstamp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tstring.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="version.h">
@@ -289,65 +265,104 @@
     <ClInclude Include="webalizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xml_output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="anode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="basenode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="ccnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="daily.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="danode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="dlnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="hnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="hourly.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="inode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="rcnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="rnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="snode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="spnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="sysnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="tnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="totals.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="unode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="vnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="scnode.h">
-      <Filter>Header Files\nodes-h</Filter>
+      <Filter>Header Files\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="html_output.h">
+      <Filter>Header Files\output</Filter>
+    </ClInclude>
+    <ClInclude Include="xml_output.h">
+      <Filter>Header Files\output</Filter>
+    </ClInclude>
+    <ClInclude Include="output.h">
+      <Filter>Header Files\output</Filter>
+    </ClInclude>
+    <ClInclude Include="dump_output.h">
+      <Filter>Header Files\output</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="tstring.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="tstamp.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="tmranges.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="thread.h">
+      <Filter>Header Files\platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

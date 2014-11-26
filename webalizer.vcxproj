@@ -188,6 +188,7 @@
     <ClInclude Include="graphs.h" />
     <ClInclude Include="hashtab.h" />
     <ClInclude Include="history.h" />
+    <ClInclude Include="html_output.h" />
     <ClInclude Include="lang.h" />
     <ClInclude Include="linklist.h" />
     <ClInclude Include="logfile.h" />
