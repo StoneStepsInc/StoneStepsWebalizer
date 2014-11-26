@@ -147,7 +147,7 @@ h_usage2 = [flaggor] [loggfil [[ loggfil ]...] | report database]
 h_msg=   -h         = skriv hjälptext,
          -v -V      = skriv versionsinformation,
          -d         = skriv ytterligare debuginformation,
-         -F typ     = Loggtyp.  typ= (clf | ftp | squid | iis | apache | w3c),
+         -F typ     = Loggtyp.  typ= (clf | squid | iis | apache | w3c),
          -i         = ignorera historiefilen,
          -p         = bevara tillstånd (inkrementell),
          -q         = visa ej informationsmeddelanden,

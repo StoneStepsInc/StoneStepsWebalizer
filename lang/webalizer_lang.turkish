@@ -138,7 +138,7 @@ h_usage2 = [opsiyonlar] [kutuk dosyasi [[ kutuk dosyasi ]...] | report database]
 h_msg=   -h        = bu yardim mesajini yazdir,
          -v -V     = surum bilgilerini yazdir,
          -d        = ek debug bilgileri yazir,
-         -F tip    = kutuk tipi. 'tip'= (clf | ftp | squid | iis | apache | w3c),
+         -F tip    = kutuk tipi. 'tip'= (clf | squid | iis | apache | w3c),
          -i        = history dosyasina bakma,
          -p        = durumu koru (eklemeli),
          -q        = bilgi mesajlarini iptal et,

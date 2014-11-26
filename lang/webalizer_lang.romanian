@@ -136,7 +136,7 @@ h_usage2 = [optiuni] [fisier jurnal [[ fisier jurnal ]...] | report database]
 h_msg=   -h        = afiseaza acest mesaj de ajutor,
          -v -V     = afiseaza informatii despre versiune,
          -d        = afiseaza informatii de depanare suplimentare,
-         -F type   = Tip jurnal.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = Tip jurnal.  type= (clf | squid | iis | apache | w3c),
          -i        = ignora fisierul de istoric,
          -p        = pastreaza starea (incremental),
          -q        = elimina mesajele de informare,

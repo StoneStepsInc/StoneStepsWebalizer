@@ -717,7 +717,7 @@ void xml_output_t::write_top_urls(bool s_xfer)
          href = xml_encode_ex(uptr->string, false);
          
          // check for log type and if the URL contains a URI scheme
-         if(config.log_type == LOG_FTP || config.log_type == LOG_SQUID || strstr_ex(uptr->string, "://", 10, 3)) {
+         if(config.log_type == LOG_SQUID || strstr_ex(uptr->string, "://", 10, 3)) {
             fprintf(out_fp,"<data complete=\"yes\"%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
          }
 			else {

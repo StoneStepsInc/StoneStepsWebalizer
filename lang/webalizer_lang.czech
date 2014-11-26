@@ -141,7 +141,7 @@ h_usage2 = [volby] [log soubor [[ log soubor ]...] | report database]
 h_msg=   -h        = vypis tento help,
          -v -V     = vypis informaci o verzi,
          -d        = vypis dalsi ladici informace,
-         -F type   = typ logu.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = typ logu.  type= (clf | squid | iis | apache | w3c),
          -i        = ignoruj soubor historie,
          -p        = zapamatuj stav (inkrementalne),
          -q        = potlac informativni zpravy,

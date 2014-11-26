@@ -139,7 +139,7 @@ h_usage2 = [options] [log file [[ log file ]...] | report database]
 h_msg=   -h        = print this help message,
          -v -V     = print version information,
          -d        = print additional debug info,
-         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignore history file,
          -p        = preserve state (incremental),
          -q        = suppress informational messages,

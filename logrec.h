@@ -26,7 +26,6 @@
 /* Log types */
 enum log_type_t {
    LOG_CLF     = 0,                 // CLF/combined log type
-   LOG_FTP     = 1,                 // wu-ftpd xferlog type
    LOG_SQUID   = 2,                 // squid proxy log
    LOG_IIS     = 3,                 // IIS (W3C, with some deviations)
    LOG_APACHE  = 4,                 // Apache

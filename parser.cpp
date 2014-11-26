@@ -97,7 +97,6 @@ bool parser_t::init_parser(int logtype)
       case LOG_IIS:
       case LOG_W3C:
       case LOG_CLF:
-      case LOG_FTP:
       default:
          break;
    }
@@ -337,9 +336,6 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
 		case LOG_APACHE:
 			retval = parse_record_apache(buffer, reclen, log_rec);
          break;
-      case LOG_FTP:   
-			retval = parse_record_ftp(buffer, reclen, log_rec);
-         break;
       case LOG_SQUID: 
 			retval = parse_record_squid(buffer, reclen, log_rec);
          break;
@@ -349,94 +345,6 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
       log_rec.normalize(config.log_type);
 
    return retval;
-}
-
-/*********************************************/
-/* PARSE_RECORD_FTP - ftp log handler        */
-/*********************************************/
-
-int parser_t::parse_record_ftp(char *buffer, size_t reclen, log_struct& log_rec)
-{
-   int i,j;
-   char *cp1, *cp2, *cpx, *cpy, *eob;
-   static string_t datetime;
-
-   eob = buffer + reclen;                      /* calculate end of buffer     */
-   fmt_logrec(buffer, false, false, false, 0); /* seperate fields with \0's   */
-
-   /* Start out with date/time       */
-   cp1=buffer;
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   cpx=cp1;       /* save month name */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   i=atoi(cp1);   /* get day number  */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   cpy=cp1;       /* get timestamp   */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   j=atoi(cp1);   /* get year        */
-
-   /* minimal sanity check */
-   if (*(cpy+2)!=':' || *(cpy+5)!=':') return 0;
-   if (j<1990 || j>2100) return 0;
-   if (i<1 || i>31) return 0;
-
-   /* format date/time field         */
-   datetime.format("[%02d/%s/%4d:%s +0000]", i, cpx, j, cpy);
-
-   if(!parse_clf_tstamp(datetime, log_rec.tstamp))
-      return 0;
-
-   /* skip seconds... */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-
-   /* get hostname */
-   log_rec.hostname = cp1;
-
-   /* get filesize */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   if (*cp1<'0'||*cp1>'9') log_rec.xfer_size=0;
-   else log_rec.xfer_size = strtoul(cp1,NULL,10);
-
-   /* URL stuff */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   cpx=cp1;
-   /* get next field for later */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   if (strlen(cpx)>MAXURL-20) *(cpx+(MAXURL-20))=0;
-
-   /* skip next two */
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-   while (*cp1!=0 && cp1<eob) cp1++;
-   while (*cp1==0) cp1++;
-
-   /* fabricate an appropriate request string based on direction */
-   log_rec.method = (*cp1=='i') ? "POST" : "GET";
-   log_rec.url = cpx;
-
-   if (cp1<eob) cp1++;
-   if (cp1<eob) cp1++;
-   while (*cp1!=0 && cp1<eob) cp1++;
-   if (cp1<eob) cp1++;
-
-   cp2 = cp1;
-   while (*cp1!=0 && cp1<eob) *cp1++;
-   log_rec.ident.assign(cp2, cp1-cp2);
-
-   /* return appropriate response code */
-   log_rec.resp_code=(*(eob-2)=='i')?206:200;
-
-   return 1;
 }
 
 /*********************************************/

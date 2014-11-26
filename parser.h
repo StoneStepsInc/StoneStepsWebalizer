@@ -77,8 +77,6 @@ class parser_t {
 
       bool fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc, u_int fieldcnt);
 
-      int parse_record_ftp(char *buffer, size_t reclen, log_struct& log_rec);
-
       int parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec);
 
       bool parse_apache_log_format(const char *format);

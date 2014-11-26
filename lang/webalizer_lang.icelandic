@@ -144,7 +144,7 @@ h_usage2 = [rofar] [log file [[ log file ]...] | report database]
 h_msg=   -h        = prentar şessa hjálp,
          -v -V     = prentar útgáfu upplısingar,
          -d        = print additional debug info,
-         -F tegund = Annála tegund.  tegund= (clf | ftp | squid | iis | apache | w3c),
+         -F tegund = Annála tegund.  tegund= (clf | squid | iis | apache | w3c),
          -i        = hunsa history skrá,
          -p        = preserve state (incremental),
          -q        = suppress informational messages,

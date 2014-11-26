@@ -139,7 +139,7 @@ h_usage2 = [pilihan] [fail log [[ fail log ]...] | report database]
 h_msg=   -h        = cetak mesej pertolongan ini,
          -v -V     = cetak maklumat versi,
          -d        = cetak maklumat tambahan berkenaan dengan debug,
-         -F type   = jenis Log.  jenis= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = jenis Log.  jenis= (clf | squid | iis | apache | w3c),
          -i        = abaikan fail terdahulu,
          -p        = kekalkan keadaan (secara menaik),
          -q        = abaikan maklumat mesej,

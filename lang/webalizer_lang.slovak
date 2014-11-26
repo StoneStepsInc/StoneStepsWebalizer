@@ -140,7 +140,7 @@ h_usage2 = [volby] [log subor [[ log subor ]...] | report database]
 h_msg=   -h        = vypis tento help,
          -v -V     = vypis informacie o verzii,
          -d        = vypis dalsie ladiace informacie,
-         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignoruj subor historie,
          -p        = zapamataj stav (inkrementalne),
          -q        = potlac informativne spravy,

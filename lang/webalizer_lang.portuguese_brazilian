@@ -136,7 +136,7 @@ h_usage2 = [opcoes] [Arquvio de log [[ Arquvio de log ]...] | report database]
 h_msg=   -h        = mostra esta mensagem de ajuda,
          -v -V     = mostra info sobre versão,
          -d        = mostra info adicional para debug,
-         -F type   = Log type.  type= (clf | ftp | squid),
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignorar Arquvio de historico,
          -p        = preservar estado (incremental),
          -q        = suprimir mensagens de informacao,

@@ -134,7 +134,7 @@ h_usage2 = [parametre] [logfil [[ logfil ]...] | report database]
 h_msg=   -h        = udskriv denne hjælpebesked,
          -v -V     = udskriv versionsoplysninger,
          -d        = udskriv ekstra fejlsøgningsinformation,
-         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignorer historiefil,
          -p        = bevar tilstand (inkremental),
          -q        = undertryk informationsrelaterede beskeder,

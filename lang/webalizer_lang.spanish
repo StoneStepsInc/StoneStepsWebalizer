@@ -148,7 +148,7 @@ h_usage2 = [opciones] [archivo histórico [[ archivo histórico ]...] | report d
 h_msg=   -h        = mostrar este mensaje,
          -v -V     = ver información de versión,
          -d        = mostrar información adicional para depuración,
-         -F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignorar archivo,
          -p        = recordar estado (incremental),
          -q        = suprimir mensajes de información,

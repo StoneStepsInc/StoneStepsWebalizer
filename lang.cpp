@@ -62,7 +62,7 @@ const char *lang_t::h_msg[]= {
          "-v -V     = print version information"           ,
          "-w -W     = print warranty information"          ,
          "-d        = print additional debug info"         ,
-         "-F type   = Log type.  type= (clf | ftp | squid | iis | apache | w3c)",
+         "-F type   = Log type.  type= (clf | squid | iis | apache | w3c)",
          "-i        = ignore history file"                 ,
          "-p        = preserve state (incremental)"        ,
          "-q        = suppress informational messages"      ,

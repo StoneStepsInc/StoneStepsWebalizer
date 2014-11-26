@@ -509,38 +509,31 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(max_errors < ntop_errors) max_errors = ntop_errors;
    if(max_downloads < ntop_downloads) max_downloads = ntop_downloads;
 
-   if (log_type == LOG_FTP) {
-      /* disable stuff for ftp logs */
-      ntop_entry = ntop_exit = 0;
-      ntop_search = 0;
-   }
-   else {
-      if(search_list.isempty()) {
-         /* If no search engines defined, define some :) */
-         search_list.add_glist("www.google.\t   q=");
-         search_list.add_glist("www.google.\t   as_q=All Words",        true);
-         search_list.add_glist("www.google.\t   as_epq=Exact Phrase",   true);
-         search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
-         search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
-         search_list.add_glist("www.google.\t   as_filetype=File Type", true);
-         search_list.add_glist("search.yahoo.\t p=");
-         search_list.add_glist("search.yahoo.\t va=All Words",          true);
-         search_list.add_glist("search.yahoo.\t vp=Exact Phrase",       true);
-         search_list.add_glist("search.yahoo.\t vo=Any Word",           true);
-         search_list.add_glist("search.yahoo.\t ve=Without Words",      true);
-         search_list.add_glist("search.yahoo.\t vf=File Type",          true);
-         search_list.add_glist("www.bing.\t     q=");
-         search_list.add_glist("msn.\t          q=");
-         search_list.add_glist("aol.com\t       query=");
-         search_list.add_glist("ask.com\t       q=");
-         search_list.add_glist("about.com\t     terms=");
-         search_list.add_glist("alltheweb.com\t q=");
-         search_list.add_glist("altavista.com\t q=");
-         search_list.add_glist("looksmart.com\t qt=");
-         search_list.add_glist("lycos.com\t     query=");
-         search_list.add_glist("search.com\t    q=");
-         search_list.add_glist("netscape.com\t  query=");
-      }
+   if(search_list.isempty()) {
+      /* If no search engines defined, define some :) */
+      search_list.add_glist("www.google.\t   q=");
+      search_list.add_glist("www.google.\t   as_q=All Words",        true);
+      search_list.add_glist("www.google.\t   as_epq=Exact Phrase",   true);
+      search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
+      search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
+      search_list.add_glist("www.google.\t   as_filetype=File Type", true);
+      search_list.add_glist("search.yahoo.\t p=");
+      search_list.add_glist("search.yahoo.\t va=All Words",          true);
+      search_list.add_glist("search.yahoo.\t vp=Exact Phrase",       true);
+      search_list.add_glist("search.yahoo.\t vo=Any Word",           true);
+      search_list.add_glist("search.yahoo.\t ve=Without Words",      true);
+      search_list.add_glist("search.yahoo.\t vf=File Type",          true);
+      search_list.add_glist("www.bing.\t     q=");
+      search_list.add_glist("msn.\t          q=");
+      search_list.add_glist("aol.com\t       query=");
+      search_list.add_glist("ask.com\t       q=");
+      search_list.add_glist("about.com\t     terms=");
+      search_list.add_glist("alltheweb.com\t q=");
+      search_list.add_glist("altavista.com\t q=");
+      search_list.add_glist("looksmart.com\t qt=");
+      search_list.add_glist("lycos.com\t     query=");
+      search_list.add_glist("search.com\t    q=");
+      search_list.add_glist("netscape.com\t  query=");
    }
 
    if(!use_classic_mangler) {
@@ -1000,7 +993,6 @@ void config_t::get_config(const char *fname)
          case 58: ntop_exit   = atoi(value); break;               // Top Exit pages
          case 59: ntop_search = atoi(value); break;               // Top Search pgs
          case 60: log_type=(tolower(value[0])=='f')?
-              LOG_FTP:(tolower(value[0])=='s')?
               LOG_SQUID:(tolower(value[0])=='c')?
               LOG_CLF: (tolower(value[0])=='a')?
               LOG_APACHE : (tolower(value[0])=='w')?
@@ -1338,7 +1330,6 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
           case 'F': log_type=(tolower(vptr[0])=='f')?
-               LOG_FTP:(tolower(vptr[0])=='s')?
                LOG_SQUID: (tolower(vptr[0])=='c')?
                LOG_CLF: (tolower(vptr[0])=='a')?
                LOG_APACHE: (tolower(vptr[0])=='w')?
@@ -1595,8 +1586,6 @@ const char *config_t::get_log_type_desc(void) const
    switch (log_type) {
       case LOG_CLF:
          return "CLF";
-      case LOG_FTP:
-         return "FTP";
       case LOG_SQUID:
          return "Squid";
       case LOG_APACHE:

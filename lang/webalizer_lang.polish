@@ -142,7 +142,7 @@ h_usage2 = [opcje] [plik logu [[ plik logu ]...] | report database]
 h_msg=   -h        = wyświetla te informacje,
          -v -V     = wyświetla informacje o wersji,
          -d        = wyświetla dodatkowe informacje,
-         -F typ    = typ logu.  typ= (clf | ftp | squid | iis | apache | w3c),
+         -F typ    = typ logu.  typ= (clf | squid | iis | apache | w3c),
          -i        = pomija plik historii,
          -p        = zachowuje stan (przyrostowy),
          -q        = wyłącza komunikaty informacyjne,

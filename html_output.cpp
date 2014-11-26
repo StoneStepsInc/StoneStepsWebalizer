@@ -1190,17 +1190,13 @@ void html_output_t::top_urls_table(int flag)
             fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
          }
 			else {
-            if (config.log_type == LOG_FTP) /* FTP log? */
-                fprintf(out_fp,"%s</td></tr>\n", buffer);
+            /* Web log  */
+            if(is_secure_url(uptr->urltype, config.use_https))
+               /* secure server mode, use https:// */
+               fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
             else
-            {             /* Web log  */
-               if(is_secure_url(uptr->urltype, config.use_https))
-                  /* secure server mode, use https:// */
-                  fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
-               else
-						/* otherwise use standard 'http://' */
-                  fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
-            }
+					/* otherwise use standard 'http://' */
+               fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
          }
 		}
       uptr++;

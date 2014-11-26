@@ -132,7 +132,7 @@ h_usage2 = [选项] [日志文件 [[ 日志文件 ]...] | report database]
 h_msg=   -h        = 显示本帮助信息,
          -v -V     = 显示本版本信息,
          -d        = 显示附加的调试信息,
-         -F type   = 日志类型.  类型= (clf | ftp | squid | iis | apache | w3c),
+         -F type   = 日志类型.  类型= (clf | squid | iis | apache | w3c),
          -i        = 忽略历史信息文件,
          -p        = 保持状态信息(增量方式),
          -q        = 不显示一般信息,

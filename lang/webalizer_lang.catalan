@@ -142,7 +142,7 @@ h_usage2 = [opcions] [fitxer històric (log) [[ fitxer històric (log) ]...] | r
 h_msg=   -h        = veure aquesta ajuda,
          -v -V     = veure la versió del programa,
          -d        = activar el mode trassa (depuració),
-         -F tipus  = tipus de fitxer de registre.  tipus=(clf | ftp | squid | iis | apache | w3c),
+         -F tipus  = tipus de fitxer de registre.  tipus=(clf | squid | iis | apache | w3c),
          -i        = ignorar el fitxer,
          -p        = conservem dades actuals (incremental),
          -q        = suprimir els missatges d'informació,

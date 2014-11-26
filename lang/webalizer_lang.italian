@@ -140,7 +140,7 @@ h_usage2 = [parametri] [file di log [[ file di log ]...] | report database]
 h_msg=	 -h        = visualizza questa schermata,
          -v -V     = mostra il numero di versione,
          -d        = visualizza informazioni di debug addizionali,
-         -F tipo   = specifica il tipo di log (clf | ftp | squid | iis | apache | w3c),
+         -F tipo   = specifica il tipo di log (clf | squid | iis | apache | w3c),
          -i        = tralascia il file di history,
          -p        = conserva le statistiche (modalita' incrementale),
          -q        = non visualizza i messaggi informativi,
