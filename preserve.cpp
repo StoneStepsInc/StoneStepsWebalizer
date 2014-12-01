@@ -397,6 +397,107 @@ bool state_t::initialize(void)
    // reset sysnode now that we have configuration available 
    sysnode.reset(config);
 
+   //
+   // initialize the database
+   //
+   
+   if(config.is_maintenance()) {
+      // make sure database exists, so database_t::open doesn't create an empty one
+      if(access(config.get_db_path(), F_OK)) {
+         if(verbose)
+            fprintf(stderr, "%s: %s\n", config.lang.msg_nofile, config.get_db_path().c_str());
+         return false;
+      }
+   }
+   else {
+      // enable trickling if trickle rate is not zero (database mode)
+      if(config.db_trickle_rate && !config.memory_mode)
+         database.set_trickle(true);
+   }
+
+   if(!database.open())
+      throw exception_t(0, string_t::_format("Cannot open the database %s", database.get_dbpath().c_str()));
+
+   // report which database was opened
+   if(verbose > 1)
+      printf("%s %s\n", config.lang.msg_use_db, database.get_dbpath().c_str());
+
+   //
+   // If there is a system node, check if we have anything to do, given state of 
+   // the database and current run parameters.
+   //
+   if(database.is_sysnode()) {
+      if(!database.get_sysnode_by_id(sysnode, NULL, NULL))
+         throw exception_t(0, "Cannot read the system node from the database");
+
+      // cannot read any data if byte order isn't the same
+      if(!sysnode.check_byte_order())
+         throw exception_t(0, "Incompatible database format (byte order)");
+
+      //
+      // Time stamps in the databases prior to v4 were saved without UTC offsets and
+      // cannot be interpreted without having to propagate current UTC offset from 
+      // the configuration to all the nodes, which would require a significant effort. 
+      // Instead, let's just cut off access to old databases here. In addition to this,
+      // all data counters in v4 were changed to 64-bit integers. Only continue if we
+      // need to read just the sysnode and query the database directly.
+      //
+      if(sysnode.appver_last < VERSION_4_0_0_0 && !config.db_info)
+         throw exception_t(0, "Cannot open a database with a version prior to v4.0");
+         
+      if(!sysnode.check_size_of())
+         throw exception_t(0, "Incompatible database format (data type sizes)");
+
+      // do not enforce time settings if we just need to print database information
+      if(!config.db_info && !sysnode.check_time_settings(config))
+         throw exception_t(0, "Incompatible database format (time settings)");
+
+      // nothing to do if just compacting the database or printing information
+      if(!config.compact_db && !config.db_info) {
+         // attach indexes to generate a report or to end the current month
+         if(config.prep_report || config.end_month) {
+            // if the last run was in the batch mode, rebuild indexes
+            if(!database.attach_indexes(sysnode.batch ? true : false))
+               throw exception_t(0, "Cannot activate secondary database indexes");
+         }
+         else {
+            // do not truncate incremental database for a non-incremental run
+            if(!config.incremental && sysnode.incremental)
+               throw exception_t(0, "Cannot truncate an incremental database for a non-incremental run");
+
+            //
+            // Truncate the database for 
+            //   a) a non-incremental run or
+            //   b) an incremental run following a non-incremental one
+            //
+            if(!config.incremental || !sysnode.incremental) {
+               if(!database.truncate())
+                  throw exception_t(0, "Cannot truncate the database\n");
+               sysnode.reset(config);
+            }
+         }
+      }
+   }
+
+   // no need to initialize the rest if we just need database information
+   if(config.db_info)
+      return true;
+
+   // fix any issues with the database to make it compatible with the latest version
+   if(sysnode.appver_last != VERSION) {
+      if(upgrade_database())
+         throw exception_t(0, "Cannot upgrade the database to the latest version");
+   }
+
+   //
+   // Initialize history
+   //
+   history.initialize();
+
+   //
+   // Initialize runtime structures
+   //
+
    // add response codes for which we have localized descriptions
    for(index = 0; index < config.lang.resp_code_count(); index++)
       response.add_status_code(config.lang.get_resp_code_by_index(index).code);
@@ -437,123 +538,54 @@ bool state_t::initialize(void)
       um_htab.set_swap_out_cb(eval_unode_cb, swap_unode_cb, this);
    }
 
-   //
-   // initialize the database
-   //
-   
-   if(config.is_maintenance()) {
-      // make sure database exists, so database_t::open doesn't create an empty one
-      if(access(config.get_db_path(), F_OK)) {
-         if(verbose)
-            fprintf(stderr, "%s: %s\n", config.lang.msg_nofile, config.get_db_path().c_str());
-         return false;
-      }
-   }
-
-   // enable trickling if trickle rate is not zero (database mode)
-   if(config.db_trickle_rate && !config.memory_mode)
-      database.set_trickle(true);
-
-   if(!database.open())
-      throw exception_t(0, "Cannot open the database");
-
-   // report which database was opened
-   if(verbose > 1)
-      printf("%s %s\n", config.lang.msg_use_db, database.get_dbpath().c_str());
-
-   //
-   // If there is a system node, check if we have anything to do, given state of 
-   // the database and current run parameters.
-   //
-   if(database.is_sysnode()) {
-      if(!database.get_sysnode_by_id(sysnode, NULL, NULL))
-         throw exception_t(0, "Cannot read the system node from the database");
-   
-      //
-      // Time stamps in the databases prior to v4 were saved without UTC offsets and
-      // cannot be interpreted without having to propagate current UTC offset from 
-      // the configuration to all the nodes, which would require a significant effort. 
-      // Instead, let's just cut off access to old databases here. 
-      //
-      if(sysnode.appver_last < VERSION_4_0_0_0)
-         throw exception_t(0, "Cannot open a database with a version prior to v4.0");
-         
-      if(!sysnode.check_size_of())
-         throw exception_t(0, "Incompatible database format (data type sizes)");
-
-      if(!sysnode.check_byte_order())
-         throw exception_t(0, "Incompatible database format (byte order)");
-
-      // do not enforce time settings if we just need to print database information
-      if(!config.db_info && !sysnode.check_time_settings(config))
-         throw exception_t(0, "Incompatible database format (time settings)");
-
-      // nothing to do if just compacting the database or printing information
-      if(!config.compact_db && !config.db_info) {
-         // attach indexes to generate a report or to end the current month
-         if(config.prep_report || config.end_month) {
-            // if the last run was in the batch mode, rebuild indexes
-            if(!database.attach_indexes(sysnode.batch ? true : false))
-               throw exception_t(0, "Cannot activate secondary database indexes");
-         }
-         else {
-            // do not truncate incremental database for a non-incremental run
-            if(!config.incremental && sysnode.incremental)
-               throw exception_t(0, "Cannot truncate an incremental database for a non-incremental run");
-
-            //
-            // Truncate the database for 
-            //   a) a non-incremental run or
-            //   b) an incremental run following a non-incremental one
-            //
-            if(!config.incremental || !sysnode.incremental) {
-               if(!database.truncate())
-                  throw exception_t(0, "Cannot truncate the database\n");
-               sysnode.reset(config);
-            }
-         }
-      }
-   }
-
-   // initialize history
-   history.initialize();
-
-   //
-   // Restore history, if required. History file may be mising, empty or incomplete
-   // at this point. History for the current month will be updated when the state
-   // is restored.
-   //
-   if (config.ignore_hist) {
-      if (verbose>1) 
-         printf("%s\n",config.lang.msg_ign_hist); 
-   }
-   else
-      history.get_history();
-
-   // fix any issues with the database to make it compatible with the latest version
-   if(sysnode.appver_last != VERSION) {
-      if(upgrade_database())
-         throw exception_t(0, "Cannot upgrade the database to the latest version");
-   }
-
    return true;
 }
 
 void state_t::cleanup(void)
 {
-   //
-   // History is expected to be up to date at this point. During a log processing run, 
-   // it will be updated when the state is restored and saved. WHen a report is being 
-   // generated from the database, the history is updated when the state is restored.
-   // Note that the state is gone at this point - don't ue it to update the history.
-   //
-   history.put_history();
-   history.cleanup();
+   if(!config.db_info)
+      history.cleanup();
 
    if(!database.close()) {
       if(verbose)
          fprintf(stderr, "Cannot close the database. The database file may be corrupt\n");
    }
+}
+
+void state_t::database_info(void) const
+{
+   printf("\n");
+   
+   printf("Database        : %s\n", config.get_db_path().c_str());
+   printf("Created by      : %d.%d.%d.%d\n", VER_PART(get_sysnode().appver, 3), VER_PART(get_sysnode().appver, 2), VER_PART(get_sysnode().appver, 1), VER_PART(get_sysnode().appver, 0));
+   printf("Last updated by : %d.%d.%d.%d\n", VER_PART(get_sysnode().appver_last, 3), VER_PART(get_sysnode().appver_last, 2), VER_PART(get_sysnode().appver_last, 1), VER_PART(get_sysnode().appver_last, 0));
+   
+   // cannot read totals ifrom a database created prior to v4
+   if(sysnode.appver_last >= VERSION_4_0_0_0) {
+      // output the first day of the month and the last timestamp
+      printf("First day       : %04d/%02d/%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.f_day);
+      printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.cur_tstamp.day, totals.cur_tstamp.hour, totals.cur_tstamp.min, totals.cur_tstamp.sec);
+   }
+
+   // output active visits and downloads
+   printf("Active visits   : %ld\n", database.get_vcount());
+   printf("Active downloads: %ld\n", database.get_dacount());
+
+   printf("Incremental     : %s\n", get_sysnode().incremental ? "yes" : "no");
+   printf("Batch           : %s\n", get_sysnode().batch ? "yes" : "no");
+
+   printf("Local time      : %s\n", get_sysnode().utc_time ? "no" : "yes");
+
+   if(!get_sysnode().utc_time)
+      printf("UTC offset      : %d min\n", get_sysnode().utc_offset);
+
+   // output numeric storage sizes and byte order in debug mode
+   if(debug_mode) {
+      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", get_sysnode().sizeof_char, get_sysnode().sizeof_short, get_sysnode().sizeof_int, get_sysnode().sizeof_long, get_sysnode().sizeof_double);
+      printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&get_sysnode().byte_order, (u_int)*((u_char*)&get_sysnode().byte_order+1), (u_int)*((u_char*)&get_sysnode().byte_order+2), (u_int)*((u_char*)&get_sysnode().byte_order+3));
+   }
+
+   printf("\n");
 }
 
 /*********************************************/
@@ -581,9 +613,17 @@ int state_t::restore_state(void)
    if(!sysnode.appver)
       return 0;
 
+   // cannot read any data nodes from old databases
+   if(config.db_info && sysnode.appver_last < VERSION_4_0_0_0)
+      return 0;
+
    // restore current totals
    if(!database.get_tgnode_by_id(totals, NULL, NULL))
       return 3;
+
+   // no need to restore the rest if we just need database information
+   if(config.db_info)
+      return 0;
    
    // get daily totals
    for(i = 0; i < 31; i++) {
@@ -615,10 +655,22 @@ int state_t::restore_state(void)
    }
 
    //
-   // Update current history. Current history file may be missing or may
-   // have old data, in which case we will recover the data for this month 
-   // from the current database file. In the worse cae scenario we just 
-   // write same data twice (i.e. the line created from the current state).
+   // Restore history, unless we are told otherwise
+   //
+   if (config.ignore_hist) {
+      if (verbose>1) 
+         printf("%s\n",config.lang.msg_ign_hist); 
+   }
+   else
+      history.get_history();
+
+   //
+   // History file may be mising, empty or incomplete at this point. Update current 
+   // history to recover the data for this month from the current database file. In 
+   // the worse cae scenario we just write same data twice (i.e. the line created 
+   // from the current state).
+   //
+   // TODO: revisit this - should not overwrite existing data
    //
    history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
 

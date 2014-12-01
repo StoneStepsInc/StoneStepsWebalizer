@@ -25,7 +25,7 @@
 // visit. Other types of visits may only be identified during the visit, 
 // given the types of URLs requested and browsing patterns.
 //
-class totals_t : public keynode_t<uint64_t>, public datanode_t<totals_t> {
+class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
    public:
       tstamp_t cur_tstamp;                       // current timestamp
 

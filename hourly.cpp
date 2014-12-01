@@ -12,7 +12,7 @@
 #include "hourly.h"
 #include "serialize.h"
 
-hourly_t::hourly_t(u_int hour) : keynode_t<u_int>(hour)
+hourly_t::hourly_t(u_int hour) : keynode_t<uint32_t>(hour)
 {
 	th_hits = th_files = th_pages = 0;
 	th_xfer = 0;

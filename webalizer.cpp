@@ -227,16 +227,21 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
          /* Error: Unable to restore run data (error num) */
          throw exception_t(0, string_t::_format("%s (%d)\n", config.lang.msg_bad_data, i));
       }
-      check_dup = true;                            // enable duplicate checking
+
+      // enable duplicate time stamp checking if in the incremental mode
+      if(config.incremental)
+         check_dup = true;
    }
 
-   /* Creating output in ... */
-   if(verbose > 1)
-      printf("%s %s\n", config.lang.msg_dir_use, !config.out_dir.isempty() ? config.out_dir.c_str() : config.lang.msg_cur_dir);
+   if(!config.db_info) {
+      /* Creating output in ... */
+      if(verbose > 1)
+         printf("%s %s\n", config.lang.msg_dir_use, !config.out_dir.isempty() ? config.out_dir.c_str() : config.lang.msg_cur_dir);
 
-   /* Hostname for reports is ... */
-   if(verbose > 1 && !config.db_info) 
-      printf("%s '%s'\n",config.lang.msg_hostname,config.hname.c_str());
+      /* Hostname for reports is ... */
+      if(verbose > 1 && !config.db_info) 
+         printf("%s '%s'\n",config.lang.msg_hostname,config.hname.c_str());
+   }
 
    return true;
 }
@@ -863,35 +868,7 @@ int webalizer_t::database_info(void)
 {
    uint64_t stime = msecs();
 
-   printf("\n");
-   
-   printf("Database        : %s\n", config.get_db_path().c_str());
-   printf("Created by      : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver, 3), VER_PART(state.get_sysnode().appver, 2), VER_PART(state.get_sysnode().appver, 1), VER_PART(state.get_sysnode().appver, 0));
-   printf("Last updated by : %d.%d.%d.%d\n", VER_PART(state.get_sysnode().appver_last, 3), VER_PART(state.get_sysnode().appver_last, 2), VER_PART(state.get_sysnode().appver_last, 1), VER_PART(state.get_sysnode().appver_last, 0));
-   
-   // output the first day of the month and the last timestamp
-   printf("First day       : %04d/%02d/%02d\n", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, state.totals.f_day);
-   printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, state.totals.cur_tstamp.day, state.totals.cur_tstamp.hour, state.totals.cur_tstamp.min, state.totals.cur_tstamp.sec);
-
-   // output active visits and downloads
-   printf("Active visits   : %ld\n", state.database.get_vcount());
-   printf("Active downloads: %ld\n", state.database.get_dacount());
-
-   printf("Incremental     : %s\n", state.get_sysnode().incremental ? "yes" : "no");
-   printf("Batch           : %s\n", state.get_sysnode().batch ? "yes" : "no");
-
-   printf("Local time      : %s\n", state.get_sysnode().utc_time ? "no" : "yes");
-
-   if(!state.get_sysnode().utc_time)
-      printf("UTC offset      : %d min\n", state.get_sysnode().utc_offset);
-
-   // output numeric storage sizes and byte order in debug mode
-   if(debug_mode) {
-      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", state.get_sysnode().sizeof_char, state.get_sysnode().sizeof_short, state.get_sysnode().sizeof_int, state.get_sysnode().sizeof_long, state.get_sysnode().sizeof_double);
-      printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&state.get_sysnode().byte_order, (u_int)*((u_char*)&state.get_sysnode().byte_order+1), (u_int)*((u_char*)&state.get_sysnode().byte_order+2), (u_int)*((u_char*)&state.get_sysnode().byte_order+3));
-   }
-
-   printf("\n");
+   state.database_info();
 
    mnt_time += elapsed(stime, msecs());
 

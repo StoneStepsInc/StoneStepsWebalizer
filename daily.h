@@ -19,7 +19,7 @@
 // daily_t
 //
 // -----------------------------------------------------------------------
-struct daily_t : public keynode_t<u_int>, public datanode_t<daily_t> {
+struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
       uint64_t tm_hits;
       uint64_t tm_files;
       uint64_t tm_pages;

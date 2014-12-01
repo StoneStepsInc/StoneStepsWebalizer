@@ -12,7 +12,7 @@
 #include "daily.h"
 #include "serialize.h"
 
-daily_t::daily_t(u_int month) : keynode_t<u_int>(month)
+daily_t::daily_t(u_int month) : keynode_t<uint32_t>(month)
 {
    td_hours = 0;
    tm_hits = tm_files = tm_hosts = tm_pages = tm_visits = 0;

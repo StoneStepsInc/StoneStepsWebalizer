@@ -13,7 +13,7 @@
 #include "serialize.h"
 #include "preserve.h"
 
-totals_t::totals_t(void) : keynode_t<uint64_t>(1)
+totals_t::totals_t(void) : keynode_t<uint32_t>(1)
 {
    a_hitptime = 0.0;							       /* average hit processing time */
    m_hitptime = 0.0;							       /* maximum hit processing time */

@@ -19,7 +19,7 @@
 // hourly_t
 //
 // -----------------------------------------------------------------------
-struct hourly_t : public keynode_t<u_int>, public datanode_t<hourly_t> {
+struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
       uint64_t th_hits;
       uint64_t th_files;
       uint64_t th_pages;

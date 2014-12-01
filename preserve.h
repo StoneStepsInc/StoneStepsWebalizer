@@ -149,6 +149,8 @@ class state_t {
 
       const sysnode_t& get_sysnode(void) const {return sysnode;}
 
+      void database_info(void) const;
+
       static void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);

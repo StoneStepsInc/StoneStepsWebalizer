@@ -13,7 +13,7 @@
 #include "version.h"
 #include "serialize.h"
 
-sysnode_t::sysnode_t(void) : keynode_t<uint64_t>(1)
+sysnode_t::sysnode_t(void) : keynode_t<uint32_t>(1)
 {
    appver = 0;
    appver_last = 0;
@@ -36,7 +36,7 @@ sysnode_t::sysnode_t(void) : keynode_t<uint64_t>(1)
 
 void sysnode_t::reset(const config_t& config)
 {
-   keynode_t<uint64_t>::reset(1);
+   keynode_t<uint32_t>::reset(1);
 
    appver = 0;
    appver_last = 0;
@@ -89,8 +89,8 @@ u_int sysnode_t::s_data_size(void) const
             sizeof(u_char)       +     // incremental database?
             sizeof(u_char)       +     // batch mode?
             sizeof(u_char)       +     // fixed_dhv
-            sizeof(uint64_t)       +     // log file position
-            s_size_of(logformat) +     // log format line
+            sizeof(uint32_t)     +     // filepos
+            s_size_of(logformat) +     // logformat
             sizeof(u_short) * 5  +     // sizeof char, short, int, long and double
             sizeof(u_int)        +     // byte_order
             sizeof(u_int)        +     // appvar_last
@@ -159,8 +159,8 @@ u_int sysnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t 
    else
       batch = false;
 
-   ptr = deserialize(ptr, filepos);
-   ptr = deserialize(ptr, logformat);
+   ptr = s_skip_field<uint32_t>(ptr);       // filepos
+   ptr = s_skip_field<string_t>(ptr);       // logformat
 
    if(version >= 3)
       ptr = deserialize(ptr, fixed_dhv);
@@ -208,17 +208,18 @@ u_int sysnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t 
 u_int sysnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int basesize, datasize;
+   u_int datasize;
 
-   basesize = datanode_t<sysnode_t>::s_data_size(buffer) + 
+   datasize = datanode_t<sysnode_t>::s_data_size(buffer) + 
             sizeof(u_int)        +        // appver
-            sizeof(u_char)       +        // incremental
-            sizeof(uint64_t);               // filepos
+            sizeof(u_char);               // incremental
 
    if(version >= 2)
-      basesize += sizeof(u_char);         // batch mode
-      
-   datasize = basesize + s_size_of<string_t>((u_char*) buffer + basesize);    // logformat
+      datasize += sizeof(u_char);         // batch mode
+   
+   // batch_mode was inserted between filepos and logformat in v2   
+   datasize += sizeof(uint32_t);          // filepos
+   datasize += s_size_of<string_t>((u_char*) buffer + datasize);    // logformat
    
    if(version < 3)
       return datasize;
