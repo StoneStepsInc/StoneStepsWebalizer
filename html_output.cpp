@@ -451,34 +451,34 @@ void html_output_t::month_total_table()
 
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    /* Total Hits */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit);
    /* Total Files */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file);
    /* Total Pages */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page);
    /* Total Visits */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_visits);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_visits);
    /* Total XFer */
    fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_xfer/1024.);
    /* Total Downloads */
    if(state.totals.t_downloads)
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_dl, state.totals.t_downloads);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_dl, state.totals.t_downloads);
 
    /**********************************************/
 
    /* Unique Hosts */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_hosts);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_hosts);
    /* Unique URL's */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_uu, state.totals.t_url);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_uu, state.totals.t_url);
    /* Unique Referrers */
    if (state.totals.t_ref != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_ur, state.totals.t_ref);
+		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_ur, state.totals.t_ref);
    /* Unique Usernames */
    if (state.totals.t_user != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_ui, state.totals.t_user);
+		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_ui, state.totals.t_user);
    /* Unique Agents */
    if (state.totals.t_agent != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_ua, state.totals.t_agent);
+		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_ua, state.totals.t_agent);
 	fputs("</tbody>\n", out_fp);
 
    // output human totals if robot or spammer filters are configured
@@ -489,23 +489,23 @@ void html_output_t::month_total_table()
 
 	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
 	   
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n\n", config.lang.msg_mtot_tx, (state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.);
 
       /* Total Non-Robot Hosts */
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n\n", config.lang.msg_mtot_us, state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n\n", config.lang.msg_mtot_us, state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts);
 
       // Total Human Visits
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n\n", config.lang.msg_mtot_tv, state.totals.t_hvisits_end);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n\n", config.lang.msg_mtot_tv, state.totals.t_hvisits_end);
 
       // output the conversion section only if target URLs or downloads are configured
       if(config.target_urls.size() || config.downloads.size()) {
          /* Unique Converted Hosts */
-         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tch, state.totals.t_hosts_conv);
+         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tch, state.totals.t_hosts_conv);
          /* Total Converted Visits */
-         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tcv, state.totals.t_visits_conv);
+         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tcv, state.totals.t_visits_conv);
          /* Host Conversion Rate */
          fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.2f</td></tr>\n", config.lang.msg_mtot_hcr, (double)state.totals.t_hosts_conv*100./(state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts));
       }
@@ -520,9 +520,9 @@ void html_output_t::month_total_table()
 
 	      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
 	      
-         fprintf(out_fp,"<tr><th>%s</th><td>%llu</td><td>%llu</td></tr>\n", config.lang.msg_mtot_mhv, (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
-         fprintf(out_fp,"<tr><th>%s</th><td>%llu</td><td>%llu</td></tr>\n", config.lang.msg_mtot_mfv, (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
-         fprintf(out_fp,"<tr><th>%s</th><td>%llu</td><td>%llu</td></tr>\n", config.lang.msg_mtot_mpv, (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
+         fprintf(out_fp,"<tr><th>%s</th><td>%"PRIu64"</td><td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mhv, (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
+         fprintf(out_fp,"<tr><th>%s</th><td>%"PRIu64"</td><td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mfv, (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
+         fprintf(out_fp,"<tr><th>%s</th><td>%"PRIu64"</td><td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mpv, (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
          fprintf(out_fp,"<tr><th>%s</th><td>%.0f</td><td>%.0f</td></tr>\n", config.lang.msg_mtot_mkv, ((state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.)/state.totals.t_hvisits_end, state.totals.max_hv_xfer/1024.);
          
          fprintf(out_fp,"<tr><th>%s</th><td>%.02f</td><td>%.02f</td></tr>\n", config.lang.msg_mtot_mdv, state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
@@ -543,13 +543,13 @@ void html_output_t::month_total_table()
 	   fputs("</tbody>\n", out_fp);
 
 	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_rhits);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_rfiles);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_rpages);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_terr, state.totals.t_rerrors);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_rhits);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_rfiles);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_rpages);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_terr, state.totals.t_rerrors);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_rxfer/1024.);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_rvisits_end);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_rhosts);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_rvisits_end);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_rhosts);
 	   fputs("</tbody>\n", out_fp);
    }
 
@@ -560,10 +560,10 @@ void html_output_t::month_total_table()
 	   fputs("</tbody>\n", out_fp);
 
 	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_spmhits);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_spmhits);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_sxfer/1024.);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_svisits_end);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_shosts);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_svisits_end);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_shosts);
 	   fputs("</tbody>\n", out_fp);
    }
       
@@ -590,27 +590,27 @@ void html_output_t::month_total_table()
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
 
    /* Max/Avg Hits per Hour */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mhh, state.totals.t_hit/(24*days_in_month), state.totals.hm_hit);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mhh, state.totals.t_hit/(24*days_in_month), state.totals.hm_hit);
    /* Max/Avg Hits per Day */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mhd, state.totals.t_hit/days_in_month, max_hits);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mhd, state.totals.t_hit/days_in_month, max_hits);
    /* Max/Avg Hits per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mhv, state.totals.t_hit/state.totals.t_visits, state.totals.max_v_hits);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mhv, state.totals.t_hit/state.totals.t_visits, state.totals.max_v_hits);
 
    /* Max/Avg Files per Day */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mfd, state.totals.t_file/days_in_month, max_files);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mfd, state.totals.t_file/days_in_month, max_files);
    /* Max/Avg Files per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mfv, state.totals.t_file/state.totals.t_visits, state.totals.max_v_files);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mfv, state.totals.t_file/state.totals.t_visits, state.totals.max_v_files);
 
    /* Max/Avg Pages per Day */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mpd, state.totals.t_page/days_in_month, max_pages);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mpd, state.totals.t_page/days_in_month, max_pages);
    /* Max/Avg Pages per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mpv, state.totals.t_page/state.totals.t_visits, state.totals.max_v_pages);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mpv, state.totals.t_page/state.totals.t_visits, state.totals.max_v_pages);
 
    /* Max/Avg Visits per Day */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%llu</td>\n<td>%llu</td></tr>\n", config.lang.msg_mtot_mvd, state.totals.t_visits/days_in_month, max_visits);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td>%"PRIu64"</td>\n<td>%"PRIu64"</td></tr>\n", config.lang.msg_mtot_mvd, state.totals.t_visits/days_in_month, max_visits);
    fprintf(out_fp,"<tr><th>%s</th>\n<td>%.02f</td>\n<td>%.02f</td></tr>\n", config.lang.msg_mtot_mdv, state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
    if(state.totals.t_visits_conv)
       fprintf(out_fp,"<tr><th>%s</th>\n<td>%.02f</td>\n<td>%.02f</td></tr>\n", config.lang.msg_mtot_cvd, state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
@@ -631,7 +631,7 @@ void html_output_t::month_total_table()
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (i=0; i < state.response.size(); i++) {
       if (state.response[i].count != 0)
-         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%llu</td></tr>\n", config.lang.get_resp_code(state.response[i].code).desc, state.response[i].count);
+         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%"PRIu64"</td></tr>\n", config.lang.get_resp_code(state.response[i].code).desc, state.response[i].count);
    }
 	fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
@@ -700,11 +700,11 @@ void html_output_t::daily_total_table()
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (; i < hptr->lday; i++) {
       fprintf(out_fp,"<tr%s><th>%d</th>\n", ((jday + i) % 7 == 6 || (jday + i) % 7 == 0) ? " class=\"weekend_tr\"" : "", i+1);
-      fprintf(out_fp,"<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%llu</td>\n", state.t_daily[i].tm_hits, PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
-      fprintf(out_fp,"<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%llu</td>\n", state.t_daily[i].tm_files, PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
-      fprintf(out_fp,"<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%llu</td>\n", state.t_daily[i].tm_pages, PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
-      fprintf(out_fp,"<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%llu</td>\n", state.t_daily[i].tm_visits, PCENT(state.t_daily[i].tm_visits, state.totals.t_visits), state.t_daily[i].h_visits_avg, state.t_daily[i].h_visits_max);
-      fprintf(out_fp,"<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%llu</td>\n", state.t_daily[i].tm_hosts, PCENT(state.t_daily[i].tm_hosts, state.totals.t_hosts), state.t_daily[i].h_hosts_avg, state.t_daily[i].h_hosts_max);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%"PRIu64"</td>\n", state.t_daily[i].tm_hits, PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%"PRIu64"</td>\n", state.t_daily[i].tm_files, PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%"PRIu64"</td>\n", state.t_daily[i].tm_pages, PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%"PRIu64"</td>\n", state.t_daily[i].tm_visits, PCENT(state.t_daily[i].tm_visits, state.totals.t_visits), state.t_daily[i].h_visits_avg, state.t_daily[i].h_visits_max);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%"PRIu64"</td>\n", state.t_daily[i].tm_hosts, PCENT(state.t_daily[i].tm_hosts, state.totals.t_hosts), state.t_daily[i].h_hosts_avg, state.t_daily[i].h_hosts_max);
       fprintf(out_fp,"<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%.0f</td>\n", state.t_daily[i].tm_xfer/1024., PCENT(state.t_daily[i].tm_xfer, state.totals.t_xfer), state.t_daily[i].h_xfer_avg/1024., state.t_daily[i].h_xfer_max/1024.);
       fputs("</tr>\n", out_fp);
    }
@@ -750,9 +750,9 @@ void html_output_t::hourly_total_table()
    for (i=0;i<24;i++)
    {
       fprintf(out_fp,"<tr><th>%d</th>\n", i);
-      fprintf(out_fp, "<td>%llu</td>\n<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_hits/days_in_month, state.t_hourly[i].th_hits, PCENT(state.t_hourly[i].th_hits, state.totals.t_hit));
-      fprintf(out_fp, "<td>%llu</td>\n<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_files/days_in_month, state.t_hourly[i].th_files, PCENT(state.t_hourly[i].th_files, state.totals.t_file));
-      fprintf(out_fp, "<td>%llu</td>\n<td>%llu</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_pages/days_in_month, state.t_hourly[i].th_pages, PCENT(state.t_hourly[i].th_pages, state.totals.t_page));
+      fprintf(out_fp, "<td>%"PRIu64"</td>\n<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_hits/days_in_month, state.t_hourly[i].th_hits, PCENT(state.t_hourly[i].th_hits, state.totals.t_hit));
+      fprintf(out_fp, "<td>%"PRIu64"</td>\n<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_files/days_in_month, state.t_hourly[i].th_files, PCENT(state.t_hourly[i].th_files, state.totals.t_file));
+      fprintf(out_fp, "<td>%"PRIu64"</td>\n<td>%"PRIu64"</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_pages/days_in_month, state.t_hourly[i].th_pages, PCENT(state.t_hourly[i].th_pages, state.totals.t_page));
       fprintf(out_fp, "<td>%.0f</td>\n<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td></tr>\n", ((double)state.t_hourly[i].th_xfer/days_in_month)/1024., state.t_hourly[i].th_xfer/1024., PCENT(state.t_hourly[i].th_xfer, state.totals.t_xfer));
    }
 
@@ -845,9 +845,9 @@ void html_output_t::top_hosts_table(int flag)
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    if (flag) 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %llu %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
+		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %"PRIu64" %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
    else      
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %llu %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s);
+		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %"PRIu64" %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s);
 
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -884,15 +884,15 @@ void html_output_t::top_hosts_table(int flag)
 
       fprintf(out_fp,
            "<th>%u</th>\n"  \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
            "<td>%.0f</td>\n" \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
            "<td>%0.2f</td>\n" \
            "<td>%0.2f</td>\n",
@@ -993,7 +993,7 @@ int html_output_t::all_hosts_page(void)
       while(iter.prev(hnode)) {
          if (hnode.flag == OBJ_GRP)
          {
-            fprintf(out_fp, "%-8llu %6.02f%%  %8llu %6.02f%%  %8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
@@ -1025,7 +1025,7 @@ int html_output_t::all_hosts_page(void)
             if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || config.hidden_hosts.isinlist(hnode.name))
                continue;
 
-            fprintf(out_fp, "%-8llu %6.02f%%  %8llu %6.02f%%  %8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
@@ -1138,9 +1138,9 @@ void html_output_t::top_urls_table(int flag)
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    if (flag) 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %llu %s %s %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url,config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer);
+		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %"PRIu64" %s %s %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url,config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer);
    else 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u);
+		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
@@ -1161,7 +1161,7 @@ void html_output_t::top_urls_table(int flag)
 
       fprintf(out_fp,
          "<th>%u</th>\n" \
-         "<td>%llu</td>\n" \
+         "<td>%"PRIu64"</td>\n" \
          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
          "<td>%.0f</td>\n"\
          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
@@ -1260,7 +1260,7 @@ int html_output_t::all_urls_page(void)
       
       while (iter.prev(unode)) {
          if (unode.flag == OBJ_GRP) {
-            fprintf(out_fp,"%-8llu %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f   %s\n",
+            fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f   %s\n",
                unode.count,
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
                unode.xfer/1024.,
@@ -1285,7 +1285,7 @@ int html_output_t::all_urls_page(void)
 
          dispurl = (unode.hexenc) ? url_decode(unode.string, str).c_str() : unode.string.c_str();
          dispurl = html_encode(dispurl, buffer, BUFSIZE, false);
-         fprintf(out_fp,"%-8llu %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
+         fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
             unode.xfer/1024.,
@@ -1373,7 +1373,7 @@ void html_output_t::top_entry_table(int flag)
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of,
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of,
            (flag) ? state.totals.u_exit : state.totals.u_entry, (flag) ? config.lang.msg_top_ex : config.lang.msg_top_en);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -1389,9 +1389,9 @@ void html_output_t::top_entry_table(int flag)
       fputs("<tr>\n", out_fp);
       fprintf(out_fp,
           "<th>%d</th>\n" \
-          "<td>%llu</td>\n" \
+          "<td>%"PRIu64"</td>\n" \
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-          "<td>%llu</td>\n" \
+          "<td>%"PRIu64"</td>\n" \
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
           "<td class=\"stats_data_item_td\">",
           i+1,uptr->count,
@@ -1507,7 +1507,7 @@ void html_output_t::top_refs_table()
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
@@ -1526,9 +1526,9 @@ void html_output_t::top_refs_table()
 
       fprintf(out_fp,
           "<th>%d</th>\n"				\
-          "<td>%llu</td>\n"				\
+          "<td>%"PRIu64"</td>\n"				\
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
-          "<td>%llu</td>\n"				\
+          "<td>%"PRIu64"</td>\n"				\
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
           "<td class=\"stats_data_item_td\">",
           i+1,
@@ -1625,7 +1625,7 @@ void html_output_t::top_dl_table(void)
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %llu %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %"PRIu64" %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
@@ -1646,7 +1646,7 @@ void html_output_t::top_dl_table(void)
    nptr = &dl_array[0];
    for(i = 0; i < tot_num; i++) {
       if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %llu)", nptr->nodeid));
+         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %"PRIu64")", nptr->nodeid));
 
       if(config.ntop_ctrys) {
          if(!nptr->hnode)
@@ -1658,13 +1658,13 @@ void html_output_t::top_dl_table(void)
       fprintf(out_fp,
           "<tr>\n"                  \
           "<th>%d</th>\n"				\
-          "<td>%llu</td>\n"		\
+          "<td>%"PRIu64"</td>\n"		\
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
           "<td>%.0f</td>\n"		\
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
           "<td>%3.02f</td>\n"		\
           "<td>%3.02f</td>\n"		\
-          "<td>%llu</td>\n"				\
+          "<td>%"PRIu64"</td>\n"				\
           "<td class=\"stats_data_item_td\">%s</td>\n",
           i+1,
           nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
@@ -1758,7 +1758,7 @@ int html_output_t::all_downloads_page(void)
       nptr = &dlnode;
 
       if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %llu)", nptr->nodeid));
+         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %"PRIu64")", nptr->nodeid));
 
       if(config.ntop_ctrys) {
          if(!nptr->hnode)
@@ -1767,7 +1767,7 @@ int html_output_t::all_downloads_page(void)
             cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
       }
 
-      fprintf(out_fp,"%5llu %6.02f%%  %11.02f %6.02f%%  %6.02f  %6.02f   %6llu  %-32s",
+      fprintf(out_fp,"%5"PRIu64" %6.02f%%  %11.02f %6.02f%%  %6.02f  %6.02f   %6"PRIu64"  %-32s",
          nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
          nptr->sumxfer/1024., (state.totals.t_xfer == 0) ? 0 : ((nptr->sumxfer/1024.)/(state.totals.t_xfer/1024.))*100.0,
          nptr->avgtime, nptr->sumtime, 
@@ -1820,7 +1820,7 @@ void html_output_t::top_err_table(void)
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th class=\"errors_th\">%s</th>\n", config.lang.msg_h_status);
@@ -1836,7 +1836,7 @@ void html_output_t::top_err_table(void)
       fprintf(out_fp,
           "<tr>\n"                  \
           "<th>%d</th>\n"				\
-          "<td>%llu</td>\n"				\
+          "<td>%"PRIu64"</td>\n"				\
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
           "<td title=\"%s\">%d</td>\n"				\
           "<td>%s</td>" \
@@ -1907,7 +1907,7 @@ int html_output_t::all_errors_page(void)
       html_encode(rptr->method, method_html, MAXMETHOD<<2, false);
       dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
       dispurl = html_encode(dispurl, buffer, BUFSIZE, false);
-      fprintf(out_fp,"%-8llu %6.02f%%           %d  %12s  %s\n",
+      fprintf(out_fp,"%-8"PRIu64" %6.02f%%           %d  %12s  %s\n",
          rptr->count,
          (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
          rptr->respcode,
@@ -1958,7 +1958,7 @@ int html_output_t::all_refs_page(void)
 
       while(iter.prev(rnode)) {
          if (rnode.flag == OBJ_GRP) {
-            fprintf(out_fp,"%-8llu %6.02f%%  %-8llu %6.02f%%  %s\n",
+            fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %-8"PRIu64" %6.02f%%  %s\n",
                rnode.count,
                (state.totals.t_hit==0)?0:((double)rnode.count/state.totals.t_hit)*100.0,
                rnode.visits, 
@@ -1985,7 +1985,7 @@ int html_output_t::all_refs_page(void)
             dispurl = (rnode.hexenc) ? url_decode(rnode.string, str).c_str() : rnode.string.c_str();
             dispurl = html_encode(dispurl, buffer, BUFSIZE, false);
          }
-         fprintf(out_fp,"%-8llu %6.02f%%  %-8llu %6.02f%%  %s\n",
+         fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %-8"PRIu64" %6.02f%%  %s\n",
             rnode.count,
             (state.totals.t_hit==0)?0:((double)rnode.count/state.totals.t_hit)*100.0,
             rnode.visits, 
@@ -2077,7 +2077,7 @@ void html_output_t::top_agents_table()
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_agent, config.lang.msg_top_a);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_agent, config.lang.msg_top_a);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
@@ -2097,11 +2097,11 @@ void html_output_t::top_agents_table()
 
       fprintf(out_fp,
           "<td>%d</td>\n" \
-          "<td>%llu</td>\n" \
+          "<td>%"PRIu64"</td>\n" \
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
           "<td>%.0f</td>\n" \
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-          "<td>%llu</td>\n" \
+          "<td>%"PRIu64"</td>\n" \
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
           "<td class=\"stats_data_item_td\">",
           i+1,
@@ -2179,7 +2179,7 @@ int html_output_t::all_agents_page(void)
       {
          if (anode.flag == OBJ_GRP)
          {
-            fprintf(out_fp,"%-8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  ",
+            fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  ",
                 anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
                 anode.xfer/1024., (state.totals.t_xfer==0)?.0:(anode.xfer/state.totals.t_xfer)*100.0,
                 anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
@@ -2204,7 +2204,7 @@ int html_output_t::all_agents_page(void)
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
                      
-         fprintf(out_fp,"%-8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  ",
+         fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  ",
              anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
              anode.xfer/1024., (state.totals.t_xfer==0)?.0:(anode.xfer/state.totals.t_xfer)*100.0,
              anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
@@ -2255,7 +2255,7 @@ void html_output_t::top_search_table(void)
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
@@ -2271,9 +2271,9 @@ void html_output_t::top_search_table(void)
       fprintf(out_fp,
          "<tr>\n"
          "<th>%d</th>\n"
-         "<td>%llu</td>\n"
+         "<td>%"PRIu64"</td>\n"
          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-         "<td>%llu</td>\n"
+         "<td>%"PRIu64"</td>\n"
          "<td class=\"data_percent_td\">%3.02f%%</td>\n",
          i+1, 
          sptr->count,
@@ -2362,7 +2362,7 @@ int html_output_t::all_search_page(void)
 
    while(iter.prev(snode)) {
       sptr = &snode;
-      fprintf(out_fp,"%-8llu %6.02f%%  %-8llu %6.02f%%  ",
+      fprintf(out_fp,"%-8"PRIu64" %6.02f%%  %-8"PRIu64" %6.02f%%  ",
          sptr->count,
          state.totals.t_srchits ? ((double)sptr->count/state.totals.t_srchits)*100.0 : 0.0,
          sptr->visits,
@@ -2471,7 +2471,7 @@ void html_output_t::top_users_table()
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %llu %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %"PRIu64" %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
@@ -2493,13 +2493,13 @@ void html_output_t::top_users_table()
 
       fprintf(out_fp,
            "<th>%d</td>\n"  \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
            "<td>%.0f</td>\n" \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%llu</td>\n"  \
+           "<td>%"PRIu64"</td>\n"  \
            "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
            "<td>%0.3f</td><td>%0.3f</td>\n" \
            "<td class=\"stats_data_item_td\">",
@@ -2571,7 +2571,7 @@ int html_output_t::all_users_page(void)
 
       while(iter.prev(inode)) {
          if (inode.flag == OBJ_GRP) {
-            fprintf(out_fp, "%-8llu %6.02f%%  %8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  %12.3f  %12.3f  %s\n",
+            fprintf(out_fp, "%-8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  %12.3f  %12.3f  %s\n",
                inode.count,
                (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
                (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,inode.xfer/1024.,
@@ -2594,7 +2594,7 @@ int html_output_t::all_users_page(void)
          if(config.hidden_users.isinlist(inode.string))
             continue;
                
-         fprintf(out_fp, "%-8llu %6.02f%%  %8llu %6.02f%%  %8.0f %6.02f%%  %8llu %6.02f%%  %12.3f  %12.3f  %s\n",
+         fprintf(out_fp, "%-8"PRIu64" %6.02f%%  %8"PRIu64" %6.02f%%  %8.0f %6.02f%%  %8"PRIu64" %6.02f%%  %12.3f  %12.3f  %s\n",
             inode.count,
             (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
             (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,inode.xfer/1024.,
@@ -2719,14 +2719,14 @@ void html_output_t::top_ctry_table()
    for(i = 0; i < tot_num; i++) {
       if(ccarray[i]->count != 0) {
          fprintf(out_fp,"<tr>"                                                \
-              "<th>%llu</th>\n" \
-              "<td>%llu</td>\n" \
+              "<th>%"PRIu64"</th>\n" \
+              "<td>%"PRIu64"</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%llu</td>\n" \
+              "<td>%"PRIu64"</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%.0f</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%llu</td>\n" \
+              "<td>%"PRIu64"</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td class=\"stats_data_item_td\">%s</td></tr>\n",
               i+1, ccarray[i]->count,
@@ -2840,16 +2840,16 @@ int html_output_t::write_main_index()
       if(hptr->hits==0) continue;
       days_in_month=(hptr->lday-hptr->fday)+1;
       fprintf(out_fp,"<tr><th><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, config.html_ext.c_str(), lang_t::s_month[hptr->month-1], hptr->year);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->hits/days_in_month);
-      fprintf(out_fp,"<td>%llu</td>\n",hptr->files/days_in_month);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->pages/days_in_month);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->visits/days_in_month);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->hosts);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->hits/days_in_month);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n",hptr->files/days_in_month);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->pages/days_in_month);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->visits/days_in_month);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->hosts);
       fprintf(out_fp,"<td>%.0f</td>\n", hptr->xfer/1024.);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->visits);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->pages);
-      fprintf(out_fp,"<td>%llu</td>\n", hptr->files);
-      fprintf(out_fp,"<td>%llu</td></tr>\n", hptr->hits);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->visits);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->pages);
+      fprintf(out_fp,"<td>%"PRIu64"</td>\n", hptr->files);
+      fprintf(out_fp,"<td>%"PRIu64"</td></tr>\n", hptr->hits);
       gt_hit   += hptr->hits;
       gt_files += hptr->files;
       gt_pages += hptr->pages;
@@ -2864,12 +2864,12 @@ int html_output_t::write_main_index()
 	 */
 	fputs("<tbody class=\"summary_footer_tbody\">\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_footer_tr\"><th colspan=\"5\">%s</th>\n", config.lang.msg_h_totals);
-   fprintf(out_fp,"<td>%llu</td>\n", gt_hosts);
+   fprintf(out_fp,"<td>%"PRIu64"</td>\n", gt_hosts);
    fprintf(out_fp,"<td>%.0f</td>\n", gt_xfer/1024.);
-   fprintf(out_fp,"<td>%llu</td>\n", gt_visits);
-   fprintf(out_fp,"<td>%llu</td>\n", gt_pages);
-   fprintf(out_fp,"<td>%llu</td>\n", gt_files);
-   fprintf(out_fp,"<td>%llu</td></tr>\n", gt_hit);
+   fprintf(out_fp,"<td>%"PRIu64"</td>\n", gt_visits);
+   fprintf(out_fp,"<td>%"PRIu64"</td>\n", gt_pages);
+   fprintf(out_fp,"<td>%"PRIu64"</td>\n", gt_files);
+   fprintf(out_fp,"<td>%"PRIu64"</td></tr>\n", gt_hit);
 	fputs("</tbody>\n", out_fp);
 
    fputs("</table>\n", out_fp);

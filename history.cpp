@@ -215,7 +215,7 @@ bool history_t::get_history(void)
    while ((fgets(buffer,BUFSIZE,hist_fp)) != NULL)
    {
       /* month# year# requests files sites xfer firstday lastday visits */
-      numfields = sscanf(buffer,"%d %d %llu %llu %llu %llu %d %d %llu %llu",
+      numfields = sscanf(buffer,"%d %d %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %d %d %"SCNu64" %"SCNu64"",
                     &hnode.month,
                     &hnode.year,
                     &hnode.hits,
@@ -297,7 +297,7 @@ void history_t::put_history(void)
    while(iter.more()) {
       hptr = &iter.next();
       if(hptr->hits != 0) {
-         fprintf(hist_fp,"%d %d %llu %llu %llu %llu %d %d %llu %llu\n",
+         fprintf(hist_fp,"%d %d %"PRIu64" %"PRIu64" %"PRIu64" %"PRIu64" %d %d %"PRIu64" %"PRIu64"\n",
                          hptr->month,
                          hptr->year,
                          hptr->hits,

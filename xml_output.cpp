@@ -193,11 +193,11 @@ int xml_output_t::write_main_index()
       fprintf(out_fp, "<row count=\"%d\" rowid=\"%d\">\n", days_in_month, state.history.month_index(hptr->year, hptr->month)+1);
       
       fprintf(out_fp,"<data url=\"usage_%04d%02d.xml\"><value>%s %d</value></data>\n", hptr->year, hptr->month, lang_t::s_month[hptr->month-1], hptr->year);
-      fprintf(out_fp,"<data><avg>%llu</avg><sum>%llu</sum></data>\n", hptr->hits/days_in_month, hptr->hits);
-      fprintf(out_fp,"<data><avg>%llu</avg><sum>%llu</sum></data>\n", hptr->files/days_in_month, hptr->files);
-      fprintf(out_fp,"<data><avg>%llu</avg><sum>%llu</sum></data>\n", hptr->pages/days_in_month, hptr->pages);
-      fprintf(out_fp,"<data><avg>%llu</avg><sum>%llu</sum></data>\n", hptr->visits/days_in_month, hptr->visits);
-      fprintf(out_fp,"<data><avg>%llu</avg><sum>%llu</sum></data>\n", hptr->hosts/days_in_month, hptr->hosts);
+      fprintf(out_fp,"<data><avg>%"PRIu64"</avg><sum>%"PRIu64"</sum></data>\n", hptr->hits/days_in_month, hptr->hits);
+      fprintf(out_fp,"<data><avg>%"PRIu64"</avg><sum>%"PRIu64"</sum></data>\n", hptr->files/days_in_month, hptr->files);
+      fprintf(out_fp,"<data><avg>%"PRIu64"</avg><sum>%"PRIu64"</sum></data>\n", hptr->pages/days_in_month, hptr->pages);
+      fprintf(out_fp,"<data><avg>%"PRIu64"</avg><sum>%"PRIu64"</sum></data>\n", hptr->visits/days_in_month, hptr->visits);
+      fprintf(out_fp,"<data><avg>%"PRIu64"</avg><sum>%"PRIu64"</sum></data>\n", hptr->hosts/days_in_month, hptr->hosts);
       fprintf(out_fp,"<data><avg>%.0f</avg><sum>%.0f</sum></data>\n", hptr->xfer/1024./days_in_month, hptr->xfer/1024.);
       fputs("</row>\n", out_fp);
 
@@ -214,11 +214,11 @@ int xml_output_t::write_main_index()
 	 *	Summary totals section
 	 */
 	fprintf(out_fp,"<totals title=\"%s\">\n", config.lang.msg_h_totals);
-   fprintf(out_fp,"<data><avg/><sum>%llu</sum></data>\n", gt_hit);
-   fprintf(out_fp,"<data><avg/><sum>%llu</sum></data>\n", gt_files);
-   fprintf(out_fp,"<data><avg/><sum>%llu</sum></data>\n", gt_pages);
-   fprintf(out_fp,"<data><avg/><sum>%llu</sum></data>\n", gt_visits);
-   fprintf(out_fp,"<data><avg/><sum>%llu</sum></data>\n", gt_hosts);
+   fprintf(out_fp,"<data><avg/><sum>%"PRIu64"</sum></data>\n", gt_hit);
+   fprintf(out_fp,"<data><avg/><sum>%"PRIu64"</sum></data>\n", gt_files);
+   fprintf(out_fp,"<data><avg/><sum>%"PRIu64"</sum></data>\n", gt_pages);
+   fprintf(out_fp,"<data><avg/><sum>%"PRIu64"</sum></data>\n", gt_visits);
+   fprintf(out_fp,"<data><avg/><sum>%"PRIu64"</sum></data>\n", gt_hosts);
    fprintf(out_fp,"<data><avg/><sum>%.0f</sum></data>\n", gt_xfer/1024.);
 	fputs("</totals>\n", out_fp);
 
@@ -254,37 +254,37 @@ void xml_output_t::write_monthly_totals(void)
 	fprintf(out_fp,"<columns><col help=\"totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_h_totals));
 
    /* Total Hits */
-   fprintf(out_fp,"<data name=\"t_hits\" help=\"hits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_hit);
+   fprintf(out_fp,"<data name=\"t_hits\" help=\"hits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_hit);
    /* Total Files */
-   fprintf(out_fp,"<data name=\"t_files\" help=\"files\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_file);
+   fprintf(out_fp,"<data name=\"t_files\" help=\"files\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_file);
    
    /* Total Pages */
-   fprintf(out_fp,"<data name=\"t_pages\" help=\"pages\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_page);
+   fprintf(out_fp,"<data name=\"t_pages\" help=\"pages\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_page);
    /* Total Visits */
-   fprintf(out_fp,"<data name=\"t_visits\" help=\"visits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_visits);
+   fprintf(out_fp,"<data name=\"t_visits\" help=\"visits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_visits);
    
    /* Total XFer */
    fprintf(out_fp,"<data name=\"t_xfer\" help=\"transfer\" title=\"%s\"><sum>%.0f</sum></data>\n", xml_encode(config.lang.msg_h_xfer), state.totals.t_xfer/1024.);
    
    // Total Downloads (skip if download groups are not configured)
    if(config.downloads.size())
-      fprintf(out_fp,"<data name=\"t_downloads\" help=\"downloads\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_downloads), state.totals.t_downloads);
+      fprintf(out_fp,"<data name=\"t_downloads\" help=\"downloads\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_downloads), state.totals.t_downloads);
    
    /**********************************************/
 
    /* Unique Hosts */
-   fprintf(out_fp,"<data name=\"t_hosts\" help=\"hosts\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_hosts);
+   fprintf(out_fp,"<data name=\"t_hosts\" help=\"hosts\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_hosts);
    /* Unique URL's */
-   fprintf(out_fp,"<data name=\"t_urls\" help=\"urls\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_urls), state.totals.t_url);
+   fprintf(out_fp,"<data name=\"t_urls\" help=\"urls\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_urls), state.totals.t_url);
    /* Unique Referrers */
-	fprintf(out_fp,"<data name=\"t_referrers\" help=\"referrers\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_refs), state.totals.t_ref);
+	fprintf(out_fp,"<data name=\"t_referrers\" help=\"referrers\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_refs), state.totals.t_ref);
 
    /* Unique Usernames */
    if (state.totals.t_user)
-	   fprintf(out_fp,"<data name=\"t_users\" help=\"users\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_mtot_ui), state.totals.t_user);
+	   fprintf(out_fp,"<data name=\"t_users\" help=\"users\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_mtot_ui), state.totals.t_user);
 	   
    /* Unique Agents */
-	fprintf(out_fp,"<data name=\"t_agents\" help=\"user_agents\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_agents), state.totals.t_agent);
+	fprintf(out_fp,"<data name=\"t_agents\" help=\"user_agents\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_agents), state.totals.t_agent);
 
    fputs("</section>\n", out_fp);
 
@@ -294,23 +294,23 @@ void xml_output_t::write_monthly_totals(void)
 	   fputs("<section>\n", out_fp);
 	   fprintf(out_fp, "<columns><col help=\"human_totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_mtot_htot));
 
-      fprintf(out_fp,"<data name=\"t_hhits\" help=\"hits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
-      fprintf(out_fp,"<data name=\"t_hfiles\" help=\"files\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
-      fprintf(out_fp,"<data name=\"t_hpages\" help=\"pages\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
+      fprintf(out_fp,"<data name=\"t_hhits\" help=\"hits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
+      fprintf(out_fp,"<data name=\"t_hfiles\" help=\"files\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
+      fprintf(out_fp,"<data name=\"t_hpages\" help=\"pages\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
       fprintf(out_fp,"<data name=\"t_hxfer\" help=\"transfer\" title=\"%s\"><sum>%.0f</sum></data>\n", xml_encode(config.lang.msg_h_xfer), (state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.);
 
       /* Total Non-Robot Hosts */
-      fprintf(out_fp,"<data name=\"t_hhosts\" help=\"hosts\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts);
+      fprintf(out_fp,"<data name=\"t_hhosts\" help=\"hosts\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts);
 
       // Total Human Visits
-      fprintf(out_fp,"<data name=\"t_hvisits\" help=\"visits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_hvisits_end);
+      fprintf(out_fp,"<data name=\"t_hvisits\" help=\"visits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_hvisits_end);
 
       // output the conversion section only if target URLs or downloads are configured
       if(config.target_urls.size() || config.downloads.size()) {
          /* Unique Converted Hosts */
-         fprintf(out_fp,"<data name=\"t_hcvhosts\" help=\"converted_hosts\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_chosts), state.totals.t_hosts_conv);
+         fprintf(out_fp,"<data name=\"t_hcvhosts\" help=\"converted_hosts\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_chosts), state.totals.t_hosts_conv);
          /* Total Converted Visits */
-         fprintf(out_fp,"<data name=\"t_hcvvisits\" help=\"converted_visits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_cvisits), state.totals.t_visits_conv);
+         fprintf(out_fp,"<data name=\"t_hcvvisits\" help=\"converted_visits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_cvisits), state.totals.t_visits_conv);
          /* Host Conversion Rate */
          fprintf(out_fp,"<data name=\"t_cvrate\" help=\"host_conversion_rate\" title=\"%s\"><value>%.2f</value></data>\n", xml_encode(config.lang.msg_mtot_hcr), (double)state.totals.t_hosts_conv*100./(state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts));
       }
@@ -322,9 +322,9 @@ void xml_output_t::write_monthly_totals(void)
 	      fputs("<section extension=\"yes\">\n", out_fp);
 	      fprintf(out_fp,"<columns><col/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode_ex(config.lang.msg_h_avg), xml_encode_ex(config.lang.msg_h_max));
 	      
-         fprintf(out_fp,"<data name=\"t_hphvisit\" help=\"hits_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mhv), (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
-         fprintf(out_fp,"<data name=\"t_fphvisit\" help=\"files_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mfv), (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
-         fprintf(out_fp,"<data name=\"t_pphvisit\" help=\"pages_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mpv), (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
+         fprintf(out_fp,"<data name=\"t_hphvisit\" help=\"hits_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mhv), (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
+         fprintf(out_fp,"<data name=\"t_fphvisit\" help=\"files_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mfv), (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
+         fprintf(out_fp,"<data name=\"t_pphvisit\" help=\"pages_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mpv), (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
          fprintf(out_fp,"<data name=\"t_xphvisit\" help=\"transfer_per_visit\" title=\"%s\"><avg>%.0f</avg><max>%.0f</max></data>\n", xml_encode(config.lang.msg_mtot_mkv), ((state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.)/state.totals.t_hvisits_end, state.totals.max_hv_xfer/1024.);
          
          fprintf(out_fp,"<data name=\"t_vlength\" help=\"visit_duration\" title=\"%s\"><avg>%.02f</avg><max>%.02f</max></data>\n", xml_encode(config.lang.msg_mtot_mdv), state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
@@ -342,13 +342,13 @@ void xml_output_t::write_monthly_totals(void)
 	   fprintf(out_fp,"<columns><col help=\"robot_totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_mtot_rtot));
    		
       // Robot Totals
-      fprintf(out_fp,"<data name=\"t_rhits\" help=\"hits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_rhits);
-      fprintf(out_fp,"<data name=\"t_rfiles\" help=\"files\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_rfiles);
-      fprintf(out_fp,"<data name=\"t_rpages\" help=\"pages\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_rpages);
-      fprintf(out_fp,"<data name=\"t_rerrors\" help=\"errors\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_errors), state.totals.t_rerrors);
+      fprintf(out_fp,"<data name=\"t_rhits\" help=\"hits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_rhits);
+      fprintf(out_fp,"<data name=\"t_rfiles\" help=\"files\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_files), state.totals.t_rfiles);
+      fprintf(out_fp,"<data name=\"t_rpages\" help=\"pages\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_pages), state.totals.t_rpages);
+      fprintf(out_fp,"<data name=\"t_rerrors\" help=\"errors\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_errors), state.totals.t_rerrors);
       fprintf(out_fp,"<data name=\"t_rxfer\" help=\"transfer\" title=\"%s\"><sum>%.0f</sum></data>\n", xml_encode(config.lang.msg_h_xfer), state.totals.t_rxfer/1024.);
-      fprintf(out_fp,"<data name=\"t_rvisits\" help=\"visits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_rvisits_end);
-      fprintf(out_fp,"<data name=\"t_rhosts\" help=\"hosts\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_rhosts);
+      fprintf(out_fp,"<data name=\"t_rvisits\" help=\"visits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_rvisits_end);
+      fprintf(out_fp,"<data name=\"t_rhosts\" help=\"hosts\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_rhosts);
 
       fputs("</section>\n", out_fp);
    }
@@ -358,11 +358,11 @@ void xml_output_t::write_monthly_totals(void)
 	   fputs("<section>\n", out_fp);
 	   fprintf(out_fp,"<columns><col help=\"spammer_totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_mtot_stot));
 
-      fprintf(out_fp,"<data name=\"t_spmhits\" help=\"hits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_spmhits);
+      fprintf(out_fp,"<data name=\"t_spmhits\" help=\"hits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hits), state.totals.t_spmhits);
       fprintf(out_fp,"<data name=\"t_sxfer\" help=\"transfer\" title=\"%s\"><sum>%.0f</sum></data>\n", xml_encode(config.lang.msg_h_xfer), state.totals.t_sxfer/1024.);
 
-      fprintf(out_fp,"<data name=\"t_svisits\" help=\"visits\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_svisits_end);
-      fprintf(out_fp,"<data name=\"t_shosts\" help=\"hosts\" title=\"%s\"><sum>%llu</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_shosts);
+      fprintf(out_fp,"<data name=\"t_svisits\" help=\"visits\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_visits), state.totals.t_svisits_end);
+      fprintf(out_fp,"<data name=\"t_shosts\" help=\"hosts\" title=\"%s\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.msg_h_hosts), state.totals.t_shosts);
 
       fputs("</section>\n", out_fp);
    }
@@ -385,24 +385,24 @@ void xml_output_t::write_monthly_totals(void)
    /* Hourly/Daily avg/max totals */
 
    /* Max/Avg Hits per Hour */
-   fprintf(out_fp,"<data name=\"t_hphour\" help=\"hits_per_hour\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mhh), state.totals.t_hit/(24*days_in_month), state.totals.hm_hit);
+   fprintf(out_fp,"<data name=\"t_hphour\" help=\"hits_per_hour\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mhh), state.totals.t_hit/(24*days_in_month), state.totals.hm_hit);
    /* Max/Avg Hits per Day */
-   fprintf(out_fp,"<data name=\"t_hpday\" help=\"hits_per_day\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mhd), state.totals.t_hit/days_in_month, max_hits);
+   fprintf(out_fp,"<data name=\"t_hpday\" help=\"hits_per_day\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mhd), state.totals.t_hit/days_in_month, max_hits);
    /* Max/Avg Hits per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<data name=\"t_hpvisit\" help=\"hits_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mhv), state.totals.t_hit/state.totals.t_visits, state.totals.max_v_hits);
+      fprintf(out_fp,"<data name=\"t_hpvisit\" help=\"hits_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mhv), state.totals.t_hit/state.totals.t_visits, state.totals.max_v_hits);
 
    /* Max/Avg Files per Day */
-   fprintf(out_fp,"<data name=\"t_fpday\" help=\"files_per_day\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mfd), state.totals.t_file/days_in_month, max_files);
+   fprintf(out_fp,"<data name=\"t_fpday\" help=\"files_per_day\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mfd), state.totals.t_file/days_in_month, max_files);
    /* Max/Avg Files per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<data name=\"t_fpvisit\" help=\"files_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mfv), state.totals.t_file/state.totals.t_visits, state.totals.max_v_files);
+      fprintf(out_fp,"<data name=\"t_fpvisit\" help=\"files_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mfv), state.totals.t_file/state.totals.t_visits, state.totals.max_v_files);
 
    /* Max/Avg Pages per Day */
-   fprintf(out_fp,"<data name=\"t_ppday\" help=\"pages_per_day\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mpd), state.totals.t_page/days_in_month, max_pages);
+   fprintf(out_fp,"<data name=\"t_ppday\" help=\"pages_per_day\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mpd), state.totals.t_page/days_in_month, max_pages);
    /* Max/Avg Pages per Visit */
    if(state.totals.t_visits)
-      fprintf(out_fp,"<data name=\"t_ppvisit\" help=\"pages_per_visit\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mpv), state.totals.t_page/state.totals.t_visits, state.totals.max_v_pages);
+      fprintf(out_fp,"<data name=\"t_ppvisit\" help=\"pages_per_visit\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mpv), state.totals.t_page/state.totals.t_visits, state.totals.max_v_pages);
 
    /* Max/Avg KBytes per Day */
    fprintf(out_fp,"<data name=\"t_xpday\" help=\"transfer_per_day\" title=\"%s\"><avg>%.0f</avg><max>%.0f</max></data>\n", xml_encode(config.lang.msg_mtot_mkd), (state.totals.t_xfer/1024.)/days_in_month,max_xfer/1024.);
@@ -411,7 +411,7 @@ void xml_output_t::write_monthly_totals(void)
       fprintf(out_fp,"<data name=\"t_xpvisit\" help=\"transfer_per_visit\" title=\"%s\"><avg>%.0f</avg><max>%.0f</max></data>\n", xml_encode(config.lang.msg_mtot_mkv), (state.totals.t_xfer/1024.)/state.totals.t_visits, state.totals.max_v_xfer/1024.);
 
    /* Max/Avg Visits per Day */
-   fprintf(out_fp,"<data name=\"t_vpday\" help=\"visits_per_day\" title=\"%s\"><avg>%llu</avg><max>%llu</max></data>\n", xml_encode(config.lang.msg_mtot_mvd), state.totals.t_visits/days_in_month, max_visits);
+   fprintf(out_fp,"<data name=\"t_vpday\" help=\"visits_per_day\" title=\"%s\"><avg>%"PRIu64"</avg><max>%"PRIu64"</max></data>\n", xml_encode(config.lang.msg_mtot_mvd), state.totals.t_visits/days_in_month, max_visits);
 
    fputs("</section>\n", out_fp);
 
@@ -422,7 +422,7 @@ void xml_output_t::write_monthly_totals(void)
    /* response code totals */
    for (i=0; i < state.response.size(); i++) {
       if (state.response[i].count != 0)
-         fprintf(out_fp,"<data title=\"%s\" code=\"%d\"><sum>%llu</sum></data>\n", xml_encode(config.lang.get_resp_code(state.response[i].code).desc), state.response[i].code, state.response[i].count);
+         fprintf(out_fp,"<data title=\"%s\" code=\"%d\"><sum>%"PRIu64"</sum></data>\n", xml_encode(config.lang.get_resp_code(state.response[i].code).desc), state.response[i].code, state.response[i].count);
    }
 
    fputs("</section>\n", out_fp);
@@ -498,11 +498,11 @@ void xml_output_t::write_daily_totals(void)
    for (; i < hptr->lday; i++) {
       fprintf(out_fp,"<row count=\"%hu\" rowid=\"%d\">\n", state.t_daily[i].td_hours, i+1);
       fprintf(out_fp,"<data><value weekday=\"%d\">%d</value></data>\n", (jday + i) % 7, i+1);
-      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%llu</sum><avg>%.2f</avg><max>%llu</max></data>\n", PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].tm_hits, state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
-      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%llu</sum><avg>%.2f</avg><max>%llu</max></data>\n", PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].tm_files, state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
-      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%llu</sum><avg>%.2f</avg><max>%llu</max></data>\n", PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].tm_pages, state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
-      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%llu</sum><avg>%.2f</avg><max>%llu</max></data>\n", PCENT(state.t_daily[i].tm_visits, state.totals.t_visits), state.t_daily[i].tm_visits, state.t_daily[i].h_visits_avg, state.t_daily[i].h_visits_max);
-      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%llu</sum><avg>%.2f</avg><max>%llu</max></data>\n", PCENT(state.t_daily[i].tm_hosts, state.totals.t_hosts), state.t_daily[i].tm_hosts, state.t_daily[i].h_hosts_avg, state.t_daily[i].h_hosts_max);
+      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%"PRIu64"</sum><avg>%.2f</avg><max>%"PRIu64"</max></data>\n", PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].tm_hits, state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
+      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%"PRIu64"</sum><avg>%.2f</avg><max>%"PRIu64"</max></data>\n", PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].tm_files, state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
+      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%"PRIu64"</sum><avg>%.2f</avg><max>%"PRIu64"</max></data>\n", PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].tm_pages, state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
+      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%"PRIu64"</sum><avg>%.2f</avg><max>%"PRIu64"</max></data>\n", PCENT(state.t_daily[i].tm_visits, state.totals.t_visits), state.t_daily[i].tm_visits, state.t_daily[i].h_visits_avg, state.t_daily[i].h_visits_max);
+      fprintf(out_fp,"<data><sum percent=\"%3.02f\">%"PRIu64"</sum><avg>%.2f</avg><max>%"PRIu64"</max></data>\n", PCENT(state.t_daily[i].tm_hosts, state.totals.t_hosts), state.t_daily[i].tm_hosts, state.t_daily[i].h_hosts_avg, state.t_daily[i].h_hosts_max);
       fprintf(out_fp,"<data><sum percent=\"%3.02f\">%.0f</sum><avg>%.0f</avg><max>%.0f</max></data>\n", PCENT(state.t_daily[i].tm_xfer, state.totals.t_xfer), state.t_daily[i].tm_xfer/1024., state.t_daily[i].h_xfer_avg/1024., state.t_daily[i].h_xfer_max/1024.);
       fputs("</row>\n", out_fp);
    }
@@ -564,9 +564,9 @@ void xml_output_t::write_hourly_totals(void)
    for(i=0; i < 24; i++) {
       fprintf(out_fp,"<row count=\"%d\" rowid=\"%d\">\n", days_in_month, i+1);
       fprintf(out_fp,"<data><value>%d</value></data>\n", i);
-      fprintf(out_fp, "<data><avg>%llu</avg><sum percent=\"%3.02f\">%llu</sum></data>\n", state.t_hourly[i].th_hits/days_in_month, PCENT(state.t_hourly[i].th_hits, state.totals.t_hit), state.t_hourly[i].th_hits);
-      fprintf(out_fp, "<data><avg>%llu</avg><sum percent=\"%3.02f\">%llu</sum></data>\n", state.t_hourly[i].th_files/days_in_month, PCENT(state.t_hourly[i].th_files, state.totals.t_file), state.t_hourly[i].th_files);
-      fprintf(out_fp, "<data><avg>%llu</avg><sum percent=\"%3.02f\">%llu</sum></data>\n", state.t_hourly[i].th_pages/days_in_month, PCENT(state.t_hourly[i].th_pages, state.totals.t_page), state.t_hourly[i].th_pages);
+      fprintf(out_fp, "<data><avg>%"PRIu64"</avg><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n", state.t_hourly[i].th_hits/days_in_month, PCENT(state.t_hourly[i].th_hits, state.totals.t_hit), state.t_hourly[i].th_hits);
+      fprintf(out_fp, "<data><avg>%"PRIu64"</avg><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n", state.t_hourly[i].th_files/days_in_month, PCENT(state.t_hourly[i].th_files, state.totals.t_file), state.t_hourly[i].th_files);
+      fprintf(out_fp, "<data><avg>%"PRIu64"</avg><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n", state.t_hourly[i].th_pages/days_in_month, PCENT(state.t_hourly[i].th_pages, state.totals.t_page), state.t_hourly[i].th_pages);
       fprintf(out_fp, "<data><avg>%.0f</avg><sum percent=\"%3.02f\">%.0f</sum></data>\n", (state.t_hourly[i].th_xfer/days_in_month)/1024., PCENT(state.t_hourly[i].th_xfer, state.totals.t_xfer), state.t_hourly[i].th_xfer/1024.);
       fputs("</row>\n", out_fp);
    }
@@ -655,9 +655,9 @@ void xml_output_t::write_top_urls(bool s_xfer)
       top_num = (uint32_t) i;
 
    if(s_xfer) 
-		fprintf(out_fp, "<report id=\"top_url_xfer\" help=\"url_report\" title=\"%s %u %s %llu %s %s %s\" top=\"%d\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_url, max_urls, state.totals.t_grp_urls);
+		fprintf(out_fp, "<report id=\"top_url_xfer\" help=\"url_report\" title=\"%s %u %s %"PRIu64" %s %s %s\" top=\"%d\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_url, max_urls, state.totals.t_grp_urls);
    else 
-		fprintf(out_fp, "<report id=\"top_url_hits\" help=\"url_report\" title=\"%s %u %s %llu %s\" top=\"%d\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u, top_num, state.totals.t_url, max_urls, state.totals.t_grp_urls);
+		fprintf(out_fp, "<report id=\"top_url_hits\" help=\"url_report\" title=\"%s %u %s %"PRIu64" %s\" top=\"%d\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u, top_num, state.totals.t_url, max_urls, state.totals.t_grp_urls);
 
    // output the top element for the top URL section
    fputs("<top>", out_fp);
@@ -698,7 +698,7 @@ void xml_output_t::write_top_urls(bool s_xfer)
 
       fprintf(out_fp,
          "<data><value>%u</value></data>\n" \
-         "<data><sum percent=\"%3.02f\">%llu</sum></data>\n" \
+         "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n" \
          "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"\
          "<data><avg>%0.3f</avg><max>%0.3f</max></data>\n",
          i+1, 
@@ -798,7 +798,7 @@ void xml_output_t::write_top_entry(bool entry)
    if(i < tot_num)
       tot_num = i;
 
-   fprintf(out_fp, "<report id=\"%s\" help=\"%s\" title=\"%s %u %s %llu %s\" top=\"%u\" total=\"%llu\">\n", 
+   fprintf(out_fp, "<report id=\"%s\" help=\"%s\" title=\"%s %u %s %"PRIu64" %s\" top=\"%u\" total=\"%"PRIu64"\">\n", 
                      entry ? "top_entry_urls" : "top_exit_urls",
                      entry ? "entry_url_report" : "exit_url_report",
                      config.lang.msg_top_top, tot_num, config.lang.msg_top_of,
@@ -822,8 +822,8 @@ void xml_output_t::write_top_entry(bool entry)
       fputs("<row>\n", out_fp);
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n",
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n",
           i+1,
           (state.totals.t_hit==0)?0:((double)uptr->count/state.totals.t_hit)*100.0, uptr->count,
           (entry)?((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0) : 
@@ -895,7 +895,7 @@ void xml_output_t::write_top_downloads(void)
       fprintf(stderr, "Failed to retrieve download records (%d)", iter.get_error());
 
    // generate the report
-   fprintf(out_fp, "<report id=\"top_downloads\" help=\"downloads_report\" colspan=\"%d\" title=\"%s %u %s %llu %s\" top=\"%d\" total=\"%llu\" max=\"%llu\">\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads, top_num, state.totals.t_downloads, config.max_downloads);
+   fprintf(out_fp, "<report id=\"top_downloads\" help=\"downloads_report\" colspan=\"%d\" title=\"%s %u %s %"PRIu64" %s\" top=\"%d\" total=\"%"PRIu64"\" max=\"%"PRIu64"\">\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads, top_num, state.totals.t_downloads, config.max_downloads);
 
    // output the top element for the top downloads section
    fputs("<top>", out_fp);
@@ -928,7 +928,7 @@ void xml_output_t::write_top_downloads(void)
    i = 0; 
    while(i < top_num || (config.all_downloads && i < config.max_downloads && iter.prev(*nptr, state_t::unpack_dlnode_const_cb, const_cast<state_t*>(&state)))) {
       if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %llu)", nptr->nodeid));
+         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %"PRIu64")", nptr->nodeid));
 
       if(config.ntop_ctrys) {
          if(!nptr->hnode)
@@ -941,10 +941,10 @@ void xml_output_t::write_top_downloads(void)
       
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
           "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
           "<data><avg>%3.02f</avg><sum>%3.02f</sum></data>\n"
-          "<data><value>%llu</value></data>\n"
+          "<data><value>%"PRIu64"</value></data>\n"
           "<data><value>%s</value></data>\n",
           i+1,
           (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0, nptr->sumhits, 
@@ -990,7 +990,7 @@ void xml_output_t::write_top_errors(void)
    /* get max to do... */
    top_num = (a_ctr > config.ntop_errors) ? config.ntop_errors : a_ctr;
 
-   fprintf(out_fp, "<report id=\"top_errors\" help=\"errors_report\" title=\"%s %llu %s %llu %s\" top=\"%llu\" total=\"%llu\" max=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors, top_num, state.totals.t_err, config.max_errors);
+   fprintf(out_fp, "<report id=\"top_errors\" help=\"errors_report\" title=\"%s %"PRIu64" %s %"PRIu64" %s\" top=\"%"PRIu64"\" total=\"%"PRIu64"\" max=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors, top_num, state.totals.t_err, config.max_errors);
 
    // output the top element for the top errors section
    fputs("<top>", out_fp);
@@ -1018,7 +1018,7 @@ void xml_output_t::write_top_errors(void)
 
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
           "<data title=\"%s\"><value>%d</value></data>\n"
           "<data><value>%s</value></data>\n",
           i+1,
@@ -1119,9 +1119,9 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       top_num = (uint32_t) i;
 
    if(s_xfer)
-      fprintf(out_fp, "<report id=\"top_host_xfer\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %u %s %llu %s %s %s\" top=\"%u\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
+      fprintf(out_fp, "<report id=\"top_host_xfer\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %u %s %"PRIu64" %s %s %s\" top=\"%u\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
    else
-      fprintf(out_fp, "<report id=\"top_host_hits\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %u %s %llu %s\" top=\"%u\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
+      fprintf(out_fp, "<report id=\"top_host_hits\" help=\"hosts_report\" colspan=\"%d\" title=\"%s %u %s %"PRIu64" %s\" top=\"%u\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, top_num, state.totals.t_hosts, max_hosts, state.totals.t_grp_hosts);
 
    // output the top element for the top hosts section
    fputs("<top>", out_fp);
@@ -1180,11 +1180,11 @@ void xml_output_t::write_top_hosts(bool s_xfer)
       
       fprintf(out_fp,
            "<data><value>%u</value></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
            "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
            "<data><avg>%.0f</avg><max>%.0f</max></data>\n",
            i+1,
            (state.totals.t_hit==0)?0:((double)hptr->count/state.totals.t_hit)*100.0, hptr->count, 
@@ -1314,7 +1314,7 @@ void xml_output_t::write_top_referrers(void)
    if(i < top_num)
       top_num = i;
 
-   fprintf(out_fp, "<report id=\"top_referrers\" help=\"referrers_report\" title=\"%s %u %s %llu %s\" top=\"%u\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r, top_num, state.totals.t_ref, config.max_refs, state.totals.t_grp_refs);
+   fprintf(out_fp, "<report id=\"top_referrers\" help=\"referrers_report\" title=\"%s %u %s %"PRIu64" %s\" top=\"%u\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r, top_num, state.totals.t_ref, config.max_refs, state.totals.t_grp_refs);
 
    // output the top element for the top referrers section
    fputs("<top>", out_fp);
@@ -1364,8 +1364,8 @@ void xml_output_t::write_top_referrers(void)
 
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n",
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n",
           i+1,
           (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
           rptr->count,
@@ -1426,7 +1426,7 @@ void xml_output_t::write_top_search_strings(void)
 
    top_num = (a_ctr > config.ntop_search) ? config.ntop_search : a_ctr;
 
-   fprintf(out_fp, "<report id=\"top_search_strings\" help=\"search_strings_report\" title=\"%s %llu %s %llu %s\" top=\"%llu\" total=\"%llu\" max=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr, top_num, state.totals.t_search, config.max_search);
+   fprintf(out_fp, "<report id=\"top_search_strings\" help=\"search_strings_report\" title=\"%s %"PRIu64" %s %"PRIu64" %s\" top=\"%"PRIu64"\" total=\"%"PRIu64"\" max=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr, top_num, state.totals.t_search, config.max_search);
 
    // output the top element for the top search strings section
    fputs("<top>", out_fp);
@@ -1453,8 +1453,8 @@ void xml_output_t::write_top_search_strings(void)
       sptr = &snode;
       fprintf(out_fp,
          "<data><value>%d</value></data>\n"
-         "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-         "<data><sum percent=\"%3.02f\">%llu</sum></data>\n",
+         "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+         "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n",
          i+1, 
          state.totals.t_srchits ? ((double)sptr->count/state.totals.t_srchits)*100.0 : 0.0,
          sptr->count,
@@ -1563,7 +1563,7 @@ void xml_output_t::write_top_users(void)
    if(i < top_num)
       top_num = i;
 
-   fprintf(out_fp, "<report id=\"top_users\" help=\"users_report\" title=\"%s %llu %s %llu %s\" top=\"%d\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i, top_num, state.totals.t_user, config.max_users, state.totals.t_grp_users);
+   fprintf(out_fp, "<report id=\"top_users\" help=\"users_report\" title=\"%s %"PRIu64" %s %"PRIu64" %s\" top=\"%d\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i, top_num, state.totals.t_user, config.max_users, state.totals.t_grp_users);
 
    // output the top element for the top users section
    fputs("<top>", out_fp);
@@ -1605,10 +1605,10 @@ void xml_output_t::write_top_users(void)
 
       fprintf(out_fp,
            "<data><value>%d</value></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
            "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
-           "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+           "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
            "<data><avg>%0.3f</avg><max>%0.3f</max></data>\n",
            i+1,
            (state.totals.t_hit==0)?0:((double)iptr->count/state.totals.t_hit)*100.0, iptr->count,
@@ -1711,7 +1711,7 @@ void xml_output_t::write_top_agents(void)
    if(i < top_num)
       top_num = i;
 
-   fprintf(out_fp, "<report id=\"top_user_agents\" help=\"user_agents_report\" title=\"%s %u %s %llu %s\" top=\"%u\" total=\"%llu\" max=\"%llu\" groups=\"%llu\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_agent, config.lang.msg_top_a, top_num, state.totals.t_agent, config.max_agents, state.totals.t_grp_agents);
+   fprintf(out_fp, "<report id=\"top_user_agents\" help=\"user_agents_report\" title=\"%s %u %s %"PRIu64" %s\" top=\"%u\" total=\"%"PRIu64"\" max=\"%"PRIu64"\" groups=\"%"PRIu64"\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_agent, config.lang.msg_top_a, top_num, state.totals.t_agent, config.max_agents, state.totals.t_grp_agents);
 
    // output the top element for the top agents section
    fputs("<top>", out_fp);
@@ -1752,9 +1752,9 @@ void xml_output_t::write_top_agents(void)
 
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
           "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
-          "<data><sum percent=\"%3.02f\">%llu</sum></data>\n",
+          "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n",
           i+1,
           (state.totals.t_hit==0)?0:((double)aptr->count/state.totals.t_hit)*100.0, aptr->count,
           (state.totals.t_xfer==0)?0:((double)aptr->xfer/state.totals.t_xfer)*100.0, aptr->xfer/1024.,
@@ -1892,10 +1892,10 @@ void xml_output_t::write_top_countries(void)
       // mimic the report row, so the same code can be used to process it
       fprintf(out_fp,
               "<data><value>0</value></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
               "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
               "<data ccode=\"_\"><value>%s</value></data>\n",
               PCENT(t_ohit, t_hit), t_ohit,
               PCENT(t_ofile, t_file), t_ofile,
@@ -1924,14 +1924,14 @@ void xml_output_t::write_top_countries(void)
 
    for(i = 0; i < tot_num; i++) {
       if(ccarray[i]->count != 0) {
-         fprintf(out_fp, "<row rowid=\"%llu\">\n", i+1);
+         fprintf(out_fp, "<row rowid=\"%"PRIu64"\">\n", i+1);
          
          fprintf(out_fp,
-              "<data><value>%llu</value></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+              "<data><value>%"PRIu64"</value></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
               "<data><sum percent=\"%3.02f\">%.0f</sum></data>\n"
-              "<data><sum percent=\"%3.02f\">%llu</sum></data>\n"
+              "<data><sum percent=\"%3.02f\">%"PRIu64"</sum></data>\n"
               "<data ccode=\"%s\"><value>%s</value></data>\n",
               i+1, 
               PCENT(ccarray[i]->count,t_hit), ccarray[i]->count,

@@ -297,7 +297,7 @@ int graph_t::year_graph6x(const history_t& history,
 
    // y-axis legend
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%llu", maxval);
+   sprintf(maxvaltxt, "%"PRIu64"", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, ML-font_size_small_px-1, MT+GBW, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                          /* print color coded legends? */
@@ -383,7 +383,7 @@ int graph_t::year_graph6x(const history_t& history,
       if (hptr->visits > maxval) maxval = hptr->visits;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%llu", maxval);
+   sprintf(maxvaltxt, "%"PRIu64"", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, MT, maxvaltxt, c_legend, false, NULL);
 
    /* visits */
@@ -509,7 +509,7 @@ int graph_t::month_graph6(const char *fname,          // filename
        if (daily[i].tm_pages > maxval) maxval = daily[i].tm_pages;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%llu", maxval);
+   sprintf(maxvaltxt, "%"PRIu64"", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                           /* Print color coded legends? */
@@ -587,7 +587,7 @@ int graph_t::month_graph6(const char *fname,          // filename
       if (daily[i].tm_visits > maxval) maxval = daily[i].tm_visits;
    }
    if (maxval <= 0) maxval = 1;
-   sprintf(maxvaltxt, "%llu", maxval);
+   sprintf(maxvaltxt, "%"PRIu64"", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 180, maxvaltxt, c_legend, false, NULL);
    
    /* data 6 */
@@ -700,10 +700,10 @@ int graph_t::day_graph3(const char *fname,
    if (maxval <= 0) maxval = 1;
    if (maxfer <= 0) maxfer = 1;
 
-   sprintf(maxvaltxt, "%llu", maxval);
+   sprintf(maxvaltxt, "%"PRIu64"", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
    
-   sprintf(maxvaltxt, "%llu", maxfer);
+   sprintf(maxvaltxt, "%"PRIu64"", maxfer);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, maxvaltxt, c_legend, false, NULL);
 
    if (config.graph_legend)                          /* print color coded legends? */

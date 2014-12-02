@@ -11,7 +11,7 @@
 #ifndef __TYPES_H
 #define __TYPES_H
 
-#include <cstdint>
+#include <cinttypes>
 
 #ifndef __BIT_TYPES_DEFINED__
 typedef unsigned char  u_char;

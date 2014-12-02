@@ -935,16 +935,16 @@ int webalizer_t::run(void)
 
       if(!config.prep_report && !config.compact_db && !config.end_month && !config.db_info) {
          // output number of processed, ignored and bad records
-         printf("%s %llu %s ", config.lang.msg_processed, total_rec, config.lang.msg_records);
+         printf("%s %"PRIu64" %s ", config.lang.msg_processed, total_rec, config.lang.msg_records);
          if (total_ignore) {
-            printf("(%llu %s",total_ignore, config.lang.msg_ignored);
+            printf("(%"PRIu64" %s",total_ignore, config.lang.msg_ignored);
             if (total_bad) 
-               printf(", %llu %s) ",total_bad, config.lang.msg_bad);
+               printf(", %"PRIu64" %s) ",total_bad, config.lang.msg_bad);
             else
                printf(") ");
          }
          else if (total_bad) 
-            printf("(%llu %s) ",total_bad, config.lang.msg_bad);
+            printf("(%"PRIu64" %s) ",total_bad, config.lang.msg_bad);
 
          // output processing time
          printf("%s %.2f %s", config.lang.msg_in, proc_time/1000., config.lang.msg_seconds);
@@ -962,7 +962,7 @@ int webalizer_t::run(void)
 
          if(verbose && config.is_dns_enabled()) {
             if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
-               printf("%s: %llu%% (%d:%d)\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
+               printf("%s: %"PRIu64"%% (%d:%d)\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
          }
 
          // report total DNS time
@@ -3093,7 +3093,7 @@ int webalizer_t::read_log_line(logfile_t& logfile)
       // full buffer - report record number, file name and the record if running in debug mode
       if (verbose) {
          
-         fprintf(stderr,"%s (%llu - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
+         fprintf(stderr,"%s (%"PRIu64" - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
          if (debug_mode) 
             fprintf(stderr,":\n%s",buffer);
          else 
@@ -3140,7 +3140,7 @@ int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logre
       /* really bad record... */
       if (verbose)
       {
-         fprintf(stderr,"%s (%llu)", config.lang.msg_bad_rec, total_rec);
+         fprintf(stderr,"%s (%"PRIu64")", config.lang.msg_bad_rec, total_rec);
          if (debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
          else fprintf(stderr,"\n");
       }
