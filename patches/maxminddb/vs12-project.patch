@@ -1,15 +1,10 @@
 # HG changeset patch
-# Parent 7b2ce3ac245b5457c8c3bf8cf9c1b060a21088b8
+# Parent a4c7514f4e99eb28ef8bbd4191413e5808899be9
 VS12 project patch
 
-diff -r 7b2ce3ac245b .hgtags
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgtags	Sun Nov 09 12:09:10 2014 -0500
-@@ -0,0 +1,1 @@
-+fb2f175871f3bd0b359000538be4e00098d947eb libmaxmindb-0-5-3
-diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.props
---- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.props	Sun Nov 09 12:09:10 2014 -0500
++++ b/projects/VS12/libmaxminddb.props	Sun Dec 07 10:43:12 2014 -0500
 @@ -0,0 +1,23 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -35,9 +30,9 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.props
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
-diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.sln
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.sln	Sun Nov 09 12:09:10 2014 -0500
++++ b/projects/VS12/libmaxminddb.sln	Sun Dec 07 10:43:12 2014 -0500
 @@ -0,0 +1,28 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
@@ -67,9 +62,9 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.sln
 +		HideSolutionNode = FALSE
 +	EndGlobalSection
 +EndGlobal
-diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj	Sun Nov 09 12:09:10 2014 -0500
++++ b/projects/VS12/libmaxminddb.vcxproj	Sun Dec 07 10:43:12 2014 -0500
 @@ -0,0 +1,142 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -214,9 +209,9 @@ diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r 7b2ce3ac245b projects/VS12/libmaxminddb.vcxproj.filters
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sun Nov 09 12:09:10 2014 -0500
++++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sun Dec 07 10:43:12 2014 -0500
 @@ -0,0 +1,23 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

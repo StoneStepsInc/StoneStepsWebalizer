@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent d6defd7f2363aecdd6294a375924db7893141ab0
-Added VS12 project files
+# Parent ec36106b1d7ea9e729485349ae406f5e9b24f36d
+VS12 project files
 
-diff -r d6defd7f2363 contrib/vstudio/vc12/miniunz.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/miniunz.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/miniunz.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/miniunz.vcxproj	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,316 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -323,9 +323,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/miniunz.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r d6defd7f2363 contrib/vstudio/vc12/minizip.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/minizip.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/minizip.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/minizip.vcxproj	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,313 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -641,9 +641,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/minizip.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r d6defd7f2363 contrib/vstudio/vc12/testzlib.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/testzlib.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/testzlib.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/testzlib.vcxproj	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,431 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1077,9 +1077,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/testzlib.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r d6defd7f2363 contrib/vstudio/vc12/testzlibdll.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/testzlibdll.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/testzlibdll.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/testzlibdll.vcxproj	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,318 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1400,9 +1400,28 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/testzlibdll.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r d6defd7f2363 contrib/vstudio/vc12/zlib.rc
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlib.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/zlib.rc	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/zlib.props	Sun Dec 07 17:53:02 2014 -0500
+@@ -0,0 +1,14 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup>
++    <TargetName>zlib12</TargetName>
++  </PropertyGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlib.rc
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/contrib/vstudio/vc12/zlib.rc	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,32 @@
 +#include <windows.h>
 +
@@ -1436,9 +1455,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlib.rc
 +    VALUE "Translation", 0x0409, 1252
 +  END
 +END
-diff -r d6defd7f2363 contrib/vstudio/vc12/zlibstat.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlibstat.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/zlibstat.vcxproj	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/zlibstat.vcxproj	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,467 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1908,9 +1927,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibstat.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.def
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlibvc.def
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/zlibvc.def	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/zlibvc.def	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,143 @@
 +LIBRARY
 +; zlib data compression and ZIP file I/O library
@@ -2055,9 +2074,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.def
 +; zlib1 v1.2.8 added:
 +        inflateGetDictionary                    @166
 +        gzvprintf                               @167
-diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.sln
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlibvc.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/zlibvc.sln	Fri Mar 07 08:40:55 2014 -0500
++++ b/contrib/vstudio/vc12/zlibvc.sln	Sun Dec 07 17:53:02 2014 -0500
 @@ -0,0 +1,117 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
@@ -2176,10 +2195,10 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.sln
 +		HideSolutionNode = FALSE
 +	EndGlobalSection
 +EndGlobal
-diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
+diff -r ec36106b1d7e contrib/vstudio/vc12/zlibvc.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/contrib/vstudio/vc12/zlibvc.vcxproj	Fri Mar 07 08:40:55 2014 -0500
-@@ -0,0 +1,690 @@
++++ b/contrib/vstudio/vc12/zlibvc.vcxproj	Sun Dec 07 17:53:02 2014 -0500
+@@ -0,0 +1,678 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
@@ -2281,12 +2300,14 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|Win32'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Itanium'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -2299,12 +2320,14 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="zlib.props" />
 +  </ImportGroup>
 +  <PropertyGroup Label="UserMacros" />
 +  <PropertyGroup>
@@ -2372,13 +2395,9 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
 +    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
 +    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">zlibwapi</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|Win32'">zlibwapi</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">zlibwapi</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlibwapi</TargetName>
 +    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithoutAsm|x64'">zlibwapi</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlibwapi</TargetName>
 +  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 +    <Midl>
 +      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -2411,7 +2430,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    <Link>
 +      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
 +      <AdditionalDependencies>..\..\masmx86\match686.obj;..\..\masmx86\inffas32.obj;%(AdditionalDependencies)</AdditionalDependencies>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
 +      <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -2422,7 +2440,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <RandomizedBaseAddress>false</RandomizedBaseAddress>
 +      <DataExecutionPrevention>
 +      </DataExecutionPrevention>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
 +    </Link>
 +    <PreBuildEvent>
@@ -2463,7 +2480,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    </ResourceCompile>
 +    <Link>
 +      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
@@ -2474,7 +2490,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <RandomizedBaseAddress>false</RandomizedBaseAddress>
 +      <DataExecutionPrevention>
 +      </DataExecutionPrevention>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +    </Link>
 +  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -2511,7 +2526,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    <Link>
 +      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
 +      <AdditionalDependencies>..\..\masmx86\match686.obj;..\..\masmx86\inffas32.obj;%(AdditionalDependencies)</AdditionalDependencies>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
@@ -2522,7 +2536,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <RandomizedBaseAddress>false</RandomizedBaseAddress>
 +      <DataExecutionPrevention>
 +      </DataExecutionPrevention>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
 +    </Link>
 +    <PreBuildEvent>
@@ -2562,7 +2575,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    </ResourceCompile>
 +    <Link>
 +      <AdditionalDependencies>..\..\masmx64\gvmat64.obj;..\..\masmx64\inffasx64.obj;%(AdditionalDependencies)</AdditionalDependencies>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
 +      <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -2570,11 +2582,10 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <GenerateMapFile>true</GenerateMapFile>
 +      <MapFileName>$(OutDir)zlibwapi.map</MapFileName>
 +      <SubSystem>Windows</SubSystem>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +      <TargetMachine>MachineX64</TargetMachine>
 +    </Link>
 +    <PreBuildEvent>
-+      <Command>cd ..\..\contrib\masmx64
++      <Command>cd ..\..\masmx64
 +bld_ml64.bat</Command>
 +    </PreBuildEvent>
 +  </ItemDefinitionGroup>
@@ -2654,7 +2665,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <Culture>0x040c</Culture>
 +    </ResourceCompile>
 +    <Link>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
@@ -2662,7 +2672,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <GenerateMapFile>true</GenerateMapFile>
 +      <MapFileName>$(OutDir)zlibwapi.map</MapFileName>
 +      <SubSystem>Windows</SubSystem>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +      <TargetMachine>MachineX64</TargetMachine>
 +    </Link>
 +  </ItemDefinitionGroup>
@@ -2745,7 +2754,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +    </ResourceCompile>
 +    <Link>
 +      <AdditionalDependencies>..\..\masmx64\gvmat64.obj;..\..\masmx64\inffasx64.obj;%(AdditionalDependencies)</AdditionalDependencies>
-+      <OutputFile>$(OutDir)zlibwapi.dll</OutputFile>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
 +      <ModuleDefinitionFile>.\zlibvc.def</ModuleDefinitionFile>
@@ -2753,7 +2761,6 @@ diff -r d6defd7f2363 contrib/vstudio/vc12/zlibvc.vcxproj
 +      <GenerateMapFile>true</GenerateMapFile>
 +      <MapFileName>$(OutDir)zlibwapi.map</MapFileName>
 +      <SubSystem>Windows</SubSystem>
-+      <ImportLibrary>$(OutDir)zlibwapi.lib</ImportLibrary>
 +      <TargetMachine>MachineX64</TargetMachine>
 +    </Link>
 +    <PreBuildEvent>

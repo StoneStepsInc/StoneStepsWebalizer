@@ -1,18 +1,22 @@
 # HG changeset patch
-# Parent d4684cb2db533d65e677edf19bdd1be0e8c75650
-Added .hgignore
+# Parent 56035c862761522dcaaf1333f2598b96cd4ca759
+.hgignore
 
-diff -r d4684cb2db53 .hgignore
+diff -r 56035c862761 .hgignore
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgignore	Sun Mar 02 23:23:21 2014 -0500
-@@ -0,0 +1,10 @@
-+syntax: glob
++++ b/.hgignore	Sun Dec 07 12:57:51 2014 -0500
+@@ -0,0 +1,14 @@
++syntax: regexp
 +
-+*.sdf
-+*.opensdf
-+*.suo
++^contrib/vstudio/vc12/zlibvc\.sdf$
++^contrib/vstudio/vc12/zlibvc\.opensdf$
++^contrib/vstudio/vc12/zlibvc\.v12\.suo$
++^contrib/vstudio/vc12/zlibvc\.vcxproj\.user$
 +
-+contrib/vstudio/vc12/x86/
++^contrib/vstudio/vc12/x86/
++^contrib/vstudio/vc12/x64/
 +
-+contrib/masmx86/*.lst
-+contrib/masmx86/*.obj
++^contrib/masmx86/[a-z0-9]+.lst$
++^contrib/masmx86/[a-z0-9]+.obj$
++^contrib/masmx64/[a-z0-9]+.lst$
++^contrib/masmx64/[a-z0-9]+.obj$

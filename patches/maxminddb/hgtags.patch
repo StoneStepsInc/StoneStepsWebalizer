@@ -1,0 +1,9 @@
+# HG changeset patch
+# Parent 06cfbb307478454f5c8c467ad43a12729dc757c6
+.hgtags
+
+diff -r 06cfbb307478 -r 8fb59b99b23b .hgtags
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgtags	Sun Dec 07 10:44:15 2014 -0500
+@@ -0,0 +1,1 @@
++fb2f175871f3bd0b359000538be4e00098d947eb libmaxmindb-0-5-3

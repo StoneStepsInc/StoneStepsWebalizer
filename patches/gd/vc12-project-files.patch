@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 8cd3b759aa21846d0873bef2f927e92560098010
+# Parent 9d2c0adfbae66ac551f4a979a63896bc017ce754
 VS12 project files
 
-diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.props
+diff -r 9d2c0adfbae6 windows/gd.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.props	Fri Mar 07 08:55:45 2014 -0500
++++ b/windows/gd.props	Sun Dec 07 10:31:06 2014 -0500
 @@ -0,0 +1,14 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -13,7 +13,7 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.props
 +  <PropertyGroup />
 +  <ItemDefinitionGroup>
 +    <ClCompile>
-+      <AdditionalIncludeDirectories>..\..\..\libpng\libpng-1.6.9;..\..\..\zlib\zlib-1.2.8;..\..\..\freetype\freetype-2.4.10\include;</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libpng\;..\..\zlib\;..\..\freetype\include</AdditionalIncludeDirectories>
 +      <PreprocessorDefinitions>HAVE_LIBPNG;BGDWIN32;HAVE_LIBFREETYPE;HAVE_FT2BUILD_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <ExceptionHandling>Async</ExceptionHandling>
 +    </ClCompile>
@@ -21,36 +21,42 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.props
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
-diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.sln
+diff -r 9d2c0adfbae6 windows/gd.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.sln	Fri Mar 07 08:55:45 2014 -0500
-@@ -0,0 +1,22 @@
++++ b/windows/gd.sln	Sun Dec 07 10:31:06 2014 -0500
+@@ -0,0 +1,28 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
 +# Visual Studio Express 2013 for Windows Desktop
-+VisualStudioVersion = 12.0.21005.1
++VisualStudioVersion = 12.0.31101.0
 +MinimumVisualStudioVersion = 10.0.40219.1
 +Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gd2", "gd.vcxproj", "{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}"
 +EndProject
 +Global
 +	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 +		Debug|Win32 = Debug|Win32
++		Debug|x64 = Debug|x64
 +		Release|Win32 = Release|Win32
++		Release|x64 = Release|x64
 +	EndGlobalSection
 +	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 +		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|Win32.ActiveCfg = Debug|Win32
 +		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|Win32.Build.0 = Debug|Win32
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|x64.ActiveCfg = Debug|x64
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Debug|x64.Build.0 = Debug|x64
 +		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|Win32.ActiveCfg = Release|Win32
 +		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|Win32.Build.0 = Release|Win32
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|x64.ActiveCfg = Release|x64
++		{79DD33EE-7B59-4064-ACF4-0B26EE94B2C9}.Release|x64.Build.0 = Release|x64
 +	EndGlobalSection
 +	GlobalSection(SolutionProperties) = preSolution
 +		HideSolutionNode = FALSE
 +	EndGlobalSection
 +EndGlobal
-diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
+diff -r 9d2c0adfbae6 windows/gd.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.vcxproj	Fri Mar 07 08:55:45 2014 -0500
-@@ -0,0 +1,231 @@
++++ b/windows/gd.vcxproj	Sun Dec 07 10:31:06 2014 -0500
+@@ -0,0 +1,371 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
@@ -58,9 +64,17 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +      <Configuration>Debug</Configuration>
 +      <Platform>Win32</Platform>
 +    </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
 +    <ProjectConfiguration Include="Release|Win32">
 +      <Configuration>Release</Configuration>
 +      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
 +    </ProjectConfiguration>
 +  </ItemGroup>
 +  <PropertyGroup Label="Globals">
@@ -75,7 +89,19 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <UseOfMfc>false</UseOfMfc>
 +    <CharacterSet>MultiByte</CharacterSet>
 +  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v120</PlatformToolset>
++    <UseOfMfc>false</UseOfMfc>
++    <CharacterSet>MultiByte</CharacterSet>
++  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v120</PlatformToolset>
++    <UseOfMfc>false</UseOfMfc>
++    <CharacterSet>MultiByte</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
 +    <ConfigurationType>DynamicLibrary</ConfigurationType>
 +    <PlatformToolset>v120</PlatformToolset>
 +    <UseOfMfc>false</UseOfMfc>
@@ -89,7 +115,17 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
 +    <Import Project="gd.props" />
 +  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
++    <Import Project="gd.props" />
++  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
++    <Import Project="gd.props" />
++  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
 +    <Import Project="gd.props" />
@@ -103,10 +139,20 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <IntDir>.\Debug\</IntDir>
 +    <LinkIncremental>false</LinkIncremental>
 +  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <LinkIncremental>false</LinkIncremental>
++    <OutDir>.\Debug64\</OutDir>
++    <IntDir>.\Debug64\</IntDir>
++  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
 +    <OutDir>.\Release\</OutDir>
 +    <IntDir>.\Release\</IntDir>
 +    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <LinkIncremental>false</LinkIncremental>
++    <OutDir>.\Release64\</OutDir>
++    <IntDir>.\Release64\</IntDir>
 +  </PropertyGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 +    <Midl>
@@ -122,10 +168,6 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
 +      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-+      <PrecompiledHeaderOutputFile>.\Debug/gd.pch</PrecompiledHeaderOutputFile>
-+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
-+      <ObjectFileName>.\Debug/</ObjectFileName>
-+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
 +      <BrowseInformation>true</BrowseInformation>
 +      <WarningLevel>Level3</WarningLevel>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -139,14 +181,47 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <Link>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <GenerateDebugInformation>true</GenerateDebugInformation>
-+      <ProgramDatabaseFile>.\Debug/gd.pdb</ProgramDatabaseFile>
 +      <RandomizedBaseAddress>false</RandomizedBaseAddress>
 +      <DataExecutionPrevention />
 +      <TargetMachine>MachineX86</TargetMachine>
 +    </Link>
 +    <Bscmake>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
-+      <OutputFile>.\Debug/gd.bsc</OutputFile>
++    </Bscmake>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <Midl>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <MkTypLibCompatible>true</MkTypLibCompatible>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <TypeLibraryName>.\Debug/gd.tlb</TypeLibraryName>
++      <HeaderFileName>
++      </HeaderFileName>
++    </Midl>
++    <ClCompile>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
++      <BrowseInformation>true</BrowseInformation>
++      <WarningLevel>Level3</WarningLevel>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++      <CompileAs>CompileAsC</CompileAs>
++    </ClCompile>
++    <ResourceCompile>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <Culture>0x0409</Culture>
++    </ResourceCompile>
++    <Link>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention>
++      </DataExecutionPrevention>
++    </Link>
++    <Bscmake>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
 +    </Bscmake>
 +  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,10 +242,6 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +      <StringPooling>true</StringPooling>
 +      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
 +      <FunctionLevelLinking>true</FunctionLevelLinking>
-+      <PrecompiledHeaderOutputFile>.\Release/gd.pch</PrecompiledHeaderOutputFile>
-+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-+      <ObjectFileName>.\Release/</ObjectFileName>
-+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
 +      <WarningLevel>Level3</WarningLevel>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -182,16 +253,49 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <Link>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
 +      <GenerateDebugInformation>true</GenerateDebugInformation>
-+      <ProgramDatabaseFile>.\Release/gd.pdb</ProgramDatabaseFile>
-+      <GenerateMapFile>true</GenerateMapFile>
-+      <MapFileName>.\Release/gd.map</MapFileName>
 +      <RandomizedBaseAddress>false</RandomizedBaseAddress>
 +      <DataExecutionPrevention />
 +      <TargetMachine>MachineX86</TargetMachine>
 +    </Link>
 +    <Bscmake>
 +      <SuppressStartupBanner>true</SuppressStartupBanner>
-+      <OutputFile>.\Release/gd.bsc</OutputFile>
++    </Bscmake>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <Midl>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <MkTypLibCompatible>true</MkTypLibCompatible>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <TypeLibraryName>.\Release/gd.tlb</TypeLibraryName>
++      <HeaderFileName>
++      </HeaderFileName>
++    </Midl>
++    <ClCompile>
++      <Optimization>MaxSpeed</Optimization>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <PreprocessorDefinitions>NDEBUG;WIN32;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <StringPooling>true</StringPooling>
++      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <WarningLevel>Level3</WarningLevel>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <ResourceCompile>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <Culture>0x0409</Culture>
++    </ResourceCompile>
++    <Link>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention>
++      </DataExecutionPrevention>
++    </Link>
++    <Bscmake>
++      <SuppressStartupBanner>true</SuppressStartupBanner>
 +    </Bscmake>
 +  </ItemDefinitionGroup>
 +  <ItemGroup>
@@ -259,23 +363,65 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +    <ClCompile Include="..\src\webpimg.c" />
 +  </ItemGroup>
 +  <ItemGroup>
-+    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410_D.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410_D.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Debug Library\libpng16.lib">
++    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410_D.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\Debug Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\Release Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\x64\Debug Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\x64\Release Library\libpng16.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Release Library\libpng16.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllDebug\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlibwapi.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllRelease\zlib12.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++    </Library>
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlibwapi.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
++      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +    </Library>
 +  </ItemGroup>
 +  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -283,10 +429,10 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj.filters
+diff -r 9d2c0adfbae6 windows/gd.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.vcxproj.filters	Fri Mar 07 08:55:45 2014 -0500
-@@ -0,0 +1,222 @@
++++ b/windows/gd.vcxproj.filters	Sun Dec 07 10:31:06 2014 -0500
+@@ -0,0 +1,246 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup>
@@ -306,6 +452,12 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj.filters
 +    </Filter>
 +    <Filter Include="Libraries\Release">
 +      <UniqueIdentifier>{73053ad2-b261-4892-9857-414ad971c4ae}</UniqueIdentifier>
++    </Filter>
++    <Filter Include="Libraries\Debu64">
++      <UniqueIdentifier>{4864c3c8-35ef-45cf-8a12-1f57bbe580e2}</UniqueIdentifier>
++    </Filter>
++    <Filter Include="Libraries\Rlease64">
++      <UniqueIdentifier>{b4ad01ae-d4b4-4a88-9261-6be63fbc6907}</UniqueIdentifier>
 +    </Filter>
 +  </ItemGroup>
 +  <ItemGroup>
@@ -489,30 +641,48 @@ diff -r 8cd3b759aa21 -r b7d72d41647f windows/gd.vcxproj.filters
 +    </ClCompile>
 +  </ItemGroup>
 +  <ItemGroup>
-+    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllDebug\zlibwapi.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410_D.lib">
 +      <Filter>Libraries\Debug</Filter>
 +    </Library>
-+    <Library Include="..\..\..\zlib\zlib-1.2.8\contrib\vstudio\vc12\x86\ZlibDllRelease\zlibwapi.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410.lib">
 +      <Filter>Libraries\Release</Filter>
 +    </Library>
-+    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410_D.lib">
++    <Library Include="..\..\libpng\projects\vstudio\Debug Library\libpng16.lib">
 +      <Filter>Libraries\Debug</Filter>
 +    </Library>
-+    <Library Include="..\..\..\freetype\freetype-2.4.10\objs\win32\vc2012\freetype2410.lib">
++    <Library Include="..\..\libpng\projects\vstudio\Release Library\libpng16.lib">
 +      <Filter>Libraries\Release</Filter>
 +    </Library>
-+    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Debug Library\libpng16.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
 +      <Filter>Libraries\Debug</Filter>
 +    </Library>
-+    <Library Include="..\..\..\libpng\libpng-1.6.9\projects\vstudio\Release Library\libpng16.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
 +      <Filter>Libraries\Release</Filter>
++    </Library>
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllDebug\zlib12.lib">
++      <Filter>Libraries\Debu64</Filter>
++    </Library>
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllRelease\zlib12.lib">
++      <Filter>Libraries\Rlease64</Filter>
++    </Library>
++    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410.lib">
++      <Filter>Libraries\Rlease64</Filter>
++    </Library>
++    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410_D.lib">
++      <Filter>Libraries\Debu64</Filter>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\x64\Debug Library\libpng16.lib">
++      <Filter>Libraries\Debu64</Filter>
++    </Library>
++    <Library Include="..\..\libpng\projects\vstudio\x64\Release Library\libpng16.lib">
++      <Filter>Libraries\Rlease64</Filter>
 +    </Library>
 +  </ItemGroup>
 +</Project>
 \ No newline at end of file
-diff -r 8cd3b759aa21 -r b7d72d41647f windows/libgd.rc
+diff -r 9d2c0adfbae6 windows/libgd.rc
 --- a/windows/libgd.rc	Tue Mar 04 08:39:44 2014 -0500
-+++ b/windows/libgd.rc	Fri Mar 07 08:55:45 2014 -0500
++++ b/windows/libgd.rc	Sun Dec 07 10:31:06 2014 -0500
 @@ -6,7 +6,7 @@
  #endif
  

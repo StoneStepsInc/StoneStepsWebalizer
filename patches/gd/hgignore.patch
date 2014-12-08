@@ -1,16 +1,21 @@
 # HG changeset patch
-# Parent b7d72d41647fd10365768238251aef53adc2f434
+# Parent f28263ad2cc2f1fb619cd528c923f48018bb6a0a
 .hgignore
 
-diff -r b7d72d41647f -r 4b3cc1996472 .hgignore
+diff -r f28263ad2cc2 .hgignore
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgignore	Fri Mar 07 08:56:22 2014 -0500
-@@ -0,0 +1,8 @@
-+syntax: glob
++++ b/.hgignore	Sun Dec 07 10:28:17 2014 -0500
+@@ -0,0 +1,13 @@
++syntax: regexp
 +
-+Debug/
-+Release/
++^windows/Debug/
++^windows/Release/
 +
-+*.opensdf
-+*.sdf
-+*.suo
++^windows/Debug64/
++^windows/Release64/
++
++^windows/gd\.sdf$
++^windows/gd\.opensdf$
++^windows/gd\.suo$
++^windows/gd\.v12\.suo$
++^windows/gd\.vcxproj\.user$

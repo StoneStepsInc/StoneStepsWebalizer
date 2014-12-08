@@ -1,3 +1,4 @@
 hgignore.patch
 vs12-src.patch
 vs12-project.patch
+hgtags.patch
