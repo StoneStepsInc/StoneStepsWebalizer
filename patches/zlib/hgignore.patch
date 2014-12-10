@@ -1,17 +1,17 @@
 # HG changeset patch
-# Parent 56035c862761522dcaaf1333f2598b96cd4ca759
+# Parent 58dba29c8e66a9aec8a86292019a4a880325840c
 .hgignore
 
-diff -r 56035c862761 .hgignore
+diff -r 58dba29c8e66 .hgignore
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgignore	Sun Dec 07 12:57:51 2014 -0500
++++ b/.hgignore	Wed Dec 10 00:34:10 2014 -0500
 @@ -0,0 +1,14 @@
 +syntax: regexp
 +
-+^contrib/vstudio/vc12/zlibvc\.sdf$
-+^contrib/vstudio/vc12/zlibvc\.opensdf$
-+^contrib/vstudio/vc12/zlibvc\.v12\.suo$
-+^contrib/vstudio/vc12/zlibvc\.vcxproj\.user$
++^contrib/vstudio/vc12/zlib\.sdf$
++^contrib/vstudio/vc12/zlib\.opensdf$
++^contrib/vstudio/vc12/zlib\.v12\.suo$
++^contrib/vstudio/vc12/zlib\.vcxproj\.user$
 +
 +^contrib/vstudio/vc12/x86/
 +^contrib/vstudio/vc12/x64/

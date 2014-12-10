@@ -4,8 +4,8 @@ VS12 project files
 
 diff -r 9d2c0adfbae6 windows/gd.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.props	Sun Dec 07 10:31:06 2014 -0500
-@@ -0,0 +1,14 @@
++++ b/windows/gd.props	Wed Dec 10 01:21:54 2014 -0500
+@@ -0,0 +1,17 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ImportGroup Label="PropertySheets" />
@@ -17,13 +17,16 @@ diff -r 9d2c0adfbae6 windows/gd.props
 +      <PreprocessorDefinitions>HAVE_LIBPNG;BGDWIN32;HAVE_LIBFREETYPE;HAVE_FT2BUILD_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <ExceptionHandling>Async</ExceptionHandling>
 +    </ClCompile>
++    <Link>
++      <ImageHasSafeExceptionHandlers />
++    </Link>
 +  </ItemDefinitionGroup>
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
 diff -r 9d2c0adfbae6 windows/gd.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.sln	Sun Dec 07 10:31:06 2014 -0500
++++ b/windows/gd.sln	Wed Dec 10 01:21:54 2014 -0500
 @@ -0,0 +1,28 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
@@ -55,7 +58,7 @@ diff -r 9d2c0adfbae6 windows/gd.sln
 +EndGlobal
 diff -r 9d2c0adfbae6 windows/gd.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.vcxproj	Sun Dec 07 10:31:06 2014 -0500
++++ b/windows/gd.vcxproj	Wed Dec 10 01:21:54 2014 -0500
 @@ -0,0 +1,371 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -403,22 +406,22 @@ diff -r 9d2c0adfbae6 windows/gd.vcxproj
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllDebug\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllRelease\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
 +      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -431,7 +434,7 @@ diff -r 9d2c0adfbae6 windows/gd.vcxproj
 \ No newline at end of file
 diff -r 9d2c0adfbae6 windows/gd.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/windows/gd.vcxproj.filters	Sun Dec 07 10:31:06 2014 -0500
++++ b/windows/gd.vcxproj.filters	Wed Dec 10 01:21:54 2014 -0500
 @@ -0,0 +1,246 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -653,16 +656,16 @@ diff -r 9d2c0adfbae6 windows/gd.vcxproj.filters
 +    <Library Include="..\..\libpng\projects\vstudio\Release Library\libpng16.lib">
 +      <Filter>Libraries\Release</Filter>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllDebug\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
 +      <Filter>Libraries\Debug</Filter>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDllRelease\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
 +      <Filter>Libraries\Release</Filter>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllDebug\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
 +      <Filter>Libraries\Debu64</Filter>
 +    </Library>
-+    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDllRelease\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
 +      <Filter>Libraries\Rlease64</Filter>
 +    </Library>
 +    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410.lib">
@@ -682,7 +685,7 @@ diff -r 9d2c0adfbae6 windows/gd.vcxproj.filters
 \ No newline at end of file
 diff -r 9d2c0adfbae6 windows/libgd.rc
 --- a/windows/libgd.rc	Tue Mar 04 08:39:44 2014 -0500
-+++ b/windows/libgd.rc	Sun Dec 07 10:31:06 2014 -0500
++++ b/windows/libgd.rc	Wed Dec 10 01:21:54 2014 -0500
 @@ -6,7 +6,7 @@
  #endif
  

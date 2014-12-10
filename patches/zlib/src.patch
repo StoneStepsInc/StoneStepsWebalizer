@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 76aac2a94544beb9e8c6c7b5cdf1cf90a6f90420
-Windows 7 source fixes
+# Parent 6b11c23fda61abf1d9f6814bb9b6c44c8fd7866d
+Source code fixes
 
-diff -r 76aac2a94544 contrib/minizip/iowin32.c
---- a/contrib/minizip/iowin32.c	Wed Dec 03 23:58:18 2014 -0500
-+++ b/contrib/minizip/iowin32.c	Sun Dec 07 17:52:09 2014 -0500
+diff -r 6b11c23fda61 contrib/minizip/iowin32.c
+--- a/contrib/minizip/iowin32.c	Wed Dec 10 01:11:16 2014 -0500
++++ b/contrib/minizip/iowin32.c	Wed Dec 10 01:15:04 2014 -0500
 @@ -25,12 +25,14 @@
  #define INVALID_SET_FILE_POINTER ((DWORD)-1)
  #endif

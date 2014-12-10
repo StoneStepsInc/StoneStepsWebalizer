@@ -12,27 +12,21 @@ rem
 echo.
 
 echo Copying Berkeley DB...
-xcopy /Y /Q %dir%..\..\common\db\.hg\patches\*.patch %dir%db\ > nul
-xcopy /Y /Q %dir%..\..\common\db\.hg\patches\series %dir%db\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\db\.hg\patches\ %dir%db\ *.patch series
 
 echo Copying FreeType...
-xcopy /Y /Q %dir%..\..\common\freetype\.hg\patches\*.patch %dir%freetype\ > nul
-xcopy /Y /Q %dir%..\..\common\freetype\.hg\patches\series %dir%freetype\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\freetype\.hg\patches\ %dir%freetype\ *.patch series
 
 echo Copying GD...
-xcopy /Y /Q %dir%..\..\common\gd\.hg\patches\*.patch %dir%gd\ > nul
-xcopy /Y /Q %dir%..\..\common\gd\.hg\patches\series %dir%gd\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\gd\.hg\patches\ %dir%gd\ *.patch series
 
 echo Copying PNG...
-xcopy /Y /Q %dir%..\..\common\libpng\.hg\patches\*.patch %dir%libpng\ > nul
-xcopy /Y /Q %dir%..\..\common\libpng\.hg\patches\series %dir%libpng\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\libpng\.hg\patches\ %dir%libpng\ *.patch series
 
 echo Copying MaxMindDB...
-xcopy /Y /Q %dir%..\..\common\GeoIP\.hg\patches\*.patch %dir%maxminddb\ > nul
-xcopy /Y /Q %dir%..\..\common\GeoIP\.hg\patches\series %dir%maxminddb\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\GeoIP\.hg\patches\ %dir%maxminddb\ *.patch series
 
 echo Copying ZLIB...
-xcopy /Y /Q %dir%..\..\common\zlib\.hg\patches\*.patch %dir%zlib\ > nul
-xcopy /Y /Q %dir%..\..\common\zlib\.hg\patches\series %dir%zlib\ > nul
+robocopy /NC /NS /NFL /NDL /NJS /NJH /NP /PURGE %dir%..\..\common\zlib\.hg\patches\ %dir%zlib\ *.patch series
 
 echo.
