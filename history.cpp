@@ -298,7 +298,7 @@ void history_t::put_history(void)
    while(iter.more()) {
       hptr = &iter.next();
       if(hptr->hits != 0) {
-         fprintf(hist_fp,"%d %d %"PRIu64" %"PRIu64" %"PRIu64" %"PRIu64" %d %d %"PRIu64" %"PRIu64"\n",
+         fprintf(hist_fp,"%d %d %" PRIu64 " %" PRIu64 " %" PRIu64 " %" PRIu64 " %d %d %" PRIu64 " %" PRIu64 "\n",
                          hptr->month,
                          hptr->year,
                          hptr->hits,
