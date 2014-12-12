@@ -148,7 +148,7 @@ struct base_list_node_t : public list_node_t<node_t> {
 
    public:
       base_list_node_t(void) {}
-      base_list_node_t(const char *str, u_int slen = 0) {string.assign(str, slen, true); init_delta_table();}
+      base_list_node_t(const char *str, size_t slen = 0) {string.assign(str, slen, true); init_delta_table();}
       base_list_node_t(const string_t& str) {string = str; init_delta_table();}
 
       virtual ~base_list_node_t(void) {}
@@ -168,9 +168,9 @@ class base_list : public list_t<node_t> {
 
       const string_t *isinlist(const string_t& str) const;
 
-      const string_t *isinlistex(const char *str, int slen, bool substr) const;
+      const string_t *isinlistex(const char *str, size_t slen, bool substr) const;
 
-      const node_t *find_node_ex(const char *str, int slen, bool substr) const;
+      const node_t *find_node_ex(const char *str, size_t slen, bool substr) const;
 
       static node_t *find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next = false);
 
@@ -211,7 +211,7 @@ struct gnode_t : public base_list_node_t<gnode_t> {
       gnode_t(void) {noname = true;}
 
    public:
-      gnode_t(const char *str, u_int slen) : base_list_node_t<gnode_t>(str, slen) {noname = true;}
+      gnode_t(const char *str, size_t slen) : base_list_node_t<gnode_t>(str, slen) {noname = true;}
       gnode_t(const string_t& str) : base_list_node_t<gnode_t>(str) {noname = true;}
 };
 
@@ -227,13 +227,13 @@ class glist : public base_list<gnode_t> {
 
       ~glist(void) {}
 
-      int add_glist(const char *str, bool srch = false);       // add group list item
+      bool add_glist(const char *str, bool srch = false);      // add group list item
 
       const string_t *isinglist(const string_t& str) const;    // scan glist for str
 
       const string_t *isinglist(const string_t& str, const_iterator& iter, bool next = false) const;
 
-      const string_t *isinglist(const char *str, int slen, bool substr) const;
+      const string_t *isinglist(const char *str, size_t slen, bool substr) const;
 
       void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL);
 

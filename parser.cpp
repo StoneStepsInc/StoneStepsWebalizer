@@ -49,7 +49,7 @@
 //
 struct field_desc {
    const char  *field;     // a pointer to a log record field
-   u_int       length;     // field length
+   size_t      length;     // field length
 
    public:
       field_desc(void)
@@ -158,7 +158,7 @@ inline char *parser_t::proc_apache_escape_seq(char *cp1)
 // bsesc       - process backslash escape sequences
 // fieldcnt    - number of fields; if zero, fields are not processed
 //
-bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc, u_int fieldcnt)
+bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc, size_t fieldcnt)
 {
    char *cp1 = buffer, *cp2;
    int q = 0, b = 0, p = 0;
@@ -629,7 +629,7 @@ errexit:
 int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_rec)
 {
    size_t slen;
-   u_int fldindex = 0, fieldcnt;
+   size_t fldindex = 0, fieldcnt;
    const char *cp1, *cp2;
 
 	if(buffer == NULL || *buffer == 0)
@@ -764,12 +764,12 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 int parser_t::parse_w3c_log_directive(const char *buffer)
 {
 	const char *cptr = buffer, *cp2 = NULL;
-	u_int slen, i;
-	int bytes_i = -1, cs_bytes_i = -1, sc_bytes_i = -1;
+	size_t slen, i;
+	size_t bytes_i = SIZE_MAX, cs_bytes_i = SIZE_MAX, sc_bytes_i = SIZE_MAX;
 	
 	static struct {
 	   const char     *name;
-	   u_int          nlen;
+	   size_t          nlen;
 	   TLogFieldId    field_id;
 	} iis_fields[] = {
 		{"date",             4,    eDate},
@@ -793,7 +793,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 	};
 	
 	// initialize to indicate that neither is found
-	bytes_i = cs_bytes_i = sc_bytes_i = -1;
+	bytes_i = cs_bytes_i = sc_bytes_i = SIZE_MAX;
 
 	if(buffer == NULL || *buffer == 0)
 		return PARSE_CODE_ERROR;
@@ -869,8 +869,8 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
    // transfer amount fields we saw, and whether upsetream traffic is
    // counted or not, ignore some of the fields we just identified. 
    //
-   if(bytes_i != -1) {
-      if(cs_bytes_i != -1 && sc_bytes_i != -1) {
+   if(bytes_i != SIZE_MAX) {
+      if(cs_bytes_i != SIZE_MAX && sc_bytes_i != SIZE_MAX) {
          if(config.upstream_traffic) {
             // if we want both amounts, ignore sent/received
             log_rec_fields[cs_bytes_i] = eUnknown;
@@ -882,13 +882,13 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
             log_rec_fields[cs_bytes_i] = eUnknown;
          }
       }
-      else if(sc_bytes_i != -1) {
+      else if(sc_bytes_i != SIZE_MAX) {
          if(config.upstream_traffic)
             log_rec_fields[sc_bytes_i] = eUnknown;
          else
             log_rec_fields[bytes_i] = eUnknown;
       }
-      else if(cs_bytes_i != -1) {
+      else if(cs_bytes_i != SIZE_MAX) {
          //
          // It's odd to see just total and received amounts and while we could
          // figure out sent amounts from these two, it will make parsing more 
@@ -898,7 +898,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
          log_rec_fields[cs_bytes_i] = eUnknown;
       }
    }
-   else if(cs_bytes_i != -1 && sc_bytes_i != -1) {
+   else if(cs_bytes_i != SIZE_MAX && sc_bytes_i != SIZE_MAX) {
       // ignore received amounts if upstream traffic is not tracked
       if(!config.upstream_traffic)
          log_rec_fields[cs_bytes_i] = eUnknown;
@@ -919,7 +919,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec, bool iis)
 {
    size_t slen;
-	u_int fldindex = 0, fieldcnt;
+	size_t fldindex = 0, fieldcnt;
 	const char *cp1, *cp2;
 	bool tsdate = false, tstime = false;
    u_int year, month, day, hour, min, sec;

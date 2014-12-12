@@ -25,7 +25,7 @@
 /* HASH - return hash value for string       */
 /*********************************************/
 
-uint64_t hash_bin(uint64_t hashval, const u_char *buf, u_int blen)
+uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen)
 {
    for(; blen; buf++, blen--)
       hashval = hash_byte(hashval, *buf);
@@ -33,7 +33,7 @@ uint64_t hash_bin(uint64_t hashval, const u_char *buf, u_int blen)
    return hashval;
 }
 
-uint64_t hash_str(uint64_t hashval, const char *str, u_int slen)
+uint64_t hash_str(uint64_t hashval, const char *str, size_t slen)
 {
    if(str == NULL)
       return hashval;

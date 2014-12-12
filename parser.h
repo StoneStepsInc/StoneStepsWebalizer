@@ -75,7 +75,7 @@ class parser_t {
 
       bool parse_clf_tstamp(const char *dt, tstamp_t& ts);
 
-      bool fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc, u_int fieldcnt);
+      bool fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc, size_t fieldcnt);
 
       int parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec);
 

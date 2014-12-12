@@ -43,7 +43,7 @@ void sc_hash_table::add_status_code(u_int code)
 
 scnode_t& sc_hash_table::get_status_code(u_int code)
 {
-   u_int index;
+   size_t index;
    u_int cls = code / 100;
 
    // check if class is valid
@@ -64,7 +64,7 @@ scnode_t& sc_hash_table::get_status_code(u_int code)
    return stcodes[0];
 }
 
-const scnode_t& sc_hash_table::operator [] (u_int index) const
+const scnode_t& sc_hash_table::operator [] (size_t index) const
 {
    if(index >= stcodes.size())
       return stcodes[0];
@@ -76,14 +76,14 @@ const scnode_t& sc_hash_table::operator [] (u_int index) const
 // serialization
 //
 
-u_int scnode_t::s_data_size(void) const
+size_t scnode_t::s_data_size(void) const
 {
    return datanode_t<scnode_t>::s_data_size() + sizeof(uint64_t);
 }
 
-u_int scnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t scnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize;
+   size_t datasize;
 
    datasize = s_data_size();
 
@@ -95,9 +95,9 @@ u_int scnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int scnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t scnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
-   u_int datasize;
+   size_t datasize;
 
    datasize = s_data_size(buffer);
 
@@ -109,7 +109,7 @@ u_int scnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_int scnode_t::s_data_size(const void *buffer)
+size_t scnode_t::s_data_size(const void *buffer)
 {
    return datanode_t<scnode_t>::s_data_size(buffer) + sizeof(uint64_t);
 }

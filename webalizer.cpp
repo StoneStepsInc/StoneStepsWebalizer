@@ -643,7 +643,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    ua_token_t token;
    const char *delims = str_delims;             // active delimiters
    char *ua, *cp1, *cp2, *ua2 = NULL;
-   u_int ualen, arglen, t_arglen = 0;
+   size_t ualen, arglen, t_arglen = 0;
    const string_t *str;
    bool skiptok = false;
    
@@ -735,7 +735,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
             if(token.argtype == strtok && config.group_agent_args.size()) {
                if((str = config.group_agent_args.isinglist(cp1, arglen, false)) != NULL) {
                   // make sure there are no duplicates
-                  for(u_int i = 0; i < ua_groups.size(); i++) {
+                  for(size_t i = 0; i < ua_groups.size(); i++) {
                      // check if lengths are the same
                      if(ua_args[ua_groups[i]].arglen == str->length()) {
                         // and compare the strings
@@ -794,9 +794,9 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
       
       // form a new user agent string
       cp1 = ua2;
-      for(u_int i = 0; i < ua_args.size(); i++) {
+      for(size_t i = 0; i < ua_args.size(); i++) {
          if(i) {
-            for(u_int j = 0; j < sizeof(o_arg); j++) 
+            for(size_t j = 0; j < sizeof(o_arg); j++) 
                *cp1++ = o_arg[j];
          }
          
@@ -1050,7 +1050,7 @@ int webalizer_t::proc_logfile(void)
    // this loop we will have same number of log files and states in the lists 
    // and the working log file state structure (wlfs) will be empty.
    //
-   for(u_int i = 0; i < logfiles.size();) {
+   for(size_t i = 0; i < logfiles.size();) {
       // the file may be open if we skipped any lines
       if(!logfiles[i]->is_open() && (errnum = logfiles[i]->open()) != 0) {
          /* Error: Can't open log file ... */
@@ -1101,7 +1101,7 @@ int webalizer_t::proc_logfile(void)
       }
       
       // find the spot in the list and insert the record (earlier timestamps first)
-      u_int j;
+      size_t j;
       for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
       lfp_state.insert(j, wlfs);
 
@@ -1146,7 +1146,7 @@ int webalizer_t::proc_logfile(void)
 
          // use logfile from wlfs, which was populated in the previous iteration
          if((reclen = read_log_line(*wlfs.logfile)) == 0) {
-            u_int i;
+            size_t i;
             
             // report that we are done with this log file
             printf("%s %s\n", config.lang.msg_log_done, wlfs.logfile->get_fname().c_str());
@@ -1172,7 +1172,7 @@ int webalizer_t::proc_logfile(void)
          }
 
          // find the spot in the list and insert the record (earlier timestamps first)
-         u_int j;
+         size_t j;
          for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
          lfp_state.insert(j, wlfs);
          wlfs.reset();
@@ -1748,14 +1748,14 @@ int webalizer_t::proc_logfile(void)
    /*********************************************/
    
    // if there are any unprocessed log files, close them (e.g. Ctrl-C was pressed)
-   for(u_int i = 0; i < logfiles.size(); i++) {
+   for(size_t i = 0; i < logfiles.size(); i++) {
       if(logfiles[i] && logfiles[i]->is_open())
          logfiles[i]->close(); 
    }
    logfiles.clear();
    
    // deallocate log records we created earlier
-   for(u_int i = 0; i < logrecs.size(); i++)
+   for(size_t i = 0; i < logrecs.size(); i++)
       delete logrecs[i];
    logrecs.clear();
 
@@ -1911,7 +1911,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 
    // copy remaining search arguments to the buffer
    cptr = buffer;
-   for(u_int index = 0; index < sr_args.size(); index++) {
+   for(size_t index = 0; index < sr_args.size(); index++) {
       if(index > 0)
          *cptr++ = '&';
       cptr += strncpy_ex(cptr, BUFSIZE - (cptr-buffer), sr_args[index].name, sr_args[index].arglen);

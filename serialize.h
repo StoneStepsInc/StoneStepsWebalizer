@@ -35,7 +35,7 @@ typedef int64_t (*s_compare_cb_t)(const void *buf1, const void *buf2);
 // return value points to the field within the record and datasize is set 
 // to reflect the size of the field.
 //
-typedef const void *(*s_field_cb_t)(const void *buffer, u_int bufsize, u_int& datasize);
+typedef const void *(*s_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize);
 
 // -----------------------------------------------------------------------
 //
@@ -62,7 +62,7 @@ typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int p
 // the last part of the value is evaluated, lastpart will be set by the
 // function to true.
 //
-typedef const void *(*s_mp_field_cb_t)(const void *buffer, u_int bufsize, u_int& datasize, u_int partid, bool& lastpart);
+typedef const void *(*s_mp_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize, u_int partid, bool& lastpart);
 
 // -----------------------------------------------------------------------
 //
@@ -70,13 +70,13 @@ typedef const void *(*s_mp_field_cb_t)(const void *buffer, u_int bufsize, u_int&
 //
 // -----------------------------------------------------------------------
 
-inline void *serialize(void *ptr, const u_char bytes[], u_int length)
+inline void *serialize(void *ptr, const u_char bytes[], size_t length)
 {
    memcpy(ptr, bytes, length);
    return (u_char*) ptr + length;
 }
 
-inline void *serialize(void *ptr, const char chars[], u_int length)
+inline void *serialize(void *ptr, const char chars[], size_t length)
 {
    memcpy(ptr, chars, length);
    return &((u_char*)ptr)[length];
@@ -108,13 +108,13 @@ inline void *serialize(void *ptr, bool value)
 //
 // -----------------------------------------------------------------------
 
-inline const void *deserialize(const void *ptr, u_char bytes[], u_int length)
+inline const void *deserialize(const void *ptr, u_char bytes[], size_t length)
 {
    memcpy(bytes, ptr, length);
    return &((u_char*)ptr)[length];
 }
 
-inline const void *deserialize(const void *ptr, char chars[], u_int length)
+inline const void *deserialize(const void *ptr, char chars[], size_t length)
 {
    memcpy(chars, ptr, length);
    return &((u_char*)ptr)[length];

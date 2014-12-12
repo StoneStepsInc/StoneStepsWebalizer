@@ -54,14 +54,14 @@ bool rc_hash_table::compare(const rcnode_t *nptr, const void *param) const
 // serialization
 //
 
-u_int rcnode_t::s_data_size(void) const
+size_t rcnode_t::s_data_size(void) const
 {
    return base_node<rcnode_t>::s_data_size() + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of(method);
 }
 
-u_int rcnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int basesize, datasize;
+   size_t basesize, datasize;
    void *ptr = buffer;
 
    basesize = base_node<rcnode_t>::s_data_size();
@@ -83,9 +83,9 @@ u_int rcnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int rcnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
-   u_int basesize, datasize;
+   size_t basesize, datasize;
    const void *ptr = buffer;
 
    basesize = base_node<rcnode_t>::s_data_size(buffer);
@@ -115,32 +115,32 @@ uint64_t rcnode_t::s_hash_value(void) const
    return hash_str(hash_num(base_node<rcnode_t>::s_hash_value(), respcode), method, method.length());
 }
 
-u_int rcnode_t::s_data_size(const void *buffer)
+size_t rcnode_t::s_data_size(const void *buffer)
 {
-   u_int basesize = base_node<rcnode_t>::s_data_size(buffer);
+   size_t basesize = base_node<rcnode_t>::s_data_size(buffer);
    // value hash follows the method when serialized
    return basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of<string_t>((u_char*)buffer + basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t));
 }
 
-const void *rcnode_t::s_field_value_mp_url(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize)
 {
    return base_node<rcnode_t>::s_field_value(buffer, bufsize, datasize);
 }
 
-const void *rcnode_t::s_field_value_mp_method(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rcnode_t::s_field_value_mp_method(const void *buffer, size_t bufsize, size_t& datasize)
 {
    const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
    datasize = s_size_of<string_t>(ptr);
    return ptr;
 }
 
-const void *rcnode_t::s_field_value_mp_respcode(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rcnode_t::s_field_value_mp_respcode(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(u_short);
    return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char);
 }
 
-const void *rcnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rcnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    const void *ptr;
    datasize = sizeof(uint64_t);
@@ -148,9 +148,9 @@ const void *rcnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_in
    return (u_char*) ptr + s_size_of<string_t>(ptr);
 }
 
-int64_t rcnode_t::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 {
-   u_int datasize;
+   size_t datasize;
    string_t tstr;
    u_short tcode;
    int64_t diff;
@@ -172,7 +172,7 @@ int64_t rcnode_t::s_compare_value(const void *buffer, u_int bufsize) const
    return method.compare(tstr);
 }
 
-const void *rcnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rcnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short);

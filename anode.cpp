@@ -39,14 +39,14 @@ anode_t::anode_t(const anode_t& anode) : base_node<anode_t>(anode)
 // serialization
 //
 
-u_int anode_t::s_data_size(void) const
+size_t anode_t::s_data_size(void) const
 {
    return base_node<anode_t>::s_data_size() + sizeof(uint64_t) * 3 + sizeof(u_char) + sizeof(double);
 }
 
-u_int anode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t anode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr;
 
    basesize = base_node<anode_t>::s_data_size();
@@ -70,10 +70,10 @@ u_int anode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int anode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t anode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool tmp;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    const void *ptr;
 
    basesize = base_node<anode_t>::s_data_size(buffer);
@@ -107,9 +107,9 @@ u_int anode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int anode_t::s_data_size(const void *buffer)
+size_t anode_t::s_data_size(const void *buffer)
 {
-   u_int datasize = base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t) * 3;
+   size_t datasize = base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t) * 3;
 
    if(s_node_ver(buffer) < 2)
       return datasize;
@@ -122,19 +122,19 @@ u_int anode_t::s_data_size(const void *buffer)
    return datasize + sizeof(uint64_t);   // xfer
 }
 
-const void *anode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *anode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t) * 2;
 }
 
-const void *anode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *anode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer);
 }
 
-const void *anode_t::s_field_visits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *anode_t::s_field_visits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<anode_t>::s_data_size(buffer) + sizeof(uint64_t);

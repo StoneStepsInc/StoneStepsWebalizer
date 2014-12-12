@@ -273,7 +273,7 @@ template <typename node_t, typename key_t>
 uint64_t hash_table<node_t, key_t>::load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const
 {
    const node_t *nptr, **pptr;
-   u_int hashidx, arridx1, arridx2, skipcnt;
+   size_t hashidx, arridx1, arridx2, skipcnt;
 
    //
    // load the array, grouping nodes by type

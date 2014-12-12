@@ -23,8 +23,8 @@
 // A set of overloaded functions, so we can use the same name for equivalent 
 // narrow-character and wide-character functions.
 //
-inline static uint_t strlen_(const char *str) {return (uint_t) strlen(str);}
-inline static uint_t strlen_(const wchar_t *str) {return (uint_t) wcslen(str);}
+inline static size_t strlen_(const char *str) {return (size_t) strlen(str);}
+inline static size_t strlen_(const wchar_t *str) {return (size_t) wcslen(str);}
 
 inline static int strcmp_(const char *s1, const char *s2) {return strcmp(s1, s2);}
 inline static int strcmp_(const wchar_t *s1, const wchar_t *s2) {return wcscmp(s1, s2);}
@@ -32,14 +32,14 @@ inline static int strcmp_(const wchar_t *s1, const wchar_t *s2) {return wcscmp(s
 inline static int stricmp_(const char *s1, const char *s2) {return strcasecmp(s1, s2);}
 inline static int stricmp_(const wchar_t *s1, const wchar_t *s2) {return wcscasecmp(s1, s2);}
 
-inline static int strncmp_(const char *s1, const char *s2, uint_t count) {return strncmp(s1, s2, (size_t) count);}
-inline static int strncmp_(const wchar_t *s1, const wchar_t *s2, uint_t count) {return wcsncmp(s1, s2, (size_t) count);}
+inline static int strncmp_(const char *s1, const char *s2, size_t count) {return strncmp(s1, s2, (size_t) count);}
+inline static int strncmp_(const wchar_t *s1, const wchar_t *s2, size_t count) {return wcsncmp(s1, s2, (size_t) count);}
 
-inline static int strnicmp_(const char *s1, const char *s2, uint_t count) {return strncasecmp(s1, s2, (size_t) count);}
-inline static int strnicmp_(const wchar_t *s1, const wchar_t *s2, uint_t count) {return wcsncasecmp(s1, s2, (size_t) count);}
+inline static int strnicmp_(const char *s1, const char *s2, size_t count) {return strncasecmp(s1, s2, (size_t) count);}
+inline static int strnicmp_(const wchar_t *s1, const wchar_t *s2, size_t count) {return wcsncasecmp(s1, s2, (size_t) count);}
 
-inline static int vsnprintf_(char *buffer, uint_t count, const char *fmt, va_list valist) {return vsnprintf(buffer, (size_t) count, fmt, valist);}
-inline static int vsnprintf_(wchar_t *buffer, uint_t count, const wchar_t *fmt, va_list valist) {return vsnwprintf(buffer, (size_t) count, fmt, valist);}
+inline static int vsnprintf_(char *buffer, size_t count, const char *fmt, va_list valist) {return vsnprintf(buffer, (size_t) count, fmt, valist);}
+inline static int vsnprintf_(wchar_t *buffer, size_t count, const wchar_t *fmt, va_list valist) {return vsnwprintf(buffer, (size_t) count, fmt, valist);}
 
 inline static const char *strchr_(const char *str, char chr) {return strchr(str, chr);}
 inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wcschr(str, chr);}
@@ -48,7 +48,7 @@ inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wc
 // Static data members
 //
 template<typename char_t> char_t string_base<char_t>::empty_string[] = {0};
-template<typename char_t> const uint_t string_base<char_t>::npos = (uint_t) -1;
+template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 
 //
 //
@@ -104,7 +104,7 @@ string_base<char_t>& string_base<char_t>::reset(void)
 }
 
 template <typename char_t>
-void string_base<char_t>::reserve(u_int len)
+void string_base<char_t>::reserve(size_t len)
 {
    if(holder)
       clear();
@@ -112,7 +112,7 @@ void string_base<char_t>::reserve(u_int len)
 }
 
 template <typename char_t>
-bool string_base<char_t>::realloc_buffer(uint_t len)
+bool string_base<char_t>::realloc_buffer(size_t len)
 {
    // if we have enough storage, we are done
    if(bufsize > len)
@@ -136,7 +136,7 @@ bool string_base<char_t>::realloc_buffer(uint_t len)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::append(const char_t *str, uint_t len, bool cstr)
+string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len, bool cstr)
 {
    if(str == NULL || *str == 0)
       return *this;
@@ -162,7 +162,7 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str, uint_t len, 
 }
 
 template <typename char_t>
-int string_base<char_t>::compare(const char_t *str, uint_t count) const
+int string_base<char_t>::compare(const char_t *str, size_t count) const
 {
    return strncmp_(string, str ? str : empty_string, count);
 }
@@ -174,7 +174,7 @@ int string_base<char_t>::compare(const char_t *str) const
 }
 
 template <typename char_t>
-int string_base<char_t>::compare_ci(const char_t *str, uint_t count) const
+int string_base<char_t>::compare_ci(const char_t *str, size_t count) const
 {
    return strnicmp_(string, str ? str : empty_string, count);
 }
@@ -186,7 +186,7 @@ int string_base<char_t>::compare_ci(const char_t *str) const
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::tolower(uint_t start, uint_t end)
+string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t end)
 {
    char_t *cp1, *cp2;
 
@@ -203,7 +203,7 @@ string_base<char_t>& string_base<char_t>::tolower(uint_t start, uint_t end)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::toupper(uint_t start, uint_t end)
+string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t end)
 {
    char_t *cp1, *cp2;
 
@@ -232,7 +232,7 @@ string_base<char_t>& string_base<char_t>::replace(char_t from, char_t to)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::truncate(uint_t at)
+string_base<char_t>& string_base<char_t>::truncate(size_t at)
 {
    if(at < slen) {
       slen = at;
@@ -242,7 +242,7 @@ string_base<char_t>& string_base<char_t>::truncate(uint_t at)
 }
 
 template <typename char_t>
-uint_t string_base<char_t>::find(char_t chr, uint_t start)
+size_t string_base<char_t>::find(char_t chr, size_t start)
 {
    const char_t *cptr;
 
@@ -250,7 +250,7 @@ uint_t string_base<char_t>::find(char_t chr, uint_t start)
 }
 
 template <typename char_t>
-uint_t string_base<char_t>::r_find(char_t chr) const
+size_t string_base<char_t>::r_find(char_t chr) const
 {
    const char_t *cp1 = string + slen;
 
@@ -360,7 +360,7 @@ string_base<char_t> string_base<char_t>::_format_va(const char_t *fmt, va_list v
 }
 
 template <typename char_t>
-char_t *string_base<char_t>::detach(u_int *bsize)
+char_t *string_base<char_t>::detach(size_t *bsize)
 {
    char_t *str = NULL;
 
@@ -374,7 +374,7 @@ char_t *string_base<char_t>::detach(u_int *bsize)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::use_string(char_t *str, uint_t len, bool cstr, uint_t bsize, bool hold)
+string_base<char_t>& string_base<char_t>::use_string(char_t *str, size_t len, bool cstr, size_t bsize, bool hold)
 {
    clear();
 

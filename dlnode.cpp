@@ -107,7 +107,7 @@ void dlnode_t::set_host(hnode_t *nptr)
 // serialization
 //
 
-u_int dlnode_t::s_data_size(void) const
+size_t dlnode_t::s_data_size(void) const
 {
    return base_node<dlnode_t>::s_data_size() + 
             sizeof(uint64_t) * 2 +
@@ -118,9 +118,9 @@ u_int dlnode_t::s_data_size(void) const
             sizeof(uint64_t);         // host name
 }
 
-u_int dlnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t dlnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int basesize, datasize;
+   size_t basesize, datasize;
    void *ptr = buffer;
 
    basesize = base_node<dlnode_t>::s_data_size();
@@ -145,11 +145,11 @@ u_int dlnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int dlnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    uint64_t hostid;
    bool active;
-   u_int basesize, datasize;
+   size_t basesize, datasize;
    const void *ptr = buffer;
 
    basesize = base_node<dlnode_t>::s_data_size(buffer);
@@ -185,14 +185,14 @@ uint64_t dlnode_t::s_hash_value(void) const
    return hash_num(base_node<dlnode_t>::s_hash_value(), hnode ? hnode->nodeid : 0);
 }
 
-int64_t dlnode_t::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t dlnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 {
    uint64_t hostid;
-   u_int datasize;
+   size_t datasize;
    int64_t diff;
 
    if(bufsize < s_data_size(buffer))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %d; expected: %d)", typeid(*this).name(), bufsize, s_data_size()));
+      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %"PRI_SZ"; expected: %"PRI_SZ")", typeid(*this).name(), bufsize, s_data_size()));
 
    if(!hnode)
       return -1;
@@ -205,9 +205,9 @@ int64_t dlnode_t::s_compare_value(const void *buffer, u_int bufsize) const
    return hnode->nodeid == hostid ? 0 : hnode->nodeid > hostid ? 1 : -1;
 }
 
-u_int dlnode_t::s_data_size(const void *buffer)
+size_t dlnode_t::s_data_size(const void *buffer)
 {
-   u_int basesize = base_node<dlnode_t>::s_data_size(buffer);
+   size_t basesize = base_node<dlnode_t>::s_data_size(buffer);
    return basesize + 
             sizeof(uint64_t) * 2 + 
             sizeof(double) * 3 + 
@@ -217,12 +217,12 @@ u_int dlnode_t::s_data_size(const void *buffer)
             sizeof(uint64_t);            // host name
 }
 
-const void *dlnode_t::s_field_value_mp_dlname(const void *buffer, u_int bufsize, u_int& datasize)
+const void *dlnode_t::s_field_value_mp_dlname(const void *buffer, size_t bufsize, size_t& datasize)
 {
    return base_node<dlnode_t>::s_field_value(buffer, bufsize, datasize);
 }
 
-const void *dlnode_t::s_field_value_mp_hostid(const void *buffer, u_int bufsize, u_int& datasize)
+const void *dlnode_t::s_field_value_mp_hostid(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*)buffer + base_node<dlnode_t>::s_data_size(buffer) + 
@@ -233,7 +233,7 @@ const void *dlnode_t::s_field_value_mp_hostid(const void *buffer, u_int bufsize,
             sizeof(u_char);
 }
 
-const void *dlnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *dlnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + 
@@ -242,7 +242,7 @@ const void *dlnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_in
             sizeof(uint64_t);          // sumxfer
 }
 
-const void *dlnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
+const void *dlnode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer) + sizeof(uint64_t) * 2;

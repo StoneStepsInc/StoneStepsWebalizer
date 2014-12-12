@@ -33,7 +33,7 @@ rnode_t::rnode_t(const char *ref) : base_node<rnode_t>(ref)
 // serialization
 //
 
-u_int rnode_t::s_data_size(void) const
+size_t rnode_t::s_data_size(void) const
 {
    return base_node<rnode_t>::s_data_size() + 
                sizeof(u_char) +                 // hexenc
@@ -41,9 +41,9 @@ u_int rnode_t::s_data_size(void) const
                sizeof(uint64_t);                  // visits
 }
 
-u_int rnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t rnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr;
 
    basesize = base_node<rnode_t>::s_data_size();
@@ -65,9 +65,9 @@ u_int rnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int rnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t rnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    u_short version;
    const void *ptr;
 
@@ -98,10 +98,10 @@ u_int rnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int rnode_t::s_data_size(const void *buffer)
+size_t rnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t) * 2;
+   size_t datasize = base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t) * 2;
    
    if(version < 2)
       return datasize;
@@ -109,13 +109,13 @@ u_int rnode_t::s_data_size(const void *buffer)
    return datasize + sizeof(uint64_t);   // visits
 }
 
-const void *rnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t);
 }
 
-const void *rnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *rnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return &((u_char*)buffer)[base_node<rnode_t>::s_data_size(buffer)];

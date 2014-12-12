@@ -150,7 +150,7 @@ void totals_t::init_counters(void)
 // serialization
 //
 
-u_int totals_t::s_data_size(void) const
+size_t totals_t::s_data_size(void) const
 {
    return datanode_t<totals_t>::s_data_size() + 
             s_size_of(cur_tstamp)+     // cur_tstamp
@@ -182,9 +182,9 @@ u_int totals_t::s_data_size(void) const
             sizeof(uint64_t)       ;     // max_hv_xfer            
 }
 
-u_int totals_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t totals_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr = buffer;
 
    basesize = datanode_t<totals_t>::s_data_size();
@@ -284,10 +284,10 @@ u_int totals_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    u_short version;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    const void *ptr = buffer;
 
    basesize = datanode_t<totals_t>::s_data_size(buffer);
@@ -452,7 +452,7 @@ u_int totals_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_int totals_t::s_data_size(const void *buffer)
+size_t totals_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
    size_t datasize = datanode_t<totals_t>::s_data_size(buffer);;

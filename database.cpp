@@ -79,10 +79,10 @@ static int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 template <s_field_cb_t extract>
 static int sc_extract_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result)
 {
-   u_int dsize;
+   size_t dsize;
    const void *dptr = extract(data->get_data(), data->get_size(), dsize);
    result->set_data(const_cast<void*>(dptr));
-   result->set_size(dsize);
+   result->set_size((u_int32_t) dsize);
    return 0;
 }
 
@@ -517,7 +517,7 @@ int database_t::table_t::open_sequence(Db& seqdb, const char *colname, int32_t c
       return error;
 
    key.set_data(const_cast<char*>(colname));
-   key.set_size(strlen(colname));
+   key.set_size((u_int32_t) strlen(colname));
 
    return sequence->open(NULL, &key, flags);
 }
@@ -694,7 +694,7 @@ template <typename node_t>
 bool database_t::node_handler_t<node_t>::put_node(table_t& table, u_char *buffer, const node_t& node)
 {
    Dbt key, data;
-   u_int keysize, datasize;
+   size_t keysize, datasize;
 
    if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
       return false;
@@ -703,10 +703,10 @@ bool database_t::node_handler_t<node_t>::put_node(table_t& table, u_char *buffer
       return false;
 
    key.set_data(&buffer[BUFKEYOFFSET]);
-   key.set_size(keysize);
+   key.set_size((u_int32_t) keysize);
 
    data.set_data(&buffer[BUFDATAOFFSET]);
-   data.set_size(datasize);
+   data.set_size((u_int32_t) datasize);
 
    if(table.primary_db().put(NULL, &key, &data, 0)) 
       return false;
@@ -722,14 +722,14 @@ template <typename node_t>
 bool database_t::node_handler_t<node_t>::get_node_by_id(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
 {
    Dbt key, pkey, data;
-   u_int keysize;
+   size_t keysize;
 
    if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
       return false;
 
    key.set_data(&buffer[BUFKEYOFFSET]);
-   key.set_size(keysize);
-   key.set_ulen(keysize);
+   key.set_size((u_int32_t) keysize);
+   key.set_ulen((u_int32_t) keysize);
    key.set_flags(DB_DBT_USERMEM);
 
    data.set_data(&buffer[BUFDATAOFFSET]);
@@ -816,13 +816,13 @@ template <typename node_t>
 bool database_t::node_handler_t<node_t>::delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node)
 {
    Dbt key;
-   u_int keysize;
+   size_t keysize;
 
    if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
       return false;
 
    key.set_data(&buffer[BUFKEYOFFSET]);
-   key.set_size(keysize);
+   key.set_size((u_int32_t) keysize);
 
    if(table.primary_db().del(NULL, &key, 0))
       return false;

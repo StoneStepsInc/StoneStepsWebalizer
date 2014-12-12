@@ -40,11 +40,11 @@ struct keynode_t {
          //
          // serialization
          //
-         u_int s_key_size(void) const;
-         u_int s_pack_key(void *buffer, u_int bufsize) const;
-         u_int s_unpack_key(const void *buffer, u_int bufsize);
+         size_t s_key_size(void) const;
+         size_t s_pack_key(void *buffer, size_t bufsize) const;
+         size_t s_unpack_key(const void *buffer, size_t bufsize);
 
-         static u_int s_key_size(const void *buffer);
+         static size_t s_key_size(const void *buffer);
 
          static int64_t s_compare_key(const void *buf1, const void *buf2);
 };

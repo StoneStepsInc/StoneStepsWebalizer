@@ -50,14 +50,14 @@ const string_t *base_list<node_t>::isinlist(const string_t& str) const
 }
 
 template <typename node_t>
-const string_t *base_list<node_t>::isinlistex(const char *str, int slen, bool substr) const
+const string_t *base_list<node_t>::isinlistex(const char *str, size_t slen, bool substr) const
 {
    const node_t *lptr;
    return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->string : NULL;
 }
 
 template <typename node_t>
-const node_t *base_list<node_t>::find_node_ex(const char *str, int slen, bool substr) const
+const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool substr) const
 {
    const node_t *lptr;
 
@@ -188,7 +188,7 @@ static gnode_t *new_gnode(const char *name, size_t nlen, const char *value, size
 /* ADD_GLIST - add item to FIFO linked list  */
 /*********************************************/
 
-int glist::add_glist(const char *str, bool srcheng)
+bool glist::add_glist(const char *str, bool srcheng)
 {
    gnode_t *newptr;
    const char *cp1, *cp2, *cp3 = NULL;
@@ -249,7 +249,7 @@ const string_t *glist::isinglist(const string_t& str, glist::const_iterator& ite
    return ((lptr = find_node(str, iter, next)) != NULL) ? &lptr->name : NULL;
 }
 
-const string_t *glist::isinglist(const char *str, int slen, bool substr) const
+const string_t *glist::isinglist(const char *str, size_t slen, bool substr) const
 {
    const gnode_t *lptr;
    return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->name : NULL;

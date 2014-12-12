@@ -13,7 +13,7 @@
 #include "serialize.h"
 #include "util.h"
 
-const u_int hnode_t::ccode_size = 2;   // in bytes, not counting the zero terminator
+const size_t hnode_t::ccode_size = 2;   // in bytes, not counting the zero terminator
 
 // -----------------------------------------------------------------------
 //
@@ -172,7 +172,7 @@ void hnode_t::reset_ccode(void)
 // serialization
 //
 
-u_int hnode_t::s_data_size(void) const
+size_t hnode_t::s_data_size(void) const
 {
    return base_node<hnode_t>::s_data_size() + 
                sizeof(u_char) * 3 +             // spammer, active, robot
@@ -188,9 +188,9 @@ u_int hnode_t::s_data_size(void) const
                s_size_of(city);                 // city
 }
 
-u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr;
 
    basesize = base_node<hnode_t>::s_data_size();
@@ -229,10 +229,10 @@ u_int hnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool active, tmp;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    u_short version;
    const void *ptr;
 
@@ -300,10 +300,10 @@ u_int hnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int hnode_t::s_data_size(const void *buffer)
+size_t hnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = base_node<hnode_t>::s_data_size(buffer) + 
+   size_t datasize = base_node<hnode_t>::s_data_size(buffer) + 
                sizeof(u_char) * 2 +    // spammer, active
                sizeof(uint64_t) * 3 +    // count, files, pages 
                sizeof(uint64_t) * 2 +    // visits, visit_max
@@ -341,7 +341,7 @@ u_int hnode_t::s_data_size(const void *buffer)
    return datasize; 
 }
 
-const void *hnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *hnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*)buffer + base_node<hnode_t>::s_data_size(buffer) + 
@@ -353,7 +353,7 @@ const void *hnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int
             sizeof(uint64_t) * 2;      // xfer, max_v_xfer
 }
 
-const void *hnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
+const void *hnode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 
@@ -361,7 +361,7 @@ const void *hnode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& data
             sizeof(uint64_t) * 3;      // count, files, pages
 }
 
-const void *hnode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *hnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<hnode_t>::s_data_size(buffer) + 

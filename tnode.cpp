@@ -15,14 +15,14 @@
 //
 // serialization
 //
-u_int tnode_t::s_data_size(void) const
+size_t tnode_t::s_data_size(void) const
 {
    return base_node<tnode_t>::s_data_size() + sizeof(uint64_t);
 }
 
-u_int tnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t tnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr;
 
    basesize = base_node<tnode_t>::s_data_size();
@@ -39,10 +39,10 @@ u_int tnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int tnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t tnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    const void *ptr;
-   u_int basesize, datasize;
+   size_t basesize, datasize;
 
    basesize = base_node<tnode_t>::s_data_size(buffer);
    datasize = s_data_size(buffer);
@@ -61,12 +61,12 @@ u_int tnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int tnode_t::s_data_size(const void *buffer)
+size_t tnode_t::s_data_size(const void *buffer)
 {
    return base_node<tnode_t>::s_data_size(buffer) + sizeof(uint64_t);
 }
 
-const void *tnode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *tnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = s_data_size(buffer);
    return (u_char*) buffer + base_node<tnode_t>::s_data_size(buffer);

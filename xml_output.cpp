@@ -104,7 +104,7 @@ char *xml_output_t::xml_encode(const char *str, bool multiline)
 char *xml_output_t::xml_encode_ex(const char *str, bool multiline)
 {
    char *optr;
-   u_int olen = 0;
+   size_t olen = 0;
    
    if(encptr-buffer >= BUFSIZE)
       throw exception_t(0, "Cannot encode XML output (insufficient buffer size)");

@@ -23,8 +23,8 @@
 
 #include "util.h"
 
-static char *encode_markup(const char *str, char *buffer, u_int bsize, bool resize, bool multiline, bool xml, u_int *slen);
-static char *url_decode(const char *str, char *out, u_int *slen = NULL);
+static char *encode_markup(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, bool xml, size_t *slen);
+static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 
 //
 // Derive table size from the size of the character. Note that when 
@@ -37,11 +37,11 @@ static char *url_decode(const char *str, char *out, u_int *slen = NULL);
 //  int n = deltas[str[0]];          // index = -30 ((int) 0xE2)
 //  int m = deltas[(u_char)str[0]];  // index = 226 ((int)(u_char) 0xE2)
 //
-const u_int bmh_delta_table::table_size = 1 << sizeof(u_char) * 8;
+const size_t bmh_delta_table::table_size = 1 << sizeof(u_char) * 8;
 
-void bmh_delta_table::reset(const char *str, u_int slen)
+void bmh_delta_table::reset(const char *str, size_t slen)
 {
-   u_int index;
+   size_t index;
 
    if(deltas)
       delete [] deltas;
@@ -53,7 +53,7 @@ void bmh_delta_table::reset(const char *str, u_int slen)
    if(slen == 0)
       slen = strlen(str);
 
-   deltas = new u_int[table_size];
+   deltas = new size_t[table_size];
 
    // use the string length to fill the array
    for(index = 0; index < table_size; index++)
@@ -112,14 +112,14 @@ uint64_t usec2msec(uint64_t usec)
 	return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
 }
 
-bool is_secure_url(u_int urltype, bool use_https)
+bool is_secure_url(size_t urltype, bool use_https)
 {
    return urltype == URL_TYPE_HTTPS || (use_https && (urltype & URL_TYPE_HTTPS || urltype == URL_TYPE_UNKNOWN));
 }
 
-u_int url_path_len(const char *url, u_int *urllen)
+size_t url_path_len(const char *url, size_t *urllen)
 {
-   u_int pathlen = 0;
+   size_t pathlen = 0;
    const char *cptr = url;
 
    while(cptr && *cptr) {
@@ -134,12 +134,12 @@ u_int url_path_len(const char *url, u_int *urllen)
    return pathlen;
 }
 
-char *html_encode(const char *str, char *buffer, u_int bsize, bool resize, bool multiline, u_int *olen)
+char *html_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, size_t *olen)
 {
    return encode_markup(str, buffer, bsize, resize, multiline, false, olen);
 }
 
-char *xml_encode(const char *str, char *buffer, u_int bsize, bool resize, bool multiline, u_int *olen)
+char *xml_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, size_t *olen)
 {
    return encode_markup(str, buffer, bsize, resize, multiline, true, olen);
 }
@@ -149,11 +149,11 @@ char *xml_encode(const char *str, char *buffer, u_int bsize, bool resize, bool m
 // enforce UTF-8. Otherwise, characters above 0x7F are not encoded or 
 // validated in any way.
 //
-static char *encode_markup(const char *str, char *buffer, u_int bsize, bool resize, bool multiline, bool xml, u_int *olen)
+static char *encode_markup(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, bool xml, size_t *olen)
 {
    static const char hex_char[] = "0123456789ABCDEF";
    const u_char *cptr = (const u_char*) str;
-   u_int slen = 0, bcnt;
+   size_t slen = 0, bcnt;
 
    while(*cptr) {
       if(buffer == NULL || (slen + 16) > bsize) {
@@ -235,7 +235,7 @@ static char *encode_markup(const char *str, char *buffer, u_int bsize, bool resi
    return buffer;
 }
 
-bool is_http_redirect(u_int respcode)
+bool is_http_redirect(size_t respcode)
 {
    switch (respcode) {
       case RC_MOVEDPERM:         // 301
@@ -248,9 +248,9 @@ bool is_http_redirect(u_int respcode)
    return false;
 }
 
-bool is_http_error(u_int respcode)
+bool is_http_error(size_t respcode)
 {
-   u_int code = respcode / 100;
+   size_t code = respcode / 100;
    return code == 4 || code == 5;
 }
 
@@ -281,9 +281,9 @@ bool is_http_error(u_int respcode)
 //      abcab       move by delta['b'] = 3
 //         abcab    match
 //
-const char *strstr_ex(const char *str1, const char *str2, u_int l1, u_int l2, const bmh_delta_table *delta)
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta)
 {
-   u_int i1;
+   size_t i1;
    const char *cp1, *cp2, *cptr;
    char lastch;
 
@@ -335,7 +335,7 @@ const char *strstr_ex(const char *str1, const char *str2, u_int l1, u_int l2, co
    return NULL;
 }
 
-int strncmp_ex(const char *str1, u_int slen1, const char *str2, u_int slen2)
+int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
 {
    int rc;
 
@@ -368,7 +368,7 @@ int strncmp_ex(const char *str1, u_int slen1, const char *str2, u_int slen2)
 
 string_t& url_decode(const string_t& str, string_t& out)
 {
-   u_int bsize, olen;
+   size_t bsize, olen;
    char *optr;
    
    out.reset();
@@ -390,7 +390,7 @@ string_t& url_decode(const string_t& str, string_t& out)
    return out;
 }
 
-char *url_decode(const char *str, char *out, u_int *slen)
+char *url_decode(const char *str, char *out, size_t *slen)
 {
    const u_char *cp1 = (const u_char*) str;     /* force unsigned so we    */
    u_char *cp2 = (u_char*) out;                 /* can do > 127            */
@@ -519,7 +519,7 @@ const char *cstr2str(const char *cp, string_t& str)
 // Converts unsigned long value to a decimal string. Returns the
 // number of characters in the resulting string
 //
-u_int ul2str(uint64_t value, char *str)
+size_t ul2str(uint64_t value, char *str)
 {
    char *cp1, *cp2, *cp3, tmp;
 
@@ -544,7 +544,7 @@ u_int ul2str(uint64_t value, char *str)
    return cp3-str;
 }
 
-uint64_t str2ul(const char *str, const char **eptr, u_int len)
+uint64_t str2ul(const char *str, const char **eptr, size_t len)
 {
    const char *cp = str;
    uint64_t value;
@@ -557,7 +557,7 @@ uint64_t str2ul(const char *str, const char **eptr, u_int len)
 
    value = *cp++ - '0';
 
-   while(*cp && (u_int) (cp - str) < len && isdigitex(*cp)) {
+   while(*cp && (size_t) (cp - str) < len && isdigitex(*cp)) {
       value *= 10;
       value += *cp++ - '0';
    }
@@ -568,7 +568,7 @@ uint64_t str2ul(const char *str, const char **eptr, u_int len)
    return value;
 }
 
-int64_t str2l(const char *str, const char **eptr, u_int len)
+int64_t str2l(const char *str, const char **eptr, size_t len)
 {
    const char *cp = str;
    uint64_t value;
@@ -619,7 +619,7 @@ void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzna
    tstamp_t local, utc;
    int offset, offshrs, offsmin;
    time_t  now;
-   u_int slen;
+   size_t slen;
 
    if(tzname)
       tzname->clear();
@@ -725,10 +725,10 @@ string_t idx_ctry(uint64_t idx)
 /* GET_DOMAIN - Get domain portion of host   */
 /*********************************************/
 
-const char *get_domain(const char *str, u_int labelcnt)
+const char *get_domain(const char *str, size_t labelcnt)
 {
    const char *cp;
-   int  i=labelcnt+1;
+   size_t i = labelcnt + 1;
 
 	if(str == NULL || *str == 0)
 		return NULL;
@@ -746,10 +746,10 @@ const char *get_domain(const char *str, u_int labelcnt)
    return cp;
 }
 
-char *get_url_domain(const char *url, char *buffer, u_int bsize)
+char *get_url_domain(const char *url, char *buffer, size_t bsize)
 {
    const char *cp1 = url, *cp2;
-   u_int nlen;
+   size_t nlen;
 
    if(!cp1 || !*cp1 || *cp1 == '/')
       return NULL;
@@ -801,11 +801,11 @@ bool is_abs_path(const char *path)
 
 string_t get_cur_path(void)
 {
-   u_int bufsize = 128;
+   size_t bufsize = 128;
    char *buffer = new char[bufsize];
    string_t path;
 
-   while(!getcwd(buffer, bufsize-1)) {
+   while(!getcwd(buffer, (int) bufsize-1)) {
       delete [] buffer;
       bufsize <<= 1;
       if(bufsize >= BUFSIZE)
@@ -849,7 +849,7 @@ string_t make_path(const char *base, const char *path)
 
 bool is_ip4_address(const char *cp)
 {
-   u_int dcnt, gcnt;    // digit and group counts
+   size_t dcnt, gcnt;    // digit and group counts
 
    if(!cp)
       return false;
@@ -901,7 +901,7 @@ uint64_t elapsed(uint64_t stime, uint64_t etime)
 //    cplen - length of the pattern; if non-zero, it *must* indicate the 
 //            exact length of the pattern
 //
-bool isinstrex(const char *str, const char *cp, u_int slen, u_int cplen, bool substr, const bmh_delta_table *deltas)
+bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas)
 {
    const char *cp1,*cp2,*eos;
 
@@ -969,7 +969,7 @@ const char_t *strptr(const char_t *str, const char_t *defstr)
    return empty;
 }
 
-u_int ucs2utf8(const wchar_t *cp, u_int slen, char *out, u_int bsize)
+size_t ucs2utf8(const wchar_t *cp, size_t slen, char *out, size_t bsize)
 {
    char *op = out;
    

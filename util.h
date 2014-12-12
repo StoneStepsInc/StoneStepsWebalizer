@@ -40,22 +40,22 @@
 //
 class bmh_delta_table {
    private:
-      u_int                *deltas;
+      size_t                *deltas;
 
-      static const u_int   table_size;
+      static const size_t   table_size;
 
    public:
       bmh_delta_table(void) {deltas = NULL;}
 
-      bmh_delta_table(const char *str, u_int slen = 0) : deltas(NULL) {reset(str, slen);}
+      bmh_delta_table(const char *str, size_t slen = 0) : deltas(NULL) {reset(str, slen);}
 
       ~bmh_delta_table(void) {if(deltas) delete [] deltas;}
 
-      void reset(const char *str, u_int slen = 0);
+      void reset(const char *str, size_t slen = 0);
 
       bool isvalid(void) const {return !(deltas == NULL);}
 
-      u_int operator [] (u_int chr) const {return deltas[chr];}
+      size_t operator [] (size_t chr) const {return deltas[chr];}
 };
 
 //
@@ -69,7 +69,7 @@ class bmh_delta_table {
 // Returns the number of output bytes and, if out is not NULL, converts
 // the UCS-2 character to a UTF-8 sequence.
 //
-inline u_int ucs2utf8(wchar_t wchar, char *out)
+inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
    // 1-byte character
 	if(wchar <= 0x7F) {
@@ -113,7 +113,7 @@ inline u_int ucs2utf8(wchar_t wchar, char *out)
 // Returns the number of bytes in a UTF-8 character or zero if the sequence
 // of bytes is not a valid UTF-8 character.
 //
-inline u_int utf8bcnt(const u_char *cp)
+inline size_t utf8bcnt(const u_char *cp)
 {
    #define CHKRNG(ch, lo, hi) ((ch) >= lo && (ch) <= hi)
 
@@ -159,7 +159,7 @@ inline u_int utf8bcnt(const u_char *cp)
 //
 //
 //
-u_int ucs2utf8(const wchar_t *str, u_int slen, char *out, u_int bsize);
+size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
 
 //
 //
@@ -174,30 +174,30 @@ inline double PCENT(uint64_t val, uint64_t max) {return PCENT((double) val, (dou
 
 uint64_t usec2msec(uint64_t usec);
 
-bool is_secure_url(u_int urltype, bool use_https);
-u_int url_path_len(const char *url, u_int *urllen);
-bool is_http_redirect(u_int respcode);
-bool is_http_error(u_int respcode);
+bool is_secure_url(size_t urltype, bool use_https);
+size_t url_path_len(const char *url, size_t *urllen);
+bool is_http_redirect(size_t respcode);
+bool is_http_error(size_t respcode);
 
-const char *strstr_ex(const char *str1, const char *str2, u_int l1, u_int l2 = 0, const bmh_delta_table *delta = NULL);
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2 = 0, const bmh_delta_table *delta = NULL);
 
 size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen);
 
-int strncmp_ex(const char *str1, u_int slen1, const char *str2, u_int slen2);
+int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2);
 
 string_t& url_decode(const string_t& str, string_t& out);
 
-char *html_encode(const char *str, char *buffer, u_int bsize, bool resize, bool multiline = false, u_int *olen = NULL);
-char *xml_encode(const char *str, char *buffer, u_int bsize, bool resize, bool multiline = false, u_int *olen = NULL);
+char *html_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline = false, size_t *olen = NULL);
+char *xml_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline = false, size_t *olen = NULL);
 
 u_char from_hex(u_char);                           /* convert hex to dec  */
 const u_char *from_hex(const u_char *cp1, u_char *cp2);
 
 const char *cstr2str(const char *cp, string_t& str);
 
-u_int ul2str(uint64_t value, char *str);
-uint64_t str2ul(const char *str, const char **eptr = NULL, u_int len = ~0);
-int64_t str2l(const char *str, const char **eptr = NULL, u_int len = ~0);
+size_t ul2str(uint64_t value, char *str);
+uint64_t str2ul(const char *str, const char **eptr = NULL, size_t len = ~0);
+int64_t str2l(const char *str, const char **eptr = NULL, size_t len = ~0);
 
 string_t cur_time(bool local_time);
 void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzname);
@@ -205,8 +205,8 @@ void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzna
 uint64_t ctry_idx(const char *);
 string_t idx_ctry(uint64_t idx);
 
-const char *get_domain(const char *, u_int);       /* return domain name  */
-char *get_url_domain(const char *url, char *buffer, u_int bsize);
+const char *get_domain(const char *, size_t);       /* return domain name  */
+char *get_url_domain(const char *url, char *buffer, size_t bsize);
 
 bool is_abs_path(const char *path);
 string_t get_cur_path(void);
@@ -216,7 +216,7 @@ bool is_ip4_address(const char *str);
 
 uint64_t elapsed(uint64_t stime, uint64_t etime);
 
-bool isinstrex(const char *str, const char *cp, u_int slen, u_int cplen, bool substr, const bmh_delta_table *deltas);
+bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas);
 
 template <typename char_t>
 const char_t *strptr(const char_t *str, const char_t *defstr = NULL);

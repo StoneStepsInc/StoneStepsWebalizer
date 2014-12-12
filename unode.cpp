@@ -55,7 +55,7 @@ unode_t::unode_t(const unode_t& unode) : base_node<unode_t>(unode)
 
 unode_t::unode_t(const char *urlpath, const char *srchargs) : base_node<unode_t>(urlpath) 
 {
-   pathlen = string.length();
+   pathlen = (u_short) string.length();
 
    if(srchargs && *srchargs && *srchargs != '-') {
       string += '?';
@@ -91,7 +91,7 @@ void unode_t::reset(uint64_t nodeid)
 //
 // serialization
 //
-u_int unode_t::s_data_size(void) const
+size_t unode_t::s_data_size(void) const
 {
    return base_node<unode_t>::s_data_size() + 
             sizeof(u_char) * 3 + 
@@ -101,9 +101,9 @@ u_int unode_t::s_data_size(void) const
             sizeof(uint64_t);          // xfer
 }
 
-u_int unode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t unode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr;
 
    basesize = base_node<unode_t>::s_data_size();
@@ -132,11 +132,11 @@ u_int unode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int unode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t unode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool tmp;
    u_short version;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    const void *ptr;
 
    basesize = base_node<unode_t>::s_data_size(buffer);
@@ -178,10 +178,10 @@ u_int unode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int unode_t::s_data_size(const void *buffer)
+size_t unode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = base_node<unode_t>::s_data_size(buffer) + 
+   size_t datasize = base_node<unode_t>::s_data_size(buffer) + 
             sizeof(u_char) * 2 + 
             sizeof(u_short) + 
             sizeof(uint64_t) * 5 + 
@@ -199,7 +199,7 @@ u_int unode_t::s_data_size(const void *buffer)
    return datasize + sizeof(u_char);    // target
 }
 
-const void *unode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize)
+const void *unode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
@@ -210,7 +210,7 @@ const void *unode_t::s_field_value_hash(const void *buffer, u_int bufsize, u_int
             sizeof(uint64_t);          // xfer
 }
 
-const void *unode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& datasize)
+const void *unode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
@@ -219,19 +219,19 @@ const void *unode_t::s_field_xfer(const void *buffer, u_int bufsize, u_int& data
             sizeof(uint64_t) * 4;
 }
 
-const void *unode_t::s_field_hits(const void *buffer, u_int bufsize, u_int& datasize)
+const void *unode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short);
 }
 
-const void *unode_t::s_field_entry(const void *buffer, u_int bufsize, u_int& datasize)
+const void *unode_t::s_field_entry(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 2;
 }
 
-const void *unode_t::s_field_exit(const void *buffer, u_int bufsize, u_int& datasize)
+const void *unode_t::s_field_exit(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
    return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 3;

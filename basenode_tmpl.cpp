@@ -53,7 +53,7 @@ void base_node<node_t>::reset(uint64_t nodeid)
 //
 
 template <typename node_t> 
-u_int base_node<node_t>::s_data_size(void) const
+size_t base_node<node_t>::s_data_size(void) const
 {
    return datanode_t<node_t>::s_data_size()  + 
             sizeof(u_char)                   +     // flag 
@@ -61,10 +61,10 @@ u_int base_node<node_t>::s_data_size(void) const
 }
 
 template <typename node_t> 
-u_int base_node<node_t>::s_pack_data(void *buffer, u_int bufsize) const
+size_t base_node<node_t>::s_pack_data(void *buffer, size_t bufsize) const
 {
    void *ptr = buffer;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
 
    basesize = datanode_t<node_t>::s_data_size();
    datasize = s_data_size();
@@ -82,10 +82,10 @@ u_int base_node<node_t>::s_pack_data(void *buffer, u_int bufsize) const
 }
 
 template <typename node_t> 
-u_int base_node<node_t>::s_unpack_data(const void *buffer, u_int bufsize)
+size_t base_node<node_t>::s_unpack_data(const void *buffer, size_t bufsize)
 {
    const void *ptr = buffer;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
 
    basesize = datanode_t<node_t>::s_data_size(buffer);
    datasize = s_data_size(buffer);
@@ -109,9 +109,9 @@ uint64_t base_node<node_t>::s_hash_value(void) const
 }
 
 template <typename node_t>
-int64_t base_node<node_t>::s_compare_value(const void *buffer, u_int bufsize) const
+int64_t base_node<node_t>::s_compare_value(const void *buffer, size_t bufsize) const
 {
-   u_int datasize;
+   size_t datasize;
    string_t tstr;
 
    if(bufsize < s_data_size(buffer))
@@ -123,9 +123,9 @@ int64_t base_node<node_t>::s_compare_value(const void *buffer, u_int bufsize) co
 }
 
 template <typename node_t> 
-u_int base_node<node_t>::s_data_size(const void *buffer)
+size_t base_node<node_t>::s_data_size(const void *buffer)
 {
-   u_int datasize = datanode_t<node_t>::s_data_size(buffer)    +
+   size_t datasize = datanode_t<node_t>::s_data_size(buffer)    +
             sizeof(u_char);                                             // flag
    
    return datasize + 
@@ -133,7 +133,7 @@ u_int base_node<node_t>::s_data_size(const void *buffer)
 }
 
 template <typename node_t> 
-const void *base_node<node_t>::s_field_value(const void *buffer, u_int bufsize, u_int& datasize)
+const void *base_node<node_t>::s_field_value(const void *buffer, size_t bufsize, size_t& datasize)
 {
    const void *ptr = (u_char*) buffer                          + 
             datanode_t<node_t>::s_data_size(buffer)            + 
@@ -150,7 +150,7 @@ int64_t base_node<node_t>::s_compare_value_hash(const void *buf1, const void *bu
 }
 
 template <typename node_t> 
-bool base_node<node_t>::s_is_group(const void *buffer, u_int bufsize)
+bool base_node<node_t>::s_is_group(const void *buffer, size_t bufsize)
 {
    if(!buffer && bufsize < s_data_size(buffer))
       return false;

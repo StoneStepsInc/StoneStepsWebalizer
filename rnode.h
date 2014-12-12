@@ -31,14 +31,14 @@ typedef struct rnode_t : public base_node<rnode_t> {
          //
          // serialization
          //
-         u_int s_data_size(void) const;
-         u_int s_pack_data(void *buffer, u_int bufsize) const;
-         u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
+         size_t s_data_size(void) const;
+         size_t s_pack_data(void *buffer, size_t bufsize) const;
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
 
-         static u_int s_data_size(const void *buffer);
+         static size_t s_data_size(const void *buffer);
 
-         static const void *s_field_value_hash(const void *buffer, u_int bufsize, u_int& datasize);
-         static const void *s_field_hits(const void *buffer, u_int bufsize, u_int& datasize);
+         static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
+         static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
 
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
 } *RNODEPTR;

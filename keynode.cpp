@@ -33,15 +33,15 @@ void keynode_t<type_t>::reset(type_t _nodeid)
 //
 
 template <typename type_t>
-u_int keynode_t<type_t>::s_key_size(void) const
+size_t keynode_t<type_t>::s_key_size(void) const
 {
    return s_size_of(nodeid);
 }
 
 template <typename type_t>
-u_int keynode_t<type_t>::s_pack_key(void *buffer, u_int bufsize) const
+size_t keynode_t<type_t>::s_pack_key(void *buffer, size_t bufsize) const
 {
-   u_int datasize = s_key_size();
+   size_t datasize = s_key_size();
 
    if(bufsize < datasize)
       return 0;
@@ -52,9 +52,9 @@ u_int keynode_t<type_t>::s_pack_key(void *buffer, u_int bufsize) const
 }
 
 template <typename type_t>
-u_int keynode_t<type_t>::s_unpack_key(const void *buffer, u_int bufsize)
+size_t keynode_t<type_t>::s_unpack_key(const void *buffer, size_t bufsize)
 {
-   u_int datasize = s_key_size();
+   size_t datasize = s_key_size();
 
    if(bufsize < datasize)
       return 0;
@@ -65,7 +65,7 @@ u_int keynode_t<type_t>::s_unpack_key(const void *buffer, u_int bufsize)
 }
 
 template <typename type_t>
-u_int keynode_t<type_t>::s_key_size(const void *buffer)
+size_t keynode_t<type_t>::s_key_size(const void *buffer)
 {
    return s_size_of<type_t>(buffer);
 }

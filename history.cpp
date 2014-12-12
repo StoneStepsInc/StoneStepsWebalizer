@@ -138,7 +138,7 @@ const hist_month_t *history_t::find_month(u_int year, u_int month) const
 
 bool history_t::update(const hist_month_t *month)
 {
-   int i;
+   size_t i;
 
    if(month == NULL)
       return false;
@@ -193,7 +193,8 @@ void history_t::cleanup(void)
 
 bool history_t::get_history(void)
 {
-   int numfields, i;
+   int numfields;
+   size_t i;
    FILE *hist_fp;
    hist_month_t hnode;
    char *buffer;

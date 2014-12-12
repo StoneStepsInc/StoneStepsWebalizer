@@ -44,11 +44,11 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
       //
       // serialization
       //
-      u_int s_data_size(void) const;
-      u_int s_pack_data(void *buffer, u_int bufsize) const;
-      u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
+      size_t s_data_size(void) const;
+      size_t s_pack_data(void *buffer, size_t bufsize) const;
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
 
-      static u_int s_data_size(const void *buffer);
+      static size_t s_data_size(const void *buffer);
 };
 
 // -----------------------------------------------------------------------
@@ -72,7 +72,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 class sc_hash_table {
    vector_t<scnode_t>   stcodes;       // HTTP status codes
 
-   u_int                clsindex[6];   // HTTP class group offsets (0th is not used)
+   size_t               clsindex[6];   // HTTP class group offsets (0th is not used)
 
    public:
       sc_hash_table(u_int maxcodes);
@@ -83,11 +83,11 @@ class sc_hash_table {
 
       scnode_t& get_status_code(u_int code);
 
-      u_int size(void) const {return stcodes.size();}
+      size_t size(void) const {return stcodes.size();}
 
-      scnode_t& operator [] (u_int index) {return const_cast<scnode_t&>(const_cast<const sc_hash_table*>(this)->operator[](index));}
+      scnode_t& operator [] (size_t index) {return const_cast<scnode_t&>(const_cast<const sc_hash_table*>(this)->operator[](index));}
 
-      const scnode_t& operator [] (u_int index) const;
+      const scnode_t& operator [] (size_t index) const;
 };
 
 #endif // __SCNODE_H

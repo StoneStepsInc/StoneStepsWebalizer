@@ -688,7 +688,7 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
 	memset(&recdata, 0, sizeof(recdata));
 
    key.data = (void*) dnode->hnode.string.c_str();
-   key.size = dnode->hnode.string.length();
+   key.size = (u_int32_t) dnode->hnode.string.length();
 
    // point the record to the internal buffer
 	recdata.flags = DB_DBT_USERMEM;
@@ -747,7 +747,8 @@ void dns_resolver_t::dns_db_put(DNODEPTR dnode)
 {
    DBT k, v;
    dns_db_record *recPtr = NULL;
-   int nameLen, recSize, dberror;
+   size_t nameLen, recSize;
+   int dberror;
 
    if(!dns_db || !dnode)
       return;
@@ -769,10 +770,10 @@ void dns_resolver_t::dns_db_put(DNODEPTR dnode)
    memcpy(&recPtr->hostname, dnode->hnode.name, nameLen);
 
    k.data = (void*) dnode->hnode.string.c_str();
-   k.size = dnode->hnode.string.length();
+   k.size = (u_int32_t) dnode->hnode.string.length();
 
    v.data = recPtr;
-   v.size = recSize;
+   v.size = (u_int32_t) recSize;
 
    if((dberror = dns_db->put(dns_db, NULL, &k, &v, 0)) < 0) {
       if(verbose)

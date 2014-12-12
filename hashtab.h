@@ -33,8 +33,8 @@ enum nodetype_t {
 // hash functions
 //
 // -----------------------------------------------------------------------
-uint64_t hash_bin(uint64_t hashval, const u_char *buf, u_int blen);
-uint64_t hash_str(uint64_t hashval, const char *str, u_int slen);
+uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen);
+uint64_t hash_str(uint64_t hashval, const char *str, size_t slen);
 template <typename type_t> uint64_t hash_num(uint64_t hashval, type_t num);
 
 inline uint64_t hash_byte(uint64_t hashval, u_char b) {return ((hashval & (~0ul << (32-5))) >> (32-5)) ^ (hashval << 5) ^ b;}

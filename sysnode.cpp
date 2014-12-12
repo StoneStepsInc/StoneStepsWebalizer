@@ -82,7 +82,7 @@ bool sysnode_t::check_time_settings(const config_t& config)
    return utc_time == !config.local_time && utc_offset == config.utc_offset;
 }
 
-u_int sysnode_t::s_data_size(void) const
+size_t sysnode_t::s_data_size(void) const
 {
    return datanode_t<sysnode_t>::s_data_size() + 
             sizeof(u_int)        +     // application version
@@ -98,9 +98,9 @@ u_int sysnode_t::s_data_size(void) const
             sizeof(short)        ;     // utc_offset
 }
 
-u_int sysnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr = buffer;
 
    basesize = datanode_t<sysnode_t>::s_data_size();
@@ -135,10 +135,10 @@ u_int sysnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int sysnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    u_short version;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    const void *ptr = buffer;
 
    basesize = datanode_t<sysnode_t>::s_data_size(buffer);
@@ -205,10 +205,10 @@ u_int sysnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t 
    return datasize;
 }
 
-u_int sysnode_t::s_data_size(const void *buffer)
+size_t sysnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize;
+   size_t datasize;
 
    datasize = datanode_t<sysnode_t>::s_data_size(buffer) + 
             sizeof(u_int)        +        // appver

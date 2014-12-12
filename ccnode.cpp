@@ -41,7 +41,7 @@ void ccnode_t::update(const ccnode_t& ccnode)
 // serialization
 //
 
-u_int ccnode_t::s_data_size(void) const
+size_t ccnode_t::s_data_size(void) const
 {
    return datanode_t<ccnode_t>::s_data_size() + 
             sizeof(uint64_t) * 3 +     // count, files, visits
@@ -49,9 +49,9 @@ u_int ccnode_t::s_data_size(void) const
             s_size_of(ccode);
 }
 
-u_int ccnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t ccnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr = buffer;
 
    basesize = datanode_t<ccnode_t>::s_data_size();
@@ -72,10 +72,10 @@ u_int ccnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int ccnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    u_short version;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    const void *ptr;
 
    basesize = datanode_t<ccnode_t>::s_data_size();
@@ -105,10 +105,10 @@ u_int ccnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_int ccnode_t::s_data_size(const void *buffer)
+size_t ccnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = datanode_t<ccnode_t>::s_data_size(buffer) + 
+   size_t datasize = datanode_t<ccnode_t>::s_data_size(buffer) + 
             sizeof(uint64_t) * 3 +     // count, files, visits
             sizeof(uint64_t);          // xfer
    

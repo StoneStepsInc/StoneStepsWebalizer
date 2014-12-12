@@ -30,13 +30,13 @@ void datanode_t<node_t>::reset(void)
 //
 
 template <typename node_t> 
-u_int datanode_t<node_t>::s_data_size(void) const
+size_t datanode_t<node_t>::s_data_size(void) const
 {
    return sizeof(__version);
 }
 
 template <typename node_t> 
-u_int datanode_t<node_t>::s_pack_data(void *buffer, u_int bufsize) const
+size_t datanode_t<node_t>::s_pack_data(void *buffer, size_t bufsize) const
 {
    if(bufsize < s_data_size())
       return 0;
@@ -47,7 +47,7 @@ u_int datanode_t<node_t>::s_pack_data(void *buffer, u_int bufsize) const
 }
 
 template <typename node_t> 
-u_int datanode_t<node_t>::s_unpack_data(const void *buffer, u_int bufsize)
+size_t datanode_t<node_t>::s_unpack_data(const void *buffer, size_t bufsize)
 {
    if(bufsize < s_data_size(buffer))
       return 0;
@@ -56,7 +56,7 @@ u_int datanode_t<node_t>::s_unpack_data(const void *buffer, u_int bufsize)
 }
 
 template <typename node_t> 
-u_int datanode_t<node_t>::s_data_size(const void *buffer)
+size_t datanode_t<node_t>::s_data_size(const void *buffer)
 {
    return sizeof(__version);
 }

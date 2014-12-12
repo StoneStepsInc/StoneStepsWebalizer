@@ -41,7 +41,7 @@ void daily_t::reset(u_int nodeid)
 // serialization
 //
 
-u_int daily_t::s_data_size(void) const
+size_t daily_t::s_data_size(void) const
 {
    return datanode_t<daily_t>::s_data_size() + 
             sizeof(uint64_t) * 10   + 
@@ -51,9 +51,9 @@ u_int daily_t::s_data_size(void) const
             sizeof(u_short);
 }
 
-u_int daily_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t daily_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize;
+   size_t datasize;
    void *ptr;
 
    datasize = s_data_size();
@@ -90,11 +90,11 @@ u_int daily_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int daily_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t daily_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool fixver = (intptr_t) arg == -1;
    u_short version;
-   u_int datasize;
+   size_t datasize;
    const void *ptr = buffer;
 
    datasize = s_data_size(buffer, fixver);
@@ -149,10 +149,10 @@ u_int daily_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int daily_t::s_data_size(const void *buffer, bool fixver)
+size_t daily_t::s_data_size(const void *buffer, bool fixver)
 {
    u_short version = s_node_ver(buffer);
-   u_int datasize = datanode_t<daily_t>::s_data_size(buffer) + 
+   size_t datasize = datanode_t<daily_t>::s_data_size(buffer) + 
             sizeof(uint64_t) * 5 + 
             sizeof(uint64_t);       // tm_xfer
    

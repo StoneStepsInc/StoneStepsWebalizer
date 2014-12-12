@@ -59,13 +59,13 @@ class datanode_t {
       //
       // serialization
       //
-      u_int s_data_size(void) const;
+      size_t s_data_size(void) const;
 
-      u_int s_pack_data(void *buffer, u_int bufsize) const;
+      size_t s_pack_data(void *buffer, size_t bufsize) const;
 
-      u_int s_unpack_data(const void *buffer, u_int bufsize);
+      size_t s_unpack_data(const void *buffer, size_t bufsize);
 
-      static u_int s_data_size(const void *buffer);
+      static size_t s_data_size(const void *buffer);
 
       static u_short s_node_ver(const void *buffer);
 };

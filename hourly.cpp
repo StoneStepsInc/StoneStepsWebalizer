@@ -31,16 +31,16 @@ void hourly_t::reset(u_int nodeid)
 // serialization
 //
 
-u_int hourly_t::s_data_size(void) const
+size_t hourly_t::s_data_size(void) const
 {
    return datanode_t<hourly_t>::s_data_size() + 
             sizeof(uint64_t) * 3 + 
             sizeof(uint64_t);          // th_xfer
 }
 
-u_int hourly_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t hourly_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize;
+   size_t datasize;
    void *ptr;
 
    datasize = s_data_size();
@@ -59,11 +59,11 @@ u_int hourly_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int hourly_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool fixver = (intptr_t) arg == -1;
    u_short version;
-   u_int datasize;
+   size_t datasize;
    const void *ptr;
 
    datasize = s_data_size(buffer, fixver);
@@ -92,7 +92,7 @@ u_int hourly_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t u
    return datasize;
 }
 
-u_int hourly_t::s_data_size(const void *buffer, bool fixver)
+size_t hourly_t::s_data_size(const void *buffer, bool fixver)
 {
    return datanode_t<hourly_t>::s_data_size(buffer) + 
             sizeof(uint64_t) * 3 + 

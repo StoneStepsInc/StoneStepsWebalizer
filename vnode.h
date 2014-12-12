@@ -81,11 +81,11 @@ struct vnode_t : public list_node_t<vnode_t>, public keynode_t<uint64_t>, public
          //
          // serialization
          //
-         u_int s_data_size(void) const;
-         u_int s_pack_data(void *buffer, u_int bufsize) const;
-         u_int s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg);
+         size_t s_data_size(void) const;
+         size_t s_pack_data(void *buffer, size_t bufsize) const;
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
 
-         static u_int s_data_size(const void *buffer);
+         static size_t s_data_size(const void *buffer);
 };
 
 #endif // __VNODE_H

@@ -58,8 +58,8 @@ class webalizer_t {
       // search argument descriptor
       struct arginfo_t {
          const char  *name;
-         u_int       namelen; 
-         u_int       arglen;
+         size_t      namelen; 
+         size_t      arglen;
          
          arginfo_t(void) {name = NULL; namelen = arglen = 0;}
       };
@@ -87,10 +87,10 @@ class webalizer_t {
       // user agent string descriptor
       struct ua_token_t {
          const char  *start;     // argument start in the user agent string
-         u_int       namelen;    // name length (e.g. 7 for Mozilla/5.0)
-         u_int       mjverlen;   // major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
-         u_int       mnverlen;   // minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
-         u_int       arglen;     // entire argument length (e.g. 10 for Opera/9.25)
+         size_t      namelen;    // name length (e.g. 7 for Mozilla/5.0)
+         size_t      mjverlen;   // major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
+         size_t      mnverlen;   // minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
+         size_t      arglen;     // entire argument length (e.g. 10 for Opera/9.25)
          toktype_t   argtype;
          
          ua_token_t(void) {start = NULL; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
@@ -127,7 +127,7 @@ class webalizer_t {
       uint64_t      rpt_time;                        // report time
       
       vector_t<ua_token_t> ua_args;                // user agent argument tokens
-      vector_t<u_int>      ua_groups;              // user ageng group indexes (ua_args)
+      vector_t<size_t>     ua_groups;              // user agent group indexes (ua_args)
       
       vector_t<arginfo_t>  sr_args;                // search string arguments
 

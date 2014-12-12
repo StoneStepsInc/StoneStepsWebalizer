@@ -154,7 +154,8 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
 {
    int brect[8];
    double ptsize = 0;
-   int pxsize = 0, charpx = 0, strsize;
+   int pxsize = 0, charpx = 0;
+   size_t strsize;
    gdFontPtr fontptr;
    const char *fontfile;
    double angle = up ? PI/2 : 0.;
@@ -188,16 +189,16 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
       strsize = strlen((const char*) str) * charpx;
       if(up) {
          if(!xyhead)
-            y += strsize;
+            y += (int) strsize;
          gdImageStringUp(im, fontptr, x, y, str, color);
       }
       else {
          if(!xyhead)
-            x -= strsize;
+            x -= (int) strsize;
          gdImageString(im, fontptr, x, y, str, color);
       }
       if(textsize)
-         *textsize = strsize + 1;   /* 1px padding */
+         *textsize = (u_int) strsize + 1;   /* 1px padding */
       return;
    }
 

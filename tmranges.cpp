@@ -17,7 +17,7 @@ tm_ranges_t::tm_ranges_t(void)
 
 bool tm_ranges_t::add_range(const tstamp_t& start, const tstamp_t& end)
 {
-   u_int i;
+   size_t i;
    tm_range_t range(start, end);
    
    // start must be less than end

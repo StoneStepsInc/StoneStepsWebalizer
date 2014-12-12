@@ -74,7 +74,7 @@ class history_t {
 
       void clear(void) {months.clear(); max_length = 0;}
 
-      u_int size(void) const {return months.size();}
+      size_t size(void) const {return months.size();}
 
       const hist_month_t *first(void) const {return months.size() ? &months[0] : NULL;}
 

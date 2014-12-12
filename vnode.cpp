@@ -89,7 +89,7 @@ void vnode_t::set_lasturl(unode_t *unode)
 // serialization
 //
 
-u_int vnode_t::s_data_size(void) const
+size_t vnode_t::s_data_size(void) const
 {
    return datanode_t<vnode_t>::s_data_size() + 
             sizeof(u_char)  * 3 +   // entry_url, robot, converted
@@ -100,9 +100,9 @@ u_int vnode_t::s_data_size(void) const
             sizeof(uint64_t);       // lasturl->nodeid
 }
 
-u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
+size_t vnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    void *ptr = buffer;
 
    basesize = datanode_t<vnode_t>::s_data_size();
@@ -133,11 +133,11 @@ u_int vnode_t::s_pack_data(void *buffer, u_int bufsize) const
    return datasize;
 }
 
-u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t upcb, void *arg)
+size_t vnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    bool tmp;
    uint64_t urlid;
-   u_int datasize, basesize;
+   size_t datasize, basesize;
    u_short version;
    const void *ptr;
 
@@ -189,7 +189,7 @@ u_int vnode_t::s_unpack_data(const void *buffer, u_int bufsize, s_unpack_cb_t up
    return datasize;
 }
 
-u_int vnode_t::s_data_size(const void *buffer)
+size_t vnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
    size_t datasize = datanode_t<vnode_t>::s_data_size(buffer) + 
