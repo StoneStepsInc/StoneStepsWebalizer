@@ -115,7 +115,7 @@ int64_t base_node<node_t>::s_compare_value(const void *buffer, size_t bufsize) c
    string_t tstr;
 
    if(bufsize < s_data_size(buffer))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %"PRI_SZ"; expected: %"PRI_SZ")", typeid(*this).name(), bufsize, s_data_size(buffer)));
+      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %" PRI_SZ "; expected: %" PRI_SZ ")", typeid(*this).name(), bufsize, s_data_size(buffer)));
 
    deserialize(s_field_value(buffer, bufsize, datasize), tstr);
 

@@ -192,7 +192,7 @@ int64_t dlnode_t::s_compare_value(const void *buffer, size_t bufsize) const
    int64_t diff;
 
    if(bufsize < s_data_size(buffer))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %"PRI_SZ"; expected: %"PRI_SZ")", typeid(*this).name(), bufsize, s_data_size()));
+      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %" PRI_SZ "; expected: %" PRI_SZ ")", typeid(*this).name(), bufsize, s_data_size()));
 
    if(!hnode)
       return -1;

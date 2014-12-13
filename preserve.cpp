@@ -207,7 +207,7 @@ int state_t::save_state(void)
    while(iter.next(0)) {
       vnode.reset(*iter);
       if(!database.delete_visit(vnode))
-         throw exception_t(0, string_t::_format("Cannot detele an ended visit from the database (ID: %"PRIu64")", vnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot detele an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid));
    }
    v_ended.clear();
 
@@ -216,7 +216,7 @@ int state_t::save_state(void)
    while(iter.next(0)) {
       dlnode.reset(*iter);
       if(!database.delete_download(dlnode))
-         throw exception_t(0, string_t::_format("Cannot detele a finished download job from the database (ID: %"PRIu64")", dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot detele a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid));
    }
    dl_ended.clear();
 
@@ -1181,7 +1181,7 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, v
 
       // read the active download node from the database
       if(!_this->database.get_danode_by_id(*daptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the active download job (ID: %"PRIu64")", dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the active download job (ID: %" PRIu64 ")", dlnode.nodeid));
 
       dlnode.download = daptr.release();
    }
@@ -1192,7 +1192,7 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, v
 
       // read the active host node from the database
       if(!_this->database.get_hnode_by_id(hnode, unpack_hnode_cb, _this))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %"PRIu64")", hostid, dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
 
       // check if the node is already in the hash table
       if((hptr = _this->hm_htab.find_node(hnode.string)) != NULL)
@@ -1229,7 +1229,7 @@ void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool act
 
       // look up the host node in the database
       if(!_this->database.get_hnode_by_id(*hptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %"PRIu64")", hostid, dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
 
        dlnode.set_host(hptr.release());
        dlnode.ownhost = true;
@@ -1246,7 +1246,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
 
       // look up a URL node in the database
       if(!_this->database.get_unode_by_id(unode, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %"PRIu64")", urlid, vnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %" PRIu64 ")", urlid, vnode.nodeid));
 
       // find the URL node or create a new one
       if((uptr = _this->find_url(unode.string)) != NULL)
@@ -1274,7 +1274,7 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 
       // look up the active visit in the database
       if(!_this->database.get_vnode_by_id(*vptr, unpack_vnode_cb, _this))
-         throw exception_t(0, string_t::_format("Cannot find the active visit of a host (ID: %"PRIu64")", hnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot find the active visit of a host (ID: %" PRIu64 ")", hnode.nodeid));
 
       hnode.set_visit(vptr.release());
    }
