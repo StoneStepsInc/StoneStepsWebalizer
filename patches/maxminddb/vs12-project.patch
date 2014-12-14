@@ -2,16 +2,128 @@
 # Parent a4c7514f4e99eb28ef8bbd4191413e5808899be9
 VS12 project patch
 
-diff -r a4c7514f4e99 projects/VS12/libmaxminddb.props
+diff -r a4c7514f4e99 projects/VS12/README
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.props	Sun Dec 07 10:43:12 2014 -0500
-@@ -0,0 +1,23 @@
++++ b/projects/VS12/README	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,52 @@
++Project Notes
++
++DO NOT modify project settings for each configuration and/or platform
++on a per-project basis. Use property sheets to set shared configuration
++properties. The rule of thumb - if you set same value for the same 
++property in more than one configuration or platform, you did it wrong.
++
++libmaxminddb.props
++
++This is the base property sheet for libMaxMindDB project. It contains 
++settings that are shared between all configurations, such as compiler
++warning level, not using link-time code generation, etc.
++
++In order to minimize the number of property sheet files, this propery
++sheet also contains settings for Win32 and Debug configurations, which 
++are overridden by the x64 and Release property sheets described below.
++
++libmaxminddb-release.props
++
++This property sheet contains all Release settings and is shared between
++Win32 and x64 release builds. It must be located higher than the base
++property sheet in the property Manager window for each configuration
++where it's used (i.e. Release|Win32 and Release|x64).
++
++libmaxminddb-x64.props
++
++This property sheet contains all x64 settings and is shared between all 
++Debug and Release x64 configurations. It must be located higher than the 
++base property sheet in the property Manager window for each configuration
++where it's used (i.e. Debug|x64 and Release|x64).
++
++Adding More Projects
++
++If you want to add more projects into this solution, follow the same logic
++and create their own property sheets. Do not use libmaxminddb property 
++sheets in those projects because it will interfere with their intermediate 
++directories. Instead, copy and rename libmaxminddb property sheets as a
++starting point.
++
++DO NOT add libmaxminddb.lib to the Additional Dependencies box of command
++line tools or any other libraries you built, for that matter. This box is
++only for standard Windows libraries. Instead, add libmaxminddb as a reference
++to all command line tool projects. Do the same for any other library projects
++you added to this solutionn. 
++
++For external 3rd-party .lib files, create a solution folder called Libraries 
++and add Debug, Debug64, Release, Release64 subfolders, then drag and drop all 
++versinos of .lib to their respective folders and use Exclude From Build in 
++each library file's property to assign them to the proper build confguration.
++Unused libraries will be shown with a traffic stop sign in each configuration. 
++If you have a lot of projects, it might be easier to do this by editing .vcxproj 
++and .vcxproj.filters in a text editor.
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb-release.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb-release.props	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,32 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup />
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <Optimization>MaxSpeed</Optimization>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup>
++    <ClCompile>
++      <OmitFramePointers>true</OmitFramePointers>
++    </ClCompile>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb-x64.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb-x64.props	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,14 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ImportGroup Label="PropertySheets" />
 +  <PropertyGroup Label="UserMacros" />
 +  <PropertyGroup>
-+    <IntDir>$(Configuration)\obj\</IntDir>
++    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\</IntDir>
++  </PropertyGroup>
++  <ItemDefinitionGroup>
++    <Lib>
++      <TargetMachine>MachineX64</TargetMachine>
++    </Lib>
++  </ItemDefinitionGroup>
++  <ItemGroup />
++</Project>
+\ No newline at end of file
+diff -r a4c7514f4e99 projects/VS12/libmaxminddb.props
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/projects/VS12/libmaxminddb.props	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,32 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ImportGroup Label="PropertySheets" />
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup>
++    <IntDir>$(SolutionDir)$(Configuration)\obj\</IntDir>
 +  </PropertyGroup>
 +  <ItemDefinitionGroup>
 +    <ClCompile>
@@ -19,25 +131,34 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.props
 +      <PreprocessorDefinitions>MMDB_UINT128_IS_BYTE_ARRAY=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <WarningLevel>Level3</WarningLevel>
-+      <ExceptionHandling>Async</ExceptionHandling>
++      <ExceptionHandling>false</ExceptionHandling>
++      <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
++      <Optimization>Disabled</Optimization>
++      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
++      <OmitFramePointers>false</OmitFramePointers>
++      <WholeProgramOptimization>false</WholeProgramOptimization>
 +    </ClCompile>
 +    <PreBuildEvent>
 +      <Command>if NOT EXIST (..\..\include\maxminddb_config.h) (
 +copy ..\..\include\maxminddb_config.h.in ..\..\include\maxminddb_config.h
 +)</Command>
 +    </PreBuildEvent>
++    <Lib>
++      <TargetMachine>MachineX86</TargetMachine>
++      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
++    </Lib>
 +  </ItemDefinitionGroup>
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
 diff -r a4c7514f4e99 projects/VS12/libmaxminddb.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.sln	Sun Dec 07 10:43:12 2014 -0500
++++ b/projects/VS12/libmaxminddb.sln	Sat Dec 13 12:22:27 2014 -0500
 @@ -0,0 +1,28 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
 +# Visual Studio Express 2013 for Windows Desktop
-+VisualStudioVersion = 12.0.30723.0
++VisualStudioVersion = 12.0.31101.0
 +MinimumVisualStudioVersion = 10.0.40219.1
 +Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmaxminddb", "libmaxminddb.vcxproj", "{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}"
 +EndProject
@@ -64,8 +185,8 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.sln
 +EndGlobal
 diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj	Sun Dec 07 10:43:12 2014 -0500
-@@ -0,0 +1,142 @@
++++ b/projects/VS12/libmaxminddb.vcxproj	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,141 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
@@ -91,6 +212,9 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  </ItemGroup>
 +  <ItemGroup>
 +    <ClInclude Include="..\..\include\maxminddb.h" />
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="README" />
 +  </ItemGroup>
 +  <PropertyGroup Label="Globals">
 +    <ProjectGuid>{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}</ProjectGuid>
@@ -134,14 +258,18 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +    <Import Project="libmaxminddb.props" />
++    <Import Project="libmaxminddb-x64.props" />
 +  </ImportGroup>
 +  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +    <Import Project="libmaxminddb.props" />
++    <Import Project="libmaxminddb-release.props" />
 +  </ImportGroup>
 +  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
 +    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 +    <Import Project="libmaxminddb.props" />
++    <Import Project="libmaxminddb-x64.props" />
++    <Import Project="libmaxminddb-release.props" />
 +  </ImportGroup>
 +  <PropertyGroup Label="UserMacros" />
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,7 +280,6 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  </PropertyGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 +    <ClCompile>
-+      <Optimization>Disabled</Optimization>
 +      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +    </ClCompile>
 +    <Link>
@@ -164,7 +291,6 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 +    <ClCompile>
-+      <Optimization>Disabled</Optimization>
 +      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +    </ClCompile>
 +    <Link>
@@ -176,9 +302,6 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
 +    <ClCompile>
-+      <Optimization>MaxSpeed</Optimization>
-+      <FunctionLevelLinking>true</FunctionLevelLinking>
-+      <IntrinsicFunctions>true</IntrinsicFunctions>
 +      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +    </ClCompile>
 +    <Link>
@@ -191,9 +314,6 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 +  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 +    <ClCompile>
-+      <Optimization>MaxSpeed</Optimization>
-+      <FunctionLevelLinking>true</FunctionLevelLinking>
-+      <IntrinsicFunctions>true</IntrinsicFunctions>
 +      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +    </ClCompile>
 +    <Link>
@@ -211,8 +331,8 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj
 \ No newline at end of file
 diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sun Dec 07 10:43:12 2014 -0500
-@@ -0,0 +1,23 @@
++++ b/projects/VS12/libmaxminddb.vcxproj.filters	Sat Dec 13 12:22:27 2014 -0500
+@@ -0,0 +1,26 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup>
@@ -234,6 +354,9 @@ diff -r a4c7514f4e99 projects/VS12/libmaxminddb.vcxproj.filters
 +    <ClInclude Include="..\..\include\maxminddb.h">
 +      <Filter>Header Files</Filter>
 +    </ClInclude>
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="README" />
 +  </ItemGroup>
 +</Project>
 \ No newline at end of file
