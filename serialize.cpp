@@ -13,10 +13,10 @@
 
 void *serialize(void *ptr, const string_t& value)
 {
-   void *cp = serialize(ptr, value.length());
+   void *cp = serialize<u_int>(ptr, (u_int) value.length());
    if(value.length())
       memcpy(cp, value.c_str(), value.length());
-   return (u_char*) ptr + sizeof(value.length()) + value.length();
+   return (u_char*) ptr + sizeof(u_int) + value.length();
 }
 
 void *serialize(void *ptr, const tstamp_t& tstamp)
@@ -50,11 +50,12 @@ void *serialize(void *ptr, const tstamp_t& tstamp)
 
 const void *deserialize(const void *ptr, string_t& value)
 {
-   u_int slen;
+   size_t slen;
    const void *cp;
    char *sp;
 
-   cp = deserialize(ptr, slen);
+   // call explicit specialization because size_t is unsigned int on Win32
+   cp = deserialize<u_int, size_t>(ptr, slen);
 
    if(slen) {
       sp = new char[slen+1];
