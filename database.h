@@ -58,10 +58,10 @@ class database_t {
       // ISO/IEC 14882, Second Edition 2003-10-15 for details on overload
       // resolution).
       //
-      #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 5
-      #define __gcc_bug11407__(cb) cb
-      #else
+      #if defined(__GNUC__) && (__GNUC__ < 4 || __GNUC__ == 4 && __GNUC_MINOR__ < 5)
       inline sc_extract_cb_t __gcc_bug11407__(sc_extract_cb_t cb) {return cb;}
+      #else
+      #define __gcc_bug11407__(cb) cb
       #endif
 
       // -----------------------------------------------------------------
