@@ -33,11 +33,16 @@ enum nodetype_t {
 // hash functions
 //
 // -----------------------------------------------------------------------
+
+//
+// The sdbm hash function below generates 64-bit hash values that are well 
+// distributed across the entire 64-bit range.
+//
+inline uint64_t hash_byte(uint64_t hashval, u_char b) {return (uint64_t) b + (hashval << 6) + (hashval << 16) - hashval;}
+
 uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen);
 uint64_t hash_str(uint64_t hashval, const char *str, size_t slen);
 template <typename type_t> uint64_t hash_num(uint64_t hashval, type_t num);
-
-inline uint64_t hash_byte(uint64_t hashval, u_char b) {return ((hashval & (~0ul << (32-5))) >> (32-5)) ^ (hashval << 5) ^ b;}
 
 inline uint64_t hash_ex(uint64_t hashval, const char *str) {return (str && *str) ? hash_str(hashval, str, strlen(str)) : 0;}
 inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
