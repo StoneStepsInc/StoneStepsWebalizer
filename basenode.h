@@ -54,6 +54,8 @@ struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, publi
 
          uint64_t s_hash_value(void) const;
 
+         size_t s_hash_value_size(void) {return sizeof(uint64_t);}
+
          int64_t s_compare_value(const void *buffer, size_t bufsize) const;
 
          static size_t s_data_size(const void *buffer);

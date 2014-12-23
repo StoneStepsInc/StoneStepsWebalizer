@@ -761,7 +761,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
 
    // make a value key
    hashkey = node.s_hash_value();
-   keysize = sizeof(uint64_t);
+   keysize = node.s_hash_value_size();
 
    key.set_data(&hashkey);
    key.set_size(keysize);
@@ -778,7 +778,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
    // open a cursor
    {cursor_iterator cursor(scdb);
 
-   // find the first value and get the primary key and value data
+   // find the first value hash and get the primary key and value data
    if(!cursor.set(key, data, &pkey))
       return false;
 
@@ -787,7 +787,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
       if(!node.s_compare_value(data.get_data(), data.get_size()))
          break;
 
-      // if there are no duplicates, return false
+      // if there are no more duplicates, value is not found
       if(!cursor.dup_count())
          return false;
 
