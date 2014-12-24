@@ -14,7 +14,7 @@
 #include "basenode.h"
 #include "types.h"
 
-typedef struct anode_t : public base_node<anode_t> {
+struct anode_t : public base_node<anode_t> {
       uint64_t   count;
       uint64_t   visits;
       
@@ -45,7 +45,7 @@ typedef struct anode_t : public base_node<anode_t> {
 
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
          static int64_t s_compare_visits(const void *buf1, const void *buf2);
-} *ANODEPTR;
+};
 
 //
 // User Agents

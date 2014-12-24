@@ -15,7 +15,7 @@
 #include "types.h"
 
 /* search string struct      */
-typedef struct snode_t : public base_node<snode_t> {     
+struct snode_t : public base_node<snode_t> {     
       u_short        termcnt;
       uint64_t         count;
       uint64_t         visits;
@@ -41,7 +41,7 @@ typedef struct snode_t : public base_node<snode_t> {
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
 
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
-} *SNODEPTR;
+};
 
 //
 // Search Strings

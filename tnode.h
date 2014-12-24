@@ -15,7 +15,7 @@
 #include "types.h"
 
 /* daily host struct */
-typedef struct tnode_t : public base_node<tnode_t> {
+struct tnode_t : public base_node<tnode_t> {
       public:
          typedef void (*s_unpack_cb_t)(tnode_t& tnode, void *arg);
 
@@ -34,7 +34,7 @@ typedef struct tnode_t : public base_node<tnode_t> {
          static size_t s_data_size(const void *buffer);
 
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
-} *TNODEPTR;
+};
 
 //
 // Hosts (daily)

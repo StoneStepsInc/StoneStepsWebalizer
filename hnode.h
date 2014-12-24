@@ -49,7 +49,7 @@
 // sync regardless whether there is a visit active or not. See vnode_t for
 // details.
 //
-typedef struct hnode_t : public base_node<hnode_t> {
+struct hnode_t : public base_node<hnode_t> {
       static const size_t ccode_size;
 
       uint64_t   count;
@@ -132,7 +132,7 @@ typedef struct hnode_t : public base_node<hnode_t> {
 
          static int64_t s_compare_xfer(const void *buf1, const void *buf2);
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
-} *HNODEPTR;
+};
 
 //
 // Hosts (monthly)

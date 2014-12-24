@@ -2055,7 +2055,7 @@ hnode_t *webalizer_t::put_hnode(
 {
    bool found = true;
    uint64_t hashval;
-   HNODEPTR cptr;
+   hnode_t *cptr;
    vnode_t *visit;
 
    newnode = newvisit = newthost = false;
@@ -2162,7 +2162,7 @@ hnode_t *webalizer_t::put_hnode(
 {
    bool found = true;
    uint64_t hashval;
-   HNODEPTR cptr;
+   hnode_t *cptr;
 
    newnode = false;
 
@@ -2217,7 +2217,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
 {
    bool found = true;
    uint64_t hashval;
-   RNODEPTR nptr;
+   rnode_t *nptr;
 
    newnode = false;
 
@@ -2267,7 +2267,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
 {
    bool found = true;
    uint64_t hashval;
-   UNODEPTR cptr;
+   unode_t *cptr;
    u_hash_table::param_block param;
 
    newnode = false;
@@ -2387,7 +2387,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
 {
    bool found = true;
    uint64_t hashval;
-   ANODEPTR cptr;
+   anode_t *cptr;
 
    newnode = false;
       
@@ -2437,7 +2437,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisi
 {
    bool found = true;
    uint64_t hashval;
-   SNODEPTR nptr;
+   snode_t *nptr;
 
    newnode = false;
 
@@ -2495,7 +2495,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 {
    bool found = true;
    uint64_t hashval;
-   INODEPTR nptr;
+   inode_t *nptr;
 
    newnode = false;
    

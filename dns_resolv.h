@@ -36,7 +36,7 @@ struct hnode_t;
 //
 // DNS host node
 //
-typedef struct dnode_t {
+struct dnode_t {
       hnode_t&       hnode;               // host node reference
       time_t         tstamp;              // when the name was resolved
       sockaddr       addr;
@@ -54,7 +54,7 @@ typedef struct dnode_t {
       sockaddr_in& addr_ipv4(void) {return (sockaddr_in&) addr;}
       const sockaddr_in& addr_ipv4(void) const {return (const sockaddr_in&) addr;}
 
-} *DNODEPTR;                               /* DNS hash table node struct   */
+};                               /* DNS hash table node struct   */
 
 //
 // DNS resolver
@@ -85,8 +85,8 @@ class dns_resolver_t {
 
       u_int dns_cache_ttl;
 
-      DNODEPTR dnode_list;
-      DNODEPTR dnode_end;
+      dnode_t *dnode_list;
+      dnode_t *dnode_end;
       int dns_live_workers;                  // total number of DNS threads
       uint64_t dns_unresolved;                 // number of addresses to resolve
 
@@ -109,9 +109,9 @@ class dns_resolver_t {
 
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city);
 
-      bool dns_db_get(DNODEPTR dnode, bool nocheck);
+      bool dns_db_get(dnode_t *dnode, bool nocheck);
 
-      void dns_db_put(DNODEPTR dnode);
+      void dns_db_put(dnode_t *dnode);
 
       bool dns_db_open(const string_t& dns_cache);
 
@@ -121,7 +121,7 @@ class dns_resolver_t {
 
       void dns_worker_thread_proc(void);
 
-      void process_dnode(DNODEPTR dnode);
+      void process_dnode(dnode_t *dnode);
 
       bool dns_derive_ccode(const string_t& name, string_t& ccode) const;
 

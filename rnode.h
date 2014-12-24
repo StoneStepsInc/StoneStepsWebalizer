@@ -15,7 +15,7 @@
 #include "basenode.h"
 
 /* referrer hash table struct   */
-typedef struct rnode_t : public base_node<rnode_t> {   
+struct rnode_t : public base_node<rnode_t> {   
       bool     hexenc;               // any %xx sequences?
       uint64_t   count;
       uint64_t   visits;
@@ -41,7 +41,7 @@ typedef struct rnode_t : public base_node<rnode_t> {
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
 
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
-} *RNODEPTR;
+};
 
 //
 // Referrers

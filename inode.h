@@ -15,7 +15,7 @@
 #include "types.h"
 
 /* host hash table struct    */
-typedef struct inode_t : public base_node<inode_t> {
+struct inode_t : public base_node<inode_t> {
       uint64_t   count;
       uint64_t   files;
       uint64_t   visit;
@@ -45,7 +45,7 @@ typedef struct inode_t : public base_node<inode_t> {
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
 
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
-} *INODEPTR;
+};
 
 //
 // Users

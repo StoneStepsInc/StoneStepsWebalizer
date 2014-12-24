@@ -149,7 +149,7 @@ dns_resolver_t::~dns_resolver_t(void)
 bool dns_resolver_t::put_hnode(hnode_t *hnode)
 {
    bool retval = false;
-   DNODEPTR nptr;
+   dnode_t* nptr;
 
 	if(!dns_db && !geoip_db)
       return false;
@@ -217,7 +217,7 @@ hnode_t *dns_resolver_t::get_hnode(void)
 // Resolves the IP address in dnode to a domain name and looks up country
 // code for this address.
 //
-void dns_resolver_t::process_dnode(DNODEPTR dnode)
+void dns_resolver_t::process_dnode(dnode_t* dnode)
 {
    bool goodcc;
    int size = 0;
@@ -464,7 +464,7 @@ void dns_resolver_t::dns_wait(void)
 bool dns_resolver_t::resolve_domain_name(void)
 {
 	bool cached = false, lookup = false;
-	DNODEPTR nptr;
+	dnode_t* nptr;
    hnode_t *hnode;
 
 	mutex_lock(dnode_mutex);
@@ -671,7 +671,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
-bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
+bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
 {
 	bool retval = false;
 	int dberror;
@@ -743,7 +743,7 @@ bool dns_resolver_t::dns_db_get(DNODEPTR dnode, bool nocheck)
 /* DB_PUT - put key/val in the cache db      */
 /*********************************************/
 
-void dns_resolver_t::dns_db_put(DNODEPTR dnode)
+void dns_resolver_t::dns_db_put(dnode_t* dnode)
 {
    DBT k, v;
    dns_db_record *recPtr = NULL;

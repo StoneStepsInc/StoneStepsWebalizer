@@ -24,7 +24,7 @@
 // vstref is zero, unode_t may still be valid (although may be swapped
 // out of memory at any time). 
 //
-typedef struct unode_t : public base_node<unode_t> {
+struct unode_t : public base_node<unode_t> {
       bool     hexenc : 1;           // any %xx sequences?
       bool     target : 1;           // Target URL?
       u_char   urltype;					 /* URL type (e.g. URL_TYPE_HTTP)*/
@@ -70,7 +70,7 @@ typedef struct unode_t : public base_node<unode_t> {
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
          static int64_t s_compare_entry(const void *buf1, const void *buf2);
          static int64_t s_compare_exit(const void *buf1, const void *buf2);
-} *UNODEPTR;
+};
 
 //
 // URLs

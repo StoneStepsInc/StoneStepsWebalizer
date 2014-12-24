@@ -16,7 +16,7 @@
 //
 // HTTP status code node
 //
-typedef struct rcnode_t : public base_node<rcnode_t> { 
+struct rcnode_t : public base_node<rcnode_t> { 
       bool           hexenc;           // any %xx sequences?
       u_short        respcode;         // HTTP status code
       uint64_t         count;
@@ -51,7 +51,7 @@ typedef struct rcnode_t : public base_node<rcnode_t> {
 
          static int64_t s_mp_compare_value(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
-} *RCNODEPTR;
+};
 
 //
 // HTTP status codes
