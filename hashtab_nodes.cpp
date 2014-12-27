@@ -27,7 +27,6 @@
 //
 template<> const u_short datanode_t<hnode_t> ::__version = 6;
 template<> const u_short datanode_t<unode_t> ::__version = 3;
-template<> const u_short datanode_t<tnode_t> ::__version = 1;
 template<> const u_short datanode_t<rnode_t> ::__version = 2;
 template<> const u_short datanode_t<anode_t> ::__version = 3;
 template<> const u_short datanode_t<snode_t> ::__version = 2;
@@ -49,7 +48,6 @@ template<> const u_short datanode_t<sysnode_t>::__version = 5;
 //
 template struct base_node<hnode_t>;
 template struct base_node<unode_t>;
-template struct base_node<tnode_t>;
 template struct base_node<rnode_t>;
 template struct base_node<anode_t>;
 template struct base_node<snode_t>;
@@ -63,7 +61,6 @@ template struct base_node<spnode_t>;
 //
 template class datanode_t<hnode_t>;
 template class datanode_t<unode_t>;
-template class datanode_t<tnode_t>;
 template class datanode_t<rnode_t>;
 template class datanode_t<anode_t>;
 template class datanode_t<snode_t>;
@@ -89,7 +86,6 @@ template class datanode_t<sysnode_t>;
 //
 template struct htab_node_t<hnode_t>;
 template struct htab_node_t<unode_t>;
-template struct htab_node_t<tnode_t>;
 template struct htab_node_t<rnode_t>;
 template struct htab_node_t<anode_t>;
 template struct htab_node_t<snode_t>;
@@ -105,7 +101,6 @@ template struct htab_node_t<ccnode_t>;
 //
 template class hash_table<hnode_t>;
 template class hash_table<unode_t>;
-template class hash_table<tnode_t>;
 template class hash_table<rnode_t>;
 template class hash_table<anode_t>;
 template class hash_table<snode_t>;

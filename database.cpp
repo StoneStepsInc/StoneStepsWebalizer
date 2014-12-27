@@ -1378,22 +1378,6 @@ bool database_t::open(void)
       return false;
 
    //
-   // daily hosts
-   //
-   if(!readonly) {
-      if(dhosts.open_sequence(sequences, "dhosts.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(dhosts.associate(dbpath, "dhosts.values", bt_compare_cb<tnode_t::s_compare_value_hash>, bt_compare_cb<tnode_t::s_compare_value_hash>, sc_extract_cb<tnode_t::s_field_value_hash>))
-      return false;
-
-   dhosts.set_values_db("dhosts.values");
-
-   if(dhosts.open(dbpath, "dhosts", bt_compare_cb<tnode_t::s_compare_key>))
-      return false;
-
-   //
    // status codes
    //
    if(scodes.open(dbpath, "statuscodes", bt_compare_cb<scnode_t::s_compare_key>))
@@ -1806,26 +1790,6 @@ bool database_t::get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t u
 
 // -----------------------------------------------------------------------
 //
-// daily hosts
-//
-// -----------------------------------------------------------------------
-bool database_t::put_tnode(const tnode_t& tnode)
-{
-   return node_handler_t<tnode_t>::put_node(dhosts, buffer, tnode);
-}
-
-bool database_t::get_tnode_by_id(tnode_t& tnode, tnode_t::s_unpack_cb_t upcb, void *arg) const
-{
-   return node_handler_t<tnode_t>::get_node_by_id(dhosts, buffer, tnode, upcb, arg);
-}
-
-bool database_t::get_tnode_by_value(tnode_t& tnode, tnode_t::s_unpack_cb_t upcb, void *arg) const
-{
-   return node_value_handler_t<tnode_t>::get_node_by_value(dhosts, buffer, tnode, upcb, arg);
-}
-
-// -----------------------------------------------------------------------
-//
 // status codes
 //
 // -----------------------------------------------------------------------
@@ -2136,15 +2100,6 @@ template class database_t::node_value_handler_t<rcnode_t>;
 template class database_t::iterator_base<rcnode_t>;
 template class database_t::iterator<rcnode_t>;
 template class database_t::reverse_iterator<rcnode_t>;
-
-// daily hosts
-template int bt_compare_cb<tnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
-template int bt_compare_cb<tnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
-
-template class database_t::node_handler_t<tnode_t>;
-template class database_t::node_value_handler_t<tnode_t>;
-template class database_t::iterator_base<tnode_t>;
-template class database_t::iterator<tnode_t>;
 
 // status codes
 template class database_t::node_handler_t<scnode_t>;

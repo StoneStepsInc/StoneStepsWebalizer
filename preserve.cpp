@@ -71,23 +71,6 @@ bool state_t::del_state_file(void)
    return is_state_file() ? !unlink(make_path(config.out_dir, config.state_fname)) : true;
 }
 
-bool state_t::eval_tnode_cb(const tnode_t *tnode, void *arg)
-{
-   return tnode ? true : false;
-}
-
-bool state_t::swap_tnode_cb(tnode_t *tnode, void *arg)
-{
-   state_t *_this = (state_t*) arg;
-
-   if(tnode->dirty) {
-      if(!_this->database.put_tnode(*tnode))
-         throw exception_t(0, "Cannot swap out a daily host node to the database");
-   }
-
-   return true;
-}
-
 bool state_t::eval_hnode_cb(const hnode_t *hnode, void *arg)
 {
    // do not swap out node if there are active visits or downloads
@@ -156,7 +139,6 @@ int state_t::save_state(void)
    const dlnode_t *dlptr;
    const ccnode_t *ccptr;
 
-   hash_table<tnode_t>::iterator t_iter;
    hash_table<hnode_t>::iterator h_iter;
    hash_table<unode_t>::iterator u_iter;
    hash_table<rnode_t>::iterator r_iter;
@@ -601,7 +583,6 @@ int state_t::restore_state(void)
    hnode_t hnode;
    dlnode_t dlnode;
    unode_t unode;
-   tnode_t tnode;
    rnode_t rnode;
    anode_t anode;
    snode_t snode;
@@ -806,7 +787,6 @@ int state_t::upgrade_database(void)
    danode_t danode;
    hnode_t hnode;
    dlnode_t dlnode;
-   tnode_t tnode;
    totals_t totals_node;
 
    // sysnode is not populated if the databases is new or has been truncated
@@ -875,44 +855,6 @@ int state_t::upgrade_database(void)
    if(!database.get_tgnode_by_id(totals_node, NULL, NULL))
       return 3;
    
-   //
-   // Versions prior 3.4 didn't store timestamps in the host nodes. Use
-   // the beginning of the current day as a timestamp for all host nodes
-   // in the daily hosts table. All other host nodes will have the last
-   // hit time stamp set to zero.
-   //
-   if(sysnode.appver < VERSION_3_4_1_1) {
-      tstamp_t cur_tstamp = totals_node.cur_tstamp;
-
-      // reset time components of the current time stamp
-      cur_tstamp.hour = 0;
-      cur_tstamp.min = 0;
-      cur_tstamp.sec = 0;
-      
-      // loop through the current daily hosts table
-      database_t::iterator<tnode_t> iter = database.begin_dhosts();
-      while(iter.next(tnode)) {
-         hnode.string = tnode.string;
-         
-         // do not use callbacks, just get the node,
-         if(!database.get_hnode_by_value(hnode, NULL, NULL))
-            return 25;
-         
-         // fix the last hit time stamp
-         if(hnode.tstamp.null)
-            hnode.tstamp = cur_tstamp;
-         
-         // and put it back into the database
-         if(!database.put_hnode(hnode))
-            return 25;
-      }
-      iter.close();
-      
-      // all done - truncate the daily hosts table
-      if(!database.clear_daily_hosts())
-         return 25;
-   }
-
    //
    // Recover missing record counts
    //   

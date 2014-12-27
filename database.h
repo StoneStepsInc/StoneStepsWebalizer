@@ -622,21 +622,6 @@ class database_t {
       uint64_t get_errcount(const char *dbname = NULL) const {return errors.count(dbname);}
 
       //
-      // daily hosts
-      //
-      uint64_t get_tnode_id(void) {return (uint64_t) dhosts.get_seq_id();}
-
-      bool clear_daily_hosts(void) {return !dhosts.truncate() ? true : false;}
-
-      iterator<tnode_t> begin_dhosts(void) const {return iterator<tnode_t>(dhosts, NULL);}
-
-      bool put_tnode(const tnode_t& tnode);
-
-      bool get_tnode_by_id(tnode_t& tnode, tnode_t::s_unpack_cb_t upcb, void *arg) const;
-
-      bool get_tnode_by_value(tnode_t& tnode, tnode_t::s_unpack_cb_t upcb, void *arg) const;
-
-      //
       // status codes
       //
       bool put_scnode(const scnode_t& scnode);

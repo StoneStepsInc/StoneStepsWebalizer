@@ -231,7 +231,6 @@
     <ClCompile Include="snode.cpp" />
     <ClCompile Include="spnode.cpp" />
     <ClCompile Include="sysnode.cpp" />
-    <ClCompile Include="tnode.cpp" />
     <ClCompile Include="totals.cpp" />
     <ClCompile Include="unode.cpp" />
     <ClCompile Include="vnode.cpp" />
@@ -294,7 +293,6 @@
     <ClInclude Include="snode.h" />
     <ClInclude Include="spnode.h" />
     <ClInclude Include="sysnode.h" />
-    <ClInclude Include="tnode.h" />
     <ClInclude Include="totals.h" />
     <ClInclude Include="unode.h" />
     <ClInclude Include="vnode.h" />

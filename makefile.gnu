@@ -92,7 +92,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	    webalizer.cpp dns_resolv.cpp history.cpp tmranges.cpp \
 	    anode.cpp ccnode.cpp dlnode.cpp hnode.cpp \
 	    inode.cpp rcnode.cpp rnode.cpp snode.cpp \
-	    spnode.cpp tnode.cpp unode.cpp vnode.cpp \
+	    spnode.cpp unode.cpp vnode.cpp \
 	    danode.cpp keynode.cpp scnode.cpp sysnode.cpp \
 	    daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	    hashtab_nodes.cpp config.cpp serialize.cpp \

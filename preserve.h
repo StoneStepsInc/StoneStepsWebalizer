@@ -115,9 +115,6 @@ class state_t {
 
       static void unpack_hnode_cb(hnode_t& hnode, bool active, void *_this);
 
-      static bool eval_tnode_cb(const tnode_t *tnode, void *arg);
-      static bool swap_tnode_cb(tnode_t *tnode, void *arg);
-
       static bool eval_hnode_cb(const hnode_t *hnode, void *arg);
       static bool swap_hnode_cb(hnode_t *hnode, void *arg);
 
