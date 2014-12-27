@@ -14,11 +14,13 @@
 #include "types.h"
 #include "basenode.h"
 
-/* referrer hash table struct   */
+//
+// Referrer
+//
 struct rnode_t : public base_node<rnode_t> {   
-      bool     hexenc;               // any %xx sequences?
-      uint64_t   count;
-      uint64_t   visits;
+      bool     hexenc;              // any %xx sequences?
+      uint64_t count;               // request count
+      uint64_t visits;              // visits started
 
       public:
          typedef void (*s_unpack_cb_t)(rnode_t& rnode, void *arg);

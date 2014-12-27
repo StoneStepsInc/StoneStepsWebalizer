@@ -13,8 +13,6 @@
 #include "serialize.h"
 #include "util.h"
 
-const size_t hnode_t::ccode_size = 2;   // in bytes, not counting the zero terminator
-
 // -----------------------------------------------------------------------
 //
 // hnode_t

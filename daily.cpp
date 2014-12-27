@@ -12,7 +12,7 @@
 #include "daily.h"
 #include "serialize.h"
 
-daily_t::daily_t(u_int month) : keynode_t<uint32_t>(month)
+daily_t::daily_t(u_int day) : keynode_t<uint32_t>(day)
 {
    td_hours = 0;
    tm_hits = tm_files = tm_hosts = tm_pages = tm_visits = 0;
@@ -23,9 +23,9 @@ daily_t::daily_t(u_int month) : keynode_t<uint32_t>(month)
    h_hits_avg = h_files_avg = h_pages_avg = h_visits_avg = h_hosts_avg = .0;
 }
 
-void daily_t::reset(u_int nodeid)
+void daily_t::reset(u_int day)
 {
-   keynode_t<u_int>::reset(nodeid);
+   keynode_t<u_int>::reset(day);
    datanode_t<daily_t>::reset();
 
    td_hours = 0;

@@ -20,13 +20,13 @@ struct hnode_t;
 
 // -----------------------------------------------------------------------
 //
-// download node
+// Download job
 //
 // -----------------------------------------------------------------------
 struct dlnode_t : public base_node<dlnode_t> {
       // combined download job data
-      uint64_t      count;             // download job count
-      uint64_t      sumhits;           // total hits
+      uint64_t    count;             // download job count
+      uint64_t    sumhits;           // total hits
       uint64_t    sumxfer;           // total transfer size
       double      avgxfer;           // average transfer size
       double      avgtime;				 // average job processing time (minutes)

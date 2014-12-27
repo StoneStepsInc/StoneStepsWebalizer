@@ -14,12 +14,14 @@
 #include "types.h"
 
 //
-// HTTP status code node
+// HTTP error URL request method and status code
+// 
+// 1. rcnode_t tracks URLs that resulted in an HTTP error
 //
 struct rcnode_t : public base_node<rcnode_t> { 
       bool           hexenc;           // any %xx sequences?
       u_short        respcode;         // HTTP status code
-      uint64_t         count;
+      uint64_t       count;            // request count
       string_t       method;           // HTTP method
 
       public:

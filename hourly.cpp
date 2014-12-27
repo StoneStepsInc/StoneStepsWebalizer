@@ -18,9 +18,9 @@ hourly_t::hourly_t(u_int hour) : keynode_t<uint32_t>(hour)
 	th_xfer = 0;
 }
 
-void hourly_t::reset(u_int nodeid)
+void hourly_t::reset(u_int hour)
 {
-   keynode_t<u_int>::reset(nodeid);
+   keynode_t<u_int>::reset(hour);
    datanode_t<hourly_t>::reset();
 
 	th_hits = th_files = th_pages = 0;

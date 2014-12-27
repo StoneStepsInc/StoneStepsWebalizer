@@ -14,13 +14,16 @@
 #include "basenode.h"
 #include "types.h"
 
+//
+// User agent
+//
 struct anode_t : public base_node<anode_t> {
-      uint64_t   count;
-      uint64_t   visits;
+      uint64_t count;                  // request count
+      uint64_t visits;                 // visits started
       
-      uint64_t   xfer;
+      uint64_t xfer;                   // transfer amount in bytes
       
-      bool     robot : 1;
+      bool     robot : 1;              // matches the robot pattern?
 
       public:
          typedef void (*s_unpack_cb_t)(anode_t& anode, void *arg);

@@ -16,7 +16,7 @@
 
 // -----------------------------------------------------------------------
 //
-// unode_t
+// URL
 //
 // -----------------------------------------------------------------------
 // 1. vstref is not a generic reference count, but rather an app-level
@@ -27,16 +27,16 @@
 struct unode_t : public base_node<unode_t> {
       bool     hexenc : 1;           // any %xx sequences?
       bool     target : 1;           // Target URL?
-      u_char   urltype;					 /* URL type (e.g. URL_TYPE_HTTP)*/
-      u_short  pathlen;              /* URL path length              */
-      uint64_t   count;                /* requests counter             */
-      uint64_t   files;                /* files counter                */
-      uint64_t   entry;                /* entry page counter           */
-      uint64_t   exit;                 /* exit page counter            */
+      u_char   urltype;					 // URL type (e.g. URL_TYPE_HTTP)
+      u_short  pathlen;              // URL path length
+      uint64_t count;                // requests counter
+      uint64_t files;                // files counter 
+      uint64_t entry;                // entry page counter
+      uint64_t exit;                 // exit page counter
 
-      uint64_t   vstref;               // visit references
+      uint64_t vstref;               // visit references
 
-      uint64_t xfer;                 /* xfer size in bytes           */
+      uint64_t xfer;                 // xfer size in bytes
       double   avgtime;				    // average processing time (sec)
       double   maxtime;              // maximum processing time (sec)
 

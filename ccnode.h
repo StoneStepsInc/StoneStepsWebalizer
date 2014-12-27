@@ -16,7 +16,7 @@
 #include "datanode.h"
 
 // -----------------------------------------------------------------------
-// ccnode_t
+// Country
 //
 // 1. Country code nodes are identified by an index value returned by
 // ctry_idx. 
@@ -25,12 +25,12 @@
 // but instead are set up from the language file on start-up.
 // -----------------------------------------------------------------------
 struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
-   string_t    ccode;
-   string_t    cdesc;
-   uint64_t    count;
-   uint64_t    files;
-   uint64_t    visits;
-   uint64_t    xfer;
+   string_t    ccode;                  // country code
+   string_t    cdesc;                  // country name
+   uint64_t    count;                  // request count
+   uint64_t    files;                  // files requested
+   uint64_t    visits;                 // visits started
+   uint64_t    xfer;                   // transfer amount in bytes
 
    public:
       typedef void (*s_unpack_cb_t)(ccnode_t& vnode, void *arg);

@@ -14,7 +14,12 @@
 #include "basenode.h"
 #include "types.h"
 
-// spammer
+//
+// Spammer
+//
+// 1. Tracks the IP address of a known spammer. Works as an index into the 
+// hosts table, where all host counters are stored.
+//
 struct spnode_t : public base_node<spnode_t> {
       public:
          typedef void (*s_unpack_cb_t)(spnode_t& spnode, void *arg);

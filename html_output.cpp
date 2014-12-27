@@ -631,7 +631,7 @@ void html_output_t::month_total_table()
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (i=0; i < state.response.size(); i++) {
       if (state.response[i].count != 0)
-         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.get_resp_code(state.response[i].code).desc, state.response[i].count);
+         fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.get_resp_code(state.response[i].get_ccode()).desc, state.response[i].count);
    }
 	fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);

@@ -16,14 +16,14 @@
 
 // -----------------------------------------------------------------------
 //
-// hourly_t
+// Hourly counters
 //
 // -----------------------------------------------------------------------
 struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
-      uint64_t th_hits;
-      uint64_t th_files;
-      uint64_t th_pages;
-      uint64_t th_xfer;
+      uint64_t th_hits;             // hourly requests total
+      uint64_t th_files;            // hourly files total 
+      uint64_t th_pages;            // hourly pages total
+      uint64_t th_xfer;             // hourly transfer amount total, in bytes
 
       public:
          typedef void (*s_unpack_cb_t)(hourly_t& hourly, void *arg);
@@ -31,7 +31,7 @@ struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
       public:
          hourly_t(u_int hour = 0);
 
-         void reset(u_int nodeid);
+         void reset(u_int hour);
 
          //
          // serialization

@@ -26,20 +26,21 @@
 // operations to maintain scnode_t's.
 //
 struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
-   const u_int&   code;          // a reference to nodeid 
    uint64_t       count;         // number of hits
 
    public:
       typedef void (*s_unpack_cb_t)(scnode_t& scnode, void *arg);
 
    public:
-      scnode_t(void) : keynode_t<u_int>(0), code(nodeid) {count = 0;}
+      scnode_t(void) : keynode_t<u_int>(0) {count = 0;}
 
-      scnode_t(u_int code) : keynode_t<u_int>(code), code(nodeid) {count = 0;}
+      scnode_t(u_int code) : keynode_t<u_int>(code) {count = 0;}
 
-      scnode_t(const scnode_t& node) : keynode_t<u_int>(node), code(nodeid) {count = node.count;}
+      scnode_t(const scnode_t& node) : keynode_t<u_int>(node) {count = node.count;}
       
       scnode_t& operator = (const scnode_t& node) {keynode_t<u_int>::operator = (node); count = node.count; return *this;}
+
+      u_int get_ccode(void) const {return nodeid;}
 
       //
       // serialization

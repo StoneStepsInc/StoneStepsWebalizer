@@ -19,7 +19,7 @@ struct unode_t;
 
 // -----------------------------------------------------------------------
 //
-// vnode_t
+// Visit
 //
 // -----------------------------------------------------------------------
 // 1. A visit node shares the node ID with the host node that owns it. 
@@ -55,11 +55,11 @@ struct vnode_t : public list_node_t<vnode_t>, public keynode_t<uint64_t>, public
       tstamp_t start;               // first hit timestamp
       tstamp_t end;                 // last hit timestamp
 
-      uint64_t   hits;                // current visit hits,
-      uint64_t   files;               // files,
-      uint64_t   pages;               // pages
+      uint64_t hits;                // current visit hits,
+      uint64_t files;               // files,
+      uint64_t pages;               // pages
 
-      uint64_t   hostref;             // host references
+      uint64_t hostref;             // host references
 
       unode_t  *lasturl;            // last requested URL
 

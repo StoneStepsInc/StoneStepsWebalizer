@@ -16,23 +16,23 @@
 
 // -----------------------------------------------------------------------
 //
-// daily_t
+// Daily counters
 //
 // -----------------------------------------------------------------------
 struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
-      uint64_t tm_hits;
-      uint64_t tm_files;
-      uint64_t tm_pages;
-      uint64_t tm_hosts;
-      uint64_t tm_visits;
+      uint64_t tm_hits;          // daily requests total
+      uint64_t tm_files;         // daily files total
+      uint64_t tm_pages;         // daily pages total
+      uint64_t tm_hosts;         // daily hosts total
+      uint64_t tm_visits;        // daily visits total
       
-      uint64_t h_hits_max;         // maximum hits per hour
-      uint64_t h_files_max;        // maximum files per hour
-      uint64_t h_pages_max;        // maximum pages per hour
-      uint64_t h_visits_max;       // maximum visits per hour
-      uint64_t h_hosts_max;        // maximum hosts per hour
+      uint64_t h_hits_max;       // maximum hits per hour
+      uint64_t h_files_max;      // maximum files per hour
+      uint64_t h_pages_max;      // maximum pages per hour
+      uint64_t h_visits_max;     // maximum visits per hour
+      uint64_t h_hosts_max;      // maximum hosts per hour
 
-      uint64_t h_xfer_max;         // maximum transfer per hour
+      uint64_t h_xfer_max;       // maximum transfer per hour
       
       double h_hits_avg;         // average hits per hour
       double h_files_avg;        // average files per hour
@@ -40,19 +40,19 @@ struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
       double h_visits_avg;       // average visits per hour
       double h_hosts_avg;        // average hosts per hour
       
-      double h_xfer_avg;
+      double h_xfer_avg;         // average transfer per hour, in bytes 
       
-      uint64_t tm_xfer;
+      uint64_t tm_xfer;          // daily transfer total, in bytes
       
-      u_short td_hours;
+      u_short td_hours;          // number of hours processed for a given day 
 
       public:
          typedef void (*s_unpack_cb_t)(daily_t& daily, void *arg);
 
       public:
-         daily_t(u_int month = 0);
+         daily_t(u_int day = 0);
 
-         void reset(u_int nodeid);
+         void reset(u_int day);
 
          //
          // serialization

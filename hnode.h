@@ -19,7 +19,7 @@
 
 // -----------------------------------------------------------------------
 //
-// host node
+// Host
 //
 // -----------------------------------------------------------------------
 // 1. Host node cannot delete active visit until visit data is factored 
@@ -50,22 +50,22 @@
 // details.
 //
 struct hnode_t : public base_node<hnode_t> {
-      static const size_t ccode_size;
+      static const size_t ccode_size = 2;   // in characters, not counting the zero terminator
 
-      uint64_t   count;
-      uint64_t   files;
-      uint64_t   pages;
+      uint64_t count;                // request count
+      uint64_t files;                // files requested
+      uint64_t pages;                // pages requested
 
-      uint64_t   visits;               // visits started
-      uint64_t   visits_conv;          // visits converted
+      uint64_t visits;               // visits started
+      uint64_t visits_conv;          // visits converted
 
-      uint64_t   visit_max;            // maximum visit length (in seconds)
+      uint64_t visit_max;            // maximum visit length (in seconds)
 
-      uint64_t   max_v_hits;           // maximum number of hits
-      uint64_t   max_v_files;          // files
-      uint64_t   max_v_pages;          // pages per visit
+      uint64_t max_v_hits;           // maximum number of hits
+      uint64_t max_v_files;          // maximum number of files
+      uint64_t max_v_pages;          // maximum number of pages per visit
 
-      uint64_t   dlref;                // download node reference count
+      uint64_t dlref;                // download node reference count
       
       tstamp_t tstamp;               // last request timestamp
 
@@ -75,15 +75,15 @@ struct hnode_t : public base_node<hnode_t> {
       string_t name;                 // host name
 
       uint64_t max_v_xfer;           // maximum transfer amount per visit
-      uint64_t xfer;
+      uint64_t xfer;                 // transfer amount in bytes
       double   visit_avg;            // average visit length (in seconds)
 
       bool     spammer  : 1;         // caught spamming?
       bool     robot    : 1;         // robot?
 
-      char     ccode[3];             // two-character country code
+      char     ccode[ccode_size+1];  // country code
 
-      string_t city;
+      string_t city;                 // city name reported by GeoIP
 
       public:
          typedef void (*s_unpack_cb_t)(hnode_t& hnode, bool active, void *arg);
