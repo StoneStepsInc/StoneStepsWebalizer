@@ -153,62 +153,6 @@ inline const void *deserialize(const void *ptr, bool& value)
    return (u_char*) ptr + sizeof(u_char);
 }
 
-//
-// Compatibility deserializer reads values whose data type changed at the specified 
-// version. The primary template defines three type parameters:
-//
-//    org_storage_t  - original storage data type used prior to the switch version
-//    new_storage_t  - new storage data type used on or after the switch version
-//    runtime_t      - run time data type
-//
-// For example, a time_t value, which was often defined as a 32-bit value in the past, 
-// was stored in the database as a uint64_t value, which also is a 32-bit value on many 
-// platforms. Now time_t is defined as a 64-bit value by many compilers, so we need to 
-// read a uint64_t value, convert it to time_t so we can use it at run time, save as a 
-// 64-bit value in the updated database and then read this 64-bit value in subsequent 
-// runs.
-//
-template <u_short switch_version, typename org_storage_t, typename new_storage_t, typename runtime_t = new_storage_t>
-class compatibility_deserializer {
-   u_short  version;          // actual value version
-
-   public:
-      compatibility_deserializer(u_short version) : version(version) {}
-
-      const void *operator () (const void *buf, runtime_t& value)
-      {
-         // read values in their original format prior to the switch version
-         if(version < switch_version)
-            return deserialize<org_storage_t, runtime_t>(buf, value); 
-         
-         // otherwise read in the new format
-         return deserialize<new_storage_t, runtime_t>(buf, value);
-      }
-};
-
-//
-// This specialized template is used when variable run time type is the same as the 
-// storage type, so new format values will be read directly into the destination
-// variable.
-//
-template <u_short switch_version, typename org_storage_t, typename new_storage_t>
-class compatibility_deserializer<switch_version, org_storage_t, new_storage_t, new_storage_t> {
-   u_short  version;          // actual value version
-
-   public:
-      compatibility_deserializer(u_short version) : version(version) {}
-
-      const void *operator () (const void *buf, new_storage_t& value)
-      {
-         // read values in their original format prior to the switch version
-         if(version < switch_version)
-            return deserialize<org_storage_t, new_storage_t>(buf, value);
-         
-         // otherwise read in the new format    
-         return deserialize(buf, value);
-      }
-};
-
 // -----------------------------------------------------------------------
 //
 // size-of functions (value)
