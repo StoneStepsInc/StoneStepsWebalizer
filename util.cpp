@@ -449,50 +449,6 @@ u_char from_hex(u_char c)
    return 0;                      /* return 0 if bad...      */
 }
 
-/*****************************************************************/
-/*                                                               */
-/* JDATE  - Julian date calculator                               */
-/*                                                               */
-/* Calculates the number of days since Jan 1, 0000.              */
-/*                                                               */
-/* Originally written by Bradford L. Barrett (03/17/1988)        */
-/* Returns an unsigned long value representing the number of     */
-/* days since January 1, 0000.                                   */
-/*                                                               */
-/* Note: Due to the changes made by Pope Gregory XIII in the     */
-/*       16th Centyry (Feb 24, 1582), dates before 1583 will     */
-/*       not return a truely accurate number (will be at least   */
-/*       10 days off).  Somehow, I don't think this will         */
-/*       present much of a problem for most situations :)        */
-/*                                                               */
-/* Usage: days = jdate(year, month, day)                         */
-/*                                                               */
-/* The number returned is adjusted by 5 to facilitate day of     */
-/* week calculations.  The mod of the returned value gives the   */
-/* day of the week the date is.  (ie: dow = days % 7 ) where     */
-/* dow will return 0=Sunday, 1=Monday, 2=Tuesday, etc...         */
-/*                                                               */
-/*****************************************************************/
-
-uint64_t jdate1(int year, int month, int day)
-{
-   uint64_t days;                      /* value returned */
-   static const int mtable[] = {0,31,59,90,120,151,181,212,243,273,304,334};
-
-   /* First, calculate base number including leap and Centenial year stuff */
-
-   days = ((uint64_t)year*365) + day + mtable[month-1] + year/4 - year/100 + year/400;
-
-   /* now adjust for leap year before March 1st */
-
-   if(month < 3 && year % 4 == 0 && !(year % 100 && year % 400))
-      --days;
-
-   /* done, return with calculated value */
-
-   return days;
-}
-
 //
 // [length]string
 //
