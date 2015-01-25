@@ -62,7 +62,6 @@ class buffer_encoder_t {
       // Only one active encoder exists across all instances of scope_mode_t copied from 
       // the first one. This ensures that the active encoder isn't reset multiple times. 
       //
-      template <encodecb_t encodecb>
       class scope_mode_t {
          private:
             buffer_encoder_t<encodecb> *encoder;         // active encoder
@@ -114,9 +113,9 @@ class buffer_encoder_t {
          mode = newmode;
       }
 
-      typename buffer_encoder_t<encodecb>::scope_mode_t<encodecb> set_scope_mode(mode_t newmode)
+      typename buffer_encoder_t<encodecb>::scope_mode_t set_scope_mode(mode_t newmode)
       {
-         scope_mode_t<encodecb> scope_mode(*this, newmode);
+         scope_mode_t scope_mode(*this, newmode);
          return scope_mode; 
       }
 };

@@ -56,5 +56,6 @@ char *buffer_encoder_t<encodecb>::encode(const char *str, bool multiline, size_t
 //
 // Instantiate templates
 //
-template buffer_encoder_t<xml_encode>;
-template buffer_encoder_t<html_encode>;
+template class buffer_encoder_t<xml_encode>;
+template class buffer_encoder_t<html_encode>;
+

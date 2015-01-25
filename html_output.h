@@ -28,7 +28,7 @@ class database_t;
 //
 class html_output_t : public output_t {
    private:
-      typedef buffer_encoder_t<html_encode> html_encoder_t;
+      typedef buffer_encoder_t<::html_encode> html_encoder_t;
 
    private:
       FILE *out_fp;
