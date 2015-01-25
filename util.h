@@ -59,6 +59,9 @@ class bmh_delta_table {
 };
 
 //
+// Converts the UCS-2 character to a UTF-8 sequence and returns the number of bytes 
+// in the output.
+//
 // [Unicode v5 ch.3 p.103]
 //
 // Scalar Value        First Byte  Second Byte Third Byte
@@ -66,36 +69,44 @@ class bmh_delta_table {
 // 00000yyy yyxxxxxx   110yyyyy    10xxxxxx
 // zzzzyyyy yyxxxxxx   1110zzzz    10yyyyyy    10xxxxxx
 //
-// Returns the number of output bytes and, if out is not NULL, converts
-// the UCS-2 character to a UTF-8 sequence.
-//
 inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
+   if(!out)
+      return 0;
+
    // 1-byte character
 	if(wchar <= 0x7F) {
-	   if(out)
-		   *out++ = wchar & 0x7F;
+		*out++ = wchar & 0x7F;
 		return 1;
 	}
 	
 	// 2-byte sequence
 	if(wchar <= 0x7FF) {
-	   if(out) {
-		   *out++ = (wchar >> 6) | 0xC0;
-		   *out++ = (wchar & 0x3F) | 0x80;
-		}
+		*out++ = (wchar >> 6) | 0xC0;
+		*out++ = (wchar & 0x3F) | 0x80;
 		return 2;
 	}
 
    // 3-byte sequence
-   if(out) {
-	   *out++ = (wchar >> 12) | 0xE0;
-	   *out++ = ((wchar & 0xFC0) >> 6) | 0x80;
-	   *out = (wchar & 0x3F) | 0x80;
-	}
+	*out++ = (wchar >> 12) | 0xE0;
+	*out++ = ((wchar & 0xFC0) >> 6) | 0x80;
+	*out = (wchar & 0x3F) | 0x80;
+
 	return 3;
 }
 
+inline size_t ucs2utf8size(wchar_t wchar)
+{
+	return (wchar <= 0x7F) ? 1 : (wchar <= 0x7FF) ? 2 : 3;
+}
+
+//
+// Returns the number of bytes in a UTF-8 character or zero if the sequence has any
+// bytes outside of the ranges defined for UTF-8 characters. 
+//
+// IMPORTANT: this function does not check whether the UTF-8 character is valid and
+// will just count bytes based on the ranges described below. For example, the 0x01
+// is not a valid character.
 //
 // [Unicode v5 ch.3 p.104]
 //
@@ -110,10 +121,7 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 // U+40000  .. U+FFFFF  F1..F3      80..BF      80..BF      80..BF
 // U+100000 .. U+10FFFF F4          80..8F      80..BF      80..BF
 //
-// Returns the number of bytes in a UTF-8 character or zero if the sequence
-// of bytes is not a valid UTF-8 character.
-//
-inline size_t utf8bcnt(const u_char *cp)
+inline size_t utf8size(const char *cp)
 {
    #define CHKRNG(ch, lo, hi) ((ch) >= lo && (ch) <= hi)
 
@@ -121,45 +129,46 @@ inline size_t utf8bcnt(const u_char *cp)
       return 0;
 
    // 1-byte character (including zero terminator)
-   if(*cp <= 0x7F)
+   if(*cp <= '\x7F')
       return 1;
    
    // 2-byte sequences
-   if(CHKRNG(*cp, 0xC2, 0xDF))
-      return CHKRNG(*(cp+1), 0x80, 0xBF) ? 2 : 0;
+   if(CHKRNG(*cp, '\xC2', '\xDF'))
+      return CHKRNG(*(cp+1), '\x80', '\xBF') ? 2 : 0;
    
    // 3-byte sequences
-   if(*cp == 0xE0)
-      return CHKRNG(*(cp+1), 0xA0, 0xBF) && CHKRNG(*(cp+2), 0x80, 0xBF) ? 3 : 0;
+   if(*cp == '\xE0')
+      return CHKRNG(*(cp+1), '\xA0', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
       
-   if(CHKRNG(*cp, 0xE1, 0xEC))
-      return CHKRNG(*(cp+1), 0x80, 0xBF) && CHKRNG(*(cp+2), 0x80, 0xBF) ? 3 : 0;
+   if(CHKRNG(*cp, '\xE1', '\xEC'))
+      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
       
-   if(*cp == 0xED)
-      return CHKRNG(*(cp+1), 0x80, 0x9F) && CHKRNG(*(cp+2), 0x80, 0xBF) ? 3 : 0;
+   if(*cp == '\xED')
+      return CHKRNG(*(cp+1), '\x80', '\x9F') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
       
-   if(CHKRNG(*cp, 0xEE, 0xEF))
-      return CHKRNG(*(cp+1), 0x80, 0xBF) && CHKRNG(*(cp+2), 0x80, 0xBF) ? 3 : 0;
+   if(CHKRNG(*cp, '\xEE', '\xEF'))
+      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
 
    // 4-byte sequences
-   if(*cp == 0xF0)
-      return CHKRNG(*(cp+1), 0x90, 0xBF) && CHKRNG(*(cp+2), 0x80, 0xBF) &&  CHKRNG(*(cp+3), 0x80, 0xBF) ? 4 : 0;
+   if(*cp == '\xF0')
+      return CHKRNG(*(cp+1), '\x90', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
 
-   if(CHKRNG(*cp, 0xF1, 0xF3))
-      return CHKRNG(*(cp+1), 0x80, 0xBF) && CHKRNG(*(cp+2), 0x80, 0xBF) &&  CHKRNG(*(cp+3), 0x80, 0xBF) ? 4 : 0;
+   if(CHKRNG(*cp, '\xF1', '\xF3'))
+      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
       
-   if(*cp == 0xF4)
-      return CHKRNG(*(cp+1), 0x80, 0x8F) && CHKRNG(*(cp+2), 0x80, 0xBF) &&  CHKRNG(*(cp+3), 0x80, 0xBF) ? 4 : 0;
+   if(*cp == '\xF4')
+      return CHKRNG(*(cp+1), '\x80', '\x8F') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
    
    return 0;
    
    #undef CHKRNG
 }
 
-//
-//
-//
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
+size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
+
+bool isutf8str(const char *str);
+bool isutf8str(const char *str, size_t slen);
 
 //
 //
@@ -187,11 +196,11 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2);
 
 string_t& url_decode(const string_t& str, string_t& out);
 
-char *html_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline = false, size_t *olen = NULL);
-char *xml_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline = false, size_t *olen = NULL);
+char *html_encode(const char *str, char *buffer, size_t bsize, bool multiline = false, size_t *olen = NULL);
+char *xml_encode(const char *str, char *buffer, size_t bsize, bool multiline = false, size_t *olen = NULL);
 
-u_char from_hex(u_char);                           /* convert hex to dec  */
-const u_char *from_hex(const u_char *cp1, u_char *cp2);
+char from_hex(char);                           /* convert hex to dec  */
+const char *from_hex(const char *cp1, char *cp2);
 
 const char *cstr2str(const char *cp, string_t& str);
 

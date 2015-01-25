@@ -73,9 +73,8 @@ class multi_reverse_iterator {
 //
 //
 //
-xml_output_t::xml_output_t(const config_t& config, const state_t& state) : output_t(config, state), graph(config)
+xml_output_t::xml_output_t(const config_t& config, const state_t& state) : output_t(config, state), graph(config), xml_encoder(buffer, BUFSIZE, xml_encoder_t::overwrite), xml_encode(xml_encoder)
 {
-   encptr = buffer;
 }
 
 xml_output_t::~xml_output_t(void)
@@ -93,34 +92,6 @@ bool xml_output_t::init_output_engine(void)
 void xml_output_t::cleanup_output_engine(void)
 {
    graph.cleanup_graph_engine();
-}
-
-char *xml_output_t::xml_encode(const char *str, bool multiline)
-{
-   xml_encode_reset();
-   return ::xml_encode(str, buffer, BUFSIZE, false, multiline);
-}
-
-char *xml_output_t::xml_encode_ex(const char *str, bool multiline)
-{
-   char *optr;
-   size_t olen = 0;
-   
-   if(encptr-buffer >= BUFSIZE)
-      throw exception_t(0, "Cannot encode XML output (insufficient buffer size)");
-   
-   // use the remainder of the buffer
-   optr = ::xml_encode(str, encptr, BUFSIZE-(encptr-buffer), false, multiline, &olen);
-   
-   // move the encoding pointer past the terminating zero
-   encptr += olen + 1;
-   
-   return optr;
-}
-
-void xml_output_t::xml_encode_reset(void)
-{
-   encptr = buffer;
 }
 
 int xml_output_t::write_main_index()
@@ -248,7 +219,8 @@ void xml_output_t::write_monthly_totals(void)
       if (state.t_daily[i].tm_xfer > max_xfer)     max_xfer  = state.t_daily[i].tm_xfer;
    }
 
-	fprintf(out_fp, "<report id=\"monthly_totals\" help=\"monthly_summary_report\" title=\"%s %s %d\">\n", xml_encode_ex(config.lang.msg_mtot_ms), xml_encode_ex(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+	xml_encoder.set_scope_mode(xml_encoder_t::append),
+	fprintf(out_fp, "<report id=\"monthly_totals\" help=\"monthly_summary_report\" title=\"%s %s %d\">\n", xml_encode(config.lang.msg_mtot_ms), xml_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 	
 	fputs("<section>\n", out_fp);
 	fprintf(out_fp,"<columns><col help=\"totals_section\" title=\"%s\"/><col/></columns>\n", xml_encode(config.lang.msg_h_totals));
@@ -320,7 +292,9 @@ void xml_output_t::write_monthly_totals(void)
       // output human per-visit totals if there are ended human visits
       if(state.totals.t_hvisits_end) {
 	      fputs("<section extension=\"yes\">\n", out_fp);
-	      fprintf(out_fp,"<columns><col/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode_ex(config.lang.msg_h_avg), xml_encode_ex(config.lang.msg_h_max));
+
+			xml_encoder.set_scope_mode(xml_encoder_t::append),
+	      fprintf(out_fp,"<columns><col/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode(config.lang.msg_h_avg), xml_encode(config.lang.msg_h_max));
 	      
          fprintf(out_fp,"<data name=\"t_hphvisit\" help=\"hits_per_visit\" title=\"%s\"><avg>%" PRIu64 "</avg><max>%" PRIu64 "</max></data>\n", xml_encode(config.lang.msg_mtot_mhv), (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
          fprintf(out_fp,"<data name=\"t_fphvisit\" help=\"files_per_visit\" title=\"%s\"><avg>%" PRIu64 "</avg><max>%" PRIu64 "</max></data>\n", xml_encode(config.lang.msg_mtot_mfv), (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
@@ -370,7 +344,9 @@ void xml_output_t::write_monthly_totals(void)
    /* Hit/file/page processing time (output only if there's data) */
    if(state.totals.m_hitptime) {
 	   fputs("<section>\n", out_fp);
-	   fprintf(out_fp,"<columns><col help=\"performance_section\" title=\"%s\"/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode_ex(config.lang.msg_mtot_perf), xml_encode_ex(config.lang.msg_h_avg), xml_encode_ex(config.lang.msg_h_max));
+
+		xml_encoder.set_scope_mode(xml_encoder_t::append),
+	   fprintf(out_fp,"<columns><col help=\"performance_section\" title=\"%s\"/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode(config.lang.msg_mtot_perf), xml_encode(config.lang.msg_h_avg), xml_encode(config.lang.msg_h_max));
 
 	   fprintf(out_fp,"<data name=\"t_htime\" help=\"hit_proc_time\" title=\"%s\"><avg>%.3f</avg><max>%.3f</max></data>\n", xml_encode(config.lang.msg_mtot_sph), state.totals.a_hitptime, state.totals.m_hitptime);
 	   fprintf(out_fp,"<data name=\"t_ftime\" help=\"file_proc_time\" title=\"%s\"><avg>%.3f</avg><max>%.3f</max></data>\n", xml_encode(config.lang.msg_mtot_spf), state.totals.a_fileptime, state.totals.m_fileptime);
@@ -380,7 +356,9 @@ void xml_output_t::write_monthly_totals(void)
 	}
 
 	fputs("<section>\n", out_fp);
-	fprintf(out_fp,"<columns><col help=\"hourly_daily_totals_section\" title=\"%s\"/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode_ex(config.lang.msg_mtot_hdt), xml_encode_ex(config.lang.msg_h_avg), xml_encode_ex(config.lang.msg_h_max));
+
+	xml_encoder.set_scope_mode(xml_encoder_t::append),
+	fprintf(out_fp,"<columns><col help=\"hourly_daily_totals_section\" title=\"%s\"/><col title=\"%s\"/><col title=\"%s\"/></columns>\n", xml_encode(config.lang.msg_mtot_hdt), xml_encode(config.lang.msg_h_avg), xml_encode(config.lang.msg_h_max));
 
    /* Hourly/Daily avg/max totals */
 
@@ -712,9 +690,11 @@ void xml_output_t::write_top_urls(bool s_xfer)
 			fprintf(out_fp,"<data group=\"yes\"><value>%s", uptr->string.c_str());
       }
       else {
+			xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
+
          dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-         dispurl = xml_encode_ex(dispurl, false);
-         href = xml_encode_ex(uptr->string, false);
+         dispurl = xml_encode(dispurl, false);
+         href = xml_encode(uptr->string, false);
          
          // check for log type and if the URL contains a URI scheme
          if(config.log_type == LOG_SQUID || strstr_ex(uptr->string, "://", 10, 3)) {
@@ -726,8 +706,6 @@ void xml_output_t::write_top_urls(bool s_xfer)
             else
                fprintf(out_fp, "<data%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
          }
-         
-         xml_encode_reset();
 		}
 		fputs("</value></data>\n", out_fp);
 		fputs("</row>\n", out_fp);
@@ -819,6 +797,8 @@ void xml_output_t::write_top_entry(bool entry)
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
+	   xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
+
       fputs("<row>\n", out_fp);
       fprintf(out_fp,
           "<data><value>%d</value></data>\n"
@@ -831,8 +811,8 @@ void xml_output_t::write_top_entry(bool entry)
           (entry)?uptr->entry : uptr->exit);
 
       dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-      dispurl = xml_encode_ex(dispurl, false);
-      href = xml_encode_ex(uptr->string, false);
+      dispurl = xml_encode(dispurl, false);
+      href = xml_encode(uptr->string, false);
 
       /* check for a service prefix (ie: http://) */
       if(strstr_ex(uptr->string, "://", 10, 3))
@@ -844,8 +824,6 @@ void xml_output_t::write_top_entry(bool entry)
          else
             fprintf(out_fp, "<data%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
 	   }
-	   
-	   xml_encode_reset();
       
       fputs("</value></data>\n", out_fp);
 	   fputs("</row>\n", out_fp);
@@ -1014,6 +992,8 @@ void xml_output_t::write_top_errors(void)
 	fputs("<rows>\n", out_fp);
 
    for(i=0; (i < top_num || config.all_errors && i < config.max_errors) && iter.prev(rcnode); i++) {
+	   xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
+
       fputs("<row>\n", out_fp);
 
       fprintf(out_fp,
@@ -1024,12 +1004,10 @@ void xml_output_t::write_top_errors(void)
           i+1,
           (state.totals.t_hit == 0) ? 0: ((double)rcnode.count/state.totals.t_hit)*100.0,
           rcnode.count,
-          xml_encode_ex(config.lang.get_resp_code(rcnode.respcode).desc), 
+          xml_encode(config.lang.get_resp_code(rcnode.respcode).desc), 
           rcnode.respcode, 
-          xml_encode_ex(rcnode.method));
+          xml_encode(rcnode.method));
 
-      xml_encode_reset();
-      
       dispurl = (rcnode.hexenc) ? url_decode(rcnode.string, str).c_str() : rcnode.string.c_str();
       dispurl = xml_encode(dispurl, false);
       fprintf(out_fp,"<data><value>%s</value></data>\n", dispurl);
@@ -1379,17 +1357,18 @@ void xml_output_t::write_top_referrers(void)
          if (rptr->string[0] == '-')
             fprintf(out_fp,"<data><value>%s</value></data>\n", config.lang.msg_ref_dreq);
          else {
+	         xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
+
             dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-            dispurl = xml_encode_ex(dispurl, false);
-            href = xml_encode_ex(rptr->string, false);
+            dispurl = xml_encode(dispurl, false);
+            href = xml_encode(rptr->string, false);
+
             // make a link only if the scheme is http or https
             if(!strncasecmp(href, "http", 4) && 
                   (*(cp1 = &href[4]) == ':' || (*cp1 == 's' && *++cp1 == ':')) && *++cp1 == '/' && *++cp1 == '/')
                fprintf(out_fp,"<data url=\"%s\"><value>%s</value></data>\n", href, dispurl);
             else
                fprintf(out_fp,"<data><value>%s</value></data>\n", dispurl);
-               
-            xml_encode_reset();
          }
       }
   		fputs("</row>\n", out_fp);

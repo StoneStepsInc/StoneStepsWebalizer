@@ -13,6 +13,7 @@
 
 #include "output.h"
 #include "graphs.h"
+#include "encoder.h"
 
 //
 //
@@ -27,9 +28,15 @@ class database_t;
 //
 class html_output_t : public output_t {
    private:
+      typedef buffer_encoder_t<html_encode> html_encoder_t;
+
+   private:
       FILE *out_fp;
 
       graph_t graph;
+
+      html_encoder_t html_encoder;          // HTML encoder (may be used for copying in local scopes)
+      html_encoder_t& html_encode;          // local scopes may define a new instance of html_encode
 
    private:
       void write_html_head(const char *period, FILE *out_fp);

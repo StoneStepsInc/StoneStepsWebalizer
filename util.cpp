@@ -23,7 +23,9 @@
 
 #include "util.h"
 
-static char *encode_markup(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, bool xml, size_t *slen);
+#include <cstddef>
+
+static char *encode_markup(const char *str, char *buffer, size_t bsize, bool multiline, bool xml, size_t *slen);
 static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 
 //
@@ -134,57 +136,49 @@ size_t url_path_len(const char *url, size_t *urllen)
    return pathlen;
 }
 
-char *html_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, size_t *olen)
+char *html_encode(const char *str, char *buffer, size_t bsize, bool multiline, size_t *olen)
 {
-   return encode_markup(str, buffer, bsize, resize, multiline, false, olen);
+   return encode_markup(str, buffer, bsize, multiline, false, olen);
 }
 
-char *xml_encode(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, size_t *olen)
+char *xml_encode(const char *str, char *buffer, size_t bsize, bool multiline, size_t *olen)
 {
-   return encode_markup(str, buffer, bsize, resize, multiline, true, olen);
+   return encode_markup(str, buffer, bsize, multiline, true, olen);
 }
 
 //
-// encode_markup encodes markup pointed to by str. When encoding XML,
-// enforce UTF-8. Otherwise, characters above 0x7F are not encoded or 
-// validated in any way.
+// encode_markup encodes HTML or XML markup pointed to by str
 //
-static char *encode_markup(const char *str, char *buffer, size_t bsize, bool resize, bool multiline, bool xml, size_t *olen)
+static char *encode_markup(const char *str, char *buffer, size_t bsize, bool multiline, bool xml, size_t *olen)
 {
    static const char hex_char[] = "0123456789ABCDEF";
-   const u_char *cptr = (const u_char*) str;
+   const char *cptr = str;
    size_t slen = 0, bcnt;
 
    while(*cptr) {
+      // always require at least 16 bytes in the buffer
       if(buffer == NULL || (slen + 16) > bsize) {
-         if(!resize) {
-            buffer = NULL;    // return NULL if we cannot resize
-            break;
-         }
-         // allocate a bigger buffer
-         bsize = (bsize) ? bsize << 1 : 128;
-         buffer = (char*) realloc(buffer, bsize);
+         buffer = NULL;
+         break;
       }
       
-      if(xml) {
-         // if encoding XML, check for invalid UTF-8 sequences
-         if((bcnt = utf8bcnt(cptr)) == 0) {
-            // replace the bad byte with a private-use code point [Unicode v5 ch.3 p.91]
-            slen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+slen);
-            cptr++;
-            continue;
-         }
+      // check for invalid UTF-8 sequences
+      if((bcnt = utf8size(cptr)) == 0) {
+         // replace the bad character with a private-use code point [Unicode v5 ch.3 p.91]
+         slen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+slen);
+         cptr++;
+         continue;
+      }
          
-         // output valid multibyte UTF-8 characters
-         if(bcnt > 1) {
-            memcpy(buffer+slen, cptr, bcnt);
-            slen += bcnt;
-            cptr += bcnt;
-            continue;
-         }
+      // no need to encode multibyte UTF-8 characters 
+      if(bcnt > 1) {
+         memcpy(buffer+slen, cptr, bcnt);
+         slen += bcnt;
+         cptr += bcnt;
+         continue;
       }
       
-      // single-byte characters
+      // check single-byte characters
       switch (*cptr) {
          case '<':
             memcpy(&buffer[slen], "&lt;", 4);
@@ -212,7 +206,7 @@ static char *encode_markup(const char *str, char *buffer, size_t bsize, bool res
             break;
          default:
             // hex-encode control characters for visibility
-            if(*cptr < 0x20 && *cptr != '\t' || *cptr == 0x7F) {
+            if(*cptr < '\x20' && *cptr != '\t' || *cptr == '\x7F') {
                buffer[slen++] = '[';
                buffer[slen++] = hex_char[(*cptr & 0xF0) >> 4];
                buffer[slen++] = hex_char[(*cptr & 0x0F)];
@@ -392,8 +386,8 @@ string_t& url_decode(const string_t& str, string_t& out)
 
 char *url_decode(const char *str, char *out, size_t *slen)
 {
-   const u_char *cp1 = (const u_char*) str;     /* force unsigned so we    */
-   u_char *cp2 = (u_char*) out;                 /* can do > 127            */
+   const char *cp1 = str;
+   char *cp2 = out;
 
    if (!str || !out) 
       return NULL;                              /* make sure strings valid */
@@ -413,7 +407,7 @@ char *url_decode(const char *str, char *out, size_t *slen)
    *cp2 = *cp1;                                 /* don't forget terminator */
    
    if(slen)
-      *slen = cp2-(u_char*) out;
+      *slen = cp2-out;
    
    return out;                                  /* return the string       */
 }
@@ -422,29 +416,37 @@ char *url_decode(const char *str, char *out, size_t *slen)
 /* FROM_HEX - convert hex char to decimal    */
 /*********************************************/
 
-const u_char *from_hex(const u_char *cp1, u_char *cp2)
+const char *from_hex(const char *cp1, char *cp2)
 {
    if(!cp1 || !cp2)
       return cp1;
 
-   *cp2 = from_hex(*cp1++) << 4;          /* convert hex to an ascii */
-   *cp2 |= from_hex(*cp1++);              /* (hopefully) character   */
+   //
+   // Convert the hex number to an octet, which is supposed to be UTF-8, but may 
+   // be in some other encoding. In the latter case there's no way to identify 
+   // the encoding, so Latin1 will be assumed by the caller if any of the octets 
+   // produced by this function form invalid UTF-8 characters.
+   //
+   *cp2 = from_hex(*cp1++) << 4;
+   *cp2 |= from_hex(*cp1++);
 
-   if(*cp2 < 32 || *cp2 == 127) 
-      *cp2 = '_';                         /* make '_' if its bad   */
+   // change control characters to underscore
+   if(*cp2 < '\x20') 
+      *cp2 = '_';
 
    return cp1;
 }
 
-u_char from_hex(u_char c)
+char from_hex(char c)
 {
    if(c >= '0' && c <= '9')
       return c - '0';
 
-   c = toupper(c);
-
    if(c >= 'A' && c <= 'F')
       return c - 'A' + 10;
+
+   if(c >= 'a' && c <= 'f')
+      return c - 'a' + 10;
 
    return 0;                      /* return 0 if bad...      */
 }
@@ -454,19 +456,25 @@ u_char from_hex(u_char c)
 //
 const char *cstr2str(const char *cp, string_t& str)
 {
+   char *ecp = NULL;
    size_t slen;
+
    str.reset();
 
    if(cp == NULL || *cp != '[')
       return NULL;
 
-   slen = atol(++cp);
-   while(*cp++ != ']');
+   slen = strtol(++cp, &ecp, 10);
+
+   if(*ecp != ']')
+      return NULL;
+
+   cp = ++ecp;
 
    if(slen)
       str.assign(cp, slen); 
 
-   return &cp[slen];
+   return cp + slen;
 }
 
 //
@@ -929,14 +937,66 @@ size_t ucs2utf8(const wchar_t *cp, size_t slen, char *out, size_t bsize)
 {
    char *op = out;
    
-   while(*cp && slen-- && bsize-(op-out) >= ucs2utf8(*cp, NULL))
-      op += ucs2utf8(*cp++, op);
-      
+   // convert one wide character at a time
+   while(slen && bsize-(op-out) >= ucs2utf8size(*cp))
+      op += ucs2utf8(*cp++, op), slen--;
+   
+   // return the size of the UTF-8 string, without the null character
    return op - out;
 }
 
+size_t ucs2utf8(const wchar_t *cp, char *out, size_t bsize)
+{
+   char *op = out;
+   
+   // convert one wide character at a time, up to the null character
+   while(*cp && bsize-(op-out) >= ucs2utf8size(*cp))
+      op += ucs2utf8(*cp++, op);
+   
+   // terminate the new string
+   *op = 0;
+   
+   // return the size of the UTF-8 string, not including the null character
+   return op - out;
+}
+
+bool isutf8str(const char *str)
+{
+   const char *cp1 = str;
+   size_t csize;
+
+   // look for a null character and count characters
+   while(*cp1) {
+      if((csize = utf8size(cp1)) == 0)
+         return false;
+      cp1 += csize;
+   }
+
+   return true;
+}
+
+bool isutf8str(const char *str, size_t slen)
+{
+   const char *cp1 = str;
+   size_t csize;
+
+   // accept empty strings
+   if(!slen)
+      return true;
+
+   // walk UTF-8 characters up to slen
+   while(cp1-str < (std::ptrdiff_t) slen) {
+      if((csize = utf8size(cp1)) == 0)
+         return false;
+      cp1 += csize;
+   }
+
+   // slen may be less than the actual number of bytes we found
+   return cp1-str == (std::ptrdiff_t) slen;
+}
+
 //
-// Instantiate template functions
+// Instantiate templates
 //
 template const char *strptr<char>(const char *str, const char *defstr);
 template const wchar_t *strptr<wchar_t>(const wchar_t *str, const wchar_t *defstr);

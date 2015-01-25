@@ -221,6 +221,9 @@
     <ClCompile Include="hashtab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="encoder.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -363,6 +366,9 @@
     </ClInclude>
     <ClInclude Include="thread.h">
       <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="encoder.h">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

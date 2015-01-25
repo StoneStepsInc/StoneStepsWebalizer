@@ -172,6 +172,7 @@
     </ClCompile>
     <ClCompile Include="dns_resolv.cpp" />
     <ClCompile Include="dump_output.cpp" />
+    <ClCompile Include="encoder.cpp" />
     <ClCompile Include="graphs.cpp" />
     <ClCompile Include="hashtab_tmpl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -253,6 +254,7 @@
     <ClInclude Include="database.h" />
     <ClInclude Include="dns_resolv.h" />
     <ClInclude Include="dump_output.h" />
+    <ClInclude Include="encoder.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="graphs.h" />
     <ClInclude Include="hashtab.h" />

@@ -12,6 +12,7 @@
 
 #include "output.h"
 #include "graphs.h"
+#include "encoder.h"
 
 //
 //
@@ -28,11 +29,15 @@ class database_t;
 // -----------------------------------------------------------------------
 class xml_output_t : public output_t {
    private:
+      typedef buffer_encoder_t<::xml_encode> xml_encoder_t;
+
+   private:
       FILE *out_fp;
       
-      char *encptr;
-
       graph_t graph;
+
+      xml_encoder_t xml_encoder;          // XML encoder (may be used for copying in local scopes)
+      xml_encoder_t& xml_encode;          // local scopes may define a new instance of xml_encode
       
    private:
       void write_monthly_totals(void);
@@ -51,11 +56,6 @@ class xml_output_t : public output_t {
    
       void write_xml_head(bool index);
       void write_xml_tail(void);
-
-      char *xml_encode(const char *str, bool multiline = false);
-      char *xml_encode_ex(const char *str, bool multiline = false);
-      
-      void xml_encode_reset(void);
 
    public:
       xml_output_t(const config_t& config, const state_t& state);

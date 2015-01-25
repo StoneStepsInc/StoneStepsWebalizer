@@ -1,3 +1,13 @@
+/*
+    webalizer - a web server log analysis program
+
+    Copyright (c) 2004-2014, Stone Steps Inc. (www.stonesteps.ca)
+
+    See COPYING and Copyright files for additional licensing and copyright information
+
+    logrec.h
+*/
+
 #ifndef _OUTPUT_H
 #define _OUTPUT_H
 
@@ -27,7 +37,7 @@ class output_t {
       const config_t&   config;
       const state_t&    state;
 
-      char *buffer;
+      char *buffer;                    // buffer for formatting, encoding, etc
       
       graphinfo_t *graphinfo;          // shared graph information 
 

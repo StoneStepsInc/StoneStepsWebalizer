@@ -1938,7 +1938,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    char *cp2, *bptr;
    int  sp_flg = 0, termcnt = 0;
    bool newsrch = false;
-   size_t slen = 0;
+   size_t slen = 0, qlen = 0;
    string_t str;
    glist::const_iterator iter = config.search_list.begin();
 
@@ -1950,22 +1950,31 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
       return;
 
    //
-   // Check if search engine referrer and count the first non-empty
-   // search string. Search engines are expected to be grouped by
-   // the domain name string, so that once the first one is found,
-   // only those following the first match will be evaluated (done
-   // for performance reasons, to avoid traversing the entire list
-   // every time).
+   // Check if the referrer domain name matches any search engine in the list 
+   // and if it does, find the first non-empty search string name matching the
+   // one in the search list entry.
+   //
+   // Search engines are expected to be grouped by the domain name, so that 
+   // once the first one is found, only those following the first match will 
+   // be evaluated for performance reasons, to avoid traversing the entire 
+   // list every time.
+   //
+   // $$$ search_list will find the domain if it's mentioned anywhere in the URL !!!
    //
    while((nptr = config.search_list.find_node(refer, iter, (nptr != NULL))) != NULL) {
 
-      /* Try to find the query variable */
+      // walk the query and look for the name we found for this domain
       cp1 = srchargs;
       do {
+         // nptr->name includes the equal sign (e.g. "as_q=")
          cp3 = nptr->name;
+
+         // walk both strings (strncmp would require two passes if not found)
          while(*cp1 && *cp3 && *cp1 == *cp3) *cp1++, *cp3++;
          if(*cp3 == 0)
             break;
+
+         // move to the next query variable
          while(*cp1 && *cp1++ != '&');
       } while(*cp1);
 
@@ -1976,10 +1985,10 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
       while(*cp1 && *cp1!='&')
       {
          if(*cp1 == '%')                              // decode URL-encoded chars
-            cp1 = (char*) from_hex((u_char*)++cp1, (u_char*)cp2);
+            cp1 = from_hex(++cp1, cp2);
          else if(*cp1 == '+') 
             *cp2 = ' ', cp1++;                        // change + to space       
-         else if(*cp1 < 32 || *cp1 == 127) 
+         else if(*cp1 < '\x20') 
             *cp2='_', cp1++;                          // strip invalid chars     
          else
             *cp2 = tolower(*cp1), cp1++;              // normal character        
@@ -1989,34 +1998,42 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          cp2++;
       }
 
-      cp3 = buffer;                                   // trim trailing spaces    
+      // trim trailing spaces
+      cp3 = buffer;                                       
       while(cp2 > cp3 && isspaceex(*(cp2-1))) cp2--;
       *cp2 = 0;
 
-      cp2 = buffer;
-      while(*cp2 && isspaceex(*cp2)) cp2++;             // trim leading spaces
+      // trim leading spaces
+      cp1 = buffer;
+      while(*cp1 && isspaceex(*cp1)) cp1++;           
 
-      if(*cp2) {                                      // count if not empty
+      // hold on to the query length
+      slen = cp2 - cp1;
+
+      // store in the hash table if not empty
+      if(slen) {                                      
          termcnt++;
          cp3 = bptr = &buffer[HALFBUFSIZE];
 
+         // [9]All Words
          *bptr++ = '[';
-         slen = nptr->qualifier.length();
-         bptr += ul2str(slen, bptr);
+         qlen = nptr->qualifier.length();
+         bptr += ul2str(qlen, bptr);
          *bptr++ = ']';
-         if(slen) {
-            memcpy(bptr, nptr->qualifier.c_str(), slen);
-            bptr += slen;
+         if(qlen) {
+            memcpy(bptr, nptr->qualifier.c_str(), qlen);
+            bptr += qlen;
          }
 
+         // [17]webalizer windows
          *bptr++ = '[';
-         slen = strlen(cp2);
          bptr += ul2str(slen, bptr);
          *bptr++ = ']';
-         memcpy(bptr, cp2, slen);
+         memcpy(bptr, cp1, slen);
          bptr += slen;
          *bptr = 0;
 
+         // [9]All Words[17]webalizer windows
          str.append(cp3, bptr-cp3);
       }
    }
@@ -2024,8 +2041,8 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    if(termcnt && !str.isempty()) {
       if(!put_snode(str, termcnt, newvisit, newsrch)) {
          if (verbose)
-         // Error adding search string node, skipping .... 
-         fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, str.c_str());
+            // Error adding search string node, skipping .... 
+            fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, str.c_str());
       }
       
       // update the count if it's a new node
