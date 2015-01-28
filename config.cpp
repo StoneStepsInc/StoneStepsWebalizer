@@ -518,22 +518,10 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
       search_list.add_glist("www.google.\t   as_filetype=File Type", true);
       search_list.add_glist("search.yahoo.\t p=");
-      search_list.add_glist("search.yahoo.\t va=All Words",          true);
-      search_list.add_glist("search.yahoo.\t vp=Exact Phrase",       true);
-      search_list.add_glist("search.yahoo.\t vo=Any Word",           true);
-      search_list.add_glist("search.yahoo.\t ve=Without Words",      true);
       search_list.add_glist("search.yahoo.\t vf=File Type",          true);
       search_list.add_glist("www.bing.\t     q=");
-      search_list.add_glist("msn.\t          q=");
-      search_list.add_glist("aol.com\t       query=");
       search_list.add_glist("ask.com\t       q=");
       search_list.add_glist("about.com\t     terms=");
-      search_list.add_glist("alltheweb.com\t q=");
-      search_list.add_glist("altavista.com\t q=");
-      search_list.add_glist("looksmart.com\t qt=");
-      search_list.add_glist("lycos.com\t     query=");
-      search_list.add_glist("search.com\t    q=");
-      search_list.add_glist("netscape.com\t  query=");
    }
 
    if(!use_classic_mangler) {
