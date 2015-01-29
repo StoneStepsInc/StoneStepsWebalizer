@@ -588,6 +588,8 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
             if(!enable_phrase_values)
                group_agent_args.set_enable_phrase_values(true);
 
+            group_agent_args.add_glist("Windows NT 6.2\t Windows 8");
+            group_agent_args.add_glist("Windows NT 6.1\t Windows 7");
             group_agent_args.add_glist("Windows NT 6.0\t Windows Vista");
             group_agent_args.add_glist("Windows NT 5.1\t Windows XP");
             group_agent_args.add_glist("Windows NT 5.2\t Windows Server 2003");

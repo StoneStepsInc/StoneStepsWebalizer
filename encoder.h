@@ -21,7 +21,7 @@ typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool mu
 // encoding mode may be set to append to the last encoding result or overwrite it.
 //
 // Copying an encoder with a new mode creates an encoder that uses only free space 
-// from the original buffe, which allows new buffer to be reset without affecting
+// from the original buffer, which allows new buffer to be reset without affecting
 // the original encoder. For example, provided that each character below is encoded
 // as a single character in the buffer, the encoder inside the for loop will have a
 // 40-byte buffer after it's constructed.
