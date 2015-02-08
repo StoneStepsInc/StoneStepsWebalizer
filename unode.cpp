@@ -53,11 +53,11 @@ unode_t::unode_t(const unode_t& unode) : base_node<unode_t>(unode)
    vstref = 0;
 }
 
-unode_t::unode_t(const char *urlpath, const char *srchargs) : base_node<unode_t>(urlpath) 
+unode_t::unode_t(const string_t& urlpath, const string_t& srchargs) : base_node<unode_t>(urlpath) 
 {
    pathlen = (u_short) string.length();
 
-   if(srchargs && *srchargs && *srchargs != '-') {
+   if(!srchargs.isempty()) {
       string += '?';
       string += srchargs;
    }

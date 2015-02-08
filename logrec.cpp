@@ -59,26 +59,26 @@ void log_struct::normalize(u_int log_type)
    //
    // fix empty search arguments
    //
-   if(srchargs[0] == '-' && srchargs[1] == 0)
+   if(srchargs == "-")
       srchargs.reset();
 
    //
    // fix empty user agents
    //
-   if(agent.isempty())
-      agent = '-';
+   if(agent == "-")
+      agent.reset();
 
    //
    // fix empty users
    //
-   if(ident[0] == '-' && ident[1] == 0)
+   if(ident == "-")
       ident.reset();
 
    //
    // fix empty referrers
    //
-   if(refer.isempty()) 
-      refer = '-';
+   if(refer == "-") 
+      refer.reset();
    else if(!refer.compare_ci("http://", 7)) {
       if((index = refer.find('/', 7)) != string_t::npos) 
          refer.tolower(0, index);
@@ -97,6 +97,6 @@ void log_struct::normalize(u_int log_type)
       hostname.tolower();
       
    // fix empty HTTP methods
-   if(method.isempty())
-      method = '-';
+   if(method == "-")
+      method.reset();
 }

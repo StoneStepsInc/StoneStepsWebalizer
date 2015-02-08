@@ -1354,7 +1354,7 @@ void xml_output_t::write_top_referrers(void)
          fprintf(out_fp,"<data group=\"yes\"><value>%s</value></data>\n", rptr->string.c_str());
       }
       else {
-         if (rptr->string[0] == '-')
+         if (rptr->string.isempty())
             fprintf(out_fp,"<data><value>%s</value></data>\n", config.lang.msg_ref_dreq);
          else {
 	         xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);

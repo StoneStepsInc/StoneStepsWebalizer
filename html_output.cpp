@@ -1551,7 +1551,7 @@ void html_output_t::top_refs_table()
       {
          html_encoder_t html_encode(html_encoder, html_encoder_t::append);
 
-         if (rptr->string[0] == '-')
+         if (rptr->string.isempty())
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
          else {
             dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
@@ -1990,7 +1990,7 @@ int html_output_t::all_refs_page(void)
          if(config.hidden_refs.isinlist(rnode.string))
             continue;
       
-         if(rnode.string[0] == '-')
+         if(rnode.string.isempty())
             dispurl = config.lang.msg_ref_dreq;
          else {
             dispurl = (rnode.hexenc) ? url_decode(rnode.string, str).c_str() : rnode.string.c_str();

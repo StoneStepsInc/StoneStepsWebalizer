@@ -648,7 +648,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    bool skiptok = false;
    
    // return if user agent string is empty
-   if(agent.isempty() || agent[0] == '-' && agent[1] == 0)
+   if(agent.isempty())
       return;
    
    // if all included, return - nothing to do
@@ -657,7 +657,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    
    // if all excluded and none included, reset the string and return   
    if(config.incl_agent_args.isempty() && config.excl_agent_args.iswildcard()) {
-      agent = '-';
+      agent.reset();
       return;
    }
    
@@ -832,7 +832,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    if(ua2)
       agent.attach(ua2);                        // attach the new string
    else
-      agent = '-';                              // reset to an empty agent string
+      agent.reset();                            // reset to an empty agent string
 }
 
 //
@@ -1946,7 +1946,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    scount = 0;
 
    // ignore empty referrers and empty search strings
-   if(srchargs == NULL || refer == NULL || *refer == '-' || *srchargs == 0)
+   if(srchargs.isempty() || refer.isempty())
       return;
 
    //
