@@ -224,6 +224,9 @@
     <ClCompile Include="encoder.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="cp1252_ucs2.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

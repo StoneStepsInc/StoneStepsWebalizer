@@ -170,6 +170,9 @@ size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 bool isutf8str(const char *str);
 bool isutf8str(const char *str, size_t slen);
 
+char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen = NULL);
+char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *olen = NULL);
+
 //
 //
 //
