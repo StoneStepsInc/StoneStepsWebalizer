@@ -28,13 +28,6 @@ base_node<node_t>::base_node(const base_node& node) : keynode_t<uint64_t>(node)
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(const char *str) : keynode_t<uint64_t>(0) 
-{
-   string = str; 
-   flag = OBJ_REG;
-}
-
-template <typename node_t> 
 base_node<node_t>::base_node(const string_t& str) : keynode_t<uint64_t>(0) 
 {
    string = str; 

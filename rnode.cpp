@@ -22,7 +22,7 @@ rnode_t::rnode_t(const rnode_t& rnode) : base_node<rnode_t>(rnode)
    visits = rnode.visits;
 }
 
-rnode_t::rnode_t(const char *ref) : base_node<rnode_t>(ref) 
+rnode_t::rnode_t(const string_t& ref) : base_node<rnode_t>(ref) 
 {
    count = 0;
    visits = 0;

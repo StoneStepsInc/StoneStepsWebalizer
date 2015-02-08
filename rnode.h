@@ -28,7 +28,7 @@ struct rnode_t : public base_node<rnode_t> {
       public:
          rnode_t(void) : base_node<rnode_t>() {hexenc = false; count = 0;}
          rnode_t(const rnode_t& rnode);
-         rnode_t(const char *ref);
+         rnode_t(const string_t& ref);
 
          //
          // serialization

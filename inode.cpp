@@ -30,7 +30,7 @@ inode_t::inode_t(const inode_t& inode) : base_node<inode_t>(inode)
    maxtime = inode.maxtime;
 }
 
-inode_t::inode_t(const char *ident) : base_node<inode_t>(ident) 
+inode_t::inode_t(const string_t& ident) : base_node<inode_t>(ident) 
 {
    count = 1; 
    visit = 1; 

@@ -26,7 +26,7 @@ struct spnode_t : public base_node<spnode_t> {
 
       public:
          spnode_t(void) : base_node<spnode_t>() {}
-         spnode_t(const char *host) : base_node<spnode_t>(host) {}
+         spnode_t(const string_t& host) : base_node<spnode_t>(host) {}
 };
 
 //

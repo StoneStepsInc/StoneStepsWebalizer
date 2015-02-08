@@ -37,7 +37,7 @@ struct snode_t : public base_node<snode_t> {
       public:
          snode_t(void) : base_node<snode_t>() {count = 0; termcnt = 0; visits = 0;}
          snode_t(const snode_t& snode);
-         snode_t(const char *srch) : base_node<snode_t>(srch) {count = 0; termcnt = 0; visits = 0;}
+         snode_t(const string_t& srch) : base_node<snode_t>(srch) {count = 0; termcnt = 0; visits = 0;}
 
          //
          // serialization
