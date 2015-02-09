@@ -2,7 +2,7 @@
 #
 #   makefile.gnu
 # 	 
-#   Copyright (c) 2004-2014, Stone Steps Inc. (www.stonesteps.ca)
+#   Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)
 #
 #   See COPYING and Copyright files for additional licensing and copyright information 
 # 

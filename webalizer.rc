@@ -35,7 +35,7 @@ BEGIN
             VALUE "FileDescription", "Stone Steps Webalizer\0"
             VALUE "FileVersion", RC_VERSION_STR
             VALUE "InternalName", "Stone Steps Webalizer\0"
-            VALUE "LegalCopyright", "Copyright © 2004-2014\0"
+            VALUE "LegalCopyright", "Copyright © 2004-2015\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "webalizer.exe\0"
             VALUE "PrivateBuild", "\0"
