@@ -380,122 +380,122 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lang\webalizer_help.english">
+    <None Include="..\lang\webalizer_help.english">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.catalan">
+    <None Include="..\lang\webalizer_lang.catalan">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.chinese">
+    <None Include="..\lang\webalizer_lang.chinese">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.croatian">
+    <None Include="..\lang\webalizer_lang.croatian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.czech">
+    <None Include="..\lang\webalizer_lang.czech">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.danish">
+    <None Include="..\lang\webalizer_lang.danish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.dutch">
+    <None Include="..\lang\webalizer_lang.dutch">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.english">
+    <None Include="..\lang\webalizer_lang.english">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.estonian">
+    <None Include="..\lang\webalizer_lang.estonian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.finnish">
+    <None Include="..\lang\webalizer_lang.finnish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.french">
+    <None Include="..\lang\webalizer_lang.french">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.galician">
+    <None Include="..\lang\webalizer_lang.galician">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.german">
+    <None Include="..\lang\webalizer_lang.german">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.greek">
+    <None Include="..\lang\webalizer_lang.greek">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.hungarian">
+    <None Include="..\lang\webalizer_lang.hungarian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.icelandic">
+    <None Include="..\lang\webalizer_lang.icelandic">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.indonesian">
+    <None Include="..\lang\webalizer_lang.indonesian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.italian">
+    <None Include="..\lang\webalizer_lang.italian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.japanese">
+    <None Include="..\lang\webalizer_lang.japanese">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.korean">
+    <None Include="..\lang\webalizer_lang.korean">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.latvian">
+    <None Include="..\lang\webalizer_lang.latvian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.malay">
+    <None Include="..\lang\webalizer_lang.malay">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.norwegian">
+    <None Include="..\lang\webalizer_lang.norwegian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.polish">
+    <None Include="..\lang\webalizer_lang.polish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.portuguese">
+    <None Include="..\lang\webalizer_lang.portuguese">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.portuguese_brazil">
+    <None Include="..\lang\webalizer_lang.portuguese_brazil">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.portuguese_brazilian">
+    <None Include="..\lang\webalizer_lang.portuguese_brazilian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.romanian">
+    <None Include="..\lang\webalizer_lang.romanian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.russian">
+    <None Include="..\lang\webalizer_lang.russian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.serbian">
+    <None Include="..\lang\webalizer_lang.serbian">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.simplified_chinese">
+    <None Include="..\lang\webalizer_lang.simplified_chinese">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.slovak">
+    <None Include="..\lang\webalizer_lang.slovak">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.slovene">
+    <None Include="..\lang\webalizer_lang.slovene">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.spanish">
+    <None Include="..\lang\webalizer_lang.spanish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.swedish">
+    <None Include="..\lang\webalizer_lang.swedish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.turkish">
+    <None Include="..\lang\webalizer_lang.turkish">
       <Filter>Language</Filter>
     </None>
-    <None Include="lang\webalizer_lang.ukrainian">
+    <None Include="..\lang\webalizer_lang.ukrainian">
       <Filter>Language</Filter>
     </None>
     <None Include="webalizer.css">
       <Filter>Stylesheets</Filter>
     </None>
-    <None Include="CHANGES" />
-    <None Include="README" />
+    <None Include="..\CHANGES" />
+    <None Include="..\README" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="graphs-amc.xsl">

@@ -6,23 +6,23 @@ syntax: regexp
 
 ^build/
 
-^Debug/
-^Release/
-
+# test directories and files
 ^logfiles/
 ^reports/
 ^temp/
 ^reports_/
 ^release_/
-
-^ipch/
-
-^webalizer\.ncb$
-^webalizer\.suo$
-^webalizer\.sdf$
-^webalizer\.plg$
-^webalizer\.opt$
-^webalizer\.v12.suo$
-^webalizer\.opensdf$
 ^webalizer\.conf$
-^webalizer\.vcxproj\.user$
+
+# Intellisense precompiled headers
+^src/ipch/
+
+# VisualStudio auto-generated files
+^src/webalizer\.ncb$
+^src/webalizer\.suo$
+^src/webalizer\.sdf$
+^src/webalizer\.plg$
+^src/webalizer\.opt$
+^src/webalizer\.v12.suo$
+^src/webalizer\.opensdf$
+^src/webalizer\.vcxproj\.user$
