@@ -753,7 +753,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
 {
    const Db *scdb;
    Dbt key, pkey, data;
-   u_int keysize;
+   u_int32_t keysize;
    uint64_t hashkey;
 
    if((scdb = table.values_db()) == NULL)
@@ -761,7 +761,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
 
    // make a value key
    hashkey = node.s_hash_value();
-   keysize = node.s_hash_value_size();
+   keysize = (u_int32_t) node.s_hash_value_size();
 
    key.set_data(&hashkey);
    key.set_size(keysize);
