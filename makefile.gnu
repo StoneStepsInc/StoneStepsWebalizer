@@ -78,8 +78,9 @@ endif
 
 PRJDIR	 := $(SRCROOT)/$(PRJNAME)
 BLDDIR   := $(PRJDIR)/build
+PRJSRC   := $(PRJDIR)/src
 
-VPATH    := $(PRJDIR)
+VPATH    := $(PRJSRC)
 
 INCDIRS  := $(PRJDIR)
 LIBDIRS  := $(BLDDIR)
@@ -206,7 +207,7 @@ clean:
 #
 $(PCHOBJ) : $(PCHSRC)
 	@if [[ -e $(PRJDIR)/$(PCHOUT) ]]; then rm $(PRJDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(PRJDIR)/$(PCHHDR)
+	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(PRJSRC)/$(PCHHDR)
 	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
 
 # ------------------------------------------------------------------------
