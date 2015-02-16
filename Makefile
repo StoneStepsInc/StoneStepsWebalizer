@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------
 #
-#   makefile.gnu
+#   Makefile
 # 	 
 #   Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)
 #
