@@ -25,14 +25,13 @@ SHELL := /bin/bash
 # Remove all standard suffix rules and declare phony targets
 #
 .SUFFIXES:
-.PHONY: all clean
+.PHONY: all clean install
 
 # ------------------------------------------------------------------------
 #
 # Define directories and file names
 #
 # ------------------------------------------------------------------------
-MAKEFILE := makefile.gnu
 TARGET   := webalizer
 
 #
@@ -45,64 +44,55 @@ PCHSRC	 := $(PCHHDR:.h=.cpp)
 PCHOUT	 := $(PCHHDR:.h=.h.gch)
 PCHOBJ	 := $(PCHHDR:.h=.o)
 
-#
-# Define SRCROOT to point to the directory above the Webalizer project 
-# directory. For example, if the Webalizer source files are located in 
-# ~/projects/webalizer, SRCROOT should be defined as ~/projects: 
-#
-#	make -f makefile.gnu SRCROOT=~/projects
-#
-# If SRCROOT is not defined, use the parent directory as a default
-# value. In this case the variable must be exported to be available 
-# to the second-level make (only existing environment variables and 
-# variables defined on the command line are passed automatically). 
-#
-ifndef SRCROOT
-SRCROOT  := $(dir $(CURDIR))
-SRCROOT  := $(SRCROOT:%/=%)
-export   SRCROOT
-endif
-
-#
-# If the project name is not defined, use the current directory name
-#
-ifndef PRJNAME
-PRJNAME	:= $(notdir $(CURDIR))
-export	PRJNAME
-endif
-
+# define the configuration directory
 ifndef ETCDIR
 ETCDIR   := /etc
 export   ETCDIR
 endif
 
-PRJDIR	 := $(SRCROOT)/$(PRJNAME)
-BLDDIR   := $(PRJDIR)/build
-PRJSRC   := $(PRJDIR)/src
+# source and build directories
+SRCDIR   := src
+BLDDIR   := build
 
-VPATH    := $(PRJSRC)
+# search paths for source and object files
+vpath %.cpp $(SRCDIR) 
+vpath %.o   $(BLDDIR)
 
-INCDIRS  := $(PRJDIR)
+# include and library search paths
+INCDIRS  := $(SRCDIR)
 LIBDIRS  := $(BLDDIR)
 
-# precompiled header file must be first in the list
+# list of source files (precompiled header file must be first in the list)
 SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
-	    output.cpp graphs.cpp preserve.cpp lang.cpp \
-	    parser.cpp mutex_pthread.cpp thread_pthread.cpp \
-	    util.cpp event_pthread.cpp logrec.cpp tstamp.cpp \
-	    webalizer.cpp dns_resolv.cpp history.cpp tmranges.cpp \
-	    anode.cpp ccnode.cpp dlnode.cpp hnode.cpp \
-	    inode.cpp rcnode.cpp rnode.cpp snode.cpp \
-	    spnode.cpp unode.cpp vnode.cpp \
-	    danode.cpp keynode.cpp scnode.cpp sysnode.cpp \
-	    daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
-	    hashtab_nodes.cpp config.cpp serialize.cpp \
-	    html_output.cpp xml_output.cpp dump_output.cpp \
-	    database.cpp logfile.cpp encoder.cpp cp1252_ucs2.cpp
+	output.cpp graphs.cpp preserve.cpp lang.cpp \
+	parser.cpp mutex_pthread.cpp thread_pthread.cpp \
+	util.cpp event_pthread.cpp logrec.cpp tstamp.cpp \
+	webalizer.cpp dns_resolv.cpp history.cpp tmranges.cpp \
+	anode.cpp ccnode.cpp dlnode.cpp hnode.cpp \
+	inode.cpp rcnode.cpp rnode.cpp snode.cpp \
+	spnode.cpp unode.cpp vnode.cpp \
+	danode.cpp keynode.cpp scnode.cpp sysnode.cpp \
+	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
+	hashtab_nodes.cpp config.cpp serialize.cpp \
+	html_output.cpp xml_output.cpp dump_output.cpp \
+	database.cpp logfile.cpp encoder.cpp cp1252_ucs2.cpp
 
+# list all libraries we use
 LIBS     := stdc++ dl pthread db_cxx gd z maxminddb
 
-DEPLIBS  :=
+# generate a list of object files
+OBJS := $(SRCS:.cpp=.o)
+OBJS := $(OBJS:.c=.o)
+
+# and a list oof dependency make files
+DEPS := $(OBJS:.o=.d)
+
+# add GCC include and library options to each search path
+INCDIRS := $(addprefix -I,$(INCDIRS))
+LIBDIRS := $(addprefix -L,$(LIBDIRS))
+
+# add the library option to each library in the list
+LIBS := $(addprefix -l,$(LIBS))
 
 # ------------------------------------------------------------------------
 #
@@ -121,33 +111,13 @@ ifeq ($(findstring -g,$(CCFLAGS)),)
 CCFLAGS  += -O3
 endif
 
+# use the specified CPU architecture if one is defined
 ifdef CPUARCH
 CCFLAGS  += -march=$(CPUARCH)
 endif
 
 # flags passed to the linker through $(CC)
-CC_LDFLAGS = 
-
-# ------------------------------------------------------------------------
-#
-# Create additional variables and modify some existing for the command line
-#
-# ------------------------------------------------------------------------
-OBJS := $(SRCS:.cpp=.o)
-OBJS := $(OBJS:.c=.o)
-
-RPOS := $(OBJS:.o=.rpo)
-
-DEPS := $(OBJS:.o=.d)
-
-INCDIRS := $(addprefix -I,$(INCDIRS))
-LIBDIRS := $(addprefix -L,$(LIBDIRS))
-
-LIBS := $(LIBS:lib%.a=%)
-LIBS := $(LIBS:lib%.so=%)
-LIBS := $(LIBS) $(DEPLIBS:lib%.a=%)
-LIBS := $(LIBS) $(DEPLIBS:lib%.so=%)
-LIBS := $(addprefix -l,$(LIBS))
+CC_LDFLAGS := 
 
 
 # ------------------------------------------------------------------------
@@ -155,13 +125,15 @@ LIBS := $(addprefix -l,$(LIBS))
 # Targets
 #
 # ------------------------------------------------------------------------
-all:
-	@echo \*\*\* Making Stone Steps Webalizer...
-	@if [[ ! -e $(BLDDIR) ]]; then mkdir -p $(BLDDIR); fi
-	@$(MAKE) --no-print-directory -C $(BLDDIR) -f $(PRJDIR)/$(MAKEFILE) $(TARGET)
 
-$(TARGET): $(OBJS) $(addprefix $(BLDDIR)/,$(DEPLIBS))
-	$(CC) -o $(TARGET) $(CC_LDFLAGS) $(LIBDIRS) $(LIBS) $(OBJS)
+# default target
+all: $(BLDDIR)/$(TARGET) ;
+
+#
+# build/webalizer
+#
+$(BLDDIR)/$(TARGET): $(OBJS)
+	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(LIBS) $(addprefix $(BLDDIR)/,$(OBJS))
 
 install:
 	@echo
@@ -186,28 +158,52 @@ clean:
 # Rules
 #
 # ------------------------------------------------------------------------
-%.d : %.cpp
-	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
-	sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; \
-	[ -s $@ ] || rm -f $@
 
-%.d : %.c
+#
+# Dependency rules build .d files in the build directory. One of these 
+# rules will be executed for each .d file included at the bottom of this 
+# file. 
+#
+# GCC is used to generate lists of includes in each source file:
+#
+#  gcc -MM src/webalizer.cpp
+#
+# , which is then piped into sed to insert the .d file in the list of 
+# targets of the generated dependency file, so the final result looks 
+# like this:
+#
+#  webalizer.o webalizer.d: webalizer.cpp version.h config.h ...
+#
+# Note that the target variable $@ will contain the build directory,
+# but the stem variable $* will only contain the name of the file. 
+# This ensures that file path separators are not misinterpreted as
+# sed options.
+#
+$(BLDDIR)/%.d : %.cpp
+	@if [[ ! -e $(BLDDIR) ]]; then mkdir -p $(BLDDIR); fi
 	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
-	sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; \
-	[ -s $@ ] || rm -f $@
+	sed 's/^[ \t]*\($*\)\.o/\1.o \1.d/g' > $@
 
+$(BLDDIR)/%.d : %.c
+	@if [[ ! -e $(BLDDIR) ]]; then mkdir -p $(BLDDIR); fi
+	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
+	sed 's/^[ \t]*\($*\)\.o/\1.o \1.d/g' > $@
+
+#
+# Rules to compile source file
+#
 %.o : %.cpp
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
+	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $(BLDDIR)/$@
 
 %.o : %.c
 	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
 
 #
-# Build the precompiled header file and then the object file
+# Build the precompiled header file and the object file
 #
-$(PCHOBJ) : $(PCHSRC)
-	@if [[ -e $(PRJDIR)/$(PCHOUT) ]]; then rm $(PRJDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(PRJSRC)/$(PCHHDR)
+$(BLDDIR)/$(PCHOBJ) : $(PCHSRC)
+	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
+	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $(BLDDIR)/$(PCHOUT)
 	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
 
 # ------------------------------------------------------------------------
@@ -215,7 +211,5 @@ $(PCHOBJ) : $(PCHSRC)
 # Dependencies
 #
 # ------------------------------------------------------------------------
-ifneq (0,$(MAKELEVEL))
-include $(DEPS)
-endif
+include $(addprefix $(BLDDIR)/, $(DEPS))
 
