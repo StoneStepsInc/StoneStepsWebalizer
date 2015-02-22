@@ -82,9 +82,6 @@ static void console_ctrl_handler(int sig);
 /* GLOBAL VARIABLES                          */
 /*********************************************/
 
-const char *version     = MAKE_VERSION(VERSION_MAJOR, VERSION_MINOR);/* program version          */
-const char *editlvl     = MAKE_EDITION_LEVEL(EDITION_LEVEL);			/* edit level               */
-const char *buildnum    = MAKE_BUILD_NUMBER(BUILD_NUMBER);				/* build number             */
 const char *moddate     = __DATE__;										      /* modification date        */
 const char *copyright   = "Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)";
 
@@ -143,7 +140,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    // be polite and announce yourself...
    if(verbose > 1) {
       uname(&system_info);
-      printf("\nStone Steps Webalizer v%s.%s.%s (%s %s)\n\n", version, editlvl, buildnum, system_info.sysname, system_info.release);
+      printf("\nStone Steps Webalizer v%s (%s %s)\n\n", state_t::get_app_version().c_str(), system_info.sysname, system_info.release);
    }
 
    // check if help is requested
@@ -383,8 +380,8 @@ void webalizer_t::print_version()
    utsname system_info;
 
    uname(&system_info);
-   printf("\nStone Steps Webalizer v%s.%s.%s (%s %s) %s\n%s\n",   
-               version,editlvl,buildnum,
+   printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n",   
+               state_t::get_app_version().c_str(),
                system_info.sysname,system_info.release,
                config.lang.language,copyright);
    printf("\nThis program is based on The Webalizer v2.01-10\nCopyright 1997-2001 by Bradford L. Barrett (www.webalizer.com)\n\n");

@@ -91,7 +91,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    }
 
    /* Standard header comments */
-   fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s.%s.%s   -->\n", version, editlvl, buildnum);
+   fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s   -->\n", state_t::get_app_version().c_str());
    fputs("<!--                                          -->\n", out_fp);
    fputs("<!-- Copyright (c) 2004-2015, Stone Steps Inc. -->\n", out_fp);
    fputs("<!--         http://www.stonesteps.ca         -->\n", out_fp);
@@ -179,11 +179,11 @@ void html_output_t::write_html_tail(FILE *out_fp)
       fputs("</div>\n", out_fp);
    }
 
-	fprintf(out_fp,"<a href=\"http://www.stonesteps.ca/webalizer\">Stone Steps Webalizer</a> (v%s.%s.%s)\n", version, editlvl, buildnum);
+	fprintf(out_fp,"<a href=\"http://www.stonesteps.ca/webalizer\">Stone Steps Webalizer</a> (v%s)\n", state_t::get_app_version().c_str());
    fputs("</div>\n", out_fp);
 
    /* wind up, this is the end of the file */
-   fprintf(out_fp,"\n<!-- Stone Steps Webalizer Version %s.%s.%s (Mod: %s) -->\n", version, editlvl, buildnum, moddate);
+   fprintf(out_fp,"\n<!-- Stone Steps Webalizer Version %s (Mod: %s) -->\n", state_t::get_app_version().c_str(), moddate);
    if (!config.html_end.isempty())
    {
       iter = config.html_end.begin();

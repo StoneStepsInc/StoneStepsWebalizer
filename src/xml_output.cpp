@@ -2040,7 +2040,7 @@ void xml_output_t::write_xml_head(bool index)
    fputs("<application>\n", out_fp);
    
    // application version
-   fprintf(out_fp,"<version>%s.%s.%s</version>\n", version, editlvl, buildnum);
+   fprintf(out_fp,"<version>%s</version>\n", state_t::get_app_version().c_str());
 
    // application configuration
    fputs("<config>\n", out_fp);

@@ -11,47 +11,38 @@
 #ifndef __VERSION_H
 #define __VERSION_H
 
-/*
- * Version definitions
- */
+//
+// Current application version components
+//
 #define VERSION_MAJOR           4
 #define VERSION_MINOR           0
 #define EDITION_LEVEL           0
-#define BUILD_NUMBER            0
+#define BUILD_NUMBER            1
 
-#define VERSION_2_1_10_0	0x02010a00ul
-#define VERSION_2_1_10_1	0x02010a01ul
-#define VERSION_2_1_10_7	0x02010a07ul
-#define VERSION_2_1_10_9	0x02010a09ul
-#define VERSION_2_1_10_16	0x02010a10ul
-#define VERSION_2_1_10_17	0x02010a11ul
-#define VERSION_2_1_10_24	0x02010a18ul
-#define VERSION_2_2_0_1	   0x02020001ul
-#define VERSION_2_3_0_5	   0x02030005ul
-#define VERSION_2_5_0_1	   0x02050001ul
-#define VERSION_3_0_1_1	   0x03000101ul
-#define VERSION_3_3_1_5	   0x03030105ul
-#define VERSION_3_4_1_1    0x03040101ul
-#define VERSION_3_5_1_1    0x03050101ul
-#define VERSION_3_8_0_1    0x03080001ul
-#define VERSION_3_8_0_4    0x03080004ul
-#define VERSION_3_10_3_2   0x030A0302ul
-#define VERSION_4_0_0_0    0x04000000ul
+//
+// Current numeric application version
+//
+#define VERSION			((unsigned int) ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (EDITION_LEVEL << 8) | (BUILD_NUMBER)))
 
-/*
- * Version macros
- */
-#define VERSION_BASE		((VERSION_MAJOR << 8) | VERSION_MINOR)
-#define VERSION			(((VERSION_BASE << 16) | (EDITION_LEVEL << 8)) | BUILD_NUMBER)
+//
+// Application version component extractors
+//
+#define VERSION_MAJOR_EX(version)     (((unsigned int) version >> 24) & 0xFFu)
+#define VERSION_MINOR_EX(version)     (((unsigned int) version >> 16) & 0xFFu)
+#define EDITION_LEVEL_EX(version)     (((unsigned int) version >>  8) & 0xFFu)
+#define BUILD_NUMBER_EX(version)      (((unsigned int) version      ) & 0xFFu)
 
-#define MAKE_STRING(value)				#value
-#define MAKE_STRING_EX(value)			MAKE_STRING(value)
+//
+// Previous application versions for conditional processing
+//
+#define VERSION_3_3_1_5	   0x03030105u
+#define VERSION_3_5_1_1    0x03050101u
+#define VERSION_3_8_0_4    0x03080004u
 
-#define MAKE_EDITION_LEVEL(editlvl)	MAKE_STRING(editlvl)
-#define MAKE_BUILD_NUMBER(buildnum)	MAKE_STRING(buildnum)
-#define MAKE_VERSION(major, minor)	MAKE_STRING(major) "." MAKE_STRING(minor)
-
-#define VER_PART(version, part) ((u_int) (((version) >> (part * 8)) & 0xFF))
+//
+// Minimum application version in the state database we can load
+//
+#define MIN_APP_DB_VERSION 0x04000001u
 
 #endif // __VERSION_H
 

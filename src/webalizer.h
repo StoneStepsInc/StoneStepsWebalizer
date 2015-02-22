@@ -211,9 +211,6 @@ class webalizer_t {
       spnode_t *put_spnode(const string_t& host);
 };
 
-extern const char *version  ;                 /* program version          */
-extern const char *editlvl  ;                 /* edit level               */
-extern const char *buildnum ;                 /* build number             */
 extern const char *moddate  ;                 /* modification date        */
 extern const char *copyright;
 

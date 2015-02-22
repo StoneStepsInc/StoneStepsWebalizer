@@ -151,6 +151,10 @@ class state_t {
       static void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);
+
+      static string_t get_app_version(void);
+
+      static string_t get_version(u_int version);
 };
 
 #endif  /* _PRESERVE_H */

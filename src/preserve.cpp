@@ -424,8 +424,8 @@ bool state_t::initialize(void)
       // all data counters in v4 were changed to 64-bit integers. Only continue if we
       // need to read just the sysnode and query the database directly.
       //
-      if(sysnode.appver_last < VERSION_4_0_0_0 && !config.db_info)
-         throw exception_t(0, "Cannot open a database with a version prior to v4.0");
+      if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
+         throw exception_t(0, string_t::_format("Cannot open a database with a version prior to v%s", state_t::get_version(MIN_APP_DB_VERSION).c_str()));
          
       if(!sysnode.check_size_of())
          throw exception_t(0, "Incompatible database format (data type sizes)");
@@ -539,11 +539,11 @@ void state_t::database_info(void) const
    printf("\n");
    
    printf("Database        : %s\n", config.get_db_path().c_str());
-   printf("Created by      : %d.%d.%d.%d\n", VER_PART(get_sysnode().appver, 3), VER_PART(get_sysnode().appver, 2), VER_PART(get_sysnode().appver, 1), VER_PART(get_sysnode().appver, 0));
-   printf("Last updated by : %d.%d.%d.%d\n", VER_PART(get_sysnode().appver_last, 3), VER_PART(get_sysnode().appver_last, 2), VER_PART(get_sysnode().appver_last, 1), VER_PART(get_sysnode().appver_last, 0));
+   printf("Created by      : %s\n", state_t::get_version(get_sysnode().appver).c_str());
+   printf("Last updated by : %s\n", state_t::get_version(get_sysnode().appver_last).c_str());
    
    // cannot read totals ifrom a database created prior to v4
-   if(sysnode.appver_last >= VERSION_4_0_0_0) {
+   if(sysnode.appver_last >= MIN_APP_DB_VERSION) {
       // output the first day of the month and the last timestamp
       printf("First day       : %04d/%02d/%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.f_day);
       printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.cur_tstamp.day, totals.cur_tstamp.hour, totals.cur_tstamp.min, totals.cur_tstamp.sec);
@@ -595,7 +595,7 @@ int state_t::restore_state(void)
       return 0;
 
    // cannot read any data nodes from old databases
-   if(config.db_info && sysnode.appver_last < VERSION_4_0_0_0)
+   if(config.db_info && sysnode.appver_last < MIN_APP_DB_VERSION)
       return 0;
 
    // restore current totals
@@ -1238,6 +1238,16 @@ void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
    // remember spammers
    if(hnode.spammer)
       _this->put_spnode(hnode.string);
+}
+
+string_t state_t::get_app_version(void)
+{
+   return string_t::_format("%u.%u.%u.%u", VERSION_MAJOR, VERSION_MINOR, EDITION_LEVEL, BUILD_NUMBER);
+}
+
+string_t state_t::get_version(u_int version)
+{
+   return string_t::_format("%u.%u.%u.%u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), EDITION_LEVEL_EX(version), BUILD_NUMBER_EX(version));
 }
 
 //
