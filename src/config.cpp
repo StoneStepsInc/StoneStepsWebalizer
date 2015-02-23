@@ -175,7 +175,6 @@ config_t::config_t(void) : config_fnames(1)
    font_size_medium = FONT_SIZE_MEDIUM;
 
    rpt_title = lang.msg_title;
-   html_charset = "utf-8";
    state_fname = "webalizer.current";         /* run state file name      */
    hist_fname = "webalizer.hist";             /* name of history file     */
    html_ext = "html";                         /* HTML file prefix         */
@@ -661,7 +660,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 188; empty slots: 
+                     // max key: 188; empty slots: 99 
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -768,7 +767,6 @@ void config_t::get_config(const char *fname)
                      {"HourlyGraph",	      9},		   // Hourly stats graph
                      {"HourlyStats",	      10},		   // Hourly stats table
                      {"HTMLBody",		      42},			// HTML body code
-                     {"HTMLCharset",	      99},			// HTML charset
                      {"HTMLCssPath",	      98},			// URL path to webalizer.css
                      {"HTMLEnd",		         43},			// HTML code at end
                      {"HTMLExtension",	      40},			// HTML filename extension
@@ -1026,7 +1024,6 @@ void config_t::get_config(const char *fname)
          case 96: http_port = atoi(value); break;
          case 97: https_port = atoi(value); break;
          case 98: save_path_opt(value, html_css_path); break;
-         case 99: html_charset = value; break;
          case 100: font_file_normal = value; break;
          case 101: font_file_bold = value; break;
          case 102: font_size_small = atof(value); break;

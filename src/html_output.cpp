@@ -111,7 +111,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    fprintf(out_fp,"\n<!-- *** Generated: %s *** -->\n\n", cur_time(config.local_time).c_str());
 
    fprintf(out_fp, "<html lang=\"%s\">\n<head>\n", config.lang.language_code);
-   fprintf(out_fp,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%s\">\n", config.html_charset.c_str());
+   fprintf(out_fp,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n");
    if(config.html_meta_noindex)
       fputs("<meta name=\"robots\" content=\"noindex,nofollow\">\n", out_fp);
    fprintf(out_fp,"<title>%s %s - %s</title>\n", config.rpt_title.c_str(), config.hname.c_str(), period);

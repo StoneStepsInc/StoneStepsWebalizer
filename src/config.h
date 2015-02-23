@@ -263,7 +263,6 @@ class config_t {
       string_t xsl_path;                         // XSL file path
 
       string_t apache_log_format;			       // is ApacheLogFormat valid?   
-      string_t html_charset;
       string_t font_file_normal;
       string_t font_file_bold;
 
