@@ -53,7 +53,7 @@ enum log_type_t {
 // 3. It is not clear what character set is used for user identification.
 //
 struct  log_struct  {
-      string_t   hostname;             // host name
+      string_t   hostname;             // client IP address (may be host name)
       string_t   method;               // HTTP method
       string_t   url;                  // requested URL path, without the query
       string_t   refer;                // referrer URL, without the query

@@ -867,7 +867,6 @@ database_t::database_t(const config_t& config) :
       search(&dbenv),
       users(&dbenv),
       errors(&dbenv),
-      dhosts(&dbenv),
       scodes(&dbenv),
       daily(&dbenv),
       hourly(&dbenv),
@@ -898,7 +897,6 @@ database_t::database_t(const config_t& config) :
    tables[index++] = &search;
    tables[index++] = &users;
    tables[index++] = &errors;
-   tables[index++] = &dhosts;
    tables[index++] = &scodes;
    tables[index++] = &daily;
    tables[index++] = &hourly;
@@ -1881,72 +1879,6 @@ bool database_t::put_sysnode(const sysnode_t& sysnode)
 bool database_t::get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const
 {
    return node_handler_t<sysnode_t>::get_node_by_id(system, buffer, sysnode, upcb, arg);
-}
-
-bool database_t::fix_v3_8_0_4(void)
-{
-   db_seq_t tnode_seq_id, anode_seq_id, hnode_seq_id, rnode_seq_id, snode_seq_id, inode_seq_id, max_seq_id;
-   int32_t delta;
-   
-   // get the IDs that were used incorrectly for tables outlined below
-   if((tnode_seq_id = dhosts.query_seq_id()) == -1)
-      return false;
-      
-   if((anode_seq_id = agents.query_seq_id()) == -1)
-      return false;
-      
-   if((hnode_seq_id = hosts.query_seq_id()) == -1)
-      return false;
-   
-   // grab the maximum ID value out of all three
-   max_seq_id = MAX(tnode_seq_id, MAX(anode_seq_id, hnode_seq_id));
-   
-   //
-   // referrer IDs were taken from tnodes in webalizer.cpp
-   // referrer IDs were taken from agents in preserve.cpp (old text state file)
-   //
-   if((rnode_seq_id = referrers.query_seq_id()) == -1)
-      return false;
-   
-   if((delta = (int32_t) (MAX(rnode_seq_id, max_seq_id) - rnode_seq_id)) > 0) {
-      if(referrers.get_seq_id(delta) == -1)
-         return false;
-   }
-   
-   //
-   // search string IDs were taken from agents
-   //
-   if((snode_seq_id = search.query_seq_id()) == -1)
-      return false;
-   
-   if((delta = (int32_t) (MAX(snode_seq_id, max_seq_id) - snode_seq_id)) > 0) {   
-      if(search.get_seq_id(delta) == -1)
-         return false;
-   }
-   
-   //
-   // user IDs were taken from agents
-   //
-   if((inode_seq_id = users.query_seq_id()) == -1)
-      return false;
-   
-   if((delta = (int32_t) (MAX(inode_seq_id, max_seq_id) - inode_seq_id)) > 0) {   
-      if(users.get_seq_id(delta) == -1)
-         return false;
-   }
-   
-   //
-   // agent IDs were taken from hosts
-   //
-   if((anode_seq_id = agents.query_seq_id()) == -1)
-      return false;
-   
-   if((delta = (int32_t) (MAX(anode_seq_id, max_seq_id) - anode_seq_id)) > 0) {   
-      if(agents.get_seq_id(delta) == -1)
-         return false;
-   }
-   
-   return true;
 }
 
 // -----------------------------------------------------------------------

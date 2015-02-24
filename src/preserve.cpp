@@ -794,16 +794,6 @@ int state_t::upgrade_database(void)
       return 0;
 
    //
-   // Some sequence IDs in v3.8.0.4 and before were drawn from the wrong 
-   // sequence tables. Adjust the affected sequences so we can start using
-   // them without running into duplicate IDs.
-   //
-   if(sysnode.appver_last <= VERSION_3_8_0_4) {
-      if(!database.fix_v3_8_0_4())
-         return 25;
-   }
-
-   //
    // Prior to v3.3.1.5, daily and hourly nodes lacked record version, but
    // stored correct record size, so it was not possible to determine the
    // version from the size (i.e. if 2 bytes short, bad version). Use the

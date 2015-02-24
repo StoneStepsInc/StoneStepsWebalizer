@@ -415,7 +415,6 @@ class database_t {
       table_t           search;
       table_t           users;
       table_t           errors;
-      table_t           dhosts;
       table_t           scodes;
       table_t           daily;
       table_t           hourly;
@@ -666,12 +665,6 @@ class database_t {
       bool put_sysnode(const sysnode_t& sysnode);
 
       bool get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const;
-      
-      //
-      //
-      //
-      bool fix_v3_8_0_4(void);
-
 };
 
 
