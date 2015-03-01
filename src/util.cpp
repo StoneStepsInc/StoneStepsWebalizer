@@ -953,7 +953,7 @@ size_t ucs2utf8(const wchar_t *cp, char *out, size_t bsize)
    while(*cp && bsize-(op-out) >= ucs2utf8size(*cp))
       op += ucs2utf8(*cp++, op);
    
-   // terminate the new string
+   // terminate the new string, but do not advance the pointer
    *op = 0;
    
    // return the size of the UTF-8 string, not including the null character
@@ -1030,6 +1030,41 @@ char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *
       if(!olen)
          return NULL;
    }
+
+   return out;
+}
+
+const string_t& toutf8(const string_t& str, string_t& out)
+{
+   extern const wchar_t CP1252_UCS2[];
+
+   char *omem;
+   size_t osize = 0, bsize = 0;
+
+   // return if the input string is empty or already contains only UTF-8 characters
+   if(str.isempty() || isutf8str(str)) {
+      out.reset();
+      return str;
+   }
+
+   // find out the size of the UTF-8 string
+   for(size_t i = 0; i < str.length(); i++)
+      osize += ucs2utf8size(CP1252_UCS2[(unsigned char) str[i]]);
+
+   omem = out.detach(&bsize);
+
+   // check if we can fit the new string in the old block, including the null character
+   if(bsize <= osize)
+      omem = (char*) realloc(omem, osize + 1);
+
+   // convert the input string to UTF-8
+   if(!cp1252utf8(str, omem, osize+1)) {
+      free(omem);
+      return out;
+   }
+
+   // attach the memory block to the output string
+   out.attach(omem, osize, true, osize+1);
 
    return out;
 }

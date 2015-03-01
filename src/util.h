@@ -95,9 +95,23 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 	return 3;
 }
 
+//
+// Returns the size of a UTF-8 character corresponding to the specified UCS-2
+// character.
+//
 inline size_t ucs2utf8size(wchar_t wchar)
 {
 	return (wchar <= 0x7F) ? 1 : (wchar <= 0x7FF) ? 2 : 3;
+}
+
+//
+// Converts char to unsigned char and checks if the argument is within the range
+// defined by the template arguments.
+//
+template <unsigned char lo, unsigned char hi>
+inline bool in_range(unsigned char ch) 
+{
+   return ch >= lo && ch <= hi;
 }
 
 //
@@ -123,55 +137,75 @@ inline size_t ucs2utf8size(wchar_t wchar)
 //
 inline size_t utf8size(const char *cp)
 {
-   #define CHKRNG(ch, lo, hi) ((ch) >= lo && (ch) <= hi)
-
    if(!cp)
       return 0;
 
    // 1-byte character (including zero terminator)
-   if(*cp <= '\x7F')
+   if(in_range<'\x00', '\x7F'>(*cp))
       return 1;
    
    // 2-byte sequences
-   if(CHKRNG(*cp, '\xC2', '\xDF'))
-      return CHKRNG(*(cp+1), '\x80', '\xBF') ? 2 : 0;
+   if(in_range<'\xC2', '\xDF'>(*cp))
+      return in_range<'\x80', '\xBF'>(*(cp+1)) ? 2 : 0;
    
    // 3-byte sequences
    if(*cp == '\xE0')
-      return CHKRNG(*(cp+1), '\xA0', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
+      return in_range<'\xA0', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
       
-   if(CHKRNG(*cp, '\xE1', '\xEC'))
-      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
+   if(in_range<'\xE1', '\xEC'>(*cp))
+      return in_range<'\x80', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
       
    if(*cp == '\xED')
-      return CHKRNG(*(cp+1), '\x80', '\x9F') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
+      return in_range<'\x80', '\x9F'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
       
-   if(CHKRNG(*cp, '\xEE', '\xEF'))
-      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') ? 3 : 0;
+   if(in_range<'\xEE', '\xEF'>(*cp))
+      return in_range<'\x80', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
 
    // 4-byte sequences
    if(*cp == '\xF0')
-      return CHKRNG(*(cp+1), '\x90', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
+      return in_range<'\x90', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) &&  in_range<'\x80', '\xBF'>(*(cp+3)) ? 4 : 0;
 
-   if(CHKRNG(*cp, '\xF1', '\xF3'))
-      return CHKRNG(*(cp+1), '\x80', '\xBF') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
+   if(in_range<'\xF1', '\xF3'>(*cp))
+      return in_range<'\x80', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) &&  in_range<'\x80', '\xBF'>(*(cp+3)) ? 4 : 0;
       
    if(*cp == '\xF4')
-      return CHKRNG(*(cp+1), '\x80', '\x8F') && CHKRNG(*(cp+2), '\x80', '\xBF') &&  CHKRNG(*(cp+3), '\x80', '\xBF') ? 4 : 0;
+      return in_range<'\x80', '\x8F'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) &&  in_range<'\x80', '\xBF'>(*(cp+3)) ? 4 : 0;
    
    return 0;
-   
-   #undef CHKRNG
 }
 
+//
+// Converts a UCS-2 string to a UTF-8 string. Returns the size of the result, in bytes,
+// not including the null character, if one was inserted. If slen was provided, all slen 
+// characters will be converted, whether they contain a null character or not. 
+//
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
 size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 
+//
+// Checks if str is a valid UTF-8 string
+//
 bool isutf8str(const char *str);
 bool isutf8str(const char *str, size_t slen);
 
+//
+// Checks if str is a valid UTF-8 string and if not, assumes str to be a Windows 
+// 1252 string and converts it to a UTF-8 string. Returns out if conversion was
+// successful or NULL otherwise.
+//
 char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen = NULL);
 char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *olen = NULL);
+
+//
+// Checks if str is a valid UTF-8 string and if not, converts it to UTF-8. Returns 
+// a reference to str and clears out in the former case and a reference to out 
+// otherwise
+// 
+// Current implementation assumes Windows 1252 character set for all non-UTF-8 
+// strings. Additinoal source character set identifier may be added in the future 
+// as a parameter. 
+//
+const string_t& toutf8(const string_t& str, string_t& out);
 
 //
 //
