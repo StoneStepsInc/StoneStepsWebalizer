@@ -393,7 +393,13 @@ string_base<char_t>& string_base<char_t>::use_string(char_t *str, size_t len, bo
    else if(bsize <= len)
       return *this;
 
+   // release current memoryy block
+   if(!holder && string != empty_string)
+      free(string);
+
+   // and attach the one supplied by the caller
    string = str;
+
    slen = len;
    bufsize = bsize;
    string[slen] = 0;

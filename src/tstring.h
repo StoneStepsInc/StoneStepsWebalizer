@@ -35,9 +35,9 @@ class string_base {
    private:
       char_t   *string;             // string
       size_t   slen     : 31;       // length
-      size_t            :  1;       // padding
+      size_t            :  1;
       size_t   bufsize  : 31;       // buffer size, in characters
-      size_t   holder   :  1;
+      size_t   holder   :  1;       // if true, does not own string memory
 
       static char_t empty_string[];
 
