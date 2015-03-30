@@ -166,8 +166,8 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    // DNS cache file is not littered with bad IP addresses.
    //
    if(accept_host_names && !is_ip4_address(hnode->string)) {
-      string_t ccode;
-      ccode.hold(hnode->ccode, 0, true, hnode_t::ccode_size+1);
+      string_t::char_buffer_t ccode_buffer(hnode->ccode, hnode_t::ccode_size+1, true);
+      string_t ccode(ccode_buffer, 0);
 
       hnode->name = hnode->string;
       dns_derive_ccode(hnode->name, ccode);
@@ -223,6 +223,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    int size = 0;
    struct hostent *res_ent;
    string_t ccode;
+   string_t::char_buffer_t ccode_buffer;
 
    if(!dnode)
       goto funcexit;
@@ -235,8 +236,9 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
 
 	dnode->tstamp = time(NULL);
 
-   // create an empty temporary string
-   ccode.hold(dnode->hnode.ccode, 0, true, hnode_t::ccode_size+1);
+   // create an empty temporary string (must be attached because of the goto's above)
+   ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
+   ccode.attach(ccode_buffer, 0);
 
    // try GeoIP first
    goodcc = geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
@@ -678,7 +680,6 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
    DBT key, recdata;
    time_t tstamp;
    dns_db_record *dnsrec;
-   string_t ccode;
 
 	/* ensure we have a dns db */
    if (!dns_db || !dnode) 
@@ -697,7 +698,8 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
 
    if (debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode.string.c_str());
 
-   ccode.hold(dnode->hnode.ccode, 0, true, hnode_t::ccode_size+1);
+   string_t::char_buffer_t ccode_buffer(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
+   string_t ccode(ccode_buffer, 0);
 
    switch((dberror = dns_db->get(dns_db, NULL, &key, &recdata, 0)))
    {

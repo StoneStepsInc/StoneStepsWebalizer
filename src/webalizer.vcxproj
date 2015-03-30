@@ -162,6 +162,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="char_buffer.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="cp1252_ucs2.cpp" />
     <ClCompile Include="database.cpp" />
@@ -251,6 +252,7 @@
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="char_buffer.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="dns_resolv.h" />

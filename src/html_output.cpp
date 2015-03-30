@@ -771,7 +771,6 @@ void html_output_t::top_hosts_table(int flag)
    uint32_t tot_num, ntop_num;
    const hnode_t *hptr;
    const char *cdesc;
-   string_t str;
    hnode_t *h_array;
 
    // return if nothing to process
@@ -954,7 +953,6 @@ int html_output_t::all_hosts_page(void)
    hnode_t  hnode;
    string_t site_fname;
    FILE     *out_fp;
-   string_t ccode;
 
    /* generate file name */
    site_fname.format("site_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
@@ -1600,7 +1598,6 @@ void html_output_t::top_dl_table(void)
    u_int i;
    const dlnode_t *nptr;
    const char *cdesc;
-   string_t str;
    dlnode_t *dl_array;
 
    if((a_ctr = state.totals.t_downloads) == 0)
@@ -1721,7 +1718,6 @@ int html_output_t::all_downloads_page(void)
    FILE     *out_fp;
    string_t dl_fname;
    const char *cdesc;
-   string_t str;
    dlnode_t dlnode;
 
    if(state.totals.t_downloads == 0)
@@ -2645,7 +2641,6 @@ void html_output_t::top_ctry_table()
    const char *pie_legend[10];
    string_t pie_title;
    string_t pie_fname, pie_fname_lang;
-   string_t ccode;
    const ccnode_t **ccarray;
    const ccnode_t *tptr;
 

@@ -41,19 +41,18 @@ static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 //
 const size_t bmh_delta_table::table_size = 1 << sizeof(u_char) * 8;
 
-void bmh_delta_table::reset(const char *str, size_t slen)
+void bmh_delta_table::reset(const string_t& str)
 {
-   size_t index;
+   size_t index, slen;
 
    if(deltas)
       delete [] deltas;
    deltas = NULL;
 
-   if(str == NULL || *str == 0)
+   if(str.isempty())
       return;
 
-   if(slen == 0)
-      slen = strlen(str);
+   slen = str.length();
 
    deltas = new size_t[table_size];
 
@@ -362,8 +361,8 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
 
 string_t& url_decode(const string_t& str, string_t& out)
 {
-   size_t bsize, olen;
-   char *optr;
+   size_t olen;
+   string_t::char_buffer_t optr;
    
    out.reset();
    
@@ -372,13 +371,13 @@ string_t& url_decode(const string_t& str, string_t& out)
       out.reserve(str.length());
       
       // and detach the block
-      optr = out.detach(&bsize);
+      optr = out.detach();
       
-      // decode the string
+      // decode the string in place 
       url_decode(str, optr, &olen);
       
       // and attach it back
-      out.attach(optr, olen, false, bsize);
+      out.attach(optr, olen);
    }
    
    return out;
@@ -1038,7 +1037,6 @@ const string_t& toutf8(const string_t& str, string_t& out)
 {
    extern const wchar_t CP1252_UCS2[];
 
-   char *omem;
    size_t osize = 0, bsize = 0;
 
    // return if the input string is empty or already contains only UTF-8 characters
@@ -1051,20 +1049,18 @@ const string_t& toutf8(const string_t& str, string_t& out)
    for(size_t i = 0; i < str.length(); i++)
       osize += ucs2utf8size(CP1252_UCS2[(unsigned char) str[i]]);
 
-   omem = out.detach(&bsize);
+   string_t::char_buffer_t omem = out.detach();
 
    // check if we can fit the new string in the old block, including the null character
-   if(bsize <= osize)
-      omem = (char*) realloc(omem, osize + 1);
+   if(omem.capacity() <= osize)
+      omem.resize(osize + 1);
 
    // convert the input string to UTF-8
-   if(!cp1252utf8(str, omem, osize+1)) {
-      free(omem);
+   if(!cp1252utf8(str, omem, omem.capacity()))
       return out;
-   }
 
    // attach the memory block to the output string
-   out.attach(omem, osize, true, osize+1);
+   out.attach(omem, osize);
 
    return out;
 }

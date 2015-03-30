@@ -400,9 +400,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 {
    ccnode_t *ccptr;
 	const string_t *group;
-   const char *cp1;
    const string_t *hostname;
-   string_t str;
    bool newhgrp = false;
    uint64_t vlen = (uint64_t) vnode.end.elapsed(vnode.start);
 
@@ -427,12 +425,12 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 		/* Domain Grouping */
 		if (config.group_domains)
 		{
-			cp1 = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
-			if (cp1 != NULL) {
-				if(!put_hnode(str.hold((char*)cp1), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
+			const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
+			if (domain) {
+				if(!put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
 					if (verbose)
 						/* Error adding Site node, skipping ... */
-						fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, cp1);
+						fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, domain);
 				}
 			}
 		}
@@ -639,7 +637,8 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    
    ua_token_t token;
    const char *delims = str_delims;             // active delimiters
-   char *ua, *cp1, *cp2, *ua2 = NULL;
+   char *cp1, *cp2;
+   string_t::char_buffer_t ua;
    size_t ualen, arglen, t_arglen = 0;
    const string_t *str;
    bool skiptok = false;
@@ -662,7 +661,9 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    ualen = agent.length();
    
    // detach the string so we can manipulate it directly   
-   ua = cp1 = cp2 = agent.detach();
+   ua = agent.detach();
+
+   cp1 = cp2 = ua.get_buffer();
 
    token.reset(cp1, strtok);
 
@@ -785,12 +786,10 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
 
       // allocate a new memory block only if the new string is greater
       if(t_arglen > ualen)
-         ua2 = (char*) malloc(t_arglen+1);
-      else
-         ua2 = ua;
+         ua.resize(t_arglen+1);
       
       // form a new user agent string
-      cp1 = ua2;
+      cp1 = ua;
       for(size_t i = 0; i < ua_args.size(); i++) {
          if(i) {
             for(size_t j = 0; j < sizeof(o_arg); j++) 
@@ -822,12 +821,8 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    ua_args.clear();
    ua_groups.clear();
    
-   // and delete the old string if it's not reused
-   if(ua2 != ua)
-      free(ua);
-      
-   if(ua2)
-      agent.attach(ua2);                        // attach the new string
+   if(ua)
+      agent.attach(ua, cp1-ua.get_buffer());    // attach the new string
    else
       agent.reset();                            // reset to an empty agent string
 }
@@ -995,7 +990,6 @@ int webalizer_t::proc_logfile(void)
    bool pageurl, fileurl, httperr, robot, target, spammer, goodurl, entryurl, exiturl;
    size_t reclen;
    const string_t *sptr, empty, *ragent;
-   string_t str;
    uint64_t stime;
    bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
@@ -1672,11 +1666,11 @@ int webalizer_t::proc_logfile(void)
 
          // URL domain grouping
          if(config.group_url_domains && (cp1 = get_url_domain(log_rec.url, buffer, BUFSIZE)) != NULL) {
-            cp1 = (char*) get_domain(cp1, config.group_url_domains);
-            if(!put_unode(str.hold(cp1), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
+            const char *domain = get_domain(cp1, config.group_url_domains);
+            if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
                if (verbose)
                   /* Error adding URL node, skipping ... */
-                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, str.c_str());
+                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, domain);
             }
          }
 
@@ -1850,8 +1844,8 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 void webalizer_t::filter_srchargs(string_t& srchargs)
 {
    arginfo_t arginfo;
-   char *cptr, *sa;
-   size_t sacap = srchargs.capacity();
+   char *cptr;
+   string_t::char_buffer_t sa;
 
    if(srchargs.isempty())
       return; 
@@ -1867,7 +1861,8 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    }
 
    // detach the storage, so we can manipulate the characters directly
-   sa = cptr = srchargs.detach();
+   sa = srchargs.detach();
+   cptr = sa.get_buffer();
 
    // walk search arguments and create descriptors for those that aren't filtered out
    while (*cptr) {
@@ -1897,7 +1892,6 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 
    // if none remaining, return
    if(!sr_args.size()) {
-      free(sa);
       srchargs.reset();
       return;
    }
@@ -1919,7 +1913,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    sa[cptr-buffer] = 0;
 
    // attach the memory block to the string
-   srchargs.attach(sa, cptr-buffer, false, sacap+1);
+   srchargs.attach(sa, cptr-buffer);
 
    sr_args.clear();
 }

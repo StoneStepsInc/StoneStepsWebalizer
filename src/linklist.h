@@ -143,12 +143,13 @@ struct base_list_node_t : public list_node_t<node_t> {
       void init_delta_table(void)
       {
          if(!string.isempty() && string[0] != '*' && string[string.length()-1] != '*')
-            delta_table.reset(string, string.length());
+            delta_table.reset(string);
       }
 
    public:
       base_list_node_t(void) {}
-      base_list_node_t(const char *str, size_t slen = 0) {string.assign(str, slen, true); init_delta_table();}
+      base_list_node_t(const char *str) {string.assign(str); init_delta_table();}
+      base_list_node_t(const char *str, size_t slen) {string.assign(str, slen); init_delta_table();}
       base_list_node_t(const string_t& str) {string = str; init_delta_table();}
 
       virtual ~base_list_node_t(void) {}

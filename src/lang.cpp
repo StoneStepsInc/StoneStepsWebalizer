@@ -1156,7 +1156,7 @@ void lang_t::proc_lang_file(const char *fname)
 
 		*cptr++ = 0;
 
-		if((lnode = ln_htab.find_lang_var(str.hold((char*) name, cptr-name-1))) == NULL) {
+		if((lnode = ln_htab.find_lang_var(str.assign((const char*) name, cptr-name-1))) == NULL) {
 			while(!iseolchar(*cptr++));
          if(verbose)
 			   fprintf(stderr, "Unknown language variable (%s)\n", name);

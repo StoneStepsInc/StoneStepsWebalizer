@@ -47,11 +47,11 @@ class bmh_delta_table {
    public:
       bmh_delta_table(void) {deltas = NULL;}
 
-      bmh_delta_table(const char *str, size_t slen = 0) : deltas(NULL) {reset(str, slen);}
+      bmh_delta_table(const string_t& str) : deltas(NULL) {reset(str);}
 
       ~bmh_delta_table(void) {if(deltas) delete [] deltas;}
 
-      void reset(const char *str, size_t slen = 0);
+      void reset(const string_t& str);
 
       bool isvalid(void) const {return !(deltas == NULL);}
 

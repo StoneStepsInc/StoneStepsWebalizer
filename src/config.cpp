@@ -1216,7 +1216,7 @@ bool config_t::ispage(const string_t& url) const
 
    cp2++;
 
-   return page_type.isinlist(string_t().hold(const_cast<char*>(cp2), cp3-cp2, true, cp3-cp2+1)) != NULL;
+   return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != NULL;
 }
 
 u_int config_t::get_url_type(u_short port, u_int urltype) const
@@ -1457,7 +1457,7 @@ void config_t::read_help_xml(const char *fname)
 {
 	long fsize;
    FILE *file = NULL;
-   char *buffer = NULL;
+   string_t::char_buffer_t buffer;
    size_t cnt1 = 0, cnt2;
 
    // check if it's a bad name
@@ -1477,7 +1477,7 @@ void config_t::read_help_xml(const char *fname)
       goto errexit;
       
    // allocate a block to hold the entire file and a zero terminator
-	if((buffer = (char*) malloc(fsize+1)) == NULL)
+	if((buffer.resize(fsize+1)) == NULL)
       goto errexit;
 
    // read first three characters
@@ -1496,7 +1496,7 @@ void config_t::read_help_xml(const char *fname)
 
    // truncate the buffer if it's too large (e.g. \r\n translation on Windows)
    if((long) (cnt1+cnt2) < fsize)
-      buffer = (char*) realloc(buffer, cnt1+cnt2+1);
+      buffer.resize(cnt1+cnt2+1);
 
    // terminate the string and attach to help_xml
 	buffer[cnt1+cnt2] = 0;

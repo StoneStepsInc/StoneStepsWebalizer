@@ -849,7 +849,6 @@ void xml_output_t::write_top_downloads(void)
    u_int i;
    dlnode_t *nptr;
    const char *cdesc;
-   string_t str;
    dlnode_t *dl_array;
 
    if((a_ctr = state.totals.t_downloads) == 0)
@@ -1027,7 +1026,6 @@ void xml_output_t::write_top_hosts(bool s_xfer)
    uint32_t top_num, ntop_num;
    hnode_t *hptr;
    const char *cdesc;
-   string_t str;
    hnode_t *h_array;
    uint64_t max_hosts = s_xfer ? config.max_hosts_kb : config.max_hosts;
    
@@ -1765,7 +1763,6 @@ void xml_output_t::write_top_countries(void)
    uint64_t i,j;
    uint64_t t_hit, t_file, t_page, t_visits, t_ohit, t_ofile, t_ovisits;
    uint64_t t_xfer, t_oxfer;
-   string_t ccode;
    string_t pie_title;
    string_t pie_fname;
    const ccnode_t **ccarray;

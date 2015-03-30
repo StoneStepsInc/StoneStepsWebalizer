@@ -75,7 +75,8 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	hashtab_nodes.cpp config.cpp serialize.cpp \
 	html_output.cpp xml_output.cpp dump_output.cpp \
-	database.cpp logfile.cpp encoder.cpp cp1252_ucs2.cpp
+	database.cpp logfile.cpp encoder.cpp cp1252_ucs2.cpp \
+	char_buffer.cpp
 
 # list all libraries we use
 LIBS     := stdc++ dl pthread db_cxx gd z maxminddb

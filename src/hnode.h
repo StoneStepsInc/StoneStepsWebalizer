@@ -107,7 +107,7 @@ struct hnode_t : public base_node<hnode_t> {
 
          void set_ccode(const char ccode[]);
 
-         const string_t get_ccode(void) const {return string_t().hold(const_cast<char*>(ccode), ccode_size, true, ccode_size+1);}
+         string_t get_ccode(void) const {return string_t::hold(ccode);}
 
          void reset_ccode(void);
 

@@ -52,13 +52,12 @@ const void *deserialize(const void *ptr, string_t& value)
 {
    size_t slen;
    const void *cp;
-   char *sp;
 
    // call explicit specialization because size_t is unsigned int on Win32
    cp = deserialize<u_int, size_t>(ptr, slen);
 
    if(slen) {
-      sp = new char[slen+1];
+      string_t::char_buffer_t sp(slen+1);
       memcpy(sp, cp, slen);
       sp[slen] = 0;
       value.attach(sp, slen);

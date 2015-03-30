@@ -15,31 +15,69 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "char_buffer.h"
+
 #ifdef _WIN32
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define vsnwprintf _vsnwprintf
-#define wcsncasecmp _wcsnicmp
-#define wcscasecmp _wcsicmp
-#else
-#define vsnwprintf vswprintf
 #endif
 
 //
 // string_base
 //
+// 1. string_base may be used to manage three kinds of strings:
+//
+//    * dynamically allocated modifiable strings (holder == false)
+//    * modifiable strings within a fixed-size buffer (holder == true && bufsize > 0)
+//    * read-only strings (holder == true && bufsize == 0)
+//
+// 2. A read-only string cannot be modified in any way and cannot be repurposed as a
+// modifiable string. Use string_t::hold to wrap string literals in a string_t class:
+//
+//    const string_t& str = string_t::hold("ABC", 3);
+//
+// Note that if a non-const instance of string_t is constructed instead in the example
+// above, calling non-const methods of this instance will throw an exception.
+//
+// Read-only strings may be moved between string_t instances via the move constructor 
+// or the move assignment operator.
+//
+// 3. Constructors that take just a reference to char_buffer_t initialize a zero-length
+// string with the specified buffer. If these constructors are not explicitly declared, 
+// this code will construct a string with random characters:
+//
+//    char_buffer_t char_buffer(100);
+//    string_t str(char_buffer);
+//
+// , because it will be interpreted as:
+//
+//    char_buffer_t char_buffer(100);
+//    string_t str(char_buffer.operator char*());
+//
 template <typename char_t>
 class string_base {
+   public:
+      typedef char_t char_type;
+
+      // char_buffer_base with a matching character type
+      typedef char_buffer_base<char_t> char_buffer_t;
+
+      // fixed_char_buffer_t with a matching character type
+      template <size_t BUFSIZE> using fixed_char_buffer_t = ::fixed_char_buffer_t<char_t, BUFSIZE>;
+
    private:
       char_t   *string;             // string
       size_t   slen     : 31;       // length
       size_t            :  1;
-      size_t   bufsize  : 31;       // buffer size, in characters
+      size_t   bufsize  : 31;       // buffer size, in characters, including the null character
       size_t   holder   :  1;       // if true, does not own string memory
 
       static char_t empty_string[];
+
+      static const char_t ex_readonly_string[];
+      static const char_t ex_bad_char_buffer[];
+      static const char_t ex_bad_hold_string[];
 
    private:
       void init(void);
@@ -48,18 +86,24 @@ class string_base {
 
       bool realloc_buffer(size_t len);
 
-      string_base& use_string(char_t *str, size_t len, bool cstr, size_t bsize, bool hold);
-
-      static size_t c2b(size_t len) {return len << (sizeof(char_t)-1);}
-
    public:
       static const size_t npos;
 
    public:
-      string_base(void) {init();};
+      string_base(void) {init();}
+
       string_base(const string_base& str) {init(); assign(str);}
-      explicit string_base(const char_t *str) {init(); assign(str, 0, true);}
-      explicit string_base(const char_t *str, size_t len, bool cstr = false) {init(); assign(str, len, cstr);}
+      string_base(string_base&& str);
+
+      explicit string_base(const char_t *str);
+      string_base(const char_t *str, size_t len) {init(); assign(str, len);}
+
+      // see #3 above
+      explicit string_base(char_buffer_t& char_buffer) {init(); attach(char_buffer, 0, false);}
+      explicit string_base(char_buffer_t&& char_buffer) {init(); attach(char_buffer, 0, false);}
+
+      string_base(char_buffer_t& char_buffer, size_t len, bool readonly) {init(); attach(char_buffer, len, readonly);}
+      string_base(char_buffer_t&& char_buffer, size_t len, bool readonly) {init(); attach(char_buffer, len, readonly);}
 
       ~string_base(void);
 
@@ -79,17 +123,18 @@ class string_base {
       bool isempty(void) const {return slen == 0;}
 
       string_base& operator = (const string_base& str) {return assign(str.string, str.slen);}
+      string_base& operator = (string_base&& str);
       string_base& operator = (const char_t *str) {return assign(str);}
       string_base& operator = (char_t chr) {return assign(&chr, 1);}
 
       string_base& assign(const string_base& str) {return assign(str.string, str.slen);}
-      string_base& assign(const char_t *str) {reset(); return append(str, 0, true);}
-      string_base& assign(const char_t *str, size_t len, bool cstr = false) {reset(); return append(str, len, cstr);}
+      string_base& assign(const char_t *str);
+      string_base& assign(const char_t *str, size_t len) {reset(); return append(str, len);}
 
       string_base& append(const string_base& str) {return append(str.string, str.slen);}
-      string_base& append(const char_t *str) {return append(str, 0, true);}
+      string_base& append(const char_t *str);
       string_base& append(char_t chr) {return append(&chr, 1);}
-      string_base& append(const char_t *str, size_t len, bool cstr = false);
+      string_base& append(const char_t *str, size_t len);
 
       int compare(const char_t *str, size_t count) const;
       int compare(const char_t *str) const;
@@ -122,7 +167,7 @@ class string_base {
 
       string_base& truncate(size_t at);
 
-      size_t find(char_t chr, size_t start = 0);
+      size_t find(char_t chr, size_t start = 0) const;
       size_t r_find(char_t chr) const;
 
       string_base& format(const char_t *fmt, ...);
@@ -131,13 +176,12 @@ class string_base {
       static string_base _format(const char_t *fmt, ...);
       static string_base _format_va(const char_t *fmt, va_list valist);
 
-      char_t *detach(size_t *bsize = NULL);
+      char_buffer_t detach(void);
 
-      string_base& attach(char_t *str) {return attach(str, 0, true, 0);}
-      string_base& attach(char_t *str, size_t len, bool cstr = false, size_t bsize = 0) {return use_string(str, len, cstr, bsize, false);}
+      string_base& attach(char_buffer_t& str, size_t len, bool readonly = false);
 
-      string_base& hold(char_t *str) {return hold(str, 0, true, 0);}
-      string_base& hold(char_t *str, size_t len, bool cstr = false, size_t bsize = 0) {return use_string(str, len, cstr, bsize, true);}
+      static string_base<char_t> hold(const char_t *str);
+      static string_base<char_t> hold(const char_t *str, size_t len);
 };
 
 //
@@ -145,6 +189,4 @@ class string_base {
 //
 typedef string_base<char> string_t;
 
-
 #endif // __TSTRING_H
-

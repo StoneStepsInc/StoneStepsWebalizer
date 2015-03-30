@@ -10,6 +10,7 @@
 #include "pch.h"
 
 #include "tstring.h"
+#include "exception.h"
 
 #include <memory.h>
 #include <stdio.h>
@@ -18,6 +19,18 @@
 #include <stdlib.h>
 #include <wchar.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define vsnwprintf _vsnwprintf
+#define wcsncasecmp _wcsnicmp
+#define wcscasecmp _wcsicmp
+#else
+#define vsnwprintf vswprintf
+#endif
 
 //
 // A set of overloaded functions, so we can use the same name for equivalent 
@@ -50,14 +63,46 @@ inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wc
 template<typename char_t> char_t string_base<char_t>::empty_string[] = {0};
 template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 
+template<typename char_t> const char_t string_base<char_t>::ex_readonly_string[] = "Cannot change a read-only string";
+template<typename char_t> const char_t string_base<char_t>::ex_bad_char_buffer[] = "Bad character buffer";
+template<typename char_t> const char_t string_base<char_t>::ex_bad_hold_string[] = "Bad string to hold";
+
 //
 //
 //
 template <typename char_t>
+string_base<char_t>::string_base(const char_t *str) 
+{
+   init();
+   
+   if(str && *str) 
+      assign(str, strlen_(str));
+}
+
+template <typename char_t>
+string_base<char_t>::string_base(string_base&& other) : string(other.string), slen(other.slen), bufsize(other.bufsize), holder(other.holder)
+{
+   other.init();
+}
+
+template <typename char_t>
 string_base<char_t>::~string_base(void) 
 {
    if(string && !holder && string != empty_string)
-      free(string);
+      char_buffer_t::free(string);
+}
+
+template <typename char_t>
+string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
+{
+   string = other.string;
+   slen = other.slen;
+   bufsize = other.bufsize;
+   holder = other.holder;
+
+   other.init();
+
+   return *this;
 }
 
 template <typename char_t>
@@ -65,14 +110,16 @@ void string_base<char_t>::make_bad_string(void)
 {
    if(string != empty_string && bufsize > 1) {
       slen = bufsize - 1;
-      memset(string, '#', c2b(slen));
+      memset(string, '#', char_buffer_t::memsize(slen));
       string[slen] = 0;
    }
 }
 
 //
-// This method is called from a constuructor and must not evaluate data 
-// members in any way (i.e. nothing is initilized at this point).
+// This method must not evaluate data members in any way because data may be not 
+// initialized if it's called from a constructor or we may need to reset original 
+// data members when moving objects in the move constructor or move assignment 
+// operator.
 //
 template <typename char_t>
 void string_base<char_t>::init(void)
@@ -85,9 +132,12 @@ void string_base<char_t>::init(void)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::clear(void)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(string) {
       if(!holder && string != empty_string)
-         free(string);
+         char_buffer_t::free(string);
       string = empty_string;
       bufsize = slen = 0;
    }
@@ -97,6 +147,9 @@ string_base<char_t>& string_base<char_t>::clear(void)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::reset(void)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(string != empty_string) 
       *string = 0;
    slen = 0;
@@ -106,29 +159,61 @@ string_base<char_t>& string_base<char_t>::reset(void)
 template <typename char_t>
 void string_base<char_t>::reserve(size_t len)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(holder)
       clear();
    realloc_buffer(len);
 }
 
 template <typename char_t>
+string_base<char_t>& string_base<char_t>::assign(const char_t *str) 
+{
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   reset();
+
+   if(str && *str)
+      return append(str, strlen_(str));
+
+   return *this;
+}
+
+template <typename char_t>
+string_base<char_t>& string_base<char_t>::append(const char_t *str) 
+{
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   if(str && *str)
+      return append(str, strlen_(str));
+
+   return *this;
+}
+
+template <typename char_t>
 bool string_base<char_t>::realloc_buffer(size_t len)
 {
-   // if we have enough storage, we are done
-   if(bufsize > len)
-      return true;
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
 
    // fail if we don't own the storage
    if(holder)
       return false;
 
+   // if we have enough storage, we are done
+   if(bufsize > len)
+      return true;
+
    // allocate storage in multiples of four, plus one for the zero terminator
    bufsize = (((len >> 2) + 1) << 2) + 1;
 
    if(string != empty_string)
-      string = (char_t*) realloc(string, c2b(bufsize));
+      string = char_buffer_t::alloc(string, bufsize);
    else {
-      string = (char_t*) malloc(c2b(bufsize));
+      string = char_buffer_t::alloc(bufsize);
       *string = 0;
    }
 
@@ -136,17 +221,17 @@ bool string_base<char_t>::realloc_buffer(size_t len)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len, bool cstr)
+string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len)
 {
-   if(str == NULL || *str == 0)
+   // can't append to a read-only string 
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   // check if there's anything to append
+   if(!str || !*str || !len)
       return *this;
 
-   if(len == 0) {
-      if(!cstr)
-         return *this;
-      len = strlen_(str);
-   }
-
+   // bufsize must be greater than slen at this point
    if(bufsize - slen <= len) {
       if(!realloc_buffer(slen+len)) {
          make_bad_string();
@@ -154,7 +239,7 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len, 
       }
    }
    
-   memcpy(&string[slen], str, c2b(len));
+   memcpy(&string[slen], str, char_buffer_t::memsize(len));
    slen += len;
    string[slen] = 0;
 
@@ -190,6 +275,9 @@ string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t end)
 {
    char_t *cp1, *cp2;
 
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(end == 0 || end >= slen)
       end = slen-1;
 
@@ -207,6 +295,9 @@ string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t end)
 {
    char_t *cp1, *cp2;
 
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(end == 0 || end >= slen)
       end = slen-1;
 
@@ -222,6 +313,9 @@ string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t end)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::replace(char_t from, char_t to)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    char_t *cptr = string;
    while(*cptr) {
       if(*cptr == from)
@@ -234,6 +328,9 @@ string_base<char_t>& string_base<char_t>::replace(char_t from, char_t to)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::truncate(size_t at)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(at < slen) {
       slen = at;
       string[slen] = 0;
@@ -242,7 +339,7 @@ string_base<char_t>& string_base<char_t>::truncate(size_t at)
 }
 
 template <typename char_t>
-size_t string_base<char_t>::find(char_t chr, size_t start)
+size_t string_base<char_t>::find(char_t chr, size_t start) const
 {
    const char_t *cptr;
 
@@ -262,6 +359,9 @@ size_t string_base<char_t>::r_find(char_t chr) const
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::format(const char_t *fmt, ...)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    va_list valist;
    va_start(valist, fmt);
    format_va(fmt, valist);
@@ -272,6 +372,10 @@ string_base<char_t>& string_base<char_t>::format(const char_t *fmt, ...)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list valist)
 {
+   // can't format a read-only string
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
    if(!fmt) {
       reset();
       return *this;
@@ -360,52 +464,92 @@ string_base<char_t> string_base<char_t>::_format_va(const char_t *fmt, va_list v
 }
 
 template <typename char_t>
-char_t *string_base<char_t>::detach(size_t *bsize)
+typename string_base<char_t>::char_buffer_t string_base<char_t>::detach(void)
 {
-   char_t *str = NULL;
+   char_buffer_t string_buffer;
 
-   if(string != empty_string) {
-      str = string;
-      if(bsize)
-         *bsize = bufsize;
-      init();
-   }
-   return str;
+   // cannot detach a read-only string
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   if(string != empty_string)
+      string_buffer.attach(string, bufsize, holder);
+
+   init();
+
+   return string_buffer;
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::use_string(char_t *str, size_t len, bool cstr, size_t bsize, bool hold)
+string_base<char_t>& string_base<char_t>::attach(char_buffer_t& char_buffer, size_t len, bool readonly)
 {
-   clear();
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
 
-   if(!str)
-      return *this;
+   // cannot attach a NULL pointer
+   if(!char_buffer)
+      throw exception_t(0, ex_bad_char_buffer);
 
-   // if len is zero and str is a zero-terminated string, get the length
-   if(!len && cstr) {
-      if(*str)
-         len = strlen_(str);
+   // check if the buffer is large enough to hold len plus the null character
+   if(len >= char_buffer.capacity())
+      throw exception_t(0, ex_bad_char_buffer);
+
+   // read-only strings must be terminated
+   if(readonly && char_buffer[len])
+      throw exception_t(0, ex_bad_char_buffer);
+
+   // release current memory block
+   if(!holder && string != empty_string)
+      char_buffer_t::free(string);
+
+   // configure the instance before the buffer is detached
+   if(!readonly) {
+      bufsize = char_buffer.capacity();
+      holder = char_buffer.isholder();
+   }
+   else {
+      bufsize = 0;
+      holder = true;
    }
 
-   // make sure the buffer is large enough to hold the string
-   if(!bsize)
-      bsize = len+1;
-   else if(bsize <= len)
-      return *this;
+   // and attach the buffer supplied by the caller
+   string = char_buffer.detach(NULL, NULL);
 
-   // release current memoryy block
-   if(!holder && string != empty_string)
-      free(string);
-
-   // and attach the one supplied by the caller
-   string = str;
-
+   // set the string length
    slen = len;
-   bufsize = bsize;
-   string[slen] = 0;
-   holder = hold;
+
+   // and make sure modifiable strings are terminated
+   if(!readonly && string[slen])
+      string[slen] = 0;
 
    return *this;
+}
+
+template <typename char_t>
+string_base<char_t> string_base<char_t>::hold(const char_t *str) 
+{
+   return string_t::hold(str, str && *str ? strlen_(str) : 0);
+}
+
+template <typename char_t>
+string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len) 
+{
+   // cannot hold a NULL pointer
+   if(!str)
+      throw exception_t(0, ex_bad_hold_string);
+
+   // str may be in read-only memory, make sure it's terminated
+   if(str[len])
+      throw exception_t(0, ex_bad_hold_string);
+
+   //
+   // Cast away the constness of str so we can create a temporary holder buffer
+   // and initialize a read-only string.
+   //
+   char_buffer_base<char_t> char_buffer(const_cast<char_t*>(str), len+1, true);
+
+   // create and return a read-only string (see note #2 in the class definition)
+   return string_base<char_t>(char_buffer, len, true);
 }
 
 //

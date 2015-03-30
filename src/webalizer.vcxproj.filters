@@ -227,6 +227,9 @@
     <ClCompile Include="cp1252_ucs2.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="char_buffer.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -371,6 +374,9 @@
       <Filter>Header Files\platform</Filter>
     </ClInclude>
     <ClInclude Include="encoder.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="char_buffer.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="exception.h">
@@ -518,53 +524,53 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\common\gd\windows\Debug\gd2.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="..\..\common\db\build_windows\Win32\Debug\libdb60d.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\gd\windows\Release\gd2.lib">
-      <Filter>Libraries\Release</Filter>
+    <Library Include="..\..\common\db\build_windows\Win32\Release\libdb60.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\db\build_windows\Win32\Debug\libdb60d.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="..\..\common\db\build_windows\x64\Debug\libdb60d.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\db\build_windows\Win32\Release\libdb60.lib">
-      <Filter>Libraries\Release</Filter>
+    <Library Include="..\..\common\db\build_windows\x64\Release\libdb60.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
-      <Filter>Libraries\Release</Filter>
+    <Library Include="..\..\common\gd\windows\Debug64\gd2.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="..\..\common\gd\windows\Debug\gd2.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\GeoIP\projects\VS12\Release\libmaxminddb.lib">
-      <Filter>Libraries\Release</Filter>
+    <Library Include="..\..\common\gd\windows\Release64\gd2.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\GeoIP\projects\VS12\Debug\libmaxminddbd.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="..\..\common\gd\windows\Release\gd2.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\gd\windows\Debug64\gd2.lib">
-      <Filter>Libraries\Debug64</Filter>
+    <Library Include="..\..\common\GeoIP\projects\VS12\Debug\libmaxminddbd.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\gd\windows\Release64\gd2.lib">
-      <Filter>Libraries\Release64</Filter>
+    <Library Include="..\..\common\GeoIP\projects\VS12\Release\libmaxminddb.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
-      <Filter>Libraries\Debug64</Filter>
+    <Library Include="..\..\common\GeoIP\projects\VS12\x64\Debug\libmaxminddbd.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
-      <Filter>Libraries\Release64</Filter>
+    <Library Include="..\..\common\GeoIP\projects\VS12\x64\Release\libmaxminddb.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\GeoIP\projects\VS12\x64\Debug\libmaxminddbd.lib">
-      <Filter>Libraries\Debug64</Filter>
+    <Library Include="..\..\common\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\GeoIP\projects\VS12\x64\Release\libmaxminddb.lib">
-      <Filter>Libraries\Release64</Filter>
+    <Library Include="..\..\common\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\db\build_windows\x64\Debug\libdb60d.lib">
-      <Filter>Libraries\Debug64</Filter>
+    <Library Include="..\..\common\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="..\common\db\build_windows\x64\Release\libdb60.lib">
-      <Filter>Libraries\Release64</Filter>
+    <Library Include="..\..\common\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
+      <Filter>Libraries</Filter>
     </Library>
   </ItemGroup>
 </Project>

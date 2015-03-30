@@ -102,7 +102,6 @@ void dump_output_t::dump_all_hosts()
    hnode_t hnode;
    FILE     *out_fp;
    char     filename[256];
-   string_t ccode;
 
    /* generate file name */
    sprintf(filename,"%s/site_%04d%02d.%s",
@@ -225,7 +224,6 @@ void dump_output_t::dump_all_downloads(void)
    FILE     *out_fp;
    char     filename[256];
    const char *cdesc;
-   string_t str;
 
    /* generate file name */
    sprintf(filename,"%s/dl_%04d%02d.%s",
