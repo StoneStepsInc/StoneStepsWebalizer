@@ -31,7 +31,7 @@ void sc_hash_table::add_status_code(u_int code)
       return;
 
    // and in the ascending order
-   if(stcodes.size() && code <= stcodes[stcodes.size()-1].get_ccode())
+   if(stcodes.size() && code <= stcodes[stcodes.size()-1].get_scode())
       return;
 
    // if first in its class, update the index
@@ -52,11 +52,11 @@ scnode_t& sc_hash_table::get_status_code(u_int code)
 
    // start with the first code in its class
    for(index = clsindex[cls]; index < stcodes.size(); index++) {
-      if(stcodes[index].get_ccode() == code)
+      if(stcodes[index].get_scode() == code)
          return stcodes[index];
 
       // codes are sorted, break
-      if(code < stcodes[index].get_ccode())
+      if(code < stcodes[index].get_scode())
          break;
    }
 

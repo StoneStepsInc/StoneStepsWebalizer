@@ -400,7 +400,7 @@ void xml_output_t::write_monthly_totals(void)
    /* response code totals */
    for (i=0; i < state.response.size(); i++) {
       if (state.response[i].count != 0)
-         fprintf(out_fp,"<data title=\"%s\" code=\"%d\"><sum>%" PRIu64 "</sum></data>\n", xml_encode(config.lang.get_resp_code(state.response[i].get_ccode()).desc), state.response[i].get_ccode(), state.response[i].count);
+         fprintf(out_fp,"<data title=\"%s\" code=\"%d\"><sum>%" PRIu64 "</sum></data>\n", xml_encode(config.lang.get_resp_code(state.response[i].get_scode()).desc), state.response[i].get_scode(), state.response[i].count);
    }
 
    fputs("</section>\n", out_fp);

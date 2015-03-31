@@ -20,11 +20,6 @@
 // HTTP status code node
 //
 // -----------------------------------------------------------------------
-// 1. IMPORTANT: code is a reference to keynode_t<u_int>::nodeid. If 
-// node's memory is reallocated, this reference will point to an invalid
-// memory block (old nodeid's location). Make sure to use proper copy 
-// operations to maintain scnode_t's.
-//
 struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
    uint64_t       count;         // number of hits
 
@@ -40,7 +35,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
       
       scnode_t& operator = (const scnode_t& node) {keynode_t<u_int>::operator = (node); count = node.count; return *this;}
 
-      u_int get_ccode(void) const {return nodeid;}
+      u_int get_scode(void) const {return nodeid;}
 
       //
       // serialization
