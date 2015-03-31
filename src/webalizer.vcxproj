@@ -257,6 +257,7 @@
     <ClInclude Include="dump_output.h" />
     <ClInclude Include="encoder.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="exception.h" />
     <ClInclude Include="graphs.h" />
     <ClInclude Include="hashtab.h" />
     <ClInclude Include="history.h" />
