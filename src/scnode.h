@@ -60,11 +60,6 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 // order. Codes inserted out of order will be discarded and the first, 
 // unknown code, will be returned when such code is requested.
 //
-// 3. IMPORTANT: scnode_t uses a reference to its base member (nodeid)
-// and the stcodes vector must be initialized not to copy existing
-// memory directly, but instead use stcode_t's copy constructor and
-// assignment operator.
-//
 class sc_hash_table {
    vector_t<scnode_t>   stcodes;       // HTTP status codes
 
