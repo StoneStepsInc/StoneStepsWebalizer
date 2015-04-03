@@ -837,8 +837,8 @@ int webalizer_t::end_month(void)
 {
    uint64_t stime = msecs();
    
-   update_visits(0);
-   update_downloads(0);
+   update_visits(tstamp_t());
+   update_downloads(tstamp_t());
    
    state.update_hourly_stats();
    
@@ -1288,7 +1288,7 @@ int webalizer_t::proc_logfile(void)
             // active visits are moved to either of the months, hit counts will 
             // no longer match for both months. 
             //
-            update_visits(0);
+            update_visits(tstamp_t());
             update_downloads(state.totals.cur_tstamp);
             
             // state_t::set_tstamp is called later, so update hourly stats now
@@ -1769,7 +1769,7 @@ int webalizer_t::proc_logfile(void)
          // report.
          //
          if(!config.incremental || config.last_log) {
-            update_visits(0);
+            update_visits(tstamp_t());
             state.update_hourly_stats();
          }
          else

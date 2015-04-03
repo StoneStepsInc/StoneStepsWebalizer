@@ -63,7 +63,8 @@ struct tstamp_t {
       tstamp_t(void) {reset();}
       tstamp_t(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset);
       tstamp_t(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec);
-      tstamp_t(time_t time) {reset(time);}
+      explicit tstamp_t(time_t time) {reset(time);}
+      tstamp_t(time_t time, int offset) {reset(time, offset);}
 
       void reset(void) {year = month = day = hour = min = sec = 0; offset = 0; utc = false; null = true;}
       void reset(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset);
