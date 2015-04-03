@@ -24,7 +24,7 @@ char_buffer_base<char_t>::char_buffer_base(char_buffer_base&& other)
 }
 
 template <typename char_t>
-char_buffer_base<char_t>::char_buffer_base(char_t *buffer, size_t bufsize, bool holder = false) : buffer(buffer), bufsize(bufsize), holder(holder) 
+char_buffer_base<char_t>::char_buffer_base(char_t *buffer, size_t bufsize, bool holder) : buffer(buffer), bufsize(bufsize), holder(holder) 
 {
 }
 
@@ -75,7 +75,7 @@ char_buffer_base<char_t>& char_buffer_base<char_t>::attach(char_t *buf, size_t b
 }
 
 template <typename char_t>
-char_t *char_buffer_base<char_t>::detach(size_t *bsize = NULL, bool *hold = NULL)
+char_t *char_buffer_base<char_t>::detach(size_t *bsize, bool *hold)
 {
    char_t *buf = buffer;
 
