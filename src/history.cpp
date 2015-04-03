@@ -246,21 +246,19 @@ bool history_t::get_history(void)
       // sorted (not guaranteed, though), so start from the end. There should be 
       // no duplicates and we don't need to do assignments (i.e. inserts only).
       //
-      for(i = months.size()-1; i >= 0; i--) {
-         // if it's the same year and the new month is greater, we found the spot
-         if(hnode.year == months[i].year && hnode.month > months[i].month)
+      for(i = months.size(); i > 0; i--) {
+         const hist_month_t& hm = months[i-1];
+
+         // break if the incoming date is greater than the current one
+         if(hnode.year == hm.year && hnode.month > hm.month)
             break;
 
-         //
-         // If the new year is greater at this point, then its the first one and 
-         // month doesn't matter (or we would get it above)
-         //
-         if(hnode.year > months[i].year)
+         if(hnode.year > hm.year)
             break;
       }
       
-      // insert the new month after the one we found of last
-      months.insert(++i, hnode);
+      // insert the new history month after the one we found
+      months.insert(i, hnode);
    }
    
    fclose(hist_fp);
