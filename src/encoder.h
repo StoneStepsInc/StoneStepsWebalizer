@@ -27,7 +27,7 @@ typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool mu
 // 40-byte buffer after it's constructed.
 //
 //    buffer_encoder_t<x> encoder(buffer, 50, buffer_encoder_t<x>::append);
-//    buffer_encoder_t<x>& encode;
+//    buffer_encoder_t<x>& encode = encoder;    // alias to make it look like a function name
 //
 //    printf("%s %s\n", encode("1234"), encode("567890"));
 //
@@ -49,7 +49,8 @@ class buffer_encoder_t {
       //
       // scope_mode_t is useful where a new encoder with a new mode cannot be instantiated.
       // For example, cp1 and cp2 will be encoded within the same buffer space, while cp3
-      // and cp4 will be encoded one after another:
+      // and cp4 will be encoded one after another (note the comma after set_scope_mode is
+      // called):
       //
       //    buffer_encoder_t<x> encode(buffer, bufsize, buffer_encoder_t<x>::overwrite);
       //
@@ -66,7 +67,7 @@ class buffer_encoder_t {
          private:
             buffer_encoder_t<encodecb> *encoder;         // active encoder
 
-            buffer_encoder_t<encodecb> saved_encoder;    // original encoder
+            buffer_encoder_t<encodecb> saved_encoder;    // copy of the original encoder
 
          public:
             scope_mode_t(buffer_encoder_t<encodecb>& encoder, typename buffer_encoder_t<encodecb>::mode_t newmode) : encoder(&encoder), saved_encoder(encoder) 
