@@ -66,12 +66,11 @@ class char_buffer_base {
 
       bool operator == (const char_t *ptr) const {return buffer == ptr;}
 
+      bool operator == (const char_buffer_base& other) const {return buffer == other.buffer && holder == other.holder && bufsize - other.bufsize;}
+
       char_t *operator + (size_t offset) {return offset < bufsize ? buffer + offset : NULL;}
 
       const char_t *operator + (size_t offset) const {return offset < bufsize ? buffer + offset : NULL;}
-
-      // needed for checking against NULL
-      bool operator == (const intptr_t ptr) const {return (intptr_t) buffer == ptr;}
 
       char_t *get_buffer(void) {return buffer;}
 
