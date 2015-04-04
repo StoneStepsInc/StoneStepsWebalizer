@@ -29,7 +29,7 @@ class database_t;
 // -----------------------------------------------------------------------
 class xml_output_t : public output_t {
    private:
-      typedef buffer_encoder_t<::xml_encode> xml_encoder_t;
+      typedef buffer_encoder_t< ::xml_encode> xml_encoder_t;
 
    private:
       FILE *out_fp;
