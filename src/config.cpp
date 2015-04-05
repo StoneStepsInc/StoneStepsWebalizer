@@ -1011,7 +1011,6 @@ void config_t::get_config(const char *fname)
          case 83: dump_search=(tolower(value[0])=='y'); break;    // DumpSrchStrs?
          case 84: dns_cache=value; break;                         // DNSCache fname
          case 85: dns_children=atoi(value); break;                // DNSChildren
-         case 93: dns_cache_ttl = atoi(value) * 86400; if(dns_cache_ttl == 0) dns_cache_ttl = DNS_CACHE_TTL; break;
          case 86: daily_graph=(tolower(value[0])=='y'); break;    // HourlyGraph
          case 87: daily_stats=(tolower(value[0])=='y'); break;    // HourlyStats
          case 88: upstream_traffic = (tolower(value[0]) == 'y') ? true : false; break;
@@ -1019,6 +1018,7 @@ void config_t::get_config(const char *fname)
          case 90: lang.proc_lang_file(value); break;
          case 91: bundle_groups = (tolower(value[0]) == 'y') ? true : false; break;
          case 92: no_def_index_alias = (tolower(value[0]) == 'y') ? true : false; break;
+         case 93: dns_cache_ttl = atoi(value) * 86400; if(dns_cache_ttl == 0) dns_cache_ttl = DNS_CACHE_TTL; break;
          case 94: html_ext_lang = (tolower(value[0]) == 'y') ? true : false; break;
          case 95: apache_log_format = value; break;
          case 96: http_port = atoi(value); break;
