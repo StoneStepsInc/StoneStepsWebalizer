@@ -17,7 +17,7 @@
 #define VERSION_MAJOR           4
 #define VERSION_MINOR           0
 #define EDITION_LEVEL           0
-#define BUILD_NUMBER            1
+#define BUILD_NUMBER            5
 
 //
 // Current numeric application version
@@ -42,7 +42,7 @@
 //
 // Minimum application version in the state database we can load
 //
-#define MIN_APP_DB_VERSION 0x04000001u
+#define MIN_APP_DB_VERSION 0x04000005u
 
 #endif // __VERSION_H
 
