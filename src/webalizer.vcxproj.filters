@@ -382,6 +382,9 @@
     <ClInclude Include="exception.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="autoptr.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="webalizer.rc">
