@@ -684,14 +684,8 @@ bool database_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s
    return true;
 }
 
-// -----------------------------------------------------------------------
-//
-// node_handler_t
-//
-// -----------------------------------------------------------------------
-
 template <typename node_t>
-bool database_t::node_handler_t<node_t>::put_node(table_t& table, u_char *buffer, const node_t& node)
+bool database_t::put_node(table_t& table, u_char *buffer, const node_t& node)
 {
    Dbt key, data;
    size_t keysize, datasize;
@@ -719,7 +713,7 @@ bool database_t::node_handler_t<node_t>::put_node(table_t& table, u_char *buffer
 }
 
 template <typename node_t>
-bool database_t::node_handler_t<node_t>::get_node_by_id(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+bool database_t::get_node_by_id(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
    size_t keysize;
@@ -749,7 +743,7 @@ bool database_t::node_handler_t<node_t>::get_node_by_id(const table_t& table, u_
 }
 
 template <typename node_t>
-bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+bool database_t::get_node_by_value(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    const Db *scdb;
    Dbt key, pkey, data;
@@ -812,8 +806,7 @@ bool database_t::node_value_handler_t<node_t>::get_node_by_value(const table_t& 
    return true;
 }
 
-template <typename node_t>
-bool database_t::node_handler_t<node_t>::delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node)
+bool database_t::delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node)
 {
    Dbt key;
    size_t keysize;
@@ -1592,17 +1585,17 @@ void database_t::trickle_thread_proc(void)
 bool database_t::put_unode(const unode_t& unode)
 {
    // unless unode_t::s_unpack_cb_t is provided, VC6 reports "fatal error C1506: unrecoverable block scoping error"
-   return node_handler_t<unode_t>::put_node(urls, buffer, unode);
+   return put_node<unode_t>(urls, buffer, unode);
 }
 
 bool database_t::get_unode_by_id(unode_t& unode, unode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<unode_t>::get_node_by_id(urls, buffer, unode, upcb, arg);
+   return get_node_by_id<unode_t>(urls, buffer, unode, upcb, arg);
 }
 
 bool database_t::get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<unode_t>::get_node_by_value(urls, buffer, unode, upcb, arg);
+   return get_node_by_value<unode_t>(urls, buffer, unode, upcb, arg);
 }
 
 //
@@ -1610,17 +1603,17 @@ bool database_t::get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb,
 //
 bool database_t::put_hnode(const hnode_t& hnode)
 {
-   return node_handler_t<hnode_t>::put_node(hosts, buffer, hnode);
+   return put_node<hnode_t>(hosts, buffer, hnode);
 }
 
 bool database_t::get_hnode_by_id(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<hnode_t>::get_node_by_id(hosts, buffer, hnode, upcb, arg);
+   return get_node_by_id<hnode_t>(hosts, buffer, hnode, upcb, arg);
 }
 
 bool database_t::get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<hnode_t>::get_node_by_value(hosts, buffer, hnode, upcb, arg);
+   return get_node_by_value<hnode_t>(hosts, buffer, hnode, upcb, arg);
 }
 
 //
@@ -1628,22 +1621,22 @@ bool database_t::get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb,
 //
 bool database_t::put_vnode(const vnode_t& vnode)
 {
-   return node_handler_t<vnode_t>::put_node(visits, buffer, vnode);
+   return put_node<vnode_t>(visits, buffer, vnode);
 }
 
 bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<vnode_t>::get_node_by_id(visits, buffer, vnode, upcb, arg);
+   return get_node_by_id<vnode_t>(visits, buffer, vnode, upcb, arg);
 }
 
 bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, const void *arg) const
 {
-   return node_handler_t<vnode_t>::get_node_by_id(visits, buffer, vnode, upcb, const_cast<void*>(arg));
+   return get_node_by_id<vnode_t>(visits, buffer, vnode, upcb, const_cast<void*>(arg));
 }
 
 bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 {
-   return node_handler_t<vnode_t>::delete_node(visits, buffer, vnode);
+   return delete_node(visits, buffer, vnode);
 }
 
 // -----------------------------------------------------------------------
@@ -1653,22 +1646,22 @@ bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 // -----------------------------------------------------------------------
 bool database_t::put_dlnode(const dlnode_t& dlnode)
 {
-   return node_handler_t<dlnode_t>::put_node(downloads, buffer, dlnode);
+   return put_node<dlnode_t>(downloads, buffer, dlnode);
 }
 
 bool database_t::get_dlnode_by_id(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<dlnode_t>::get_node_by_id(downloads, buffer, dlnode, upcb, arg);
+   return get_node_by_id<dlnode_t>(downloads, buffer, dlnode, upcb, arg);
 }
 
 bool database_t::get_dlnode_by_value(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<dlnode_t>::get_node_by_value(downloads, buffer, dlnode, upcb, arg);
+   return get_node_by_value<dlnode_t>(downloads, buffer, dlnode, upcb, arg);
 }
 
 bool database_t::delete_download(const keynode_t<uint64_t>& danode)
 {
-   return node_handler_t<danode_t>::delete_node(active_downloads, buffer, danode);
+   return delete_node(active_downloads, buffer, danode);
 }
 
 // -----------------------------------------------------------------------
@@ -1678,12 +1671,12 @@ bool database_t::delete_download(const keynode_t<uint64_t>& danode)
 // -----------------------------------------------------------------------
 bool database_t::put_danode(const danode_t& danode)
 {
-   return node_handler_t<danode_t>::put_node(active_downloads, buffer, danode);
+   return put_node<danode_t>(active_downloads, buffer, danode);
 }
 
 bool database_t::get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<danode_t>::get_node_by_id(active_downloads, buffer, danode, upcb, arg);
+   return get_node_by_id<danode_t>(active_downloads, buffer, danode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1693,17 +1686,17 @@ bool database_t::get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_anode(const anode_t& anode)
 {
-   return node_handler_t<anode_t>::put_node(agents, buffer, anode);
+   return put_node<anode_t>(agents, buffer, anode);
 }
 
 bool database_t::get_anode_by_id(anode_t& anode, anode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<anode_t>::get_node_by_id(agents, buffer, anode, upcb, arg);
+   return get_node_by_id<anode_t>(agents, buffer, anode, upcb, arg);
 }
 
 bool database_t::get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<anode_t>::get_node_by_value(agents, buffer, anode, upcb, arg);
+   return get_node_by_value<anode_t>(agents, buffer, anode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1713,17 +1706,17 @@ bool database_t::get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_rnode(const rnode_t& rnode)
 {
-   return node_handler_t<rnode_t>::put_node(referrers, buffer, rnode);
+   return put_node<rnode_t>(referrers, buffer, rnode);
 }
 
 bool database_t::get_rnode_by_id(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<rnode_t>::get_node_by_id(referrers, buffer, rnode, upcb, arg);
+   return get_node_by_id<rnode_t>(referrers, buffer, rnode, upcb, arg);
 }
 
 bool database_t::get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<rnode_t>::get_node_by_value(referrers, buffer, rnode, upcb, arg);
+   return get_node_by_value<rnode_t>(referrers, buffer, rnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1733,17 +1726,17 @@ bool database_t::get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_snode(const snode_t& snode)
 {
-   return node_handler_t<snode_t>::put_node(search, buffer, snode);
+   return put_node<snode_t>(search, buffer, snode);
 }
 
 bool database_t::get_snode_by_id(snode_t& snode, snode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<snode_t>::get_node_by_id(search, buffer, snode, upcb, arg);
+   return get_node_by_id<snode_t>(search, buffer, snode, upcb, arg);
 }
 
 bool database_t::get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<snode_t>::get_node_by_value(search, buffer, snode, upcb, arg);
+   return get_node_by_value<snode_t>(search, buffer, snode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1753,17 +1746,17 @@ bool database_t::get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_inode(const inode_t& inode)
 {
-   return node_handler_t<inode_t>::put_node(users, buffer, inode);
+   return put_node<inode_t>(users, buffer, inode);
 }
 
 bool database_t::get_inode_by_id(inode_t& inode, inode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<inode_t>::get_node_by_id(users, buffer, inode, upcb, arg);
+   return get_node_by_id<inode_t>(users, buffer, inode, upcb, arg);
 }
 
 bool database_t::get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<inode_t>::get_node_by_value(users, buffer, inode, upcb, arg);
+   return get_node_by_value<inode_t>(users, buffer, inode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1773,17 +1766,17 @@ bool database_t::get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_rcnode(const rcnode_t& rcnode)
 {
-   return node_handler_t<rcnode_t>::put_node(errors, buffer, rcnode);
+   return put_node<rcnode_t>(errors, buffer, rcnode);
 }
 
 bool database_t::get_rcnode_by_id(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<rcnode_t>::get_node_by_id(errors, buffer, rcnode, upcb, arg);
+   return get_node_by_id<rcnode_t>(errors, buffer, rcnode, upcb, arg);
 }
 
 bool database_t::get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_value_handler_t<rcnode_t>::get_node_by_value(errors, buffer, rcnode, upcb, arg);
+   return get_node_by_value<rcnode_t>(errors, buffer, rcnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1793,12 +1786,12 @@ bool database_t::get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t u
 // -----------------------------------------------------------------------
 bool database_t::put_scnode(const scnode_t& scnode)
 {
-   return node_handler_t<scnode_t>::put_node(scodes, buffer, scnode);
+   return put_node<scnode_t>(scodes, buffer, scnode);
 }
 
 bool database_t::get_scnode_by_id(scnode_t& scnode, scnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<scnode_t>::get_node_by_id(scodes, buffer, scnode, upcb, arg);
+   return get_node_by_id<scnode_t>(scodes, buffer, scnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1808,12 +1801,12 @@ bool database_t::get_scnode_by_id(scnode_t& scnode, scnode_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_tdnode(const daily_t& tdnode)
 {
-   return node_handler_t<daily_t>::put_node(daily, buffer, tdnode);
+   return put_node<daily_t>(daily, buffer, tdnode);
 }
 
 bool database_t::get_tdnode_by_id(daily_t& tdnode, daily_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<daily_t>::get_node_by_id(daily, buffer, tdnode, upcb, arg);
+   return get_node_by_id<daily_t>(daily, buffer, tdnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1823,12 +1816,12 @@ bool database_t::get_tdnode_by_id(daily_t& tdnode, daily_t::s_unpack_cb_t upcb, 
 // -----------------------------------------------------------------------
 bool database_t::put_thnode(const hourly_t& thnode)
 {
-   return node_handler_t<hourly_t>::put_node(hourly, buffer, thnode);
+   return put_node<hourly_t>(hourly, buffer, thnode);
 }
 
 bool database_t::get_thnode_by_id(hourly_t& thnode, hourly_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<hourly_t>::get_node_by_id(hourly, buffer, thnode, upcb, arg);
+   return get_node_by_id<hourly_t>(hourly, buffer, thnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1838,12 +1831,12 @@ bool database_t::get_thnode_by_id(hourly_t& thnode, hourly_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_tgnode(const totals_t& tgnode)
 {
-   return node_handler_t<totals_t>::put_node(totals, buffer, tgnode);
+   return put_node<totals_t>(totals, buffer, tgnode);
 }
 
 bool database_t::get_tgnode_by_id(totals_t& tgnode, totals_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<totals_t>::get_node_by_id(totals, buffer, tgnode, upcb, arg);
+   return get_node_by_id<totals_t>(totals, buffer, tgnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1853,12 +1846,12 @@ bool database_t::get_tgnode_by_id(totals_t& tgnode, totals_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_ccnode(const ccnode_t& ccnode)
 {
-   return node_handler_t<ccnode_t>::put_node(countries, buffer, ccnode);
+   return put_node<ccnode_t>(countries, buffer, ccnode);
 }
 
 bool database_t::get_ccnode_by_id(ccnode_t& ccnode, ccnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<ccnode_t>::get_node_by_id(countries, buffer, ccnode, upcb, arg);
+   return get_node_by_id<ccnode_t>(countries, buffer, ccnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1873,12 +1866,12 @@ bool database_t::is_sysnode(void) const
 
 bool database_t::put_sysnode(const sysnode_t& sysnode)
 {
-   return node_handler_t<sysnode_t>::put_node(system, buffer, sysnode);
+   return put_node<sysnode_t>(system, buffer, sysnode);
 }
 
 bool database_t::get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return node_handler_t<sysnode_t>::get_node_by_id(system, buffer, sysnode, upcb, arg);
+   return get_node_by_id<sysnode_t>(system, buffer, sysnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1911,8 +1904,10 @@ template int sc_extract_group_cb<unode_t, unode_t::s_field_xfer>(Db *secondary, 
 template class database_t::iterator_base<unode_t>;
 template class database_t::iterator<unode_t>;
 template class database_t::reverse_iterator<unode_t>;
-template class database_t::node_handler_t<unode_t>;
-template class database_t::node_value_handler_t<unode_t>;
+
+template bool database_t::put_node(table_t& table, u_char *buffer, const unode_t& node);
+template bool database_t::get_node_by_id(const table_t& table, u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<unode_t>(const table_t& table, u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // hosts
 template int bt_compare_cb<hnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1931,11 +1926,15 @@ template int sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>(Db *secondary, 
 template class database_t::iterator_base<hnode_t>;
 template class database_t::iterator<hnode_t>;
 template class database_t::reverse_iterator<hnode_t>;
-template class database_t::node_handler_t<hnode_t>;
-template class database_t::node_value_handler_t<hnode_t>;
+
+template bool database_t::put_node<hnode_t>(table_t& table, u_char *buffer, const hnode_t& hnode);
+template bool database_t::get_node_by_id<hnode_t>(const table_t& table, u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<hnode_t>(const table_t& table, u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // visits
-template class database_t::node_handler_t<vnode_t>;
+template bool database_t::put_node<vnode_t>(table_t& table, u_char *buffer, const vnode_t& hnode);
+template bool database_t::get_node_by_id<vnode_t>(const table_t& table, u_char *buffer, vnode_t& node, vnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<vnode_t>;
 template class database_t::iterator<vnode_t>;
 
@@ -1946,14 +1945,18 @@ template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, co
 template int sc_extract_cb<dlnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<dlnode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::node_handler_t<dlnode_t>;
-template class database_t::node_value_handler_t<dlnode_t>;
+template bool database_t::put_node<dlnode_t>(table_t& table, u_char *buffer, const dlnode_t& hnode);
+template bool database_t::get_node_by_id<dlnode_t>(const table_t& table, u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<dlnode_t>(const table_t& table, u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+
 template class database_t::iterator_base<dlnode_t>;
 template class database_t::iterator<dlnode_t>;
 template class database_t::reverse_iterator<dlnode_t>;
 
 // active downloads
-template class database_t::node_handler_t<danode_t>;
+template bool database_t::put_node<danode_t>(table_t& table, u_char *buffer, const danode_t& hnode);
+template bool database_t::get_node_by_id<danode_t>(const table_t& table, u_char *buffer, danode_t& node, danode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<danode_t>;
 template class database_t::iterator<danode_t>;
 
@@ -1970,8 +1973,10 @@ template int sc_extract_group_cb<anode_t, anode_t::s_field_hits>(Db *secondary, 
 template class database_t::iterator_base<anode_t>;
 template class database_t::iterator<anode_t>;
 template class database_t::reverse_iterator<anode_t>;
-template class database_t::node_handler_t<anode_t>;
-template class database_t::node_value_handler_t<anode_t>;
+
+template bool database_t::put_node<anode_t>(table_t& table, u_char *buffer, const anode_t& node);
+template bool database_t::get_node_by_id<anode_t>(const table_t& table, u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<anode_t>(const table_t& table, u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // referrers
 template int bt_compare_cb<rnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1986,8 +1991,10 @@ template int sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>(Db *secondary, 
 template class database_t::iterator_base<rnode_t>;
 template class database_t::iterator<rnode_t>;
 template class database_t::reverse_iterator<rnode_t>;
-template class database_t::node_handler_t<rnode_t>;
-template class database_t::node_value_handler_t<rnode_t>;
+
+template bool database_t::put_node<rnode_t>(table_t& table, u_char *buffer, const rnode_t& node);
+template bool database_t::get_node_by_id<rnode_t>(const table_t& table, u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<rnode_t>(const table_t& table, u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // search strings
 template int bt_compare_cb<snode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2001,8 +2008,10 @@ template int sc_extract_cb<snode_t::s_field_hits>(Db *secondary, const Dbt *key,
 template class database_t::iterator_base<snode_t>;
 template class database_t::iterator<snode_t>;
 template class database_t::reverse_iterator<snode_t>;
-template class database_t::node_handler_t<snode_t>;
-template class database_t::node_value_handler_t<snode_t>;
+
+template bool database_t::put_node<snode_t>(table_t& table, u_char *buffer, const snode_t& node);
+template bool database_t::get_node_by_id<snode_t>(const table_t& table, u_char *buffer, snode_t& node, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<snode_t>(const table_t& table, u_char *buffer, snode_t& unode, snode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // users
 template int bt_compare_cb<inode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2017,8 +2026,10 @@ template int sc_extract_group_cb<inode_t, inode_t::s_field_hits>(Db *secondary, 
 template class database_t::iterator_base<inode_t>;
 template class database_t::iterator<inode_t>;
 template class database_t::reverse_iterator<inode_t>;
-template class database_t::node_handler_t<inode_t>;
-template class database_t::node_value_handler_t<inode_t>;
+
+template bool database_t::put_node<inode_t>(table_t& table, u_char *buffer, const inode_t& node);
+template bool database_t::get_node_by_id<inode_t>(const table_t& table, u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<inode_t>(const table_t& table, u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // errors
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2027,34 +2038,46 @@ template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, co
 template int sc_extract_cb<rcnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<rcnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::node_handler_t<rcnode_t>;
-template class database_t::node_value_handler_t<rcnode_t>;
+template bool database_t::put_node<rcnode_t>(table_t& table, u_char *buffer, const rcnode_t& node);
+template bool database_t::get_node_by_id<rcnode_t>(const table_t& table, u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool database_t::get_node_by_value<rcnode_t>(const table_t& table, u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
+
 template class database_t::iterator_base<rcnode_t>;
 template class database_t::iterator<rcnode_t>;
 template class database_t::reverse_iterator<rcnode_t>;
 
 // status codes
-template class database_t::node_handler_t<scnode_t>;
+template bool database_t::put_node<scnode_t>(table_t& table, u_char *buffer, const scnode_t& node);
+template bool database_t::get_node_by_id<scnode_t>(const table_t& table, u_char *buffer, scnode_t& node, scnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<scnode_t>;
 template class database_t::iterator<scnode_t>;
 
 // daily totals
-template class database_t::node_handler_t<daily_t>;
+template bool database_t::put_node<daily_t>(table_t& table, u_char *buffer, const daily_t& node);
+template bool database_t::get_node_by_id<daily_t>(const table_t& table, u_char *buffer, daily_t& node, daily_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<daily_t>;
 template class database_t::iterator<daily_t>;
 
 // hourly totals
-template class database_t::node_handler_t<hourly_t>;
+template bool database_t::put_node<hourly_t>(table_t& table, u_char *buffer, const hourly_t& node);
+template bool database_t::get_node_by_id<hourly_t>(const table_t& table, u_char *buffer, hourly_t& node, hourly_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<hourly_t>;
 template class database_t::iterator<hourly_t>;
 
 // totals
-template class database_t::node_handler_t<totals_t>;
+template bool database_t::put_node<totals_t>(table_t& table, u_char *buffer, const totals_t& node);
+template bool database_t::get_node_by_id<totals_t>(const table_t& table, u_char *buffer, totals_t& node, totals_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
 // country codes
-template class database_t::node_handler_t<ccnode_t>;
+template bool database_t::put_node<ccnode_t>(table_t& table, u_char *buffer, const ccnode_t& node);
+template bool database_t::get_node_by_id<ccnode_t>(const table_t& table, u_char *buffer, ccnode_t& node, ccnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
 template class database_t::iterator_base<ccnode_t>;
 template class database_t::iterator<ccnode_t>;
 
 // system
-template class database_t::node_handler_t<sysnode_t>;
+template bool database_t::put_node<sysnode_t>(table_t& table, u_char *buffer, const sysnode_t& node);
+template bool database_t::get_node_by_id<sysnode_t>(const table_t& table, u_char *buffer, sysnode_t& node, sysnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;

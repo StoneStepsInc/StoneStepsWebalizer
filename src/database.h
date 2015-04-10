@@ -234,35 +234,16 @@ class database_t {
             uint64_t count(const char *dbname = NULL) const;
       };
 
-      // -----------------------------------------------------------------
-      //
-      // node_handler_t
-      //
-      // -----------------------------------------------------------------
       template <typename node_t>
-      class node_handler_t {
-         public:
-            static bool put_node(table_t& table, u_char *buffer, const node_t& unode);
+      bool put_node(table_t& table, u_char *buffer, const node_t& unode);
 
-            static bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
-
-            static bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
-      };
-
-      // -----------------------------------------------------------------
-      //
-      // node_value_handler_t
-      //
-      // -----------------------------------------------------------------
-      //
-      // Similar to node_handler_t, but is instantiated only for nodes 
-      // that can be looked up by value, such as hosts, URLs, etc.
-      //
       template <typename node_t>
-      class node_value_handler_t {
-         public:
-            static bool get_node_by_value(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
-      };
+      bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+      bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
+
+      template <typename node_t>
+      bool get_node_by_value(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
    public:
       // -----------------------------------------------------------------
