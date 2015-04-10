@@ -234,17 +234,6 @@ class database_t {
             uint64_t count(const char *dbname = NULL) const;
       };
 
-      template <typename node_t>
-      bool put_node(table_t& table, u_char *buffer, const node_t& unode);
-
-      template <typename node_t>
-      bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-
-      bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
-
-      template <typename node_t>
-      bool get_node_by_value(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-
    public:
       // -----------------------------------------------------------------
       //
@@ -340,6 +329,17 @@ class database_t {
       };
 
    private:
+      template <typename node_t>
+      bool put_node(table_t& table, u_char *buffer, const node_t& unode);
+
+      template <typename node_t>
+      bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+      bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
+
+      template <typename node_t>
+      bool get_node_by_value(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
       void reset_db_handles(void);
 
       void trickle_thread_proc(void);
