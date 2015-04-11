@@ -403,7 +403,7 @@ class database_t {
       table_t           countries;
       table_t           system;
 
-      table_t           *tables[18];
+      vector_t<table_t*> tables;
 
       thread_t          trickle_thread;
       event_t           trickle_event;

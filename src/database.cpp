@@ -880,26 +880,22 @@ database_t::database_t(const config_t& config) :
    buffer = new u_char[DBBUFSIZE];
 
    // initialize the array to hold table pointers
-   tables[index++] = &urls;
-   tables[index++] = &hosts;
-   tables[index++] = &visits;
-   tables[index++] = &downloads;
-   tables[index++] = &active_downloads;
-   tables[index++] = &agents;
-   tables[index++] = &referrers;
-   tables[index++] = &search;
-   tables[index++] = &users;
-   tables[index++] = &errors;
-   tables[index++] = &scodes;
-   tables[index++] = &daily;
-   tables[index++] = &hourly;
-   tables[index++] = &totals;
-   tables[index++] = &countries;
-   tables[index++] = &system;
-   tables[index] = NULL;
-
-   if(index >= sizeof(tables)/sizeof(tables[0]))
-      throw exception_t(0, "Incorrect number of entries in the database_t::tables array");
+   tables.push(&urls);
+   tables.push(&hosts);
+   tables.push(&visits);
+   tables.push(&downloads);
+   tables.push(&active_downloads);
+   tables.push(&agents);
+   tables.push(&referrers);
+   tables.push(&search);
+   tables.push(&users);
+   tables.push(&errors);
+   tables.push(&scodes);
+   tables.push(&daily);
+   tables.push(&hourly);
+   tables.push(&totals);
+   tables.push(&countries);
+   tables.push(&system);
 }
 
 database_t::~database_t(void)
@@ -916,8 +912,8 @@ void database_t::reset_db_handles(void)
    //
 
    // destroy table databases
-   for(table_t **tab = tables; *tab != NULL; tab++)
-      (*tab)->destroy_db_handles();
+   for(size_t i = 0; i < tables.size(); i++)
+      tables[i]->destroy_db_handles();
 
    // destroy the sequences database
    sequences.Db::~Db();
@@ -930,8 +926,8 @@ void database_t::reset_db_handles(void)
    new (&sequences) Db(&dbenv, DBFLAGS);
 
    // construct table databases
-   for(table_t **tab = tables; *tab != NULL; tab++)
-      (*tab)->init_db_handles();
+   for(size_t i = 0; i < tables.size(); i++)
+      tables[i]->init_db_handles();
 }
 
 void *database_t::malloc(size_t size)
@@ -1102,14 +1098,14 @@ bool database_t::open(void)
          return false;
 
       // initialize table databases as free-threaded
-      for(table_t **tab = tables; *tab != NULL; tab++)
-         (*tab)->set_threaded(true);
+      for(size_t i = 0; i < tables.size(); i++)
+         tables[i]->set_threaded(true);
    }
 
    // initialize table databases as read-only, if requested
    if(readonly) {
-      for(table_t **tab = tables; *tab != NULL; tab++)
-         (*tab)->set_readonly(true);
+      for(size_t i = 0; i < tables.size(); i++)
+         tables[i]->set_readonly(true);
    }
 
    // get the fully-qualified database file path
@@ -1413,8 +1409,8 @@ bool database_t::close(void)
       msleep(50);
 
    // close all table databases
-   for(table_t **tab = tables; *tab != NULL; tab++) {
-      if((*tab)->close())
+   for(size_t i = 0; i < tables.size(); i++) {
+      if(tables[i]->close())
          errcnt++;
    }
 
@@ -1447,8 +1443,8 @@ bool database_t::truncate(void)
 {
    u_int errcnt = 0;
 
-   for(table_t **tab = tables; *tab != NULL; tab++) {
-      if((*tab)->truncate())
+   for(size_t i = 0; i < tables.size(); i++) {
+      if(tables[i]->truncate())
          errcnt++;
    }
 
@@ -1463,8 +1459,8 @@ int database_t::compact(u_int& bytes)
 
    bytes = 0;
 
-   for(table_t **tab = tables; *tab != NULL; tab++) {
-      if((error = (*tab)->compact(tbytes)) != 0)
+   for(size_t i = 0; i < tables.size(); i++) {
+      if((error = tables[i]->compact(tbytes)) != 0)
          return error;
       bytes += tbytes;
    }
@@ -1482,8 +1478,8 @@ bool database_t::flush(void)
    if(dbenv.memp_sync(NULL))
       errcnt++;
 
-   for(table_t **tab = tables; *tab != NULL; tab++) {
-      if((*tab)->sync())
+   for(size_t i = 0; i < tables.size(); i++) {
+      if(tables[i]->sync())
          errcnt++;
    }
 
