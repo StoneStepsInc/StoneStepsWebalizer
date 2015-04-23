@@ -2,7 +2,16 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <BDBDir>..\..\common\db\</BDBDir>
+    <GDDir>..\..\common\gd\</GDDir>
+    <GeoIPDir>..\..\common\GeoIP\</GeoIPDir>
+    <ZLibDir>..\..\common\zlib\</ZLibDir>
+    <BDBLibName>libdb60</BDBLibName>
+    <GDLibName>gd2</GDLibName>
+    <GeoIPLibName>libmaxminddb</GeoIPLibName>
+    <ZLibName>zlib12</ZLibName>
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
     <LinkIncremental>false</LinkIncremental>
@@ -11,7 +20,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\common\GeoIP\include\;..\..\common\gd\src\;..\..\common\zlib\;..\..\common\db\build_windows\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GeoIPDir)include\;$(GDDir)src\;$(ZLibDir);$(BDBDir)build_windows\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MMDB_UINT128_IS_BYTE_ARRAY=1;BGDWIN32;_CRT_SECURE_NO_WARNINGS;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -28,6 +37,42 @@
       <ImageHasSafeExceptionHandlers />
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
+    <CustomBuildStep>
+      <Command>xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(TargetDir)"
+xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(TargetDir)"
+</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Copying 3rd-party libraries...</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(BDBLibDir)$(BDBLibName).dll;$(GDLibDir)$(GDLibName).dll;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BuildMacro Include="BDBDir">
+      <Value>$(BDBDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GDDir">
+      <Value>$(GDDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GeoIPDir">
+      <Value>$(GeoIPDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ZLibDir">
+      <Value>$(ZLibDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BDBLibName">
+      <Value>$(BDBLibName)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GDLibName">
+      <Value>$(GDLibName)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GeoIPLibName">
+      <Value>$(GeoIPLibName)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ZLibName">
+      <Value>$(ZLibName)</Value>
+    </BuildMacro>
+  </ItemGroup>
 </Project>
