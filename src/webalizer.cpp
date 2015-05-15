@@ -379,6 +379,11 @@ void webalizer_t::print_version()
 {
    utsname system_info;
 
+   if(verbose == 0) {
+      printf("%s\n", state_t::get_app_version().c_str());
+      return;
+   }
+
    uname(&system_info);
    printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n",   
                state_t::get_app_version().c_str(),
