@@ -26,3 +26,5 @@ syntax: regexp
 ^src/webalizer\.v12.suo$
 ^src/webalizer\.opensdf$
 ^src/webalizer\.vcxproj\.user$
+^src/copylibs\.vcxproj\.user$
+^src/package\.vcxproj\.user$

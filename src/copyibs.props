@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <ExtensionsToDeleteOnClean />
+    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\copylibs\</IntDir>
+    <TargetName />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <CustomBuildStep>
+      <Command>xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(OutDir)"
+xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(OutDir)"
+</Command>
+      <Message>Copying 3rd-party libraries to $(OutDir)</Message>
+      <Outputs>$(OutDir)$(BDBLibName).dll;$(OutDir)$(GDLibName).dll</Outputs>
+    </CustomBuildStep>
+    <CustomBuild />
+    <BuildLog />
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

@@ -37,17 +37,9 @@
       <ImageHasSafeExceptionHandlers />
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
-    <CustomBuildStep>
-      <Command>xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(TargetDir)"
-xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(TargetDir)"
-</Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <Message>Copying 3rd-party libraries...</Message>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <Outputs>$(BDBLibDir)$(BDBLibName).dll;$(GDLibDir)$(GDLibName).dll;%(Outputs)</Outputs>
-    </CustomBuildStep>
+    <BuildLog>
+      <Path>$(IntDir)msbuild.log</Path>
+    </BuildLog>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="BDBDir">
