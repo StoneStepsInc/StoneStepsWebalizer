@@ -1,15 +1,16 @@
 --------------------------------------------------------------------
-4.0.x.x [xx-Apr-2015] -- Stone Steps Inc. (www.stonesteps.ca)
+4.0.0.12 [18-Jul-2015] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Ported the source to run on x64 natively
+ * Upgraded GeoIP library (requires new GeoIP database - see GeoIPDBPath in README)
  * Added a city column to the hosts reports
  * Updated the default search engine list
- * Updated Windows version identifiers
  * Removed support for wu-ftpd logs
  * Removed FoldSeqErr and -f options; out of sequence records will be ignored
  * Made local UTC offset used by default when reporting time
  * Added NoLocalUTCOffset to ignore local UTC offset
  * Created a repository on CodePlex - http://stonestepswebalizer.codeplex.com
+ * [Windows] Introduced a command-line build script
 
 --------------------------------------------------------------------
 3.10.3.2 [23-Jun-2013] -- Stone Steps Inc. (www.stonesteps.ca)
