@@ -151,12 +151,14 @@ size_t inode_t::s_data_size(const void *buffer)
 
 const void *inode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
+   datasize = sizeof(uint64_t);
+
    u_short version = s_node_ver(buffer);
    size_t offset = base_node<inode_t>::s_data_size(buffer) + 
             sizeof(uint64_t) * 3;     // count, files, visit
 
    if(version >= 3)
-      offset += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // tstamp
+      offset += s_size_of<tstamp_t>((u_char*) buffer + offset);  // tstamp
    else
       offset += sizeof(uint64_t);     // tstamp
 
