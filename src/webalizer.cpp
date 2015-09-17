@@ -179,16 +179,17 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
       exit(1);
    }
 
-   //
-   // Initialize DNS resolver
-   //
-   if(config.is_dns_enabled() && !config.is_maintenance()) {
-      // initialize the DNS processor
-      if(dns_resolver.dns_init() == false) {
-         if(verbose)
-            printf("%s\n", lang_t::msg_dns_init);
+   // initialize components we need for log file processing
+   if(!config.is_maintenance()) {
+      // initialize DNS resolver if the number of workers is set to a non-zero value
+      if(config.is_dns_enabled()) {
+         if(dns_resolver.dns_init() == false) {
+            if(verbose)
+               printf("%s\n", lang_t::msg_dns_init);
+         }
       }
 
+      // initialize the log file parser
       if(!parser.init_parser(config.log_type)) {
          if(verbose)
             fprintf(stderr, "%s\n", config.lang.msg_pars_err);
