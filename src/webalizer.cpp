@@ -93,7 +93,7 @@ int     debug_mode   = 0;                     /* debug mode flag          */
 //
 //
 //
-webalizer_t::webalizer_t(void) : config(_config), parser(config), state(config), dns_resolver(config)
+webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
 {
    check_dup = false;                         /* check for dup flag       */
 
@@ -125,11 +125,6 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
 {
    u_int i;
    utsname system_info;
-
-   //
-   // Read configuration files
-   //
-   _config.initialize(get_cur_path(), argc, argv);
 
    // check if version is requested
    if(config.print_version) {
@@ -2926,7 +2921,12 @@ int main(int argc, char *argv[])
 #endif
 
    try {
-      webalizer_t logproc;
+      config_t config;
+
+      // read configuration files
+      config.initialize(get_cur_path(), argc, argv);
+      
+      webalizer_t logproc(config);
 
       try {
          // set the Ctrl-C handler

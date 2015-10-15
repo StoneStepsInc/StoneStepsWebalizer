@@ -98,7 +98,6 @@ class webalizer_t {
       };
       
    private:
-      config_t    _config;
       const config_t& config;
       
       parser_t    parser;
@@ -187,7 +186,7 @@ class webalizer_t {
       static int qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2);
 
    public:
-      webalizer_t(void);
+      webalizer_t(const config_t& config);
 
       ~webalizer_t(void);
 
