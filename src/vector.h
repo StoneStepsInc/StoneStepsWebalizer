@@ -164,6 +164,25 @@ class vector_t {
          elements = NULL;
       }
 
+      vector_t(const vector_t& other) :
+            delta(other.delta), copyref(other.copyref), 
+            count(other.count), maxcount(other.maxcount)
+      {
+         elements = (type_t*) malloc(maxcount * sizeof(type_t)); 
+
+         for(size_t i = 0; i < count; i++)
+            ::new (elements+i) type_t(other.elements[i]);
+      }
+
+      vector_t(vector_t&& other) : 
+            delta(other.delta), copyref(other.copyref), 
+            count(other.count), maxcount(other.maxcount), 
+            elements(other.elements)
+      {
+         other.count = 0;
+         other.elements = NULL;
+      }
+
       ~vector_t(void) 
       {
          if(elements) {
@@ -172,6 +191,43 @@ class vector_t {
 
             free(elements);
          }
+      }
+
+      vector_t& operator = (const vector_t& other)
+      {
+         clear();
+
+         free(elements);
+
+         delta = other.delta;
+         copyref = other.copyref;
+         count = other.count;
+         maxcount = other.maxcount;
+
+         elements = (type_t*) malloc(maxcount * sizeof(type_t)); 
+
+         for(size_t i = 0; i < count; i++)
+            ::new (elements+i) type_t(other.elements[i]);
+
+         return *this;
+      }
+
+      vector_t& operator = (vector_t&& other)
+      {
+         clear();
+
+         free(elements);
+
+         delta = other.delta;
+         copyref = other.copyref;
+         count = other.count;
+         maxcount = other.maxcount;
+         elements = other.elements;
+
+         other.count = 0;
+         other.elements = NULL;
+
+         return *this;
       }
 
       iterator begin(void) {return iterator(count, elements);}
