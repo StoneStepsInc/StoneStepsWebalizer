@@ -24,6 +24,9 @@
 #include "serialize.h"
 #include "exception.h"
 
+#include <type_traits>
+#include <utility>
+
 //
 //
 //
@@ -104,7 +107,7 @@ static int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, D
 //
 // -----------------------------------------------------------------------
 
-database_t::cursor_iterator_base::cursor_iterator_base(const Db *db) 
+berkeleydb_t::cursor_iterator_base::cursor_iterator_base(const Db *db) 
 {
    cursor = NULL;
    error = 0;
@@ -115,19 +118,19 @@ database_t::cursor_iterator_base::cursor_iterator_base(const Db *db)
    }
 }
 
-database_t::cursor_iterator_base::~cursor_iterator_base(void) 
+berkeleydb_t::cursor_iterator_base::~cursor_iterator_base(void) 
 {
    close();
 }
 
-void database_t::cursor_iterator_base::close(void) 
+void berkeleydb_t::cursor_iterator_base::close(void) 
 {
    if(cursor)
       error = cursor->close();
    cursor = NULL;
 }
 
-bool database_t::cursor_iterator::set(Dbt& key, Dbt& data, Dbt *pkey)
+bool berkeleydb_t::cursor_iterator::set(Dbt& key, Dbt& data, Dbt *pkey)
 {
    if(!cursor || is_error())
       return false;
@@ -151,7 +154,7 @@ bool database_t::cursor_iterator::set(Dbt& key, Dbt& data, Dbt *pkey)
    return true;
 }
 
-bool database_t::cursor_iterator::next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey)
+bool berkeleydb_t::cursor_iterator::next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey)
 {
    if(!cursor || is_error())
       return false;
@@ -195,7 +198,7 @@ bool database_t::cursor_iterator::next(Dbt& key, Dbt& data, Dbt *pkey, bool dupk
    return true;
 }
 
-bool database_t::cursor_reverse_iterator::prev(Dbt& key, Dbt& data, Dbt *pkey)
+bool berkeleydb_t::cursor_reverse_iterator::prev(Dbt& key, Dbt& data, Dbt *pkey)
 {
    if(!cursor || is_error())
       return false;
@@ -210,20 +213,39 @@ bool database_t::cursor_reverse_iterator::prev(Dbt& key, Dbt& data, Dbt *pkey)
 
 // -----------------------------------------------------------------------
 //
-// database_t::table_t
+// berkeleydb_t::table_t
 //
 // -----------------------------------------------------------------------
 
-database_t::table_t::table_t(DbEnv *_dbenv) : table(_dbenv, DBFLAGS)
+berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb) :
+      dbenv(&dbenv),
+      table(new_db(&dbenv, DBFLAGS)),
+      values(NULL),
+      seqdb(&seqdb),
+      sequence(NULL),
+      threaded(false),
+      readonly(false)
 {
-   dbenv = _dbenv;
-   values = NULL;
-   sequence = NULL;
-   threaded = false;
-   readonly = false;
 }
 
-database_t::table_t::~table_t(void)
+berkeleydb_t::table_t::table_t(table_t&& other) :
+      dbenv(other.dbenv),
+      table(other.table),
+      values(other.values),
+      seqdb(other.seqdb),
+      sequence(other.sequence),
+      indexes(std::move(other.indexes)),
+      threaded(other.threaded),
+      readonly(other.readonly)
+{
+   other.dbenv = NULL;
+   other.table = NULL;
+   other.values = NULL;
+   other.seqdb = NULL;
+   other.sequence = NULL;
+}
+
+berkeleydb_t::table_t::~table_t(void)
 {
    for(u_int index = 0; index < indexes.size(); index++) {
       if(indexes[index].scdb)
@@ -232,9 +254,33 @@ database_t::table_t::~table_t(void)
 
    if(sequence)
       delete_db_sequence(sequence);
+
+   if(table)
+      delete_db(table);
 }
 
-void database_t::table_t::init_db_handles(void)
+berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other)
+{
+   dbenv = other.dbenv;
+   table = other.table;
+   values = other.values;
+   seqdb = other.seqdb;
+   sequence = other.sequence;
+   indexes = std::move(other.indexes);
+
+   threaded = other.threaded;
+   readonly = other.readonly;
+
+   other.dbenv = NULL;
+   other.table = NULL;
+   other.values = NULL;
+   other.seqdb = NULL;
+   other.sequence = NULL;
+
+   return *this;
+}
+
+void berkeleydb_t::table_t::init_db_handles(void)
 {
    Db *scdb;
 
@@ -247,10 +293,10 @@ void database_t::table_t::init_db_handles(void)
    }
 
    // construct the primary database
-   new (&table) Db(dbenv, DBFLAGS);
+   new (table) Db(dbenv, DBFLAGS);
 }
 
-void database_t::table_t::destroy_db_handles(void)
+void berkeleydb_t::table_t::destroy_db_handles(void)
 {
    Db *scdb;
 
@@ -263,10 +309,10 @@ void database_t::table_t::destroy_db_handles(void)
    }
 
    // destroy the primary database
-   table.Db::~Db();
+   table->Db::~Db();
 }
 
-const database_t::table_t::db_desc_t *database_t::table_t::get_sc_desc(const char *dbname) const
+const berkeleydb_t::table_t::db_desc_t *berkeleydb_t::table_t::get_sc_desc(const char *dbname) const
 {
    if(!dbname || !*dbname)
       return NULL;
@@ -279,7 +325,7 @@ const database_t::table_t::db_desc_t *database_t::table_t::get_sc_desc(const cha
    return NULL;
 }
 
-database_t::table_t::db_desc_t *database_t::table_t::get_sc_desc(const char *dbname)
+berkeleydb_t::table_t::db_desc_t *berkeleydb_t::table_t::get_sc_desc(const char *dbname)
 {
    if(!dbname || !*dbname)
       return NULL;
@@ -292,7 +338,7 @@ database_t::table_t::db_desc_t *database_t::table_t::get_sc_desc(const char *dbn
    return NULL;
 }
 
-int database_t::table_t::open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb)
+int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb)
 {
    u_int index;
    int error;
@@ -311,21 +357,21 @@ int database_t::table_t::open(const char *dbpath, const char *dbname, bt_compare
    }
 
    // then configure and open the primary database
-   if((error = table.set_bt_compare(btcb)) != 0)
+   if((error = table->set_bt_compare(btcb)) != 0)
       return error;
 
    // set little endian byte order
-   if((error = table.set_lorder(1234)) != 0)
+   if((error = table->set_lorder(1234)) != 0)
       return error;
 
-   if((error = table.open(NULL, dbpath, dbname, DB_BTREE, flags, FILEMASK)) != 0)
+   if((error = table->open(NULL, dbpath, dbname, DB_BTREE, flags, FILEMASK)) != 0)
       return error;
 
    // associate all secondary databases with a non-NULL callback
    for(index = 0; index < indexes.size(); index++) {
       // if the extraction callback is not NULL, associate immediately
       if(indexes[index].scdb && indexes[index].sccb) {
-         if((error = table.associate(NULL, indexes[index].scdb, indexes[index].sccb, 0)) != 0)
+         if((error = table->associate(NULL, indexes[index].scdb, indexes[index].sccb, 0)) != 0)
             return error;
       }
    }
@@ -333,7 +379,7 @@ int database_t::table_t::open(const char *dbpath, const char *dbname, bt_compare
    return 0;
 }
 
-int database_t::table_t::close(void)
+int berkeleydb_t::table_t::close(void)
 {
    int error;
 
@@ -356,16 +402,16 @@ int database_t::table_t::close(void)
       sequence = NULL;
    }
 
-   return table.close(0);
+   return table->close(0);
 }
 
-int database_t::table_t::truncate(u_int32_t *count)
+int berkeleydb_t::table_t::truncate(u_int32_t *count)
 {
    u_int32_t temp;
-   return table.truncate(NULL, count ? count : &temp, 0);
+   return table->truncate(NULL, count ? count : &temp, 0);
 }
 
-int database_t::table_t::compact(u_int& bytes)
+int berkeleydb_t::table_t::compact(u_int& bytes)
 {
 #if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
    DB_COMPACT c_data;
@@ -392,12 +438,12 @@ int database_t::table_t::compact(u_int& bytes)
    }
    
    // do the same for the primary table database
-   if((error = table.get_pagesize(&pagesize)) != 0)
+   if((error = table->get_pagesize(&pagesize)) != 0)
       return error;
 
    memset(&c_data, 0, sizeof(c_data));
 
-   if((error = table.compact(NULL, NULL, NULL, &c_data, DB_FREE_SPACE, NULL)) != 0)
+   if((error = table->compact(NULL, NULL, NULL, &c_data, DB_FREE_SPACE, NULL)) != 0)
       return error;
       
    bytes += c_data.compact_pages_truncated * pagesize;
@@ -408,7 +454,7 @@ int database_t::table_t::compact(u_int& bytes)
 #endif
 }
 
-int database_t::table_t::sync(void)
+int berkeleydb_t::table_t::sync(void)
 {
    int error;
 
@@ -417,10 +463,10 @@ int database_t::table_t::sync(void)
          return error;
    }
 
-   return table.sync(0);
+   return table->sync(0);
 }
 
-int database_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb)
+int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb)
 {
    int error;
    Db *scdb = new_db(dbenv, DBFLAGS);
@@ -451,7 +497,7 @@ errexit:
    return error;
 }
 
-int database_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild)
+int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild)
 {
    int error;
    u_int32_t temp;
@@ -469,7 +515,7 @@ int database_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, boo
    }
 
    // associate the secondary, rebuilding if requested
-   if((error = table.associate(NULL, desc->scdb, sccb, flags)) != 0)
+   if((error = table->associate(NULL, desc->scdb, sccb, flags)) != 0)
       return error;
 
    // mark as associated
@@ -478,7 +524,7 @@ int database_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, boo
    return 0;
 }
 
-Db *database_t::table_t::secondary_db(const char *dbname)
+Db *berkeleydb_t::table_t::secondary_db(const char *dbname)
 {
    db_desc_t *desc;
 
@@ -488,7 +534,7 @@ Db *database_t::table_t::secondary_db(const char *dbname)
    return desc->scdb;
 }
 
-const Db *database_t::table_t::secondary_db(const char *dbname) const
+const Db *berkeleydb_t::table_t::secondary_db(const char *dbname) const
 {
    const db_desc_t *desc;
 
@@ -498,7 +544,7 @@ const Db *database_t::table_t::secondary_db(const char *dbname) const
    return desc->scdb;
 }
 
-int database_t::table_t::open_sequence(Db& seqdb, const char *colname, int32_t cachesize)
+int berkeleydb_t::table_t::open_sequence(const char *colname, int32_t cachesize)
 {
    u_int32_t flags = DB_CREATE;
    int error;
@@ -522,7 +568,7 @@ int database_t::table_t::open_sequence(Db& seqdb, const char *colname, int32_t c
    return sequence->open(NULL, &key, flags);
 }
 
-db_seq_t database_t::table_t::get_seq_id(int32_t delta)
+db_seq_t berkeleydb_t::table_t::get_seq_id(int32_t delta)
 {
    db_seq_t seqid;
 
@@ -532,7 +578,7 @@ db_seq_t database_t::table_t::get_seq_id(int32_t delta)
    return seqid;
 }
 
-db_seq_t database_t::table_t::query_seq_id(void)
+db_seq_t berkeleydb_t::table_t::query_seq_id(void)
 {
    DB_SEQUENCE_STAT *db_stat;
    db_seq_t cur_seq_id;
@@ -547,10 +593,10 @@ db_seq_t database_t::table_t::query_seq_id(void)
    return cur_seq_id;
 }
 
-uint64_t database_t::table_t::count(const char *dbname) const
+uint64_t berkeleydb_t::table_t::count(const char *dbname) const
 {
    DB_BTREE_STAT *stats;
-   const Db *dbptr = &table;
+   const Db *dbptr = table;
    uint64_t nkeys;
 
    if(dbname && *dbname) {
@@ -570,19 +616,19 @@ uint64_t database_t::table_t::count(const char *dbname) const
 
 // -----------------------------------------------------------------------
 //
-// database_t::iterator
+// berkeleydb_t::iterator
 //
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-database_t::iterator_base<node_t>::iterator_base(cursor_iterator_base& iter) : iter(iter)
+berkeleydb_t::iterator_base<node_t>::iterator_base(cursor_iterator_base& iter) : iter(iter)
 {
    // set the default size for the keys and data
    set_buffer_size(BUFKEYSIZE, BUFDATASIZE);
 }
 
 template <typename node_t>
-database_t::iterator_base<node_t>::~iterator_base(void)
+berkeleydb_t::iterator_base<node_t>::~iterator_base(void)
 {
    if(key.get_flags() & DB_DBT_USERMEM)
       delete [] (u_char*) key.get_data();
@@ -595,7 +641,7 @@ database_t::iterator_base<node_t>::~iterator_base(void)
 }
 
 template <typename node_t>
-void database_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int maxdata)
+void berkeleydb_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int maxdata)
 {
    if(maxkey) {
       key.set_data(new u_char[maxkey]);
@@ -616,12 +662,12 @@ void database_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int maxd
 
 // -----------------------------------------------------------------------
 //
-// database_t::iterator
+// berkeleydb_t::iterator
 //
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-database_t::iterator<node_t>::iterator(const table_t& table, const char *dbname) : 
+berkeleydb_t::iterator<node_t>::iterator(const table_t& table, const char *dbname) : 
       iterator_base<node_t>(iter),
       iter(dbname ? table.secondary_db(dbname) : &table.primary_db())
 {
@@ -629,7 +675,7 @@ database_t::iterator<node_t>::iterator(const table_t& table, const char *dbname)
 }
 
 template <typename node_t>
-bool database_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
 {
    if(!iter.next(key, data, primdb ? NULL : &pkey))
       return false;
@@ -651,12 +697,12 @@ bool database_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpack_
 
 // -----------------------------------------------------------------------
 //
-// database_t::reverse_iterator
+// berkeleydb_t::reverse_iterator
 //
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-database_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, const char *dbname) : 
+berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, const char *dbname) : 
       iterator_base<node_t>(iter), 
       iter(dbname ? table.secondary_db(dbname) : &table.primary_db())
 {
@@ -664,7 +710,7 @@ database_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, con
 }
 
 template <typename node_t>
-bool database_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
 {
    if(!iter.prev(key, data, primdb ? NULL : &pkey))
       return false;
@@ -684,8 +730,11 @@ bool database_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s
    return true;
 }
 
+//
+//
+//
 template <typename node_t>
-bool database_t::put_node(table_t& table, u_char *buffer, const node_t& node)
+bool berkeleydb_t::table_t::put_node(u_char *buffer, const node_t& node)
 {
    Dbt key, data;
    size_t keysize, datasize;
@@ -702,7 +751,7 @@ bool database_t::put_node(table_t& table, u_char *buffer, const node_t& node)
    data.set_data(&buffer[BUFDATAOFFSET]);
    data.set_size((u_int32_t) datasize);
 
-   if(table.primary_db().put(NULL, &key, &data, 0)) 
+   if(table->put(NULL, &key, &data, 0)) 
       return false;
 
    // node flags are mutable
@@ -713,7 +762,7 @@ bool database_t::put_node(table_t& table, u_char *buffer, const node_t& node)
 }
 
 template <typename node_t>
-bool database_t::get_node_by_id(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_id(u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
    size_t keysize;
@@ -730,7 +779,7 @@ bool database_t::get_node_by_id(const table_t& table, u_char *buffer, node_t& no
    data.set_ulen(BUFDATASIZE);
    data.set_flags(DB_DBT_USERMEM);
 
-   if(const_cast<Db&>(table.primary_db()).get(NULL, &key, &data, 0))
+   if(const_cast<Db*>(table)->get(NULL, &key, &data, 0))
       return false;
 
    if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
@@ -743,14 +792,13 @@ bool database_t::get_node_by_id(const table_t& table, u_char *buffer, node_t& no
 }
 
 template <typename node_t>
-bool database_t::get_node_by_value(const table_t& table, u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_value(u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
-   const Db *scdb;
    Dbt key, pkey, data;
    u_int32_t keysize;
    uint64_t hashkey;
 
-   if((scdb = table.values_db()) == NULL)
+   if(values == NULL)
       return false;
 
    // make a value key
@@ -770,7 +818,7 @@ bool database_t::get_node_by_value(const table_t& table, u_char *buffer, node_t&
    data.set_flags(DB_DBT_USERMEM);
 
    // open a cursor
-   {cursor_iterator cursor(scdb);
+   {cursor_iterator cursor(values);
 
    // find the first value hash and get the primary key and value data
    if(!cursor.set(key, data, &pkey))
@@ -806,7 +854,7 @@ bool database_t::get_node_by_value(const table_t& table, u_char *buffer, node_t&
    return true;
 }
 
-bool database_t::delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node)
+bool berkeleydb_t::table_t::delete_node(u_char *buffer, const keynode_t<uint64_t>& node)
 {
    Dbt key;
    size_t keysize;
@@ -817,27 +865,10 @@ bool database_t::delete_node(table_t& table, u_char *buffer, const keynode_t<uin
    key.set_data(&buffer[BUFKEYOFFSET]);
    key.set_size((u_int32_t) keysize);
 
-   if(table.primary_db().del(NULL, &key, 0))
+   if(table->del(NULL, &key, 0))
       return false;
 
    return true;
-}
-
-// -----------------------------------------------------------------------
-//
-// DbEnvEx
-//
-// -----------------------------------------------------------------------
-
-database_t::DbEnvEx::DbEnvEx(u_int32_t flags) : DbEnv(flags)
-{
-   // configure the environment to use the correct memory manager
-   if(set_alloc(database_t::malloc, database_t::realloc, database_t::free))
-      throw exception_t(0, "Cannot set memory management functions for the database environment");
-}
-
-database_t::DbEnvEx::~DbEnvEx(void)
-{
 }
 
 // -----------------------------------------------------------------------
@@ -846,56 +877,67 @@ database_t::DbEnvEx::~DbEnvEx(void)
 //
 // -----------------------------------------------------------------------
 
-database_t::database_t(const config_t& config) : 
-      config(config),
+berkeleydb_t::berkeleydb_t(config_t&& config) :
+      config(config.clone()),
       dbenv(DBENVFLAGS),
-      sequences(&dbenv, DBFLAGS),
-      urls(&dbenv),
-      hosts(&dbenv),
-      visits(&dbenv),
-      downloads(&dbenv),
-      active_downloads(&dbenv),
-      agents(&dbenv),
-      referrers(&dbenv),
-      search(&dbenv),
-      users(&dbenv),
-      errors(&dbenv),
-      scodes(&dbenv),
-      daily(&dbenv),
-      hourly(&dbenv),
-      totals(&dbenv),
-      countries(&dbenv),
-      system(&dbenv)
+      sequences(&dbenv, DBFLAGS)
 {
-   u_int index = 0;
+   // configure the environment to use the correct memory manager
+   if(dbenv.set_alloc(berkeleydb_t::malloc, berkeleydb_t::realloc, berkeleydb_t::free))
+      throw exception_t(0, "Cannot set memory management functions for the database environment");
 
-   trickle_thread = 0;
+   trickle_thread = 0;                 // $$$
    trickle_event = NULL;
    trickle_thread_stop = false;
    trickle_thread_stopped = true;
 
    readonly = false;
    trickle = false;
+}
 
+berkeleydb_t::~berkeleydb_t()
+{
+   config.release();
+}
+
+database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
+      config(config),
+      urls(make_table()),
+      hosts(make_table()),
+      visits(make_table()),
+      downloads(make_table()),
+      active_downloads(make_table()),
+      agents(make_table()),
+      referrers(make_table()),
+      search(make_table()),
+      users(make_table()),
+      errors(make_table()),
+      scodes(make_table()),
+      daily(make_table()),
+      hourly(make_table()),
+      totals(make_table()),
+      countries(make_table()),
+      system(make_table())
+{
    buffer = new u_char[DBBUFSIZE];
 
    // initialize the array to hold table pointers
-   tables.push(&urls);
-   tables.push(&hosts);
-   tables.push(&visits);
-   tables.push(&downloads);
-   tables.push(&active_downloads);
-   tables.push(&agents);
-   tables.push(&referrers);
-   tables.push(&search);
-   tables.push(&users);
-   tables.push(&errors);
-   tables.push(&scodes);
-   tables.push(&daily);
-   tables.push(&hourly);
-   tables.push(&totals);
-   tables.push(&countries);
-   tables.push(&system);
+   add_table(urls);
+   add_table(hosts);
+   add_table(visits);
+   add_table(downloads);
+   add_table(active_downloads);
+   add_table(agents);
+   add_table(referrers);
+   add_table(search);
+   add_table(users);
+   add_table(errors);
+   add_table(scodes);
+   add_table(daily);
+   add_table(hourly);
+   add_table(totals);
+   add_table(countries);
+   add_table(system);
 }
 
 database_t::~database_t(void)
@@ -903,7 +945,7 @@ database_t::~database_t(void)
    delete [] buffer;
 }
 
-void database_t::reset_db_handles(void)
+void berkeleydb_t::reset_db_handles(void)
 {
    //
    // Once DbEnv::close and Db::close are called, their object instances 
@@ -919,8 +961,8 @@ void database_t::reset_db_handles(void)
    sequences.Db::~Db();
    
    // reconstruct the environment 
-   dbenv.~DbEnvEx();
-   new (&dbenv) DbEnvEx(DBFLAGS);
+   dbenv.~DbEnv();
+   new (&dbenv) DbEnv(DBFLAGS);
 
    // construct the sequence database
    new (&sequences) Db(&dbenv, DBFLAGS);
@@ -930,32 +972,32 @@ void database_t::reset_db_handles(void)
       tables[i]->init_db_handles();
 }
 
-void *database_t::malloc(size_t size)
+void *berkeleydb_t::malloc(size_t size)
 {
    return ::malloc(size);
 }
 
-void *database_t::realloc(void *block, size_t size)
+void *berkeleydb_t::realloc(void *block, size_t size)
 {
    return ::realloc(block, size);
 }
 
-void database_t::free(void *block)
+void berkeleydb_t::free(void *block)
 {
    ::free(block);
 }
 
-DbSequence *database_t::new_db_sequence(Db& db, u_int32_t flags)
+DbSequence *berkeleydb_t::new_db_sequence(Db *seqdb, u_int32_t flags)
 {
    void *dbseq;
    
    if((dbseq = malloc(sizeof(DbSequence))) == NULL)
       return NULL;
    
-   return new (dbseq) DbSequence(&db, flags);
+   return new (dbseq) DbSequence(seqdb, flags);
 }
 
-void database_t::delete_db_sequence(DbSequence *dbseq)
+void berkeleydb_t::delete_db_sequence(DbSequence *dbseq)
 {
    if(dbseq) {
       dbseq->~DbSequence();
@@ -963,7 +1005,7 @@ void database_t::delete_db_sequence(DbSequence *dbseq)
    }
 }
 
-Db *database_t::new_db(DbEnv *dbenv, u_int32_t flags)
+Db *berkeleydb_t::new_db(DbEnv *dbenv, u_int32_t flags)
 {
    void *db;
    
@@ -973,17 +1015,12 @@ Db *database_t::new_db(DbEnv *dbenv, u_int32_t flags)
    return new (db) Db(dbenv, flags);
 }
 
-void database_t::delete_db(Db *db)
+void berkeleydb_t::delete_db(Db *db)
 {
    if(db) {
       db->~Db();
       free(db);
    }
-}
-
-void database_t::db_error_cb(const DbEnv *dbenv, const char *errpfx, const char *errmsg)
-{
-   throw DbException(errpfx, errmsg, -1);
 }
 
 bool database_t::attach_indexes(bool rebuild)
@@ -1075,13 +1112,10 @@ bool database_t::attach_indexes(bool rebuild)
    return true;
 }
 
-bool database_t::open(void)
+bool berkeleydb_t::open(void)
 {
    u_int32_t dbflags = readonly ? DB_RDONLY : DB_CREATE;
    u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
-
-   // set the error handler callback
-   dbenv.set_errcall(db_error_cb);
 
    // do some additional initialization for threaded environment
    if(!readonly && trickle) {
@@ -1108,34 +1142,31 @@ bool database_t::open(void)
          tables[i]->set_readonly(true);
    }
 
-   // get the fully-qualified database file path
-   dbpath = config.get_db_path();
-
    // set the temporary directory
-   if(dbenv.set_tmp_dir(config.db_path))
+   if(dbenv.set_tmp_dir(config.get_tmp_path()))
       return false;
 
    // if configured cache size is non-zero,
-   if(config.db_cache_size) {
+   if(config.get_db_cache_size()) {
       // set the maximum database cache size
-      if(dbenv.set_cachesize(0, config.db_cache_size, 0))
+      if(dbenv.set_cachesize(0, config.get_db_cache_size(), 0))
          return false;
 
       // and the maximum memory-mapped file size (read-only mode)
       if(readonly) {
-         if(dbenv.set_mp_mmapsize(config.db_cache_size))
+         if(dbenv.set_mp_mmapsize(config.get_db_cache_size()))
             return false;
       }
    }
 
    // disable OS buffering, if requested
-   if(config.db_direct) {
+   if(config.get_db_direct()) {
       if(dbenv.set_flags(DB_DIRECT_DB, 1))
          return false;
    }
 
    // enable write-through I/O, if requested
-   if(config.db_dsync) {
+   if(config.get_db_dsync()) {
 #if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
       if(dbenv.set_flags(DB_DSYNC_DB, 1))
          return false;
@@ -1145,14 +1176,22 @@ bool database_t::open(void)
    }
 
    // open the DB environment
-   if(dbenv.open(dbpath, envflags, FILEMASK))
+   if(dbenv.open(config.get_db_path(), envflags, FILEMASK))
       return false;
 
    //
    // create the sequences database (unique node IDs)
    //
-   if(sequences.open(NULL, dbpath, "sequences", DB_HASH, dbflags, FILEMASK))
-         return false;
+   if(sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK))
+      return false;
+
+   return true;
+}
+
+bool database_t::open(void)
+{
+   if(!berkeleydb_t::open())
+      return false;
 
    //
    // confgure all databases
@@ -1161,243 +1200,244 @@ bool database_t::open(void)
    //
    // system
    //
-   if(system.open(dbpath, "system", bt_compare_cb<sysnode_t::s_compare_key>))
+   if(system.open(config.get_db_path(), "system", bt_compare_cb<sysnode_t::s_compare_key>))
       return false;
 
    //
    // urls
    //
-   if(!readonly) {
-      if(urls.open_sequence(sequences, "urls.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(urls.open_sequence("urls.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(urls.associate(dbpath, "urls.values", bt_compare_cb<unode_t::s_compare_value_hash>, bt_compare_cb<unode_t::s_compare_value_hash>, sc_extract_cb<unode_t::s_field_value_hash>))
+   if(urls.associate(config.get_db_path(), "urls.values", bt_compare_cb<unode_t::s_compare_value_hash>, bt_compare_cb<unode_t::s_compare_value_hash>, sc_extract_cb<unode_t::s_field_value_hash>))
       return false;
 
    urls.set_values_db("urls.values");
 
-   if(urls.associate(dbpath, "urls.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_hits>) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_hits>) : NULL))
       return false;
 
-   if(urls.associate(dbpath, "urls.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_xfer>) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_xfer>) : NULL))
       return false;
 
-   if(urls.associate(dbpath, "urls.entry", bt_compare_cb<unode_t::s_compare_entry>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_entry>) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.entry", bt_compare_cb<unode_t::s_compare_entry>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_entry>) : NULL))
       return false;
 
-   if(urls.associate(dbpath, "urls.exit", bt_compare_cb<unode_t::s_compare_exit>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_exit>) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.exit", bt_compare_cb<unode_t::s_compare_exit>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_exit>) : NULL))
       return false;
 
-   if(urls.associate(dbpath, "urls.groups.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_hits>)) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.groups.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_hits>)) : NULL))
       return false;
 
-   if(urls.associate(dbpath, "urls.groups.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_xfer>)) : NULL))
+   if(urls.associate(config.get_db_path(), "urls.groups.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_xfer>)) : NULL))
       return false;
 
-   if(urls.open(dbpath, "urls", bt_compare_cb<unode_t::s_compare_key>))
+   if(urls.open(config.get_db_path(), "urls", bt_compare_cb<unode_t::s_compare_key>))
       return false;
 
    //
    // hosts
    //
-   if(!readonly) {
-      if(hosts.open_sequence(sequences, "hosts.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(hosts.open_sequence("hosts.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(hosts.associate(dbpath, "hosts.values", bt_compare_cb<hnode_t::s_compare_value_hash>, bt_compare_cb<hnode_t::s_compare_value_hash>, sc_extract_cb<hnode_t::s_field_value_hash>))
+   if(hosts.associate(config.get_db_path(), "hosts.values", bt_compare_cb<hnode_t::s_compare_value_hash>, bt_compare_cb<hnode_t::s_compare_value_hash>, sc_extract_cb<hnode_t::s_field_value_hash>))
       return false;
 
    hosts.set_values_db("hosts.values");
 
-   if(hosts.associate(dbpath, "hosts.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_hits>) : NULL))
+   if(hosts.associate(config.get_db_path(), "hosts.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_hits>) : NULL))
       return false;
 
-   if(hosts.associate(dbpath, "hosts.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_xfer>) : NULL))
+   if(hosts.associate(config.get_db_path(), "hosts.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_xfer>) : NULL))
       return false;
 
-   if(hosts.associate(dbpath, "hosts.groups.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>)) : NULL))
+   if(hosts.associate(config.get_db_path(), "hosts.groups.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>)) : NULL))
       return false;
 
-   if(hosts.associate(dbpath, "hosts.groups.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>)) : NULL))
+   if(hosts.associate(config.get_db_path(), "hosts.groups.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>)) : NULL))
       return false;
 
-   if(hosts.open(dbpath, "hosts", bt_compare_cb<hnode_t::s_compare_key>))
+   if(hosts.open(config.get_db_path(), "hosts", bt_compare_cb<hnode_t::s_compare_key>))
       return false;
 
    //
    // visits
    //
-   if(visits.open(dbpath, "visits.active", bt_compare_cb<vnode_t::s_compare_key>))
+   if(visits.open(config.get_db_path(), "visits.active", bt_compare_cb<vnode_t::s_compare_key>))
       return false;
 
    //
    // downloads
    //
-   if(!readonly) {
-      if(downloads.open_sequence(sequences, "downloads.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(downloads.open_sequence("downloads.seq", config.db_seq_cache_size))
          return false;
    }
    
-   if(downloads.associate(dbpath, "downloads.values", bt_compare_cb<dlnode_t::s_compare_value_hash>, bt_compare_cb<dlnode_t::s_compare_value_hash>, sc_extract_cb<dlnode_t::s_field_value_hash>))
+   if(downloads.associate(config.get_db_path(), "downloads.values", bt_compare_cb<dlnode_t::s_compare_value_hash>, bt_compare_cb<dlnode_t::s_compare_value_hash>, sc_extract_cb<dlnode_t::s_field_value_hash>))
       return false;
 
    downloads.set_values_db("downloads.values");
 
-   if(downloads.associate(dbpath, "downloads.xfer", bt_compare_cb<dlnode_t::s_compare_xfer>, bt_compare_cb<dlnode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<dlnode_t::s_field_xfer>) : NULL))
+   if(downloads.associate(config.get_db_path(), "downloads.xfer", bt_compare_cb<dlnode_t::s_compare_xfer>, bt_compare_cb<dlnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<dlnode_t::s_field_xfer>) : NULL))
       return false;
 
-   if(downloads.open(dbpath, "downloads", bt_compare_cb<dlnode_t::s_compare_key>))
+   if(downloads.open(config.get_db_path(), "downloads", bt_compare_cb<dlnode_t::s_compare_key>))
       return false;
 
    //
    // active downloads
    //
-   if(active_downloads.open(dbpath, "downloads.active", bt_compare_cb<danode_t::s_compare_key>))
+   if(active_downloads.open(config.get_db_path(), "downloads.active", bt_compare_cb<danode_t::s_compare_key>))
       return false;
 
    //
    // agents
    //
-   if(!readonly) {
-      if(agents.open_sequence(sequences, "agents.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(agents.open_sequence("agents.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(agents.associate(dbpath, "agents.values", bt_compare_cb<anode_t::s_compare_value_hash>, bt_compare_cb<anode_t::s_compare_value_hash>, sc_extract_cb<anode_t::s_field_value_hash>))
+   if(agents.associate(config.get_db_path(), "agents.values", bt_compare_cb<anode_t::s_compare_value_hash>, bt_compare_cb<anode_t::s_compare_value_hash>, sc_extract_cb<anode_t::s_field_value_hash>))
       return false;
 
    agents.set_values_db("agents.values");
 
-   if(agents.associate(dbpath, "agents.hits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_hits>) : NULL))
+   if(agents.associate(config.get_db_path(), "agents.hits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_hits>) : NULL))
       return false;
 
-   if(agents.associate(dbpath, "agents.visits", bt_compare_cb<anode_t::s_compare_visits>, bt_compare_cb<anode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_visits>) : NULL))
+   if(agents.associate(config.get_db_path(), "agents.visits", bt_compare_cb<anode_t::s_compare_visits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_visits>) : NULL))
       return false;
 
-   if(agents.associate(dbpath, "agents.groups.visits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<anode_t, anode_t::s_field_visits>)) : NULL))
+   if(agents.associate(config.get_db_path(), "agents.groups.visits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<anode_t, anode_t::s_field_visits>)) : NULL))
       return false;
 
-   if(agents.open(dbpath, "agents", bt_compare_cb<anode_t::s_compare_key>))
+   if(agents.open(config.get_db_path(), "agents", bt_compare_cb<anode_t::s_compare_key>))
       return false;
 
    //
    // referrers
    //
-   if(!readonly) {
-      if(referrers.open_sequence(sequences, "referrers.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(referrers.open_sequence("referrers.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(referrers.associate(dbpath, "referrers.values", bt_compare_cb<rnode_t::s_compare_value_hash>, bt_compare_cb<rnode_t::s_compare_value_hash>, sc_extract_cb<rnode_t::s_field_value_hash>))
+   if(referrers.associate(config.get_db_path(), "referrers.values", bt_compare_cb<rnode_t::s_compare_value_hash>, bt_compare_cb<rnode_t::s_compare_value_hash>, sc_extract_cb<rnode_t::s_field_value_hash>))
       return false;
 
    referrers.set_values_db("referrers.values");
 
-   if(referrers.associate(dbpath, "referrers.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<rnode_t::s_field_hits>) : NULL))
+   if(referrers.associate(config.get_db_path(), "referrers.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<rnode_t::s_field_hits>) : NULL))
       return false;
 
-   if(referrers.associate(dbpath, "referrers.groups.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>)) : NULL))
+   if(referrers.associate(config.get_db_path(), "referrers.groups.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>)) : NULL))
       return false;
 
-   if(referrers.open(dbpath, "referrers", bt_compare_cb<rnode_t::s_compare_key>))
+   if(referrers.open(config.get_db_path(), "referrers", bt_compare_cb<rnode_t::s_compare_key>))
       return false;
 
    //
    // search strings
    //
-   if(!readonly) {
-      if(search.open_sequence(sequences, "search.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(search.open_sequence("search.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(search.associate(dbpath, "search.values", bt_compare_cb<snode_t::s_compare_value_hash>, bt_compare_cb<snode_t::s_compare_value_hash>, sc_extract_cb<snode_t::s_field_value_hash>))
+   if(search.associate(config.get_db_path(), "search.values", bt_compare_cb<snode_t::s_compare_value_hash>, bt_compare_cb<snode_t::s_compare_value_hash>, sc_extract_cb<snode_t::s_field_value_hash>))
       return false;
 
    search.set_values_db("search.values");
 
-   if(search.associate(dbpath, "search.hits", bt_compare_cb<snode_t::s_compare_hits>, bt_compare_cb<snode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<snode_t::s_field_hits>) : NULL))
+   if(search.associate(config.get_db_path(), "search.hits", bt_compare_cb<snode_t::s_compare_hits>, bt_compare_cb<snode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<snode_t::s_field_hits>) : NULL))
       return false;
 
-   if(search.open(dbpath, "search", bt_compare_cb<snode_t::s_compare_key>))
+   if(search.open(config.get_db_path(), "search", bt_compare_cb<snode_t::s_compare_key>))
       return false;
 
    //
    // users
    //
-   if(!readonly) {
-      if(users.open_sequence(sequences, "users.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(users.open_sequence("users.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(users.associate(dbpath, "users.values", bt_compare_cb<inode_t::s_compare_value_hash>, bt_compare_cb<inode_t::s_compare_value_hash>, sc_extract_cb<inode_t::s_field_value_hash>))
+   if(users.associate(config.get_db_path(), "users.values", bt_compare_cb<inode_t::s_compare_value_hash>, bt_compare_cb<inode_t::s_compare_value_hash>, sc_extract_cb<inode_t::s_field_value_hash>))
       return false;
 
    users.set_values_db("users.values");
 
-   if(users.associate(dbpath, "users.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<inode_t::s_field_hits>) : NULL))
+   if(users.associate(config.get_db_path(), "users.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<inode_t::s_field_hits>) : NULL))
       return false;
 
-   if(users.associate(dbpath, "users.groups.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, readonly ? __gcc_bug11407__((sc_extract_group_cb<inode_t, inode_t::s_field_hits>)) : NULL))
+   if(users.associate(config.get_db_path(), "users.groups.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<inode_t, inode_t::s_field_hits>)) : NULL))
       return false;
 
-   if(users.open(dbpath, "users", bt_compare_cb<inode_t::s_compare_key>))
+   if(users.open(config.get_db_path(), "users", bt_compare_cb<inode_t::s_compare_key>))
       return false;
 
    //
    // errors
    //
-   if(!readonly) {
-      if(errors.open_sequence(sequences, "errors.seq", config.db_seq_cache_size))
+   if(!get_readonly()) {
+      if(errors.open_sequence("errors.seq", config.db_seq_cache_size))
          return false;
    }
 
-   if(errors.associate(dbpath, "errors.values", bt_compare_cb<rcnode_t::s_compare_value_hash>, bt_compare_cb<rcnode_t::s_compare_value_hash>, sc_extract_cb<rcnode_t::s_field_value_hash>))
+   if(errors.associate(config.get_db_path(), "errors.values", bt_compare_cb<rcnode_t::s_compare_value_hash>, bt_compare_cb<rcnode_t::s_compare_value_hash>, sc_extract_cb<rcnode_t::s_field_value_hash>))
       return false;
 
    errors.set_values_db("errors.values");
 
-   if(errors.associate(dbpath, "errors.hits", bt_compare_cb<rcnode_t::s_compare_hits>, bt_compare_cb<rcnode_t::s_compare_key>, readonly ? __gcc_bug11407__(sc_extract_cb<rcnode_t::s_field_hits>) : NULL))
+   if(errors.associate(config.get_db_path(), "errors.hits", bt_compare_cb<rcnode_t::s_compare_hits>, bt_compare_cb<rcnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<rcnode_t::s_field_hits>) : NULL))
       return false;
 
-   if(errors.open(dbpath, "errors", bt_compare_cb<rcnode_t::s_compare_key>))
+   if(errors.open(config.get_db_path(), "errors", bt_compare_cb<rcnode_t::s_compare_key>))
       return false;
 
    //
    // status codes
    //
-   if(scodes.open(dbpath, "statuscodes", bt_compare_cb<scnode_t::s_compare_key>))
+   if(scodes.open(config.get_db_path(), "statuscodes", bt_compare_cb<scnode_t::s_compare_key>))
       return false;
 
    //
    // daily totals
    //
-   if(daily.open(dbpath, "totals.daily", bt_compare_cb<daily_t::s_compare_key>))
+   if(daily.open(config.get_db_path(), "totals.daily", bt_compare_cb<daily_t::s_compare_key>))
       return false;
+
 
    //
    // hourly totals
    //
-   if(hourly.open(dbpath, "totals.hourly", bt_compare_cb<hourly_t::s_compare_key>))
+   if(hourly.open(config.get_db_path(), "totals.hourly", bt_compare_cb<hourly_t::s_compare_key>))
       return false;
 
    //
    // totals
    //
-   if(totals.open(dbpath, "totals", bt_compare_cb<totals_t::s_compare_key>))
+   if(totals.open(config.get_db_path(), "totals", bt_compare_cb<totals_t::s_compare_key>))
       return false;
 
    //
    // country codes
    //
-   if(countries.open(dbpath, "countries", bt_compare_cb<ccnode_t::s_compare_key>))
+   if(countries.open(config.get_db_path(), "countries", bt_compare_cb<ccnode_t::s_compare_key>))
       return false;
 
    return true;
 }
 
-bool database_t::close(void)
+bool berkeleydb_t::close(void)
 {
    u_int errcnt = 0, waitcnt = 300;
 
@@ -1439,7 +1479,7 @@ bool database_t::close(void)
    return !errcnt ? true : false;
 }
 
-bool database_t::truncate(void)
+bool berkeleydb_t::truncate(void)
 {
    u_int errcnt = 0;
 
@@ -1451,7 +1491,7 @@ bool database_t::truncate(void)
    return !errcnt ? true : false;
 }
 
-int database_t::compact(u_int& bytes)
+int berkeleydb_t::compact(u_int& bytes)
 {
 #if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
    int error;
@@ -1471,7 +1511,7 @@ int database_t::compact(u_int& bytes)
 #endif
 }
 
-bool database_t::flush(void)
+bool berkeleydb_t::flush(void)
 {
    u_int errcnt = 0;
 
@@ -1500,7 +1540,7 @@ bool database_t::rollover(const tstamp_t& tstamp)
       return false;
 
    // make the initial part of the path
-   path = make_path(config.db_path, config.db_fname);
+   path = make_path(config.get_db_path(), config.db_fname);
 
    // create a file name with a year/month sequence (e.g. webalizer_200706.db)
    curpath.format("%s.%s", path.c_str(), config.db_fname_ext.c_str());
@@ -1519,16 +1559,16 @@ bool database_t::rollover(const tstamp_t& tstamp)
 }
 
 #ifdef _WIN32
-unsigned int __stdcall database_t::trickle_thread_proc(void *arg)
+unsigned int __stdcall berkeleydb_t::trickle_thread_proc(void *arg)
 #else
-void *database_t::trickle_thread_proc(void *arg)
+void *berkeleydb_t::trickle_thread_proc(void *arg)
 #endif
 {
-   ((database_t*) arg)->trickle_thread_proc();
+   ((berkeleydb_t*) arg)->trickle_thread_proc();
    return 0;
 }
 
-void database_t::trickle_thread_proc(void)
+void berkeleydb_t::trickle_thread_proc(void)
 {
    int nwrote, error;
    uint64_t eventrc, count = 0;
@@ -1555,7 +1595,7 @@ void database_t::trickle_thread_proc(void)
       }
 
       // trickle some dirty pages to disk
-      if((error = dbenv.memp_trickle(config.db_trickle_rate, &nwrote)) != 0) {
+      if((error = dbenv.memp_trickle(config.get_db_trickle_rate(), &nwrote)) != 0) {
          trickle_error.format("Failed to trickle database cache to disk (%d)", error);
          break;
       }
@@ -1581,17 +1621,17 @@ void database_t::trickle_thread_proc(void)
 bool database_t::put_unode(const unode_t& unode)
 {
    // unless unode_t::s_unpack_cb_t is provided, VC6 reports "fatal error C1506: unrecoverable block scoping error"
-   return put_node<unode_t>(urls, buffer, unode);
+   return urls.put_node<unode_t>(buffer, unode);
 }
 
 bool database_t::get_unode_by_id(unode_t& unode, unode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<unode_t>(urls, buffer, unode, upcb, arg);
+   return urls.get_node_by_id<unode_t>(buffer, unode, upcb, arg);
 }
 
 bool database_t::get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<unode_t>(urls, buffer, unode, upcb, arg);
+   return urls.get_node_by_value<unode_t>(buffer, unode, upcb, arg);
 }
 
 //
@@ -1599,17 +1639,17 @@ bool database_t::get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb,
 //
 bool database_t::put_hnode(const hnode_t& hnode)
 {
-   return put_node<hnode_t>(hosts, buffer, hnode);
+   return hosts.put_node<hnode_t>(buffer, hnode);
 }
 
 bool database_t::get_hnode_by_id(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<hnode_t>(hosts, buffer, hnode, upcb, arg);
+   return hosts.get_node_by_id<hnode_t>(buffer, hnode, upcb, arg);
 }
 
 bool database_t::get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<hnode_t>(hosts, buffer, hnode, upcb, arg);
+   return hosts.get_node_by_value<hnode_t>(buffer, hnode, upcb, arg);
 }
 
 //
@@ -1617,22 +1657,22 @@ bool database_t::get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb,
 //
 bool database_t::put_vnode(const vnode_t& vnode)
 {
-   return put_node<vnode_t>(visits, buffer, vnode);
+   return visits.put_node<vnode_t>(buffer, vnode);
 }
 
 bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<vnode_t>(visits, buffer, vnode, upcb, arg);
+   return visits.get_node_by_id<vnode_t>(buffer, vnode, upcb, arg);
 }
 
 bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, const void *arg) const
 {
-   return get_node_by_id<vnode_t>(visits, buffer, vnode, upcb, const_cast<void*>(arg));
+   return visits.get_node_by_id<vnode_t>(buffer, vnode, upcb, const_cast<void*>(arg));
 }
 
 bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 {
-   return delete_node(visits, buffer, vnode);
+   return visits.delete_node(buffer, vnode);
 }
 
 // -----------------------------------------------------------------------
@@ -1642,22 +1682,22 @@ bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 // -----------------------------------------------------------------------
 bool database_t::put_dlnode(const dlnode_t& dlnode)
 {
-   return put_node<dlnode_t>(downloads, buffer, dlnode);
+   return downloads.put_node<dlnode_t>(buffer, dlnode);
 }
 
 bool database_t::get_dlnode_by_id(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<dlnode_t>(downloads, buffer, dlnode, upcb, arg);
+   return downloads.get_node_by_id<dlnode_t>(buffer, dlnode, upcb, arg);
 }
 
 bool database_t::get_dlnode_by_value(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<dlnode_t>(downloads, buffer, dlnode, upcb, arg);
+   return downloads.get_node_by_value<dlnode_t>(buffer, dlnode, upcb, arg);
 }
 
 bool database_t::delete_download(const keynode_t<uint64_t>& danode)
 {
-   return delete_node(active_downloads, buffer, danode);
+   return active_downloads.delete_node(buffer, danode);
 }
 
 // -----------------------------------------------------------------------
@@ -1667,12 +1707,12 @@ bool database_t::delete_download(const keynode_t<uint64_t>& danode)
 // -----------------------------------------------------------------------
 bool database_t::put_danode(const danode_t& danode)
 {
-   return put_node<danode_t>(active_downloads, buffer, danode);
+   return active_downloads.put_node<danode_t>(buffer, danode);
 }
 
 bool database_t::get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<danode_t>(active_downloads, buffer, danode, upcb, arg);
+   return active_downloads.get_node_by_id<danode_t>(buffer, danode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1682,17 +1722,17 @@ bool database_t::get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_anode(const anode_t& anode)
 {
-   return put_node<anode_t>(agents, buffer, anode);
+   return agents.put_node<anode_t>(buffer, anode);
 }
 
 bool database_t::get_anode_by_id(anode_t& anode, anode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<anode_t>(agents, buffer, anode, upcb, arg);
+   return agents.get_node_by_id<anode_t>(buffer, anode, upcb, arg);
 }
 
 bool database_t::get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<anode_t>(agents, buffer, anode, upcb, arg);
+   return agents.get_node_by_value<anode_t>(buffer, anode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1702,17 +1742,17 @@ bool database_t::get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_rnode(const rnode_t& rnode)
 {
-   return put_node<rnode_t>(referrers, buffer, rnode);
+   return referrers.put_node<rnode_t>(buffer, rnode);
 }
 
 bool database_t::get_rnode_by_id(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<rnode_t>(referrers, buffer, rnode, upcb, arg);
+   return referrers.get_node_by_id<rnode_t>(buffer, rnode, upcb, arg);
 }
 
 bool database_t::get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<rnode_t>(referrers, buffer, rnode, upcb, arg);
+   return referrers.get_node_by_value<rnode_t>(buffer, rnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1722,17 +1762,17 @@ bool database_t::get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_snode(const snode_t& snode)
 {
-   return put_node<snode_t>(search, buffer, snode);
+   return search.put_node<snode_t>(buffer, snode);
 }
 
 bool database_t::get_snode_by_id(snode_t& snode, snode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<snode_t>(search, buffer, snode, upcb, arg);
+   return search.get_node_by_id<snode_t>(buffer, snode, upcb, arg);
 }
 
 bool database_t::get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<snode_t>(search, buffer, snode, upcb, arg);
+   return search.get_node_by_value<snode_t>(buffer, snode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1742,17 +1782,17 @@ bool database_t::get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_inode(const inode_t& inode)
 {
-   return put_node<inode_t>(users, buffer, inode);
+   return users.put_node<inode_t>(buffer, inode);
 }
 
 bool database_t::get_inode_by_id(inode_t& inode, inode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<inode_t>(users, buffer, inode, upcb, arg);
+   return users.get_node_by_id<inode_t>(buffer, inode, upcb, arg);
 }
 
 bool database_t::get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<inode_t>(users, buffer, inode, upcb, arg);
+   return users.get_node_by_value<inode_t>(buffer, inode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1762,17 +1802,17 @@ bool database_t::get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb,
 // -----------------------------------------------------------------------
 bool database_t::put_rcnode(const rcnode_t& rcnode)
 {
-   return put_node<rcnode_t>(errors, buffer, rcnode);
+   return errors.put_node<rcnode_t>(buffer, rcnode);
 }
 
 bool database_t::get_rcnode_by_id(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<rcnode_t>(errors, buffer, rcnode, upcb, arg);
+   return errors.get_node_by_id<rcnode_t>(buffer, rcnode, upcb, arg);
 }
 
 bool database_t::get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_value<rcnode_t>(errors, buffer, rcnode, upcb, arg);
+   return errors.get_node_by_value<rcnode_t>(buffer, rcnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1782,12 +1822,12 @@ bool database_t::get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t u
 // -----------------------------------------------------------------------
 bool database_t::put_scnode(const scnode_t& scnode)
 {
-   return put_node<scnode_t>(scodes, buffer, scnode);
+   return scodes.put_node<scnode_t>(buffer, scnode);
 }
 
 bool database_t::get_scnode_by_id(scnode_t& scnode, scnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<scnode_t>(scodes, buffer, scnode, upcb, arg);
+   return scodes.get_node_by_id<scnode_t>(buffer, scnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1797,12 +1837,12 @@ bool database_t::get_scnode_by_id(scnode_t& scnode, scnode_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_tdnode(const daily_t& tdnode)
 {
-   return put_node<daily_t>(daily, buffer, tdnode);
+   return daily.put_node<daily_t>(buffer, tdnode);
 }
 
 bool database_t::get_tdnode_by_id(daily_t& tdnode, daily_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<daily_t>(daily, buffer, tdnode, upcb, arg);
+   return daily.get_node_by_id<daily_t>(buffer, tdnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1812,12 +1852,12 @@ bool database_t::get_tdnode_by_id(daily_t& tdnode, daily_t::s_unpack_cb_t upcb, 
 // -----------------------------------------------------------------------
 bool database_t::put_thnode(const hourly_t& thnode)
 {
-   return put_node<hourly_t>(hourly, buffer, thnode);
+   return hourly.put_node<hourly_t>(buffer, thnode);
 }
 
 bool database_t::get_thnode_by_id(hourly_t& thnode, hourly_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<hourly_t>(hourly, buffer, thnode, upcb, arg);
+   return hourly.get_node_by_id<hourly_t>(buffer, thnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1827,12 +1867,12 @@ bool database_t::get_thnode_by_id(hourly_t& thnode, hourly_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_tgnode(const totals_t& tgnode)
 {
-   return put_node<totals_t>(totals, buffer, tgnode);
+   return totals.put_node<totals_t>(buffer, tgnode);
 }
 
 bool database_t::get_tgnode_by_id(totals_t& tgnode, totals_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<totals_t>(totals, buffer, tgnode, upcb, arg);
+   return totals.get_node_by_id<totals_t>(buffer, tgnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1842,12 +1882,12 @@ bool database_t::get_tgnode_by_id(totals_t& tgnode, totals_t::s_unpack_cb_t upcb
 // -----------------------------------------------------------------------
 bool database_t::put_ccnode(const ccnode_t& ccnode)
 {
-   return put_node<ccnode_t>(countries, buffer, ccnode);
+   return countries.put_node<ccnode_t>(buffer, ccnode);
 }
 
 bool database_t::get_ccnode_by_id(ccnode_t& ccnode, ccnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<ccnode_t>(countries, buffer, ccnode, upcb, arg);
+   return countries.get_node_by_id<ccnode_t>(buffer, ccnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1862,12 +1902,12 @@ bool database_t::is_sysnode(void) const
 
 bool database_t::put_sysnode(const sysnode_t& sysnode)
 {
-   return put_node<sysnode_t>(system, buffer, sysnode);
+   return system.put_node<sysnode_t>(buffer, sysnode);
 }
 
 bool database_t::get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const
 {
-   return get_node_by_id<sysnode_t>(system, buffer, sysnode, upcb, arg);
+   return system.get_node_by_id<sysnode_t>(buffer, sysnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
@@ -1897,13 +1937,13 @@ template int sc_extract_group_cb<unode_t, unode_t::s_field_value_hash>(Db *secon
 template int sc_extract_group_cb<unode_t, unode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<unode_t, unode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<unode_t>;
-template class database_t::iterator<unode_t>;
-template class database_t::reverse_iterator<unode_t>;
+template class berkeleydb_t::iterator_base<unode_t>;
+template class berkeleydb_t::iterator<unode_t>;
+template class berkeleydb_t::reverse_iterator<unode_t>;
 
-template bool database_t::put_node(table_t& table, u_char *buffer, const unode_t& node);
-template bool database_t::get_node_by_id(const table_t& table, u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<unode_t>(const table_t& table, u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node(u_char *buffer, const unode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id(u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<unode_t>(u_char *buffer, unode_t& node, unode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // hosts
 template int bt_compare_cb<hnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1919,20 +1959,20 @@ template int sc_extract_cb<hnode_t::s_field_xfer>(Db *secondary, const Dbt *key,
 template int sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<hnode_t>;
-template class database_t::iterator<hnode_t>;
-template class database_t::reverse_iterator<hnode_t>;
+template class berkeleydb_t::iterator_base<hnode_t>;
+template class berkeleydb_t::iterator<hnode_t>;
+template class berkeleydb_t::reverse_iterator<hnode_t>;
 
-template bool database_t::put_node<hnode_t>(table_t& table, u_char *buffer, const hnode_t& hnode);
-template bool database_t::get_node_by_id<hnode_t>(const table_t& table, u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<hnode_t>(const table_t& table, u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<hnode_t>(u_char *buffer, const hnode_t& hnode);
+template bool berkeleydb_t::table_t::get_node_by_id<hnode_t>(u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<hnode_t>(u_char *buffer, hnode_t& node, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // visits
-template bool database_t::put_node<vnode_t>(table_t& table, u_char *buffer, const vnode_t& hnode);
-template bool database_t::get_node_by_id<vnode_t>(const table_t& table, u_char *buffer, vnode_t& node, vnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<vnode_t>(u_char *buffer, const vnode_t& hnode);
+template bool berkeleydb_t::table_t::get_node_by_id<vnode_t>(u_char *buffer, vnode_t& node, vnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<vnode_t>;
-template class database_t::iterator<vnode_t>;
+template class berkeleydb_t::iterator_base<vnode_t>;
+template class berkeleydb_t::iterator<vnode_t>;
 
 // downloads
 template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1941,20 +1981,20 @@ template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, co
 template int sc_extract_cb<dlnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<dlnode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template bool database_t::put_node<dlnode_t>(table_t& table, u_char *buffer, const dlnode_t& hnode);
-template bool database_t::get_node_by_id<dlnode_t>(const table_t& table, u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<dlnode_t>(const table_t& table, u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<dlnode_t>(u_char *buffer, const dlnode_t& hnode);
+template bool berkeleydb_t::table_t::get_node_by_id<dlnode_t>(u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<dlnode_t>(u_char *buffer, dlnode_t& node, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-template class database_t::iterator_base<dlnode_t>;
-template class database_t::iterator<dlnode_t>;
-template class database_t::reverse_iterator<dlnode_t>;
+template class berkeleydb_t::iterator_base<dlnode_t>;
+template class berkeleydb_t::iterator<dlnode_t>;
+template class berkeleydb_t::reverse_iterator<dlnode_t>;
 
 // active downloads
-template bool database_t::put_node<danode_t>(table_t& table, u_char *buffer, const danode_t& hnode);
-template bool database_t::get_node_by_id<danode_t>(const table_t& table, u_char *buffer, danode_t& node, danode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<danode_t>(u_char *buffer, const danode_t& hnode);
+template bool berkeleydb_t::table_t::get_node_by_id<danode_t>(u_char *buffer, danode_t& node, danode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<danode_t>;
-template class database_t::iterator<danode_t>;
+template class berkeleydb_t::iterator_base<danode_t>;
+template class berkeleydb_t::iterator<danode_t>;
 
 // user agents
 template int bt_compare_cb<anode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1966,13 +2006,13 @@ template int sc_extract_cb<anode_t::s_field_value_hash>(Db *secondary, const Dbt
 template int sc_extract_cb<anode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<anode_t, anode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<anode_t>;
-template class database_t::iterator<anode_t>;
-template class database_t::reverse_iterator<anode_t>;
+template class berkeleydb_t::iterator_base<anode_t>;
+template class berkeleydb_t::iterator<anode_t>;
+template class berkeleydb_t::reverse_iterator<anode_t>;
 
-template bool database_t::put_node<anode_t>(table_t& table, u_char *buffer, const anode_t& node);
-template bool database_t::get_node_by_id<anode_t>(const table_t& table, u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<anode_t>(const table_t& table, u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<anode_t>(u_char *buffer, const anode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<anode_t>(u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<anode_t>(u_char *buffer, anode_t& node, anode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // referrers
 template int bt_compare_cb<rnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -1984,13 +2024,13 @@ template int sc_extract_cb<rnode_t::s_field_value_hash>(Db *secondary, const Dbt
 template int sc_extract_cb<rnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<rnode_t>;
-template class database_t::iterator<rnode_t>;
-template class database_t::reverse_iterator<rnode_t>;
+template class berkeleydb_t::iterator_base<rnode_t>;
+template class berkeleydb_t::iterator<rnode_t>;
+template class berkeleydb_t::reverse_iterator<rnode_t>;
 
-template bool database_t::put_node<rnode_t>(table_t& table, u_char *buffer, const rnode_t& node);
-template bool database_t::get_node_by_id<rnode_t>(const table_t& table, u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<rnode_t>(const table_t& table, u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<rnode_t>(u_char *buffer, const rnode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<rnode_t>(u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<rnode_t>(u_char *buffer, rnode_t& node, rnode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // search strings
 template int bt_compare_cb<snode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2001,13 +2041,13 @@ template int bt_compare_cb<snode_t::s_compare_hits>(Db *db, const Dbt *dbt1, con
 template int sc_extract_cb<snode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<snode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<snode_t>;
-template class database_t::iterator<snode_t>;
-template class database_t::reverse_iterator<snode_t>;
+template class berkeleydb_t::iterator_base<snode_t>;
+template class berkeleydb_t::iterator<snode_t>;
+template class berkeleydb_t::reverse_iterator<snode_t>;
 
-template bool database_t::put_node<snode_t>(table_t& table, u_char *buffer, const snode_t& node);
-template bool database_t::get_node_by_id<snode_t>(const table_t& table, u_char *buffer, snode_t& node, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<snode_t>(const table_t& table, u_char *buffer, snode_t& unode, snode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<snode_t>(u_char *buffer, const snode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<snode_t>(u_char *buffer, snode_t& node, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<snode_t>(u_char *buffer, snode_t& unode, snode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // users
 template int bt_compare_cb<inode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2019,13 +2059,13 @@ template int sc_extract_cb<inode_t::s_field_value_hash>(Db *secondary, const Dbt
 template int sc_extract_cb<inode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<inode_t, inode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template class database_t::iterator_base<inode_t>;
-template class database_t::iterator<inode_t>;
-template class database_t::reverse_iterator<inode_t>;
+template class berkeleydb_t::iterator_base<inode_t>;
+template class berkeleydb_t::iterator<inode_t>;
+template class berkeleydb_t::reverse_iterator<inode_t>;
 
-template bool database_t::put_node<inode_t>(table_t& table, u_char *buffer, const inode_t& node);
-template bool database_t::get_node_by_id<inode_t>(const table_t& table, u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<inode_t>(const table_t& table, u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<inode_t>(u_char *buffer, const inode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<inode_t>(u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<inode_t>(u_char *buffer, inode_t& node, inode_t::s_unpack_cb_t upcb, void *arg) const;
 
 // errors
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -2034,46 +2074,46 @@ template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, co
 template int sc_extract_cb<rcnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<rcnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-template bool database_t::put_node<rcnode_t>(table_t& table, u_char *buffer, const rcnode_t& node);
-template bool database_t::get_node_by_id<rcnode_t>(const table_t& table, u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-template bool database_t::get_node_by_value<rcnode_t>(const table_t& table, u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
+template bool berkeleydb_t::table_t::put_node<rcnode_t>(u_char *buffer, const rcnode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<rcnode_t>(u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::get_node_by_value<rcnode_t>(u_char *buffer, rcnode_t& node, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-template class database_t::iterator_base<rcnode_t>;
-template class database_t::iterator<rcnode_t>;
-template class database_t::reverse_iterator<rcnode_t>;
+template class berkeleydb_t::iterator_base<rcnode_t>;
+template class berkeleydb_t::iterator<rcnode_t>;
+template class berkeleydb_t::reverse_iterator<rcnode_t>;
 
 // status codes
-template bool database_t::put_node<scnode_t>(table_t& table, u_char *buffer, const scnode_t& node);
-template bool database_t::get_node_by_id<scnode_t>(const table_t& table, u_char *buffer, scnode_t& node, scnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<scnode_t>(u_char *buffer, const scnode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<scnode_t>(u_char *buffer, scnode_t& node, scnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<scnode_t>;
-template class database_t::iterator<scnode_t>;
+template class berkeleydb_t::iterator_base<scnode_t>;
+template class berkeleydb_t::iterator<scnode_t>;
 
 // daily totals
-template bool database_t::put_node<daily_t>(table_t& table, u_char *buffer, const daily_t& node);
-template bool database_t::get_node_by_id<daily_t>(const table_t& table, u_char *buffer, daily_t& node, daily_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<daily_t>(u_char *buffer, const daily_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<daily_t>(u_char *buffer, daily_t& node, daily_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<daily_t>;
-template class database_t::iterator<daily_t>;
+template class berkeleydb_t::iterator_base<daily_t>;
+template class berkeleydb_t::iterator<daily_t>;
 
 // hourly totals
-template bool database_t::put_node<hourly_t>(table_t& table, u_char *buffer, const hourly_t& node);
-template bool database_t::get_node_by_id<hourly_t>(const table_t& table, u_char *buffer, hourly_t& node, hourly_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<hourly_t>(u_char *buffer, const hourly_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<hourly_t>(u_char *buffer, hourly_t& node, hourly_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<hourly_t>;
-template class database_t::iterator<hourly_t>;
+template class berkeleydb_t::iterator_base<hourly_t>;
+template class berkeleydb_t::iterator<hourly_t>;
 
 // totals
-template bool database_t::put_node<totals_t>(table_t& table, u_char *buffer, const totals_t& node);
-template bool database_t::get_node_by_id<totals_t>(const table_t& table, u_char *buffer, totals_t& node, totals_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<totals_t>(u_char *buffer, const totals_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<totals_t>(u_char *buffer, totals_t& node, totals_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
 // country codes
-template bool database_t::put_node<ccnode_t>(table_t& table, u_char *buffer, const ccnode_t& node);
-template bool database_t::get_node_by_id<ccnode_t>(const table_t& table, u_char *buffer, ccnode_t& node, ccnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<ccnode_t>(u_char *buffer, const ccnode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<ccnode_t>(u_char *buffer, ccnode_t& node, ccnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-template class database_t::iterator_base<ccnode_t>;
-template class database_t::iterator<ccnode_t>;
+template class berkeleydb_t::iterator_base<ccnode_t>;
+template class berkeleydb_t::iterator<ccnode_t>;
 
 // system
-template bool database_t::put_node<sysnode_t>(table_t& table, u_char *buffer, const sysnode_t& node);
-template bool database_t::get_node_by_id<sysnode_t>(const table_t& table, u_char *buffer, sysnode_t& node, sysnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+template bool berkeleydb_t::table_t::put_node<sysnode_t>(u_char *buffer, const sysnode_t& node);
+template bool berkeleydb_t::table_t::get_node_by_id<sysnode_t>(u_char *buffer, sysnode_t& node, sysnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;

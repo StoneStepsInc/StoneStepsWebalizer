@@ -398,11 +398,11 @@ bool state_t::initialize(void)
    }
 
    if(!database.open())
-      throw exception_t(0, string_t::_format("Cannot open the database %s", database.get_dbpath().c_str()));
+      throw exception_t(0, string_t::_format("Cannot open the database %s", config.get_db_path().c_str()));
 
    // report which database was opened
    if(verbose > 1)
-      printf("%s %s\n", config.lang.msg_use_db, database.get_dbpath().c_str());
+      printf("%s %s\n", config.lang.msg_use_db, config.get_db_path().c_str());
 
    //
    // If there is a system node, check if we have anything to do, given state of 

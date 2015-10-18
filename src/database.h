@@ -24,11 +24,11 @@
 
 // -----------------------------------------------------------------
 //
-// database_t
+// berkeleydb_t
 //
 // -----------------------------------------------------------------
-class database_t {
-   private:
+class berkeleydb_t {
+   protected:
       //
       // Define BDB callback types (bt_compare_fcn_type, etc are deprecated)
       //
@@ -63,6 +63,47 @@ class database_t {
       #else
       #define __gcc_bug11407__(cb) cb
       #endif
+
+      // -----------------------------------------------------------------
+      // config_t
+      //
+      // 1. config_t provides all configuration data needed to construct a berkeleydb_t
+      // instance. Configuration cannot be changed after an instance of berkeleydb_t has
+      // been constructed.
+      //
+      // 2. berkeleydb_t will use the config_t::clone and config_t::release methods to 
+      // maintain a copy of the configuration object throughout the lifespan of each
+      // berkeleydb_t instance. This allows berkeleydb_t instances constructed using 
+      // temporary config_t objects.
+      //
+      // 3. The reference to a config_t instance returned by config_t::clone must point
+      // to a valid object until config_t::release is called. Otherwise config_t make
+      // no assumption of how the underlying object memory is maintained.
+      //
+      class config_t {
+         public:
+            virtual const config_t& clone(void) const = 0;
+
+            virtual void release(void) const = 0;
+
+            virtual const string_t& get_db_path(void) const = 0;
+
+            virtual const string_t& get_tmp_path(void) const = 0;
+
+            virtual const string_t& get_db_fname(void) const = 0;
+
+            virtual const string_t& get_db_fname_ext(void) const = 0;
+
+            virtual uint32_t get_db_cache_size(void) const = 0;
+
+            virtual uint32_t get_db_seq_cache_size(void) const = 0;
+
+            virtual uint32_t get_db_trickle_rate(void) const = 0;
+
+            virtual bool get_db_direct(void) const = 0;
+
+            virtual bool get_db_dsync(void) const = 0;
+      };
 
       // -----------------------------------------------------------------
       //
@@ -118,7 +159,7 @@ class database_t {
       //
       // -----------------------------------------------------------------
       //
-      // Each table contains the primary database, indexed by a numeric 
+      // 1. Each table contains the primary database, indexed by a numeric 
       // sequence ID (key), and a set of secondary databases, containing one 
       // field from the primary database (serving as an index). One of the 
       // index databases contains hashes of actual item values, such as IP 
@@ -148,6 +189,12 @@ class database_t {
       //   | value: 127.0.0.2     |
       //   | ...                  |
       //
+      // 2. Berkeley databases cannot be copied, so table_t instances only use
+      // move semantics, which requires all non-copyable data members maintained 
+      // as pointers. These pointers can only be NULL for objects that are near
+      // their lifetime. Calling any methods for these objects will result in
+      // undefined behavior.
+      //
       class table_t {
          private:
             struct db_desc_t {
@@ -164,13 +211,13 @@ class database_t {
          private:
             DbEnv                *dbenv;     // shared DB environment
 
-            Db                   table;      // primary database
+            Db                   *table;     // primary database
 
             Db                   *values;    // pointer to the values database (stored in indexes)
 
-            DbSequence           *sequence;  // source of primary keys
+            Db                   *seqdb;     // shared sequence database
 
-            string_t             errmsg;
+            DbSequence           *sequence;  // source of primary keys
 
             vector_t<db_desc_t>  indexes;    // secondary databases
 
@@ -182,10 +229,22 @@ class database_t {
             const db_desc_t *get_sc_desc(const char *dbname) const;
             db_desc_t *get_sc_desc(const char *dbname);
 
+            Db& primary_db(void) {return *table;}
+
+            Db *secondary_db(const char *dbname);
+
          public:
-            table_t(DbEnv *env);
+            table_t(DbEnv& env, Db& seqdb);
+
+            table_t(table_t&& other);
+
+            table_t(const table_t& other) = delete;
 
             ~table_t(void);
+
+            table_t& operator = (const table_t& other) = delete;
+
+            table_t& operator = (table_t&& other);
 
             void set_threaded(bool value) {threaded = value;}
 
@@ -196,9 +255,8 @@ class database_t {
             bool get_readonly(void) const {return readonly;}
 
             void init_db_handles(void);
-            void destroy_db_handles(void);
 
-            const string_t& get_errmsg(void) const {return errmsg;}
+            void destroy_db_handles(void);
 
             int open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb);
 
@@ -216,22 +274,31 @@ class database_t {
 
             int associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild);
 
-            Db& primary_db(void) {return table;}
-            const Db& primary_db(void) const {return table;}
+            const Db& primary_db(void) const {return *table;}
 
-            Db *secondary_db(const char *dbname);
             const Db *secondary_db(const char *dbname) const;
 
             Db *values_db(void) {return values;}
             const Db *values_db(void) const {return values;}
 
-            int open_sequence(Db& seqdb, const char *colname, int32_t cachesize);
+            int open_sequence(const char *colname, int32_t cachesize);
 
             db_seq_t get_seq_id(int32_t delta = 1);
             
             db_seq_t query_seq_id(void);
 
             uint64_t count(const char *dbname = NULL) const;
+
+            template <typename node_t>
+            bool put_node(u_char *buffer, const node_t& unode);
+
+            template <typename node_t>
+            bool get_node_by_id(u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+            bool delete_node(u_char *buffer, const keynode_t<uint64_t>& node);
+
+            template <typename node_t>
+            bool get_node_by_value(u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
       };
 
    public:
@@ -316,30 +383,7 @@ class database_t {
             bool prev(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
       
-      // -----------------------------------------------------------------
-      //
-      // DbEnvEx initializes DbEnv before table databases are created
-      //
-      // -----------------------------------------------------------------
-      class DbEnvEx : public DbEnv {
-         public:
-            DbEnvEx(u_int32_t flags);
-            
-            ~DbEnvEx(void);
-      };
-
    private:
-      template <typename node_t>
-      bool put_node(table_t& table, u_char *buffer, const node_t& unode);
-
-      template <typename node_t>
-      bool get_node_by_id(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-
-      bool delete_node(table_t& table, u_char *buffer, const keynode_t<uint64_t>& node);
-
-      template <typename node_t>
-      bool get_node_by_value(const table_t& table, u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
-
       void reset_db_handles(void);
 
       void trickle_thread_proc(void);
@@ -349,8 +393,6 @@ class database_t {
       #else
       static void *trickle_thread_proc(void *arg);
       #endif
-
-      static void db_error_cb(const DbEnv *dbenv, const char *errpfx, const char *errmsg);
 
       //
       // If BDB is linked against another version of CRT, deleting 
@@ -368,7 +410,7 @@ class database_t {
       static Db *new_db(DbEnv *dbenv, u_int32_t flags);
       static void delete_db(Db *db);
 
-      static DbSequence *new_db_sequence(Db& db, u_int32_t flags);
+      static DbSequence *new_db_sequence(Db *seqdb, u_int32_t flags);
       static void delete_db_sequence(DbSequence *dbseq);
       
       //
@@ -381,8 +423,82 @@ class database_t {
    private:
       const config_t&   config;
 
-      DbEnvEx           dbenv;
+      DbEnv             dbenv;
       Db                sequences;
+
+      vector_t<table_t*> tables;
+
+      thread_t          trickle_thread;
+      event_t           trickle_event;
+      string_t          trickle_error;
+      bool              trickle_thread_stop;
+      bool              trickle_thread_stopped;
+
+      bool              readonly;
+      bool              trickle;
+
+   protected:
+      void add_table(table_t& table) {tables.push(&table);}
+
+      table_t make_table(void) {return table_t(dbenv, sequences);}
+
+   public:
+      berkeleydb_t(config_t&& config);
+
+      ~berkeleydb_t(void);
+
+      void set_trickle(bool value) {trickle = value;}
+
+      void set_readonly(bool value) {readonly = value;}
+
+      bool get_readonly(void) const {return readonly;}
+
+      bool open(void);
+
+      bool close(void);
+
+      bool truncate(void);
+
+      bool flush(void);
+
+      int compact(u_int& bytes);
+};
+
+class database_t : public berkeleydb_t {
+   private:
+      class db_config_t : public berkeleydb_t::config_t {
+         private:
+            const ::config_t& config;
+            string_t          db_path;
+
+         public:
+            db_config_t(const ::config_t& config) : config(config), db_path(config.get_db_path()) {}
+
+            const db_config_t& clone(void) const {return *new db_config_t(config);}
+
+            void release(void) const {delete this;}
+
+            const string_t& get_db_path(void) const {return db_path;}
+
+            const string_t& get_tmp_path(void) const {return config.db_path;}
+
+            const string_t& get_db_fname(void) const {return config.db_fname;}
+
+            const string_t& get_db_fname_ext(void) const {return config.db_fname_ext;}
+
+            uint32_t get_db_cache_size(void) const {return config.db_cache_size;}
+
+            uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
+
+            uint32_t get_db_trickle_rate(void) const {return config.db_trickle_rate;}
+
+            bool get_db_direct(void) const {return config.db_direct;}
+
+            bool get_db_dsync(void) const {return config.db_dsync;}
+      };
+
+   private:
+      const ::config_t& config;
 
       u_char            *buffer;
 
@@ -403,45 +519,16 @@ class database_t {
       table_t           countries;
       table_t           system;
 
-      vector_t<table_t*> tables;
-
-      thread_t          trickle_thread;
-      event_t           trickle_event;
-      string_t          trickle_error;
-      bool              trickle_thread_stop;
-      bool              trickle_thread_stopped;
-
-      bool              readonly;
-      bool              trickle;
-
-      string_t          dbpath;
-
    public:
-      database_t(const config_t& config);
+      database_t(const ::config_t& config);
 
       ~database_t(void);
 
-      void set_trickle(bool value) {trickle = value;}
-
-      const string_t& get_dbpath(void) const {return dbpath;}
-
-      void set_readonly(bool value) {readonly = value;}
-
-      bool get_readonly(void) const {return readonly;}
-
       bool open(void);
 
-      bool close(void);
-
-      bool truncate(void);
-
-      bool flush(void);
+      bool attach_indexes(bool rebuild);
 
       bool rollover(const tstamp_t& tstamp);
-
-      int compact(u_int& bytes);
-
-      bool attach_indexes(bool rebuild);
 
       // urls
       uint64_t get_unode_id(void) {return (uint64_t) urls.get_seq_id();}
@@ -647,6 +734,5 @@ class database_t {
 
       bool get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const;
 };
-
 
 #endif // __DATABASE_H
