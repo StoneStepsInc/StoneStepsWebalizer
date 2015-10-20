@@ -385,6 +385,9 @@
     <ClInclude Include="autoptr.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="berkeleydb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="webalizer.rc">
