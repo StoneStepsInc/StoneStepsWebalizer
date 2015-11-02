@@ -427,7 +427,7 @@ bool database_t::rollover(const tstamp_t& tstamp)
       return false;
 
    // make the initial part of the path
-   path = make_path(config.get_db_path(), config.db_fname);
+   path = make_path(config.db_path, config.db_fname);
 
    // create a file name with a year/month sequence (e.g. webalizer_200706.db)
    curpath.format("%s.%s", path.c_str(), config.db_fname_ext.c_str());
