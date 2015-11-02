@@ -126,8 +126,6 @@ class database_t : public berkeleydb_t {
 
       bool get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      bool get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, const void *arg) const;
-
       bool delete_visit(const keynode_t<uint64_t>& vnode);
 
       uint64_t get_vcount(const char *dbname = NULL) const {return visits.count(dbname);}

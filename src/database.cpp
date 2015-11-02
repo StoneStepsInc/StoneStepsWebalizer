@@ -495,11 +495,6 @@ bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, vo
    return visits.get_node_by_id<vnode_t>(vnode, upcb, arg);
 }
 
-bool database_t::get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, const void *arg) const
-{
-   return visits.get_node_by_id<vnode_t>(vnode, upcb, const_cast<void*>(arg));
-}
-
 bool database_t::delete_visit(const keynode_t<uint64_t>& vnode)
 {
    return visits.delete_node(vnode);
