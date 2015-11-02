@@ -803,7 +803,7 @@ bool berkeleydb_t::table_t::get_node_by_id(node_t& node, typename node_t::s_unpa
    data.set_ulen(DBBUFSIZE);
    data.set_flags(DB_DBT_USERMEM);
 
-   if(const_cast<Db*>(table)->get(NULL, &key, &data, 0))
+   if(table->get(NULL, &key, &data, 0))
       return false;
 
    if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
