@@ -61,8 +61,6 @@ class database_t : public berkeleydb_t {
    private:
       const ::config_t& config;
 
-      u_char            *buffer;
-
       table_t           urls;
       table_t           hosts;
       table_t           visits;

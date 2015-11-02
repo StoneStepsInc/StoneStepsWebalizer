@@ -36,11 +36,7 @@
 
 #define FILEMASK              0664              // database file access mask (rw-rw-r--)
 
-#define BUFKEYSIZE            (DBBUFSIZE >> 1)
-#define BUFDATASIZE           (DBBUFSIZE >> 1)
-
-#define BUFKEYOFFSET          0
-#define BUFDATAOFFSET         ((BUFKEYOFFSET) + (BUFKEYSIZE))
+#define DBBUFSIZE             32768             // shared buffer for key and data
 
 //
 // B-Tree comparison function template for BDB v6 and up (top) and for prior versions 
@@ -229,12 +225,13 @@ bool berkeleydb_t::cursor_reverse_iterator::prev(Dbt& key, Dbt& data, Dbt *pkey)
 //
 // -----------------------------------------------------------------------
 
-berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb) :
+berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb, buffer_allocator_t& buffer_allocator) :
       dbenv(&dbenv),
       table(new_db(&dbenv, DBFLAGS)),
       values(NULL),
       seqdb(&seqdb),
       sequence(NULL),
+      buffer_allocator(&buffer_allocator),
       threaded(false),
       readonly(false)
 {
@@ -247,6 +244,7 @@ berkeleydb_t::table_t::table_t(table_t&& other) :
       seqdb(other.seqdb),
       sequence(other.sequence),
       indexes(std::move(other.indexes)),
+      buffer_allocator(other.buffer_allocator),
       threaded(other.threaded),
       readonly(other.readonly)
 {
@@ -255,6 +253,7 @@ berkeleydb_t::table_t::table_t(table_t&& other) :
    other.values = NULL;
    other.seqdb = NULL;
    other.sequence = NULL;
+   other.buffer_allocator = NULL;
 }
 
 berkeleydb_t::table_t::~table_t(void)
@@ -278,6 +277,7 @@ berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other)
    values = other.values;
    seqdb = other.seqdb;
    sequence = other.sequence;
+   buffer_allocator = other.buffer_allocator;
    indexes = std::move(other.indexes);
 
    threaded = other.threaded;
@@ -288,6 +288,7 @@ berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other)
    other.values = NULL;
    other.seqdb = NULL;
    other.sequence = NULL;
+   other.buffer_allocator = NULL;
 
    return *this;
 }
@@ -636,7 +637,7 @@ template <typename node_t>
 berkeleydb_t::iterator_base<node_t>::iterator_base(cursor_iterator_base& iter) : iter(iter)
 {
    // set the default size for the keys and data
-   set_buffer_size(BUFKEYSIZE, BUFDATASIZE);
+   set_buffer_size(DBBUFSIZE, DBBUFSIZE);
 }
 
 template <typename node_t>
@@ -749,21 +750,25 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t:
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-bool berkeleydb_t::table_t::put_node(u_char *buffer, const node_t& node)
+bool berkeleydb_t::table_t::put_node(const node_t& node)
 {
    Dbt key, data;
-   size_t keysize, datasize;
+   size_t keysize = node.s_key_size(), datasize = node.s_data_size();
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
 
-   if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
+   buffer.resize(keysize+datasize);
+
+   if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
 
-   if((datasize = node.s_pack_data(&buffer[BUFDATAOFFSET], BUFDATASIZE)) == 0)
+   if(node.s_pack_data(buffer+keysize, datasize) != datasize)
       return false;
 
-   key.set_data(&buffer[BUFKEYOFFSET]);
+   key.set_data(buffer);
    key.set_size((u_int32_t) keysize);
 
-   data.set_data(&buffer[BUFDATAOFFSET]);
+   data.set_data(buffer+keysize);
    data.set_size((u_int32_t) datasize);
 
    if(table->put(NULL, &key, &data, 0)) 
@@ -777,21 +782,25 @@ bool berkeleydb_t::table_t::put_node(u_char *buffer, const node_t& node)
 }
 
 template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_id(u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_id(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
-   size_t keysize;
+   size_t keysize = node.s_key_size();
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
 
-   if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
+   buffer.resize(keysize+DBBUFSIZE);
+
+   if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
 
-   key.set_data(&buffer[BUFKEYOFFSET]);
+   key.set_data(buffer);
    key.set_size((u_int32_t) keysize);
    key.set_ulen((u_int32_t) keysize);
    key.set_flags(DB_DBT_USERMEM);
 
-   data.set_data(&buffer[BUFDATAOFFSET]);
-   data.set_ulen(BUFDATASIZE);
+   data.set_data(buffer+keysize);
+   data.set_ulen(DBBUFSIZE);
    data.set_flags(DB_DBT_USERMEM);
 
    if(const_cast<Db*>(table)->get(NULL, &key, &data, 0))
@@ -807,11 +816,15 @@ bool berkeleydb_t::table_t::get_node_by_id(u_char *buffer, node_t& node, typenam
 }
 
 template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_value(u_char *buffer, node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
-   u_int32_t keysize;
+   u_int32_t keysize = node.s_key_size();
    uint64_t hashkey;
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
+
+   buffer.resize(keysize+DBBUFSIZE);
 
    if(values == NULL)
       return false;
@@ -824,12 +837,12 @@ bool berkeleydb_t::table_t::get_node_by_value(u_char *buffer, node_t& node, type
    key.set_size(keysize);
 
    // share the key buffer between the key and the value
-   pkey.set_data(&buffer[BUFKEYOFFSET]);
-   pkey.set_ulen(BUFKEYSIZE);
+   pkey.set_data(buffer);
+   pkey.set_ulen(keysize);
    pkey.set_flags(DB_DBT_USERMEM);
 
-   data.set_data(&buffer[BUFDATAOFFSET]);
-   data.set_ulen(BUFDATASIZE);
+   data.set_data(buffer+keysize);
+   data.set_ulen(DBBUFSIZE);
    data.set_flags(DB_DBT_USERMEM);
 
    // open a cursor
@@ -869,21 +882,45 @@ bool berkeleydb_t::table_t::get_node_by_value(u_char *buffer, node_t& node, type
    return true;
 }
 
-bool berkeleydb_t::table_t::delete_node(u_char *buffer, const keynode_t<uint64_t>& node)
+bool berkeleydb_t::table_t::delete_node(const keynode_t<uint64_t>& node)
 {
    Dbt key;
-   size_t keysize;
+   size_t keysize = node.s_key_size();
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
 
-   if((keysize = node.s_pack_key(&buffer[BUFKEYOFFSET], BUFKEYSIZE)) == 0)
+   buffer.resize(keysize);
+
+   if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
 
-   key.set_data(&buffer[BUFKEYOFFSET]);
+   key.set_data(buffer);
    key.set_size((u_int32_t) keysize);
 
    if(table->del(NULL, &key, 0))
       return false;
 
    return true;
+}
+
+//
+// buffer_queue_t
+//
+buffer_t berkeleydb_t::buffer_queue_t::get_buffer(void)
+{
+   buffer_t buffer;
+
+   if(!buffers.empty()) {
+      buffer = std::move(buffers.back());
+      buffers.pop_back();
+   }
+
+   return buffer;
+}
+
+void berkeleydb_t::buffer_queue_t::release_buffer(buffer_t&& buffer)
+{
+   buffers.push_back(std::move(buffer));
 }
 
 // -----------------------------------------------------------------------

@@ -14,11 +14,13 @@
 #include "vector.h"
 #include "tstamp.h"
 #include "serialize.h"
+#include "buffer.h"
 
 #include "event.h"
 #include "thread.h"
 
 #include <db_cxx.h>
+#include <vector>
 
 // -----------------------------------------------------------------
 //
@@ -151,6 +153,56 @@ class berkeleydb_t {
             bool prev(Dbt& key, Dbt& data, Dbt *pkey);
       };
 
+      //
+      //
+      //
+      class buffer_allocator_t {
+         public:
+            virtual buffer_t get_buffer(void) = 0;
+
+            virtual void release_buffer(buffer_t&& buffer) = 0;
+      };
+
+      // -----------------------------------------------------------------
+      // buffer_holder_t is a convenience class to help manage temporary
+      // buffers. The intended use is as follows:
+      //
+      //  buffer_t&& buffer = buffer_holder_t(*buffer_allocator).buffer;
+      //
+      // However, VC++ 2013 fails to recognize that the rvalue reference 
+      // is bound to a subobject of a temporary and creates a new buffer_t
+      // temporary. VC 2015 fixes this problem, but until the project is 
+      // upgraded, a local buffer_holder_t instance must be created to 
+      // maintain a valid buffer_t instance.
+      //
+      // Note that operator buffer_t& cannot be used here to access the
+      // buffer because the temporary in the example above only lives as
+      // long as the reference it's bound to and when the operator is 
+      // called the temporary is bound to the returned reference, which 
+      // is used to initialize the buffer reference, but then is destroyed,
+      // causing the buffer holder to be destroyed as well.
+      // -----------------------------------------------------------------
+      class buffer_holder_t {
+         private:
+            buffer_allocator_t&  allocator;
+
+         public:
+            buffer_t             buffer;
+
+         public:
+            buffer_holder_t(buffer_allocator_t& allocator) : allocator(allocator), buffer(allocator.get_buffer()) {}
+
+            buffer_holder_t(const buffer_holder_t&) = delete;
+
+            buffer_holder_t(buffer_holder_t&& other) = delete;
+
+            ~buffer_holder_t(void) {allocator.release_buffer(std::move(buffer));}
+
+            buffer_holder_t& operator = (const buffer_holder_t&) = delete;
+
+            buffer_holder_t& operator = (buffer_holder_t&&) = delete;
+      };
+
       // -----------------------------------------------------------------
       //
       // a table (primary database) with indexes (secondary databases)
@@ -193,6 +245,10 @@ class berkeleydb_t {
       // their lifetime. Calling any methods for these objects will result in
       // undefined behavior.
       //
+      // 3. Buffer allocator is also maintained as a pointer to allow creating
+      // buffers in const table_t methods. The assumption is that buffer allocators 
+      // are safe for the current threading model.
+      //
       class table_t {
          private:
             struct db_desc_t {
@@ -223,6 +279,8 @@ class berkeleydb_t {
 
             bool                 readonly;
 
+            buffer_allocator_t   *buffer_allocator;
+
          private:
             const db_desc_t *get_sc_desc(const char *dbname) const;
             db_desc_t *get_sc_desc(const char *dbname);
@@ -232,7 +290,7 @@ class berkeleydb_t {
             Db *secondary_db(const char *dbname);
 
          public:
-            table_t(DbEnv& env, Db& seqdb);
+            table_t(DbEnv& env, Db& seqdb, buffer_allocator_t& buffer_allocator);
 
             table_t(table_t&& other);
 
@@ -288,15 +346,15 @@ class berkeleydb_t {
             uint64_t count(const char *dbname = NULL) const;
 
             template <typename node_t>
-            bool put_node(u_char *buffer, const node_t& unode);
+            bool put_node(const node_t& unode);
 
             template <typename node_t>
-            bool get_node_by_id(u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+            bool get_node_by_id(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-            bool delete_node(u_char *buffer, const keynode_t<uint64_t>& node);
+            bool delete_node(const keynode_t<uint64_t>& node);
 
             template <typename node_t>
-            bool get_node_by_value(u_char *buffer, node_t& unode, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+            bool get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
       };
 
    public:
@@ -381,6 +439,19 @@ class berkeleydb_t {
             bool prev(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
       
+      //
+      //
+      //
+      class buffer_queue_t : public buffer_allocator_t {
+         private:
+            std::vector<buffer_t>   buffers;
+
+         public:
+            buffer_t get_buffer(void);
+
+            void release_buffer(buffer_t&& buffer);
+      };
+
    private:
       void reset_db_handles(void);
 
@@ -424,6 +495,8 @@ class berkeleydb_t {
       DbEnv             dbenv;
       Db                sequences;
 
+      buffer_queue_t    buffer_queue;
+
       vector_t<table_t*> tables;
 
       thread_t          trickle_thread;
@@ -438,7 +511,7 @@ class berkeleydb_t {
    protected:
       void add_table(table_t& table) {tables.push(&table);}
 
-      table_t make_table(void) {return table_t(dbenv, sequences);}
+      table_t make_table(void) {return table_t(dbenv, sequences, buffer_queue);}
 
    public:
       berkeleydb_t(config_t&& config);

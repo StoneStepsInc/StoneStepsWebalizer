@@ -230,6 +230,9 @@
     <ClCompile Include="char_buffer.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="berkeleydb_tmpl.cpp">
+      <Filter>Source Files\templates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
