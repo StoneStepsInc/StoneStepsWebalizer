@@ -103,13 +103,13 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
 //
 // -----------------------------------------------------------------------
 
-berkeleydb_t::cursor_iterator_base::cursor_iterator_base(const Db *db) 
+berkeleydb_t::cursor_iterator_base::cursor_iterator_base(Db *db) 
 {
    cursor = NULL;
    error = 0;
 
    if(db) {
-      if((error = const_cast<Db*>(db)->cursor(NULL, &cursor, 0)) != 0)
+      if((error = db->cursor(NULL, &cursor, 0)) != 0)
          cursor = NULL;
    }
 }
@@ -537,17 +537,7 @@ int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, b
    return 0;
 }
 
-Db *berkeleydb_t::table_t::secondary_db(const char *dbname)
-{
-   db_desc_t *desc;
-
-   if((desc = get_sc_desc(dbname)) == NULL)
-      return NULL;
-
-   return desc->scdb;
-}
-
-const Db *berkeleydb_t::table_t::secondary_db(const char *dbname) const
+Db *berkeleydb_t::table_t::secondary_db(const char *dbname) const
 {
    const db_desc_t *desc;
 
@@ -609,7 +599,7 @@ db_seq_t berkeleydb_t::table_t::query_seq_id(void)
 uint64_t berkeleydb_t::table_t::count(const char *dbname) const
 {
    DB_BTREE_STAT *stats;
-   const Db *dbptr = table;
+   Db *dbptr = table;
    uint64_t nkeys;
 
    if(dbname && *dbname) {
@@ -617,7 +607,7 @@ uint64_t berkeleydb_t::table_t::count(const char *dbname) const
          return 0;
    }
 
-   if(const_cast<Db*>(dbptr)->stat(NULL, &stats, 0) != 0)
+   if(dbptr->stat(NULL, &stats, 0) != 0)
       return 0;
 
    nkeys = (uint64_t) stats->bt_nkeys;
@@ -682,7 +672,7 @@ void berkeleydb_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int ma
 template <typename node_t>
 berkeleydb_t::iterator<node_t>::iterator(const table_t& table, const char *dbname) : 
       iterator_base<node_t>(iter),
-      iter(dbname ? table.secondary_db(dbname) : &table.primary_db())
+      iter(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
    primdb = (dbname == NULL);
 }
@@ -717,7 +707,7 @@ bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpac
 template <typename node_t>
 berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, const char *dbname) : 
       iterator_base<node_t>(iter), 
-      iter(dbname ? table.secondary_db(dbname) : &table.primary_db())
+      iter(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
    primdb = (dbname == NULL);
 }

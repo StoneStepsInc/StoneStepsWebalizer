@@ -121,7 +121,7 @@ class berkeleydb_t {
             cursor_iterator_base& operator = (const cursor_iterator_base&) {return *this;}
 
          public:
-            cursor_iterator_base(const Db *db);
+            cursor_iterator_base(Db *db);
             
             ~cursor_iterator_base(void);
 
@@ -137,7 +137,7 @@ class berkeleydb_t {
             db_recno_t   count;     // remaining duplicate count (zero if unique)
 
          public:
-            cursor_iterator(const Db *db) : cursor_iterator_base(db) {count = 0;}
+            cursor_iterator(Db *db) : cursor_iterator_base(db) {count = 0;}
 
             db_recno_t dup_count(void) const {return count;}
 
@@ -148,7 +148,7 @@ class berkeleydb_t {
 
       class cursor_reverse_iterator : public cursor_iterator_base {
          public:
-            cursor_reverse_iterator(const Db *db) : cursor_iterator_base(db) {}
+            cursor_reverse_iterator(Db *db) : cursor_iterator_base(db) {}
 
             bool prev(Dbt& key, Dbt& data, Dbt *pkey);
       };
@@ -285,10 +285,6 @@ class berkeleydb_t {
             const db_desc_t *get_sc_desc(const char *dbname) const;
             db_desc_t *get_sc_desc(const char *dbname);
 
-            Db& primary_db(void) {return *table;}
-
-            Db *secondary_db(const char *dbname);
-
          public:
             table_t(DbEnv& env, Db& seqdb, buffer_allocator_t& buffer_allocator);
 
@@ -330,12 +326,11 @@ class berkeleydb_t {
 
             int associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild);
 
-            const Db& primary_db(void) const {return *table;}
+            Db *primary_db(void) const {return table;}
 
-            const Db *secondary_db(const char *dbname) const;
+            Db *secondary_db(const char *dbname) const;
 
-            Db *values_db(void) {return values;}
-            const Db *values_db(void) const {return values;}
+            Db *values_db(void) const {return values;}
 
             int open_sequence(const char *colname, int32_t cachesize);
 
