@@ -10,20 +10,14 @@
 #ifndef __THREAD_H
 #define __THREAD_H
 
-
-#if defined(_WIN32)
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
-
 #include "types.h"
 
+struct thread_handle_t;
+typedef thread_handle_t *thread_t;
+
 #if defined(_WIN32)
-typedef HANDLE thread_t;
 typedef unsigned (__stdcall *start_routine_t)(void*); 
 #else
-typedef pthread_t thread_t;
 typedef void *(*start_routine_t)(void*);
 #endif
 		  

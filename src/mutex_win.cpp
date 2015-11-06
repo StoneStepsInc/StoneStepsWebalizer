@@ -11,17 +11,23 @@
 
 #include "mutex.h"
 
+#include <windows.h>
+
+struct mutex_handle_t {
+   CRITICAL_SECTION  crit_sect;
+};
+
 mutex_t mutex_create(void)
 {
-	CRITICAL_SECTION *mutex = new CRITICAL_SECTION;
-	InitializeCriticalSection(mutex);
+	mutex_t mutex = new mutex_handle_t;
+	InitializeCriticalSection(&mutex->crit_sect);
 	return mutex;
 }
 
 void mutex_destroy(mutex_t mutex)
 {
 	if(mutex) {
-		DeleteCriticalSection(mutex);
+		DeleteCriticalSection(&mutex->crit_sect);
 		delete mutex;
 	}
 }
@@ -29,11 +35,11 @@ void mutex_destroy(mutex_t mutex)
 void mutex_lock(mutex_t mutex)
 {
    if(mutex)
-	   EnterCriticalSection(mutex);
+	   EnterCriticalSection(&mutex->crit_sect);
 }
 
 void mutex_unlock(mutex_t mutex)
 {
    if(mutex)
-	   LeaveCriticalSection(mutex);
+	   LeaveCriticalSection(&mutex->crit_sect);
 }

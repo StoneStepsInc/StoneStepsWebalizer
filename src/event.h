@@ -11,24 +11,10 @@
 #ifndef __EVENT_H
 #define __EVENT_H
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
-
 #include "types.h"
 
-#if defined(_WIN32)
-typedef HANDLE event_t;
-#else
-typedef struct event_imp_t {
-   pthread_cond_t    condition;
-   pthread_mutex_t   mutex;
-   bool              manual;
-   bool              signalled;
-} *event_t;
-#endif
+struct event_handle_t;
+typedef event_handle_t *event_t;
 
 enum event_result_t {
    EVENT_OK       = 0,

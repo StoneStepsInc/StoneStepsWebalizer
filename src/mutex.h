@@ -11,17 +11,8 @@
 #ifndef __MUTEX_H
 #define __MUTEX_H
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
-
-#if defined(_WIN32)
-typedef CRITICAL_SECTION *mutex_t;
-#else
-typedef pthread_mutex_t *mutex_t;
-#endif
+struct mutex_handle_t;
+typedef mutex_handle_t *mutex_t;
 		  
 mutex_t mutex_create(void);
 void mutex_destroy(mutex_t mutex);

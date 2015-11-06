@@ -12,6 +12,15 @@
 #include <errno.h>
 #include "event.h"
 
+#include <pthread.h>
+
+struct event_handle_t {
+   pthread_cond_t    condition;
+   pthread_mutex_t   mutex;
+   bool              manual;
+   bool              signalled;
+};
+
 static timespec *get_abs_time(uint32_t timeout, timespec *abstime) 
 {
    struct timeval now;
@@ -34,7 +43,7 @@ static timespec *get_abs_time(uint32_t timeout, timespec *abstime)
 
 event_t event_create(bool manual, bool signalled)
 {
-   event_t event = new event_imp_t;
+   event_t event = new event_handle_t;
 
    event->manual = manual;
    event->signalled = signalled;
