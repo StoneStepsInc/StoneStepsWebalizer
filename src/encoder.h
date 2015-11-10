@@ -10,6 +10,8 @@
 #ifndef __ENCODER_H
 #define __ENCODER_H
 
+#include <stddef.h>
+
 //
 // Text encoder function (HTML, XML, TSV, etc)
 //

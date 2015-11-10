@@ -11,6 +11,8 @@
 #ifndef __CHAR_BUFFER_H
 #define __CHAR_BUFFER_H
 
+#include <stddef.h>
+
 //
 // 1. char_buffer_base is a transient object that maintains a block of memory, large 
 // enough to accommodate bufsize narrow or wide characters, depending on the template 

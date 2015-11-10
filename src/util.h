@@ -14,6 +14,7 @@
 
 #include <stddef.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "types.h"
 #include "tstring.h"

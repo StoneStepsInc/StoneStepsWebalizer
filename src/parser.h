@@ -14,6 +14,8 @@
 
 #include <stdlib.h>
 
+#include "config.h"
+
 /* Parse codes */
 #define PARSE_CODE_ERROR	0
 #define PARSE_CODE_OK		1

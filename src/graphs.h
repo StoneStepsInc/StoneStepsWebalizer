@@ -23,6 +23,7 @@
 
 #include "daily.h"
 #include "hourly.h"
+#include "config.h"
 
 //
 // GD uses a 7-bit alpha channel. The most significant bit is not used and can

@@ -13,6 +13,7 @@
 #include "keynode.h"
 #include "datanode.h"
 #include "tstring.h"
+#include "config.h"
 
 // -----------------------------------------------------------------------
 //

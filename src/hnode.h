@@ -15,6 +15,7 @@
 #include "basenode.h"
 #include "unode.h"
 #include "vnode.h"
+#include "tstamp.h"
 #include "types.h"
 
 // -----------------------------------------------------------------------

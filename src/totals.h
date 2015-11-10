@@ -10,9 +10,10 @@
 #ifndef __TOTALS_H
 #define __TOTALS_H
 
-#include "types.h"
 #include "keynode.h"
 #include "datanode.h"
+#include "tstamp.h"
+#include "types.h"
 #include "version.h"
 
 // -----------------------------------------------------------------------

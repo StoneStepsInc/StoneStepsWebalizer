@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include "tstring.h"
+#include "types.h"
 
 class logfile_t {
    private:

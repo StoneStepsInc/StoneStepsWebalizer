@@ -13,6 +13,7 @@
 #include "keynode.h"
 #include "datanode.h"
 #include "linklist.h"
+#include "tstamp.h"
 #include "types.h"
 
 struct unode_t;

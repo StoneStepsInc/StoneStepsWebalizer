@@ -33,6 +33,7 @@
 #include "util.h"
 #include "exception.h"
 #include "dump_output.h"
+#include "preserve.h"
 
 dump_output_t::dump_output_t(const config_t& config, const state_t& state) : output_t(config, state)
 {

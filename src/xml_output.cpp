@@ -32,6 +32,8 @@
 #include "util.h"
 #include "exception.h"
 #include "xml_output.h"
+#include "preserve.h"
+#include "history.h"
 
 // -----------------------------------------------------------------------
 // multi_reverse_iterator

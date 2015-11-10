@@ -12,6 +12,7 @@
 
 #include "keynode.h"
 #include "datanode.h"
+#include "tstamp.h"
 #include "types.h"
 
 // -----------------------------------------------------------------------

@@ -12,6 +12,7 @@
 
 #include "hashtab.h"
 #include "basenode.h"
+#include "tstamp.h"
 #include "types.h"
 
 //

@@ -41,6 +41,7 @@
 #include "history.h"
 #include "exception.h"
 #include "html_output.h"
+#include "preserve.h"
 
 //
 //

@@ -25,6 +25,8 @@
 
 #include <cstddef>
 
+#include "tstamp.h"
+
 static char *encode_markup(const char *str, char *buffer, size_t bsize, bool multiline, bool xml, size_t *slen);
 static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 

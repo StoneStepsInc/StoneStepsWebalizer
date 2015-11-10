@@ -9,8 +9,8 @@
 */
 #include "pch.h"
 
-#include <memory.h>
 #include "char_buffer.h"
+#include <stdlib.h>
 
 template <typename char_t>
 char_buffer_base<char_t>::char_buffer_base(void) : buffer(NULL), bufsize(0), holder(false)

@@ -19,7 +19,10 @@
 #include "hashtab.h"
 #include "mutex.h"
 #include "event.h"
+#include "thread.h"
 #include "queue.h"
+
+#include "hnode.h"
 
 #include <db.h>                                /* DB header ****************/
 

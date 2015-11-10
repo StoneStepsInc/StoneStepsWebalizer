@@ -12,7 +12,6 @@
 #include "danode.h"
 #include "serialize.h"
 
-
 danode_t::danode_t(uint64_t _nodeid) : keynode_t<uint64_t>(_nodeid)
 {
    hits = 0; 
