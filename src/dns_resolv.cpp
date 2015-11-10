@@ -260,7 +260,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    }
 
 funcexit:
-	if(debug_mode)
+	if(config.debug_mode)
 		fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
 }
 
@@ -288,7 +288,7 @@ bool dns_resolver_t::dns_init(void)
 
 #ifdef _WIN32
 	if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot initialize Windows sockets\n");
       return false;
 	}
@@ -296,19 +296,19 @@ bool dns_resolver_t::dns_init(void)
 
    // initialize synchronization primitives
 	if((dnode_mutex = mutex_create()) == NULL) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot initialize DNS mutex\n");
       return false;
    }
 
 	if((hqueue_mutex = mutex_create()) == NULL) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot initialize the host queue mutex\n");
       return false;
    }
 
    if((dns_done_event = event_create(true, true)) == NULL) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot initialize DNS event\n");
       return false;
    }
@@ -318,7 +318,7 @@ bool dns_resolver_t::dns_init(void)
       if(!dns_db_open(config.dns_cache))  
 			dns_db = NULL;
       else {
-         if (verbose > 1) {
+         if (config.verbose > 1) {
 				/* Using DNS cache file <filaneme> */
 				printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
 			}
@@ -329,11 +329,11 @@ bool dns_resolver_t::dns_init(void)
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
       if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "%s %s (%d - %s)\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
       }
       else {
-         if (verbose > 1) 
+         if (config.verbose > 1) 
             printf("%s %s\n", lang_t::msg_dns_useg, config.geoip_db_path.c_str());
 
          geoip_db = &mmdb;
@@ -360,7 +360,7 @@ bool dns_resolver_t::dns_init(void)
 	if(dns_db || geoip_db)
 		dns_create_worker_threads();
 
-   if (verbose > 1) {
+   if (config.verbose > 1) {
 		/* DNS Lookup (#children): */
 		printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
    }
@@ -446,7 +446,7 @@ void dns_resolver_t::dns_wait(void)
    if(event_wait(dns_done_event, (uint32_t) -1) == EVENT_OK)
       return;
 
-   if(verbose)
+   if(config.verbose)
       fprintf(stderr, "DNS event wait operation has failed - using polling to wait\n");
 
    while(!done) {
@@ -611,13 +611,13 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    result = MMDB_lookup_sockaddr(geoip_db, (sockaddr*) &ipaddr, &mmdb_error);
 
    if(mmdb_error != MMDB_SUCCESS) {
-      if(debug_mode)
+      if(config.debug_mode)
          fprintf(stderr, "Cannot lookup IP address %s (%d - %s)\n", hostaddr.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
       return false;
    }
    
    if(!result.found_entry) {
-      if(debug_mode)
+      if(config.debug_mode)
          fprintf(stderr, "Cannot find IP address %s\n", hostaddr.c_str());
       return false;
    }
@@ -696,7 +696,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
    recdata.ulen = DBBUFSIZE;
    recdata.data = buffer;
 
-   if (debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode.string.c_str());
+   if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode.string.c_str());
 
    string_t::char_buffer_t ccode_buffer(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
    string_t ccode(ccode_buffer, 0);
@@ -704,7 +704,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
    switch((dberror = dns_db->get(dns_db, NULL, &key, &recdata, 0)))
    {
       case  DB_NOTFOUND: 
-			if (debug_mode) 
+			if (config.debug_mode) 
 				fprintf(stderr,"[%04x] ... not found\n", thread_id());
 			break;
       case  0:
@@ -726,14 +726,14 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
                geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
 
-				if (debug_mode)
+				if (config.debug_mode)
 					fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
 				retval = true;
 			}
 			break;
 
       default: 
-			if (debug_mode) 
+			if (config.debug_mode) 
 				fprintf(stderr," error (%04x - %s)\n", dberror, db_strerror(dberror));
 			break;
    }
@@ -778,7 +778,7 @@ void dns_resolver_t::dns_db_put(dnode_t* dnode)
    v.size = (u_int32_t) recSize;
 
    if((dberror = dns_db->put(dns_db, NULL, &k, &v, 0)) < 0) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr,"dns_db_put failed (%04x - %s)!\n", dberror, db_strerror(dberror));
    }
 }
@@ -801,7 +801,7 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
 	db_version(&major, &minor, &patch);
 
 	if(major < 4 && minor < 3) {
-      if(verbose)
+      if(config.verbose)
 		   fprintf(stderr, "Error: The Berkeley DB library must be v4.3 or newer (found v%d.%d.%d).\n", major, minor, patch);
 		return false;
 	}
@@ -819,7 +819,7 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
    }
   
    if(db_create(&dns_db, NULL, 0)) {
-      if (verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
+      if (config.verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
       return false;                  /* disable cache */
    }
 
@@ -827,7 +827,7 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
    if(dns_db->open(dns_db, NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))
    {
       /* Error: Unable to open DNS cache file <filename> */
-      if (verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
+      if (config.verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
       return false;                  /* disable cache */
    }
 

@@ -204,6 +204,10 @@ config_t::config_t(void) : config_fnames(1)
 
    // push the initial DST pair into the vector
    dst_pairs.push(dst_pair_t());
+
+   verbose = 2;
+   debug_mode = 0;
+
 }
 
 config_t::~config_t(void)
@@ -1015,7 +1019,7 @@ void config_t::get_config(const char *fname)
          case 87: daily_stats=(tolower(value[0])=='y'); break;    // HourlyStats
          case 88: upstream_traffic = (tolower(value[0]) == 'y') ? true : false; break;
          case 89: conv_url_lower_case = (tolower(value[0]) == 'y') ? true : false; break;
-         case 90: lang.proc_lang_file(value); break;
+         case 90: lang.proc_lang_file(value, verbose); break;
          case 91: bundle_groups = (tolower(value[0]) == 'y') ? true : false; break;
          case 92: no_def_index_alias = (tolower(value[0]) == 'y') ? true : false; break;
          case 93: dns_cache_ttl = atoi(value) * 86400; if(dns_cache_ttl == 0) dns_cache_ttl = DNS_CACHE_TTL; break;

@@ -68,7 +68,7 @@ FILE *output_t::open_out_file(const char *filename) const
    /* open the file... */
    if ( (out_fp=fopen(make_path(config.out_dir, filename),"w")) == NULL)
    {
-      if (verbose)
+      if (config.verbose)
          fprintf(stderr,"%s %s!\n",config.lang.msg_no_open,filename);
       return NULL;
    }

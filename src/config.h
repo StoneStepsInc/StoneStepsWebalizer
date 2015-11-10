@@ -366,7 +366,10 @@ class config_t {
       int utc_offset;                            // UTC offset in minutes, not including DST
 
       lang_t lang;
-      
+
+      int verbose;                              // 2=verbose,1=err, 0=none
+      int debug_mode;                           // debug mode flag
+
    private:
       static void get_config_cb(const char *fname, void *_this);
 

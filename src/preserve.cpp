@@ -159,7 +159,7 @@ int state_t::save_state(void)
    dlnode_t dlnode;
 
    /* Saving current run data... */
-   if (verbose>1)
+   if (config.verbose>1)
    {
       sprintf(buffer,"%02d/%02d/%04d %02d:%02d:%02d",totals.cur_tstamp.month,totals.cur_tstamp.day,totals.cur_tstamp.year,totals.cur_tstamp.hour,totals.cur_tstamp.min,totals.cur_tstamp.sec);
       printf("%s [%s]\n", config.lang.msg_put_data,buffer);
@@ -363,7 +363,7 @@ int state_t::save_state(void)
       // delete the old state file, if there is one
       if(stfile) {
          if(!del_state_file()) {
-            if(verbose)
+            if(config.verbose)
                fprintf(stderr, "Cannot delete the state file (%s). Delete the file manually before the next run\n", config.state_fname.c_str());
          }
       }
@@ -386,7 +386,7 @@ bool state_t::initialize(void)
    if(config.is_maintenance()) {
       // make sure database exists, so database_t::open doesn't create an empty one
       if(access(config.get_db_path(), F_OK)) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "%s: %s\n", config.lang.msg_nofile, config.get_db_path().c_str());
          return false;
       }
@@ -401,7 +401,7 @@ bool state_t::initialize(void)
       throw exception_t(0, string_t::_format("Cannot open the database %s", config.get_db_path().c_str()));
 
    // report which database was opened
-   if(verbose > 1)
+   if(config.verbose > 1)
       printf("%s %s\n", config.lang.msg_use_db, config.get_db_path().c_str());
 
    //
@@ -529,7 +529,7 @@ void state_t::cleanup(void)
       history.cleanup();
 
    if(!database.close()) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot close the database. The database file may be corrupt\n");
    }
 }
@@ -562,7 +562,7 @@ void state_t::database_info(void) const
       printf("UTC offset      : %d min\n", get_sysnode().utc_offset);
 
    // output numeric storage sizes and byte order in debug mode
-   if(debug_mode) {
+   if(config.debug_mode) {
       printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", get_sysnode().sizeof_char, get_sysnode().sizeof_short, get_sysnode().sizeof_int, get_sysnode().sizeof_long, get_sysnode().sizeof_double);
       printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&get_sysnode().byte_order, (u_int)*((u_char*)&get_sysnode().byte_order+1), (u_int)*((u_char*)&get_sysnode().byte_order+2), (u_int)*((u_char*)&get_sysnode().byte_order+3));
    }
@@ -639,7 +639,7 @@ int state_t::restore_state(void)
    // Restore history, unless we are told otherwise
    //
    if (config.ignore_hist) {
-      if (verbose>1) 
+      if (config.verbose>1) 
          printf("%s\n",config.lang.msg_ign_hist); 
    }
    else

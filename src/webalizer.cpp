@@ -87,9 +87,6 @@ const char *copyright   = "Copyright (c) 2004-2015, Stone Steps Inc. (www.stones
 
 static bool abort_signal = false;   // true if Ctrl-C was pressed
 
-int     verbose      = 2;                     /* 2=verbose,1=err, 0=none  */ 
-int     debug_mode   = 0;                     /* debug mode flag          */
-
 //
 //
 //
@@ -133,7 +130,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    }
 
    // be polite and announce yourself...
-   if(verbose > 1) {
+   if(config.verbose > 1) {
       uname(&system_info);
       printf("\nStone Steps Webalizer v%s (%s %s)\n\n", state_t::get_app_version().c_str(), system_info.sysname, system_info.release);
    }
@@ -151,17 +148,17 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    }
 
    // report procesed language file
-   if(verbose > 1)
+   if(config.verbose > 1)
       config.lang.report_lang_fname();
 
    // report processed configuration files
-   if(verbose > 1)
+   if(config.verbose > 1)
       config.report_config();
 
    // check if the output directory has write access
    if(access(config.out_dir, R_OK | W_OK)) {
       /* Error: Can't change directory to ... */
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "%s %s\n", config.lang.msg_dir_err,config.out_dir.c_str());
       exit(1);
    }
@@ -169,7 +166,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    // check if the database directory has write access
    if(access(config.db_path, R_OK | W_OK)) {
       /* Error: Can't change directory to ... */
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "%s %s\n", config.lang.msg_dir_err, config.db_path.c_str());
       exit(1);
    }
@@ -179,14 +176,14 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
       // initialize DNS resolver if the number of workers is set to a non-zero value
       if(config.is_dns_enabled()) {
          if(dns_resolver.dns_init() == false) {
-            if(verbose)
+            if(config.verbose)
                printf("%s\n", lang_t::msg_dns_init);
          }
       }
 
       // initialize the log file parser
       if(!parser.init_parser(config.log_type)) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "%s\n", config.lang.msg_pars_err);
          exit(1);
       }
@@ -197,7 +194,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    //
    if(!config.compact_db && !config.end_month && !config.db_info) {
       if(!init_output_engines()) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "Cannot initialize output engine\n");
          exit(1);
       }
@@ -207,7 +204,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    // Initialize the state engine
    //
    if(!state.initialize()) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "Cannot initialize the state engine\n");
       exit(1);
    }
@@ -228,11 +225,11 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
 
    if(!config.db_info) {
       /* Creating output in ... */
-      if(verbose > 1)
+      if(config.verbose > 1)
          printf("%s %s\n", config.lang.msg_dir_use, !config.out_dir.isempty() ? config.out_dir.c_str() : config.lang.msg_cur_dir);
 
       /* Hostname for reports is ... */
-      if(verbose > 1 && !config.db_info) 
+      if(config.verbose > 1 && !config.db_info) 
          printf("%s '%s'\n",config.lang.msg_hostname,config.hname.c_str());
    }
 
@@ -284,7 +281,7 @@ bool webalizer_t::init_output_engines(void)
       // and initialize this output engine
       if(!optr->init_output_engine()) {
          delete optr;
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "Cannot initialize output engine (%s)\n", iter.item()->string.c_str());
          continue;
       }
@@ -320,7 +317,7 @@ void webalizer_t::write_main_index(void)
       optr = iter.item();
       
       if(optr->is_main_index()) {
-         if (verbose>1) 
+         if (config.verbose>1) 
             printf("%s (%s)\n", config.lang.msg_gen_sum, optr->get_output_type());
          
          optr->write_main_index();
@@ -336,7 +333,7 @@ void webalizer_t::write_monthly_report(void)
    while(iter.next(NULL)) {
       optr = iter.item();
       
-      if(verbose > 1)
+      if(config.verbose > 1)
          printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year, optr->get_output_type());
       
       optr->write_monthly_report();
@@ -375,7 +372,7 @@ void webalizer_t::print_version()
 {
    utsname system_info;
 
-   if(verbose == 0) {
+   if(config.verbose == 0) {
       printf("%s\n", state_t::get_app_version().c_str());
       return;
    }
@@ -387,8 +384,8 @@ void webalizer_t::print_version()
                config.lang.language,copyright);
    printf("\nThis program is based on The Webalizer v2.01-10\nCopyright 1997-2001 by Bradford L. Barrett (www.webalizer.com)\n\n");
 
-   if (debug_mode) {
-      printf("Mod date: %s\n", moddate);
+   if (config.debug_mode) {
+      printf("Mod date: %s\n", __DATE__);
       printf("\nDefault config dir: %s\n\n", ETCDIR);
    }
 }
@@ -416,7 +413,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 	if(config.group_sites.size() && ((hostname && (group = config.group_sites.isinglist(*hostname)) != NULL) ||
                                                 ((group = config.group_sites.isinglist(hnode.string)) != NULL))) {
 		if(!put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-			if (verbose)
+			if (config.verbose)
 				/* Error adding Site node, skipping ... */
 				fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, group->c_str());
 		}
@@ -429,7 +426,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 			const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
 			if (domain) {
 				if(!put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-					if (verbose)
+					if (config.verbose)
 						/* Error adding Site node, skipping ... */
 						fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, domain);
 				}
@@ -845,7 +842,7 @@ int webalizer_t::end_month(void)
    
    if (state.save_state()) {
       /* Error: Unable to save current run data */
-      if (verbose) 
+      if (config.verbose) 
          fprintf(stderr,"%s\n",config.lang.msg_data_err);
       return 1;
    }
@@ -888,7 +885,7 @@ int webalizer_t::compact_database(void)
    uint64_t stime = msecs();
    
    if((error = state.database.compact(bytes)) == 0) {
-      if(verbose > 1)
+      if(config.verbose > 1)
          printf("%s: %d KB\n", config.lang.msg_cmpctdb, bytes/1024);
    }
    else
@@ -921,7 +918,7 @@ int webalizer_t::run(void)
    end_ts = msecs();              
    
    /* display timing totals?   */
-   if (config.time_me || verbose > 1) {
+   if (config.time_me || config.verbose > 1) {
       /* get total (end-start) and processing time */
       tot_time = elapsed(start_ts, end_ts);
       proc_time = tot_time-dns_time-mnt_time-rpt_time;
@@ -953,7 +950,7 @@ int webalizer_t::run(void)
          else  
             printf("\n");
 
-         if(verbose && config.is_dns_enabled()) {
+         if(config.verbose && config.is_dns_enabled()) {
             if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
                printf("%s: %" PRIu64 "%% (%d:%d)\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
          }
@@ -1027,7 +1024,7 @@ int webalizer_t::proc_logfile(void)
       }
       
       /* Using logfile ... */
-      if (verbose>1)
+      if (config.verbose>1)
       {
          printf("%s %s (",config.lang.msg_log_use, !fname.isempty() ? make_path(config.cur_dir, fname).c_str() : "STDIN");
          if (logfile->is_gzip()) printf("gzip-");
@@ -1302,7 +1299,7 @@ int webalizer_t::proc_logfile(void)
             stime = msecs();
             if (state.save_state()) {
                /* Error: Unable to save current run data */
-               if (verbose) 
+               if (config.verbose) 
                   fprintf(stderr,"%s\n",config.lang.msg_data_err);
                // report generator uses saved state data
                return 1;
@@ -1447,7 +1444,7 @@ int webalizer_t::proc_logfile(void)
          if((hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
             spammer, ragent != NULL, target, newvisit, newhost, newthost)) == NULL)
          {
-            if (verbose)
+            if (config.verbose)
                /* Error adding host node (monthly), skipping .... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, log_rec.hostname.c_str());
          }
@@ -1484,7 +1481,7 @@ int webalizer_t::proc_logfile(void)
             if((uptr = put_unode(log_rec.url, log_rec.srchargs, OBJ_REG,
                 log_rec.xfer_size, log_rec.proc_time/1000., log_rec.port, entryurl, target, newurl)) == NULL)
             {
-               if (verbose)
+               if (config.verbose)
                /* Error adding URL node, skipping ... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, log_rec.url.c_str());
             }
@@ -1496,7 +1493,7 @@ int webalizer_t::proc_logfile(void)
             if(!log_rec.ident.isempty()) {
                if(!put_inode(log_rec.ident, OBJ_REG, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newuser))
                {
-                  if (verbose)
+                  if (config.verbose)
                   /* Error adding ident node, skipping .... */
                   fprintf(stderr,"%s %s\n", config.lang.msg_nomem_i, log_rec.ident.c_str());
                }
@@ -1510,7 +1507,7 @@ int webalizer_t::proc_logfile(void)
             if((sptr = config.downloads.isinglist(log_rec.url)) != NULL) {
                if(log_rec.resp_code == RC_OK || log_rec.resp_code == RC_PARTIALCONTENT) {
                   if(!put_dlnode(*sptr, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl)) {
-                     if (verbose)
+                     if (config.verbose)
                         /* Error adding a download node, skipping .... */
                         fprintf(stderr,"%s %s\n", config.lang.msg_nomem_dl, log_rec.url.c_str());
                   }
@@ -1523,7 +1520,7 @@ int webalizer_t::proc_logfile(void)
          //
          if(httperr && (config.ntop_errors || config.dump_errors)) {
             if(!put_rcnode(log_rec.method, log_rec.url, log_rec.resp_code, false, 1, &newerr)) {
-               if (verbose)
+               if (config.verbose)
                   /* Error adding response code node, skipping .... */
                   fprintf(stderr,"%s %d %s\n", config.lang.msg_nomem_rc, log_rec.resp_code, log_rec.url.c_str());
             }
@@ -1539,7 +1536,7 @@ int webalizer_t::proc_logfile(void)
                // check if it's a partial request and ignore the referrer if requested
                if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
                   if(!put_rnode(log_rec.refer, OBJ_REG, (uint64_t)1, newvisit, newref)) {
-                     if (verbose) 
+                     if (config.verbose) 
                         fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, log_rec.refer.c_str());
                   }
                }
@@ -1560,7 +1557,7 @@ int webalizer_t::proc_logfile(void)
          {
             if(!log_rec.agent.isempty()) {
                if(!put_anode(log_rec.agent, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent)) {
-                  if (verbose)
+                  if (config.verbose)
                      fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, log_rec.agent.c_str());
                }
             }
@@ -1659,7 +1656,7 @@ int webalizer_t::proc_logfile(void)
          if((sptr = config.group_urls.isinglist(log_rec.url))!=NULL)
          {
             if(!put_unode(*sptr, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
-               if (verbose)
+               if (config.verbose)
                   /* Error adding URL node, skipping ... */
                   fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, sptr->c_str());
             }
@@ -1669,7 +1666,7 @@ int webalizer_t::proc_logfile(void)
          if(config.group_url_domains && (cp1 = get_url_domain(log_rec.url, buffer, BUFSIZE)) != NULL) {
             const char *domain = get_domain(cp1, config.group_url_domains);
             if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
-               if (verbose)
+               if (config.verbose)
                   /* Error adding URL node, skipping ... */
                   fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, domain);
             }
@@ -1679,7 +1676,7 @@ int webalizer_t::proc_logfile(void)
          if((sptr = config.group_refs.isinglist(log_rec.refer))!=NULL)
          {
             if(!put_rnode(*sptr, OBJ_GRP, 1ul, newvisit, newrgrp)) {
-               if (verbose)
+               if (config.verbose)
                /* Error adding Referrer node, skipping ... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, sptr->c_str());
             }
@@ -1689,7 +1686,7 @@ int webalizer_t::proc_logfile(void)
          if((sptr = config.group_agents.isinglist(log_rec.agent))!=NULL)
          {
             if(!put_anode(*sptr, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp)) {
-               if (verbose)
+               if (config.verbose)
                /* Error adding User Agent node, skipping ... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, sptr->c_str());
             }
@@ -1699,7 +1696,7 @@ int webalizer_t::proc_logfile(void)
          if(robot && ragent && config.group_robots)
          {
             if(!put_anode(*ragent, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp)) {
-               if (verbose)
+               if (config.verbose)
                /* Error adding User Agent node, skipping ... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, ragent->c_str());
             }
@@ -1710,7 +1707,7 @@ int webalizer_t::proc_logfile(void)
          {
             if(!put_inode(*sptr, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp))
             {
-               if (verbose)
+               if (config.verbose)
                /* Error adding Username node, skipping ... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_i, sptr->c_str());
             }
@@ -1785,7 +1782,7 @@ int webalizer_t::proc_logfile(void)
          stime = msecs();
          if (state.save_state()) {
             /* Error: Unable to save current run data */
-            if (verbose) 
+            if (config.verbose) 
                fprintf(stderr,"%s\n",config.lang.msg_data_err);
          }
          mnt_time += elapsed(stime, msecs());
@@ -1815,7 +1812,7 @@ int webalizer_t::proc_logfile(void)
    else
    {
       /* No valid records found... exit with error (1) */
-      if (verbose) 
+      if (config.verbose) 
          printf("%s\n",config.lang.msg_no_vrec);
 
       retcode = 1;
@@ -2032,7 +2029,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
    if(termcnt && !str.isempty()) {
       if(!put_snode(str, termcnt, newvisit, newsrch)) {
-         if (verbose)
+         if (config.verbose)
             // Error adding search string node, skipping .... 
             fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, str.c_str());
       }
@@ -2910,6 +2907,7 @@ char *webalizer_t::our_gzgets(gzFile fp, char *buf, int size)
 /*********************************************/
 int main(int argc, char *argv[])
 {
+   config_t config;
    int retcode;
 
 #ifdef _WIN32
@@ -2921,8 +2919,6 @@ int main(int argc, char *argv[])
 #endif
 
    try {
-      config_t config;
-
       // read configuration files
       config.initialize(get_cur_path(), argc, argv);
       
@@ -2954,18 +2950,18 @@ int main(int argc, char *argv[])
       }
 #ifdef _WIN32
       catch(ex_win32_se_t& err) {
-         if(verbose) {
+         if(config.verbose) {
             fprintf(stderr, "%s\n", err.desc().c_str());
             print_loaded_modules();
          }
-      }
+       }
 #endif      
       catch (DbException &err) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
       }
       catch (exception_t &err) {
-         if(verbose)
+         if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
       }
 
@@ -2978,18 +2974,18 @@ int main(int argc, char *argv[])
    }
 #ifdef _WIN32
    catch(ex_win32_se_t& err) {
-      if(verbose) {
+      if(config.verbose) {
          fprintf(stderr, "%s\n", err.desc().c_str());
          print_loaded_modules();
       }
    }
 #endif      
    catch (DbException &err) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
    }
    catch (exception_t &err) {
-      if(verbose)
+      if(config.verbose)
          fprintf(stderr, "%s\n", err.desc().c_str());
    }
 
@@ -3105,10 +3101,9 @@ int webalizer_t::read_log_line(logfile_t& logfile)
       total_bad++;                     /* bump bad record counter      */
 
       // full buffer - report record number, file name and the record if running in debug mode
-      if (verbose) {
-         
+      if (config.verbose) {
          fprintf(stderr,"%s (%" PRIu64 " - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
-         if (debug_mode) 
+         if (config.debug_mode) 
             fprintf(stderr,":\n%s",buffer);
          else 
             fprintf(stderr,"\n");
@@ -3121,12 +3116,12 @@ int webalizer_t::read_log_line(logfile_t& logfile)
             throw exception_t(0, string_t::_format("%s: %s (%d)", config.lang.msg_file_err, logfile.get_fname().c_str(), errnum));
 
          // print this buffer
-         if (debug_mode && verbose) 
+         if (config.debug_mode && config.verbose) 
             fprintf(stderr,"%s",buffer);
 
          // if at the end of the oversized record, print EOL and move on to the next line
          if(reclen < BUFSIZE-1) {
-            if (debug_mode && verbose)
+            if (config.debug_mode && config.verbose)
                fprintf(stderr,"\n");
             break;
          }
@@ -3146,16 +3141,16 @@ int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logre
    // record in case we need to report an error. This is expensive - do it only
    // in debug mode.
    //
-   if(debug_mode)
+   if(config.debug_mode)
 	   lrecstr = buffer;
 
    if((parse_code = parser.parse_record(buffer, reclen, logrec)) == PARSE_CODE_ERROR) {
 
       /* really bad record... */
-      if (verbose)
+      if (config.verbose)
       {
          fprintf(stderr,"%s (%" PRIu64 ")", config.lang.msg_bad_rec, total_rec);
-         if (debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
+         if (config.debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
          else fprintf(stderr,"\n");
       }
    }

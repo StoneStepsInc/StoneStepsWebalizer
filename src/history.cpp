@@ -203,14 +203,14 @@ bool history_t::get_history(void)
    fpath = make_path(config.out_dir, config.hist_fname);
 
    if((hist_fp=fopen(fpath,"r")) == NULL) {
-      if (verbose>1) 
+      if (config.verbose>1) 
          printf("%s\n", config.lang.msg_no_hist);
       return false;
    }
 
    buffer = new char[BUFSIZE];
 
-   if (verbose>1) 
+   if (config.verbose>1) 
       printf("%s %s\n", config.lang.msg_get_hist, fpath.c_str());
 
    while ((fgets(buffer,BUFSIZE,hist_fp)) != NULL)
@@ -236,7 +236,7 @@ bool history_t::get_history(void)
       
       // check if the month is in the 1-12 range
       if(hnode.month == 0 || hnode.month > 12) {
-         if (verbose)
+         if (config.verbose)
             fprintf(stderr,"%s (mth=%d)\n",config.lang.msg_bad_hist, hnode.month);
          continue;
       }
@@ -285,12 +285,12 @@ void history_t::put_history(void)
    fpath = make_path(config.out_dir, config.hist_fname);
 
    if((hist_fp = fopen(fpath,"w")) == NULL) {
-      if (verbose)
+      if (config.verbose)
          fprintf(stderr,"%s %s\n", config.lang.msg_hist_err, fpath.c_str());
       return;
    }
 
-   if (verbose>1) 
+   if (config.verbose>1) 
       printf("%s\n",config.lang.msg_put_hist);
 
    while(iter.more()) {

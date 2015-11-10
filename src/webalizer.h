@@ -213,7 +213,4 @@ class webalizer_t {
 extern const char *moddate  ;                 /* modification date        */
 extern const char *copyright;
 
-extern int     verbose      ;                 /* 2=verbose,1=err, 0=none  */
-extern int     debug_mode   ;                 /* debug mode flag          */
-
 #endif  /* _WEBALIZER_H */

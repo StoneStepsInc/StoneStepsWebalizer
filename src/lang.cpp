@@ -783,7 +783,7 @@ lang_t::~lang_t(void)
       delete [] lang_buffer;
 }
 
-bool lang_t::read_lang_file(const char *fname)
+bool lang_t::read_lang_file(const char *fname, int verbose)
 {
 	long filelen;
 	size_t lang_len;
@@ -1090,7 +1090,7 @@ void lang_t::init_lang_htab(void)
 //
 //	See webalizer_lang.english for file format description
 //
-void lang_t::proc_lang_file(const char *fname)
+void lang_t::proc_lang_file(const char *fname, int verbose)
 {
 	u_char *name, *cptr, *cctld;
 	const lang_node_t *lnode;
@@ -1098,7 +1098,7 @@ void lang_t::proc_lang_file(const char *fname)
 	bool endofinput, quoted;
    string_t str;
 
-	if(read_lang_file(fname) == false)
+	if(read_lang_file(fname, verbose) == false)
 		return;
 
 	//
@@ -1322,10 +1322,8 @@ const lang_t::resp_code_t& lang_t::get_resp_code_by_index(u_int index) const
 
 void lang_t::report_lang_fname(void) const
 {
-   if(!lang_fname.isempty()) {
-      if(verbose > 1)
-         printf("%s %s\n", msg_use_lang, lang_fname.c_str());
-   }
+   if(!lang_fname.isempty())
+      printf("%s %s\n", msg_use_lang, lang_fname.c_str());
 }
 
 //

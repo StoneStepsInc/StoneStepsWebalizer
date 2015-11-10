@@ -333,7 +333,7 @@ class lang_t {
 
       void init_lang_htab(void);
 
-      bool read_lang_file(const char *fname);
+      bool read_lang_file(const char *fname, int verbose);
 
    public:
       lang_t(void);
@@ -341,7 +341,7 @@ class lang_t {
 
       void report_lang_fname(void) const;
 
-      void proc_lang_file(const char *fname);
+      void proc_lang_file(const char *fname, int verbose);
       void cleanup_lang_data(void);
 
       u_int resp_code_count(void) const;

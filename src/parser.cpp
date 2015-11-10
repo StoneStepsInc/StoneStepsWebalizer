@@ -88,7 +88,7 @@ bool parser_t::init_parser(int logtype)
 
       case LOG_APACHE:
          if(!parse_apache_log_format(config.apache_log_format)) {
-            if(verbose)
+            if(config.verbose)
                fprintf(stderr, "%s\n", config.lang.msg_afm_err);
             return false;
          }
@@ -360,7 +360,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    char *cp1, *cp2, *cpx, *eob;
 
    if(!buffer || !*buffer) {
-      if (verbose>1) printf("%s\n",config.lang.msg_ign_nscp);
+      if (config.verbose>1) printf("%s\n",config.lang.msg_ign_nscp);
       return PARSE_CODE_ERROR;
    }
    
@@ -543,7 +543,7 @@ bool parser_t::parse_apache_log_format(const char *format)
 
 			case 't':
 				if(paramlen) {
-               if(verbose)
+               if(config.verbose)
 					   fprintf(stderr, "Error parsing Apache log format - \"%{format}t\" is not supported\n");
 					goto errexit;
 				}
