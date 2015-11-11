@@ -34,67 +34,14 @@ class exception_t {
 		const string_t& desc(void) const {return errdesc;}
 };
 
-#ifdef _WIN32
-// -----------------------------------------------------------------------
-// ex_win32_se_t
-//
-// Win32 structured exception wrapper class that captures exception details
-// and creates a formatted exception description string.
-// -----------------------------------------------------------------------
-class ex_win32_se_t : public exception_t {
-   private:
-      unsigned int   excode;        // exception code of the first exception
-   
-   private:   
-      static string_t get_ex_desc(unsigned int excode, _EXCEPTION_POINTERS *exinfo)
-      {
-         string_t extext;
-         u_int reccnt = 0;
-      
-         // check if we have everything we need
-         if(!exinfo || !exinfo->ExceptionRecord) {
-            extext = "Missing Windows exception information";
-            return extext;
-         }
-         
-         extext = "Windows exception: ";
-         
-         // walk the exception chain, starting from the first exception record
-         EXCEPTION_RECORD *exrec = exinfo->ExceptionRecord;
-         while(exrec) {
-            // add a separator between chained exceptions
-            if(!extext.isempty())
-               extext += "; ";
-            
-            // grab the base exceptino information first
-            extext += string_t::_format("code: %x flags: %x address: %p", exrec->ExceptionCode, exrec->ExceptionFlags, exrec->ExceptionAddress);
-            
-            // check if this exception record has any parameters
-            if(exrec->NumberParameters) {
-               // add them to the exception description
-               extext += " (";
-               for(unsigned int i = 0; i < exrec->NumberParameters; i++) {
-                  if(i != 0)
-                     extext += ", ";
-                  extext += string_t::_format("%p", exrec->ExceptionInformation[i]);
-               }
-               extext += ")";
-            }
-            
-            // move on to the next exception record
-            exrec = exrec->ExceptionRecord;
-         }
-         
-         return extext;
-      }
-      
+class os_ex_t : public exception_t {
    public:
-      ex_win32_se_t(unsigned int excode, _EXCEPTION_POINTERS *exinfo) : 
-            exception_t(0, get_ex_desc(excode, exinfo)), excode(excode)
-      {
-      }
+      os_ex_t(u_int code, const char *desc) : exception_t(code, desc) {}
 };
 
-#endif   // _WIN32
+//
+//
+//
+void set_os_ex_translator(void);
 
 #endif // __EXCEPTION_H

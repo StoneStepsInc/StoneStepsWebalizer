@@ -233,6 +233,9 @@
     <ClCompile Include="berkeleydb_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
+    <ClCompile Include="exception_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

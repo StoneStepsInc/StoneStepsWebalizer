@@ -33,9 +33,7 @@
 #	ifndef INADDR_NONE
 #	define INADDR_NONE 0xFFFFFFFF
 #	endif  /* INADDR_NONE */
-#endif
-
-#ifdef _WIN32
+#else
 #define F_OK 00
 #define R_OK 04
 #endif

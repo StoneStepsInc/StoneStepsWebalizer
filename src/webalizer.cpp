@@ -2908,15 +2908,9 @@ char *webalizer_t::our_gzgets(gzFile fp, char *buf, int size)
 int main(int argc, char *argv[])
 {
    config_t config;
-   int retcode;
+   int retcode = 0;
 
-#ifdef _WIN32
-      //
-      // Set a callback to translate Win32 structured exceptions (memory access
-      // violations, etc) to C++ exceptins as early as possible.
-      //
-      _set_se_translator(_win32_se_handler);    // $$$ check if has to be reset to the default callback !!!
-#endif
+   set_os_ex_translator();
 
    try {
       // read configuration files
@@ -2948,14 +2942,10 @@ int main(int argc, char *argv[])
 
          return retcode;
       }
-#ifdef _WIN32
-      catch(ex_win32_se_t& err) {
-         if(config.verbose) {
+      catch(os_ex_t& err) {
+         if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
-            print_loaded_modules();
-         }
        }
-#endif      
       catch (DbException &err) {
          if(config.verbose)
             fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
@@ -2972,14 +2962,10 @@ int main(int argc, char *argv[])
 
       logproc.cleanup();
    }
-#ifdef _WIN32
-   catch(ex_win32_se_t& err) {
-      if(config.verbose) {
+   catch(os_ex_t& err) {
+      if(config.verbose)
          fprintf(stderr, "%s\n", err.desc().c_str());
-         print_loaded_modules();
-      }
    }
-#endif      
    catch (DbException &err) {
       if(config.verbose)
          fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
@@ -2991,61 +2977,6 @@ int main(int argc, char *argv[])
 
    return -1;
 }
-
-//
-// Win32 detailed exception reporting
-//
-#ifdef _WIN32
-void __cdecl _win32_se_handler(unsigned int excode, _EXCEPTION_POINTERS *exinfo)
-{
-   throw ex_win32_se_t(excode, exinfo);
-}
-
-void print_loaded_modules(void)
-{
-   DWORD sizein = 0, sizeout = 0, modulecnt = 0;
-   HMODULE *modules = NULL;
-   MODULEINFO moduleinfo;
-   char modulename[256];
-
-   if(!EnumProcessModules(GetCurrentProcess(), NULL, 0, &sizein)) {
-      fprintf(stderr, "Cannot enumerate modules");
-      return;
-   }
-   
-   // WinXP doesn't null-terminate the returned string if the buffer is too small
-   modulename[sizeof(modulename)-sizeof(char)] = 0;
-   
-   // double the size to account for modules loaded after the first call
-   sizein *= 2;
-   
-   modules = new HMODULE[sizein / sizeof(HMODULE)];
-   
-   if(!EnumProcessModules(GetCurrentProcess(), modules, sizein, &sizeout)) {
-      fprintf(stderr, "Cannot enumerate modules");
-      goto funcexit;
-   }
-   
-   // the number of modules we actually have is the minimum of the two sizes
-   modulecnt = MIN(sizein/sizeof(HMODULE), sizeout/sizeof(HMODULE));
-   
-   // print the total just so we know if we missed anything
-   fprintf(stderr, "Loaded modules (%d of %d)\n", modulecnt, sizeout / sizeof(HMODULE));
-   
-   for(DWORD i = 0; i < modulecnt; i++) {
-      if(!GetModuleFileNameA(modules[i], modulename, sizeof(modulename)-sizeof(char)))
-         strcpy(modulename, "*unknown*");
-      
-      if(!GetModuleInformation(GetCurrentProcess(), modules[i], &moduleinfo, sizeof(MODULEINFO)))
-         memset(&moduleinfo, 0, sizeof(MODULEINFO));
-      
-      fprintf(stderr, "%s (%p-%p)\n", modulename, moduleinfo.lpBaseOfDll, (unsigned char*) moduleinfo.lpBaseOfDll + moduleinfo.SizeOfImage);
-   }
-   
-funcexit:
-   delete [] modules;   
-}
-#endif 
 
 //
 // If Ctrl-C is not handled properly, both Berkeley databases may get damaged 

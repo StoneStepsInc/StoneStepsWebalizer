@@ -181,6 +181,7 @@
     <ClCompile Include="dns_resolv.cpp" />
     <ClCompile Include="dump_output.cpp" />
     <ClCompile Include="encoder.cpp" />
+    <ClCompile Include="exception_win.cpp" />
     <ClCompile Include="graphs.cpp" />
     <ClCompile Include="hashtab_tmpl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
