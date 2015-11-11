@@ -766,20 +766,13 @@ bool is_abs_path(const char *path)
 
 string_t get_cur_path(void)
 {
-   size_t bufsize = 128;
-   char *buffer = new char[bufsize];
+   char buffer[PATH_MAX+1];
    string_t path;
 
-   while(!getcwd(buffer, (int) bufsize-1)) {
-      delete [] buffer;
-      bufsize <<= 1;
-      if(bufsize >= BUFSIZE)
-         return path;
-      buffer = new char[bufsize];
-   }
+   if(!getcwd(buffer, (int) (sizeof(buffer)-1)))
+      return path;
 
    path = buffer;
-   delete [] buffer;
 
    return path;
 }

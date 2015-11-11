@@ -36,6 +36,12 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
+#ifdef _WIN32
+#define PATH_MAX _MAX_PATH
+#else
+#define PATH_MAX 255
+#endif
+
 //
 //
 //
