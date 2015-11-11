@@ -175,19 +175,19 @@ class config_t {
 
       u_int graph_background_alpha;
 
-      uint32_t graph_background;
-      uint32_t graph_gridline;
-      uint32_t graph_shadow;
-      uint32_t graph_title_color;
-      uint32_t graph_hits_color;
-      uint32_t graph_files_color;
-      uint32_t graph_hosts_color;
-      uint32_t graph_pages_color;
-      uint32_t graph_visits_color;
-      uint32_t graph_volume_color;
-      uint32_t graph_outline_color;
-      uint32_t graph_legend_color;
-      uint32_t graph_weekend_color;
+      string_t graph_background;
+      string_t graph_gridline;
+      string_t graph_shadow;
+      string_t graph_title_color;
+      string_t graph_hits_color;
+      string_t graph_files_color;
+      string_t graph_hosts_color;
+      string_t graph_pages_color;
+      string_t graph_visits_color;
+      string_t graph_volume_color;
+      string_t graph_outline_color;
+      string_t graph_legend_color;
+      string_t graph_weekend_color;
 
       u_int max_hist_length;
 

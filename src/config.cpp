@@ -128,20 +128,6 @@ config_t::config_t(void) : config_fnames(1)
 
    graph_background_alpha = 0;                // percent: opaque=0, transparent=100
 
-   graph_background = DEFCOLOR;
-   graph_gridline = DEFCOLOR;
-   graph_shadow = DEFCOLOR;
-   graph_title_color = DEFCOLOR;
-   graph_hits_color = DEFCOLOR;
-   graph_files_color = DEFCOLOR;
-   graph_hosts_color = DEFCOLOR;
-   graph_pages_color = DEFCOLOR;
-   graph_visits_color = DEFCOLOR;
-   graph_volume_color = DEFCOLOR;
-   graph_outline_color = DEFCOLOR;
-   graph_legend_color = DEFCOLOR;
-   graph_weekend_color = DEFCOLOR;
-   
    graph_type = "png";
 
    max_hist_length = 24;
@@ -1033,8 +1019,8 @@ void config_t::get_config(const char *fname)
          case 102: font_size_small = atof(value); break;
          case 103: font_size_medium = atof(value); break;
          case 104: font_anti_aliasing = (tolower(value[0]) == 'y') ? true : false; break;
-         case 105: graph_background = graph_t::make_color(value); break;
-         case 106: graph_shadow = graph_t::make_color(value); break;
+         case 105: graph_background = value; break;
+         case 106: graph_shadow = value; break;
          case 107: sort_srch_args = (tolower(value[0]) == 'y') ? true : false; break;
          case 108: incl_srch_args.add_nlist(value);   break;
          case 109: excl_srch_args.add_nlist(value);   break;
@@ -1051,23 +1037,23 @@ void config_t::get_config(const char *fname)
          case 121: dump_downloads = (tolower(value[0]) == 'y') ? true : false; break;
          case 122: ntop_downloads = atoi(value); break;
          case 123: all_downloads=(tolower(value[0]) == 'y'); break;
-         case 124: graph_gridline = graph_t::make_color(value); break;
+         case 124: graph_gridline = value; break;
          case 125: ignore_referrer_partial = (tolower(value[0]) == 'y') ? true : false; break;
          case 126: group_url_domains=atoi(value); break;
          case 127: monthly_totals_stats=(tolower(value[0]) == 'y') ? true : false; break;
          case 128: save_path_opt(value, html_js_path); break;
          case 129: graph_border_width = atoi(value); if(graph_border_width > 7) graph_border_width = 7; break;
          case 130: graph_background_alpha = atoi(value); if(graph_background_alpha > 100) graph_background_alpha = 100; break;
-         case 131: graph_title_color = graph_t::make_color(value); break;
-         case 132: graph_hits_color = graph_t::make_color(value); break;
-         case 133: graph_files_color = graph_t::make_color(value); break;
-         case 134: graph_hosts_color = graph_t::make_color(value); break;
-         case 135: graph_pages_color = graph_t::make_color(value); break;
-         case 136: graph_visits_color = graph_t::make_color(value); break;
-         case 137: graph_volume_color = graph_t::make_color(value); break;
-         case 138: graph_outline_color = graph_t::make_color(value); break;
-         case 139: graph_legend_color = graph_t::make_color(value); break;
-         case 140: graph_weekend_color = graph_t::make_color(value); break;
+         case 131: graph_title_color = value; break;
+         case 132: graph_hits_color = value; break;
+         case 133: graph_files_color = value; break;
+         case 134: graph_hosts_color = value; break;
+         case 135: graph_pages_color = value; break;
+         case 136: graph_visits_color = value; break;
+         case 137: graph_volume_color = value; break;
+         case 138: graph_outline_color = value; break;
+         case 139: graph_legend_color = value; break;
+         case 140: graph_weekend_color = value; break;
          case 141: geoip_db_path = value; break;
          case 142: spam_refs.add_nlist(value); break;
          case 143: max_hist_length = atoi(value); break;

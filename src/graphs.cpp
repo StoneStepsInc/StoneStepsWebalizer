@@ -37,10 +37,11 @@
 #define PI 3.14159265358979323846
 #endif
 
-#define ALPHA(color)    ((color & (~DEFCOLOR)) >> 24)
-#define RED(color)      ((color & 0xFF0000ul) >> 16)
-#define GREEN(color)    ((color & 0x00FF00ul) >> 8)
-#define BLUE(color)     ((color & 0x0000FFul))
+// color component extractors
+#define ALPHA(color)    (((uint32_t) color & (uint32_t) 0x7F000000u) >> 24)   // GD uses a 7-bit alpha channel
+#define RED(color)      (((uint32_t) color & (uint32_t) 0x00FF0000u) >> 16)
+#define GREEN(color)    (((uint32_t) color & (uint32_t) 0x0000FF00u) >> 8)
+#define BLUE(color)     (((uint32_t) color & (uint32_t) 0x000000FFu))
 
 #define CX     156                           // center x (for pie)
 #define CY     150                           // center y  (chart)
@@ -118,19 +119,19 @@ graph_t::graph_t(const config_t& config) : config(config)
    font_size_medium_px = 0;
    font_size_medium_bold_px = 0;
 
-   graph_background = DEFCOLOR;
-   graph_gridline = DEFCOLOR;
-   graph_shadow = DEFCOLOR;
-   graph_title_color = DEFCOLOR;
-   graph_hits_color = DEFCOLOR;
-   graph_files_color = DEFCOLOR;
-   graph_hosts_color = DEFCOLOR;
-   graph_pages_color = DEFCOLOR;
-   graph_visits_color = DEFCOLOR;
-   graph_volume_color = DEFCOLOR;
-   graph_outline_color = DEFCOLOR;
-   graph_legend_color = DEFCOLOR;
-   graph_weekend_color = DEFCOLOR;
+   graph_background = 0xE0E0E0;
+   graph_title_color = 0x0000FF;
+   graph_gridline = 0x808080;
+   graph_shadow = 0x333333;
+   graph_hits_color = 0x00805C;
+   graph_files_color = 0x0000FF;
+   graph_hosts_color = 0xFF8000;
+   graph_pages_color = 0x00C0FF;
+   graph_visits_color = 0xFFFF00;
+   graph_volume_color = 0xFF0000;
+   graph_outline_color = 0x000000;
+   graph_legend_color = 0x000000;
+   graph_weekend_color = 0x00805C;
 }
 
 graph_t::~graph_t(void)
@@ -939,12 +940,7 @@ void graph_t::init_graph(const char *title, int xsize, int ysize)
 
 uint32_t graph_t::make_color(const char *str)
 {
-   return (str && *str) ? strtoul(str, NULL, 16) : DEFCOLOR;
-}
-
-bool graph_t::is_default_color(uint64_t color)
-{
-   return (color & DEFCOLOR) ? true : false;
+   return (str && *str) ? strtoul(str, NULL, 16) : 0;
 }
 
 //
@@ -989,20 +985,20 @@ void graph_t::init_graph_engine(void)
    else
       font_size_medium_bold_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
 
-   // assign default colors
-   graph_background = is_default_color(config.graph_background) ? 0xE0E0E0 : config.graph_background;
-   graph_title_color = is_default_color(config.graph_title_color) ? 0x0000FF : config.graph_title_color;
-   graph_gridline = is_default_color(config.graph_gridline) ? 0x808080 : config.graph_gridline;
-   graph_shadow = is_default_color(config.graph_shadow) ? 0x333333 : config.graph_shadow;
-   graph_hits_color = is_default_color(config.graph_hits_color) ? 0x00805C : config.graph_hits_color;
-   graph_files_color = is_default_color(config.graph_files_color) ? 0x0000FF : config.graph_files_color;
-   graph_hosts_color = is_default_color(config.graph_hosts_color) ? 0xFF8000 : config.graph_hosts_color;
-   graph_pages_color = is_default_color(config.graph_pages_color) ? 0x00C0FF : config.graph_pages_color;
-   graph_visits_color = is_default_color(config.graph_visits_color) ? 0xFFFF00 : config.graph_visits_color;
-   graph_volume_color = is_default_color(config.graph_volume_color) ? 0xFF0000 : config.graph_volume_color;
-   graph_outline_color = is_default_color(config.graph_outline_color) ? 0x000000 : config.graph_outline_color;
-   graph_legend_color = is_default_color(config.graph_legend_color) ? 0x000000 : config.graph_legend_color;
-   graph_weekend_color = is_default_color(config.graph_weekend_color) ? 0x00805C : config.graph_weekend_color;
+   // assign configured colors
+   if(!config.graph_background.isempty()) graph_background = make_color(config.graph_background);
+   if(!config.graph_title_color.isempty()) graph_title_color = make_color(config.graph_title_color);
+   if(!config.graph_gridline.isempty()) graph_gridline = make_color(config.graph_gridline);
+   if(!config.graph_shadow.isempty()) graph_shadow = make_color(config.graph_shadow);
+   if(!config.graph_hits_color.isempty()) graph_hits_color = make_color(config.graph_hits_color);
+   if(!config.graph_files_color.isempty()) graph_files_color = make_color(config.graph_files_color);
+   if(!config.graph_hosts_color.isempty()) graph_hosts_color = make_color(config.graph_hosts_color);
+   if(!config.graph_pages_color.isempty()) graph_pages_color = make_color(config.graph_pages_color);
+   if(!config.graph_visits_color.isempty()) graph_visits_color = make_color(config.graph_visits_color);
+   if(!config.graph_volume_color.isempty()) graph_volume_color = make_color(config.graph_volume_color);
+   if(!config.graph_outline_color.isempty()) graph_outline_color = make_color(config.graph_outline_color);
+   if(!config.graph_legend_color.isempty()) graph_legend_color = make_color(config.graph_legend_color);
+   if(!config.graph_weekend_color.isempty()) graph_weekend_color = make_color(config.graph_weekend_color);
 
    // convert the percentage transparency to 0..127 and shift it into place
    if(config.graph_true_color)

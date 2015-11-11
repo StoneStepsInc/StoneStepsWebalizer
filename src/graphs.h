@@ -25,17 +25,6 @@
 #include "hourly.h"
 #include "config.h"
 
-//
-// GD uses a 7-bit alpha channel. The most significant bit is not used and can
-// be designated to track the default value. 
-//
-// TODO: consider using a NULL of sorts to track whether the color was specified 
-// or not in the configuration. This bit may interfere with libraries using 8-bit 
-// alpha channels.
-//
-#define DEFCOLOR ((uint64_t) 0x80000000ul)
-
-class config_t;
 class history_t;
 
 //
@@ -85,8 +74,6 @@ class graph_t {
       void draw_grid_line(gdImagePtr im, u_int gw, u_int y);
       void draw_graph_bar(gdImagePtr im, u_int x1, u_int y1, u_int x2, u_int y2, int color);
 
-      static bool is_default_color(uint64_t color);
-
    public:
       graph_t(const config_t& _config);
 
@@ -110,19 +97,19 @@ class graph_t {
       uint64_t get_weekend_color(void) const {return graph_weekend_color;}
 
       // return true if the respective color is defined in the configuration
-      bool is_default_background_color(void) const {return config.graph_background & DEFCOLOR ? true : false;}
-      bool is_default_title_color(void) const {return config.graph_title_color & DEFCOLOR ? true : false;}
-      bool is_default_gridline_color(void) const {return config.graph_gridline & DEFCOLOR ? true : false;}
-      bool is_default_shadow_color(void) const {return config.graph_shadow & DEFCOLOR ? true : false;}
-      bool is_default_hits_color(void) const {return config.graph_hits_color & DEFCOLOR ? true : false;}
-      bool is_default_files_color(void) const {return config.graph_files_color & DEFCOLOR ? true : false;}
-      bool is_default_pages_color(void) const {return config.graph_pages_color & DEFCOLOR ? true : false;}
-      bool is_default_visits_color(void) const {return config.graph_visits_color & DEFCOLOR ? true : false;}
-      bool is_default_hosts_color(void) const {return config.graph_hosts_color & DEFCOLOR ? true : false;}
-      bool is_default_volume_color(void) const {return config.graph_volume_color & DEFCOLOR ? true : false;}
-      bool is_default_outline_color(void) const {return config.graph_outline_color & DEFCOLOR ? true : false;}
-      bool is_default_legend_color(void) const {return config.graph_legend_color & DEFCOLOR ? true : false;}
-      bool is_default_weekend_color(void) const {return config.graph_weekend_color & DEFCOLOR ? true : false;}
+      bool is_default_background_color(void) const {return config.graph_background.isempty() ? true : false;}
+      bool is_default_title_color(void) const {return config.graph_title_color.isempty() ? true : false;}
+      bool is_default_gridline_color(void) const {return config.graph_gridline.isempty() ? true : false;}
+      bool is_default_shadow_color(void) const {return config.graph_shadow.isempty() ? true : false;}
+      bool is_default_hits_color(void) const {return config.graph_hits_color.isempty() ? true : false;}
+      bool is_default_files_color(void) const {return config.graph_files_color.isempty() ? true : false;}
+      bool is_default_pages_color(void) const {return config.graph_pages_color.isempty() ? true : false;}
+      bool is_default_visits_color(void) const {return config.graph_visits_color.isempty() ? true : false;}
+      bool is_default_hosts_color(void) const {return config.graph_hosts_color.isempty() ? true : false;}
+      bool is_default_volume_color(void) const {return config.graph_volume_color.isempty() ? true : false;}
+      bool is_default_outline_color(void) const {return config.graph_outline_color.isempty() ? true : false;}
+      bool is_default_legend_color(void) const {return config.graph_legend_color.isempty() ? true : false;}
+      bool is_default_weekend_color(void) const {return config.graph_weekend_color.isempty() ? true : false;}
             
       void init_graph_engine(void);
       void cleanup_graph_engine(void);
