@@ -28,7 +28,7 @@ thread_t thread_create(start_routine_t start_routine, void *arg)
 	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 
 	if(pthread_create(&thread_handle, &attr, start_routine, arg)) 
-		thread = 0;
+		thread_handle = 0;
 	 
 	pthread_attr_destroy(&attr);
 

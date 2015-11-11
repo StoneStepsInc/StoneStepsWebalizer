@@ -14,7 +14,7 @@
 
 struct mutex_handle_t {
    pthread_mutex_t *mutex_handle;
-   mutex_handle_t((pthread_mutex_t *mutex_handle) : mutex(mutex_handle) {}
+   mutex_handle_t(pthread_mutex_t *mutex_handle) : mutex_handle(mutex_handle) {}
 };
 
 mutex_t mutex_create(void)
@@ -37,13 +37,13 @@ mutex_t mutex_create(void)
 
    pthread_mutexattr_destroy(&attr);
 
-   return new pthread_handle_t(mutex);
+   return new mutex_handle_t(mutex);
 }
 
 void mutex_destroy(mutex_t mutex)
 {
 	if(mutex) {
-		pthread_mutex_destroy(&mutex->mutex_handle);
+		pthread_mutex_destroy(mutex->mutex_handle);
       delete mutex->mutex_handle;
 		delete mutex;
 	}
