@@ -37,6 +37,57 @@
 #endif
 
 //
+//
+//
+/* Response code defines as per draft ietf HTTP/1.1 rev 6 */
+#define RC_CONTINUE           100
+#define RC_SWITCHPROTO        101
+#define RC_OK                 200
+#define RC_CREATED            201
+#define RC_ACCEPTED           202
+#define RC_NONAUTHINFO        203
+#define RC_NOCONTENT          204
+#define RC_RESETCONTENT       205
+#define RC_PARTIALCONTENT     206
+#define RC_MULTIPLECHOICES    300
+#define RC_MOVEDPERM          301
+#define RC_MOVEDTEMP          302
+#define RC_SEEOTHER           303
+#define RC_NOMOD              304
+#define RC_USEPROXY           305
+#define RC_MOVEDTEMPORARILY   307
+#define RC_BAD                400
+#define RC_UNAUTH             401
+#define RC_PAYMENTREQ         402
+#define RC_FORBIDDEN          403
+#define RC_NOTFOUND           404
+#define RC_METHODNOTALLOWED   405
+#define RC_NOTACCEPTABLE      406
+#define RC_PROXYAUTHREQ       407
+#define RC_TIMEOUT            408
+#define RC_CONFLICT           409
+#define RC_GONE               410
+#define RC_LENGTHREQ          411
+#define RC_PREFAILED          412
+#define RC_REQENTTOOLARGE     413
+#define RC_REQURITOOLARGE     414
+#define RC_UNSUPMEDIATYPE     415
+#define RC_RNGNOTSATISFIABLE  416
+#define RC_EXPECTATIONFAILED  417
+#define RC_SERVERERR          500
+#define RC_NOTIMPLEMENTED     501
+#define RC_BADGATEWAY         502
+#define RC_UNAVAIL            503
+#define RC_GATEWAYTIMEOUT     504
+#define RC_BADHTTPVER         505
+
+/* Request types (bit field) */
+#define URL_TYPE_UNKNOWN	0x00
+#define URL_TYPE_HTTP		0x01
+#define URL_TYPE_HTTPS		0x02
+#define URL_TYPE_MIXED		0x03			/* HTTP and HTTPS (nothing else) */
+
+//
 // Boyer-Moore-Horspool delta table (see strstr_ex for details)
 //
 class bmh_delta_table {
