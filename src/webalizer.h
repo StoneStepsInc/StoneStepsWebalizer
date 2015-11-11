@@ -38,11 +38,6 @@
 #ifdef _WIN32
 #define F_OK 00
 #define R_OK 04
-#define ETCDIR getenv("WINDIR")
-#else
-#ifndef ETCDIR
-#error ETCDIR is not defined
-#endif
 #endif
 
 // -----------------------------------------------------------------------

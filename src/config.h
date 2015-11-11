@@ -19,6 +19,15 @@
 #include "lang.h"
 #include "tstamp.h"
 #include "tmranges.h"
+#include "logrec.h"
+
+#ifdef _WIN32
+#define ETCDIR getenv("WINDIR")
+#else
+#ifndef ETCDIR
+#error ETCDIR is not defined
+#endif
+#endif
 
 #define DNS_CACHE_TTL     86400*30					// Default TTL of an entry in the DNS cache (in seconds)
 
