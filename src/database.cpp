@@ -749,6 +749,8 @@ bool database_t::get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t 
 // keynode_t
 template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<keynode_t<u_int>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<keynode_t<u_int>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 // URLs
 template int bt_compare_cb<unode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -757,9 +759,14 @@ template int bt_compare_cb<unode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, con
 template int bt_compare_cb<unode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 template int bt_compare_cb<unode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 template int bt_compare_cb<unode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<unode_t::s_compare_entry>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<unode_t::s_compare_exit>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<unode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<unode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
+template int sc_extract_cb<unode_t::s_field_entry>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
+template int sc_extract_cb<unode_t::s_field_exit>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
+template int sc_extract_cb<unode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<unode_t, unode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<unode_t, unode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<unode_t, unode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
@@ -805,6 +812,9 @@ template class berkeleydb_t::iterator<vnode_t>;
 template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<dlnode_t::s_compare_xfer>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
+template int bt_compare_cb<dlnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<dlnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+
 template int sc_extract_cb<dlnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<dlnode_t::s_field_xfer>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
@@ -826,12 +836,16 @@ template class berkeleydb_t::iterator<danode_t>;
 // user agents
 template int bt_compare_cb<anode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<anode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<anode_t::s_compare_visits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *iocp);
 template int bt_compare_cb<anode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 template int bt_compare_cb<anode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+template int bt_compare_cb<anode_t::s_compare_visits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<anode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<anode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
+template int sc_extract_cb<anode_t::s_field_visits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_group_cb<anode_t, anode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
+template int sc_extract_group_cb<anode_t, anode_t::s_field_visits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
 template class berkeleydb_t::iterator_base<anode_t>;
 template class berkeleydb_t::iterator<anode_t>;
@@ -897,6 +911,9 @@ template bool berkeleydb_t::table_t::get_node_by_value<inode_t>(inode_t& node, i
 // errors
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
+
+template int bt_compare_cb<rcnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
+template int bt_compare_cb<rcnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
 template int sc_extract_cb<rcnode_t::s_field_value_hash>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template int sc_extract_cb<rcnode_t::s_field_hits>(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
