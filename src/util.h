@@ -39,7 +39,9 @@
 #ifdef _WIN32
 #define PATH_MAX _MAX_PATH
 #else
+#ifndef PATH_MAX
 #define PATH_MAX 255
+#endif
 #endif
 
 //
