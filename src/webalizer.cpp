@@ -24,7 +24,6 @@
 #include <io.h>
 #include <direct.h>
 #include "platform/sys/utsname.h"
-#include <psapi.h>
 #else
 #include <signal.h>
 #include <unistd.h>                           /* normal stuff             */

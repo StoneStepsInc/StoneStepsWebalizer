@@ -155,7 +155,10 @@ class berkeleydb_t {
       };
 
       //
-      //
+      // Objects derived from buffer_allocator_t allow table_t instances to
+      // reuse buffers in a more optimal way defined by the allocator owner,
+      // which minimizes memory allocations without having to use a single
+      // large buffer.
       //
       class buffer_allocator_t {
          public:
@@ -176,12 +179,12 @@ class berkeleydb_t {
       // upgraded, a local buffer_holder_t instance must be created to 
       // maintain a valid buffer_t instance.
       //
-      // Note that operator buffer_t& cannot be used here to access the
-      // buffer because the temporary in the example above only lives as
-      // long as the reference it's bound to and when the operator is 
-      // called the temporary is bound to the returned reference, which 
-      // is used to initialize the buffer reference, but then is destroyed,
-      // causing the buffer holder to be destroyed as well.
+      // Note that operator buffer_t&& cannot be used to access the member 
+      // variable buffer because the temporary buffer holder in the example 
+      // above, which buffer is a subobject of, is bound to the return value
+      // reference, which in turn initializes the local variable buffer, but 
+      // the return value is destroyed after this line, causing the buffer 
+      // holder to be destroyed as well.
       // -----------------------------------------------------------------
       class buffer_holder_t {
          private:
@@ -202,6 +205,9 @@ class berkeleydb_t {
             buffer_holder_t& operator = (const buffer_holder_t&) = delete;
 
             buffer_holder_t& operator = (buffer_holder_t&&) = delete;
+
+            // see notes in the class definition
+            operator buffer_t&& (void) = delete;
       };
 
       // -----------------------------------------------------------------
@@ -436,7 +442,7 @@ class berkeleydb_t {
       };
       
       //
-      //
+      // A queue of buffers shared between all table_t objects
       //
       class buffer_queue_t : public buffer_allocator_t {
          private:
