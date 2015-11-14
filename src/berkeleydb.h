@@ -10,6 +10,7 @@
 #ifndef __BERKELEYDB_H
 #define __BERKELEYDB_H
 
+#include "keynode.h"
 #include "tstring.h"
 #include "vector.h"
 #include "tstamp.h"
