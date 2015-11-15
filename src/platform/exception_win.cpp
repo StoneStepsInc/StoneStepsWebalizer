@@ -7,9 +7,9 @@
    
    exception_win.cpp
 */
-#include "pch.h"
+#include "../pch.h"
 
-#include "exception.h"
+#include "../exception.h"
 
 #include <eh.h>
 #include <windows.h>

@@ -7,11 +7,11 @@
 
     event_win.cpp
 */
-#include "pch.h"
+#include "../pch.h"
+
+#include "../event.h"
 
 #include <windows.h>
-
-#include "event.h"
 
 struct event_handle_t {
    HANDLE event_handle;

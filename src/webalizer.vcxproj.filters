@@ -164,10 +164,10 @@
     <ClCompile Include="vnode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="mutex_win.cpp">
+    <ClCompile Include="platform\mutex_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
-    <ClCompile Include="thread_win.cpp">
+    <ClCompile Include="platform\thread_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
     <ClCompile Include="platform\sys\utsname.cpp">
@@ -215,7 +215,7 @@
     <ClCompile Include="output.cpp">
       <Filter>Source Files\output</Filter>
     </ClCompile>
-    <ClCompile Include="event_win.cpp">
+    <ClCompile Include="platform\event_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
     <ClCompile Include="hashtab.cpp">
@@ -233,7 +233,7 @@
     <ClCompile Include="berkeleydb_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
-    <ClCompile Include="exception_win.cpp">
+    <ClCompile Include="platform\exception_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
   </ItemGroup>

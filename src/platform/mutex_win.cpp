@@ -7,9 +7,9 @@
 
     mutex_win.cpp
 */
-#include "pch.h"
+#include "../pch.h"
 
-#include "mutex.h"
+#include "../mutex.h"
 
 #include <windows.h>
 

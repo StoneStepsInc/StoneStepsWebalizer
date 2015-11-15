@@ -7,10 +7,10 @@
 
     thread_win.cpp
 */
-#include "pch.h"
+#include "../pch.h"
 
+#include "../thread.h"
 #include <process.h>
-#include "thread.h"
 #include <windows.h>
 
 struct thread_handle_t {
