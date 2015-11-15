@@ -23,6 +23,8 @@
 #define F_OK 00      // existance
 #define W_OK 02      // write access
 #define R_OK 04      // read access
+#else
+#include <unistd.h>
 #endif
 
 //
