@@ -203,7 +203,4 @@ class webalizer_t {
       spnode_t *put_spnode(const string_t& host);
 };
 
-extern const char *moddate  ;                 /* modification date        */
-extern const char *copyright;
-
 #endif  /* _WEBALIZER_H */

@@ -184,7 +184,7 @@ void html_output_t::write_html_tail(FILE *out_fp)
    fputs("</div>\n", out_fp);
 
    /* wind up, this is the end of the file */
-   fprintf(out_fp,"\n<!-- Stone Steps Webalizer Version %s (Mod: %s) -->\n", state_t::get_app_version().c_str(), moddate);
+   fprintf(out_fp,"\n<!-- Stone Steps Webalizer Version %s -->\n", state_t::get_app_version().c_str());
    if (!config.html_end.isempty())
    {
       iter = config.html_end.begin();

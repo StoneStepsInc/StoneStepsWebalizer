@@ -81,8 +81,7 @@ static void console_ctrl_handler(int sig);
 /* GLOBAL VARIABLES                          */
 /*********************************************/
 
-const char *moddate     = __DATE__;										      /* modification date        */
-const char *copyright   = "Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)";
+static const char *copyright   = "Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)";
 
 static bool abort_signal = false;   // true if Ctrl-C was pressed
 
