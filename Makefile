@@ -102,7 +102,7 @@ LIBS := $(addprefix -l,$(LIBS))
 # ------------------------------------------------------------------------
 CCFLAGS  = -DHAVE_CXX_STDHEADERS \
      -DETCDIR=\"$(ETCDIR)\" \
-     -fexceptions -fno-implicit-templates \
+     -fexceptions \
      -Wno-multichar -Winvalid-pch \
      -std=c++11 \
      $(MYCCFLAGS)
