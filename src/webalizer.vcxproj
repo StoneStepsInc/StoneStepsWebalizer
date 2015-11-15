@@ -280,6 +280,8 @@
     <ClInclude Include="mutex.h" />
     <ClInclude Include="output.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="platform\sys\utsname.h" />
     <ClInclude Include="preserve.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="scnode.h" />
