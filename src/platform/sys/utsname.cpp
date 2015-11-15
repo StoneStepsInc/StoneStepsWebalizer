@@ -14,6 +14,15 @@
 #include <stdio.h>
 #include "utsname.h"
 
+//
+// Microsoft deprecated GetVersion and GetVersionEx functions in favor of 
+// VerifyVersionInfo, which allows applications to check whether they are
+// compatible with a current version of Windows, but makes it impossible 
+// to report Windows version. Disable this warning until this functionality
+// is reworked.
+//
+#pragma warning(disable: 4996)   // 'GetVersionExA': was declared deprecated
+
 extern "C" int uname(struct utsname *name)
 {
 	OSVERSIONINFO verinfo = {0};
