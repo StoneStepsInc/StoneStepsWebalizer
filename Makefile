@@ -89,6 +89,9 @@ OBJS := $(OBJS:.c=.o)
 # and a list oof dependency make files
 DEPS := $(OBJS:.o=.d)
 
+# and a list of template repository files
+RPOS := $(OBJS:.o=.rpo)
+
 # add GCC include and library options to each search path
 INCDIRS := $(addprefix -I,$(INCDIRS))
 LIBDIRS := $(addprefix -L,$(LIBDIRS))
@@ -148,7 +151,7 @@ clean:
 	@echo "Removing dependency files..."
 	@for obj in $(DEPS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing the precompiled header..."
-	@if [[ -e $(PCHOUT) ]]; then rm $(PCHOUT); fi
+	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
 	@echo "Removing template repository files..."
 	@for obj in $(RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing webalizer..."
@@ -182,14 +185,14 @@ clean:
 # sed options.
 #
 $(BLDDIR)/%.d : %.cpp
-	@if [[ ! -e $(BLDDIR) ]]; then mkdir -p $(BLDDIR); fi
+	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
 	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
-	sed 's/^[ \t]*\($*\)\.o/\1.o \1.d/g' > $@
+	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 $(BLDDIR)/%.d : %.c
-	@if [[ ! -e $(BLDDIR) ]]; then mkdir -p $(BLDDIR); fi
+	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
 	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
-	sed 's/^[ \t]*\($*\)\.o/\1.o \1.d/g' > $@
+	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 #
 # Rules to compile source file
@@ -213,5 +216,15 @@ $(BLDDIR)/$(PCHOBJ) : $(PCHSRC)
 # Dependencies
 #
 # ------------------------------------------------------------------------
+
+# 
+# Include the dependencies if there is no target specified explicitly (i.e.
+# the default target is being built) or if the specified target is not one 
+# of the maintenance targets.
+#
+ifeq ($(MAKECMDGOALS),)
 include $(addprefix $(BLDDIR)/, $(DEPS))
+else ifneq ($(filter-out clean install,$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(DEPS))
+endif
 
