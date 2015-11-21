@@ -624,43 +624,25 @@ uint64_t berkeleydb_t::table_t::count(const char *dbname) const
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-berkeleydb_t::iterator_base<node_t>::iterator_base(cursor_iterator_base& iter) : iter(iter)
+berkeleydb_t::iterator_base<node_t>::iterator_base(buffer_allocator_t& buffer_allocator, cursor_iterator_base& cursor) : 
+      buffer_allocator(&buffer_allocator), 
+      cursor(cursor)
 {
-   // set the default size for the keys and data
-   set_buffer_size(DBBUFSIZE, DBBUFSIZE);
 }
 
 template <typename node_t>
 berkeleydb_t::iterator_base<node_t>::~iterator_base(void)
 {
-   if(key.get_flags() & DB_DBT_USERMEM)
-      delete [] (u_char*) key.get_data();
-
-   if(pkey.get_flags() & DB_DBT_USERMEM)
-      delete [] (u_char*) pkey.get_data();
-
-   if(data.get_flags() & DB_DBT_USERMEM)
-      delete [] (u_char*) data.get_data();
 }
 
 template <typename node_t>
-void berkeleydb_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int maxdata)
+Dbt& berkeleydb_t::iterator_base<node_t>::set_dbt_buffer(Dbt& dbt, void *buffer, size_t size) const
 {
-   if(maxkey) {
-      key.set_data(new u_char[maxkey]);
-      key.set_ulen(maxkey);
-      key.set_flags(DB_DBT_USERMEM);
+   dbt.set_data(buffer);
+   dbt.set_ulen(size);
+   dbt.set_flags(DB_DBT_USERMEM);
 
-      pkey.set_data(new u_char[maxkey]);
-      pkey.set_ulen(maxkey);
-      pkey.set_flags(DB_DBT_USERMEM);
-   }
-
-   if(maxdata) {
-      data.set_data(new u_char[maxdata]);
-      data.set_ulen(maxdata);
-      data.set_flags(DB_DBT_USERMEM);
-   }
+   return dbt;
 }
 
 // -----------------------------------------------------------------------
@@ -670,9 +652,9 @@ void berkeleydb_t::iterator_base<node_t>::set_buffer_size(u_int maxkey, u_int ma
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-berkeleydb_t::iterator<node_t>::iterator(const table_t& table, const char *dbname) : 
-      iterator_base<node_t>(iter),
-      iter(dbname ? table.secondary_db(dbname) : table.primary_db())
+berkeleydb_t::iterator<node_t>::iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname) : 
+      iterator_base<node_t>(buffer_allocator, cursor),
+      cursor(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
    primdb = (dbname == NULL);
 }
@@ -680,7 +662,20 @@ berkeleydb_t::iterator<node_t>::iterator(const table_t& table, const char *dbnam
 template <typename node_t>
 bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
 {
-   if(!iter.next(key, data, primdb ? NULL : &pkey))
+   Dbt key, data, pkey;
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
+
+   // for a secondary database we retrieve two keys
+   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3));
+
+   set_dbt_buffer(key, buffer, DBBUFSIZE);
+   set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
+
+   if(!primdb)
+      set_dbt_buffer(pkey, buffer + DBBUFSIZE*2, DBBUFSIZE);
+
+   if(!cursor.next(key, data, primdb ? NULL : &pkey))
       return false;
 
    if(primdb) {
@@ -705,9 +700,9 @@ bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpac
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, const char *dbname) : 
-      iterator_base<node_t>(iter), 
-      iter(dbname ? table.secondary_db(dbname) : table.primary_db())
+berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname) : 
+      iterator_base<node_t>(buffer_allocator, cursor), 
+      cursor(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
    primdb = (dbname == NULL);
 }
@@ -715,7 +710,20 @@ berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(const table_t& table, c
 template <typename node_t>
 bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
 {
-   if(!iter.prev(key, data, primdb ? NULL : &pkey))
+   Dbt key, data, pkey;
+   buffer_holder_t buffer_holder(*buffer_allocator);
+   buffer_t& buffer = buffer_holder.buffer; 
+
+   // for a secondary database we retrieve two keys
+   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3));
+
+   set_dbt_buffer(key, buffer, DBBUFSIZE);
+   set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
+
+   if(!primdb)
+      set_dbt_buffer(pkey, buffer + DBBUFSIZE*2, DBBUFSIZE);
+
+   if(!cursor.prev(key, data, primdb ? NULL : &pkey))
       return false;
 
    if(primdb) {
@@ -891,6 +899,18 @@ bool berkeleydb_t::table_t::delete_node(const keynode_t<uint64_t>& node)
       return false;
 
    return true;
+}
+
+template <typename node_t>
+berkeleydb_t::iterator<node_t> berkeleydb_t::table_t::begin(const char *dbname) const 
+{
+   return iterator<node_t>(*buffer_allocator, *this, dbname);
+}
+
+template <typename node_t>
+berkeleydb_t::reverse_iterator<node_t> berkeleydb_t::table_t::rbegin(const char *dbname) const 
+{
+   return reverse_iterator<node_t>(*buffer_allocator, *this, dbname);
 }
 
 //

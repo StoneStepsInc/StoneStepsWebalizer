@@ -779,6 +779,9 @@ template bool berkeleydb_t::table_t::put_node(const unode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id(unode_t& node, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<unode_t>(unode_t& node, unode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<unode_t> berkeleydb_t::table_t::begin<unode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<unode_t> berkeleydb_t::table_t::rbegin<unode_t>(const char *dbname) const;
+
 // hosts
 template int bt_compare_cb<hnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<hnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -801,9 +804,14 @@ template bool berkeleydb_t::table_t::put_node<hnode_t>(const hnode_t& hnode);
 template bool berkeleydb_t::table_t::get_node_by_id<hnode_t>(hnode_t& node, hnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<hnode_t>(hnode_t& node, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<hnode_t> berkeleydb_t::table_t::begin<hnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<hnode_t> berkeleydb_t::table_t::rbegin<hnode_t>(const char *dbname) const;
+
 // visits
 template bool berkeleydb_t::table_t::put_node<vnode_t>(const vnode_t& hnode);
 template bool berkeleydb_t::table_t::get_node_by_id<vnode_t>(vnode_t& node, vnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+template berkeleydb_t::iterator<vnode_t> berkeleydb_t::table_t::begin<vnode_t>(const char *dbname) const; 
 
 template class berkeleydb_t::iterator_base<vnode_t>;
 template class berkeleydb_t::iterator<vnode_t>;
@@ -822,6 +830,9 @@ template bool berkeleydb_t::table_t::put_node<dlnode_t>(const dlnode_t& hnode);
 template bool berkeleydb_t::table_t::get_node_by_id<dlnode_t>(dlnode_t& node, dlnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<dlnode_t>(dlnode_t& node, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<dlnode_t> berkeleydb_t::table_t::begin<dlnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<dlnode_t> berkeleydb_t::table_t::rbegin<dlnode_t>(const char *dbname) const;
+
 template class berkeleydb_t::iterator_base<dlnode_t>;
 template class berkeleydb_t::iterator<dlnode_t>;
 template class berkeleydb_t::reverse_iterator<dlnode_t>;
@@ -829,6 +840,8 @@ template class berkeleydb_t::reverse_iterator<dlnode_t>;
 // active downloads
 template bool berkeleydb_t::table_t::put_node<danode_t>(const danode_t& hnode);
 template bool berkeleydb_t::table_t::get_node_by_id<danode_t>(danode_t& node, danode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+template berkeleydb_t::iterator<danode_t> berkeleydb_t::table_t::begin<danode_t>(const char *dbname) const; 
 
 template class berkeleydb_t::iterator_base<danode_t>;
 template class berkeleydb_t::iterator<danode_t>;
@@ -855,6 +868,9 @@ template bool berkeleydb_t::table_t::put_node<anode_t>(const anode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<anode_t>(anode_t& node, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<anode_t>(anode_t& node, anode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<anode_t> berkeleydb_t::table_t::begin<anode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<anode_t> berkeleydb_t::table_t::rbegin<anode_t>(const char *dbname) const;
+
 // referrers
 template int bt_compare_cb<rnode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<rnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -873,6 +889,9 @@ template bool berkeleydb_t::table_t::put_node<rnode_t>(const rnode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<rnode_t>(rnode_t& node, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<rnode_t>(rnode_t& node, rnode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<rnode_t> berkeleydb_t::table_t::begin<rnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<rnode_t> berkeleydb_t::table_t::rbegin<rnode_t>(const char *dbname) const;
+
 // search strings
 template int bt_compare_cb<snode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<snode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -889,6 +908,9 @@ template class berkeleydb_t::reverse_iterator<snode_t>;
 template bool berkeleydb_t::table_t::put_node<snode_t>(const snode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<snode_t>(snode_t& node, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<snode_t>(snode_t& unode, snode_t::s_unpack_cb_t upcb, void *arg) const;
+
+template berkeleydb_t::iterator<snode_t> berkeleydb_t::table_t::begin<snode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<snode_t> berkeleydb_t::table_t::rbegin<snode_t>(const char *dbname) const;
 
 // users
 template int bt_compare_cb<inode_t::s_compare_value_hash>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
@@ -908,6 +930,9 @@ template bool berkeleydb_t::table_t::put_node<inode_t>(const inode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<inode_t>(inode_t& node, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<inode_t>(inode_t& node, inode_t::s_unpack_cb_t upcb, void *arg) const;
 
+template berkeleydb_t::iterator<inode_t> berkeleydb_t::table_t::begin<inode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<inode_t> berkeleydb_t::table_t::rbegin<inode_t>(const char *dbname) const;
+
 // errors
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<rcnode_t::s_compare_hits>(Db *db, const Dbt *dbt1, const Dbt *dbt2);
@@ -921,6 +946,9 @@ template int sc_extract_cb<rcnode_t::s_field_hits>(Db *secondary, const Dbt *key
 template bool berkeleydb_t::table_t::put_node<rcnode_t>(const rcnode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<rcnode_t>(rcnode_t& node, rcnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 template bool berkeleydb_t::table_t::get_node_by_value<rcnode_t>(rcnode_t& node, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
+
+template berkeleydb_t::iterator<rcnode_t> berkeleydb_t::table_t::begin<rcnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<rcnode_t> berkeleydb_t::table_t::rbegin<rcnode_t>(const char *dbname) const;
 
 template class berkeleydb_t::iterator_base<rcnode_t>;
 template class berkeleydb_t::iterator<rcnode_t>;
@@ -954,6 +982,8 @@ template bool berkeleydb_t::table_t::get_node_by_id<totals_t>(totals_t& node, to
 // country codes
 template bool berkeleydb_t::table_t::put_node<ccnode_t>(const ccnode_t& node);
 template bool berkeleydb_t::table_t::get_node_by_id<ccnode_t>(ccnode_t& node, ccnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+template berkeleydb_t::iterator<ccnode_t> berkeleydb_t::table_t::begin<ccnode_t>(const char *dbname) const; 
 
 template class berkeleydb_t::iterator_base<ccnode_t>;
 template class berkeleydb_t::iterator<ccnode_t>;

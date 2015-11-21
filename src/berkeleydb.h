@@ -65,6 +65,10 @@ class berkeleydb_t {
       #define __gcc_bug11407__(cb) cb
       #endif
 
+   public:
+      template <typename node_t> class iterator; 
+      template <typename node_t> class reverse_iterator;
+
       // -----------------------------------------------------------------
       // config_t
       //
@@ -78,7 +82,7 @@ class berkeleydb_t {
       // temporary config_t objects.
       //
       // 3. The reference to a config_t instance returned by config_t::clone must point
-      // to a valid object until config_t::release is called. Otherwise config_t make
+      // to a valid object until config_t::release is called. Otherwise config_t makes
       // no assumption of how the underlying object memory is maintained.
       //
       class config_t {
@@ -106,6 +110,7 @@ class berkeleydb_t {
             virtual bool get_db_dsync(void) const = 0;
       };
 
+   private:
       // -----------------------------------------------------------------
       //
       // cursor iterators
@@ -154,6 +159,8 @@ class berkeleydb_t {
             bool prev(Dbt& key, Dbt& data, Dbt *pkey);
       };
 
+      // -----------------------------------------------------------------
+      // buffer_allocator_t
       //
       // Objects derived from buffer_allocator_t allow table_t instances to
       // reuse buffers in a more optimal way defined by the allocator owner,
@@ -210,6 +217,7 @@ class berkeleydb_t {
             operator buffer_t&& (void) = delete;
       };
 
+   protected:
       // -----------------------------------------------------------------
       //
       // a table (primary database) with indexes (secondary databases)
@@ -357,6 +365,12 @@ class berkeleydb_t {
 
             template <typename node_t>
             bool get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+
+            template <typename node_t>
+            iterator<node_t> begin(const char *dbname) const; 
+
+            template <typename node_t>
+            reverse_iterator<node_t> rbegin(const char *dbname) const;
       };
 
    public:
@@ -368,50 +382,39 @@ class berkeleydb_t {
       template <typename node_t>
       class iterator_base {
          protected:
-            cursor_iterator_base&   iter;          // cursor reference
+            cursor_iterator_base&   cursor;        // cursor reference
 
-            Dbt                     key;           // iterator key
+            buffer_allocator_t      *buffer_allocator;
 
-            Dbt                     data;          // data
-
-            Dbt                     pkey;          // optional primary key
+         protected:
+            Dbt& set_dbt_buffer(Dbt& dbt, void *buffer, size_t size) const;
 
          public:
-            iterator_base(cursor_iterator_base& iter);
+            iterator_base(buffer_allocator_t& buffer_allocator, cursor_iterator_base& cursor);
 
             ~iterator_base(void);
 
-            void set_buffer_size(u_int maxkey, u_int maxdata);
+            void close(void) {cursor.close();}
 
-            void close(void) {iter.close();}
+            bool is_error(void) const {return cursor.is_error();}
 
-            bool is_error(void) const {return iter.is_error();}
-
-            int get_error(void) const {return iter.get_error();}
+            int get_error(void) const {return cursor.get_error();}
 
       };
 
       template <typename node_t>
       class iterator : public iterator_base<node_t> {
          private:
-            //
-            // key, data and pkey are members of a dependent class and are  
-            // not visible if unqualified names are used      [temp.dep.3]
-            //
-            using iterator_base<node_t>::key;
-            using iterator_base<node_t>::data;
-            using iterator_base<node_t>::pkey;
-
-            cursor_iterator         iter;
+            cursor_iterator         cursor;
 
             bool                    primdb;        // is primary database?
 
          private:
             // do not allow assignments
-            iterator& operator = (const iterator&) {return *this;}
+            iterator& operator = (const iterator&) = delete;
 
          public:
-            iterator(const table_t& table, const char *dbname);
+            iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             bool next(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
@@ -419,28 +422,20 @@ class berkeleydb_t {
       template <typename node_t>
       class reverse_iterator : public iterator_base<node_t> {
          private:
-            //
-            // key, data and pkey are members of a dependent class and are  
-            // not visible if unqualified names are used      [temp.dep.3]
-            //
-            using iterator_base<node_t>::key;
-            using iterator_base<node_t>::data;
-            using iterator_base<node_t>::pkey;
-
-            cursor_reverse_iterator iter;
+            cursor_reverse_iterator cursor;
 
             bool                    primdb;        // is primary database?
 
          private:
             // do not allow assignments
-            reverse_iterator& operator = (const reverse_iterator&) {return *this;}
+            reverse_iterator& operator = (const reverse_iterator&) = delete;
 
          public:
-            reverse_iterator(const table_t& table, const char *dbname);
+            reverse_iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             bool prev(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
-      
+
       //
       // A queue of buffers shared between all table_t objects
       //

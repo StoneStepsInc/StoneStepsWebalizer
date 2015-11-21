@@ -92,9 +92,9 @@ class database_t : public berkeleydb_t {
       // urls
       uint64_t get_unode_id(void) {return (uint64_t) urls.get_seq_id();}
 
-      iterator<unode_t> begin_urls(const char *dbname) const {return iterator<unode_t>(urls, dbname);}
+      iterator<unode_t> begin_urls(const char *dbname) const {return urls.begin<unode_t>(dbname);}
 
-      reverse_iterator<unode_t> rbegin_urls(const char *dbname) const {return reverse_iterator<unode_t>(urls, dbname);}
+      reverse_iterator<unode_t> rbegin_urls(const char *dbname) const {return urls.rbegin<unode_t>(dbname);}
 
       bool put_unode(const unode_t& unode);
 
@@ -107,9 +107,9 @@ class database_t : public berkeleydb_t {
       // hosts
       uint64_t get_hnode_id(void) {return (uint64_t) hosts.get_seq_id();}
 
-      iterator<hnode_t> begin_hosts(const char *dbname) const {return iterator<hnode_t>(hosts, dbname);}
+      iterator<hnode_t> begin_hosts(const char *dbname) const {return hosts.begin<hnode_t>(dbname);}
 
-      reverse_iterator<hnode_t> rbegin_hosts(const char *dbname) const {return reverse_iterator<hnode_t>(hosts, dbname);}
+      reverse_iterator<hnode_t> rbegin_hosts(const char *dbname) const {return hosts.rbegin<hnode_t>(dbname);}
 
       bool put_hnode(const hnode_t& hnode);
 
@@ -122,7 +122,7 @@ class database_t : public berkeleydb_t {
       // visits
       bool put_vnode(const vnode_t& vnode);
 
-      iterator<vnode_t> begin_visits(void) const {return iterator<vnode_t>(visits, NULL);}
+      iterator<vnode_t> begin_visits(void) const {return visits.begin<vnode_t>(NULL);}
 
       bool get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const;
 
@@ -135,9 +135,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_dlnode_id(void) {return (uint64_t) downloads.get_seq_id();}
 
-      iterator<dlnode_t> begin_downloads(const char *dbname) const {return iterator<dlnode_t>(downloads, dbname);}
+      iterator<dlnode_t> begin_downloads(const char *dbname) const {return downloads.begin<dlnode_t>(dbname);}
 
-      reverse_iterator<dlnode_t> rbegin_downloads(const char *dbname) const {return reverse_iterator<dlnode_t>(downloads, dbname);}
+      reverse_iterator<dlnode_t> rbegin_downloads(const char *dbname) const {return downloads.rbegin<dlnode_t>(dbname);}
 
       bool put_dlnode(const dlnode_t& dlnode);
 
@@ -154,7 +154,7 @@ class database_t : public berkeleydb_t {
       //
       bool put_danode(const danode_t& danode);
 
-      iterator<danode_t> begin_active_downloads(void) const {return iterator<danode_t>(active_downloads, NULL);}
+      iterator<danode_t> begin_active_downloads(void) const {return active_downloads.begin<danode_t>(NULL);}
 
       bool get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb, void *arg) const;
 
@@ -165,9 +165,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_anode_id(void) {return (uint64_t) agents.get_seq_id();}
 
-      iterator<anode_t> begin_agents(const char *dbname) const {return iterator<anode_t>(agents, dbname);}
+      iterator<anode_t> begin_agents(const char *dbname) const {return agents.begin<anode_t>(dbname);}
 
-      reverse_iterator<anode_t> rbegin_agents(const char *dbname) const {return reverse_iterator<anode_t>(agents, dbname);}
+      reverse_iterator<anode_t> rbegin_agents(const char *dbname) const {return agents.rbegin<anode_t>(dbname);}
 
       bool put_anode(const anode_t& anode);
 
@@ -182,9 +182,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_rnode_id(void) {return (uint64_t) referrers.get_seq_id();}
 
-      iterator<rnode_t> begin_referrers(const char *dbname) const {return iterator<rnode_t>(referrers, dbname);}
+      iterator<rnode_t> begin_referrers(const char *dbname) const {return referrers.begin<rnode_t>(dbname);}
 
-      reverse_iterator<rnode_t> rbegin_referrers(const char *dbname) const {return reverse_iterator<rnode_t>(referrers, dbname);}
+      reverse_iterator<rnode_t> rbegin_referrers(const char *dbname) const {return referrers.rbegin<rnode_t>(dbname);}
 
       bool put_rnode(const rnode_t& rnode);
 
@@ -199,9 +199,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_snode_id(void) {return (uint64_t) search.get_seq_id();}
 
-      iterator<snode_t> begin_search(const char *dbname) const {return iterator<snode_t>(search, dbname);}
+      iterator<snode_t> begin_search(const char *dbname) const {return search.begin<snode_t>(dbname);}
 
-      reverse_iterator<snode_t> rbegin_search(const char *dbname) const {return reverse_iterator<snode_t>(search, dbname);}
+      reverse_iterator<snode_t> rbegin_search(const char *dbname) const {return search.rbegin<snode_t>(dbname);}
 
       bool put_snode(const snode_t& snode);
 
@@ -216,9 +216,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_inode_id(void) {return (uint64_t) users.get_seq_id();}
 
-      iterator<inode_t> begin_users(const char *dbname) const {return iterator<inode_t>(users, dbname);}
+      iterator<inode_t> begin_users(const char *dbname) const {return users.begin<inode_t>(dbname);}
 
-      reverse_iterator<inode_t> rbegin_users(const char *dbname) const {return reverse_iterator<inode_t>(users, dbname);}
+      reverse_iterator<inode_t> rbegin_users(const char *dbname) const {return users.rbegin<inode_t>(dbname);}
 
       bool put_inode(const inode_t& inode);
 
@@ -233,9 +233,9 @@ class database_t : public berkeleydb_t {
       //
       uint64_t get_rcnode_id(void) {return (uint64_t) errors.get_seq_id();}
 
-      iterator<rcnode_t> begin_errors(const char *dbname) const {return iterator<rcnode_t>(errors, dbname);}
+      iterator<rcnode_t> begin_errors(const char *dbname) const {return errors.begin<rcnode_t>(dbname);}
 
-      reverse_iterator<rcnode_t> rbegin_errors(const char *dbname) const {return reverse_iterator<rcnode_t>(errors, dbname);}
+      reverse_iterator<rcnode_t> rbegin_errors(const char *dbname) const {return errors.rbegin<rcnode_t>(dbname);}
 
       bool put_rcnode(const rcnode_t& rcnode);
 
@@ -276,7 +276,7 @@ class database_t : public berkeleydb_t {
       //
       // country codes
       //
-      iterator<ccnode_t> begin_countries(void) const {return iterator<ccnode_t>(countries, NULL);}
+      iterator<ccnode_t> begin_countries(void) const {return countries.begin<ccnode_t>(NULL);}
 
       bool put_ccnode(const ccnode_t& ccnode);
 
