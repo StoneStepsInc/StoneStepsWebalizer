@@ -405,6 +405,9 @@ class berkeleydb_t {
       template <typename node_t>
       class iterator : public iterator_base<node_t> {
          private:
+            using iterator_base<node_t>::set_dbt_buffer;
+            using iterator_base<node_t>::buffer_allocator;
+
             cursor_iterator         cursor;
 
             bool                    primdb;        // is primary database?
@@ -422,6 +425,9 @@ class berkeleydb_t {
       template <typename node_t>
       class reverse_iterator : public iterator_base<node_t> {
          private:
+            using iterator_base<node_t>::set_dbt_buffer;
+            using iterator_base<node_t>::buffer_allocator;
+
             cursor_reverse_iterator cursor;
 
             bool                    primdb;        // is primary database?
