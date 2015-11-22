@@ -112,54 +112,6 @@ class berkeleydb_t {
 
    private:
       // -----------------------------------------------------------------
-      //
-      // cursor iterators
-      //
-      // -----------------------------------------------------------------
-      class cursor_iterator_base {
-         protected:
-            Dbc         *cursor;
-
-            int          error;
-
-         private:
-            // do not allow assignments
-            cursor_iterator_base& operator = (const cursor_iterator_base&) {return *this;}
-
-         public:
-            cursor_iterator_base(Db *db);
-            
-            ~cursor_iterator_base(void);
-
-            bool is_error(void) const {return (error && error != DB_NOTFOUND) ? true : false;}
-
-            int get_error(void) const {return error;}
-
-            void close(void);
-      };
-
-      class cursor_iterator : public cursor_iterator_base {
-         private:
-            db_recno_t   count;     // remaining duplicate count (zero if unique)
-
-         public:
-            cursor_iterator(Db *db) : cursor_iterator_base(db) {count = 0;}
-
-            db_recno_t dup_count(void) const {return count;}
-
-            bool set(Dbt& key, Dbt& data, Dbt *pkey);
-
-            bool next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey = false);
-      };
-
-      class cursor_reverse_iterator : public cursor_iterator_base {
-         public:
-            cursor_reverse_iterator(Db *db) : cursor_iterator_base(db) {}
-
-            bool prev(Dbt& key, Dbt& data, Dbt *pkey);
-      };
-
-      // -----------------------------------------------------------------
       // buffer_allocator_t
       //
       // Objects derived from buffer_allocator_t allow table_t instances to
@@ -215,6 +167,54 @@ class berkeleydb_t {
 
             // see notes in the class definition
             operator buffer_t&& (void) = delete;
+      };
+
+      // -----------------------------------------------------------------
+      //
+      // cursor iterators
+      //
+      // -----------------------------------------------------------------
+      class cursor_iterator_base {
+         protected:
+            Dbc         *cursor;
+
+            int          error;
+
+         private:
+            // do not allow assignments
+            cursor_iterator_base& operator = (const cursor_iterator_base&) {return *this;}
+
+         public:
+            cursor_iterator_base(Db *db);
+            
+            ~cursor_iterator_base(void);
+
+            bool is_error(void) const {return (error && error != DB_NOTFOUND) ? true : false;}
+
+            int get_error(void) const {return error;}
+
+            void close(void);
+      };
+
+      class cursor_iterator : public cursor_iterator_base {
+         private:
+            db_recno_t   count;     // remaining duplicate count (zero if unique)
+
+         public:
+            cursor_iterator(Db *db) : cursor_iterator_base(db) {count = 0;}
+
+            db_recno_t dup_count(void) const {return count;}
+
+            bool set(Dbt& key, Dbt& data, Dbt *pkey);
+
+            bool next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey = false);
+      };
+
+      class cursor_reverse_iterator : public cursor_iterator_base {
+         public:
+            cursor_reverse_iterator(Db *db) : cursor_iterator_base(db) {}
+
+            bool prev(Dbt& key, Dbt& data, Dbt *pkey);
       };
 
    protected:
