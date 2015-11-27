@@ -12,7 +12,6 @@
 
 #include "keynode.h"
 #include "tstring.h"
-#include "vector.h"
 #include "tstamp.h"
 #include "serialize.h"
 #include "buffer.h"
@@ -288,7 +287,7 @@ class berkeleydb_t {
 
             DbSequence           *sequence;  // source of primary keys
 
-            vector_t<db_desc_t>  indexes;    // secondary databases
+            std::vector<db_desc_t> indexes;  // secondary databases
 
             bool                 threaded;
 
@@ -500,7 +499,7 @@ class berkeleydb_t {
 
       buffer_queue_t    buffer_queue;
 
-      vector_t<table_t*> tables;
+      std::vector<table_t*> tables;
 
       thread_t          trickle_thread;
       event_t           trickle_event;
@@ -512,7 +511,7 @@ class berkeleydb_t {
       bool              trickle;
 
    protected:
-      void add_table(table_t& table) {tables.push(&table);}
+      void add_table(table_t& table) {tables.push_back(&table);}
 
       table_t make_table(void) {return table_t(dbenv, sequences, buffer_queue);}
 

@@ -501,7 +501,7 @@ int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_
    if((error = scdb->set_bt_compare(btcb)) != 0)
       goto errexit;
 
-   indexes.push(db_desc_t(scdb, dbname, dbpath, sccb));
+   indexes.push_back(db_desc_t(scdb, dbname, dbpath, sccb));
 
    return 0;
 
