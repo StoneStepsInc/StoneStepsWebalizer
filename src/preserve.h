@@ -21,6 +21,8 @@
 #include "database.h"
 #include "hashtab_nodes.h"
 
+#include <vector>
+
 class config_t;
 class lang_t;
 class webalizer_t;
@@ -66,8 +68,8 @@ class state_t {
 
       cc_hash_table cc_htab;                     // countries
 
-      vector_t<uint64_t> v_ended;                  // ended active visit node IDs
-      vector_t<uint64_t> dl_ended;                 // ended active download node IDs
+      std::vector<uint64_t> v_ended;             // ended active visit node IDs
+      std::vector<uint64_t> dl_ended;            // ended active download node IDs
 
       history_t   history;
                                                  // see note #2 above

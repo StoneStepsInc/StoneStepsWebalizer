@@ -12,7 +12,6 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#include "vector.h"
 #include "linklist.h"
 #include "tstring.h"
 #include "types.h"
@@ -20,6 +19,8 @@
 #include "tstamp.h"
 #include "tmranges.h"
 #include "logrec.h"
+
+#include <vector>
 
 #ifdef _WIN32
 #define ETCDIR getenv("WINDIR")
@@ -65,9 +66,9 @@ class config_t {
       };
       
    private:
-      vector_t<string_t> config_fnames;
-      vector_t<string_t> messages;
-      vector_t<dst_pair_t> dst_pairs;
+      std::vector<string_t> config_fnames;
+      std::vector<string_t> messages;
+      std::vector<dst_pair_t> dst_pairs;
       bool user_config;
 
    public:
@@ -249,7 +250,7 @@ class config_t {
       
       string_t graph_type;                       // graph type (PNG, Flash-OFC, etc)
       
-      vector_t<string_t> log_fnames;            // all input log file names
+      std::vector<string_t> log_fnames;          // all input log file names
       
       string_t dns_cache;                        // DNS cache file name      
       u_int dns_children;                        // # of DNS children        

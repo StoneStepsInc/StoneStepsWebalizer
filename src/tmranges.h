@@ -15,7 +15,8 @@
 
 #include "types.h"
 #include "tstamp.h"
-#include "vector.h"
+
+#include <vector>
 
 class tm_ranges_t {
    public:
@@ -31,7 +32,7 @@ class tm_ranges_t {
       };
    
    private:
-      vector_t<tm_range_t> tm_ranges;
+      std::vector<tm_range_t> tm_ranges;
       
    public:
       tm_ranges_t(void);

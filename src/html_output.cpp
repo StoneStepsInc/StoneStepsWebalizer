@@ -2850,8 +2850,8 @@ int html_output_t::write_main_index()
 	fputs("<tbody class=\"summary_data_tbody\">\n", out_fp);
 
    iter = state.history.rbegin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != state.history.rend()) {
+      hptr = &*iter++;
       if(hptr->hits==0) continue;
       days_in_month=(hptr->lday-hptr->fday)+1;
       fprintf(out_fp,"<tr><th><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, config.html_ext.c_str(), lang_t::s_month[hptr->month-1], hptr->year);

@@ -312,7 +312,6 @@
     <ClInclude Include="tstring.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="util.h" />
-    <ClInclude Include="vector.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="webalizer.h" />
     <ClInclude Include="xml_output.h" />

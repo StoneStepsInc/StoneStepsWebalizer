@@ -13,7 +13,6 @@
 #include "config.h"
 #include "hashtab.h"
 #include "tstring.h"
-#include "vector.h"
 #include "tstamp.h"
 #include "types.h"
 #include "hashtab_nodes.h"

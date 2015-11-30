@@ -127,8 +127,8 @@ const hist_month_t *history_t::find_month(u_int year, u_int month) const
    const hist_month_t *hptr;
    const_iterator iter = months.begin();
 
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != months.end()) {
+      hptr = &*iter++;
       if(hptr->month == month && hptr->year == year)
          return hptr;
    }
@@ -145,7 +145,7 @@ bool history_t::update(const hist_month_t *month)
 
    // just add, if the history is empty
    if(months.size() == 0) {
-      months.push(*month);
+      months.push_back(*month);
       return true;
    }
 
@@ -167,11 +167,11 @@ bool history_t::update(const hist_month_t *month)
    }
    
    // and insert the new month
-   months.insert(++i, *month);
+   months.insert(months.begin()+i+1, *month);
 
-   // trim the history if it's too long
+   // trim the history if it's too long $$$ replace with a range erase
    while(length() > max_length)
-      months.remove(0);
+      months.erase(months.begin());
 
    return true;
 }
@@ -258,15 +258,15 @@ bool history_t::get_history(void)
       }
       
       // insert the new history month after the one we found
-      months.insert(i, hnode);
+      months.insert(months.begin()+i, hnode);
    }
    
    fclose(hist_fp);
    delete [] buffer;
 
-   // remove extra months from history
+   // remove extra months from history $$$ replace with a range erase
    while(length() > max_length)
-      months.remove(0);
+      months.erase(months.begin());
       
    return true;
 }
@@ -293,8 +293,8 @@ void history_t::put_history(void)
    if (config.verbose>1) 
       printf("%s\n",config.lang.msg_put_hist);
 
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != end()) {
+      hptr = &*iter++;
       if(hptr->hits != 0) {
          fprintf(hist_fp,"%d %d %" PRIu64 " %" PRIu64 " %" PRIu64 " %" PRIu64 " %d %d %" PRIu64 " %" PRIu64 "\n",
                          hptr->month,

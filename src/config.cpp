@@ -189,7 +189,7 @@ config_t::config_t(void) : config_fnames(1)
    geoip_city = true;
 
    // push the initial DST pair into the vector
-   dst_pairs.push(dst_pair_t());
+   dst_pairs.push_back(dst_pair_t());
 
    verbose = 2;
    debug_mode = 0;
@@ -229,12 +229,12 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 
    // if log_fnames is empty, insert one empty entry to force stdin (i.e. at most one)
    if(!log_fnames.size())
-      log_fnames.push(string_t());
+      log_fnames.push_back(string_t());
       
    // treat a single dash as stdin
-   vector_t<string_t>::iterator iter = log_fnames.begin();
-   while(iter.more()) {
-      string_t& fname = iter.next();
+   std::vector<string_t>::iterator iter = log_fnames.begin();
+   while(iter != log_fnames.end()) {
+      string_t& fname = *iter++;
       if(fname.length() == 1 && fname[0] == '-')
          fname.clear();
    }
@@ -290,7 +290,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 
    // turn off batch mode if incremental is not specified
    if(batch && (!incremental || prep_report)) {
-      messages.push(string_t("WARNING: Batch processing only works in the incremental mode"));
+      messages.push_back(string_t("WARNING: Batch processing only works in the incremental mode"));
       batch = false;
    }
 
@@ -326,7 +326,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    while(grph_iter.next()) {
       if(is_ip4_address(grph_iter.item()->name)) {
          grph_iter.item()->name = string_t::_format("group_%s", grph_iter.item()->name.c_str());
-         messages.push(string_t::_format("WARNING: A bare IP address in GroupHost is changed to %s\n", grph_iter.item()->name.c_str()));
+         messages.push_back(string_t::_format("WARNING: A bare IP address in GroupHost is changed to %s\n", grph_iter.item()->name.c_str()));
       }
    }
    
@@ -342,9 +342,9 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    // , may refer to the same file. 
    //
    if(!log_dir.isempty()) {
-      vector_t<string_t>::iterator iter = log_fnames.begin();
-      while(iter.more()) {
-         string_t& fname = iter.next();
+      std::vector<string_t>::iterator iter = log_fnames.begin();
+      while(iter != log_fnames.end()) {
+         string_t& fname = *iter++;
          // ignore empty file names (used to read stdin) and absolute paths
          if(fname.length() && !is_abs_path(fname))
             fname = make_path(log_dir, fname);
@@ -388,10 +388,10 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    enable_js = !html_js_path.isempty();
 
    // process all DST ranges we collected
-   vector_t<dst_pair_t>::iterator dst_iter = dst_pairs.begin();
+   std::vector<dst_pair_t>::iterator dst_iter = dst_pairs.begin();
    
-   while(dst_iter.more()) {
-      const dst_pair_t& dst_pair = dst_iter.next();
+   while(dst_iter != dst_pairs.end()) {
+      const dst_pair_t& dst_pair = *dst_iter++;
       
       // ignore the range if both timestamps are empty (the top one)
       if(dst_pair.dst_start.isempty() && dst_pair.dst_end.isempty())
@@ -859,7 +859,7 @@ void config_t::get_config(const char *fname)
    kwinfo *kptr, key = {NULL, 0};
    char *buffer;
 
-   config_fnames.push(string_t(fname));
+   config_fnames.push_back(string_t(fname));
 
    if ( (fp=fopen(fname,"r")) == NULL)
    {
@@ -906,13 +906,13 @@ void config_t::get_config(const char *fname)
       key.keyword = keyword;
       if((kptr = (kwinfo*) bsearch(&key, kwords, num_kwords, sizeof(kwords[0]), cmp_conf_kw)) == NULL) {
          /* Invalid keyword       */
-         messages.push(string_t::_format("%s \"%s\" (%s)\n", lang.msg_bad_key, keyword.c_str(), fname));
+         messages.push_back(string_t::_format("%s \"%s\" (%s)\n", lang.msg_bad_key, keyword.c_str(), fname));
          continue;
       }
 
       switch (kptr->key) {
          case 1:  out_dir=value; break;                           // OutputDir
-         case 2:  log_fnames.push(value);break;                   // LogFile
+         case 2:  log_fnames.push_back(value);break;              // LogFile
          case 3:  rpt_title = value; break;                       // ReportTitle
          case 4:  hname=value; break;                             // HostName
          case 5:  ignore_hist=(tolower(value[0])=='y'); break;    // IgnoreHist
@@ -1241,7 +1241,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
          else {
             // ignore the log file path if --end-month is found (use the default database)
             if(!end_month)
-               log_fnames.push(string_t(argv[optind]));
+               log_fnames.push_back(string_t(argv[optind]));
          }
          continue;
       }
@@ -1291,7 +1291,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
          else if(!strncasecmp(nptr, "pipe-log-names", nlen))
             pipe_log_names  = true;
          else
-            messages.push(string_t::_format("WARNING: Unknown option --%s\n", string_t(nptr, nlen).c_str()));
+            messages.push_back(string_t::_format("WARNING: Unknown option --%s\n", string_t(nptr, nlen).c_str()));
 
          continue;
       }
@@ -1493,13 +1493,13 @@ void config_t::read_help_xml(const char *fname)
 	help_xml.attach(buffer, cnt1+cnt2);
 
    // report the file path
-   messages.push(string_t::_format("%s %s", lang.msg_use_help, fname));
+   messages.push_back(string_t::_format("%s %s", lang.msg_use_help, fname));
 	
 	return;
 
 errexit:
    // report that we couldn't read the file
-   messages.push(string_t::_format("%s (%s)", lang.msg_file_err, fname));
+   messages.push_back(string_t::_format("%s (%s)", lang.msg_file_err, fname));
 
 	if(buffer)
 	   free(buffer);
@@ -1535,7 +1535,7 @@ void config_t::set_dst_range(const string_t *start, const string_t *end)
       return;
 
    // otherwise create a new one for the next range
-   dst_pairs.push(dst_pair_t());
+   dst_pairs.push_back(dst_pair_t());
 }
 
 void config_t::proc_stdin_log_files(void)
@@ -1552,7 +1552,7 @@ void config_t::proc_stdin_log_files(void)
       
       // and if it's not empty, put it into the list
       if(cp2-cp1)
-         log_fnames.push(string_t(cp1, cp2-cp1));
+         log_fnames.push_back(string_t(cp1, cp2-cp1));
    }
    
    delete [] buffer;

@@ -37,7 +37,8 @@
 #include "lang.h"
 #include "parser.h"
 #include "util.h"
-#include "vector.h"
+
+#include <vector>
 
 //
 //
@@ -530,15 +531,15 @@ bool parser_t::parse_apache_log_format(const char *format)
 			case 'a':
 			case 'h':
 				// h is a host!!!
-				log_rec_fields.push(eClientIpAddress);
+				log_rec_fields.push_back(eClientIpAddress);
 				break;
 
 			case 'l':
-				log_rec_fields.push(eRemoteLoginName);
+				log_rec_fields.push_back(eRemoteLoginName);
 				break;
 
 			case 'u':
-				log_rec_fields.push(eUserName);
+				log_rec_fields.push_back(eUserName);
 				break;
 
 			case 't':
@@ -547,71 +548,71 @@ bool parser_t::parse_apache_log_format(const char *format)
 					   fprintf(stderr, "Error parsing Apache log format - \"%{format}t\" is not supported\n");
 					goto errexit;
 				}
-				log_rec_fields.push(eDateTime);
+				log_rec_fields.push_back(eDateTime);
 				break;
 
 			case 'r':
-				log_rec_fields.push(eHttpRequestLine);
+				log_rec_fields.push_back(eHttpRequestLine);
 				break;
 
 			case 's':
-				log_rec_fields.push(eHttpStatus);
+				log_rec_fields.push_back(eHttpStatus);
 				break;
 
 			case 'b':
 			case 'B':
 			case 'O':
-				log_rec_fields.push(eBytesSent);
+				log_rec_fields.push_back(eBytesSent);
 				break;
 
 			case 'T':
-				log_rec_fields.push(eProcTimeS);
+				log_rec_fields.push_back(eProcTimeS);
 				break;
 
 			case 'D':
-				log_rec_fields.push(eProcTimeMcS);
+				log_rec_fields.push_back(eProcTimeMcS);
 				break;
 
 			case 'A':
-				log_rec_fields.push(eWebsiteIpAddress);
+				log_rec_fields.push_back(eWebsiteIpAddress);
 				break;
 
 			case 'p':
-				log_rec_fields.push(eWebsitePort);
+				log_rec_fields.push_back(eWebsitePort);
 				break;
 
 			case 'm':
-				log_rec_fields.push(eHttpMethod);
+				log_rec_fields.push_back(eHttpMethod);
 				break;
 
 			case 'U':
-				log_rec_fields.push(eUriStem);
+				log_rec_fields.push_back(eUriStem);
 				break;
 
 			case 'q':
-				log_rec_fields.push(eUriQuery);
+				log_rec_fields.push_back(eUriQuery);
 				break;
 
 			case 'I':
-				log_rec_fields.push(eBytesReceived);
+				log_rec_fields.push_back(eBytesReceived);
 				break;
 
 			case 'v':
 			case 'V':
-				log_rec_fields.push(eWebsiteName);
+				log_rec_fields.push_back(eWebsiteName);
 				break;
 
 			case 'i':
 				if(strncasecmp(param, "Referer", 7) == 0)
-					log_rec_fields.push(eReferrer);
+					log_rec_fields.push_back(eReferrer);
 				else if(strncasecmp(param, "User-Agent", 10) == 0)
-					log_rec_fields.push(eUserAgent);
+					log_rec_fields.push_back(eUserAgent);
 				else
-					log_rec_fields.push(eUnknown);
+					log_rec_fields.push_back(eUnknown);
 				break;
 
 			default:
-				log_rec_fields.push(eUnknown);
+				log_rec_fields.push_back(eUnknown);
 				break;
 		}
 		cptr++;
@@ -846,7 +847,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 			   }
 			   
 			   // store the field identifier
-            log_rec_fields.push(iis_fields[i].field_id);			   
+            log_rec_fields.push_back(iis_fields[i].field_id);			   
 			   
 			   break;
 			}
@@ -854,7 +855,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 		
 		// if we didn't find one, push eUnknown so we can skip it
 		if(i == sizeof(iis_fields)/sizeof(iis_fields[0]))
-		   log_rec_fields.push(eUnknown);
+		   log_rec_fields.push_back(eUnknown);
 
 		// move onto the next field and skip the whitespace
 		cptr = cp2;

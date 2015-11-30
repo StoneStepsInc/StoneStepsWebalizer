@@ -11,9 +11,10 @@
 #ifndef __HISTORY_H
 #define __HISTORY_H
 
-#include "vector.h"
 #include "types.h"
 #include "config.h"
+
+#include <vector>
 
 //
 // hist_month_t
@@ -43,12 +44,12 @@ struct hist_month_t {
 //
 class history_t {
    public:
-      typedef vector_t<hist_month_t>::const_iterator const_iterator;
-      typedef vector_t<hist_month_t>::const_reverse_iterator const_reverse_iterator;
+      typedef std::vector<hist_month_t>::const_iterator const_iterator;
+      typedef std::vector<hist_month_t>::const_reverse_iterator const_reverse_iterator;
 
    private:
       const config_t&         config;
-      vector_t<hist_month_t>  months;
+      std::vector<hist_month_t> months;
       u_int                   max_length;
 
    public:
@@ -62,7 +63,11 @@ class history_t {
 
       const_iterator begin(void) const {return months.begin();}
 
+      const_iterator end(void) const {return months.end();}
+
       const_reverse_iterator rbegin(void) const {return months.rbegin();}
+
+      const_reverse_iterator rend(void) const {return months.rend();}
 
       void set_max_length(u_int len) {max_length = (len > 12) ? len : 12;}
 

@@ -364,9 +364,6 @@
     <ClInclude Include="util.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="vector.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="tstamp.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

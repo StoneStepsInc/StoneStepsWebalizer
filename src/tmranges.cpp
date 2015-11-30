@@ -37,7 +37,7 @@ bool tm_ranges_t::add_range(const tstamp_t& start, const tstamp_t& end)
    }
    
    // and insert the range
-   tm_ranges.insert(i, range);
+   tm_ranges.insert(tm_ranges.begin()+i, range);
    return true;
 }
 

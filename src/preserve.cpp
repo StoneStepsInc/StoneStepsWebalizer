@@ -48,10 +48,13 @@
 #include "autoptr.h"
 #include "history.h"
 
-state_t::state_t(const config_t& config) : v_ended(128), dl_ended(128), config(config), history(config), database(config), response(config.lang.resp_code_count())
+state_t::state_t(const config_t& config) : config(config), history(config), database(config), response(config.lang.resp_code_count())
 {
    stfile = false;
    buffer = new char[BUFSIZE];
+
+   v_ended.reserve(128);
+   dl_ended.reserve(128); 
 }
 
 state_t::~state_t(void)
@@ -149,7 +152,7 @@ int state_t::save_state(void)
    hash_table<dlnode_t>::iterator dl_iter;
    hash_table<ccnode_t>::iterator cc_iter;
 
-   vector_t<uint64_t>::iterator iter;
+   std::vector<uint64_t>::iterator iter;
    
    u_int  i;
 
@@ -186,19 +189,19 @@ int state_t::save_state(void)
 
    // delete stale active visits
    iter = v_ended.begin();
-   while(iter.next(0)) {
-      vnode.reset(*iter);
+   while(iter != v_ended.end()) {
+      vnode.reset(*iter++);
       if(!database.delete_visit(vnode))
-         throw exception_t(0, string_t::_format("Cannot detele an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot delete an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid));
    }
    v_ended.clear();
 
    // delete stale active downloads
    iter = dl_ended.begin();
-   while(iter.next(0)) {
-      dlnode.reset(*iter);
+   while(iter != dl_ended.end()) {
+      dlnode.reset(*iter++);
       if(!database.delete_download(dlnode))
-         throw exception_t(0, string_t::_format("Cannot detele a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid));
+         throw exception_t(0, string_t::_format("Cannot delete a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid));
    }
    dl_ended.clear();
 

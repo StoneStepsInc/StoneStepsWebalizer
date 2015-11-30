@@ -290,8 +290,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    // find maximum value
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       if(hptr->hits > maxval) maxval = hptr->hits;
       if(hptr->files > maxval) maxval = hptr->files;
       if(hptr->pages > maxval) maxval = hptr->pages;
@@ -337,8 +337,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* hits */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->hits / (double)maxval);
       if (percent <= 0.0) continue;
@@ -351,8 +351,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* files */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->files / (double)maxval);
       if (percent <= 0.0) continue;
@@ -365,8 +365,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* pages */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->pages / (double)maxval);
       if (percent <= 0.0) continue;
@@ -379,8 +379,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    maxval=0;
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       if (hptr->hosts > maxval) maxval = hptr->hosts;           /* get max val    */
       if (hptr->visits > maxval) maxval = hptr->visits;
    }
@@ -390,8 +390,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* visits */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->visits / (double)maxval);
       if (percent <= 0.0) continue;
@@ -404,8 +404,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* hosts */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->hosts / (double)maxval);
       if (percent <= 0.0) continue;
@@ -418,8 +418,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    fmaxval=0;
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       if(hptr->xfer > fmaxval) fmaxval = hptr->xfer;         /* get max val    */
    }
    if (fmaxval <= 0) fmaxval = 1;
@@ -428,8 +428,8 @@ int graph_t::year_graph6x(const history_t& history,
 
    /* transfer */
    iter = history.begin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != history.end()) {
+      hptr = &*iter++;
       i = history.month_index(hptr->year, hptr->month);
       percent = ((double)hptr->xfer / (double)fmaxval);
       if (percent <= 0.0) continue;

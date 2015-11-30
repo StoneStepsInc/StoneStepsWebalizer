@@ -27,6 +27,7 @@
 #include "logfile.h"
 
 #include <zlib.h>
+#include <vector>
 
 #ifndef _WIN32
 #	include <netinet/in.h>       /* needed for in_addr structure definition   */
@@ -97,7 +98,7 @@ class webalizer_t {
       state_t     state;
       dns_resolver_t dns_resolver;
 
-      vector_t<output_t*> output;
+      std::vector<output_t*> output;
 
       bool        check_dup;                       // check for dups flag
 
@@ -118,10 +119,10 @@ class webalizer_t {
       uint64_t      mnt_time;                        // maintenance time (saving state, etc)
       uint64_t      rpt_time;                        // report time
       
-      vector_t<ua_token_t> ua_args;                // user agent argument tokens
-      vector_t<size_t>     ua_groups;              // user agent group indexes (ua_args)
+      std::vector<ua_token_t> ua_args;                // user agent argument tokens
+      std::vector<size_t>     ua_groups;              // user agent group indexes (ua_args)
       
-      vector_t<arginfo_t>  sr_args;                // search string arguments
+      std::vector<arginfo_t>  sr_args;                // search string arguments
 
    private:
       bool init_output_engines(void);

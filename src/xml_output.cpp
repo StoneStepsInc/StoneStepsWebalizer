@@ -158,8 +158,8 @@ int xml_output_t::write_main_index()
 	fputs("<rows>\n", out_fp);
 
    iter = state.history.rbegin();
-   while(iter.more()) {
-      hptr = &iter.next();
+   while(iter != state.history.rend()) {
+      hptr = &*iter++;
       if(hptr->hits==0) continue;
       days_in_month=(hptr->lday-hptr->fday)+1;
       

@@ -284,7 +284,7 @@ bool webalizer_t::init_output_engines(void)
          continue;
       }
       
-      output.push(optr);
+      output.push_back(optr);
    }
    
    if(!output.size())
@@ -296,10 +296,10 @@ bool webalizer_t::init_output_engines(void)
 void webalizer_t::cleanup_output_engines(void)
 {
    output_t *optr;
-   vector_t<output_t*>::iterator iter = output.begin();
+   std::vector<output_t*>::iterator iter = output.begin();
    
-   while(iter.next(NULL)) {
-      optr = iter.item();
+   while(iter != output.end()) {
+      optr = *iter++;
       optr->cleanup_output_engine();
       delete optr;
    }
@@ -309,10 +309,10 @@ void webalizer_t::cleanup_output_engines(void)
 void webalizer_t::write_main_index(void)
 {
    output_t *optr;
-   vector_t<output_t*>::iterator iter = output.begin();
+   std::vector<output_t*>::iterator iter = output.begin();
    
-   while(iter.next(NULL)) {
-      optr = iter.item();
+   while(iter != output.end()) {
+      optr = *iter++;
       
       if(optr->is_main_index()) {
          if (config.verbose>1) 
@@ -326,10 +326,10 @@ void webalizer_t::write_main_index(void)
 void webalizer_t::write_monthly_report(void)
 {
    output_t *optr;
-   vector_t<output_t*>::iterator iter = output.begin();
+   std::vector<output_t*>::iterator iter = output.begin();
    
-   while(iter.next(NULL)) {
-      optr = iter.item();
+   while(iter != output.end()) {
+      optr = *iter++;
       
       if(config.verbose > 1)
          printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year, optr->get_output_type());
@@ -742,7 +742,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
                
                   if(!skiptok) {
                      // remember grouped item index
-                     ua_groups.push(ua_args.size());
+                     ua_groups.push_back(ua_args.size());
                   
                      // re-write the token
                      token.start = str->c_str();
@@ -756,7 +756,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
             }
             
             if(!skiptok)
-               ua_args.push(token);             // keep the token
+               ua_args.push_back(token);             // keep the token
             else
                skiptok = false;                 // skip and reset skiptok
          }
@@ -999,9 +999,9 @@ int webalizer_t::proc_logfile(void)
    int retcode = 0, errnum = 0;
 
    lfp_state_t wlfs;                   // working log file state
-   vector_t<lfp_state_t> lfp_state;    // log file states ordered by log time (TODO: change to a list)
-   vector_t<logfile_t*> logfiles;      // owns log files
-   vector_t<log_struct*> logrecs;      // owns log records
+   std::vector<lfp_state_t> lfp_state;    // log file states ordered by log time (TODO: change to a list)
+   std::vector<logfile_t*> logfiles;      // owns log files
+   std::vector<log_struct*> logrecs;      // owns log records
    
    tm_ranges_t::iterator dst_iter = config.dst_ranges.begin();
    
@@ -1010,9 +1010,9 @@ int webalizer_t::proc_logfile(void)
    // open files at this point, so we don't exceed the limit on the total number 
    // of open files.
    //
-   vector_t<string_t>::const_iterator iter = config.log_fnames.begin();
-   while(iter.more()) {
-      const string_t& fname = iter.next();
+   std::vector<string_t>::const_iterator iter = config.log_fnames.begin();
+   while(iter != config.log_fnames.end()) {
+      const string_t& fname = *iter++;
       autoptr_t<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? make_path(config.cur_dir, fname) : fname));
       
       // check if we can read the file
@@ -1029,7 +1029,7 @@ int webalizer_t::proc_logfile(void)
          printf("%s)\n", config.get_log_type_desc());
       }
 
-      logfiles.push(logfile.release());
+      logfiles.push_back(logfile.release());
    }
 
    //
@@ -1051,7 +1051,7 @@ int webalizer_t::proc_logfile(void)
 
          logfiles[i]->close();
          delete logfiles[i];
-         logfiles.remove(i);
+         logfiles.erase(logfiles.begin()+i);
          
          continue;
       }
@@ -1060,7 +1060,7 @@ int webalizer_t::proc_logfile(void)
       if(!wlfs.logrec) {
          wlfs.logfile = logfiles[i];
          wlfs.logrec = new log_struct;
-         logrecs.push(wlfs.logrec);
+         logrecs.push_back(wlfs.logrec);
       }
 
       // parse the log line
@@ -1090,7 +1090,7 @@ int webalizer_t::proc_logfile(void)
       // find the spot in the list and insert the record (earlier timestamps first)
       size_t j;
       for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
-      lfp_state.insert(j, wlfs);
+      lfp_state.insert(lfp_state.begin()+j, wlfs);
 
       // reset the working state and move onto the next log file
       wlfs.reset();
@@ -1142,7 +1142,7 @@ int webalizer_t::proc_logfile(void)
             for(i = 0; i < logfiles.size() && wlfs.logfile != logfiles[i]; i++);
             logfiles[i]->close();
             delete logfiles[i];
-            logfiles.remove(i);
+            logfiles.erase(logfiles.begin()+i);
             
             break;
          }
@@ -1161,7 +1161,7 @@ int webalizer_t::proc_logfile(void)
          // find the spot in the list and insert the record (earlier timestamps first)
          size_t j;
          for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
-         lfp_state.insert(j, wlfs);
+         lfp_state.insert(lfp_state.begin()+j, wlfs);
          wlfs.reset();
       }
    
@@ -1172,7 +1172,7 @@ int webalizer_t::proc_logfile(void)
          // working state lets us keep track of which log file needs to be read from.
          //
          wlfs = lfp_state[0];
-         lfp_state.remove(0);
+         lfp_state.erase(lfp_state.begin());
          
          log_struct& log_rec = *wlfs.logrec;
          
@@ -1882,7 +1882,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 
          if(sr_args.size() >= sr_args.capacity())
             sr_args.reserve(sr_args.capacity() << 1);
-         sr_args.push(arginfo);
+         sr_args.push_back(arginfo);
       }
    }
 
@@ -2780,7 +2780,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 
    // if the visit node was read from the database, queue it for deletion
    if(visit->storage) {
-      state.v_ended.push(visit->nodeid);
+      state.v_ended.push_back(visit->nodeid);
       visit->storage = false;
    }
 
@@ -2845,7 +2845,7 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
 
    // if the download node was read from the database, queue it for deletion
    if(download->storage) {
-      state.dl_ended.push(download->nodeid);
+      state.dl_ended.push_back(download->nodeid);
       download->storage = false;
    }
 

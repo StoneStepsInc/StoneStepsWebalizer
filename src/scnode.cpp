@@ -12,10 +12,10 @@
 #include "scnode.h"
 #include "serialize.h"
 
-sc_hash_table::sc_hash_table(u_int maxcodes) : stcodes(maxcodes, true)
+sc_hash_table::sc_hash_table(u_int maxcodes) : stcodes(maxcodes)
 {
    memset(clsindex, 0, sizeof(clsindex));
-   stcodes.push(scnode_t(0));                // unknown status code node
+   stcodes.push_back(scnode_t(0));           // unknown status code node
 }
 
 sc_hash_table::~sc_hash_table(void)
@@ -38,7 +38,7 @@ void sc_hash_table::add_status_code(u_int code)
    if(clsindex[cls] == 0)
       clsindex[cls] = stcodes.size();
 
-   stcodes.push(scnode_t(code));
+   stcodes.push_back(scnode_t(code));
 }
 
 scnode_t& sc_hash_table::get_status_code(u_int code)

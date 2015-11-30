@@ -10,10 +10,11 @@
 #ifndef __SCNODE_H
 #define __SCNODE_H
 
-#include "vector.h"
 #include "types.h"
 #include "keynode.h"
 #include "datanode.h"
+
+#include <vector>
 
 // -----------------------------------------------------------------------
 //
@@ -61,7 +62,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 // unknown code, will be returned when such code is requested.
 //
 class sc_hash_table {
-   vector_t<scnode_t>   stcodes;       // HTTP status codes
+   std::vector<scnode_t> stcodes;      // HTTP status codes
 
    size_t               clsindex[6];   // HTTP class group offsets (0th is not used)
 

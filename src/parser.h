@@ -16,6 +16,8 @@
 
 #include "config.h"
 
+#include <vector>
+
 /* Parse codes */
 #define PARSE_CODE_ERROR	0
 #define PARSE_CODE_OK		1
@@ -62,7 +64,7 @@ class parser_t {
    private:
       const config_t& config;
 
-      vector_t<TLogFieldId> log_rec_fields;
+      std::vector<TLogFieldId> log_rec_fields;
 
       field_desc *fields;
 
