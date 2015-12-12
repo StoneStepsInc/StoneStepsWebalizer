@@ -397,6 +397,9 @@
     <ClInclude Include="platform\sys\utsname.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
+    <ClInclude Include="pool_allocator.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="webalizer.rc">

@@ -61,6 +61,9 @@
 #include "html_output.h"
 #include "xml_output.h"
 #include "autoptr.h"
+#include "pool_allocator.h"
+
+#include <list>
 
 //
 //
@@ -998,15 +1001,19 @@ int webalizer_t::proc_logfile(void)
 
    int retcode = 0, errnum = 0;
 
+   typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
+   typedef std::list<log_struct*, pool_allocator_t<log_struct, FOPEN_MAX>> logrec_list_t;
+   typedef std::list<logfile_t*, pool_allocator_t<logfile_t, FOPEN_MAX>> logfile_list_t;
+
    lfp_state_t wlfs;                   // working log file state
-   std::vector<lfp_state_t> lfp_state;    // log file states ordered by log time (TODO: change to a list)
-   std::vector<logfile_t*> logfiles;      // owns log files
-   std::vector<log_struct*> logrecs;      // owns log records
+   lfp_state_list_t lfp_state;         // log file states ordered by log time
+   logfile_list_t logfiles;            // owns log files
+   logrec_list_t logrecs;              // contains one log record per log file; owns log records
    
    tm_ranges_t::iterator dst_iter = config.dst_ranges.begin();
    
    //
-   // Walk through the list of log files and test if each one is radable. Do not 
+   // Walk through the list of log files and test if each one is readable. Do not 
    // open files at this point, so we don't exceed the limit on the total number 
    // of open files.
    //
@@ -1033,32 +1040,45 @@ int webalizer_t::proc_logfile(void)
    }
 
    //
-   // Loop through the log files and populate the log file state list. After
-   // this loop we will have same number of log files and states in the lists 
-   // and the working log file state structure (wlfs) will be empty.
+   // Loop through the log lines of each log file until we find a valid log
+   // record. Store the first good log record and the file pointer in a state
+   // and insert the state into the state list, ordered by the time stamp.
+   // Repeat the process for each log file. After this loop we will have same 
+   // number of log files, log records and states in the lists and the working 
+   // log file state structure (wlfs) will be empty.
    //
-   for(size_t i = 0; i < logfiles.size();) {
+   for(logfile_list_t::iterator i = logfiles.begin(); i != logfiles.end();) {
       // the file may be open if we skipped any lines
-      if(!logfiles[i]->is_open() && (errnum = logfiles[i]->open()) != 0) {
+      if(!(*i)->is_open() && (errnum = (*i)->open()) != 0) {
          /* Error: Can't open log file ... */
-         throw exception_t(0, string_t::_format("%s %s (%d)\n", config.lang.msg_log_err, logfiles[i]->get_fname().c_str(), errnum));
+         throw exception_t(0, string_t::_format("%s %s (%d)\n", config.lang.msg_log_err, (*i)->get_fname().c_str(), errnum));
       }
 
       // read the log record into the buffer
-      if((reclen = read_log_line(*logfiles[i])) == 0) {
-         // if there's no more data, remove the log file from the list and clean up
-         printf("%s %s\n", config.lang.msg_log_done, logfiles[i]->get_fname().c_str());
+      if((reclen = read_log_line(**i)) == 0) {
+         // report if there's no more data
+         printf("%s %s\n", config.lang.msg_log_done, (*i)->get_fname().c_str());
 
-         logfiles[i]->close();
-         delete logfiles[i];
-         logfiles.erase(logfiles.begin()+i);
+         // close the log fil and clean up
+         (*i)->close();
+         delete (*i);
+         i = logfiles.erase(i);
          
+         // delete the last log record and remove it from the list
+         if(wlfs.logrec) {
+            delete logrecs.back();
+            logrecs.pop_back();
+         }
+
+         // do not leave dangling poiters behind
+         wlfs.reset();
+
          continue;
       }
       
       // allocate a log record and set up the state structure
       if(!wlfs.logrec) {
-         wlfs.logfile = logfiles[i];
+         wlfs.logfile = *i;
          wlfs.logrec = new log_struct;
          logrecs.push_back(wlfs.logrec);
       }
@@ -1081,16 +1101,16 @@ int webalizer_t::proc_logfile(void)
       // when the next line is read in the main loop.
       //
       if(logfiles.size() >= FOPEN_MAX) {
-         if(logfiles[i]->set_reopen_offset() == -1L)
-            throw exception_t(0, string_t::_format("%s %s (%d)\n", config.lang.msg_fpos_err, logfiles[i]->get_fname().c_str(), errnum));
+         if((*i)->set_reopen_offset() == -1L)
+            throw exception_t(0, string_t::_format("%s %s (%d)\n", config.lang.msg_fpos_err, (*i)->get_fname().c_str(), errnum));
             
-         logfiles[i]->close();
+         (*i)->close();
       }
       
       // find the spot in the list and insert the record (earlier timestamps first)
-      size_t j;
-      for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
-      lfp_state.insert(lfp_state.begin()+j, wlfs);
+      lfp_state_list_t::iterator j = lfp_state.begin();
+      while(j != lfp_state.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
+      lfp_state.insert(j, wlfs);
 
       // reset the working state and move onto the next log file
       wlfs.reset();
@@ -1133,16 +1153,16 @@ int webalizer_t::proc_logfile(void)
 
          // use logfile from wlfs, which was populated in the previous iteration
          if((reclen = read_log_line(*wlfs.logfile)) == 0) {
-            size_t i;
+            logfile_list_t::iterator i;
             
             // report that we are done with this log file
             printf("%s %s\n", config.lang.msg_log_done, wlfs.logfile->get_fname().c_str());
 
             // find it in the list, remove it and clean up
-            for(i = 0; i < logfiles.size() && wlfs.logfile != logfiles[i]; i++);
-            logfiles[i]->close();
-            delete logfiles[i];
-            logfiles.erase(logfiles.begin()+i);
+            for(i = logfiles.begin(); i != logfiles.end() && wlfs.logfile != *i; i++);
+            (*i)->close();
+            delete *i;
+            logfiles.erase(i);
             
             break;
          }
@@ -1159,9 +1179,9 @@ int webalizer_t::proc_logfile(void)
          }
 
          // find the spot in the list and insert the record (earlier timestamps first)
-         size_t j;
-         for(j = 0; j < lfp_state.size() && wlfs.logrec->tstamp > lfp_state[j].logrec->tstamp; j++);
-         lfp_state.insert(lfp_state.begin()+j, wlfs);
+         lfp_state_list_t::iterator j = lfp_state.begin();
+         while(j != lfp_state.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
+         lfp_state.insert(j, wlfs);
          wlfs.reset();
       }
    
@@ -1171,8 +1191,8 @@ int webalizer_t::proc_logfile(void)
          // Get the first state and remove it from the list. The log file in the  
          // working state lets us keep track of which log file needs to be read from.
          //
-         wlfs = lfp_state[0];
-         lfp_state.erase(lfp_state.begin());
+         wlfs = lfp_state.front();
+         lfp_state.pop_front();
          
          log_struct& log_rec = *wlfs.logrec;
          
@@ -1735,15 +1755,15 @@ int webalizer_t::proc_logfile(void)
    /*********************************************/
    
    // if there are any unprocessed log files, close them (e.g. Ctrl-C was pressed)
-   for(size_t i = 0; i < logfiles.size(); i++) {
-      if(logfiles[i] && logfiles[i]->is_open())
-         logfiles[i]->close(); 
+   for(logfile_list_t::iterator i = logfiles.begin(); i != logfiles.end(); i++) {
+      if(*i && (*i)->is_open())
+         (*i)->close(); 
    }
    logfiles.clear();
    
    // deallocate log records we created earlier
-   for(size_t i = 0; i < logrecs.size(); i++)
-      delete logrecs[i];
+   for(logrec_list_t::iterator i = logrecs.begin(); i != logrecs.end(); i++)
+      delete *i;
    logrecs.clear();
 
    if(good_rec)                                                         /* were any good records?   */
