@@ -10,25 +10,8 @@
 */
 #include "pch.h"
 
-/*********************************************/
-/* STANDARD INCLUDES                         */
-/*********************************************/
-
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-/* ensure sys/types */
-#ifndef _SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-/* some systems need this */
-#ifdef HAVE_MATH_H
-#include <math.h>
-#endif
 
 #include "lang.h"
 #include "linklist.h"
