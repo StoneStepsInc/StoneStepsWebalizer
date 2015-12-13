@@ -13,7 +13,7 @@
 //
 template <typename T, size_t POOLSIZE>
 class pool_allocator_t {
-   template <typename U, size_t POOLSIZE> friend class pool_allocator_t;
+   template <typename U, size_t> friend class pool_allocator_t;
 
 private:
    std::allocator<T>    stdalloc;      // standard allocator
@@ -62,7 +62,7 @@ public:
 
    ~pool_allocator_t(void)
    {
-      for(std::vector<T*>::iterator iter = mempool.begin(); iter != mempool.end(); iter++)
+      for(typename std::vector<T*>::iterator iter = mempool.begin(); iter != mempool.end(); iter++)
          deallocate(*iter, 1);
       mempool.clear();
    }
@@ -119,9 +119,10 @@ public:
          mempool.push_back(area);
    }
 
-   void construct(pointer memblock)
+   template <typename U, typename ...Args>
+   void construct(U *memblock, Args&&... args)
    {
-      stdalloc.construct(memblock);
+      stdalloc.construct(memblock, std::forward<Args>(args)...);
    }
 
    void destroy(pointer object)
