@@ -78,7 +78,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    if (config.html_pre.isempty())
    {
       /* Default 'DOCTYPE' header record if none specified */
-      fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n\n", out_fp);
+      fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n", out_fp);
 
    }
    else
@@ -91,24 +91,18 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    }
 
    /* Standard header comments */
-   fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s   -->\n", state_t::get_app_version().c_str());
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!-- Copyright (c) 2004-2015, Stone Steps Inc. -->\n", out_fp);
-   fputs("<!--         http://www.stonesteps.ca         -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!--   Based on v2.01.10 of The Webalizer     -->\n", out_fp);
-   fputs("<!-- Copyright 1997-2000 Bradford L. Barrett  -->\n", out_fp);
-   fputs("<!-- (brad@mrunix.net  http://www.mrunix.net) -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!-- Distributed under the GNU GPL  Version 2 -->\n", out_fp);
-   fputs("<!--        Full text may be found at:        -->\n", out_fp);
-   fputs("<!--  http://www.stonesteps.ca/legal/gpl.asp  -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!--   Support the Free Software Foundation   -->\n", out_fp);
-   fputs("<!--           (http://www.fsf.org)           -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
+   fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s\n\n", state_t::get_app_version().c_str());
+   fputs("     Copyright (c) 2004-2015, Stone Steps Inc.\n", out_fp);
+   fputs("             http://www.stonesteps.ca\n\n", out_fp);
+   fputs("       Based on v2.01.10 of The Webalizer\n", out_fp);
+   fputs("     Copyright 1997-2000 Bradford L. Barrett\n", out_fp);
+   fputs("     (brad@mrunix.net  http://www.mrunix.net)\n\n", out_fp);
+   fputs("     Distributed under the GNU GPL, Version 2\n", out_fp);
+   fputs("            Full text may be found at:\n", out_fp);
+   fputs("      http://www.stonesteps.ca/legal/gpl.asp\n", out_fp);
+   fputs("-->\n\n", out_fp);
 
-   fprintf(out_fp,"\n<!-- *** Generated: %s *** -->\n\n", cur_time(config.local_time).c_str());
+   fprintf(out_fp,"<!-- Generated: %s -->\n\n", cur_time(config.local_time).c_str());
 
    fprintf(out_fp, "<html lang=\"%s\">\n<head>\n", config.lang.language_code);
    fprintf(out_fp,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n");

@@ -2019,17 +2019,15 @@ void xml_output_t::write_xml_head(bool index)
       fprintf(out_fp, "<!ENTITY help SYSTEM \"%s\">", xml_encode(config.help_file.c_str()));
    fputs("]>\n", out_fp);
    
-   fprintf(out_fp, "<?xml-stylesheet type=\"text/xsl\" href=\"%s%s\" ?>\n\n", config.xsl_path.c_str(), index ? "index.xsl" : "usage.xsl");
+   fprintf(out_fp, "<?xml-stylesheet type=\"text/xsl\" href=\"%s%s\" ?>\n", config.xsl_path.c_str(), index ? "index.xsl" : "usage.xsl");
 
    /* Standard header comments */
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!-- Copyright (c) 2004-2015, Stone Steps Inc. -->\n", out_fp);
-   fputs("<!--         http://www.stonesteps.ca         -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
-   fputs("<!-- Distributed under the GNU GPL  Version 2 -->\n", out_fp);
-   fputs("<!--        Full text may be found at:        -->\n", out_fp);
-   fputs("<!--  http://www.stonesteps.ca/legal/gpl.asp  -->\n", out_fp);
-   fputs("<!--                                          -->\n", out_fp);
+   fputs("<!-- Copyright (c) 2004-2015, Stone Steps Inc.\n", out_fp);
+   fputs("             http://www.stonesteps.ca\n\n", out_fp);
+   fputs("     Distributed under the GNU GPL, Version 2\n", out_fp);
+   fputs("            Full text may be found at:\n", out_fp);
+   fputs("      http://www.stonesteps.ca/legal/gpl.asp\n", out_fp);
+   fputs("-->\n", out_fp);
 
    fprintf(out_fp, "<sswdoc version=\"1.0\" lang=\"%s\">\n", config.lang.language_code);
    
