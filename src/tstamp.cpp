@@ -236,9 +236,9 @@ void tstamp_t::tolocal(int offset)
 int64_t tstamp_t::compare(const tstamp_t& other, int mode) const
 {
    tstamp_t temp(uninitialized);
-   const tstamp_t& tstamp = (utc == other.utc || offset == other.offset) ? other : temp;
+   const tstamp_t& tstamp = (utc == other.utc && (utc || offset == other.offset)) ? other : temp;
 
-   // check if we need to convert the other time stamp into our time zone
+   // need to convert the time zone of the other time stamp if the UTC flags or offsets mismatch
    if(&tstamp == &temp) {
       temp = other;
       utc ? temp.toutc() : temp.tolocal(offset);
