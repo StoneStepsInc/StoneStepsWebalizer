@@ -1611,7 +1611,7 @@ int webalizer_t::proc_logfile(void)
 
          // update total host/URL/etc counters (htab size, minus group count)
          if(newhost) {state.totals.t_hosts++; state.totals.ht_hosts++;}
-         if(newthost) state.totals.dt_hosts++;
+         if(newthost) state.t_daily[state.totals.cur_tstamp.day-1].tm_hosts++;
          if(newurl) state.totals.t_url++;
          if(newagent) state.totals.t_agent++;
          if(newuser) state.totals.t_user++;
@@ -1768,7 +1768,6 @@ int webalizer_t::proc_logfile(void)
 
    if(good_rec)                                                         /* were any good records?   */
    {
-      state.t_daily[state.totals.cur_tstamp.day-1].tm_hosts = state.totals.dt_hosts;         /* If yes, clean up a bit   */
       if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
 
       if (total_rec > (total_ignore+total_bad))                         /* did we process any?   */
