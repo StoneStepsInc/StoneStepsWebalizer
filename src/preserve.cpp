@@ -1074,8 +1074,6 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
    if (totals.cur_tstamp.day != tstamp.day)
    {
       /* if yes, init daily stuff */
-      t_daily[totals.cur_tstamp.day-1].tm_hosts = totals.dt_hosts; 
-      totals.dt_hosts = 0;
       totals.cur_tstamp.day = tstamp.day;
    }
 
