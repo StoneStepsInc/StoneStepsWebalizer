@@ -40,8 +40,6 @@ totals_t::totals_t(void) : keynode_t<uint32_t>(1)
    t_vconv_avg = .0;
    t_vconv_max = 0;
 
-   dt_hosts = 0;                              /* daily hosts total      */
-
    ht_hits = 0;                                /* hourly hits totals       */
    ht_files = 0;
    ht_pages = 0;
@@ -116,8 +114,6 @@ void totals_t::init_counters(void)
 	a_hitptime = m_hitptime = a_fileptime = m_fileptime = a_pageptime = m_pageptime = 0.0;
    t_xfer = 0;
    
-   dt_hosts = 0;
-   
    f_day = l_day = 1;
    
    t_dlcount = 0;
@@ -160,7 +156,7 @@ size_t totals_t::s_data_size(void) const
             sizeof(uint64_t) * 8   +     // t_hit, t_file, t_page, t_hosts, t_url, t_ref, t_agent, t_user
             sizeof(uint64_t) * 5   +     // t_err, t_dlcount, t_srchits, t_entry, t_exit
             sizeof(uint64_t) * 2   +     // u_entry, u_exit
-            sizeof(uint64_t) * 3   +     // dt_hosts, ht_hits, hm_hit
+            sizeof(uint64_t) * 2   +     // ht_hits, hm_hit
             sizeof(uint64_t)       +     // t_visits
             sizeof(uint64_t)       +     // t_xfer
             sizeof(double)       +     // t_visit_avg
@@ -234,8 +230,6 @@ size_t totals_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, m_fileptime);
    ptr = serialize(ptr, a_pageptime);
    ptr = serialize(ptr, m_pageptime);
-
-   ptr = serialize(ptr, dt_hosts);
 
    ptr = serialize(ptr, ht_hits);
    ptr = serialize(ptr, hm_hit);
@@ -345,7 +339,8 @@ size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = deserialize(ptr, a_pageptime);
    ptr = deserialize(ptr, m_pageptime);
 
-   ptr = deserialize(ptr, dt_hosts);
+   if(version < 7)
+      ptr = s_skip_field<uint64_t>(ptr);     // dt_hosts
 
    ptr = deserialize(ptr, ht_hits);
    ptr = deserialize(ptr, hm_hit);
@@ -474,8 +469,10 @@ size_t totals_t::s_data_size(const void *buffer)
             sizeof(double)       +  // t_visit_avg
             sizeof(uint64_t)       +  // t_visit_max
             sizeof(double) *  6  +  // a_hitptime, m_hitptime, a_fileptime, m_fileptime, a_pageptime, m_pageptime 
-            sizeof(uint64_t)       +  // dt_hosts
             sizeof(uint64_t) *  2  ;  // ht_hits, hm_hit 
+
+   if(version < 7)
+      datasize += sizeof(uint64_t);    // dt_hosts (removed in v7)
 
    if(version < 2)
       return datasize;

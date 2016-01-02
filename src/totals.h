@@ -103,8 +103,6 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
 	   double a_pageptime;
       double m_pageptime;		
 
-      uint64_t dt_hosts;                           // daily hosts total
-
       uint64_t hm_hit;                             // current hourly hits maximum
       
       uint64_t ht_hits;                            // current hourly counts
