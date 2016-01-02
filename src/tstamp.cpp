@@ -227,10 +227,10 @@ void tstamp_t::toutc(void)
       reset(mktime());
 }
 
-void tstamp_t::tolocal(int offset) 
+void tstamp_t::tolocal(int of) 
 {
-   if(!null && (utc || offset != this->offset)) 
-      reset(mktime(), offset);
+   if(!null && (utc || of != offset)) 
+      reset(mktime(), of);
 }
 
 int64_t tstamp_t::compare(const tstamp_t& other, int mode) const
