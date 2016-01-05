@@ -15,9 +15,9 @@
 // Current application version components
 //
 #define VERSION_MAJOR           4
-#define VERSION_MINOR           0
-#define EDITION_LEVEL           3
-#define BUILD_NUMBER            2
+#define VERSION_MINOR           1
+#define EDITION_LEVEL           0
+#define BUILD_NUMBER            1
 
 //
 // Current numeric application version
