@@ -1052,32 +1052,17 @@ void state_t::update_hourly_stats(void)
 void state_t::set_tstamp(const tstamp_t& tstamp)
 {
    if (totals.cur_tstamp.year != tstamp.year || totals.cur_tstamp.month != tstamp.month) {
-      totals.cur_tstamp.month = tstamp.month;
-      totals.cur_tstamp.year  = tstamp.year;
       totals.f_day = totals.l_day = tstamp.day;
    }
 
    /* adjust last day processed if different */
    if (tstamp.day > totals.l_day) totals.l_day = tstamp.day;
 
-   /* update min/sec stuff */
-   if (totals.cur_tstamp.sec != tstamp.sec) totals.cur_tstamp.sec = tstamp.sec;
-   if (totals.cur_tstamp.min != tstamp.min) totals.cur_tstamp.min = tstamp.min;
-
    /* check for hour change  */
-   if (totals.cur_tstamp.hour != tstamp.hour)
+   if (totals.cur_tstamp.year != tstamp.year || totals.cur_tstamp.month != tstamp.month ||
+         totals.cur_tstamp.day != tstamp.day || totals.cur_tstamp.hour != tstamp.hour)
    {
       update_hourly_stats();
-      
-      /* if yes, init hourly stuff */
-      totals.cur_tstamp.hour = tstamp.hour;
-   }
-
-   /* check for day change   */
-   if (totals.cur_tstamp.day != tstamp.day)
-   {
-      /* if yes, init daily stuff */
-      totals.cur_tstamp.day = tstamp.day;
    }
 
    // update current timestamp

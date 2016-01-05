@@ -1213,7 +1213,7 @@ int webalizer_t::proc_logfile(void)
          rec_tstamp = log_rec.tstamp;
 
          /* Do we need to check for duplicate records? (incremental mode)   */
-         if (check_dup)
+         if (check_dup && !state.totals.cur_tstamp.null)
          {
             /* check if less than/equal to last record processed            */
             if ( rec_tstamp <= state.totals.cur_tstamp )
@@ -1227,6 +1227,10 @@ int webalizer_t::proc_logfile(void)
             check_dup = false;
 
             //
+            // If the previous run ended on the last record for the current month,
+            // we might be able to keep the report generated at the end of that
+            // run instead of generating a new report.
+            //
             // Original code used to reset the state timestamp, based on the 
             // assumption that the report generated in the previous run was 
             // a valid report, which was the case at the time because at the 
@@ -1239,7 +1243,6 @@ int webalizer_t::proc_logfile(void)
             // usable if there are any active visits at the end of the log file 
             // and a new report must be generated at the end of the month.
             //
-
             if(state.totals.cur_tstamp.year != log_rec.tstamp.year || state.totals.cur_tstamp.month != log_rec.tstamp.month) {
                // check if there are active visits
                if(state.totals.t_visits == state.totals.t_visits_end) {
@@ -1247,20 +1250,19 @@ int webalizer_t::proc_logfile(void)
                      state.clear_month();
 
                      // reset the current state timestamp
-                     state.totals.cur_tstamp.sec   = log_rec.tstamp.sec;
-                     state.totals.cur_tstamp.min   = log_rec.tstamp.min;
-                     state.totals.cur_tstamp.hour  = log_rec.tstamp.hour;
-                     state.totals.cur_tstamp.day   = log_rec.tstamp.day;
-                     state.totals.cur_tstamp.month = log_rec.tstamp.month;
-                     state.totals.cur_tstamp.year  = log_rec.tstamp.year;
-                     state.totals.cur_tstamp= rec_tstamp;
+                     state.totals.cur_tstamp = log_rec.tstamp;
                      state.totals.f_day=state.totals.l_day=log_rec.tstamp.day;
                }
             }
          }
 
-         /* check for out of sequence records */
-         if (rec_tstamp < state.totals.cur_tstamp) {
+         //
+         // Check for out of sequence records. If there are new log records that
+         // fall into the same second as the last record, these records will be
+         // ignored, which is slightly better than double-counting the records 
+         // that have already been processed.
+         //
+         if (rec_tstamp <= state.totals.cur_tstamp) {
             total_ignore++; 
             continue; 
          }
@@ -1272,73 +1274,65 @@ int webalizer_t::proc_logfile(void)
          /********************************************/
 
          //
-         // Update state timestamp parts and related data items
+         // Check for month change. The state timestamp must not be updated until 
+         // reports are generated and the database is rolled over, so each database
+         // contains the right start and end time stamps for its month.
          //
+         if (!state.totals.cur_tstamp.null) {
+            if (state.totals.cur_tstamp.year != log_rec.tstamp.year || state.totals.cur_tstamp.month != log_rec.tstamp.month)
+            {
+               if(config.is_dns_enabled()) {
+                  stime = msecs();
+                  dns_resolver.dns_wait();
+                  dns_time += elapsed(stime, msecs());
+               }
 
-         /* first time through? */
-         if (state.totals.cur_tstamp.month == 0)
-         {
-             /* if yes, init our date vars */
-             state.totals.cur_tstamp.month=log_rec.tstamp.month; state.totals.cur_tstamp.year=log_rec.tstamp.year;
-             state.totals.cur_tstamp.day=log_rec.tstamp.day; state.totals.cur_tstamp.hour=log_rec.tstamp.hour;
-             state.totals.cur_tstamp.min=log_rec.tstamp.min; state.totals.cur_tstamp.sec=log_rec.tstamp.sec;
-             state.totals.f_day=log_rec.tstamp.day;
-         }
-
-         //
-         // Check for month change. The state timestamp must not be updated 
-         // until reports are generated and the database is rolled over.
-         //
-         if (state.totals.cur_tstamp.year != log_rec.tstamp.year || state.totals.cur_tstamp.month != log_rec.tstamp.month)
-         {
-            if(config.is_dns_enabled()) {
-               stime = msecs();
-				   dns_resolver.dns_wait();
-               dns_time += elapsed(stime, msecs());
-            }
-
-            //
-            // Terminate all visits for the current month. This operation splits 
-            // active visits at the month boundary, which is by design. The sum 
-            // of all hits of all visits must match the total number of hits. If 
-            // active visits are moved to either of the months, hit counts will 
-            // no longer match for both months. 
-            //
-            update_visits(tstamp_t());
-            update_downloads(state.totals.cur_tstamp);
+               //
+               // Terminate all visits for the current month. This operation splits 
+               // active visits at the month boundary, which is by design. The sum 
+               // of all hits of all visits must match the total number of hits. If 
+               // active visits are moved to either of the months, hit counts will 
+               // no longer match for both months. 
+               //
+               update_visits(tstamp_t());
+               update_downloads(state.totals.cur_tstamp);
             
-            // state_t::set_tstamp is called later, so update hourly stats now
-            state.update_hourly_stats();
+               // state_t::set_tstamp is called later, so update hourly stats now
+               state.update_hourly_stats();
 
-            if(config.is_dns_enabled())
-				   group_hosts_by_name();
+               if(config.is_dns_enabled())
+				      group_hosts_by_name();
 
-            // save run data for the report generator
-            stime = msecs();
-            if (state.save_state()) {
-               /* Error: Unable to save current run data */
-               if (config.verbose) 
-                  fprintf(stderr,"%s\n",config.lang.msg_data_err);
-               // report generator uses saved state data
-               return 1;
-            }
-            mnt_time += elapsed(stime, msecs());
-
-            // generate monthly reports if not in batch mode
-            if(!config.batch) {
+               // save run data for the report generator
                stime = msecs();
-               if(!state.database.attach_indexes(true))
-                  throw exception_t(0, "Cannot create secondary database indexes");
-               write_monthly_report();                /* generate HTML for month */
-               rpt_time += elapsed(stime, msecs());
-            }
+               if (state.save_state()) {
+                  /* Error: Unable to save current run data */
+                  if (config.verbose) 
+                     fprintf(stderr,"%s\n",config.lang.msg_data_err);
+                  // report generator uses saved state data
+                  return 1;
+               }
+               mnt_time += elapsed(stime, msecs());
 
-            stime = msecs();
-            state.clear_month();
-            mnt_time += elapsed(stime, msecs());
+               // generate monthly reports if not in batch mode
+               if(!config.batch) {
+                  stime = msecs();
+                  if(!state.database.attach_indexes(true))
+                     throw exception_t(0, "Cannot create secondary database indexes");
+                  write_monthly_report();                /* generate HTML for month */
+                  rpt_time += elapsed(stime, msecs());
+               }
+
+               stime = msecs();
+               state.clear_month();
+               mnt_time += elapsed(stime, msecs());
+            }
          }
 
-         state.set_tstamp(log_rec.tstamp);            // update current timestamp
+         //
+         // Update the state with the new time stamp
+         //
+         state.set_tstamp(log_rec.tstamp);
 
          /*********************************************/
          /* DO SOME PRE-PROCESS FORMATTING            */
