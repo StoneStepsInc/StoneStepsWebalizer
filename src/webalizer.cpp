@@ -997,8 +997,6 @@ int webalizer_t::proc_logfile(void)
 
    uint64_t total_good = 0;
 
-   bool good_rec = false;                /* true if we had a good record*/
-
    int retcode = 0, errnum = 0;
 
    typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
@@ -1201,9 +1199,6 @@ int webalizer_t::proc_logfile(void)
          /*********************************************/
          /* GOOD RECORD, CHECK INCREMENTAL/TIMESTAMPS */
          /*********************************************/
-
-         /* Flag as a good one */
-         good_rec = true;
 
          // check if need to convert log time stamp to local time
          if(config.local_time)
@@ -1760,7 +1755,7 @@ int webalizer_t::proc_logfile(void)
       delete *i;
    logrecs.clear();
 
-   if(good_rec)                                                         /* were any good records?   */
+   if(total_good)                                                       /* were any good records?   */
    {
       if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
 
