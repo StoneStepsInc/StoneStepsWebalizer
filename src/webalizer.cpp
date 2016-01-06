@@ -993,8 +993,6 @@ int webalizer_t::proc_logfile(void)
    bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
 
-   tstamp_t rec_tstamp;  
-
    uint64_t total_good = 0;
 
    int retcode = 0, errnum = 0;
@@ -1205,7 +1203,7 @@ int webalizer_t::proc_logfile(void)
             log_rec.tstamp.tolocal(config.get_utc_offset(log_rec.tstamp, dst_iter));
 
          /* get current records timestamp (seconds since epoch) */
-         rec_tstamp = log_rec.tstamp;
+         tstamp_t& rec_tstamp = log_rec.tstamp;
 
          /* Do we need to check for duplicate records? (incremental mode)   */
          if (check_dup && !state.totals.cur_tstamp.null)
@@ -1777,9 +1775,9 @@ int webalizer_t::proc_logfile(void)
             state.update_hourly_stats();
          }
          else
-            update_visits(rec_tstamp);
+            update_visits(state.totals.cur_tstamp);
 
-         update_downloads(rec_tstamp);
+         update_downloads(state.totals.cur_tstamp);
 
          if(config.is_dns_enabled())
 			   group_hosts_by_name();
