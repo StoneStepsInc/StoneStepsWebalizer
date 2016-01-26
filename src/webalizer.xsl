@@ -2,7 +2,7 @@
 <!--
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2016, Stone Steps Inc. (www.stonesteps.ca)
 
    See COPYING and Copyright files for additional licensing and copyright information 
  -->
@@ -64,7 +64,7 @@
 <xsl:template name="output_copyright_comment" xml:space="preserve">
 <xsl:comment>      Stone Steps Webalizer v<xsl:value-of select="application/version"/>      </xsl:comment>
 <xsl:comment>                                          </xsl:comment>
-<xsl:comment> Copyright (c) 2004-2015, Stone Steps Inc. </xsl:comment>
+<xsl:comment> Copyright (c) 2004-2016, Stone Steps Inc. </xsl:comment>
 <xsl:comment>         http://www.stonesteps.ca         </xsl:comment>
 <xsl:comment>                                          </xsl:comment>
 <xsl:comment> Distributed under the GNU GPL  Version 2 </xsl:comment>
