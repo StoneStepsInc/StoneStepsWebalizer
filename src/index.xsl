@@ -16,7 +16,7 @@
 <xsl:import href="webalizer.xsl"/>
 
 <!-- configure output as HTML 4.01 strict -->
-<xsl:output method="html" indent="no" encoding="utf-8" doctype-public="-//W3C//DTD HTML 4.01//EN" doctype-system="http://www.w3.org/TR/html4/strict.dtd" />
+<xsl:output method="html" indent="no" encoding="utf-8"/>
 
 <!-- include Flash graph templates -->
 <xsl:include href="graphs-ofc.xsl"/>
@@ -49,7 +49,7 @@
 
 </head>
 
-<body onload="onloadpage(PAGE_INDEX)" onkeyup="return onpagekeyup(event)">
+<body onload="onload_index_page()">
 
 <!-- page header -->
 <xsl:call-template name="output_page_header"/>

@@ -71,7 +71,7 @@ void html_output_t::cleanup_output_engine(void)
 /* WRITE_HTML_HEAD - output top of HTML page */
 /*********************************************/
 
-void html_output_t::write_html_head(const char *period, FILE *out_fp)
+void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_t page_type)
 {
    list_t<nnode_t>::iterator iter;                 /* used for HTMLhead processing */
 
@@ -79,7 +79,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    if (config.html_pre.isempty())
    {
       /* Default 'DOCTYPE' header record if none specified */
-      fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n", out_fp);
+      fputs("<!DOCTYPE HTML>\n", out_fp);
 
    }
    else
@@ -122,8 +122,19 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp)
    fputs("</head>\n\n", out_fp);
 
    if(config.html_body.isempty()) {
-      if(config.enable_js)
-         fputs("<body onload=\"onloadpage()\" onkeyup=\"onpagekeyup(event)\">\n", out_fp);
+      if(config.enable_js) {
+         switch (page_type) {
+            case page_index:
+               fputs("<body onload=\"onload_index_page()\">\n", out_fp);
+               break;
+            case page_usage:
+               fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
+               break;
+            case page_all_items:
+               fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);
+               break;
+         }
+      }
       else
 		   fputs("<body>\n", out_fp);
    }
@@ -316,7 +327,7 @@ int html_output_t::write_monthly_report()
    if ( (out_fp=open_out_file(html_fname_lang))==NULL ) return 1;
 
    sprintf(buffer,"%s %d", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_usage);
 
    month_links();
 
@@ -376,9 +387,6 @@ int html_output_t::write_monthly_report()
 void html_output_t::month_links()
 {
    string_t onclick;
-
-   if(config.enable_js)
-      onclick = " onclick=\"return onclickmenu(this)\"";
 
    fputs("<table id=\"main_menu\" class=\"page_links_table\"><tr>\n", out_fp);
    
@@ -959,7 +967,7 @@ int html_output_t::all_hosts_page(void)
    if ( (out_fp=open_out_file(site_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -1241,7 +1249,7 @@ int html_output_t::all_urls_page(void)
    if ( (out_fp=open_out_file(url_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -1731,7 +1739,7 @@ int html_output_t::all_downloads_page(void)
    if ( (out_fp=open_out_file(dl_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -1891,7 +1899,7 @@ int html_output_t::all_errors_page(void)
    if ( (out_fp=open_out_file(err_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -1945,7 +1953,7 @@ int html_output_t::all_refs_page(void)
    if ( (out_fp=open_out_file(ref_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2168,7 +2176,7 @@ int html_output_t::all_agents_page(void)
    if ( (out_fp=open_out_file(agent_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2359,7 +2367,7 @@ int html_output_t::all_search_page(void)
    if ( (out_fp=open_out_file(search_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
 
@@ -2567,7 +2575,7 @@ int html_output_t::all_users_page(void)
    if ( (out_fp=open_out_file(user_fname))==NULL ) return 0;
 
    sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
-   write_html_head(buffer, out_fp);
+   write_html_head(buffer, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2807,7 +2815,7 @@ int html_output_t::write_main_index()
    
    // Last N Months
    title.format("%s %d %s", config.lang.msg_main_plst, state.history.disp_length(), config.lang.msg_main_pmns);
-   write_html_head(title, out_fp);
+   write_html_head(title, out_fp, page_index);
 
    /* year graph */
    fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);

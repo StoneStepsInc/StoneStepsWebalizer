@@ -16,7 +16,7 @@
 <xsl:import href="webalizer.xsl"/>
 
 <!-- configure output as HTML 4.01 strict -->
-<xsl:output method="html" indent="no" encoding="utf-8" doctype-public="-//W3C//DTD HTML 4.01//EN" doctype-system="http://www.w3.org/TR/html4/strict.dtd" />
+<xsl:output method="html" indent="no" encoding="utf-8"/>
 
 <!-- include Flash graph templates -->
 <xsl:include href="graphs-ofc.xsl"/>
@@ -52,6 +52,177 @@
 <head>
 <xsl:call-template name="output_html_head"/>
 
+<script type="text/javascript">
+<![CDATA[
+var ie6 = false;
+var ie7 = false;
+var ie8 = false;
+var ie9 = false;
+
+var allitems = null;          // instance of ViewAllInfo, if there is an expanded report
+
+function ViewAllInfo()
+{
+   this.rptlink = null;       // a link in front of each report
+   this.viewall = null;       // view all link (tbody)
+   this.allitems = null;      // all items (tbody)
+   this.titlenode = null;     // title table cell (th)
+   this.title = null;         // original report title (String)
+}
+
+function onload_usage_page_xml()
+{
+   initAllItemsLinks();
+
+   registerOnKeyUpHandler(onKeyUpAllItemsHandler);
+}
+
+function onKeyUpAllItemsHandler(event)
+{
+   if(event.keyCode == KEY_ESC)
+      hideAllItems(true);
+}
+
+function initAllItemsLinks()
+{
+   // check for versions of IE
+   ie6 = /MSIE[ \t]+6/.test(window.navigator.userAgent);
+   ie7 = /MSIE[ \t]+7/.test(window.navigator.userAgent);
+   ie8 = /MSIE[ \t]+8/.test(window.navigator.userAgent);
+   ie9 = /MSIE[ \t]+9/.test(window.navigator.userAgent);
+}
+
+//
+// hideAllItems
+//
+// Collapse an expanded all-items section, if there's any
+//
+function hideAllItems(gotorep)
+{
+   if(allitems) {
+      // make the View All link visible
+      allitems.viewall.style.display = (ie6 || ie7 || ie8 || ie9) ? "block" : "table-row-group";
+      
+      // hide the remaining items
+      allitems.allitems.style.display = "none";
+
+      // and restore the report title
+      allitems.titlenode.firstChild.data = allitems.title;
+      
+      // if requested, go to the top of the report
+      if(gotorep)
+         document.location.href = "#" + allitems.rptlink.name;
+         
+      // all done, reset the descriptor
+      allitems = null;
+   }
+}
+
+//
+// showAllItems
+//
+// Shows the hidden table section with the remainder of report items,
+// fixes up the title and hides the View All table section.
+//
+function showAllItems(node, top, count)
+{
+   if(!node)
+      return false;
+
+   // hide the expanded section, if there's any
+   hideAllItems(false);
+   
+   // create a descriptor to hold table sections
+   allitems = new ViewAllInfo();
+   
+   //
+   // Hide the table section containing the View All link
+   //
+   node = findParentNode(node, "tbody")
+
+   // store the link node
+   allitems.viewall = node;
+   
+   // and hide the section
+   node.style.display = "none";
+   
+   //
+   // Expand the section containing remaining report items
+   //
+   node = findNextSibling(node, "tbody");
+
+   // store it, so we can use it later to collapse the section
+   allitems.allitems = node;
+
+   // and make the section visible (IE6/7 do not understand table-row-group)
+   node.style.display = (ie6 || ie7 || ie8 || ie9) ? "block" : "table-row-group";
+
+   //
+   // Fix the title to reflect the number of displayed items
+   //
+   allitems.titlenode = findReportTitle(node);
+   
+   // keep the title, so we can restore it later
+   allitems.title = allitems.titlenode.firstChild.data;
+   
+   // replace the top number with the new value
+   allitems.titlenode.firstChild.data = allitems.title.replace(new RegExp(" " + top + " "), " " + count + " ");
+
+   //
+   // We may have collapsed a report that is located before the one we are
+   // expanding, which would cause the browser to show some arbitrary part
+   // of the markup. In order to avoid this, let's tell the browser to go 
+   // to the top of the current report. 
+   //
+   
+   // find the anchor element before the report table
+   allitems.rptlink = findPrevSibling(findParentNode(node, "table"), "a");
+
+   // and change the document location
+   document.location.href = "#" + allitems.rptlink.name;
+   
+   return true;
+}
+
+//
+// findReportTitle
+//
+// Given any node inside a report table, returns the report title cell.
+// The text data within the cell is normalized before the call returns,
+// so it is possible to use firstChild against the returned value to
+// access title text.
+//
+function findReportTitle(node)
+{
+   // find the parent table
+   node = findParentNode(node, "table");
+   
+   // find the head section
+   node = node.firstChild;
+
+   while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != "thead")
+      node = node.nextSibling;
+
+   // find the title row
+   node = node.firstChild;
+
+   while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != "tr" || node.className.indexOf("table_title_tr") == -1)
+      node = node.nextSibling;
+   
+   // find the title cell
+   node = node.firstChild;
+
+   while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != "th")
+      node = node.nextSibling;
+   
+   node.normalize();
+   
+   return node;
+}   
+
+]]>
+</script>
+
 <!-- graph-related HTML markup -->
 <xsl:choose>
 <xsl:when test="$graphtype=&quot;graph-flash-ofc&quot;">
@@ -64,7 +235,7 @@
 
 </head>
 
-<body onload="onloadpage(PAGE_USAGE)" onkeyup="return onpagekeyup(event)">
+<body onload="onload_usage_page(onload_usage_page_xml)">
 
 <a name="top"></a>
 
@@ -74,58 +245,58 @@
 <!-- main menu links -->
 <table id="main_menu" class="page_links_table"><tr>
 <xsl:if test="$report_daily_totals">
-<td><a href="#daily" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_daily_stats&quot;)"/></a></td>
+<td><a href="#daily"><xsl:value-of select="key(&quot;text&quot;, &quot;link_daily_stats&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_hourly_totals">
-<td><a href="#hourly" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hourly_stats&quot;)"/></a></td>
+<td><a href="#hourly"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hourly_stats&quot;)"/></a></td>
 </xsl:if>
 
 <xsl:choose>
 <!-- if there's a top URLs report, always link to it -->
 <xsl:when test="$report_top_url_hits">
-<td><a href="#urls" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_urls&quot;)"/></a>
+<td><a href="#urls"><xsl:value-of select="key(&quot;text&quot;, &quot;link_urls&quot;)"/></a>
 <!-- if there's also a URL transfer report, create a hidden link -->
 <xsl:if test="$report_top_url_xfer"><a href="#urlxfer" style="display: none"/></xsl:if>
 </td>
 </xsl:when>
 <xsl:when test="$report_top_url_xfer">
 <!-- if there's just a URL transfer report, link to it -->
-<td><a href="#urlxfer" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_urls&quot;)"/></a></td>
+<td><a href="#urlxfer"><xsl:value-of select="key(&quot;text&quot;, &quot;link_urls&quot;)"/></a></td>
 </xsl:when>
 </xsl:choose>
 
 <xsl:if test="$report_top_entry_urls">
-<td><a href="#entry" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_entry&quot;)"/></a></td>
+<td><a href="#entry"><xsl:value-of select="key(&quot;text&quot;, &quot;link_entry&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_exit_urls">
-<td><a href="#exit" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_exit&quot;)"/></a></td>
+<td><a href="#exit"><xsl:value-of select="key(&quot;text&quot;, &quot;link_exit&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_downloads">
-<td><a href="#downloads" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_downloads&quot;)"/></a></td>
+<td><a href="#downloads"><xsl:value-of select="key(&quot;text&quot;, &quot;link_downloads&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_errors">
-<td><a href="#errors" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_errors&quot;)"/></a></td>
+<td><a href="#errors"><xsl:value-of select="key(&quot;text&quot;, &quot;link_errors&quot;)"/></a></td>
 </xsl:if>
 
 <xsl:choose>
 <!-- if there's a top hosts report, always link to it -->
 <xsl:when test="$report_top_host_hits">
-<td><a href="#hosts" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hosts&quot;)"/></a></td>
+<td><a href="#hosts"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hosts&quot;)"/></a></td>
 <!-- if there's also a hosts transfer report, create a hidden link -->
 <xsl:if test="$report_top_host_xfer"><a href="#hostxfer" style="display: none"></a></xsl:if>
 </xsl:when>
 <!-- if there's just a hosts transfer report, link to it -->
 <xsl:when test="$report_top_host_xfer">
-<td><a href="#hosts" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hosts&quot;)"/></a></td>
+<td><a href="#hosts"><xsl:value-of select="key(&quot;text&quot;, &quot;link_hosts&quot;)"/></a></td>
 </xsl:when>
 </xsl:choose>
 
 <xsl:if test="$report_top_referrers">
-<td><a href="#referrers" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_referrers&quot;)"/></a></td>
+<td><a href="#referrers"><xsl:value-of select="key(&quot;text&quot;, &quot;link_referrers&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_search_strings">
-<td><a href="#search" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_search&quot;)"/></a></td>
+<td><a href="#search"><xsl:value-of select="key(&quot;text&quot;, &quot;link_search&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_users">
-<td><a href="#users" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_users&quot;)"/></a></td>
+<td><a href="#users"><xsl:value-of select="key(&quot;text&quot;, &quot;link_users&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_user_agents">
-<td><a href="#useragents" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_agents&quot;)"/></a></td>
+<td><a href="#useragents"><xsl:value-of select="key(&quot;text&quot;, &quot;link_agents&quot;)"/></a></td>
 </xsl:if><xsl:if test="$report_top_countries">
-<td><a href="#countries" onclick="return onclickmenu(this)"><xsl:value-of select="key(&quot;text&quot;, &quot;link_countries&quot;)"/></a></td>
+<td><a href="#countries"><xsl:value-of select="key(&quot;text&quot;, &quot;link_countries&quot;)"/></a></td>
 </xsl:if>
 </tr></table>
 

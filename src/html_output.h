@@ -27,6 +27,9 @@ class database_t;
 //
 //
 class html_output_t : public output_t {
+   public:
+      enum page_type_t {page_index, page_usage, page_all_items};
+
    private:
       typedef buffer_encoder_t< ::html_encode> html_encoder_t;
 
@@ -39,7 +42,7 @@ class html_output_t : public output_t {
       html_encoder_t& html_encode;          // local scopes may define a new instance of html_encode
 
    private:
-      void write_html_head(const char *period, FILE *out_fp);
+      void write_html_head(const char *period, FILE *out_fp, page_type_t page_type);
       void write_html_tail(FILE *out_fp);
 
       void write_url_report(void);
