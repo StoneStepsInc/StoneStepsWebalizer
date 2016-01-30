@@ -23,10 +23,10 @@ typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool mu
 // encoding mode may be set to append to the last encoding result or overwrite it.
 //
 // Copying an encoder with a new mode creates an encoder that uses only free space 
-// from the original buffer, which allows new buffer to be reset without affecting
-// the original encoder. For example, provided that each character below is encoded
-// as a single character in the buffer, the encoder inside the for loop will have a
-// 40-byte buffer after it's constructed.
+// from the original buffer, which makes it possible to manipulate the new buffer
+// without affecting the original encoder. For example, provided that each character
+// below is encoded as a single narrow character in the buffer, the encoder inside
+// the for loop will have a 38-byte buffer after it's constructed.
 //
 //    buffer_encoder_t<x> encoder(buffer, 50, buffer_encoder_t<x>::append);
 //    buffer_encoder_t<x>& encode = encoder;    // alias to make it look like a function name
@@ -35,6 +35,7 @@ typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool mu
 //
 //    for(int i = 0; i < max; i++) {
 //       buffer_encoder_t<x> encoder(encoder, buffer_encoder_t<x>::overwrite);
+//       buffer_encoder_t<x>& encode = encoder;
 //       printf("%s\n", encode(cp3));
 //       printf("%s\n", encode(cp4));
 //    }
