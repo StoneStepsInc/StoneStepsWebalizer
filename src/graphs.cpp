@@ -469,10 +469,10 @@ int graph_t::month_graph6(const char *fname,          // filename
    uint64_t maxval=0;
    uint64_t fmaxval=0;
    u_int offset, textsize;
-   uint64_t julday;
+   uint64_t wday;
 
-   /* calc julian date for month */
-   julday = tstamp_t::wday(tstamp_t::jday(year, month, 1));
+   // get the week day of the first day of the month
+   wday = tstamp_t::wday(tstamp_t::jday(year, month, 1));
 
    /* initalize the graph */
    init_graph(title,512,400);
@@ -496,11 +496,10 @@ int graph_t::month_graph6(const char *fname,          // filename
    /* x-axis legend */
    for (i=0;i<31;i++)
    {
-      if ((julday % 7 == 6) || (julday % 7 == 0))
+      if((wday+i) % 7 == 6 || (wday+i) % 7 == 0)
          _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_weekend, true, NULL);
       else
          _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_legend, true, NULL);
-      julday++;
    }
 
    /* y-axis legend */

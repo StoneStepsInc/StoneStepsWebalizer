@@ -67,6 +67,106 @@ void html_output_t::cleanup_output_engine(void)
    graph.cleanup_graph_engine();
 }
 
+void html_output_t::write_highcharts_head(FILE *out_fp)
+{
+   fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
+   fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
+
+   // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
+   fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
+   fputs("<script type=\"text/javascript\">\n", out_fp);
+   fputs("function onLoadUsagePage()\n", out_fp); 
+   fputs("{\n", out_fp);
+   fputs("   var chart_config = {\n", out_fp);
+
+   //
+   // Output custom colors, if any are defined in the configuration. Chart colors 
+   // can also be changed in the chart prototype in webalizer.js. Prototype colors 
+   // will take effect immediately in all reports that don't override colors via 
+   // configuration.
+   //
+   // Note that ECMAScript 5.1 allows a trailing comma after a property definition.
+   //
+   if(!graph.is_default_background_color()) fprintf(out_fp, "      background_color: \"#%06X\",\n", graph.get_background_color());
+   if(!graph.is_default_gridline_color()) fprintf(out_fp, "      gridline_color: \"#%06X\",\n", graph.get_gridline_color());
+   if(!graph.is_default_title_color()) fprintf(out_fp, "      title_color: \"#%06X\",\n", graph.get_title_color());
+   if(!graph.is_default_hits_color()) fprintf(out_fp, "      hits_color: \"#%06X\",\n", graph.get_hits_color());
+   if(!graph.is_default_files_color()) fprintf(out_fp, "      files_color: \"#%06X\",\n", graph.get_files_color());
+   if(!graph.is_default_pages_color()) fprintf(out_fp, "      pages_color: \"#%06X\",\n", graph.get_pages_color());
+   if(!graph.is_default_visits_color()) fprintf(out_fp, "      visits_color: \"#%06X\",\n", graph.get_visits_color());
+   if(!graph.is_default_hosts_color()) fprintf(out_fp, "      hosts_color: \"#%06X\",\n", graph.get_hosts_color());
+   if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\"", graph.get_volume_color());
+   if(!graph.is_default_weekend_color()) fprintf(out_fp, "      weekend_color: \"#%06X\",\n", graph.get_weekend_color());
+   fputs("   };\n\n", out_fp);
+
+   u_int last_day = state.totals.cur_tstamp.last_month_day();
+   fputs("   var daily_usage_chart = new DailyUsageChart(1, chart_config, {\n", out_fp);
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+   fprintf(out_fp, "      maxDay: %d,\n", last_day);
+
+   //
+   // Use ISO week day numbering to compute the number of days to the next
+   // Saturday because Saturday (6) and Sunday (7) are next to each other
+   // and we don't have to use use modulo division. The result may be -1 if 
+   // the 1st is a Sunday.
+   //
+   fputs("      weekends: [", out_fp);
+   int to_sat = 6 - tstamp_t::wday_iso(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
+   for(u_int i = 1+to_sat; i <= last_day; i += 7) {
+      // 1st Saturday will be in the [0-6] range
+      if(i > 6)
+         fputs(", ", out_fp);
+
+      //
+      // If both, Sat (i) and Sun (i+1) are within the month, print both
+      // numbers. Otherwise, print either Sun (1st of the month) or Sat
+      // (last day of the month).
+      //
+      if(i > 0 && i < last_day)
+         fprintf(out_fp, "%d, %d", i, i+1);
+      else
+         fprintf(out_fp, "%d", i == 0 ? i+1 : i);
+   }
+   fputs("],\n", out_fp);
+
+   fputs("      seriesNames: {\n", out_fp);
+   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
+   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
+   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
+   fprintf(out_fp, "         xfer: \"%s\",\n", config.lang.msg_h_xfer);
+   fprintf(out_fp, "         visits: \"%s\",\n", config.lang.msg_h_visits);
+   fprintf(out_fp, "         hosts: \"%s\"\n", config.lang.msg_h_hosts);
+   fputs("      }\n", out_fp);
+   fputs("   });\n\n", out_fp);
+
+   fputs("   renderDailyUsageChart_Highcharts(daily_usage_chart);\n\n", out_fp);
+
+   fputs("   var hourly_usage_chart = new HourlyUsageChart(1, chart_config, {\n", out_fp);
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+   fputs("      seriesNames: {\n", out_fp);
+   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
+   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
+   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
+   fprintf(out_fp, "         xfer: \"%s\"\n", config.lang.msg_h_xfer);
+   fputs("      }\n", out_fp);
+   fputs("   });\n\n", out_fp);
+
+   fputs("   renderHourlyUsageChart_Highcharts(hourly_usage_chart);\n\n", out_fp);
+
+   fputs("   var country_usage_chart = new CountryUsageChart(1, chart_config, {\n", out_fp);
+   fprintf(out_fp, "     title: \"%s %s %d\",\n", config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+   fprintf(out_fp, "     totalVisits: %d,\n", state.totals.t_hvisits_end);
+   fprintf(out_fp, "     otherLabel : \"%s\",\n", config.lang.msg_h_other);
+   fputs("     seriesNames: {\n", out_fp);
+   fprintf(out_fp, "         visits: \"%s\"\n", config.lang.msg_h_visits);
+   fputs("      }\n", out_fp);
+   fputs("   });\n\n", out_fp);
+
+   fputs("   renderCountryUsageChart_Highcharts(country_usage_chart);\n", out_fp);
+   fputs("}\n", out_fp);
+   fputs("</script>\n", out_fp);		
+}
+
 /*********************************************/
 /* WRITE_HTML_HEAD - output top of HTML page */
 /*********************************************/
@@ -80,7 +180,6 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    {
       /* Default 'DOCTYPE' header record if none specified */
       fputs("<!DOCTYPE HTML>\n", out_fp);
-
    }
    else
    {
@@ -114,6 +213,20 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    if(!config.html_js_path.isempty())
 	   fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
+   if(config.js_charts == "highcharts")
+      write_highcharts_head(out_fp);
+   else {
+      //
+      // Generate an empty onload handler for this page, so the onload event can
+      // be output wihout evaluating any conditions.
+      //
+      fputs("<script type=\"text/javascript\">\n", out_fp);
+      fputs("function onLoadUsagePage()\n", out_fp); 
+      fputs("{\n", out_fp);
+      fputs("}\n", out_fp);
+      fputs("</script>\n", out_fp);		
+   }
+
    iter = config.html_head.begin();
    while(iter.next())
    {
@@ -128,7 +241,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
                fputs("<body onload=\"onload_index_page()\">\n", out_fp);
                break;
             case page_usage:
-               fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
+               fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
                break;
             case page_all_items:
                fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);
@@ -338,12 +451,19 @@ int html_output_t::write_monthly_report()
    {
       fputs("\n<div id=\"daily_stats_report\">\n", out_fp);
       fputs("\n<a name=\"daily\"></a>\n", out_fp);
-      if (config.daily_graph) 
-			fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
+      if (config.daily_graph) {
+         if(config.js_charts == "highcharts")
+			   fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
+         else
+			   fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
+      }
+
    	if (config.daily_stats) 
 			fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
+
       if (config.daily_stats) 
 			daily_total_table();
+
       fputs("</div>\n", out_fp);
    }
 
@@ -351,8 +471,13 @@ int html_output_t::write_monthly_report()
    {
       fputs("\n<div id=\"hourly_stats_report\">\n", out_fp);
       fputs("<a name=\"hourly\"></a>\n", out_fp);
-      if (config.hourly_graph) 
-         fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
+      if (config.hourly_graph) { 
+         if(config.js_charts == "highcharts")
+            fputs("<div id=\"hourly_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
+         else
+            fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
+      }
+
       if (config.hourly_stats) hourly_total_table();
       fputs("</div>\n", out_fp);
    }
@@ -648,18 +773,18 @@ void html_output_t::month_total_table()
 
 void html_output_t::daily_total_table()
 {
-   u_int jday;
+   u_int wday;
    int i;
    const hist_month_t *hptr;
 
    if((hptr = state.history.find_month(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month)) == NULL)
       return;
       
-   jday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
+   wday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
 
    /* Daily stats */
    fputs("\n<!-- Daily Totals Table -->\n", out_fp);
-   fputs("<table class=\"report_table totals_table\">\n", out_fp);
+   fputs("<table id=\"daily_usage_table\" class=\"report_table totals_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    /* Daily statistics for ... */
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
@@ -702,7 +827,7 @@ void html_output_t::daily_total_table()
 
 	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (; i < hptr->lday; i++) {
-      fprintf(out_fp,"<tr%s><th>%d</th>\n", ((jday + i) % 7 == 6 || (jday + i) % 7 == 0) ? " class=\"weekend_tr\"" : "", i+1);
+      fprintf(out_fp,"<tr%s><th>%d</th>\n", ((wday + i) % 7 == 6 || (wday + i) % 7 == 0) ? " class=\"weekend_tr\"" : "", i+1);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_hits, PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_files, PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_pages, PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
@@ -727,7 +852,7 @@ void html_output_t::hourly_total_table()
 
    /* Hourly stats */
    fputs("\n<!-- Hourly Totals Table -->\n", out_fp);
-   fputs("<table class=\"report_table totals_table\">\n", out_fp);
+   fputs("<table id=\"hourly_usage_table\" class=\"report_table totals_table\">\n", out_fp);
 
 	fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
@@ -2716,12 +2841,16 @@ void html_output_t::top_ctry_table()
       if(makeimgs)
          graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
 
-      /* put the image tag in the page */
-      fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
+      if(config.js_charts == "highcharts")
+         fputs("<div id=\"country_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
+      else {
+         /* put the image tag in the page */
+         fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
+      }
    }
 
    /* Now do the table */
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"country_usage_table\" class=\"report_table stats_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"10\">%s %u %s %d %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);

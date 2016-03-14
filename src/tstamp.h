@@ -95,15 +95,29 @@ struct tstamp_t {
 
       time_t mktime(void) const;
 
-      static time_t mktime(int year, int month, int day, int hour, int min, int sec);
+      u_int last_month_day(void) const {return last_month_day(year, month);}
 
-      static time_t mktime(int year, int month, int day, int hour, int min, int sec, int offset);
+      u_int jday(void) const {return jday(year, month, day);}
+
+      u_int wday(void) const {return wday(year, month, day);}
+
+      static time_t mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec);
+
+      static time_t mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset);
 
       static u_int jday(u_int year, u_int month, u_int day);
 
+      // returns zero-based US week day number (0 - Sun, 1 - Mon, etc)
       static inline u_int wday(uint64_t days) {return (days + 1) % 7;}
 
-      static inline u_int wday(int year, int month, int day) {return wday(jday(year, month, day));}
+      // returns one-based ISO week day number (1 - Mon, 2 - Tue, etc)
+      static inline u_int wday_iso(uint64_t days) {return (days % 7) + 1;}
+
+      static inline u_int wday(u_int year, u_int month, u_int day) {return wday(jday(year, month, day));}
+
+      static inline u_int wday_iso(u_int year, u_int month, u_int day) {return wday_iso(jday(year, month, day));}
+
+      static u_int last_month_day(u_int year, u_int month);
 };
 
 #endif // __TSTAMP_H

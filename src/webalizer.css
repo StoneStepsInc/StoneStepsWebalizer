@@ -20,7 +20,7 @@ img {margin: 0 auto; display: block;}
  * Shared Classes
  */
 pre.details_pre {font-size: 8pt; margin-left: 5px;}
-p.note_p {margin: auto 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
+p.note_p {margin: 1em 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
 span.help_span {cursor: help;}
 
 div#helpbox {display: none; position: absolute; width: 400px; right: 0; top: 0; padding: 3px 5px; border: 1px solid black; background-color: #FFFFE0; font: 10pt Arial, sans-serif;}
@@ -39,11 +39,20 @@ td.converted, span.converted {color: inherit;}
 td.target, span.target {color: inherit;}
 
 /*
- * Graph Holders
+ * PNG image charts
  */
 div.graph_holder {margin: 1em auto; padding: 0; border: 1px solid #333333; background-color: #E3E3E3;}
 div#monthly_summary_graph {}
 div#daily_usage_graph, div#hourly_usage_graph, div#country_usage_graph {width: 512px;}
+
+/*
+ * JavaScript Charts
+ */
+div.chart_holder {margin: 1em auto; padding: 0; border: 1px solid black;}
+div#monthly_summary_chart {}
+div#daily_usage_chart {width: 800px; height: 450px}
+div#hourly_usage_chart {width: 660px; height: 450px}
+div#country_usage_chart {width: 600px; height: 430px}
 
 /*
  * Colorized Header Cells (Hits, Pages, Visits, etc)

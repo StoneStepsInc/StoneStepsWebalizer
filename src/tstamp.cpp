@@ -300,7 +300,7 @@ time_t tstamp_t::mktime(void) const
       mktime(year, month, day, hour, min, sec, offset);
 }
 
-time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec, int offset)
+time_t tstamp_t::mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset)
 {
    //
    // Convert local time as if it's UTC and then subtract the offset (i.e. negative offsets 
@@ -312,7 +312,7 @@ time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec
 //
 // Returns the number of seconds since midnight 1/1/1970, UTC
 //
-time_t tstamp_t::mktime(int year, int month, int day, int hour, int min, int sec)
+time_t tstamp_t::mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec)
 {
    //
    // Julian day number for noon 1970-01-01 (UTC) is 2440588. Subtracting this value
@@ -332,4 +332,15 @@ u_int tstamp_t::jday(u_int year, u_int month, u_int day)
    y = year+4800-a;
    m = month + 12*a - 3;
    return day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045;
+}
+
+u_int tstamp_t::last_month_day(u_int year, u_int month)
+{
+   //
+   // Find out how many days there are between the beginning of the 28th 
+   // day of the requested month and the beginning of the 1st day of the 
+   // next month and add the difference to 27 to account for the full 
+   // day of the 28th included into the difference.
+   //
+   return 27 + ((month < 12) ? jday(year, month+1, 1) : jday(year+1, 1, 1)) - jday(year, month, 28);
 }

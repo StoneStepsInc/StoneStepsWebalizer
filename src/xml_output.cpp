@@ -416,7 +416,7 @@ void xml_output_t::write_daily_totals(void)
 {
    string_t png_fname;
    string_t title;
-   u_int jday;
+   u_int wday;
    int i;
    const hist_month_t *hptr;
 
@@ -439,7 +439,7 @@ void xml_output_t::write_daily_totals(void)
    //
    //
    //   
-   jday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
+   wday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
 
 	fprintf(out_fp, "<report id=\"daily_totals\" help=\"daily_totals_report\" title=\"%s %s %d\">\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 	
@@ -449,7 +449,7 @@ void xml_output_t::write_daily_totals(void)
 
    fputs("<days>", out_fp);
 	for(i = 0; i < 31; i++)
-	   fprintf(out_fp, "<day weekday=\"%d\"/>", (jday + i) % 7);
+	   fprintf(out_fp, "<day weekday=\"%d\"/>", (wday + i) % 7);
    fputs("</days>\n", out_fp);
    
    fputs("</graph>\n", out_fp);
@@ -477,7 +477,7 @@ void xml_output_t::write_daily_totals(void)
 	
    for (; i < hptr->lday; i++) {
       fprintf(out_fp,"<row count=\"%hu\" rowid=\"%d\">\n", state.t_daily[i].td_hours, i+1);
-      fprintf(out_fp,"<data><value weekday=\"%d\">%d</value></data>\n", (jday + i) % 7, i+1);
+      fprintf(out_fp,"<data><value weekday=\"%d\">%d</value></data>\n", (wday + i) % 7, i+1);
       fprintf(out_fp,"<data><sum percent=\"%3.02f\">%" PRIu64 "</sum><avg>%.2f</avg><max>%" PRIu64 "</max></data>\n", PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].tm_hits, state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
       fprintf(out_fp,"<data><sum percent=\"%3.02f\">%" PRIu64 "</sum><avg>%.2f</avg><max>%" PRIu64 "</max></data>\n", PCENT(state.t_daily[i].tm_files, state.totals.t_file), state.t_daily[i].tm_files, state.t_daily[i].h_files_avg, state.t_daily[i].h_files_max);
       fprintf(out_fp,"<data><sum percent=\"%3.02f\">%" PRIu64 "</sum><avg>%.2f</avg><max>%" PRIu64 "</max></data>\n", PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].tm_pages, state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
