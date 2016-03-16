@@ -67,7 +67,7 @@ void html_output_t::cleanup_output_engine(void)
    graph.cleanup_graph_engine();
 }
 
-void html_output_t::write_highcharts_head(FILE *out_fp)
+void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
 {
    fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
    fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
@@ -75,6 +75,25 @@ void html_output_t::write_highcharts_head(FILE *out_fp)
    // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
    fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
    fputs("<script type=\"text/javascript\">\n", out_fp);
+
+   if(page_type == page_index)
+      write_highcharts_head_index(out_fp);
+   else
+      write_highcharts_head_usage(out_fp);
+
+   fputs("</script>\n", out_fp);		
+}
+
+void html_output_t::write_highcharts_head_index(FILE *out_fp)
+{
+   fputs("function onLoadIndexPage()\n", out_fp); 
+   fputs("{\n", out_fp);
+
+   fputs("}\n", out_fp);
+}
+
+void html_output_t::write_highcharts_head_usage(FILE *out_fp)
+{
    fputs("function onLoadUsagePage()\n", out_fp); 
    fputs("{\n", out_fp);
    fputs("   var chart_config = {\n", out_fp);
@@ -164,7 +183,6 @@ void html_output_t::write_highcharts_head(FILE *out_fp)
 
    fputs("   renderCountryUsageChart_Highcharts(country_usage_chart);\n", out_fp);
    fputs("}\n", out_fp);
-   fputs("</script>\n", out_fp);		
 }
 
 /*********************************************/
@@ -214,18 +232,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
 	   fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
    if(config.js_charts == "highcharts")
-      write_highcharts_head(out_fp);
-   else {
-      //
-      // Generate an empty onload handler for this page, so the onload event can
-      // be output wihout evaluating any conditions.
-      //
-      fputs("<script type=\"text/javascript\">\n", out_fp);
-      fputs("function onLoadUsagePage()\n", out_fp); 
-      fputs("{\n", out_fp);
-      fputs("}\n", out_fp);
-      fputs("</script>\n", out_fp);		
-   }
+      write_highcharts_head(out_fp, page_type);
 
    iter = config.html_head.begin();
    while(iter.next())
@@ -238,10 +245,16 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
       if(config.enable_js) {
          switch (page_type) {
             case page_index:
-               fputs("<body onload=\"onload_index_page()\">\n", out_fp);
+               if(config.js_charts == "highcharts")
+                  fputs("<body onload=\"onload_index_page(onLoadIndexPage)\">\n", out_fp);
+               else
+                  fputs("<body onload=\"onload_index_page()\">\n", out_fp);
                break;
             case page_usage:
-               fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
+               if(config.js_charts == "highcharts")
+                  fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
+               else
+                  fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
                break;
             case page_all_items:
                fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);

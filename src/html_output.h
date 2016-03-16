@@ -45,7 +45,9 @@ class html_output_t : public output_t {
       void write_html_head(const char *period, FILE *out_fp, page_type_t page_type);
       void write_html_tail(FILE *out_fp);
 
-      void write_highcharts_head(FILE *out_fp);
+      void write_highcharts_head(FILE *out_fp, page_type_t page_type);
+      void write_highcharts_head_index(FILE *out_fp);
+      void write_highcharts_head_usage(FILE *out_fp);
 
       void write_url_report(void);
       void write_download_report(void);
