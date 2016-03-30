@@ -49,7 +49,7 @@ div#daily_usage_graph, div#hourly_usage_graph, div#country_usage_graph {width: 5
  * JavaScript Charts
  */
 div.chart_holder {margin: 1em auto; padding: 0; border: 1px solid black;}
-div#monthly_summary_chart {}
+div#monthly_summary_chart {width: 700px; height: 450px}
 div#daily_usage_chart {width: 800px; height: 450px}
 div#hourly_usage_chart {width: 660px; height: 450px}
 div#country_usage_chart {width: 600px; height: 430px}

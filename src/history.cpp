@@ -77,8 +77,7 @@ u_int history_t::length(void) const
 //
 u_int history_t::disp_length(void) const
 {
-   u_int displen;
-   return ((displen = length()) > 12) ? displen : 12;
+   return length() > 12 ? length() : 12;
 }
 
 //
@@ -119,6 +118,16 @@ u_int history_t::first_month(void) const
 
    hptr = &months[months.size()-1];
 
+   //
+   //   1  4        1           1           1   5
+   //   ...=========+-----------+-----------=====
+   //      <-- 9 -->
+   //      <---------------- 38 ---------------->
+   //
+   // Subtract the last few months, so we can figure out the number of months in the 
+   // partial year in front of the history range (the first % 12). We need the second 
+   // modulo division to account for the history length being a multiple of 12.
+   //
    return ((12 - (disp_length() - hptr->month) % 12) % 12) + 1;
 }
 

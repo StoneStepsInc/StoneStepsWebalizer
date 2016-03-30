@@ -84,18 +84,8 @@ void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
    fputs("</script>\n", out_fp);		
 }
 
-void html_output_t::write_highcharts_head_index(FILE *out_fp)
+void html_output_t::write_highcharts_head_js_config(FILE *out_fp)
 {
-   fputs("function onLoadIndexPage()\n", out_fp); 
-   fputs("{\n", out_fp);
-
-   fputs("}\n", out_fp);
-}
-
-void html_output_t::write_highcharts_head_usage(FILE *out_fp)
-{
-   fputs("function onLoadUsagePage()\n", out_fp); 
-   fputs("{\n", out_fp);
    fputs("   var chart_config = {\n", out_fp);
 
    //
@@ -117,6 +107,56 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\"", graph.get_volume_color());
    if(!graph.is_default_weekend_color()) fprintf(out_fp, "      weekend_color: \"#%06X\",\n", graph.get_weekend_color());
    fputs("   };\n\n", out_fp);
+}
+
+void html_output_t::write_highcharts_head_index(FILE *out_fp)
+{
+   fputs("function onLoadIndexPage()\n", out_fp); 
+   fputs("{\n", out_fp);
+
+   write_highcharts_head_js_config(out_fp);
+
+   fputs("   var monthly_summary_chart = new MonthlySummaryChart(1, chart_config, {\n", out_fp);
+   fprintf(out_fp, "      title: \"%s %s\",\n", config.lang.msg_main_us,config.hname.c_str());
+
+   fputs("      shortMonths: [", out_fp);
+   for(u_int i = 0; i < sizeof(lang_t::s_month)/sizeof(lang_t::s_month[0]); i++) {
+      if(i) fputs(", ", out_fp);
+      fprintf(out_fp, "\"%s\"", lang_t::s_month[i]);
+   }
+   fputs("],\n", out_fp);
+
+   fputs("      longMonths: [", out_fp);
+   for(u_int i = 0; i < sizeof(lang_t::l_month)/sizeof(lang_t::l_month[0]); i++) {
+      if(i) fputs(", ", out_fp);
+      fprintf(out_fp, "\"%s\"", lang_t::l_month[i]);
+   }
+   fputs("],\n", out_fp);
+
+   fprintf(out_fp, "      monthCount: %u,\n", state.history.disp_length());
+   fprintf(out_fp, "      firstYear: %u,\n", state.history.first()->year);
+   fprintf(out_fp, "      firstMonth: %u,\n", state.history.first()->month);
+
+   fputs("      seriesNames: {\n", out_fp);
+   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
+   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
+   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
+   fprintf(out_fp, "         xfer: \"%s\",\n", config.lang.msg_h_xfer);
+   fprintf(out_fp, "         visits: \"%s\",\n", config.lang.msg_h_visits);
+   fprintf(out_fp, "         hosts: \"%s\"\n", config.lang.msg_h_hosts);
+   fputs("      }\n", out_fp);
+   fputs("   });\n\n", out_fp);
+
+   fputs("   renderMonthlySummaryChart(monthly_summary_chart);\n", out_fp);
+   fputs("}\n", out_fp);
+}
+
+void html_output_t::write_highcharts_head_usage(FILE *out_fp)
+{
+   fputs("function onLoadUsagePage()\n", out_fp); 
+   fputs("{\n", out_fp);
+
+   write_highcharts_head_js_config(out_fp);
 
    u_int last_day = state.totals.cur_tstamp.last_month_day();
    fputs("   var daily_usage_chart = new DailyUsageChart(1, chart_config, {\n", out_fp);
@@ -158,7 +198,7 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
-   fputs("   renderDailyUsageChart_Highcharts(daily_usage_chart);\n\n", out_fp);
+   fputs("   renderDailyUsageChart(daily_usage_chart);\n\n", out_fp);
 
    fputs("   var hourly_usage_chart = new HourlyUsageChart(1, chart_config, {\n", out_fp);
    fprintf(out_fp, "      title: \"%s %s %d\",\n", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
@@ -170,7 +210,7 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
-   fputs("   renderHourlyUsageChart_Highcharts(hourly_usage_chart);\n\n", out_fp);
+   fputs("   renderHourlyUsageChart(hourly_usage_chart);\n\n", out_fp);
 
    fputs("   var country_usage_chart = new CountryUsageChart(1, chart_config, {\n", out_fp);
    fprintf(out_fp, "     title: \"%s %s %d\",\n", config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
@@ -181,7 +221,7 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
-   fputs("   renderCountryUsageChart_Highcharts(country_usage_chart);\n", out_fp);
+   fputs("   renderCountryUsageChart(country_usage_chart);\n", out_fp);
    fputs("}\n", out_fp);
 }
 
@@ -2960,13 +3000,16 @@ int html_output_t::write_main_index()
    write_html_head(title, out_fp, page_index);
 
    /* year graph */
-   fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
+   if(config.js_charts == "highcharts")
+		fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
+   else
+      fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
 
    fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
 
    /* month table */
 	fputs("\n<!-- Monthly Summary Table -->\n", out_fp);
-	fputs("<table class=\"report_table monthly_summary_table\">\n", out_fp);
+	fputs("<table id=\"monthly_summary_table\" class=\"report_table monthly_summary_table\">\n", out_fp);
 	fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"11\">%s</th></tr>\n", config.lang.msg_main_sum);
 
@@ -2998,7 +3041,7 @@ int html_output_t::write_main_index()
       hptr = &*iter++;
       if(hptr->hits==0) continue;
       days_in_month=(hptr->lday-hptr->fday)+1;
-      fprintf(out_fp,"<tr><th><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, config.html_ext.c_str(), lang_t::s_month[hptr->month-1], hptr->year);
+      fprintf(out_fp,"<tr><th data-year=\"%u\" data-month=\"%u\"><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, hptr->year, hptr->month, config.html_ext.c_str(), lang_t::s_month[hptr->month-1], hptr->year);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->hits/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n",hptr->files/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->pages/days_in_month);

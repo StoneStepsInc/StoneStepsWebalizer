@@ -81,9 +81,57 @@ function getVisitsTitleHtml_Highcharts(config, titles)
 }
 
 //
-// Render a daily usage chart in a predefined div element in a report
+// Returns an array of months for the category axis of the summary usage chart
 //
-function renderDailyUsageChart_Highcharts(daily_usage)
+function getMonthlySummaryMonths_Highcharts(monthly_summary)
+{
+   var months = [];
+
+   for(var i = 0; i < monthly_summary.monthCount; i++) {
+      months.push(monthly_summary.shortMonths[(monthly_summary.firstMonth + i - 1) % 12]);
+   }
+
+   return months;
+}
+
+//
+// Returns a series array containing Y axis avlues positionally corresponding
+// to the X axis label array returned from getMonthlySummaryMonths_Highcharts.
+//
+function getMonthlySummaryData_Highcharts(monthly_summary, years, months, yValues)
+{
+   var series = [];
+   var month = monthly_summary.firstMonth;
+   var year = monthly_summary.firstYear;
+
+   //
+   // The series array must contain as many elements as there are axis 
+   // categories. Those series elements that don't have any data values
+   // will be filed with null values.
+   //
+   for(var i = 0, k = 0; i < monthly_summary.monthCount; i++) {
+      
+      if(months[k] == month && years[k] == year)
+         series.push(yValues[k++]);
+      else
+         series.push(null);
+
+      if(month == 12) {
+         month = 1;
+         year++;
+      }
+      else
+         month++;
+   }
+
+   return series;   
+}
+
+//
+// Daily usage chart
+//
+
+function renderDailyUsageChart(daily_usage)
 {
    var daily_usage_chart_options = {
       lang: {
@@ -288,10 +336,7 @@ function renderDailyUsageChart_Highcharts(daily_usage)
 // Hourly usage chart
 //
 
-//
-// Render a daily usage chart in a predefined div element in a report
-//
-function renderHourlyUsageChart_Highcharts(hourly_usage)
+function renderHourlyUsageChart(hourly_usage)
 {
    var hourly_usage_chart_options = {
       lang: {
@@ -429,7 +474,7 @@ function renderHourlyUsageChart_Highcharts(hourly_usage)
 // Country usage chart
 //
 
-function renderCountryUsageChart_Highcharts(country_usage)
+function renderCountryUsageChart(country_usage)
 {
    var country_usage_chart_options = {
       lang: {
@@ -499,4 +544,200 @@ function renderCountryUsageChart_Highcharts(country_usage)
 
 
    Highcharts.chart("country_usage_chart", country_usage_chart_options);
+}
+
+//
+// Monthly summary chart
+//
+
+function renderMonthlySummaryChart(monthly_summary)
+{
+   var monthly_summary_chart_options = {
+      lang: {
+         numericSymbols: null
+      },
+      chart: {
+         animation: false,
+         backgroundColor: monthly_summary.config.background_color,
+         shadow: false,
+         spacingLeft: 5,
+         spacingRight: 20
+      },
+      title: {
+         align: "center",
+         text: monthly_summary.chart.title,
+         style: { 
+            color: monthly_summary.config.title_color,
+            fontSize: "16px" 
+         }
+      },
+      legend: {
+         enabled: false
+      },
+      plotOptions: {
+         column: {
+            pointWidth: 10
+         }
+      },
+      tooltip: {
+         formatter: function ()
+         {
+            // compute a zero-based offset in months from January 1st of the first year 
+            var monthOffset = monthly_summary.chart.firstMonth + this.point.x - 1;
+
+            // output full month and year before point data
+            return monthly_summary.chart.longMonths[monthOffset % 12] + " " + 
+               (monthly_summary.chart.firstYear + Math.floor(monthOffset / 12)) + "<br/>" + 
+               "<span style=\"color:" + this.point.color + "\">\u25CF</span> " + 
+               this.series.name + ": <b>" + this.y + "</b><br/>";
+         }
+      },
+      series: [{
+         animation: false,
+         type: "column",
+         color: monthly_summary.config.hits_color,
+         name: monthly_summary.chart.seriesNames.hits,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.hits)
+      },{
+         animation: false,
+         type: "column",
+         color: monthly_summary.config.files_color,
+         name: monthly_summary.chart.seriesNames.files,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.files)
+      },{
+         animation: false,
+         type: "column",
+         color: monthly_summary.config.pages_color,
+         name: monthly_summary.chart.seriesNames.pages,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.pages)
+      },{
+         animation: false,
+         type: "column",
+         yAxis: 1,
+         color: monthly_summary.config.visits_color,
+         name: monthly_summary.chart.seriesNames.visits,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.visits)
+      },{
+         animation: false,
+         type: "column",
+         yAxis: 1,
+         color: monthly_summary.config.hosts_color,
+         name: monthly_summary.chart.seriesNames.hosts,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.hosts)
+      },{
+         animation: false,
+         type: "column",
+         yAxis: 2,
+         color: monthly_summary.config.xfer_color,
+         name: monthly_summary.chart.seriesNames.xfer,
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.xfer)
+      }],
+      xAxis: {
+         type: "category",
+         offset: -2,
+         tickAmount: monthly_summary.chart.monthCount,
+         categories: getMonthlySummaryMonths_Highcharts(monthly_summary.chart),
+         allowDecimals: false,
+         lineColor: monthly_summary.config.gridline_color,
+         tickColor: monthly_summary.config.gridline_color,
+         tickInterval: 1,
+         labels: {
+            step: 1,
+            style: {fontSize: "11px"}
+         }
+      },
+      yAxis: [{
+         height: 110,
+         top: 40,
+         offset: 0,
+         ceiling: monthly_summary.getMonthlySummaryMaxHits(),
+         allowDecimals: false,
+         opposite: false,
+         endOnTick: true,
+         alignTicks: false,
+         gridLineColor: monthly_summary.config.gridline_color,
+         tickColor: monthly_summary.config.gridline_color,
+         lineColor: monthly_summary.config.gridline_color,
+         lineWidth: 1,
+         showFirstLabel: false,
+         reserveSpace: false,
+         labels: {
+            enabled: true,
+            align: "left",
+            formatter: function()
+            {
+               if(this.isLast) return this.value;
+            },
+            y: 12,
+            x: 3
+         },
+         title: {
+            align: "middle",
+            fontWeight: "bold",
+            text: getHitsTitleHtml_Highcharts(monthly_summary.config, monthly_summary.chart.seriesNames)
+         }
+      },{
+         height: 110,
+         top: 170,
+         offset: 0,
+         max: monthly_summary.getMonthlySummaryMaxVisits(),
+         allowDecimals: false,
+         opposite: false,
+         endOnTick: true,
+         alignTicks: false,
+         gridLineColor: monthly_summary.config.gridline_color,
+         tickColor: monthly_summary.config.gridline_color,
+         lineWidth: 1,
+         lineColor: monthly_summary.config.gridline_color,
+         showFirstLabel: false,
+         reserveSpace: false,
+         labels: {
+            enabled: true,
+            align: "left",
+            formatter: function() 
+            {
+               if(this.isLast) return this.value;
+            },
+            y: 12,
+            x: 3
+         },
+         title: {
+            align: "middle",
+            fontWeight: "bold",
+            text: getVisitsTitleHtml_Highcharts(monthly_summary.config, monthly_summary.chart.seriesNames)
+         }
+      },{
+         height: 110,
+         top: 300,
+         offset: 0,
+         max: monthly_summary.getMonthlySummaryMaxXfer(),
+         allowDecimals: false,
+         opposite: false,
+         endOnTick: true,
+         alignTicks: false,
+         gridLineColor: monthly_summary.config.gridline_color,
+         tickColor: monthly_summary.config.gridline_color,
+         lineWidth: 1,
+         lineColor: monthly_summary.config.gridline_color,
+         showFirstLabel: false,
+         reserveSpace: false,
+         labels: {
+            enabled: true,
+            align: "left",
+            formatter: function() 
+            {
+               if(this.isLast) return this.value;
+            },
+            y: 12,
+            x: 3
+         },
+         title: {
+            align: "middle",
+            fontWeight: "bold",
+            text: getXferTitleHtml_Highcharts(monthly_summary.config, monthly_summary.chart.seriesNames)
+         }
+      }]
+   };
+   
+   Highcharts.chart("monthly_summary_chart", monthly_summary_chart_options);
 }

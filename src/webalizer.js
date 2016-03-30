@@ -679,7 +679,7 @@ CountryUsageChart.prototype = {
 function getCountryUsageData(version, total_visits)
 {
    var rows;
-   var usage = {countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0}
+   var usage = {countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0};
    var visits = 0, disp_visits = 0;
    var percent;
 
@@ -721,6 +721,93 @@ function getCountryUsageData(version, total_visits)
    if(disp_visits < total_visits) {
       usage.visits_other = total_visits - disp_visits;
       usage.percent_other = ((usage.visits_other * 100) / total_visits).toFixed(1) + "%";
+   }
+
+   return usage;
+}
+
+//
+// MonthlySummaryChart
+//
+
+function MonthlySummaryChart(version, config, chart)
+{
+   this.version = version;                   // monthly usage table layout version
+   this.chart = chart;
+   this.config = createChartConfig(config);
+   this.data = getMonthlySummaryData(version);
+}
+
+MonthlySummaryChart.prototype = {
+   getMonthlySummaryMaxHits: function()
+   {
+      return getMaxValue(this.data.hits);
+   },
+
+   getMonthlySummaryMaxXfer: function()
+   {
+      return getMaxValue(this.data.xfer);
+   },
+
+   getMonthlySummaryMaxVisits: function()
+   {
+      return getMaxValue(this.data.visits);
+   }
+};
+
+//
+// getMonthlySummaryData extracts data from the monthly summary report table and 
+// returns an object containing following data arrays:
+//
+// {years: [], months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []}
+//   
+// All arrays contain the same number of elements, one for each month present in 
+// the monthly summary report table.
+//
+function getMonthlySummaryData(version)
+{
+   var rows;
+   var usage = {years: [], months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []};
+
+   if(version != 1)
+      return usage;
+
+   rows = getTableDataRows("monthly_summary_table");
+
+   if(!rows || !rows.length)
+      return usage;
+
+   //
+   // The table lists months in the descending order, but the chart shows earlier
+   // dates on the left, so we need to reverse the order of elements in the usage
+   // arrays to allow the code that translates these arrays to the chart format,
+   // which typically will have an element for each actual month, to walk two index 
+   // values at a different speed instead of having to match usage values to the 
+   // location on the axis.
+   //
+   for(var i = rows.length - 1; i >= 0; i--) {
+      var cells = rows[i].cells;
+
+      // check if it's the footer tbody (TODO: remove when tfoot is implemented)
+      if(cells.length == 7)
+         continue;
+
+      if(!cells || cells.length != 11)
+         return usage;
+
+      // make sure HTML5 dataset is supported
+      if(!cells[0].dataset)
+         return usage;
+
+      // extract the counters and push them into their arrays
+      usage.years.push(parseInt(cells[0].dataset.year));
+      usage.months.push(parseInt(cells[0].dataset.month));
+      usage.hits.push(parseInt(cells[10].firstChild.data));
+      usage.files.push(parseInt(cells[9].firstChild.data));
+      usage.pages.push(parseInt(cells[8].firstChild.data));
+      usage.visits.push(parseInt(cells[7].firstChild.data));
+      usage.hosts.push(parseInt(cells[5].firstChild.data));
+      usage.xfer.push(parseInt(cells[6].firstChild.data));
    }
 
    return usage;
