@@ -178,7 +178,7 @@ bool history_t::update(const hist_month_t *month)
    // and insert the new month
    months.insert(months.begin()+i+1, *month);
 
-   // trim the history if it's too long $$$ replace with a range erase
+   // length includes empty months in between, so delete one and check how many are left
    while(length() > max_length)
       months.erase(months.begin());
 
@@ -273,7 +273,7 @@ bool history_t::get_history(void)
    fclose(hist_fp);
    delete [] buffer;
 
-   // remove extra months from history $$$ replace with a range erase
+   // length includes empty months in between, so delete one and check how many are left
    while(length() > max_length)
       months.erase(months.begin());
       
