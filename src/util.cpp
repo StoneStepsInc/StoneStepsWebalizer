@@ -162,8 +162,8 @@ static char *encode_markup(const char *str, char *buffer, size_t bsize, bool mul
          break;
       }
       
-      // check for invalid UTF-8 sequences and control characters
-      if((bcnt = utf8size(cptr)) == 0 || (*cptr < '\x20' && *cptr != '\t') || *cptr == '\x7F') {
+      // check for invalid UTF-8 sequences and control characters, except \t, \r and \n
+      if((bcnt = utf8size(cptr)) == 0 || (*cptr < '\x20' && !strchr("\t\r\n", *cptr)) || *cptr == '\x7F') {
          // replace the bad character with a private-use code point [Unicode v5 ch.3 p.91]
          slen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+slen);
          cptr++;
