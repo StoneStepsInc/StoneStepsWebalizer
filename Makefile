@@ -74,8 +74,8 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	hashtab_nodes.cpp config.cpp serialize.cpp \
 	html_output.cpp xml_output.cpp dump_output.cpp \
-	database.cpp logfile.cpp encoder.cpp cp1252_ucs2.cpp \
-	char_buffer.cpp \
+	database.cpp logfile.cpp cp1252_ucs2.cpp \
+	char_buffer.cpp unicode.cpp \
    platform/exception_linux.cpp platform/event_pthread.cpp \
    platform/mutex_pthread.cpp platform/thread_pthread.cpp 
 

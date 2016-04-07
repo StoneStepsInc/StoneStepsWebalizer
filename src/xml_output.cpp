@@ -2179,6 +2179,7 @@ void xml_output_t::write_xml_tail(void)
 }
 
 #include "linklist_tmpl.cpp"
+#include "encoder_tmpl.cpp"
 
 //
 // Instantiate linked list templates (see comments at the end of hashtab.cpp)
@@ -2189,3 +2190,6 @@ template class list_t<multi_reverse_iterator<database_t::reverse_iterator, rnode
 template class list_t<multi_reverse_iterator<database_t::reverse_iterator, inode_t>::itnode_t>;
 template class list_t<multi_reverse_iterator<database_t::reverse_iterator, anode_t>::itnode_t>;
 template class list_t<multi_reverse_iterator<database_t::reverse_iterator, dlnode_t>::itnode_t>;
+
+// XML encoder
+template class buffer_encoder_t<encode_xml_char>;

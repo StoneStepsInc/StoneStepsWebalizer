@@ -10,12 +10,26 @@
 #ifndef __ENCODER_H
 #define __ENCODER_H
 
+#include "unicode.h"
+
 #include <stddef.h>
 
 //
-// Text encoder function (HTML, XML, TSV, etc)
+// buffer_encoder_t uses encode_char_t to encode a single vaid UTF-8 character.
+// This function should not evaluate any bytes beyond the size of the character.
 //
-typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool multiline, size_t *olen);
+// If NULL is passed in, the function should return the length of the longest
+// enchoded character sequence. In this case the input character size and the
+// output character pointer are not evaluated and may be zero and NULL.
+//
+// The size of the output buffer pointed to by op must be large enough to
+// accommodate the largest encoded sequence.
+//
+// The caller must never assume that the returned sequence is null-terminated 
+// and should always rely on the returned size to determine the length of the
+// encoded sequence.
+//
+typedef char *(*encode_char_t)(const char *cp, size_t cbc, char *op, size_t& obc);
 
 //
 // buffer_encoder_t provides a quick way to encode a string within a pre-allocated 
@@ -40,7 +54,7 @@ typedef char *(*encodecb_t)(const char *str, char *buffer, size_t bsize, bool mu
 //       printf("%s\n", encode(cp4));
 //    }
 //
-template <encodecb_t encodecb>
+template <encode_char_t encode_char>
 class buffer_encoder_t {
    public:
       enum mode_t {append, overwrite};
@@ -68,12 +82,12 @@ class buffer_encoder_t {
       //
       class scope_mode_t {
          private:
-            buffer_encoder_t<encodecb> *encoder;         // active encoder
+            buffer_encoder_t<encode_char> *encoder;         // active encoder
 
-            buffer_encoder_t<encodecb> saved_encoder;    // copy of the original encoder
+            buffer_encoder_t<encode_char> saved_encoder;    // copy of the original encoder
 
          public:
-            scope_mode_t(buffer_encoder_t<encodecb>& encoder, typename buffer_encoder_t<encodecb>::mode_t newmode) : encoder(&encoder), saved_encoder(encoder) 
+            scope_mode_t(buffer_encoder_t<encode_char>& encoder, typename buffer_encoder_t<encode_char>::mode_t newmode) : encoder(&encoder), saved_encoder(encoder) 
             {
                this->encoder->set_mode(newmode);
             }
@@ -96,6 +110,9 @@ class buffer_encoder_t {
       size_t bufsize;      // size of the entire buffer
       mode_t mode;         // move cptr forward after each encode call?
 
+   private:
+      static char *encode(const char *str, char *buffer, size_t bsize, size_t *slen);
+
    public:
       buffer_encoder_t(char *buffer, size_t bufsize, mode_t mode);
 
@@ -105,11 +122,11 @@ class buffer_encoder_t {
 
       void reset(void) {cptr = buffer;}
 
-      char *encode(const char *str, bool multiline = false, size_t *olen = NULL);
+      char *encode(const char *str, size_t *olen = NULL);
 
-      char *operator () (const char *str, bool multiline = false, size_t *olen = NULL)
+      char *operator () (const char *str, size_t *olen = NULL)
       {
-         return encode(str, multiline, olen);
+         return encode(str, olen);
       }
 
       void set_mode(mode_t newmode) 
@@ -117,7 +134,7 @@ class buffer_encoder_t {
          mode = newmode;
       }
 
-      typename buffer_encoder_t<encodecb>::scope_mode_t set_scope_mode(mode_t newmode)
+      typename buffer_encoder_t<encode_char>::scope_mode_t set_scope_mode(mode_t newmode)
       {
          scope_mode_t scope_mode(*this, newmode);
          return scope_mode; 

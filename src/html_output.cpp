@@ -3081,3 +3081,10 @@ int html_output_t::write_main_index()
    fclose(out_fp);
    return 0;
 }
+
+#include "encoder_tmpl.cpp"
+
+//
+// Instantiate HTML and JavaScript encoder templates
+//
+template class buffer_encoder_t<encode_html_char>;

@@ -180,7 +180,12 @@
     </ClCompile>
     <ClCompile Include="dns_resolv.cpp" />
     <ClCompile Include="dump_output.cpp" />
-    <ClCompile Include="encoder.cpp" />
+    <ClCompile Include="encoder_tmpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="platform\exception_win.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\pch.h</PrecompiledHeaderFile>
@@ -226,6 +231,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="serialize.cpp" />
+    <ClCompile Include="unicode.cpp" />
     <ClCompile Include="webalizer.cpp" />
     <ClCompile Include="xml_output.cpp" />
     <ClCompile Include="anode.cpp" />
@@ -312,6 +318,7 @@
     <ClInclude Include="tstamp.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="unicode.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="webalizer.h" />

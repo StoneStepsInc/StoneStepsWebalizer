@@ -13,7 +13,7 @@
 // invalid because they both correspond to the character A from the basic character 
 // set. C++ 2011 clarifies that only characters outside quoted characters or quoted 
 // strings should be considered invalid, but some compilers still generate syntax 
-// errors for universale character names like L'\u0041'. Use hexadecimal character 
+// errors for universal character names like L'\u0041'. Use hexadecimal character 
 // literals instead.
 //
 // The Unicode replacement character (U+FFFD) is used for Windows-1252 code points 

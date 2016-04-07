@@ -31,7 +31,7 @@ class html_output_t : public output_t {
       enum page_type_t {page_index, page_usage, page_all_items};
 
    private:
-      typedef buffer_encoder_t< ::html_encode> html_encoder_t;
+      typedef buffer_encoder_t<encode_html_char> html_encoder_t;
 
    private:
       FILE *out_fp;

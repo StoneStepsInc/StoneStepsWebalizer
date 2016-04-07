@@ -27,7 +27,6 @@
 #include "unicode.h"
 #include "tstamp.h"
 
-static char *encode_markup(const char *str, char *buffer, size_t bsize, bool multiline, bool xml, size_t *slen);
 static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 
 //
@@ -137,89 +136,107 @@ size_t url_path_len(const char *url, size_t *urllen)
    return pathlen;
 }
 
-char *html_encode(const char *str, char *buffer, size_t bsize, bool multiline, size_t *olen)
+char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc)
 {
-   return encode_markup(str, buffer, bsize, multiline, false, olen);
-}
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      obc = 6;
+      return op;
+   }
 
-char *xml_encode(const char *str, char *buffer, size_t bsize, bool multiline, size_t *olen)
-{
-   return encode_markup(str, buffer, bsize, multiline, true, olen);
-}
-
-//
-// encode_markup encodes HTML or XML markup pointed to by str
-//
-static char *encode_markup(const char *str, char *buffer, size_t bsize, bool multiline, bool xml, size_t *olen)
-{
-   static const char hex_char[] = "0123456789ABCDEF";
-   const char *cptr = str;
-   size_t slen = 0, bcnt;
-
-   while(*cptr) {
-      // always require at least 16 bytes in the buffer
-      if(buffer == NULL || (slen + 16) > bsize) {
-         buffer = NULL;
+   switch (*cp) {
+      case '<':
+         obc = 4;
+         memcpy(op, "&lt;", 4);
+         break;
+      case '>':
+         obc = 4;
+         memcpy(op, "&gt;", 4);
+         break;
+      case '&':
+         obc = 5;
+         memcpy(op, "&amp;", 4);
+         break;
+      case '"':
+         obc = 6;
+         memcpy(op, "&quot;", 6);
+         break;
+      case '\'':
+         obc = 6;
+         memcpy(op, "&#x27;", 6);
+         break;
+      default:
+         obc = cbc;
+         memcpy(op, cp, cbc);
          break;
       }
       
-      // check for invalid UTF-8 sequences and control characters, except \t, \r and \n
-      if((bcnt = utf8size(cptr)) == 0 || (*cptr < '\x20' && !strchr("\t\r\n", *cptr)) || *cptr == '\x7F') {
-         // replace the bad character with a private-use code point [Unicode v5 ch.3 p.91]
-         slen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+slen);
-         cptr++;
-         continue;
+   return op;
+}
+
+char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc)
+{
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      encode_html_char(NULL, cbc, op, obc);
+      if(obc < 6)
+         obc = 6;
+      return op;
       }
          
-      // no need to encode multibyte UTF-8 characters 
-      if(bcnt > 1) {
-         memcpy(buffer+slen, cptr, bcnt);
-         slen += bcnt;
-         cptr += bcnt;
-         continue;
+   if(*cp == '\'') {
+      obc = 6;
+      memcpy(op, "&apos;", 6);
+      return op;
       }
       
-      // check single-byte characters
-      switch (*cptr) {
-         case '<':
-            memcpy(&buffer[slen], "&lt;", 4);
-            slen += 4;
-            break;
-         case '>':
-            memcpy(&buffer[slen], "&gt;", 4);
-            slen += 4;
-            break;
-         case '&':
-            memcpy(&buffer[slen], "&amp;", 5);
-            slen += 5;
-            break;
-         case '"':
-            memcpy(&buffer[slen], "&quot;", 6);
-            slen += 6;
-            break;
-         case '\'':
-            memcpy(&buffer[slen], xml ? "&apos;" : "&#x27;", 6);
-            slen += 6;
-            break;
-         case '\r':
-         case '\n':
-            buffer[slen++] = multiline ? *cptr : ' ';
-            break;
-         default:
-            buffer[slen++] = *cptr;
-            break;
-      }
-      cptr++;
+   return encode_html_char(cp, cbc, op, obc);
+}
+
+char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc)
+{
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      obc = 6;
+      return op;
    }
 
-   if(buffer && slen < bsize)
-      buffer[slen] = 0;
-   
-   // update output length, if requested   
-   if(olen)
-      *olen = slen;
+   switch (*cp) {
+      case '\'':
+         obc = 2;
+         memcpy(op, "\\'", 2);
+            break;
+      case '\"':
+         obc = 2;
+         memcpy(op, "\\\"", 2);
+            break;
+         case '\r':
+         obc = 2;
+         memcpy(op, "\\r", 2);
+         break;
+         case '\n':
+         obc = 2;
+         return "\\n";
+      case '\xE2':
+         // check if the sequence is either E2 80 A8 (LS) or E2 80 A9 (PS)
+         if(*(cp+1) == '\x80') {
+            if(*(cp+2) == '\xA8')
+               memcpy(op, "\\u2028", 6);
+            else if(*(cp+2) == '\xA9')
+               memcpy(op, "\\u2029", 6);
+            else
+               memcpy(op, cp, 3);
+         }
+         else
+            memcpy(op, cp, 3);
+            break;
+         default:
+         obc = cbc;
+         memcpy(op, cp, cbc);
+            break;
+      }
 
-   return buffer;
+   return op;
 }
 
 bool is_http_redirect(size_t respcode)
