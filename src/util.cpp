@@ -450,7 +450,7 @@ const char *from_hex(const char *cp1, char *cp2)
    *cp2 |= from_hex(*cp1++);
 
    // change control characters to underscore
-   if(*cp2 < '\x20') 
+   if((unsigned char) *cp2 < '\x20') 
       *cp2 = '_';
 
    return cp1;
