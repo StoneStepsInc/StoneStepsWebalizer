@@ -205,36 +205,45 @@ char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc)
       case '\'':
          obc = 2;
          memcpy(op, "\\'", 2);
-            break;
+         break;
       case '\"':
          obc = 2;
          memcpy(op, "\\\"", 2);
-            break;
-         case '\r':
+         break;
+      case '\r':
          obc = 2;
          memcpy(op, "\\r", 2);
          break;
-         case '\n':
+      case '\n':
          obc = 2;
-         return "\\n";
+         memcpy(op, "\\n", 2);
+         break;
       case '\xE2':
          // check if the sequence is either E2 80 A8 (LS) or E2 80 A9 (PS)
          if(*(cp+1) == '\x80') {
-            if(*(cp+2) == '\xA8')
+            if(*(cp+2) == '\xA8') {
+               obc = 6;
                memcpy(op, "\\u2028", 6);
-            else if(*(cp+2) == '\xA9')
+            }
+            else if(*(cp+2) == '\xA9') {
+               obc = 6;
                memcpy(op, "\\u2029", 6);
-            else
+            }
+            else {
+               obc = 3;
                memcpy(op, cp, 3);
+            }
          }
-         else
+         else {
+            obc = 3;
             memcpy(op, cp, 3);
-            break;
-         default:
+         }
+         break;
+      default:
          obc = cbc;
          memcpy(op, cp, cbc);
-            break;
-      }
+         break;
+   }
 
    return op;
 }
