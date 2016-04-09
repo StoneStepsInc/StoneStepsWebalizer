@@ -46,7 +46,13 @@
 //
 //
 //
-html_output_t::html_output_t(const config_t& config, const state_t& state) : output_t(config, state), graph(config), html_encoder(buffer, BUFSIZE, html_encoder_t::overwrite), html_encode(html_encoder)
+html_output_t::html_output_t(const config_t& config, const state_t& state) : 
+      output_t(config, state), 
+      graph(config), 
+      html_encoder(buffer, HALFBUFSIZE, html_encoder_t::overwrite), 
+      html_encode(html_encoder),
+      js_encoder(buffer+HALFBUFSIZE, HALFBUFSIZE, js_encoder_t::overwrite), 
+      js_encode(js_encoder)
 {
 }
 
@@ -117,19 +123,21 @@ void html_output_t::write_highcharts_head_index(FILE *out_fp)
    write_highcharts_head_js_config(out_fp);
 
    fputs("   var monthly_summary_chart = new MonthlySummaryChart(1, chart_config, {\n", out_fp);
-   fprintf(out_fp, "      title: \"%s %s\",\n", config.lang.msg_main_us,config.hname.c_str());
+
+   js_encode.set_scope_mode(js_encoder_t::append),
+   fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
 
    fputs("      shortMonths: [", out_fp);
    for(u_int i = 0; i < sizeof(lang_t::s_month)/sizeof(lang_t::s_month[0]); i++) {
       if(i) fputs(", ", out_fp);
-      fprintf(out_fp, "\"%s\"", lang_t::s_month[i]);
+      fprintf(out_fp, "\"%s\"", js_encode(lang_t::s_month[i]));
    }
    fputs("],\n", out_fp);
 
    fputs("      longMonths: [", out_fp);
    for(u_int i = 0; i < sizeof(lang_t::l_month)/sizeof(lang_t::l_month[0]); i++) {
       if(i) fputs(", ", out_fp);
-      fprintf(out_fp, "\"%s\"", lang_t::l_month[i]);
+      fprintf(out_fp, "\"%s\"", js_encode(lang_t::l_month[i]));
    }
    fputs("],\n", out_fp);
 
@@ -138,12 +146,12 @@ void html_output_t::write_highcharts_head_index(FILE *out_fp)
    fprintf(out_fp, "      firstMonth: %u,\n", state.history.first()->month);
 
    fputs("      seriesNames: {\n", out_fp);
-   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
-   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
-   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
-   fprintf(out_fp, "         xfer: \"%s\",\n", config.lang.msg_h_xfer);
-   fprintf(out_fp, "         visits: \"%s\",\n", config.lang.msg_h_visits);
-   fprintf(out_fp, "         hosts: \"%s\"\n", config.lang.msg_h_hosts);
+   fprintf(out_fp, "         hits: \"%s\",\n", js_encode(config.lang.msg_h_hits)); 
+   fprintf(out_fp, "         files: \"%s\",\n", js_encode(config.lang.msg_h_files));
+   fprintf(out_fp, "         pages: \"%s\",\n", js_encode(config.lang.msg_h_pages));
+   fprintf(out_fp, "         xfer: \"%s\",\n", js_encode(config.lang.msg_h_xfer));
+   fprintf(out_fp, "         visits: \"%s\",\n", js_encode(config.lang.msg_h_visits));
+   fprintf(out_fp, "         hosts: \"%s\"\n", js_encode(config.lang.msg_h_hosts));
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
@@ -158,9 +166,15 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
 
    write_highcharts_head_js_config(out_fp);
 
+   //
+   // Daily usage chart
+   //
    u_int last_day = state.totals.cur_tstamp.last_month_day();
    fputs("   var daily_usage_chart = new DailyUsageChart(1, chart_config, {\n", out_fp);
-   fprintf(out_fp, "      title: \"%s %s %d\",\n", config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+
+   js_encode.set_scope_mode(js_encoder_t::append),
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+
    fprintf(out_fp, "      maxDay: %d,\n", last_day);
 
    //
@@ -189,35 +203,47 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    fputs("],\n", out_fp);
 
    fputs("      seriesNames: {\n", out_fp);
-   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
-   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
-   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
-   fprintf(out_fp, "         xfer: \"%s\",\n", config.lang.msg_h_xfer);
-   fprintf(out_fp, "         visits: \"%s\",\n", config.lang.msg_h_visits);
-   fprintf(out_fp, "         hosts: \"%s\"\n", config.lang.msg_h_hosts);
+   fprintf(out_fp, "         hits: \"%s\",\n", js_encode(config.lang.msg_h_hits)); 
+   fprintf(out_fp, "         files: \"%s\",\n", js_encode(config.lang.msg_h_files));
+   fprintf(out_fp, "         pages: \"%s\",\n", js_encode(config.lang.msg_h_pages));
+   fprintf(out_fp, "         xfer: \"%s\",\n", js_encode(config.lang.msg_h_xfer));
+   fprintf(out_fp, "         visits: \"%s\",\n", js_encode(config.lang.msg_h_visits));
+   fprintf(out_fp, "         hosts: \"%s\"\n", js_encode(config.lang.msg_h_hosts));
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
    fputs("   renderDailyUsageChart(daily_usage_chart);\n\n", out_fp);
 
+   //
+   // Hourly usage chart
+   //
    fputs("   var hourly_usage_chart = new HourlyUsageChart(1, chart_config, {\n", out_fp);
-   fprintf(out_fp, "      title: \"%s %s %d\",\n", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+
+   js_encode.set_scope_mode(js_encoder_t::append),
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+
    fputs("      seriesNames: {\n", out_fp);
-   fprintf(out_fp, "         hits: \"%s\",\n", config.lang.msg_h_hits); 
-   fprintf(out_fp, "         files: \"%s\",\n", config.lang.msg_h_files);
-   fprintf(out_fp, "         pages: \"%s\",\n", config.lang.msg_h_pages);
-   fprintf(out_fp, "         xfer: \"%s\"\n", config.lang.msg_h_xfer);
+   fprintf(out_fp, "         hits: \"%s\",\n", js_encode(config.lang.msg_h_hits)); 
+   fprintf(out_fp, "         files: \"%s\",\n", js_encode(config.lang.msg_h_files));
+   fprintf(out_fp, "         pages: \"%s\",\n", js_encode(config.lang.msg_h_pages));
+   fprintf(out_fp, "         xfer: \"%s\"\n", js_encode(config.lang.msg_h_xfer));
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
    fputs("   renderHourlyUsageChart(hourly_usage_chart);\n\n", out_fp);
 
+   //
+   // Country usage chart
+   //
    fputs("   var country_usage_chart = new CountryUsageChart(1, chart_config, {\n", out_fp);
-   fprintf(out_fp, "     title: \"%s %s %d\",\n", config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+
+   js_encode.set_scope_mode(js_encoder_t::append),
+   fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+
    fprintf(out_fp, "     totalVisits: %d,\n", state.totals.t_hvisits_end);
    fprintf(out_fp, "     otherLabel : \"%s\",\n", config.lang.msg_h_other);
    fputs("     seriesNames: {\n", out_fp);
-   fprintf(out_fp, "         visits: \"%s\"\n", config.lang.msg_h_visits);
+   fprintf(out_fp, "         visits: \"%s\"\n", js_encode(config.lang.msg_h_visits));
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
