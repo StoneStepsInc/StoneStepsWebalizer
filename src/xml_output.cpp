@@ -695,8 +695,8 @@ void xml_output_t::write_top_urls(bool s_xfer)
 			xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
 
          dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-         dispurl = xml_encode(dispurl, false);
-         href = xml_encode(uptr->string, false);
+         dispurl = xml_encode(dispurl);
+         href = xml_encode(uptr->string);
          
          // check for log type and if the URL contains a URI scheme
          if(config.log_type == LOG_SQUID || strstr_ex(uptr->string, "://", 10, 3)) {
@@ -813,8 +813,8 @@ void xml_output_t::write_top_entry(bool entry)
           (entry)?uptr->entry : uptr->exit);
 
       dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-      dispurl = xml_encode(dispurl, false);
-      href = xml_encode(uptr->string, false);
+      dispurl = xml_encode(dispurl);
+      href = xml_encode(uptr->string);
 
       /* check for a service prefix (ie: http://) */
       if(strstr_ex(uptr->string, "://", 10, 3))
@@ -1010,7 +1010,7 @@ void xml_output_t::write_top_errors(void)
           xml_encode(rcnode.method));
 
       dispurl = (rcnode.hexenc) ? url_decode(rcnode.string, str).c_str() : rcnode.string.c_str();
-      dispurl = xml_encode(dispurl, false);
+      dispurl = xml_encode(dispurl);
       fprintf(out_fp,"<data><value>%s</value></data>\n", dispurl);
 
       fputs("</row>\n", out_fp);
@@ -1360,8 +1360,8 @@ void xml_output_t::write_top_referrers(void)
 	         xml_encoder_t xml_encode(xml_encoder, xml_encoder_t::append);
 
             dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-            dispurl = xml_encode(dispurl, false);
-            href = xml_encode(rptr->string, false);
+            dispurl = xml_encode(dispurl);
+            href = xml_encode(rptr->string);
 
             // make a link only if the scheme is http or https
             if(!strncasecmp(href, "http", 4) && 
@@ -1597,7 +1597,7 @@ void xml_output_t::write_top_users(void)
            iptr->avgtime, iptr->maxtime);
 
       dispuser = url_decode(iptr->string, str).c_str();
-      dispuser = xml_encode(dispuser, false);
+      dispuser = xml_encode(dispuser);
       if(iptr->flag == OBJ_GRP && config.hlite_groups)
          fprintf(out_fp,"<data group=\"yes\"><value>%s</value></data>\n", dispuser); 
       else 
