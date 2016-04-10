@@ -237,18 +237,6 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(pipe_log_names )
       proc_stdin_log_files();
 
-   // if log_fnames is empty, insert one empty entry to force stdin (i.e. at most one)
-   if(!log_fnames.size())
-      log_fnames.push(string_t());
-      
-   // treat a single dash as stdin
-   vector_t<string_t>::iterator iter = log_fnames.begin();
-   while(iter.more()) {
-      string_t& fname = iter.next();
-      if(fname.length() == 1 && fname[0] == '-')
-         fname.clear();
-   }
-
    //
    // If no user configuration file was provided, try to locate the
    // default one in the
@@ -340,6 +328,21 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       }
    }
    
+   //
+   // If log_fnames is empty, insert one empty entry to force stdin (i.e. at most one)
+   //
+   if(!log_fnames.size())
+      log_fnames.push(string_t());
+      
+   // treat a single dash as stdin
+   vector_t<string_t>::iterator iter = log_fnames.begin();
+   while(iter.more()) {
+      string_t& fname = iter.next();
+      if(fname.length() == 1 && fname[0] == '-')
+         fname.clear();
+   }
+
+
    //
    // If the log file path is relative and the log directory is not empty, combine 
    // the two to form the complete path. Note, though, that it's close to impossible 
