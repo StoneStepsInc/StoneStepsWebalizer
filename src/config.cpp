@@ -31,7 +31,7 @@ struct kwinfo {
    u_int key;
 };
 
-config_t::config_t(void) : config_fnames(1)
+config_t::config_t(void)
 {
    print_options = false;
    print_version = false;
