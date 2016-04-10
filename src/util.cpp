@@ -818,7 +818,7 @@ string_t make_path(const char *base, const char *path)
    cp1 = &base[strlen(base) - 1];
 
    if(*cp1 != '/' && *cp1 != '\\')
-      result += '/';
+      result += PATH_SEP_CHAR;
 
    return result + path;
 }
