@@ -1,4 +1,15 @@
 --------------------------------------------------------------------
+4.0.5.2 [10-Apr-2016] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * Fixed a bug that caused LogFile entry in the configuration file ignored
+ * Fixed a bug causing stdin reported as a file that cannot be opened
+
+--------------------------------------------------------------------
+4.0.4.1 [04-Jan-2016] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * Fixed a bug causing the last day before a month change lose host counts
+
+--------------------------------------------------------------------
 4.0.3.6 [21-Sep-2015] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Reduced the size of the copyright comment in HTML and XML reports to 
