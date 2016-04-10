@@ -120,5 +120,10 @@ int logfile_t::get_line(char *buffer, u_int bufsize, int *errnum) const
 
 bool logfile_t::is_readable(void) const 
 {
-   return !log_fname.isempty() && !access(log_fname, R_OK);
+   // stdin (empty file name) is always readable
+   if(log_fname.isempty())
+      return true;
+   
+   // otherwise check if we can read the file   
+   return !access(log_fname, R_OK);
 }
