@@ -424,7 +424,7 @@ function createChartConfig(report_config)
 //
 // Returns the maximum value from an array of numeric values
 //
-function getMaxValue(values)
+function getMaxChartValue(values)
 {
    var max = 0;
 
@@ -494,17 +494,17 @@ DailyUsageChart.prototype = {
 
    getDailyUsageMaxHits: function()
    {
-      return getMaxValue(this.data.hits);
+      return getMaxChartValue(this.data.hits);
    },
 
    getDailyUsageMaxXfer: function()
    {
-      return getMaxValue(this.data.xfer);
+      return getMaxChartValue(this.data.xfer);
    },
 
    getDailyUsageMaxVisits: function()
    {
-      return getMaxValue(this.data.visits);
+      return getMaxChartValue(this.data.visits);
    }
 };
 
@@ -576,12 +576,12 @@ function HourlyUsageChart(version, config, chart)
 HourlyUsageChart.prototype = {
    getHourlyUsageMaxHits: function()
    {
-      return getMaxValue(this.data.hits);
+      return getMaxChartValue(this.data.hits);
    },
 
    getHourlyUsageMaxXfer: function()
    {
-      return getMaxValue(this.data.xfer);
+      return getMaxChartValue(this.data.xfer);
    }
 };
 
@@ -741,17 +741,17 @@ function MonthlySummaryChart(version, config, chart)
 MonthlySummaryChart.prototype = {
    getMonthlySummaryMaxHits: function()
    {
-      return getMaxValue(this.data.hits);
+      return getMaxChartValue(this.data.hits);
    },
 
    getMonthlySummaryMaxXfer: function()
    {
-      return getMaxValue(this.data.xfer);
+      return getMaxChartValue(this.data.xfer);
    },
 
    getMonthlySummaryMaxVisits: function()
    {
-      return getMaxValue(this.data.visits);
+      return getMaxChartValue(this.data.visits);
    }
 };
 
