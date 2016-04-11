@@ -759,7 +759,7 @@ MonthlySummaryChart.prototype = {
 // getMonthlySummaryData extracts data from the monthly summary report table and 
 // returns an object containing following data arrays:
 //
-// {years: [], months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []}
+// {months: [{year: 2016, month: 4}], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []}
 //   
 // All arrays contain the same number of elements, one for each month present in 
 // the monthly summary report table.
@@ -767,7 +767,7 @@ MonthlySummaryChart.prototype = {
 function getMonthlySummaryData(version)
 {
    var rows;
-   var usage = {years: [], months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []};
+   var usage = {months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []};
 
    if(version != 1)
       return usage;
@@ -800,8 +800,7 @@ function getMonthlySummaryData(version)
          return usage;
 
       // extract the counters and push them into their arrays
-      usage.years.push(parseInt(cells[0].dataset.year));
-      usage.months.push(parseInt(cells[0].dataset.month));
+      usage.months.push({year: parseInt(cells[0].dataset.year), month: parseInt(cells[0].dataset.month)});
       usage.hits.push(parseInt(cells[10].firstChild.data));
       usage.files.push(parseInt(cells[9].firstChild.data));
       usage.pages.push(parseInt(cells[8].firstChild.data));

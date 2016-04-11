@@ -142,8 +142,7 @@ void html_output_t::write_highcharts_head_index(FILE *out_fp)
    fputs("],\n", out_fp);
 
    fprintf(out_fp, "      monthCount: %u,\n", state.history.disp_length());
-   fprintf(out_fp, "      firstYear: %u,\n", state.history.first()->year);
-   fprintf(out_fp, "      firstMonth: %u,\n", state.history.first()->month);
+   fprintf(out_fp, "      firstMonth: {year: %u, month: %u},\n", state.history.first()->year, state.history.first()->month);
 
    fputs("      seriesNames: {\n", out_fp);
    fprintf(out_fp, "         hits: \"%s\",\n", js_encode(config.lang.msg_h_hits)); 

@@ -81,14 +81,14 @@ function getVisitsTitleHtml_Highcharts(config, titles)
 }
 
 //
-// Returns an array of months for the category axis of the summary usage chart
+// Returns an array of short month names for the category axis of the summary usage chart
 //
 function getMonthlySummaryMonths_Highcharts(monthly_summary)
 {
    var months = [];
 
    for(var i = 0; i < monthly_summary.monthCount; i++) {
-      months.push(monthly_summary.shortMonths[(monthly_summary.firstMonth + i - 1) % 12]);
+      months.push(monthly_summary.shortMonths[(monthly_summary.firstMonth.month + i - 1) % 12]);
    }
 
    return months;
@@ -98,11 +98,11 @@ function getMonthlySummaryMonths_Highcharts(monthly_summary)
 // Returns a series array containing Y axis avlues positionally corresponding
 // to the X axis label array returned from getMonthlySummaryMonths_Highcharts.
 //
-function getMonthlySummaryData_Highcharts(monthly_summary, years, months, yValues)
+function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
 {
    var series = [];
-   var month = monthly_summary.firstMonth;
-   var year = monthly_summary.firstYear;
+   var month = monthly_summary.firstMonth.month;
+   var year = monthly_summary.firstMonth.year;
 
    //
    // The series array must contain as many elements as there are axis 
@@ -111,7 +111,7 @@ function getMonthlySummaryData_Highcharts(monthly_summary, years, months, yValue
    //
    for(var i = 0, k = 0; i < monthly_summary.monthCount; i++) {
       
-      if(months[k] == month && years[k] == year)
+      if(months[k].month == month && months[k].year == year)
          series.push(yValues[k++]);
       else
          series.push(null);
@@ -583,11 +583,11 @@ function renderMonthlySummaryChart(monthly_summary)
          formatter: function ()
          {
             // compute a zero-based offset in months from January 1st of the first year 
-            var monthOffset = monthly_summary.chart.firstMonth + this.point.x - 1;
+            var monthOffset = monthly_summary.chart.firstMonth.month + this.point.x - 1;
 
             // output full month and year before point data
             return monthly_summary.chart.longMonths[monthOffset % 12] + " " + 
-               (monthly_summary.chart.firstYear + Math.floor(monthOffset / 12)) + "<br/>" + 
+               (monthly_summary.chart.firstMonth.year + Math.floor(monthOffset / 12)) + "<br/>" + 
                "<span style=\"color:" + this.point.color + "\">\u25CF</span> " + 
                this.series.name + ": <b>" + this.y + "</b><br/>";
          }
@@ -597,40 +597,40 @@ function renderMonthlySummaryChart(monthly_summary)
          type: "column",
          color: monthly_summary.config.hits_color,
          name: monthly_summary.chart.seriesNames.hits,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.hits)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.hits)
       },{
          animation: false,
          type: "column",
          color: monthly_summary.config.files_color,
          name: monthly_summary.chart.seriesNames.files,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.files)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.files)
       },{
          animation: false,
          type: "column",
          color: monthly_summary.config.pages_color,
          name: monthly_summary.chart.seriesNames.pages,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.pages)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.pages)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: monthly_summary.config.visits_color,
          name: monthly_summary.chart.seriesNames.visits,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.visits)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.visits)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: monthly_summary.config.hosts_color,
          name: monthly_summary.chart.seriesNames.hosts,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.hosts)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.hosts)
       },{
          animation: false,
          type: "column",
          yAxis: 2,
          color: monthly_summary.config.xfer_color,
          name: monthly_summary.chart.seriesNames.xfer,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.years, monthly_summary.data.months, monthly_summary.data.xfer)
+         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.xfer)
       }],
       xAxis: {
          type: "category",
