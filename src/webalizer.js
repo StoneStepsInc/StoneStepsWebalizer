@@ -457,7 +457,7 @@ function htmlEncode(value)
       }
 
       // make it visible that the regex is out of sync
-      retrn "#";
+      return "#";
    }
 
    return value.replace(/&|<|>|"|'/g, encode_html_char);
