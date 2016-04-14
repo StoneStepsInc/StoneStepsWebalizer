@@ -524,6 +524,7 @@ function renderCountryUsageChart(country_usage)
             reserveSpace: false,
          },
          tooltip: {
+            headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>",
             pointFormatter: function()
             {
                return "<span style=\"color:" + this.color + "\">\u25CF</span> " + htmlEncode(this.series.name) + 
