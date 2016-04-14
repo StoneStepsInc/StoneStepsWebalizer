@@ -58,9 +58,9 @@ function getCountryUsageColors_Highcharts(country_usage)
 function getHitsTitleHtml_Highcharts(config, titles)
 {
    // Highcharts translates this markup to SVG and does not support CSS classes, so the style has to be repeated
-   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.hits_color + "\">" + titles.hits + "</span> / " +
-      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.files_color + "\">" + titles.files + "</span> / " +
-      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.pages_color + "\">" + titles.pages + "</span>";
+   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.hits_color + "\">" + htmlEncode(titles.hits) + "</span> / " +
+      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.files_color + "\">" + htmlEncode(titles.files) + "</span> / " +
+      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.pages_color + "\">" + htmlEncode(titles.pages) + "</span>";
 }
 
 //
@@ -68,7 +68,7 @@ function getHitsTitleHtml_Highcharts(config, titles)
 //
 function getXferTitleHtml_Highcharts(config, titles)
 {
-   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.xfer_color + "\">" + titles.xfer + "</span>";
+   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.xfer_color + "\">" + htmlEncode(titles.xfer) + "</span>";
 }
 
 //
@@ -76,8 +76,8 @@ function getXferTitleHtml_Highcharts(config, titles)
 //
 function getVisitsTitleHtml_Highcharts(config, titles)
 {
-   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.visits_color + "\">" + titles.visits + "</span> / " +
-      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.hosts_color + "\">" + titles.hosts + "</span>";
+   return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.visits_color + "\">" + htmlEncode(titles.visits) + "</span> / " +
+      "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.hosts_color + "\">" + htmlEncode(titles.hosts) + "</span>";
 }
 
 //
@@ -526,7 +526,7 @@ function renderCountryUsageChart(country_usage)
          tooltip: {
             pointFormatter: function()
             {
-               return "<span style=\"color:" + this.color + "\">\u25CF</span> " + this.series.name + 
+               return "<span style=\"color:" + this.color + "\">\u25CF</span> " + htmlEncode(this.series.name) + 
                   " <b>" + this.y + "</b> (" + country_usage.getPercent(this.x) + ")";
             }
          },
@@ -534,7 +534,7 @@ function renderCountryUsageChart(country_usage)
             events: {
                legendItemClick: function(e) 
                {
-                  // prevent the default action that hides the slice
+                  // prevent the default click action that hides the slice
                   e.preventDefault();
                }
             }
@@ -586,10 +586,10 @@ function renderMonthlySummaryChart(monthly_summary)
             var monthOffset = monthly_summary.chart.firstMonth.month + this.point.x - 1;
 
             // output full month and year before point data
-            return monthly_summary.chart.longMonths[monthOffset % 12] + " " + 
+            return htmlEncode(monthly_summary.chart.longMonths[monthOffset % 12]) + " " + 
                (monthly_summary.chart.firstMonth.year + Math.floor(monthOffset / 12)) + "<br/>" + 
                "<span style=\"color:" + this.point.color + "\">\u25CF</span> " + 
-               this.series.name + ": <b>" + this.y + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + this.y + "</b><br/>";
          }
       },
       series: [{

@@ -437,6 +437,33 @@ function getMaxChartValue(values)
 }
 
 //
+// Returns HTML-encoded value
+//
+function htmlEncode(value)
+{
+   function encode_html_char(ch)
+   {
+      switch(ch) {
+         case '<':
+            return "&lt;";
+         case '>':
+            return "&gt;";
+         case '"':
+            return "&quot;";
+         case '\'':
+            return "&#x27;";
+         case '&':
+            return "&amp;";
+      }
+
+      // make it visible that the regex is out of sync
+      retrn "#";
+   }
+
+   return value.replace(/&|<|>|"|'/g, encode_html_char);
+}
+
+//
 // getTableDataRows returns an array containing all TR elements from
 // all tbody elements of the table identified by table_id.
 //
@@ -762,7 +789,9 @@ MonthlySummaryChart.prototype = {
 // {months: [{year: 2016, month: 4}], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: []}
 //   
 // All arrays contain the same number of elements, one for each month present in 
-// the monthly summary report table.
+// the monthly summary report table. The months array contains objects describing
+// data point year and month, so its possible to use it with any other dat array
+// to form a complete x/y series.
 //
 function getMonthlySummaryData(version)
 {
@@ -788,7 +817,13 @@ function getMonthlySummaryData(version)
    for(var i = rows.length - 1; i >= 0; i--) {
       var cells = rows[i].cells;
 
-      // check if it's the footer tbody (TODO: remove when tfoot is implemented)
+      //
+      // HTML4 required tfoot to appear before any tbody element, which made it 
+      // less useful when totals were generated while tbody was being populated. 
+      // HTML5 lifts this restriction and the report will eventually be reorked 
+      // to have all footer rows inside tfoot elements. Until then, just check 
+      // the number of columns to skip the footer tbody. 
+      //
       if(cells.length == 7)
          continue;
 
