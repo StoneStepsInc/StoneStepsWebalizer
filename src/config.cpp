@@ -652,7 +652,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 188; empty slots:  
+                     // max key: 189; empty slots:  
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -793,6 +793,7 @@ void config_t::get_config(const char *fname)
                      {"IncrementalName",     38},			// Filename for state data
                      {"IndexAlias",		      20},			// Aliases for index.html
                      {"JavaScriptCharts",    99},        // JavaScript charts package name
+                     {"JavaScriptChartsPath", 189},      // Alternative JavaScript charts path
                      {"LanguageFile",	      90},			//	Language file
                      {"LocalUTCOffset",      188},       // Do not use local UTC offset?
                      {"LogDir",              183},       // Log directory
@@ -1106,6 +1107,7 @@ void config_t::get_config(const char *fname)
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
          case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;
+         case 189: js_charts_paths.push_back(value); break;
       }
    }
    fclose(fp);

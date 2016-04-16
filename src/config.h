@@ -250,6 +250,7 @@ class config_t {
       
       string_t graph_type;                       // graph type (PNG, Flash-OFC, etc)
       string_t js_charts;                        // empty, Highcharts
+      std::vector<string_t> js_charts_paths;     // alternative JavaScript charts framework paths
       
       std::vector<string_t> log_fnames;          // all input log file names
       

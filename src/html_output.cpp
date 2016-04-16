@@ -76,10 +76,19 @@ void html_output_t::cleanup_output_engine(void)
 void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
 {
    fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
-   fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
 
-   // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
-   fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
+   if(config.js_charts_paths.empty()) {
+      fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
+      // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
+      fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
+   }
+   else {
+      // output all alternative JavaScript charts paths
+      for(std::vector<string_t>::const_iterator i = config.js_charts_paths.begin(); i != config.js_charts_paths.end(); i++)
+         fprintf(out_fp, "<script src=\"%s\"></script>\n", js_encode(i->c_str()));
+   }
+
+   // output the script block for JavaScripts charts
    fputs("<script type=\"text/javascript\">\n", out_fp);
 
    if(page_type == page_index)
