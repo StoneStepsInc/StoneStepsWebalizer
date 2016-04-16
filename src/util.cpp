@@ -155,7 +155,7 @@ char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc)
          break;
       case '&':
          obc = 5;
-         memcpy(op, "&amp;", 4);
+         memcpy(op, "&amp;", 5);
          break;
       case '"':
          obc = 6;
@@ -182,13 +182,13 @@ char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc)
       if(obc < 6)
          obc = 6;
       return op;
-      }
+   }
          
    if(*cp == '\'') {
       obc = 6;
       memcpy(op, "&apos;", 6);
       return op;
-      }
+   }
       
    return encode_html_char(cp, cbc, op, obc);
 }
