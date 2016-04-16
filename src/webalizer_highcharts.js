@@ -127,6 +127,9 @@ function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
    return series;   
 }
 
+//
+// Configure global Highcharts properties
+//
 function setupCharts(config)
 {
    Highcharts.setOptions({
