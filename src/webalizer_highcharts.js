@@ -127,6 +127,17 @@ function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
    return series;   
 }
 
+function setupCharts(config)
+{
+   Highcharts.setOptions({
+      lang: {
+         thousandsSep: "",             // disable the default separtor, which is a space
+         numericSymbols: null          // disable numeric suffixes (kilo, mega, etc)
+      }
+   });
+
+}
+
 //
 // Daily usage chart
 //
@@ -134,9 +145,6 @@ function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
 function renderDailyUsageChart(daily_usage)
 {
    var daily_usage_chart_options = {
-      lang: {
-         numericSymbols: null                   // disable numeric suffixes (kilo, mega, etc)
-      },
       chart: {
          animation: false,
          backgroundColor: daily_usage.config.background_color,
@@ -339,9 +347,6 @@ function renderDailyUsageChart(daily_usage)
 function renderHourlyUsageChart(hourly_usage)
 {
    var hourly_usage_chart_options = {
-      lang: {
-         numericSymbols: null
-      },
       chart: {
          animation: false,
          backgroundColor: hourly_usage.config.background_color,
@@ -477,9 +482,6 @@ function renderHourlyUsageChart(hourly_usage)
 function renderCountryUsageChart(country_usage)
 {
    var country_usage_chart_options = {
-      lang: {
-         numericSymbols: null
-      },
       chart: {
          animation: false,
          backgroundColor: country_usage.config.background_color,
@@ -554,9 +556,6 @@ function renderCountryUsageChart(country_usage)
 function renderMonthlySummaryChart(monthly_summary)
 {
    var monthly_summary_chart_options = {
-      lang: {
-         numericSymbols: null
-      },
       chart: {
          animation: false,
          backgroundColor: monthly_summary.config.background_color,

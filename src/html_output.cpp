@@ -92,7 +92,7 @@ void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
 
 void html_output_t::write_highcharts_head_js_config(FILE *out_fp)
 {
-   fputs("   var chart_config = {\n", out_fp);
+   fputs("   var config = createChartConfig({\n", out_fp);
 
    //
    // Output custom colors, if any are defined in the configuration. Chart colors 
@@ -110,9 +110,13 @@ void html_output_t::write_highcharts_head_js_config(FILE *out_fp)
    if(!graph.is_default_pages_color()) fprintf(out_fp, "      pages_color: \"#%06X\",\n", graph.get_pages_color());
    if(!graph.is_default_visits_color()) fprintf(out_fp, "      visits_color: \"#%06X\",\n", graph.get_visits_color());
    if(!graph.is_default_hosts_color()) fprintf(out_fp, "      hosts_color: \"#%06X\",\n", graph.get_hosts_color());
-   if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\"", graph.get_volume_color());
+   if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\",\n", graph.get_volume_color());
    if(!graph.is_default_weekend_color()) fprintf(out_fp, "      weekend_color: \"#%06X\",\n", graph.get_weekend_color());
-   fputs("   };\n\n", out_fp);
+
+   // output the language code for this report
+   fprintf(out_fp, "      lang: \"%s\"\n", js_encode(config.lang.language_code));
+
+   fputs("   });\n\n", out_fp);
 }
 
 void html_output_t::write_highcharts_head_index(FILE *out_fp)
@@ -122,7 +126,9 @@ void html_output_t::write_highcharts_head_index(FILE *out_fp)
 
    write_highcharts_head_js_config(out_fp);
 
-   fputs("   var monthly_summary_chart = new MonthlySummaryChart(1, chart_config, {\n", out_fp);
+   fputs("   setupCharts(config);\n\n", out_fp);
+
+   fputs("   var monthly_summary_chart = new MonthlySummaryChart(1, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
@@ -165,11 +171,13 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
 
    write_highcharts_head_js_config(out_fp);
 
+   fputs("   setupCharts(config);\n\n", out_fp);
+
    //
    // Daily usage chart
    //
    u_int last_day = state.totals.cur_tstamp.last_month_day();
-   fputs("   var daily_usage_chart = new DailyUsageChart(1, chart_config, {\n", out_fp);
+   fputs("   var daily_usage_chart = new DailyUsageChart(1, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -216,7 +224,7 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    //
    // Hourly usage chart
    //
-   fputs("   var hourly_usage_chart = new HourlyUsageChart(1, chart_config, {\n", out_fp);
+   fputs("   var hourly_usage_chart = new HourlyUsageChart(1, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -234,7 +242,7 @@ void html_output_t::write_highcharts_head_usage(FILE *out_fp)
    //
    // Country usage chart
    //
-   fputs("   var country_usage_chart = new CountryUsageChart(1, chart_config, {\n", out_fp);
+   fputs("   var country_usage_chart = new CountryUsageChart(1, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);

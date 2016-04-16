@@ -504,7 +504,7 @@ function DailyUsageChart(version, config, chart)
 {
    this.version = version;                      // daily usage table layout version
    this.chart = chart;                          // chart information (no series data)
-   this.config = createChartConfig(config);     // chain global and report config
+   this.config = config;                        // chart config object
    this.data = getDailyUsageData(this.version); // extract report data from HTML tables
 }
 
@@ -596,7 +596,7 @@ function HourlyUsageChart(version, config, chart)
 {
    this.version = version;                      // hourly usage table layout version
    this.chart = chart;
-   this.config = createChartConfig(config);
+   this.config = config;
    this.data = getHourlyUsageData(this.version);
 }
 
@@ -660,7 +660,7 @@ function CountryUsageChart(version, config, chart)
 {
    this.version = version;                   // country table layout version
    this.chart = chart;
-   this.config = createChartConfig(config);
+   this.config = config;
    this.data = getCountryUsageData(this.version, this.chart.totalVisits);
 }
 
@@ -761,7 +761,7 @@ function MonthlySummaryChart(version, config, chart)
 {
    this.version = version;                   // monthly usage table layout version
    this.chart = chart;
-   this.config = createChartConfig(config);
+   this.config = config;
    this.data = getMonthlySummaryData(version);
 }
 
