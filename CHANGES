@@ -1,4 +1,12 @@
 --------------------------------------------------------------------
+4.1.0.x [xx-xxx-2016] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * Implemented a generic JavaScript charting layer
+ * Added support for Highcharts JavaScript charts
+ * [BUG] URL decoder converted many Unicode characters into underscores
+ * [BUG] Host counts were dropped in the last day before the month change
+
+--------------------------------------------------------------------
 4.0.5.2 [10-Apr-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Fixed a bug that caused LogFile entry in the configuration file ignored

@@ -1,7 +1,7 @@
 **************************************************************************
-Stone Steps Webalizer (v4.0.0.10)
+Stone Steps Webalizer (v4.1.0)
 
-Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)
+Copyright (c) 2004-2016, Stone Steps Inc. (www.stonesteps.ca)
 
 The version of The Webalizer provided with this distribution is a fork 
 based on the version 2.01-10 of the original Webalizer: 
@@ -1725,7 +1725,25 @@ GraphTrueColor
               TrueColor or palette-based graph images. TrueColor images 
               are larger in size, but are of better quality, especially if 
               font smoothing is turned on. Default value: no  
-    
+
+JavaScriptCharts
+              Specifies the type the the JavaScript chart package to use.
+              Only Highcharts is supported at the moment. By default this
+              value is empty and all charts are rendered as PNG images.
+
+              Please note that Highcharts is not an Open Source package 
+              and may be used without buying a license only for non-commercial 
+              purposes. Read Highcharts' page for additional information 
+              about their licensing before enabling Highcharts in the reports:
+
+              https://shop.highsoft.com/faq#Non-Commercial-0
+
+JavaScriptChartsPath
+              JavaScripts charts by default will use implementation scripts
+              from the 3rd-party chart vendor's location. If you would like
+              to serve charts scripts from your servers, specify as many of 
+              these variables as you need in the configuration file and each 
+              will be output in the report's head element.
 
 Database Configuration Options
 ------------------------------
