@@ -134,7 +134,7 @@ function setupCharts(config)
 {
    Highcharts.setOptions({
       lang: {
-         thousandsSep: "",             // disable the default separtor, which is a space
+         thousandsSep: "",             // disable the default separtor (a space)
          numericSymbols: null          // disable numeric suffixes (kilo, mega, etc)
       }
    });
@@ -170,6 +170,9 @@ function renderDailyUsageChart(daily_usage)
          column: {
             pointWidth: 7
          }
+      },
+      tooltip: {
+         headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>"
       },
       series: [{
          animation: false,
@@ -373,6 +376,9 @@ function renderHourlyUsageChart(hourly_usage)
             pointWidth: 7
          }
       },
+      tooltip: {
+         headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>"
+      },
       series: [{
          animation: false,
          type: "column",
@@ -529,7 +535,7 @@ function renderCountryUsageChart(country_usage)
             reserveSpace: false,
          },
          tooltip: {
-            headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>",
+            headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>",
             pointFormatter: function()
             {
                return "<span style=\"color:" + this.color + "\">\u25CF</span> " + htmlEncode(this.series.name) + 
@@ -589,8 +595,8 @@ function renderMonthlySummaryChart(monthly_summary)
             var monthOffset = monthly_summary.chart.firstMonth.month + this.point.x - 1;
 
             // output full month and year before point data
-            return htmlEncode(monthly_summary.chart.longMonths[monthOffset % 12]) + " " + 
-               (monthly_summary.chart.firstMonth.year + Math.floor(monthOffset / 12)) + "<br/>" + 
+            return "<span style=\"font-size: 12px\">" + htmlEncode(monthly_summary.chart.longMonths[monthOffset % 12]) + " " + 
+               (monthly_summary.chart.firstMonth.year + Math.floor(monthOffset / 12)) + "</span><br/>" + 
                "<span style=\"color:" + this.point.color + "\">\u25CF</span> " + 
                htmlEncode(this.series.name) + ": <b>" + this.y + "</b><br/>";
          }
