@@ -73,14 +73,17 @@ void html_output_t::cleanup_output_engine(void)
    graph.cleanup_graph_engine();
 }
 
-void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
+void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 {
-   fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
+   if(config.js_charts == "highcharts")
+      fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
 
    if(config.js_charts_paths.empty()) {
-      fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
-      // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
-      fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
+      if(config.js_charts == "highcharts") {
+         fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
+         // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
+         fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
+      }
    }
    else {
       // output all alternative JavaScript charts paths
@@ -92,14 +95,14 @@ void html_output_t::write_highcharts_head(FILE *out_fp, page_type_t page_type)
    fputs("<script type=\"text/javascript\">\n", out_fp);
 
    if(page_type == page_index)
-      write_highcharts_head_index(out_fp);
+      write_js_charts_head_index(out_fp);
    else
-      write_highcharts_head_usage(out_fp);
+      write_js_charts_head_usage(out_fp);
 
    fputs("</script>\n", out_fp);		
 }
 
-void html_output_t::write_highcharts_head_js_config(FILE *out_fp)
+void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
 {
    fputs("   var config = createChartConfig({\n", out_fp);
 
@@ -128,12 +131,12 @@ void html_output_t::write_highcharts_head_js_config(FILE *out_fp)
    fputs("   });\n\n", out_fp);
 }
 
-void html_output_t::write_highcharts_head_index(FILE *out_fp)
+void html_output_t::write_js_charts_head_index(FILE *out_fp)
 {
    fputs("function onLoadIndexPage()\n", out_fp); 
    fputs("{\n", out_fp);
 
-   write_highcharts_head_js_config(out_fp);
+   write_js_charts_head_js_config(out_fp);
 
    fputs("   setupCharts(config);\n\n", out_fp);
 
@@ -173,12 +176,12 @@ void html_output_t::write_highcharts_head_index(FILE *out_fp)
    fputs("}\n", out_fp);
 }
 
-void html_output_t::write_highcharts_head_usage(FILE *out_fp)
+void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 {
    fputs("function onLoadUsagePage()\n", out_fp); 
    fputs("{\n", out_fp);
 
-   write_highcharts_head_js_config(out_fp);
+   write_js_charts_head_js_config(out_fp);
 
    fputs("   setupCharts(config);\n\n", out_fp);
 
@@ -313,8 +316,8 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    if(!config.html_js_path.isempty())
 	   fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
-   if(config.js_charts == "highcharts")
-      write_highcharts_head(out_fp, page_type);
+   if(!config.js_charts.isempty())
+      write_js_charts_head(out_fp, page_type);
 
    iter = config.html_head.begin();
    while(iter.next())
@@ -327,13 +330,13 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
       if(config.enable_js) {
          switch (page_type) {
             case page_index:
-               if(config.js_charts == "highcharts")
+               if(!config.js_charts.isempty())
                   fputs("<body onload=\"onload_index_page(onLoadIndexPage)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_index_page()\">\n", out_fp);
                break;
             case page_usage:
-               if(config.js_charts == "highcharts")
+               if(!config.js_charts.isempty())
                   fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
@@ -547,7 +550,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"daily_stats_report\">\n", out_fp);
       fputs("\n<a name=\"daily\"></a>\n", out_fp);
       if (config.daily_graph) {
-         if(config.js_charts == "highcharts")
+         if(!config.js_charts.isempty())
 			   fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
          else
 			   fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
@@ -567,7 +570,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"hourly_stats_report\">\n", out_fp);
       fputs("<a name=\"hourly\"></a>\n", out_fp);
       if (config.hourly_graph) { 
-         if(config.js_charts == "highcharts")
+         if(!config.js_charts.isempty())
             fputs("<div id=\"hourly_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
          else
             fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
@@ -2936,7 +2939,7 @@ void html_output_t::top_ctry_table()
       if(makeimgs)
          graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
 
-      if(config.js_charts == "highcharts")
+      if(!config.js_charts.isempty())
          fputs("<div id=\"country_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
       else {
          /* put the image tag in the page */
@@ -3042,7 +3045,7 @@ int html_output_t::write_main_index()
    write_html_head(title, out_fp, page_index);
 
    /* year graph */
-   if(config.js_charts == "highcharts")
+   if(!config.js_charts.isempty())
 		fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
    else
       fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
