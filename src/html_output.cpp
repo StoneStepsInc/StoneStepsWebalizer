@@ -75,8 +75,8 @@ void html_output_t::cleanup_output_engine(void)
 
 void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 {
-   if(config.js_charts == "highcharts")
-      fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_highcharts.js\"></script>\n", config.html_js_path.c_str());
+   html_encoder.set_scope_mode(html_encoder_t::append),
+   fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_%s.js\"></script>\n", html_encode(config.html_js_path.c_str()), html_encode(config.js_charts.c_str()));
 
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
