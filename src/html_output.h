@@ -103,7 +103,7 @@ class html_output_t : public output_t {
       virtual int write_main_index();
       virtual int write_monthly_report(void);
 
-      virtual bool graph_support(void) const {return true;}
+      virtual bool graph_support(void) const {return config.js_charts.isempty();}
 };
 
 #endif // __HTML_OUTPUT_H

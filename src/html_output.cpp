@@ -498,40 +498,17 @@ void html_output_t::write_country_report(void)
 int html_output_t::write_monthly_report()
 {
    string_t html_fname, html_fname_lang;           /* filename storage areas...       */
-   string_t png1_fname, png1_fname_lang;
-   string_t png2_fname, png2_fname_lang;
+   string_t png1_fname;
+   string_t png2_fname;
    string_t dtitle, htitle;
 
    /* fill in filenames */
    html_fname.format("usage_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
-   png1_fname.format("daily_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
-   png2_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
-   if(config.html_ext_lang) {
+   if(config.html_ext_lang)
       html_fname_lang = html_fname + '.' + config.lang.language_code;
-      png1_fname_lang = png1_fname + '.' + config.lang.language_code;
-      png2_fname_lang = png2_fname + '.' + config.lang.language_code;
-   }
-   else {
+   else
       html_fname_lang = html_fname;
-      png1_fname_lang = png1_fname;
-      png2_fname_lang = png2_fname;
-   }
-
-   /* create PNG images for web page */
-   if (config.daily_graph)
-   {
-      dtitle.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
-      if(makeimgs)
-         graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
-   }
-
-   if (config.hourly_graph)
-   {
-      htitle.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
-      if(makeimgs)
-         graph.day_graph3(png2_fname_lang, htitle, state.t_hourly);
-   }
 
    /* now do html stuff... */
    /* first, open the file */
@@ -552,8 +529,24 @@ int html_output_t::write_monthly_report()
       if (config.daily_graph) {
          if(!config.js_charts.isempty())
 			   fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
-         else
+         else {
+            // create daily stats PNG image
+            string_t png1_fname_lang;
+
+            png1_fname.format("daily_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
+
+            if(config.html_ext_lang)
+               png1_fname_lang = png1_fname + '.' + config.lang.language_code;
+            else
+               png1_fname_lang = png1_fname;
+
+            dtitle.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+
+            if(makeimgs)
+               graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
+
 			   fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
+         }
       }
 
    	if (config.daily_stats) 
@@ -572,8 +565,24 @@ int html_output_t::write_monthly_report()
       if (config.hourly_graph) { 
          if(!config.js_charts.isempty())
             fputs("<div id=\"hourly_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
-         else
+         else {
+            // create hourly stats PNG image
+            string_t png2_fname_lang;
+
+            png2_fname.format("hourly_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
+
+            if(config.html_ext_lang)
+               png2_fname_lang = png2_fname + '.' + config.lang.language_code;
+            else
+               png2_fname_lang = png2_fname;
+
+            htitle.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+
+            if(makeimgs)
+               graph.day_graph3(png2_fname_lang, htitle, state.t_hourly);
+
             fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
+         }
       }
 
       if (config.hourly_stats) hourly_total_table();
@@ -2865,8 +2874,6 @@ void html_output_t::top_ctry_table()
    uint64_t t_hit, t_file, t_page, t_visits;
    uint64_t t_xfer;
    const char *pie_legend[10];
-   string_t pie_title;
-   string_t pie_fname, pie_fname_lang;
    const ccnode_t **ccarray;
    const ccnode_t *tptr;
 
@@ -2917,31 +2924,34 @@ void html_output_t::top_ctry_table()
    /* generate pie chart if needed */
    if (config.ctry_graph)
    {
-      for (i=0;i<10;i++) {
-         pie_data[i] = 0;                           /* init data array      */
-         pie_legend[i] = NULL;
-      }
-      j = MIN(tot_num, 10);                         /* ensure data size     */
-
-      for(i = 0; i < j; i++) {
-         pie_data[i]=ccarray[i]->visits;            /* load the array       */
-         pie_legend[i]=ccarray[i]->cdesc;
-      }
-
-      pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
-      pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
-
-      if(config.html_ext_lang)
-         pie_fname_lang = pie_fname + '.' + config.lang.language_code;
-      else
-         pie_fname_lang = pie_fname;
-
-      if(makeimgs)
-         graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
-
       if(!config.js_charts.isempty())
          fputs("<div id=\"country_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
       else {
+         string_t pie_title;
+         string_t pie_fname, pie_fname_lang;
+
+         for (i=0;i<10;i++) {
+            pie_data[i] = 0;                           /* init data array      */
+            pie_legend[i] = NULL;
+         }
+         j = MIN(tot_num, 10);                         /* ensure data size     */
+
+         for(i = 0; i < j; i++) {
+            pie_data[i]=ccarray[i]->visits;            /* load the array       */
+            pie_legend[i]=ccarray[i]->cdesc;
+         }
+
+         pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+         pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
+
+         if(config.html_ext_lang)
+            pie_fname_lang = pie_fname + '.' + config.lang.language_code;
+         else
+            pie_fname_lang = pie_fname;
+
+         if(makeimgs)
+            graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
+
          /* put the image tag in the page */
          fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
       }
@@ -3013,25 +3023,15 @@ int html_output_t::write_main_index()
    uint64_t gt_xfer=0;
    uint64_t gt_visits=0;
    uint64_t gt_hosts=0;
-   string_t index_fname, png_fname, png_fname_lang, title;
+   string_t index_fname, png_fname, title;
    const hist_month_t *hptr;
    history_t::const_reverse_iterator iter;
 
    /* now do html stuff... */
    index_fname.format("index.%s",config.html_ext.c_str());
-   png_fname = "usage.png";
 
-   if(config.html_ext_lang) {
+   if(config.html_ext_lang)
       index_fname = index_fname + '.' + config.lang.language_code;
-      png_fname_lang = png_fname + '.' + config.lang.language_code;
-   }
-   else
-      png_fname_lang = png_fname;
-
-   sprintf(buffer,"%s %s",config.lang.msg_main_us,config.hname.c_str());
-
-   if(makeimgs)
-      graph.year_graph6x(state.history, png_fname_lang, buffer, graphinfo->usage_width, graphinfo->usage_height);
 
    if ( (out_fp=fopen(make_path(config.out_dir, index_fname),"w")) == NULL)
    {
@@ -3047,8 +3047,23 @@ int html_output_t::write_main_index()
    /* year graph */
    if(!config.js_charts.isempty())
 		fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
-   else
+   else {
+      string_t png_fname_lang;
+
+      png_fname = "usage.png";
+
+      if(config.html_ext_lang)
+         png_fname_lang = png_fname + '.' + config.lang.language_code;
+      else
+         png_fname_lang = png_fname;
+
+      sprintf(buffer,"%s %s",config.lang.msg_main_us,config.hname.c_str());
+
+      if(makeimgs)
+         graph.year_graph6x(state.history, png_fname_lang, buffer, graphinfo->usage_width, graphinfo->usage_height);
+
       fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
+   }
 
    fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
 
