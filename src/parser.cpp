@@ -923,7 +923,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 	size_t fldindex = 0, fieldcnt;
 	const char *cp1, *cp2;
 	bool tsdate = false, tstime = false;
-   u_int year, month, day, hour, min, sec;
+   u_int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
 	if(buffer == NULL || *buffer == 0)
 		return PARSE_CODE_ERROR;

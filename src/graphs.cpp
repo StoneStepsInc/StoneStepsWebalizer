@@ -158,7 +158,7 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
    int pxsize = 0, charpx = 0;
    size_t strsize;
    gdFontPtr fontptr;
-   const char *fontfile;
+   const char *fontfile = NULL;
    double angle = up ? PI/2 : 0.;
 
    switch (fonttype) {

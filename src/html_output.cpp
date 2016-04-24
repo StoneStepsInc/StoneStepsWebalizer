@@ -1005,7 +1005,7 @@ void html_output_t::top_hosts_table(int flag)
    u_int i;
    uint32_t tot_num, ntop_num;
    const hnode_t *hptr;
-   const char *cdesc;
+   const char *cdesc = NULL;
    hnode_t *h_array;
 
    // return if nothing to process
@@ -1832,7 +1832,7 @@ void html_output_t::top_dl_table(void)
    uint32_t tot_num;
    u_int i;
    const dlnode_t *nptr;
-   const char *cdesc;
+   const char *cdesc = NULL;
    dlnode_t *dl_array;
 
    if((a_ctr = state.totals.t_downloads) == 0)
@@ -1952,7 +1952,7 @@ int html_output_t::all_downloads_page(void)
    const dlnode_t *nptr;
    FILE     *out_fp;
    string_t dl_fname;
-   const char *cdesc;
+   const char *cdesc = NULL;
    dlnode_t dlnode;
 
    if(state.totals.t_downloads == 0)

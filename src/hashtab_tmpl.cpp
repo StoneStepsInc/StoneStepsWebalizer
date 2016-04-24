@@ -162,7 +162,7 @@ void hash_table<node_t, key_t>::pop_node(uint64_t hashval, node_t *nptr)
 template <typename node_t, typename key_t>
 const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key) const
 {
-   node_t **pptr, *nptr, *prev;
+   node_t **pptr, *nptr, *prev = NULL;
 
    pptr = &htab[hashval % maxhash].head;
    nptr = *pptr;
@@ -183,7 +183,7 @@ const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t
 template <typename node_t, typename key_t>
 node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key, nodetype_t type)
 {
-   node_t **pptr, *nptr, *prev;
+   node_t **pptr, *nptr, *prev = NULL;
 
    pptr = &htab[hashval % maxhash].head;
    nptr = *pptr;
@@ -206,7 +206,7 @@ node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key,
 template <typename node_t, typename key_t>
 node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const void *params)
 {
-   node_t **pptr, *nptr, *prev;
+   node_t **pptr, *nptr, *prev = NULL;
 
    pptr = &htab[hashval % maxhash].head;
    nptr = *pptr;

@@ -850,7 +850,7 @@ void xml_output_t::write_top_downloads(void)
    uint32_t top_num;
    u_int i;
    dlnode_t *nptr;
-   const char *cdesc;
+   const char *cdesc = NULL;
    dlnode_t *dl_array;
 
    if((a_ctr = state.totals.t_downloads) == 0)
@@ -1027,7 +1027,7 @@ void xml_output_t::write_top_hosts(bool s_xfer)
    u_int i;
    uint32_t top_num, ntop_num;
    hnode_t *hptr;
-   const char *cdesc;
+   const char *cdesc = NULL;
    hnode_t *h_array;
    uint64_t max_hosts = s_xfer ? config.max_hosts_kb : config.max_hosts;
    
