@@ -544,7 +544,7 @@ bool parser_t::parse_apache_log_format(const char *format)
 			case 't':
 				if(paramlen) {
                if(verbose)
-					   fprintf(stderr, "Error parsing Apache log format - \"%{format}t\" is not supported\n");
+					   fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
 					goto errexit;
 				}
 				log_rec_fields.push(eDateTime);
