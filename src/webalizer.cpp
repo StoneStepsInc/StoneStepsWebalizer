@@ -1927,7 +1927,8 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    const gnode_t *nptr = NULL;
    const char *cp1, *cp3;
    char *cp2, *bptr;
-   int  sp_flg = 0, termcnt = 0;
+   int  sp_flg = 0;
+   u_short termcnt = 0;
    bool newsrch = false;
    size_t slen = 0, qlen = 0;
    string_t str;
@@ -2441,7 +2442,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
 /* PUT_SNODE - insert/update search str node */
 /*********************************************/
 
-snode_t *webalizer_t::put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode)
+snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvisit, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;

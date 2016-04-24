@@ -166,7 +166,7 @@ class webalizer_t {
 
       anode_t *put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode);
 
-      snode_t *put_snode(const string_t& str, u_int termcnt, bool newvisit, bool& newnode);
+      snode_t *put_snode(const string_t& str, u_short termcnt, bool newvisit, bool& newnode);
 
       inode_t *put_inode(const string_t& str, nodetype_t type, bool fileurl, uint64_t xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
 
