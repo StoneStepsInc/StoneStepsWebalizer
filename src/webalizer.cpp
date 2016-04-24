@@ -254,7 +254,6 @@ bool webalizer_t::cleanup(void)
 bool webalizer_t::init_output_engines(void)
 {
    output_t::graphinfo_t *graphinfo = NULL;
-   bool makeimgs = false;
    output_t *optr;
    nlist::const_iterator iter = config.output_formats.begin();
    
@@ -990,7 +989,6 @@ int webalizer_t::proc_logfile(void)
    size_t reclen;
    const string_t *sptr, empty, *ragent;
    uint64_t stime;
-   bool gz_log = false;                  // flag for zipped log
    u_int newsrch = 0;
 
    uint64_t total_good = 0;
@@ -1927,7 +1925,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_int& scount, bool newvisit)
 {
    const gnode_t *nptr = NULL;
-   const char *cp1, *cp3, *cps = NULL;
+   const char *cp1, *cp3;
    char *cp2, *bptr;
    int  sp_flg = 0, termcnt = 0;
    bool newsrch = false;

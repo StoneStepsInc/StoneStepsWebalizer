@@ -17,7 +17,6 @@
 static string_t get_ex_desc(unsigned int excode, _EXCEPTION_POINTERS *exinfo)
 {
    string_t extext;
-   u_int reccnt = 0;
       
    // check if we have everything we need
    if(!exinfo || !exinfo->ExceptionRecord) {

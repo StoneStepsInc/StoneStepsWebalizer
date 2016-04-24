@@ -1674,7 +1674,7 @@ void html_output_t::top_entry_table(int flag)
 
 void html_output_t::top_refs_table()
 {
-   uint64_t a_ctr, r_reg=0, r_grp=0;
+   uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
    const rnode_t *rptr;
@@ -2250,7 +2250,7 @@ int html_output_t::all_refs_page(void)
 
 void html_output_t::top_agents_table()
 {
-   uint64_t a_ctr, a_reg=0, a_grp=0, a_hid=0;
+   uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
    const anode_t *aptr;
@@ -2650,7 +2650,7 @@ int html_output_t::all_search_page(void)
 
 void html_output_t::top_users_table()
 {
-   uint64_t a_ctr=0, i_reg=0, i_grp=0, i_hid=0;
+   uint64_t a_ctr=0;
    uint32_t tot_num;
    u_int i;
    const inode_t *iptr;
@@ -3015,8 +3015,6 @@ int html_output_t::write_main_index()
    /* create main index file */
 
    u_int days_in_month;
-   u_int lyear=0;
-   u_int	s_mth=0;
    uint64_t gt_hit=0;
    uint64_t gt_files=0;
    uint64_t gt_pages=0;

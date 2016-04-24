@@ -117,7 +117,7 @@ const string_t& toutf8(const string_t& str, string_t& out)
 {
    extern const wchar_t CP1252_UCS2[];
 
-   size_t osize = 0, bsize = 0;
+   size_t osize = 0;
 
    // return if the input string is empty or already contains only UTF-8 characters
    if(str.isempty() || isutf8str(str)) {

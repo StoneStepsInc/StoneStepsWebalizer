@@ -148,7 +148,6 @@ dns_resolver_t::~dns_resolver_t(void)
 /*********************************************/
 bool dns_resolver_t::put_hnode(hnode_t *hnode)
 {
-   bool retval = false;
    dnode_t* nptr;
 
 	if(!dns_db && !geoip_db)
@@ -220,7 +219,6 @@ hnode_t *dns_resolver_t::get_hnode(void)
 void dns_resolver_t::process_dnode(dnode_t* dnode)
 {
    bool goodcc;
-   int size = 0;
    struct hostent *res_ent;
    string_t ccode;
    string_t::char_buffer_t ccode_buffer;

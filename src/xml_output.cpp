@@ -1469,7 +1469,7 @@ void xml_output_t::write_top_search_strings(void)
 
 void xml_output_t::write_top_users(void)
 {
-   uint64_t a_ctr=0, i_reg=0, i_grp=0, i_hid=0;
+   uint64_t a_ctr=0;
    uint32_t top_num;
    u_int i;
    inode_t *iptr;
