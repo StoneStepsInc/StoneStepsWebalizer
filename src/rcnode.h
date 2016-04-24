@@ -30,7 +30,7 @@ struct rcnode_t : public base_node<rcnode_t> {
       public:
          rcnode_t(void) : base_node<rcnode_t>() {count = 0; hexenc = false; respcode = 0;}
          rcnode_t(const rcnode_t& rcnode);
-         rcnode_t(const string_t& method, const string_t& url, u_int respcode);
+         rcnode_t(const string_t& method, const string_t& url, u_short respcode);
 
          //
          // serialization

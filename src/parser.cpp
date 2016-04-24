@@ -437,7 +437,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    if(++cp1 >= eob) return PARSE_CODE_ERROR;
 
    /* response code */
-   log_rec.resp_code = atoi(cp1);
+   log_rec.resp_code = (u_short) atoi(cp1);
    while(*cp1 && cp1 < eob) cp1++;
    if(++cp1 >= eob) return PARSE_CODE_ERROR;
 
@@ -683,7 +683,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 
 			case eHttpStatus:
 				/* response code */
-				log_rec.resp_code = atoi(cp1);
+				log_rec.resp_code = (u_short) atoi(cp1);
 				break;
 
 			case eBytesReceived:
@@ -733,7 +733,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 				break;
 
 			case eWebsitePort:
-				log_rec.port = atoi(cp1);
+				log_rec.port = (u_short) atoi(cp1);
 				break;
 
 			case eProcTimeMcS:
@@ -986,7 +986,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 				break;
 
 			case eWebsitePort:
-				log_rec.port = atoi(cp1);
+				log_rec.port = (u_short) atoi(cp1);
 				break;
 
 			case eUriStem:
@@ -1006,7 +1006,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 				break;
 
 			case eHttpStatus:
-				log_rec.resp_code = atoi(cp1);
+				log_rec.resp_code = (u_short) atoi(cp1);
 				break;
 
          // see comments in parse_w3c_log_directive
@@ -1101,7 +1101,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    cp1++;
 
    /* response code */
-   log_rec.resp_code = atoi(cp1);
+   log_rec.resp_code = (u_short) atoi(cp1);
 
    /* xfer size */
    cp1 = fields[++fldindex].field;

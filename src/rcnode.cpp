@@ -28,14 +28,13 @@ rcnode_t::rcnode_t(const rcnode_t& rcnode) : base_node<rcnode_t>(rcnode)
    respcode = rcnode.respcode;
 }
 
-rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_int _respcode) : base_node<rcnode_t>(url) 
+rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respcode) : base_node<rcnode_t>(url) 
 {
    count = 0; 
    hexenc = (url && strchr(url, '%')) ? true : false;
    method = _method;
    respcode = _respcode;
 }
-
 
 bool rc_hash_table::compare(const rcnode_t *nptr, const void *param) const
 {
