@@ -952,7 +952,7 @@ int webalizer_t::run(void)
 
          if(config.verbose && config.is_dns_enabled()) {
             if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
-               printf("%s: %" PRIu64 "%% (%d:%d)\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
+               printf("%s: %" PRIu64 "%% (%" PRIu64 ":%" PRIu64 ")\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
          }
 
          // report total DNS time

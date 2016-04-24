@@ -1542,7 +1542,7 @@ void xml_output_t::write_top_users(void)
    if(i < top_num)
       top_num = i;
 
-   fprintf(out_fp, "<report id=\"top_users\" help=\"users_report\" title=\"%s %" PRIu64 " %s %" PRIu64 " %s\" top=\"%d\" total=\"%" PRIu64 "\" max=\"%" PRIu64 "\" groups=\"%" PRIu64 "\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i, top_num, state.totals.t_user, config.max_users, state.totals.t_grp_users);
+   fprintf(out_fp, "<report id=\"top_users\" help=\"users_report\" title=\"%s %" PRIu32 " %s %" PRIu64 " %s\" top=\"%d\" total=\"%" PRIu64 "\" max=\"%" PRIu64 "\" groups=\"%" PRIu64 "\">\n", config.lang.msg_top_top, top_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i, top_num, state.totals.t_user, config.max_users, state.totals.t_grp_users);
 
    // output the top element for the top users section
    fputs("<top>", out_fp);

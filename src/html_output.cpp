@@ -259,7 +259,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
-   fprintf(out_fp, "     totalVisits: %d,\n", state.totals.t_hvisits_end);
+   fprintf(out_fp, "     totalVisits: %" PRIu64 ",\n", state.totals.t_hvisits_end);
    fprintf(out_fp, "     otherLabel : \"%s\",\n", config.lang.msg_h_other);
    fputs("     seriesNames: {\n", out_fp);
    fprintf(out_fp, "         visits: \"%s\"\n", js_encode(config.lang.msg_h_visits));
