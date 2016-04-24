@@ -130,7 +130,7 @@ size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, appver_last);
 
    ptr = serialize(ptr, utc_time);
-         serialize<short>(ptr, utc_offset);
+         serialize<short>(ptr, (short) utc_offset);
 
    return datasize;
 }

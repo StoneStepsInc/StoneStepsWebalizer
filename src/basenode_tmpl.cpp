@@ -68,7 +68,7 @@ size_t base_node<node_t>::s_pack_data(void *buffer, size_t bufsize) const
    datanode_t<node_t>::s_pack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = serialize<u_char>(ptr, flag);
+   ptr = serialize<u_char>(ptr, (u_char) flag);
    ptr = serialize(ptr, string);
 
    return datasize;
