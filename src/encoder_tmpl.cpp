@@ -38,7 +38,7 @@ char *buffer_encoder_t<encode_char>::encode(const char *str, size_t *olptr)
    size_t olen, avsize;
 
    // check if cptr points one element past the end of the buffer
-   if(!(avsize = bufsize - (cptr-buffer)))
+   if((avsize = bufsize - (cptr-buffer)) == 0)
       return NULL;
 
    // encode the string in the available buffer space

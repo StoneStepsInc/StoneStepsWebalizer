@@ -1265,7 +1265,8 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
          longopt = false;
          nlen = 1;
          nptr =  &argv[optind][1];
-         if((vptr = (strchr("aAcCDeEFgIlmMnNoPrRsStuUx", *nptr)) ? argv[++optind] : NULL)) {
+         vptr = strchr("aAcCDeEFgIlmMnNoPrRsStuUx", *nptr) ? argv[++optind] : NULL;
+         if(vptr) {
             if(*vptr == '-') {
                if(verbose)
                   fprintf(stderr, "Missing option value for -%s\n", nptr);
