@@ -37,7 +37,7 @@ void thread_destroy(thread_t thread)
 
    if(thread) {
 	   if(!GetExitCodeThread(thread->thread_handle, &exitcode) && exitcode == STILL_ACTIVE)
-		   TerminateThread(thread->thread_handle, -1);
+		   TerminateThread(thread->thread_handle, (DWORD) -1);
 
 	   CloseHandle(thread->thread_handle);
 
