@@ -1204,7 +1204,7 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
 					if(*cptr == 0)
 						break;
 
-					if((quoted = (*cptr == '"') ? true : false))
+					if((quoted = (*cptr == '"')))
 						cptr++;
 
 					//
