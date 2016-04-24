@@ -327,7 +327,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"daily_stats_report\">\n", out_fp);
       fputs("\n<a name=\"daily\"></a>\n", out_fp);
       if (config.daily_graph) 
-			fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
+			   fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
    	if (config.daily_stats) 
 			fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
       if (config.daily_stats) 
@@ -340,7 +340,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"hourly_stats_report\">\n", out_fp);
       fputs("<a name=\"hourly\"></a>\n", out_fp);
       if (config.hourly_graph) 
-         fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
+            fprintf(out_fp,"<div id=\"hourly_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"340\" width=\"512\"></div>\n", png2_fname.c_str(), htitle.c_str());
       if (config.hourly_stats) hourly_total_table();
       fputs("</div>\n", out_fp);
    }
@@ -2685,31 +2685,31 @@ void html_output_t::top_ctry_table()
    /* generate pie chart if needed */
    if (config.ctry_graph)
    {
-      for (i=0;i<10;i++) {
-         pie_data[i] = 0;                           /* init data array      */
-         pie_legend[i] = NULL;
+         for (i=0;i<10;i++) {
+            pie_data[i] = 0;                           /* init data array      */
+            pie_legend[i] = NULL;
+         }
+         j = MIN(tot_num, 10);                         /* ensure data size     */
+
+         for(i = 0; i < j; i++) {
+            pie_data[i]=ccarray[i]->visits;            /* load the array       */
+            pie_legend[i]=ccarray[i]->cdesc;
+         }
+
+         pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+         pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
+
+         if(config.html_ext_lang)
+            pie_fname_lang = pie_fname + '.' + config.lang.language_code;
+         else
+            pie_fname_lang = pie_fname;
+
+         if(makeimgs)
+            graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
+
+         /* put the image tag in the page */
+         fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
       }
-      j = MIN(tot_num, 10);                         /* ensure data size     */
-
-      for(i = 0; i < j; i++) {
-         pie_data[i]=ccarray[i]->visits;            /* load the array       */
-         pie_legend[i]=ccarray[i]->cdesc;
-      }
-
-      pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
-      pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
-
-      if(config.html_ext_lang)
-         pie_fname_lang = pie_fname + '.' + config.lang.language_code;
-      else
-         pie_fname_lang = pie_fname;
-
-      if(makeimgs)
-         graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
-
-      /* put the image tag in the page */
-      fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
-   }
 
    /* Now do the table */
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
@@ -2809,7 +2809,7 @@ int html_output_t::write_main_index()
    write_html_head(title, out_fp);
 
    /* year graph */
-   fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
+      fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
 
    fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
 

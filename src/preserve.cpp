@@ -550,8 +550,8 @@ void state_t::database_info(void) const
    }
 
    // output active visits and downloads
-   printf("Active visits   : %ld\n", database.get_vcount());
-   printf("Active downloads: %ld\n", database.get_dacount());
+   printf("Active visits   : %" PRIu64 "\n", database.get_vcount());
+   printf("Active downloads: %" PRIu64 "\n", database.get_dacount());
 
    printf("Incremental     : %s\n", get_sysnode().incremental ? "yes" : "no");
    printf("Batch           : %s\n", get_sysnode().batch ? "yes" : "no");
