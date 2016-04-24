@@ -94,19 +94,19 @@ class graph_t {
       static uint32_t make_color(const char *str);
 
       // these methods should be called only after the engine has been initialized
-      uint64_t get_background_color(void) const {return graph_background;}
-      uint64_t get_title_color(void) const {return graph_title_color;}
-      uint64_t get_gridline_color(void) const {return graph_gridline;}
-      uint64_t get_shadow_color(void) const {return graph_shadow;}
-      uint64_t get_hits_color(void) const {return graph_hits_color;}
-      uint64_t get_files_color(void) const {return graph_files_color;}
-      uint64_t get_pages_color(void) const {return graph_pages_color;}
-      uint64_t get_visits_color(void) const {return graph_visits_color;}
-      uint64_t get_hosts_color(void) const {return graph_hosts_color;}
-      uint64_t get_volume_color(void) const {return graph_volume_color;}
-      uint64_t get_outline_color(void) const {return graph_outline_color;}
-      uint64_t get_legend_color(void) const {return graph_legend_color;}
-      uint64_t get_weekend_color(void) const {return graph_weekend_color;}
+      uint32_t get_background_color(void) const {return graph_background;}
+      uint32_t get_title_color(void) const {return graph_title_color;}
+      uint32_t get_gridline_color(void) const {return graph_gridline;}
+      uint32_t get_shadow_color(void) const {return graph_shadow;}
+      uint32_t get_hits_color(void) const {return graph_hits_color;}
+      uint32_t get_files_color(void) const {return graph_files_color;}
+      uint32_t get_pages_color(void) const {return graph_pages_color;}
+      uint32_t get_visits_color(void) const {return graph_visits_color;}
+      uint32_t get_hosts_color(void) const {return graph_hosts_color;}
+      uint32_t get_volume_color(void) const {return graph_volume_color;}
+      uint32_t get_outline_color(void) const {return graph_outline_color;}
+      uint32_t get_legend_color(void) const {return graph_legend_color;}
+      uint32_t get_weekend_color(void) const {return graph_weekend_color;}
 
       // return true if the respective color is defined in the configuration
       bool is_default_background_color(void) const {return config.graph_background & DEFCOLOR ? true : false;}
