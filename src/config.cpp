@@ -1215,16 +1215,13 @@ bool config_t::ispage(const string_t& url) const
    return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != NULL;
 }
 
-u_int config_t::get_url_type(u_short port, u_int urltype) const
+u_char config_t::get_url_type(u_short port, u_char urltype) const
 {
-	if(port == PORT_UNKNOWN)
-		return URL_TYPE_UNKNOWN;
-
 	if(port == http_port)
-		return urltype | URL_TYPE_HTTP;
+		return urltype | (u_char) URL_TYPE_HTTP;
 
-	if(port = https_port)
-		return urltype | URL_TYPE_HTTPS;
+	if(port == https_port)
+		return urltype | (u_char) URL_TYPE_HTTPS;
 
 	return URL_TYPE_UNKNOWN;
 }

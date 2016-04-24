@@ -26,7 +26,7 @@ unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid)
    count = files = entry = exit = 0; 
    xfer = 0;
    avgtime = maxtime = .0; 
-   urltype = URL_TYPE_HTTP; 
+   urltype = URL_TYPE_UNKNOWN; 
    pathlen = 0;
    vstref = 0;
 }
@@ -83,7 +83,7 @@ void unode_t::reset(uint64_t nodeid)
    count = files = entry = exit = 0; 
    xfer = 0;
    avgtime = maxtime = .0; 
-   urltype = URL_TYPE_HTTP; 
+   urltype = URL_TYPE_UNKNOWN; 
    pathlen = 0;
    vstref = 0;
 }

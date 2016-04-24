@@ -370,7 +370,7 @@ class config_t {
 
       bool ispage(const string_t& url) const;
 
-      u_int get_url_type(u_short port, u_int urltype) const;
+      u_char get_url_type(u_short port, u_char urltype) const;
       
       string_t get_db_path(void) const;
       

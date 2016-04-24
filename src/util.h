@@ -97,7 +97,7 @@
 #define RC_GATEWAYTIMEOUT     504
 #define RC_BADHTTPVER         505
 
-/* Request types (bit field) */
+/* Request types (bit values) */
 #define URL_TYPE_UNKNOWN	0x00
 #define URL_TYPE_HTTP		0x01
 #define URL_TYPE_HTTPS		0x02
