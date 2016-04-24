@@ -78,7 +78,7 @@ struct unode_t : public base_node<unode_t> {
 class u_hash_table : public hash_table<unode_t> {
    public:
       struct param_block {
-         u_int type;
+         nodetype_t type;
          const string_t *url;
          const string_t *srchargs;
       };
