@@ -30,22 +30,22 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
       return 0;
 
    // 1-byte character
-	if(wchar <= 0x7F) {
-		*out++ = wchar & 0x7F;
+	if(wchar <= L'\x7F') {
+		*out++ = (char) wchar & L'\x7F';
 		return 1;
 	}
 	
 	// 2-byte sequence
-	if(wchar <= 0x7FF) {
-		*out++ = (wchar >> 6) | 0xC0;
-		*out++ = (wchar & 0x3F) | 0x80;
+	if(wchar <= L'\x7FF') {
+		*out++ = (char) (wchar >> 6) | L'\xC0';
+		*out++ = (char) (wchar & L'\x3F') | L'\x80';
 		return 2;
 	}
 
    // 3-byte sequence
-	*out++ = (wchar >> 12) | 0xE0;
-	*out++ = ((wchar & 0xFC0) >> 6) | 0x80;
-	*out = (wchar & 0x3F) | 0x80;
+	*out++ = (char) (wchar >> 12) | L'\xE0';
+	*out++ = (char) ((wchar & L'\xFC0') >> 6) | L'\x80';
+	*out = (char) (wchar & L'\x3F') | L'\x80';
 
 	return 3;
 }
@@ -56,7 +56,7 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 //
 inline size_t ucs2utf8size(wchar_t wchar)
 {
-	return (wchar <= 0x7F) ? 1 : (wchar <= 0x7FF) ? 2 : 3;
+	return (wchar <= L'\x7F') ? 1 : (wchar <= L'\x7FF') ? 2 : 3;
 }
 
 //
