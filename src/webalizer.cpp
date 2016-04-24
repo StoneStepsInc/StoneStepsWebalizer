@@ -1983,7 +1983,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          else if(*cp1 < '\x20') 
             *cp2='_', cp1++;                          // strip invalid chars     
          else
-            *cp2 = tolower(*cp1), cp1++;              // normal character        
+            *cp2 = (char) tolower(*cp1), cp1++;       // normal character        
 
          if (sp_flg && *cp2==' ') continue;           // compress spaces         
          if(*cp2==' ') sp_flg=1; else sp_flg=0;       // (flag spaces here)      

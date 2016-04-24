@@ -285,7 +285,7 @@ string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t end)
       return *this;
 
    for(cp1 = &string[start], cp2 = &string[end]; cp1 <= cp2; cp1++) 
-      *cp1 = ::tolower(*cp1);
+      *cp1 = (char) ::tolower(*cp1);
 
    return *this;
 }
@@ -305,7 +305,7 @@ string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t end)
       return *this;
 
    for(cp1 = &string[start], cp2 = &string[end]; cp1 <= cp2; cp1++) 
-      *cp1 = ::toupper(*cp1);
+      *cp1 = (char) ::toupper(*cp1);
 
    return *this;
 }
