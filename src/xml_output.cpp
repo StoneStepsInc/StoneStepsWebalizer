@@ -703,7 +703,7 @@ void xml_output_t::write_top_urls(bool s_xfer)
             fprintf(out_fp,"<data complete=\"yes\"%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
          }
 			else {
-            if(is_secure_url(uptr->urltype, config.use_https))
+            if(config.is_secure_url(uptr->urltype))
                fprintf(out_fp, "<data secure=\"yes\"%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
             else
                fprintf(out_fp, "<data%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
@@ -821,7 +821,7 @@ void xml_output_t::write_top_entry(bool entry)
          fprintf(out_fp,"<data complete=\"yes\"%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
 		else
       {
-         if(is_secure_url(uptr->urltype, config.use_https))
+         if(config.is_secure_url(uptr->urltype))
             fprintf(out_fp, "<data secure=\"yes\"%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);
          else
             fprintf(out_fp, "<data%s url=\"%s\"><value>%s", uptr->target?" target=\"yes\"" : "", href, dispurl);

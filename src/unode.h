@@ -51,6 +51,8 @@ struct unode_t : public base_node<unode_t> {
 
          void reset(uint64_t nodeid = 0);
 
+         u_char update_url_type(u_char type);
+
          //
          // serialization
          //

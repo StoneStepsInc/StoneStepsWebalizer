@@ -162,8 +162,8 @@ class config_t {
       bool page_entry;
       bool use_ext_ent;                          // Use external XML entities?
 
-      u_int	http_port;
-      u_int	https_port;
+      u_short  http_port;
+      u_short	https_port;
 
       u_int mangle_agent;                        // mangle user agents       
       u_int group_domains;                       // Group domains 0=none     
@@ -370,8 +370,10 @@ class config_t {
 
       bool ispage(const string_t& url) const;
 
-      u_char get_url_type(u_short port, u_char urltype) const;
+      u_char get_url_type(u_short port) const;
       
+      bool is_secure_url(u_char urltype) const;
+
       string_t get_db_path(void) const;
       
       bool is_default_db(void) const;

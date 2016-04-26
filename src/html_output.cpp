@@ -1426,7 +1426,7 @@ void html_output_t::top_urls_table(int flag)
          }
 			else {
             /* Web log  */
-            if(is_secure_url(uptr->urltype, config.use_https))
+            if(config.is_secure_url(uptr->urltype))
                /* secure server mode, use https:// */
                fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
             else
@@ -1647,7 +1647,7 @@ void html_output_t::top_entry_table(int flag)
 			fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
 		else
       {
-         if(is_secure_url(uptr->urltype, config.use_https))
+         if(config.is_secure_url(uptr->urltype))
 				/* secure server mode, use https:// */
 				fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
          else

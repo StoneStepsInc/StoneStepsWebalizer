@@ -114,11 +114,6 @@ uint64_t usec2msec(uint64_t usec)
 	return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
 }
 
-bool is_secure_url(size_t urltype, bool use_https)
-{
-   return urltype == URL_TYPE_HTTPS || (use_https && (urltype & URL_TYPE_HTTPS || urltype == URL_TYPE_UNKNOWN));
-}
-
 size_t url_path_len(const char *url, size_t *urllen)
 {
    size_t pathlen = 0;

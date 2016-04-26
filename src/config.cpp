@@ -1015,8 +1015,8 @@ void config_t::get_config(const char *fname)
          case 93: dns_cache_ttl = atoi(value) * 86400; if(dns_cache_ttl == 0) dns_cache_ttl = DNS_CACHE_TTL; break;
          case 94: html_ext_lang = (tolower(value[0]) == 'y') ? true : false; break;
          case 95: apache_log_format = value; break;
-         case 96: http_port = atoi(value); break;
-         case 97: https_port = atoi(value); break;
+         case 96: http_port = (u_short) atoi(value); break;
+         case 97: https_port = (u_short) atoi(value); break;
          case 98: save_path_opt(value, html_css_path); break;
          case 99: js_charts = value.tolower(); break;
          case 100: font_file_normal = value; break;
@@ -1215,15 +1215,20 @@ bool config_t::ispage(const string_t& url) const
    return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != NULL;
 }
 
-u_char config_t::get_url_type(u_short port, u_char urltype) const
+u_char config_t::get_url_type(u_short port) const
 {
 	if(port == http_port)
-		return urltype | (u_char) URL_TYPE_HTTP;
+		return (u_char) URL_TYPE_HTTP;
 
 	if(port == https_port)
-		return urltype | (u_char) URL_TYPE_HTTPS;
+		return (u_char) URL_TYPE_HTTPS;
 
-	return URL_TYPE_UNKNOWN;
+	return (u_char) URL_TYPE_OTHER;
+}
+
+bool config_t::is_secure_url(u_char urltype) const
+{
+   return urltype == URL_TYPE_HTTPS || (use_https && (urltype & URL_TYPE_HTTPS || urltype == URL_TYPE_UNKNOWN));
 }
 
 void config_t::proc_cmd_line(int argc, const char * const argv[])

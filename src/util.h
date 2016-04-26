@@ -98,10 +98,11 @@
 #define RC_BADHTTPVER         505
 
 /* Request types (bit values) */
-#define URL_TYPE_UNKNOWN	0x00
-#define URL_TYPE_HTTP		0x01
-#define URL_TYPE_HTTPS		0x02
-#define URL_TYPE_MIXED		0x03			/* HTTP and HTTPS (nothing else) */
+#define URL_TYPE_UNKNOWN      0x00
+#define URL_TYPE_HTTP         0x01
+#define URL_TYPE_HTTPS        0x02
+#define URL_TYPE_MIXED        0x03        /* HTTP and HTTPS (nothing else) */
+#define URL_TYPE_OTHER        0x04
 
 //
 // Boyer-Moore-Horspool delta table (see strstr_ex for details)
@@ -139,7 +140,6 @@ inline double PCENT(uint64_t val, uint64_t max) {return PCENT((double) val, (dou
 
 uint64_t usec2msec(uint64_t usec);
 
-bool is_secure_url(size_t urltype, bool use_https);
 size_t url_path_len(const char *url, size_t *urllen);
 bool is_http_redirect(size_t respcode);
 bool is_http_error(size_t respcode);

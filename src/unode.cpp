@@ -12,6 +12,7 @@
 #include "unode.h"
 #include "serialize.h"
 #include "config.h"
+#include "exception.h"
 
 // -----------------------------------------------------------------------
 //
@@ -86,6 +87,17 @@ void unode_t::reset(uint64_t nodeid)
    urltype = URL_TYPE_UNKNOWN; 
    pathlen = 0;
    vstref = 0;
+}
+
+u_char unode_t::update_url_type(u_char type)
+{
+   // make sure only allowed bits are set in the argument
+   if(type & ~(URL_TYPE_HTTP | URL_TYPE_HTTPS | URL_TYPE_OTHER))
+      throw exception_t(0, "Bad URL type");
+
+   urltype |= type;
+
+   return urltype;
 }
 
 //

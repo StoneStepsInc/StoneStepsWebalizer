@@ -2299,7 +2299,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
             cptr->count= 1;
             cptr->xfer = xfer;
 			   cptr->avgtime = cptr->maxtime = proctime;
-			   cptr->urltype = config.get_url_type(port, cptr->urltype);
+			   cptr->update_url_type(config.get_url_type(port));
             cptr->exit = 0;
 
             if(target && !cptr->target)
@@ -2330,7 +2330,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
       }
       cptr->count++;
       cptr->xfer += xfer;
-		cptr->urltype = config.get_url_type(port, cptr->urltype);
+		cptr->update_url_type(config.get_url_type(port));
 		cptr->avgtime = AVG(cptr->avgtime, proctime, cptr->count);
 		cptr->maxtime = MAX(cptr->maxtime, proctime);
    }
