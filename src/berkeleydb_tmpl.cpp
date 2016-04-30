@@ -639,7 +639,7 @@ template <typename node_t>
 Dbt& berkeleydb_t::iterator_base<node_t>::set_dbt_buffer(Dbt& dbt, void *buffer, size_t size) const
 {
    dbt.set_data(buffer);
-   dbt.set_ulen(size);
+   dbt.set_ulen((u_int32_t) size);
    dbt.set_flags(DB_DBT_USERMEM);
 
    return dbt;
@@ -817,7 +817,7 @@ template <typename node_t>
 bool berkeleydb_t::table_t::get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
-   u_int32_t keysize = node.s_key_size();
+   u_int32_t keysize = (u_int32_t) node.s_key_size();
    uint64_t hashkey;
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
