@@ -790,7 +790,7 @@ MonthlySummaryChart.prototype = {
 //   
 // All arrays contain the same number of elements, one for each month present in 
 // the monthly summary report table. The months array contains objects describing
-// data point year and month, so its possible to use it with any other dat array
+// data point year and month, so its possible to use it with any other data array
 // to form a complete x/y series.
 //
 function getMonthlySummaryData(version)
@@ -810,9 +810,9 @@ function getMonthlySummaryData(version)
    // The table lists months in the descending order, but the chart shows earlier
    // dates on the left, so we need to reverse the order of elements in the usage
    // arrays to allow the code that translates these arrays to the chart format,
-   // which typically will have an element for each actual month, to walk two index 
-   // values at a different speed instead of having to match usage values to the 
-   // location on the axis.
+   // which typically will have an element for each actual month, to walk these 
+   // arrays at different speeds instead of having to match usage year/month values
+   // to the values on the axis.
    //
    for(var i = rows.length - 1; i >= 0; i--) {
       var cells = rows[i].cells;
@@ -822,7 +822,7 @@ function getMonthlySummaryData(version)
       // less useful when totals were generated while tbody was being populated. 
       // HTML5 lifts this restriction and the report will eventually be reorked 
       // to have all footer rows inside tfoot elements. Until then, just check 
-      // the number of columns to skip the footer tbody. 
+      // the number of columns to skip the footer tbody, which has fewer columns. 
       //
       if(cells.length == 7)
          continue;
