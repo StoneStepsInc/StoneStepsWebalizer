@@ -17,7 +17,7 @@ syntax: regexp
 # Intellisense precompiled headers
 ^src/ipch/
 
-# VisualStudio auto-generated files
+# Visual Studio auto-generated files
 ^src/webalizer\.ncb$
 ^src/webalizer\.suo$
 ^src/webalizer\.sdf$
@@ -28,3 +28,8 @@ syntax: regexp
 ^src/webalizer\.vcxproj\.user$
 ^src/copylibs\.vcxproj\.user$
 ^src/package\.vcxproj\.user$
+
+# Visual Studio 2015 auto-generated files
+^src/\.vs/
+^src/webalizer\.VC\.db$
+^src/webalizer\.VC\.VC\.opendb$
