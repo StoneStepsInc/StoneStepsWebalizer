@@ -117,6 +117,7 @@ xcopy /Q /Y Copyright build\%platform%\%version%\ > nul
 
 xcopy /Q /Y src\webalizer.css build\%platform%\%version%\ > nul
 xcopy /Q /Y src\webalizer.js build\%platform%\%version%\ > nul
+xcopy /Q /Y src\webalizer_highcharts.js build\%platform%\%version%\ > nul
 xcopy /Q /Y src\page-links-bg.png build\%platform%\%version%\ > nul
 xcopy /Q /Y src\page-links-hover-bg.png build\%platform%\%version%\ > nul
 xcopy /Q /Y src\webalizer.xsl build\%platform%\%version%\ > nul
