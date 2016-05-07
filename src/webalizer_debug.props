@@ -4,8 +4,8 @@
   <PropertyGroup Label="UserMacros">
     <BDBLibDir>$(BDBDir)build_windows\$(BDBPlatformPathLabel)Debug\</BDBLibDir>
     <GDLibDir>$(GDDir)windows\Debug$(GDPlatformPathLabel)\</GDLibDir>
-    <GeoIPLibDir>$(GeoIPDir)projects\VS12\$(GeoIPPlatformPathLabel)Debug\</GeoIPLibDir>
-    <ZLibLibDir>$(ZLibDir)contrib\vstudio\vc12\$(ZLibPlatformPathLabel)ZlibDebugStatic\</ZLibLibDir>
+    <GeoIPLibDir>$(GeoIPDir)projects\VS14\$(GeoIPPlatformPathLabel)Debug\</GeoIPLibDir>
+    <ZLibLibDir>$(ZLibDir)contrib\vstudio\vc14\$(ZLibPlatformPathLabel)ZlibDebugStatic\</ZLibLibDir>
     <BDBLibName>libdb60d</BDBLibName>
     <GeoIPLibName>libmaxminddbd</GeoIPLibName>
   </PropertyGroup>

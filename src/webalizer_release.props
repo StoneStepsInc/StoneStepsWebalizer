@@ -5,8 +5,8 @@
   <PropertyGroup Label="UserMacros">
     <BDBLibDir>$(BDBDir)build_windows\$(BDBPlatformPathLabel)Release\</BDBLibDir>
     <GDLibDir>$(GDDir)windows\Release$(GDPlatformPathLabel)\</GDLibDir>
-    <GeoIPLibDir>$(GeoIPDir)projects\VS12\$(GeoIPPlatformPathLabel)Release\</GeoIPLibDir>
-    <ZLibLibDir>$(ZLibDir)contrib\vstudio\vc12\$(ZLibPlatformPathLabel)ZlibReleaseStatic\</ZLibLibDir>
+    <GeoIPLibDir>$(GeoIPDir)projects\VS14\$(GeoIPPlatformPathLabel)Release\</GeoIPLibDir>
+    <ZLibLibDir>$(ZLibDir)contrib\vstudio\vc14\$(ZLibPlatformPathLabel)ZlibReleaseStatic\</ZLibLibDir>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
