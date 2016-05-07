@@ -109,7 +109,14 @@ function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
    // categories. Those series elements that don't have any data values
    // will be filed with null values.
    //
-   for(var i = 0, k = 0; i < monthly_summary.monthCount; i++) {
+   // Start with the actual first month in the report summary data and
+   // iterate once for every month in the series (`i`). If the series 
+   // year and the month match those in the `months` array, assign the
+   // series data point and move to the next summary month (`k`). The 
+   // loop ends when we run out of values in `months` or populated all 
+   // series months.
+   //
+   for(var i = 0, k = 0; k < months.length && i < monthly_summary.monthCount; i++) {
       
       if(months[k].month == month && months[k].year == year)
          series.push(yValues[k++]);
@@ -123,6 +130,15 @@ function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
       else
          month++;
    }
+
+   //
+   // Ideally, we could just set `series.length` to the total number of months
+   // and then just assign those elements that correspond to the values in the
+   // `months` array, but Highcharts ignores array elements with `undefined` 
+   // values, so we need to fill up the rest of the series with `null` values.
+   //
+   for(var i = series.length; i < monthly_summary.monthCount; i++)
+      series.push(null);
 
    return series;   
 }
