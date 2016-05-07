@@ -1,0 +1,23 @@
+# HG changeset patch
+# Parent  da3650e87b3ad74378ad4a5a356baf61dcaebf32
+Visual Studio 2015 .hgignore files
+
+diff -r da3650e87b3a -r 9e1eb0d4b0c5 .hgignore
+--- a/.hgignore	Wed Dec 10 01:15:11 2014 -0500
++++ b/.hgignore	Sun May 01 21:35:05 2016 -0400
+@@ -8,6 +8,15 @@ syntax: regexp
+ ^contrib/vstudio/vc12/x86/
+ ^contrib/vstudio/vc12/x64/
+ 
++^contrib/vstudio/vc14/zlib\.sdf$
++^contrib/vstudio/vc14/zlib\.VC\.db$
++^contrib/vstudio/vc14/zlib\.VC\.VC\.opendb$
++^contrib/vstudio/vc14/zlib\.vcxproj\.user$
++
++^contrib/vstudio/vc14/\.vs/
++^contrib/vstudio/vc14/x86/
++^contrib/vstudio/vc14/x64/
++
+ ^contrib/masmx86/[a-z0-9]+.lst$
+ ^contrib/masmx86/[a-z0-9]+.obj$
+ ^contrib/masmx64/[a-z0-9]+.lst$
