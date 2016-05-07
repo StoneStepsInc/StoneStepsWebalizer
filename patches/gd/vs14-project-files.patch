@@ -1,0 +1,143 @@
+# HG changeset patch
+# Parent  93b1dbeb4a1074add092b9b2709585fb1e2a6fba
+Upgraded project files to Visual Studio 2015
+
+diff -r 93b1dbeb4a10 -r 97889fde3a63 windows/gd.vcxproj
+--- a/windows/gd.vcxproj	Mon May 02 22:23:47 2016 -0400
++++ b/windows/gd.vcxproj	Mon May 02 22:34:06 2016 -0400
+@@ -1,5 +1,5 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup Label="ProjectConfigurations">
+     <ProjectConfiguration Include="Debug|Win32">
+       <Configuration>Debug</Configuration>
+@@ -26,25 +26,25 @@
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+-    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v140</PlatformToolset>
+     <UseOfMfc>false</UseOfMfc>
+     <CharacterSet>MultiByte</CharacterSet>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+-    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v140</PlatformToolset>
+     <UseOfMfc>false</UseOfMfc>
+     <CharacterSet>MultiByte</CharacterSet>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+-    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v140</PlatformToolset>
+     <UseOfMfc>false</UseOfMfc>
+     <CharacterSet>MultiByte</CharacterSet>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+-    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v140</PlatformToolset>
+     <UseOfMfc>false</UseOfMfc>
+     <CharacterSet>MultiByte</CharacterSet>
+   </PropertyGroup>
+@@ -304,22 +304,22 @@
+     <ClCompile Include="..\src\webpimg.c" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2015\freetype2410.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410_D.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2015\freetype2410_D.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410.lib">
++    <Library Include="..\..\freetype\objs\x64\vc2015\freetype2410.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410_D.lib">
++    <Library Include="..\..\freetype\objs\x64\vc2015\freetype2410_D.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+@@ -344,22 +344,22 @@
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x64\ZlibDebugStatic\zlib12.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x64\ZlibReleaseStatic\zlib12.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x86\ZlibDebugStatic\zlib12.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x86\ZlibReleaseStatic\zlib12.lib">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+diff -r 93b1dbeb4a10 -r 97889fde3a63 windows/gd.vcxproj.filters
+--- a/windows/gd.vcxproj.filters	Mon May 02 22:23:47 2016 -0400
++++ b/windows/gd.vcxproj.filters	Mon May 02 22:34:06 2016 -0400
+@@ -206,10 +206,10 @@
+     </ClCompile>
+   </ItemGroup>
+   <ItemGroup>
+-    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410_D.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2015\freetype2410_D.lib">
+       <Filter>Libraries\Debug</Filter>
+     </Library>
+-    <Library Include="..\..\freetype\objs\win32\vc2013\freetype2410.lib">
++    <Library Include="..\..\freetype\objs\win32\vc2015\freetype2410.lib">
+       <Filter>Libraries\Release</Filter>
+     </Library>
+     <Library Include="..\..\libpng\projects\vstudio\Debug Library\libpng16.lib">
+@@ -218,22 +218,22 @@
+     <Library Include="..\..\libpng\projects\vstudio\Release Library\libpng16.lib">
+       <Filter>Libraries\Release</Filter>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibDebugStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x86\ZlibDebugStatic\zlib12.lib">
+       <Filter>Libraries\Debug</Filter>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x86\ZlibReleaseStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x86\ZlibReleaseStatic\zlib12.lib">
+       <Filter>Libraries\Release</Filter>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibDebugStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x64\ZlibDebugStatic\zlib12.lib">
+       <Filter>Libraries\Debu64</Filter>
+     </Library>
+-    <Library Include="..\..\zlib\contrib\vstudio\vc12\x64\ZlibReleaseStatic\zlib12.lib">
++    <Library Include="..\..\zlib\contrib\vstudio\vc14\x64\ZlibReleaseStatic\zlib12.lib">
+       <Filter>Libraries\Rlease64</Filter>
+     </Library>
+-    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410.lib">
++    <Library Include="..\..\freetype\objs\x64\vc2015\freetype2410.lib">
+       <Filter>Libraries\Rlease64</Filter>
+     </Library>
+-    <Library Include="..\..\freetype\objs\x64\vc2013\freetype2410_D.lib">
++    <Library Include="..\..\freetype\objs\x64\vc2015\freetype2410_D.lib">
+       <Filter>Libraries\Debu64</Filter>
+     </Library>
+     <Library Include="..\..\libpng\projects\vstudio\x64\Debug Library\libpng16.lib">

@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent  ad75b438f87c7ea9f5f66ce09ae2fd4bbc63f79b
+Visual Studio 2015 .hgignore files
+
+diff -r ad75b438f87c -r 93b1dbeb4a10 .hgignore
+--- a/.hgignore	Wed Dec 10 01:22:24 2014 -0500
++++ b/.hgignore	Mon May 02 22:23:47 2016 -0400
+@@ -11,3 +11,7 @@ syntax: regexp
+ ^windows/gd\.suo$
+ ^windows/gd\.v12\.suo$
+ ^windows/gd\.vcxproj\.user$
++
++^windows/gd\.VC\.VC\.opendb$
++^windows/gd\.VC\.db$
++^windows/.vs/
