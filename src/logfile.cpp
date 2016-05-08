@@ -93,8 +93,13 @@ long logfile_t::set_reopen_offset(void)
 
 int logfile_t::get_line(char *buffer, u_int bufsize, int *errnum) const
 {
-   if(buffer)
-      *buffer = 0;
+   if(!buffer) {
+      if(errnum)
+         *errnum = EINVAL;
+      return -1;
+   }
+
+   *buffer = 0;
 
    if(gz_log) {
       if(gzlog_fp && gzgets(gzlog_fp, buffer, bufsize) == Z_NULL) {
