@@ -52,7 +52,7 @@ void msleep(unsigned long timeout)
 
 uint64_t msecs(void)
 {
-   return GetTickCount();
+   return (uint64_t) GetTickCount();
 }
 
 unsigned long thread_id(void)
