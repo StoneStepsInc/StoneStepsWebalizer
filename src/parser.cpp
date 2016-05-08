@@ -265,7 +265,7 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
    // find the first space after the method
    cptr = cp1;
    while(*cp1 && *cp1 != ' ') 
-      *cp1++;
+      cp1++;
    
    // if there's no method, return
    if(cp1-cptr == 0)
@@ -279,14 +279,14 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
       return NULL;
 
    // skip spaces 
-   while(*cp1 && *cp1 && *cp1 == ' ') cp1++;
+   while(*cp1 && *cp1 == ' ') cp1++;
 
    // copy the URL
    cptr = cp1;
    while(*cp1 && *cp1 != ' ') {
       if(*cp1 == '?')
          break;
-      *cp1++;
+      cp1++;
    }
    if(cp1 <= cptr)
       return NULL;
@@ -296,7 +296,7 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
    if(*cp1 == '?') {
       cp1++;
       cptr = cp1;
-      while(*cp1 && *cp1 != ' ') *cp1++;
+      while(*cp1 && *cp1 != ' ') cp1++;
       if(cp1 > cptr)
          log_rec.srchargs.assign(cptr, cp1-cptr);
    }
@@ -400,7 +400,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
       if(*cp2 == 0)
          *cp2++ = ' ';
       else
-         *cp2++;
+         cp2++;
    }
    if(cp2 == cp1 || cp2 >= eob) return PARSE_CODE_ERROR;
 
@@ -420,7 +420,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    // date/time string 
    //
    cp2 = cp1;
-   while(*cp2 && cp2 < eob) *cp2++;
+   while(*cp2 && cp2 < eob) cp2++;
    if(cp2 >= eob) return PARSE_CODE_ERROR;
 
    if(!parse_clf_tstamp(cp1, log_rec.tstamp))
@@ -456,14 +456,14 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    //
    cp2 = cp1;
 
-   while(*cp2 && cp2 < eob && *cp2 != '?' && *cp2 != '\n') *cp2++;
+   while(*cp2 && cp2 < eob && *cp2 != '?' && *cp2 != '\n') cp2++;
    if (cp2 >= eob) return PARSE_CODE_OK;
    if(*cp1 == '"') {cp1++; if(*cp2 != '?') cp2--;}
    log_rec.refer.assign(cp1, cp2-cp1);
 
    if(*cp2 == '?') {
       cp1 = ++cp2;
-      while(*cp2 && cp2 < eob && *cp2 != '\n') *cp2++;
+      while(*cp2 && cp2 < eob && *cp2 != '\n') cp2++;
       if(*--cp2 != '"') cp2++;
       log_rec.xsrchstr.assign(cp1, cp2-cp1);
    }
@@ -474,7 +474,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    //
    // user agent, if present
    //
-   while(*cp2 && cp2 < eob) *cp2++;
+   while(*cp2 && cp2 < eob) cp2++;
    if (cp2 >= eob) return PARSE_CODE_OK;
    if(*cp1 == '"') {cp1++; cp2--;}
    log_rec.agent.assign(cp1, cp2-cp1);
@@ -1112,7 +1112,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    cp1 = fields[++fldindex].field;
    cpx = cp1;
    while(*cp1 && *cp1 != ' ' && *cp1 != '"')
-      *cp1++;
+      cp1++;
    log_rec.method.assign(cpx, cp1-cpx);
 
    // URL path
@@ -1120,7 +1120,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    while(*cp1 && *cp1 != ' ') {
       if(*cp1 == '?')
          break;
-      *cp1++;
+      cp1++;
    }
    log_rec.url.assign(fields[fldindex].field, cp1-fields[fldindex].field);
 
@@ -1129,7 +1129,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
       cp1++;
       cpx = cp1;
       while(*cp1 && *cp1 != ' ')
-         *cp1++;
+         cp1++;
       if(cp1 > cpx)
          log_rec.srchargs.assign(cpx, cp1-cpx);
    }

@@ -1962,7 +1962,7 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          cp3 = nptr->name;
 
          // walk both strings (strncmp would require two passes if not found)
-         while(*cp1 && *cp3 && *cp1 == *cp3) *cp1++, *cp3++;
+         while(*cp1 && *cp3 && *cp1 == *cp3) cp1++, cp3++;
          if(*cp3 == 0)
             break;
 

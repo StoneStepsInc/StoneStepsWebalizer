@@ -881,7 +881,7 @@ void config_t::get_config(const char *fname)
 
       // skip to the first non-alphanum character
       cp1 = cp2 = buffer;
-      while(isalnum(*cp2)) *cp2++;
+      while(isalnum(*cp2)) cp2++;
       
       // hold onto the keyword
       keyword.assign(cp1, cp2-cp1);
@@ -892,10 +892,10 @@ void config_t::get_config(const char *fname)
       
       // find the end of the line
       cp2 = cp1;
-      while(*cp2 != '\n' && *cp2 != '\0') *cp2++;
+      while(*cp2 != '\n' && *cp2 != '\0') cp2++;
       
       // move backwards until we find a non-whitespace character
-      while(cp2 != cp1 && iswspaceex(*cp2)) *cp2--;
+      while(cp2 != cp1 && iswspaceex(*cp2)) cp2--;
       if(*cp2 != 0 && *cp2 != '\n') cp2++;
 
       // ignore empty values
