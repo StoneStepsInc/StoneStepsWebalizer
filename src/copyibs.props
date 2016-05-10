@@ -8,15 +8,17 @@
     <TargetName />
   </PropertyGroup>
   <ItemDefinitionGroup>
-    <CustomBuildStep>
-      <Command>xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(OutDir)"
-xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(OutDir)"
-</Command>
-      <Message>Copying 3rd-party libraries to $(OutDir)</Message>
-      <Outputs>$(OutDir)$(BDBLibName).dll;$(OutDir)$(GDLibName).dll</Outputs>
-    </CustomBuildStep>
+    <CustomBuildStep />
     <CustomBuild />
     <BuildLog />
+    <CustomBuild>
+      <Command>copy %(FullPath) $(OutDir)%(Filename)%(Extension)</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)%(Filename)%(Extension)</Outputs>
+      <Message>Copying %(Filename)%(Extension)</Message>
+      <LinkObjects>false</LinkObjects>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
