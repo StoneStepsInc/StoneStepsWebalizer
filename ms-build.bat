@@ -107,23 +107,6 @@ if ERRORLEVEL 1 goto :msbuild_error
 rem
 rem Copy all files to the version directory
 rem
-echo Copying additional Webalizer files
-
-xcopy /Q /Y sample.conf build\%platform%\%version%\ > nul
-xcopy /Q /Y README build\%platform%\%version%\ > nul
-xcopy /Q /Y CHANGES build\%platform%\%version%\ > nul
-xcopy /Q /Y COPYING build\%platform%\%version%\ > nul
-xcopy /Q /Y Copyright build\%platform%\%version%\ > nul
-
-xcopy /Q /Y src\webalizer.css build\%platform%\%version%\ > nul
-xcopy /Q /Y src\webalizer.js build\%platform%\%version%\ > nul
-xcopy /Q /Y src\webalizer_highcharts.js build\%platform%\%version%\ > nul
-xcopy /Q /Y src\page-links-bg.png build\%platform%\%version%\ > nul
-xcopy /Q /Y src\page-links-hover-bg.png build\%platform%\%version%\ > nul
-xcopy /Q /Y src\webalizer.xsl build\%platform%\%version%\ > nul
-
-echo Copying language files
-xcopy /Q /Y lang\webalizer_lang.* build\%platform%\%version%\lang\ > nul
 
 echo Copying XSL templates
 for %%f in (index.xsl usage.xsl webalizer.xsl graphs-amc.xsl graphs-amc-line.xml graphs-amc-pie.xml graphs-ofc.xsl) do xcopy /Q /Y src\%%f build\%platform%\%version%\ > nul

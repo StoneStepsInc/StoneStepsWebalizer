@@ -1,2 +1,159 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\COPYING" />
+    <None Include="..\Copyright" />
+    <None Include="..\README" />
+    <None Include="..\sample.conf" />
+    <None Include="..\lang\webalizer_help.english">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.catalan">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.croatian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.czech">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.danish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.dutch">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.english">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.estonian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.finnish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.french">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.galician">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.german">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.greek">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.hungarian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.icelandic">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.indonesian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.italian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.japanese">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.korean">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.latvian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.malay">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.norwegian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.polish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.portuguese">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.portuguese_brazilian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.romanian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.russian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.serbian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.simplified_chinese">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.slovak">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.slovene">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.spanish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.swedish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.turkish">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="..\lang\webalizer_lang.ukrainian">
+      <Filter>lang</Filter>
+    </None>
+    <None Include="webalizer.css">
+      <Filter>src</Filter>
+    </None>
+    <None Include="webalizer.js">
+      <Filter>src</Filter>
+    </None>
+    <None Include="webalizer_highcharts.js">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="page-links-bg.png">
+      <Filter>src</Filter>
+    </Image>
+    <Image Include="page-links-hover-bg.png">
+      <Filter>src</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="lang">
+      <UniqueIdentifier>{524721df-9d31-4e88-9831-2881e4e03644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{29606b9d-4d93-4ab6-a4de-52769551a03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="xsl">
+      <UniqueIdentifier>{1f7a9600-1dfb-42b7-8fca-7ec0136b12b2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="graphs-amc.xsl">
+      <Filter>xsl</Filter>
+    </Xml>
+    <Xml Include="graphs-ofc.xsl">
+      <Filter>xsl</Filter>
+    </Xml>
+    <Xml Include="index.xsl">
+      <Filter>xsl</Filter>
+    </Xml>
+    <Xml Include="usage.xsl">
+      <Filter>xsl</Filter>
+    </Xml>
+    <Xml Include="webalizer.xsl">
+      <Filter>xsl</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

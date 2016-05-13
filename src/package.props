@@ -11,13 +11,31 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <CustomBuildStep>
-      <Command>xcopy /Y ..\build\$(Platform)\$(Configuration)\webalizer.exe "$(OutDir)"  
-xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(OutDir)"
-xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(OutDir)"
+      <Command>echo Copying binaries to $(OutDir)
+xcopy /Y ..\build\$(Platform)\$(Configuration)\webalizer.exe "$(OutDir)" &gt; nul
+xcopy /Y "$(BDBLibDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul
+xcopy /Y "$(GDLibDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
 
+echo Copying additional files to $(OutDir)
+xcopy /Q /Y ..\sample.conf "$(OutDir)" &gt; nul
+xcopy /Q /Y ..\README "$(OutDir)" &gt; nul
+xcopy /Q /Y ..\CHANGES "$(OutDir)" &gt; nul
+xcopy /Q /Y ..\COPYING "$(OutDir)" &gt; nul
+xcopy /Q /Y ..\Copyright "$(OutDir)" &gt; nul
+
+echo Copying script and style sheet files to $(OutDir)src
+xcopy /Q /Y webalizer.css "$(OutDir)src\" &gt; nul
+xcopy /Q /Y webalizer.js "$(OutDir)src\" &gt; nul
+xcopy /Q /Y webalizer_highcharts.js "$(OutDir)src\" &gt; nul
+xcopy /Q /Y page-links-bg.png "$(OutDir)src\" &gt; nul
+xcopy /Q /Y page-links-hover-bg.png "$(OutDir)src\" &gt; nul
+xcopy /Q /Y webalizer.xsl "$(OutDir)src\" &gt; nul
+
+echo Copying language files to $(OutDir)lang
+xcopy /Q /Y ..\lang\webalizer_lang.* "$(OutDir)lang\" &gt; nul
 </Command>
-      <Message>Copying binaries into $(OutDir)</Message>
-      <Outputs>$(OutDir)$(BDBLibName).dll;$(OutDir)$(GDLibName).dll</Outputs>
+      <Message>Copying package files into $(OutDir)</Message>
+      <Outputs>phony-package-target</Outputs>
     </CustomBuildStep>
     <CustomBuild />
     <BuildLog />

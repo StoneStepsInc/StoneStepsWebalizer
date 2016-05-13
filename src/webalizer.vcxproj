@@ -345,55 +345,6 @@
     <ResourceCompile Include="webalizer.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\lang\webalizer_help.english" />
-    <None Include="..\lang\webalizer_lang.catalan" />
-    <None Include="..\lang\webalizer_lang.chinese" />
-    <None Include="..\lang\webalizer_lang.croatian" />
-    <None Include="..\lang\webalizer_lang.czech" />
-    <None Include="..\lang\webalizer_lang.danish" />
-    <None Include="..\lang\webalizer_lang.dutch" />
-    <None Include="..\lang\webalizer_lang.english" />
-    <None Include="..\lang\webalizer_lang.estonian" />
-    <None Include="..\lang\webalizer_lang.finnish" />
-    <None Include="..\lang\webalizer_lang.french" />
-    <None Include="..\lang\webalizer_lang.galician" />
-    <None Include="..\lang\webalizer_lang.german" />
-    <None Include="..\lang\webalizer_lang.greek" />
-    <None Include="..\lang\webalizer_lang.hungarian" />
-    <None Include="..\lang\webalizer_lang.icelandic" />
-    <None Include="..\lang\webalizer_lang.indonesian" />
-    <None Include="..\lang\webalizer_lang.italian" />
-    <None Include="..\lang\webalizer_lang.japanese" />
-    <None Include="..\lang\webalizer_lang.korean" />
-    <None Include="..\lang\webalizer_lang.latvian" />
-    <None Include="..\lang\webalizer_lang.malay" />
-    <None Include="..\lang\webalizer_lang.norwegian" />
-    <None Include="..\lang\webalizer_lang.polish" />
-    <None Include="..\lang\webalizer_lang.portuguese" />
-    <None Include="..\lang\webalizer_lang.portuguese_brazil" />
-    <None Include="..\lang\webalizer_lang.portuguese_brazilian" />
-    <None Include="..\lang\webalizer_lang.romanian" />
-    <None Include="..\lang\webalizer_lang.russian" />
-    <None Include="..\lang\webalizer_lang.serbian" />
-    <None Include="..\lang\webalizer_lang.simplified_chinese" />
-    <None Include="..\lang\webalizer_lang.slovak" />
-    <None Include="..\lang\webalizer_lang.slovene" />
-    <None Include="..\lang\webalizer_lang.spanish" />
-    <None Include="..\lang\webalizer_lang.swedish" />
-    <None Include="..\lang\webalizer_lang.turkish" />
-    <None Include="..\lang\webalizer_lang.ukrainian" />
-    <None Include="webalizer.css" />
-    <None Include="..\CHANGES" />
-    <None Include="..\README" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="graphs-amc.xsl" />
-    <Xml Include="graphs-ofc.xsl" />
-    <Xml Include="index.xsl" />
-    <Xml Include="usage.xsl" />
-    <Xml Include="webalizer.xsl" />
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="$(BDBDir)build_windows\Win32\Debug\libdb60d.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
