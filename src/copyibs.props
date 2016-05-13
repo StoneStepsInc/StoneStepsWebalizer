@@ -12,7 +12,7 @@
     <CustomBuild />
     <BuildLog />
     <CustomBuild>
-      <Command>copy %(FullPath) $(OutDir)%(Filename)%(Extension)</Command>
+      <Command>xcopy /Q /Y %(FullPath) $(OutDir)%(Filename)%(Extension) &gt; nul</Command>
     </CustomBuild>
     <CustomBuild>
       <Outputs>$(OutDir)%(Filename)%(Extension)</Outputs>
