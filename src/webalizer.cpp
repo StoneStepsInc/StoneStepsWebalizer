@@ -60,10 +60,10 @@
 #include "dump_output.h"
 #include "html_output.h"
 #include "xml_output.h"
-#include "autoptr.h"
 #include "pool_allocator.h"
 
 #include <list>
+#include <memory>
 
 //
 //
@@ -1014,7 +1014,7 @@ int webalizer_t::proc_logfile(void)
    std::vector<string_t>::const_iterator iter = config.log_fnames.begin();
    while(iter != config.log_fnames.end()) {
       const string_t& fname = *iter++;
-      autoptr_t<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? make_path(config.cur_dir, fname) : fname));
+      std::unique_ptr<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? make_path(config.cur_dir, fname) : fname));
       
       // check if we can read the file
       if(!logfile->is_readable()) {

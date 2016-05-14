@@ -381,9 +381,6 @@
     <ClInclude Include="exception.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="autoptr.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="berkeleydb.h">
       <Filter>Header Files</Filter>
     </ClInclude>

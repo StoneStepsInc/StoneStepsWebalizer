@@ -285,7 +285,6 @@
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="autoptr.h" />
     <ClInclude Include="berkeleydb.h" />
     <ClInclude Include="char_buffer.h" />
     <ClInclude Include="config.h" />

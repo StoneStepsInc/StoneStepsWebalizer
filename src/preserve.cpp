@@ -45,8 +45,9 @@
 #include "database.h"
 #include "lang.h"
 #include "exception.h"
-#include "autoptr.h"
 #include "history.h"
+
+#include <memory>
 
 state_t::state_t(const config_t& config) : config(config), history(config), database(config), response(config.lang.resp_code_count())
 {
@@ -1090,12 +1091,12 @@ unode_t *state_t::find_url(const string_t& url)
 void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
 {
    hnode_t hnode, *hptr;
-   autoptr_t<danode_t> daptr;
+   std::unique_ptr<danode_t> daptr;
    state_t *_this = (state_t*) arg;
 
    // for active downloads, lookup the download job descriptor
    if(active) {
-      daptr.set(new danode_t(dlnode.nodeid));
+      daptr.reset(new danode_t(dlnode.nodeid));
 
       // read the active download node from the database
       if(!_this->database.get_danode_by_id(*daptr, NULL, NULL))
@@ -1138,11 +1139,11 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, v
 //
 void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
 {
-   autoptr_t<hnode_t> hptr;
+   std::unique_ptr<hnode_t> hptr;
    const state_t *_this = (const state_t*) arg;
 
    if(hostid) {
-      hptr.set(new hnode_t);
+      hptr.reset(new hnode_t);
       hptr->nodeid = hostid;
 
       // look up the host node in the database
@@ -1180,7 +1181,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
 void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 {
    state_t *_this = (state_t*) arg;
-   autoptr_t<vnode_t> vptr;
+   std::unique_ptr<vnode_t> vptr;
    string_t str;
 
    if(hnode.flag == OBJ_GRP)
@@ -1188,7 +1189,7 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 
    // read the active visit, if there's one
    if(active) {
-      vptr.set(new vnode_t(hnode.nodeid));
+      vptr.reset(new vnode_t(hnode.nodeid));
 
       // look up the active visit in the database
       if(!_this->database.get_vnode_by_id(*vptr, unpack_vnode_cb, _this))
