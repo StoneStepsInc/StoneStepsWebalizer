@@ -15,6 +15,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "package", "package.vcxproj"
 		{A9C517BF-D624-47CB-BC93-16B4C9FE6956} = {A9C517BF-D624-47CB-BC93-16B4C9FE6956}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{A06181BF-4E93-4884-8F19-EB1F7A80DB8C}"
+	ProjectSection(SolutionItems) = preProject
+		vs-projects-readme.md = vs-projects-readme.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
