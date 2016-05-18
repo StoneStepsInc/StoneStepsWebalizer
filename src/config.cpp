@@ -974,7 +974,7 @@ void config_t::get_config(const char *fname)
          case 57: ntop_entry  = atoi(value); break;               // Top Entry pgs
          case 58: ntop_exit   = atoi(value); break;               // Top Exit pages
          case 59: ntop_search = atoi(value); break;               // Top Search pgs
-         case 60: log_type=(tolower(value[0])=='f')?
+         case 60: log_type=(tolower(value[0])=='s')?
               LOG_SQUID:(tolower(value[0])=='c')?
               LOG_CLF: (tolower(value[0])=='a')?
               LOG_APACHE : (tolower(value[0])=='w')?
@@ -1315,7 +1315,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'D': dns_cache=vptr; break;                           // DNS Cache filename
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
-          case 'F': log_type=(tolower(vptr[0])=='f')?
+          case 'F': log_type=(tolower(vptr[0])=='s')?
                LOG_SQUID: (tolower(vptr[0])=='c')?
                LOG_CLF: (tolower(vptr[0])=='a')?
                LOG_APACHE: (tolower(vptr[0])=='w')?
