@@ -3033,7 +3033,7 @@ void print_loaded_modules(void)
    modulecnt = MIN(sizein/sizeof(HMODULE), sizeout/sizeof(HMODULE));
    
    // print the total just so we know if we missed anything
-   fprintf(stderr, "Loaded modules (%d of %d)\n", modulecnt, sizeout / sizeof(HMODULE));
+   fprintf(stderr, "Loaded modules (%lu of %lu)\n", modulecnt, static_cast<DWORD>(sizeout / sizeof(HMODULE)));
    
    for(DWORD i = 0; i < modulecnt; i++) {
       if(!GetModuleFileNameA(modules[i], modulename, sizeof(modulename)-sizeof(char)))
