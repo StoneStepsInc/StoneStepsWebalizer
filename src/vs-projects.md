@@ -3,8 +3,8 @@
 All settings that are shared between multiple projects in this solution are configured 
 in property sheets that are attached to the relevant projects in various combinations. 
 
-IMPORTANT: Do not change any settings at the project level unless these settins apply 
-only to a particular combination of platform and build configuratiion.
+IMPORTANT: Do not change any settings at the project level, unless these settings apply 
+to a particular platform and build configuration.
 
 ## webalizer
 
