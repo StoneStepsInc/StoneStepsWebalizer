@@ -1,4 +1,9 @@
 --------------------------------------------------------------------
+4.1.1.5 [22-May-2016] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * [BUG] Squid log file type is misidentified by the '-F f' option and '-F s' is ignored
+
+--------------------------------------------------------------------
 4.1.0.5 [01-May-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Implemented a generic JavaScript charting layer
@@ -9,13 +14,13 @@
 --------------------------------------------------------------------
 4.0.5.2 [10-Apr-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Fixed a bug that caused LogFile entry in the configuration file ignored
- * Fixed a bug causing stdin reported as a file that cannot be opened
+ * [BUG] Fixed a bug that caused LogFile entry in the configuration file ignored
+ * [BUG] Fixed a bug causing stdin reported as a file that cannot be opened
 
 --------------------------------------------------------------------
 4.0.4.1 [04-Jan-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Fixed a bug causing the last day before a month change lose host counts
+ * [BUG] Fixed a bug causing the last day before a month change lose host counts
 
 --------------------------------------------------------------------
 4.0.3.6 [21-Sep-2015] -- Stone Steps Inc. (www.stonesteps.ca)
@@ -26,12 +31,12 @@
 --------------------------------------------------------------------
 4.0.2.5 [21-Sep-2015] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Fixed a bug causing ApacheLogFormat ignored if DNS resolution was disabled
+ * [BUG] Fixed a bug causing ApacheLogFormat ignored if DNS resolution was disabled
 
 --------------------------------------------------------------------
 4.0.1.2 [14-Sep-2015] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Fixed a bug causing SSW to crash after processing a log file with user names
+ * [BUG] Fixed a bug causing SSW to crash after processing a log file with user names
 
 --------------------------------------------------------------------
 4.0.0.12 [18-Jul-2015] -- Stone Steps Inc. (www.stonesteps.ca)
@@ -53,7 +58,7 @@
 
  * Added GraphType to the configuration (XML reports)
  * Colors defined in the configuration are propagated now to the XML reports and picked up by XSL
- * Fixed a bug causing the first log record of each file processed twice
+ * [BUG] Fixed a bug causing the first log record of each file processed twice
  * Made W3C a standalone log file type to account for differences with IIS log file format
 
 --------------------------------------------------------------------
