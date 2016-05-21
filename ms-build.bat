@@ -14,7 +14,7 @@ if "%~1" == "?" goto help
 rem
 rem Check if Visual Studio is configured for this command prompt
 rem
-if "%VCINSTALLDIR%" == "" goto :novs12
+if "%VCINSTALLDIR%" == "" goto :novs14
 
 rem
 rem Keep all variables created in this batch file local
@@ -147,13 +147,13 @@ echo.
 
 goto :exit
 
-:novs12
+:novs14
 echo.
 echo Visual Studio is not configured for this command prompt window. Run 
 echo the appropriate vsvars*.bat batch file for your platform from this 
 echo directory prior to launching ms-build.bat.
 echo.
-echo %VS120COMNTOOLS%
+echo %VS140COMNTOOLS%
 echo. 
 
 goto :exit
