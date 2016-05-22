@@ -1,5 +1,5 @@
 --------------------------------------------------------------------
-4.1.1.5 [22-May-2016] -- Stone Steps Inc. (www.stonesteps.ca)
+4.1.1.2 [22-May-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Updated VS project files to VS2015
  * [BUG] Squid log file type is misidentified by the '-F f' option and '-F s' is ignored
