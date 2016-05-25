@@ -448,9 +448,7 @@ General Options
 
 -F        Specify that the log file format. By default, Stone Steps 
           Webalizer expects IIS log file, but may be instructed to
-          process other formats: w3c, iis, apache, clf, squid, wu-ftpd. 
-          Note that wu-ftpd support is limited and will be 
-          eventually dropped. 
+          process other formats: w3c, iis, apache, clf, squid. 
           Config file keyword: LogType
 
 -f        Fold out of sequence log records back into analysis, by
@@ -535,7 +533,7 @@ General Options
           scripts that display the whole page, not just parts of it.
           Some system will need to define a few more, such as 'phtml',
           'php3' or 'pl' in order to have them counted as well.  The
-          default is 'htm*' and 'cgi' for web logs and 'txt' for ftp.
+          default is 'htm*' and 'cgi' for web logs.
           Config file keyword: PageType
 
 -t name   This option specifies the title string for all reports.  This
@@ -919,7 +917,7 @@ LogDir        Defines an optional path to the log directory. If LogDir is not
               Default value: none
 
 LogType       This specified the log file type being used. Values may 
-              be either 'w3c', 'iis', 'apache', 'clf', 'ftp' or 'squid'. 
+              be either 'w3c', 'iis', 'apache', 'clf' or 'squid'. 
               Ensure that you specify the proper file type, otherwise 
               you will be presented with a long stream of 'invalid 
               record' messages ;)
@@ -1102,7 +1100,7 @@ PageType      Allows you to define the 'page' type extension.  Normally,
               option allows you to specify what extensions you consider
               a page.  Default is 'txt', 'php', 'htm*' and 'cgi' for 
               Apache and CLF logs, 'txt', 'asp', 'aspx', and 'htm*' 
-              for IIS logs and 'txt' for ftp logs.
+              for IIS logs.
               Command line argument: -P
               
 PageEntryURL  HTTP requests are logged at the end of the request processing
@@ -1897,9 +1895,8 @@ TopSearch     Allows you to specify how many "Top Search Strings" are
 TopUsers      This allows you to specify how many "Top" usernames are
               displayed in the "Top Usernames" table.  Usernames are
               only available if you use http authentication on your
-              web server, or when processing wu-ftpd xferlogs.  The
-              default value is 20.  If you want to disable the Username
-              table, specify a value of zero (0).
+              web server. The default value is 20. If you want to 
+              disable the Username table, specify a value of zero (0).
 
 AllUsers      Will cause a separate HTML page to be generated for all
               normally visable usernames.  A link will be added to the
@@ -2183,9 +2180,9 @@ DumpAgents    Dump tab delmited user agent file.  Value can be either
 DumpUsers     Dump tab delimited username file.  Value can be either
               'yes' or 'no', with the default being 'no'.  FIlename
               used is user_YYYYMM.tab (YYYY=year, MM=month).  The
-              username data is only avilable if processing a wu-ftpd
-              xferlog or http authentication is used on the web server
-              and that information is present in the log.
+              username data is only avilable if http authentication 
+              is used on the web server and that information is present
+              in the log.
 
 DumpSearchStr Dump tab delimited search string file.  Value can be
               either 'yes' or 'no', with the default being 'no'.
@@ -2353,52 +2350,6 @@ by both Apache and NCSA).   Netscape and other web servers have
 similar capabilities to alter their log formats.  (note: the above
 works for apache servers up to V1.2.  V1.3 and higher now have additional
 ways to specify log formats... refer to included documentation).
-
-Notes on FTP Log Files
-----------------------
-
-Note that FTP log processing is not maintained and will eventually be 
-dropped.
-
-The Webalizer now supports ftp logs produced by wu-ftpd and others, as
-a standard 'xferlog'.  To process an ftp log, you must either use the
--Ff command line option or have "LogType ftp" in your configuration file.
-Support for additional formats may be forthcoming, however a future
-version of the Webalizer is in the works that will allow user defined
-log formats, so this will become a non-issue.  It is recommended that
-you create a separate configuration file for ftp analysis, since the
-values used for your web server will most likely not be suited for ftp
-log analysis (ie: page types, hostname, etc.. should be different).
-
-Because of the difference in web and ftp logs, there are a few limitations:
-
-o Because there is no concept of a 'response code' in ftp world, response
-  codes are restricted to either 200 (OK) or 206 (Partial Content), based
-  on the completion status found in xferlog (for wu-ftpd, 'i'=incomplete
-  and will generate a 206, 'c'=complete and will generate a 200).  If your
-  ftp server doesn't supply the completion status, all requests will be
-  assigned a response code of 200.  This allows the usage graph to display
-  all transfer requests (hits), and how many of those completed in success
-  (files - ie: 200 response codes).
-
-o Page totals won't accurately reflect reality, since there isn't really
-  the concept of a 'page' in regards to ftp services.  I have found that
-  setting the PageType value to "README", "FIRST", etc... seems to work
-  fairly well however,  and will give a pretty good indication of how
-  many 'non-binary' files were requested.  Of course, the content of your
-  ftp site will be different, so your results may vary.
-
-o Visit totals also won't accurately reflect reality, since visits are
-  triggered on PageType requests (see above).  What you usually wind up
-  with is visits=sites in most cases.
-
-o Entry/Exit pages will not be calculated for ftp logs.
-
-o For obvious reasons, referrers and user agents are not supported.
-
-o You _cannot_ analyze both web and ftp logs at the same time.. they must
-  be done separately in different runs.
-
 
 Notes on Referrers
 ------------------
