@@ -110,10 +110,10 @@ div.page_footer_div a:hover {color: red;}
  * Page Links
  */
 table.page_links_table {font-size: 9pt; margin: 1em auto 0; border-collapse: collapse; text-align: center; border-style: none;}
-table.page_links_table td {padding: 0; border: 1px solid #578EBE; background: #EEE url("page-links-bg.png") repeat-x;}
+table.page_links_table td {padding: 0; border: 1px solid #578EBE; background: #EEE linear-gradient(#FFF, #DCDCDC);}
 table.page_links_table a {color: blue; text-decoration: none; border-style: none; display: block; padding: 1px 5px; margin: 0;}
 table.page_links_table a:visited {color: blue;}
-table.page_links_table a:hover {color: red; background: #FFF6BF url("page-links-hover-bg.png") repeat-x;}
+table.page_links_table a:hover {color: red; background: #FFF6BF linear-gradient(#FFF, #FFF6BF);}
 
 /*
  * Report table base classes
