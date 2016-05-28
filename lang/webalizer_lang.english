@@ -8,17 +8,7 @@
 #
 # LanguageFile  c:\tools\webalizer\lang\webalizer_lang.english
 #
-# Make sure the character set defined by the HTMLCharset configuration
-# variable matches the symbols of the selected language file. For
-# example, in order to use the euc-jp character set, add the following
-# line to the configuration file:
-#
-# HTMLCharset   euc-jp
-#
-# Note that the specified character does not affect the appearance of 
-# the informational messages.
-#
-# Language files may be saved in the UTF-8 format, whether prefixed 
+# Language files must be saved in the UTF-8 format, whether prefixed 
 # with the UTF-8 BOM sequence (xEF xBB xBF) or not. UTF-16 and UTF-32
 # formats are not supported.
 #

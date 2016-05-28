@@ -2262,9 +2262,6 @@ HTMLEnd        This allows insertion of closing code, at the very end of
                </HTML> tags.  If specified, you _must_ specify these tags
                yourself.
 
-HTMLCharset
-              Specifies the character set for the reports. Default value: utf-8
-    
 HTMLCssPath
               Specifies a URL path to the webalizer.css file, not 
               including the file name. The path must be a URL path, 
@@ -2695,28 +2692,12 @@ ga,       Gabon,
 The file webalizer_lang.english constains additional information
 about the structure of a language file.
 
-If you use any language other than English, make sure that the value 
-of the HTMLCharset configuration variable matches the selected 
-language. For example, if you configured Stone Steps Webalizer to use 
-a Japanese language file that is written using Unicode characters from 
-the utf-8 character set, set the following two configuration variables 
-in webalizer.conf, as shown in the example below, to be able to view 
-reports in Japanese:
+Language files must be saved in the UTF-8 character encoding.
 
-LanguageFile        c:\tools\webalizer\lang\webalizer_lang.japanese
-HTMLCharset         utf-8
-
-Note that the character set specified using the HTMLCharset 
-configuration variable does not have any effect on how Stone Steps 
-Webalizer displays progress messages in the command line window while 
-processing log files.
-
-Most of the existing language files have been converted to Unicode 
-(UTF-8). The default setting for HTMLCharset has been changed from 
-iso-8859-1 to utf-8. If, however, you would like to convert an old 
-language file to Unicode, you can use the iconv utility. For example, 
-the following command converts the Japanese language file from euc-jp 
-to utf-8:
+All existing language files have been converted to UTF-8. If you would 
+like to convert some other character encoding to UTF-8, you can use the 
+iconv utility. For example, the following command converts a Japanese 
+language file from euc-jp to utf-8:
 
 $ iconv -f euc-jp -t utf-8 -o webalizer_lang.utf-8.japanese webalizer_lang.japanese
 
