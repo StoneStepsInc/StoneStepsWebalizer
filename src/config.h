@@ -160,7 +160,6 @@ class config_t {
       bool use_classic_mangler;
       bool target_downloads;
       bool page_entry;
-      bool use_ext_ent;                          // Use external XML entities?
 
       u_short  http_port;
       u_short	https_port;
@@ -222,8 +221,6 @@ class config_t {
       double font_size_small;
       double font_size_medium;
 
-      string_t xsl_path;                         // XSL file path
-
       string_t apache_log_format;			       // is ApacheLogFormat valid?   
       string_t font_file_normal;
       string_t font_file_bold;
@@ -245,7 +242,6 @@ class config_t {
       string_t db_fname_ext;
       string_t report_db_name;                   // path of a DB file for a report
       string_t log_dir;                          // optional log file directory
-      string_t help_file;                        // XML help file path
       string_t help_xml;                         // content of the XML help file
       
       string_t graph_type;                       // graph type (PNG, Flash-OFC, etc)

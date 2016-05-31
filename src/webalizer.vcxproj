@@ -233,7 +233,6 @@
     <ClCompile Include="serialize.cpp" />
     <ClCompile Include="unicode.cpp" />
     <ClCompile Include="webalizer.cpp" />
-    <ClCompile Include="xml_output.cpp" />
     <ClCompile Include="anode.cpp" />
     <ClCompile Include="ccnode.cpp" />
     <ClCompile Include="daily.cpp" />
@@ -321,7 +320,6 @@
     <ClInclude Include="util.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="webalizer.h" />
-    <ClInclude Include="xml_output.h" />
     <ClInclude Include="anode.h" />
     <ClInclude Include="basenode.h" />
     <ClInclude Include="ccnode.h" />

@@ -5,9 +5,6 @@
     <None Include="..\Copyright" />
     <None Include="..\README" />
     <None Include="..\sample.conf" />
-    <None Include="..\lang\webalizer_help.english">
-      <Filter>lang</Filter>
-    </None>
     <None Include="..\lang\webalizer_lang.catalan">
       <Filter>lang</Filter>
     </None>
@@ -135,25 +132,5 @@
     <Filter Include="src">
       <UniqueIdentifier>{29606b9d-4d93-4ab6-a4de-52769551a03f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="xsl">
-      <UniqueIdentifier>{1f7a9600-1dfb-42b7-8fca-7ec0136b12b2}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="graphs-amc.xsl">
-      <Filter>xsl</Filter>
-    </Xml>
-    <Xml Include="graphs-ofc.xsl">
-      <Filter>xsl</Filter>
-    </Xml>
-    <Xml Include="index.xsl">
-      <Filter>xsl</Filter>
-    </Xml>
-    <Xml Include="usage.xsl">
-      <Filter>xsl</Filter>
-    </Xml>
-    <Xml Include="webalizer.xsl">
-      <Filter>xsl</Filter>
-    </Xml>
   </ItemGroup>
 </Project>

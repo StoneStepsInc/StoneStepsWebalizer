@@ -59,7 +59,6 @@
 #include "exception.h"
 #include "dump_output.h"
 #include "html_output.h"
-#include "xml_output.h"
 #include "pool_allocator.h"
 
 #include <list>
@@ -263,8 +262,6 @@ bool webalizer_t::init_output_engines(void)
          optr = new html_output_t(config, state);
       else if(iter.item()->string == "tsv") 
          optr = new dump_output_t(config, state);
-      else if(iter.item()->string == "xml") 
-         optr = new xml_output_t(config, state);
       else {
          fprintf(stderr, "Unrecognized output format (%s)\n", iter.item()->string.c_str());
          continue;

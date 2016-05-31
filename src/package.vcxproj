@@ -143,7 +143,6 @@
   <ItemGroup>
     <None Include="..\COPYING" />
     <None Include="..\Copyright" />
-    <None Include="..\lang\webalizer_help.english" />
     <None Include="..\lang\webalizer_lang.catalan" />
     <None Include="..\lang\webalizer_lang.croatian" />
     <None Include="..\lang\webalizer_lang.czech" />
@@ -187,13 +186,6 @@
   <ItemGroup>
     <Image Include="page-links-bg.png" />
     <Image Include="page-links-hover-bg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="graphs-amc.xsl" />
-    <Xml Include="graphs-ofc.xsl" />
-    <Xml Include="index.xsl" />
-    <Xml Include="usage.xsl" />
-    <Xml Include="webalizer.xsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

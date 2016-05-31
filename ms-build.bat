@@ -104,16 +104,6 @@ rem Check if msbuild generated any errors
 rem 
 if ERRORLEVEL 1 goto :msbuild_error
 
-rem
-rem Copy all files to the version directory
-rem
-
-echo Copying XSL templates
-for %%f in (index.xsl usage.xsl webalizer.xsl graphs-amc.xsl graphs-amc-line.xml graphs-amc-pie.xml graphs-ofc.xsl) do xcopy /Q /Y src\%%f build\%platform%\%version%\ > nul
-
-echo Copying Flash charts
-xcopy /Q /Y /S /E ..\common\ofcharts\* build\%platform%\%version%\ofcharts > nul
-
 echo Done
 
 goto :exit

@@ -930,7 +930,7 @@ OutputDir     This defines the output directory to use for the reports.  If
 OutputFormat  Specifies the format of the generated reports. These formats,
               are supported:
               
-              HTML, TSV, XML
+              HTML, TSV
               
               HTML is the default format and will be used if no other format
               is specified. 
@@ -940,33 +940,9 @@ OutputFormat  Specifies the format of the generated reports. These formats,
               were set to yes. Note that if at least one DumpX option is used, 
               TSV report is added automatically to the list of output formats.
               
-              XML will instruct Stone Steps Webalizer to produce XML reports,
-              which can be further styled with XSL stylesheet or used as input
-              in XML-aware applications.
-              
               Multiple OutputFormat entries may be used in order to generate
               reports in more than one format. 
               
-XslPath       Specifies the path to the XSL style sheets, usage.xsl, index.xsl 
-              and webalizer.xsl, used to format XML reports.
-              Default value: none
-
-HelpFile      Specifies the path to the XML help file. The type of path depends 
-              on the value of UseExternalEntities. If the latter is set to "yes",
-              HelpFile will be evaluated by the Web browser rendering the XML 
-              report and is expected to be a URL path. If UseExternalEntities is 
-              set to "no", HelpFile will be evaluated by Stone Steps Webalizer 
-              when an XML report is being generated and is expected to be a file 
-              path. In both cases, if the path is not an absolute path, it should 
-              be relative to the location of the report file.
-              Default value: none
-              
-UseExternalEntities
-              If set to "yes", allows generated XML files include references 
-              to other XML files. Otherwise, the content of referenced file
-              will be embedded into the source XML file.
-              Default value: no
-
 HistoryName   Allows specification of a history path/filename if desired.
               The default is to use the file named 'webalizer.hist', kept
               in the normal output directory (OutputDir above).  Any name
@@ -2758,103 +2734,6 @@ of the Robot entries, regardless whether the corresponding hosts are
 marked as robots or not. Visit robot flag is used when user agents 
 are classified as robots or not and when website and country totals 
 are updated. Country totals do not include robot activity.
-
-XML Reports
------------
-
-XML/XSL provide a powerful way to separate report data, such as hit and 
-visit counts, from how reports are presented. Unlike CSS, which only 
-allows web masters to change the appearance of individual report elements, 
-such as font color and size of a table cell, XSL provides a mechanism to 
-generate reports in a variety of layouts.
-
-There are several XSL files in the distribution package:
-
-   index.xsl      - index report template
-   usage.xsl      - monthly report template
-   webalizer.xsl  - a collection of XSL templates
-   graphs-amc.xsl - amCharts templates
-   graphs-ofc.xsl - Open Flash Charts templates
-
-Two additional files are used when amCharts graphs are selected:
-
-   graphs-amc-line.xml  - line graph configuration options
-   graphs-amc-pie.xml   - pie graph configuration options
-
-XML reports may be viewed in any XSL-aware browser, which includes latest
-versions of FireFox, Opera and Internet Explorer. Adobe Flash is required
-to view Flash graphs. 
-
-Flash Graphs
-------------
-
-Flash graphs are disabled by default. If you would like to use Flash graphs
-instead, open webalizer.xsl, locate this line
-
-   <xsl:variable name="graphtype">graph-png</xsl:variable>
-
-, and change graph-png to graph-flash-amc to use amCharts:
-
-   <xsl:variable name="graphtype">graph-flash-amc</xsl:variable>
-   
-, or to graph-flash-ofc to use Open Flash Charts:
-
-   <xsl:variable name="graphtype">graph-flash-ofc</xsl:variable>
-
-Open Flash Chart is included in the distribution package, under the
-ofcharts directory. You can also download it at this location:
-
-http://teethgrinder.co.uk/open-flash-chart/download.php
-
-Combine all required files in a single directory with the following
-structure:
-
-ofcharts /
-          open-flash-chart.swf
-          README.TXT
-          swfobject.js
-
-Please, note that current XSL files are designed to work with the first 
-version of Open Flash Chart.
-
-If you would like to use amCharts, you will need to download 
-"Line & Area" and "Pie & Donut" at the following location:
-
-http://www.amcharts.com/download
-
-Combine these two packages in a single directory with the following 
-structure:
-
-amcharts /
-         | amline.swf
-         | ampie.swf
-         | licence.txt
-         | readme.txt
-         | swfobject.js
-         /fonts/
-         |       arial.fla
-         |       arial.swf
-         |       garamond.swf
-         |       tahoma.swf
-         |       times new roman.swf
-         /plugins/
-                 value_indicator.swf
-                  
-                  
-Open Flash Chart and amCharts can be copied to any location accessible 
-from the report directory. Just make sure to change the paths for 
-the selected chart types in webalizer.xsl to point to the correct 
-directory. By default, both paths are relative to the report directory:
-
-<xsl:variable name="amcpath">amcharts/</xsl:variable>
-<xsl:variable name="ofcpath">ofcharts/</xsl:variable>
-
-Note that these are URL paths, so make sure to use forward slashes to 
-separate path components. Always end the paths with a trailing slash. 
-Use relative paths (i.e. no slash in front) to browse reports off the 
-hard drive. Avoid using any special characters in paths, such as double 
-quotes.
-
 
 Known Issues
 ------------

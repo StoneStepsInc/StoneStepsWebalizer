@@ -178,9 +178,6 @@ config_t::config_t(void)
    target_downloads = true;
    page_entry = true;
    
-   // most browsers ignore external XML entity declarations
-   use_ext_ent = false;
-   
    accept_host_names = false;
 
    // do not use the local machine's UTC offset by default
@@ -359,13 +356,6 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(out_dir.isempty() || !is_abs_path(out_dir))
       out_dir = make_path(cur_dir, out_dir);
 
-   //
-   // If we are not allowed to use external XML entities, read the help
-   // file, so we can embed it into XML reports.
-   //
-   if(!use_ext_ent && !help_file.isempty())
-      read_help_xml(make_path(out_dir, help_file));
-   
    //
    // Initialize database path and file name
    //
@@ -652,7 +642,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 189; empty slots:  
+                     // max key: 189; empty slots: 172, 184, 185 
                      //
                      {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
                      {"AllAgents",		      67},			// List all User Agents?
@@ -743,7 +733,6 @@ void config_t::get_config(const char *fname)
                      {"GroupURL",		      31},			// Group URL's
                      {"GroupURLDomains",     126},			// Group URL domains (proxy)
                      {"GroupUser",		      74},			// Usernames to group
-                     {"HelpFile",            184},       // XML help file
                      {"HideAgent",		      19},			// User Agents to hide
                      {"HideAllHosts",        63},
                      {"HideAllSites",	      63},			// Hide ind. sites (0=no)
@@ -847,12 +836,10 @@ void config_t::get_config(const char *fname)
                      {"TopUsers",		      70},			// Top Usernames to show
                      {"UpstreamTraffic",     88},        // Track upstream traffic?
                      {"UseClassicMangleAgents",166},     // Use classic MangleAgents?
-                     {"UseExternalEntities", 185},       // Use external XML entities?
                      {"UseHTTPS",		      44},			// Use https:// on URL's
                      {"UTCOffset",           160},       // UTC/local time difference
                      {"UTCTime",		         30},			// Local or UTC time?
-                     {"VisitTimeout",	      50},			// Visit timeout (seconds)
-                     {"XslPath",             172}        // XSL file path
+                     {"VisitTimeout",	      50}			// Visit timeout (seconds)
                    };
 
    FILE *fp;
@@ -1090,7 +1077,6 @@ void config_t::get_config(const char *fname)
          case 169: target_downloads = (tolower(value[0]) == 'y'); break;
          case 170: page_entry = (tolower(value[0]) == 'y'); break;
          case 171: add_output_format(value.tolower()); break;
-         case 172: save_path_opt(value, xsl_path); break;
          case 173: max_hosts=str2ul(value); break;
          case 174: max_urls=str2ul(value); break;
          case 175: max_refs=str2ul(value); break;
@@ -1102,8 +1088,6 @@ void config_t::get_config(const char *fname)
          case 181: max_hosts_kb=str2ul(value); break;
          case 182: max_urls_kb=str2ul(value); break;
          case 183: log_dir = value; break;
-         case 184: help_file = value; break;
-         case 185: use_ext_ent = (tolower(value[0]) == 'y'); break;
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
          case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;

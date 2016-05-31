@@ -202,9 +202,6 @@
     <ClCompile Include="dump_output.cpp">
       <Filter>Source Files\output</Filter>
     </ClCompile>
-    <ClCompile Include="xml_output.cpp">
-      <Filter>Source Files\output</Filter>
-    </ClCompile>
     <ClCompile Include="output.cpp">
       <Filter>Source Files\output</Filter>
     </ClCompile>
@@ -340,9 +337,6 @@
       <Filter>Header Files\platform</Filter>
     </ClInclude>
     <ClInclude Include="html_output.h">
-      <Filter>Header Files\output</Filter>
-    </ClInclude>
-    <ClInclude Include="xml_output.h">
       <Filter>Header Files\output</Filter>
     </ClInclude>
     <ClInclude Include="output.h">
