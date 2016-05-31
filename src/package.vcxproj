@@ -141,6 +141,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\CHANGES" />
     <None Include="..\COPYING" />
     <None Include="..\Copyright" />
     <None Include="..\lang\webalizer_lang.catalan" />

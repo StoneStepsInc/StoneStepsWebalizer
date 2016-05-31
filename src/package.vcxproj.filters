@@ -116,6 +116,7 @@
     <None Include="webalizer_highcharts.js">
       <Filter>src</Filter>
     </None>
+    <None Include="..\CHANGES" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lang">
