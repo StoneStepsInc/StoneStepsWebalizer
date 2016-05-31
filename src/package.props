@@ -27,8 +27,6 @@ echo Copying script and style sheet files to $(OutDir)src
 xcopy /Q /Y webalizer.css "$(OutDir)src\" &gt; nul
 xcopy /Q /Y webalizer.js "$(OutDir)src\" &gt; nul
 xcopy /Q /Y webalizer_highcharts.js "$(OutDir)src\" &gt; nul
-xcopy /Q /Y page-links-bg.png "$(OutDir)src\" &gt; nul
-xcopy /Q /Y page-links-hover-bg.png "$(OutDir)src\" &gt; nul
 
 echo Copying language files to $(OutDir)lang
 xcopy /Q /Y ..\lang\webalizer_lang.* "$(OutDir)lang\" &gt; nul

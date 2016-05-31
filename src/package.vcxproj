@@ -183,10 +183,6 @@
     <None Include="webalizer.js" />
     <None Include="webalizer_highcharts.js" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="page-links-bg.png" />
-    <Image Include="page-links-hover-bg.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

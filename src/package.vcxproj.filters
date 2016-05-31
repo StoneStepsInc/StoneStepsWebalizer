@@ -118,14 +118,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="page-links-bg.png">
-      <Filter>src</Filter>
-    </Image>
-    <Image Include="page-links-hover-bg.png">
-      <Filter>src</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="lang">
       <UniqueIdentifier>{524721df-9d31-4e88-9831-2881e4e03644}</UniqueIdentifier>
     </Filter>
