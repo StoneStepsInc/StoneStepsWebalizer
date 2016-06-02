@@ -30,10 +30,10 @@
 #include <vector>
 
 #ifndef _WIN32
-#	include <netinet/in.h>       /* needed for in_addr structure definition   */
-#	ifndef INADDR_NONE
-#	define INADDR_NONE 0xFFFFFFFF
-#	endif  /* INADDR_NONE */
+#include <netinet/in.h>       /* needed for in_addr structure definition   */
+#ifndef INADDR_NONE
+#define INADDR_NONE 0xFFFFFFFF
+#endif  /* INADDR_NONE */
 #else
 #define F_OK 00
 #define R_OK 04

@@ -25,17 +25,17 @@ struct hnode_t;
 // -----------------------------------------------------------------------
 struct dlnode_t : public base_node<dlnode_t> {
       // combined download job data
-      uint64_t    count;             // download job count
-      uint64_t    sumhits;           // total hits
-      uint64_t    sumxfer;           // total transfer size
-      double      avgxfer;           // average transfer size
-      double      avgtime;				 // average job processing time (minutes)
-      double      sumtime;		       // total job processing time (minutes)
+      uint64_t    count;            // download job count
+      uint64_t    sumhits;          // total hits
+      uint64_t    sumxfer;          // total transfer size
+      double      avgxfer;          // average transfer size
+      double      avgtime;          // average job processing time (minutes)
+      double      sumtime;          // total job processing time (minutes)
 
-      danode_t    *download;         // active download job
-      hnode_t     *hnode;            // host node
+      danode_t    *download;        // active download job
+      hnode_t     *hnode;           // host node
 
-      bool        ownhost : 1;       // true, if dlnode_t owns hnode
+      bool        ownhost : 1;      // true, if dlnode_t owns hnode
 
       public:
          typedef void (*s_unpack_cb_t)(dlnode_t& vnode, uint64_t hostid, bool active, void *arg);

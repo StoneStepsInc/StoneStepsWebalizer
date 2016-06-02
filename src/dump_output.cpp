@@ -60,7 +60,7 @@ int dump_output_t::write_main_index()
 int dump_output_t::write_monthly_report(void)
 {
    // dump downloads tab file
-	if (config.dump_downloads) 
+   if (config.dump_downloads) 
       dump_all_downloads();
 
    // Dump URLS tab file
@@ -68,27 +68,27 @@ int dump_output_t::write_monthly_report(void)
       dump_all_urls();     
 
    // dump HTTP errors tab file
-	if (config.dump_errors) 
+   if (config.dump_errors) 
       dump_all_errors();    
 
    // Dump sites tab file
-	if (config.dump_hosts) 
+   if (config.dump_hosts) 
       dump_all_hosts();   
 
    // Dump referrers tab file
-	if (config.dump_refs) 
+   if (config.dump_refs) 
       dump_all_refs();    
 
    // dump search string tab file
-	if (config.dump_search) 
+   if (config.dump_search) 
       dump_all_search();  
 
    // dump usernames tab file
-	if (config.dump_users) 
+   if (config.dump_users) 
       dump_all_users();  
 
    // dump user agents tab file
-	if (config.dump_agents) 
+   if (config.dump_agents) 
       dump_all_agents();  
       
    return 0;

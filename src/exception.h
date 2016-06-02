@@ -20,18 +20,18 @@
 // a code and some text is required.
 // -----------------------------------------------------------------------
 class exception_t {
-	private:
-		u_int		errcode;
-		string_t	errdesc;
+   private:
+      u_int      errcode;
+      string_t   errdesc;
 
-	public:
-		exception_t(u_int code, const char *desc) {errcode = code; errdesc = desc;}
+   public:
+      exception_t(u_int code, const char *desc) {errcode = code; errdesc = desc;}
 
       exception_t(const exception_t& exception) {errcode = exception.errcode; errdesc = exception.errdesc;};
 
-		u_int code(void) const {return errcode;}
+      u_int code(void) const {return errcode;}
 
-		const string_t& desc(void) const {return errdesc;}
+      const string_t& desc(void) const {return errdesc;}
 };
 
 class os_ex_t : public exception_t {

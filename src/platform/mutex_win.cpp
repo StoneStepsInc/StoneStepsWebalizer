@@ -19,27 +19,27 @@ struct mutex_handle_t {
 
 mutex_t mutex_create(void)
 {
-	mutex_t mutex = new mutex_handle_t;
-	InitializeCriticalSection(&mutex->crit_sect);
-	return mutex;
+   mutex_t mutex = new mutex_handle_t;
+   InitializeCriticalSection(&mutex->crit_sect);
+   return mutex;
 }
 
 void mutex_destroy(mutex_t mutex)
 {
-	if(mutex) {
-		DeleteCriticalSection(&mutex->crit_sect);
-		delete mutex;
-	}
+   if(mutex) {
+      DeleteCriticalSection(&mutex->crit_sect);
+      delete mutex;
+   }
 }
 
 void mutex_lock(mutex_t mutex)
 {
    if(mutex)
-	   EnterCriticalSection(&mutex->crit_sect);
+      EnterCriticalSection(&mutex->crit_sect);
 }
 
 void mutex_unlock(mutex_t mutex)
 {
    if(mutex)
-	   LeaveCriticalSection(&mutex->crit_sect);
+      LeaveCriticalSection(&mutex->crit_sect);
 }

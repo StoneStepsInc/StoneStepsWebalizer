@@ -15,8 +15,8 @@
 
 totals_t::totals_t(void) : keynode_t<uint32_t>(1)
 {
-   a_hitptime = 0.0;							       /* average hit processing time */
-   m_hitptime = 0.0;							       /* maximum hit processing time */
+   a_hitptime = 0.0;                            /* average hit processing time */
+   m_hitptime = 0.0;                            /* maximum hit processing time */
    a_fileptime = 0.0;
    m_fileptime = 0.0;
    a_pageptime = 0.0;
@@ -111,7 +111,7 @@ void totals_t::init_counters(void)
    
    max_v_xfer = 0;
    max_hv_xfer = 0;
-	a_hitptime = m_hitptime = a_fileptime = m_fileptime = a_pageptime = m_pageptime = 0.0;
+   a_hitptime = m_hitptime = a_fileptime = m_fileptime = a_pageptime = m_pageptime = 0.0;
    t_xfer = 0;
    
    f_day = l_day = 1;

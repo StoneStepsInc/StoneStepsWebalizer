@@ -25,23 +25,23 @@
 
 extern "C" int uname(struct utsname *name)
 {
-	OSVERSIONINFO verinfo = {0};
-	DWORD buffsize;
+   OSVERSIONINFO verinfo = {0};
+   DWORD buffsize;
 
-	if(name == NULL)
-		return EFAULT;
+   if(name == NULL)
+      return EFAULT;
 
-	buffsize = SYS_NMLN;
-	GetComputerName(name->machine, &buffsize);
-	strcpy(name->nodename, name->machine);
+   buffsize = SYS_NMLN;
+   GetComputerName(name->machine, &buffsize);
+   strcpy(name->nodename, name->machine);
 
-	verinfo.dwOSVersionInfoSize = sizeof(verinfo);
-	GetVersionEx(&verinfo);
-	
-	sprintf(name->version, "%d.%d.%d", verinfo.dwMajorVersion, verinfo.dwMinorVersion, verinfo.dwBuildNumber);
-	strcpy(name->release, name->version);
+   verinfo.dwOSVersionInfoSize = sizeof(verinfo);
+   GetVersionEx(&verinfo);
+   
+   sprintf(name->version, "%d.%d.%d", verinfo.dwMajorVersion, verinfo.dwMinorVersion, verinfo.dwBuildNumber);
+   strcpy(name->release, name->version);
 
-	sprintf(name->sysname, "Windows");
+   sprintf(name->sysname, "Windows");
 
-	return 0;
+   return 0;
 }

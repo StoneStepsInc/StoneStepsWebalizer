@@ -99,7 +99,7 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
    else
       write_js_charts_head_usage(out_fp);
 
-   fputs("</script>\n", out_fp);		
+   fputs("</script>\n", out_fp);      
 }
 
 void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
@@ -312,9 +312,9 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    if(config.html_meta_noindex)
       fputs("<meta name=\"robots\" content=\"noindex,nofollow\">\n", out_fp);
    fprintf(out_fp,"<title>%s %s - %s</title>\n", config.rpt_title.c_str(), config.hname.c_str(), period);
-	fprintf(out_fp,"<link rel=\"stylesheet\" type=\"text/css\" href=\"%swebalizer.css\">\n", !config.html_css_path.isempty() ? config.html_css_path.c_str() : "");
+   fprintf(out_fp,"<link rel=\"stylesheet\" type=\"text/css\" href=\"%swebalizer.css\">\n", !config.html_css_path.isempty() ? config.html_css_path.c_str() : "");
    if(!config.html_js_path.isempty())
-	   fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
+      fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
    if(!config.js_charts.isempty())
       write_js_charts_head(out_fp, page_type);
@@ -347,7 +347,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
          }
       }
       else
-		   fputs("<body>\n", out_fp);
+         fputs("<body>\n", out_fp);
    }
    else
    {
@@ -396,7 +396,7 @@ void html_output_t::write_html_tail(FILE *out_fp)
       fputs("</div>\n", out_fp);
    }
 
-	fprintf(out_fp,"<a href=\"http://www.stonesteps.ca/webalizer\">Stone Steps Webalizer</a> (v%s)\n", state_t::get_app_version().c_str());
+   fprintf(out_fp,"<a href=\"http://www.stonesteps.ca/webalizer\">Stone Steps Webalizer</a> (v%s)\n", state_t::get_app_version().c_str());
    fputs("</div>\n", out_fp);
 
    /* wind up, this is the end of the file */
@@ -420,68 +420,68 @@ void html_output_t::write_url_report(void)
       top_urls_table(0);
 
    // Top URL's (by kbytes)
-	if (config.ntop_urlsK)
+   if (config.ntop_urlsK)
       top_urls_table(1); 
 
    // Top Entry Pages
-	if(config.ntop_entry)
+   if(config.ntop_entry)
       top_entry_table(0);
 
    // Top Exit Pages
-	if(config.ntop_exit)
+   if(config.ntop_exit)
       top_entry_table(1);
 }
 
 void html_output_t::write_download_report(void)
 {
    // top downloads
-	if (config.ntop_downloads) 
+   if (config.ntop_downloads) 
       top_dl_table();
 }
 
 void html_output_t::write_error_report(void)
 {
    // top HTTP errors table
-	if (config.ntop_errors) 
+   if (config.ntop_errors) 
       top_err_table();
 }
 
 void html_output_t::write_host_report(void)
 {
    // Top sites table (by hits)
-	if (config.ntop_sites) 
+   if (config.ntop_sites) 
       top_hosts_table(0); 
 
    // Top Sites table (by kbytes)
-	if (config.ntop_sitesK)                      
-		top_hosts_table(1);
+   if (config.ntop_sitesK)                      
+      top_hosts_table(1);
 }
 
 void html_output_t::write_referrer_report(void)
 {
    // Top referrers table
-	if (config.ntop_refs) 
+   if (config.ntop_refs) 
       top_refs_table();   
 }
 
 void html_output_t::write_search_report(void)
 {
    // top search strings table
-	if (config.ntop_search) 
+   if (config.ntop_search) 
       top_search_table(); 
 }
 
 void html_output_t::write_user_report(void)
 {
    // top usernames table
-	if (config.ntop_users) 
+   if (config.ntop_users) 
       top_users_table(); 
 }
 
 void html_output_t::write_user_agent_report(void)
 {
    // top user agents table
-	if (config.ntop_agents) 
+   if (config.ntop_agents) 
       top_agents_table(); 
 }
 
@@ -528,7 +528,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<a name=\"daily\"></a>\n", out_fp);
       if (config.daily_graph) {
          if(!config.js_charts.isempty())
-			   fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
+            fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
          else {
             // create daily stats PNG image
             string_t png1_fname_lang;
@@ -545,15 +545,15 @@ int html_output_t::write_monthly_report()
             if(makeimgs)
                graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
 
-			   fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
+            fprintf(out_fp,"<div id=\"daily_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"400\" width=\"512\"></div>\n", png1_fname.c_str(), dtitle.c_str());
          }
       }
 
-   	if (config.daily_stats) 
-			fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
+      if (config.daily_stats) 
+         fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
 
       if (config.daily_stats) 
-			daily_total_table();
+         daily_total_table();
 
       fputs("</div>\n", out_fp);
    }
@@ -678,13 +678,13 @@ void html_output_t::month_total_table()
    fputs("\n<a name=\"totals\"></a>\n", out_fp);
    fputs("\n<div id=\"monthly_totals_report\">\n", out_fp);
    fputs("<table class=\"report_table monthly_totals_table\">\n", out_fp);
-	fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
+   fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
 
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"3\">%s %s %d</th></tr>\n", config.lang.msg_mtot_ms, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    /* Total Hits */
    fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit);
    /* Total Files */
@@ -707,23 +707,23 @@ void html_output_t::month_total_table()
    fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_uu, state.totals.t_url);
    /* Unique Referrers */
    if (state.totals.t_ref != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ur, state.totals.t_ref);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ur, state.totals.t_ref);
    /* Unique Usernames */
    if (state.totals.t_user != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ui, state.totals.t_user);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ui, state.totals.t_user);
    /* Unique Agents */
    if (state.totals.t_agent != 0)
-		fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ua, state.totals.t_agent);
-	fputs("</tbody>\n", out_fp);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_ua, state.totals.t_agent);
+   fputs("</tbody>\n", out_fp);
 
    // output human totals if robot or spammer filters are configured
    if(config.spam_refs.size() || config.robots.size()) {
-	   fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
-	   fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_htot);
-	   fputs("</tbody>\n", out_fp);
+      fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+      fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_htot);
+      fputs("</tbody>\n", out_fp);
 
-	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
-	   
+      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+      
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
@@ -745,16 +745,16 @@ void html_output_t::month_total_table()
          fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.2f</td></tr>\n", config.lang.msg_mtot_hcr, (double)state.totals.t_hosts_conv*100./(state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts));
       }
       
-	   fputs("</tbody>\n", out_fp);
+      fputs("</tbody>\n", out_fp);
 
       // output human per-visit totals if there are ended human visits
       if(state.totals.t_hvisits_end) {
-	      fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
-		   fprintf(out_fp,"<tr><th>&nbsp;</th><td>%s</td><td>%s</td></tr>\n", config.lang.msg_h_avg, config.lang.msg_h_max);
-	      fputs("</tbody>\n", out_fp);
+         fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+         fprintf(out_fp,"<tr><th>&nbsp;</th><td>%s</td><td>%s</td></tr>\n", config.lang.msg_h_avg, config.lang.msg_h_max);
+         fputs("</tbody>\n", out_fp);
 
-	      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
-	      
+         fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+         
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mhv, (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mfv, (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mpv, (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
@@ -765,7 +765,7 @@ void html_output_t::month_total_table()
          if(state.totals.t_visits_conv)
             fprintf(out_fp,"<tr><th>%s</th><td>%.02f</td><td>%.02f</td></tr>\n", config.lang.msg_mtot_cvd, state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
             
-	      fputs("</tbody>\n", out_fp);
+         fputs("</tbody>\n", out_fp);
       }
    }
 
@@ -773,11 +773,11 @@ void html_output_t::month_total_table()
 
    // Robot Totals
    if(state.totals.t_rhits) {
-	   fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
-	   fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_rtot);
-	   fputs("</tbody>\n", out_fp);
+      fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+      fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_rtot);
+      fputs("</tbody>\n", out_fp);
 
-	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_rhits);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_rfiles);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_rpages);
@@ -785,44 +785,44 @@ void html_output_t::month_total_table()
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_rxfer/1024.);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_rvisits_end);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_rhosts);
-	   fputs("</tbody>\n", out_fp);
+      fputs("</tbody>\n", out_fp);
    }
 
    // Spammer Totals
    if(state.totals.t_spmhits) {
-	   fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
-	   fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_stot);
-	   fputs("</tbody>\n", out_fp);
+      fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+      fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_stot);
+      fputs("</tbody>\n", out_fp);
 
-	   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_spmhits);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_sxfer/1024.);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_svisits_end);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_shosts);
-	   fputs("</tbody>\n", out_fp);
+      fputs("</tbody>\n", out_fp);
    }
       
    /**********************************************/
 
    /* Hit/file/page processing time (output only if there's data) */
-	if(state.totals.m_hitptime) {
-		fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
-		fprintf(out_fp,"<tr><th>%s</th>\n<td>%s</td>\n<td>%s</td></tr>\n", config.lang.msg_mtot_perf, config.lang.msg_h_avg, config.lang.msg_h_max);
-		fputs("</tbody>\n", out_fp);
+   if(state.totals.m_hitptime) {
+      fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%s</td>\n<td>%s</td></tr>\n", config.lang.msg_mtot_perf, config.lang.msg_h_avg, config.lang.msg_h_max);
+      fputs("</tbody>\n", out_fp);
 
-		fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
-		fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_sph, state.totals.a_hitptime, state.totals.m_hitptime);
-		fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_spf, state.totals.a_fileptime, state.totals.m_fileptime);
-		fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_spp, state.totals.a_pageptime, state.totals.m_pageptime);
-		fputs("</tbody>\n", out_fp);
-	}
+      fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_sph, state.totals.a_hitptime, state.totals.m_hitptime);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_spf, state.totals.a_fileptime, state.totals.m_fileptime);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td>%.3f</td>\n<td>%.3f</td></tr>\n", config.lang.msg_mtot_spp, state.totals.a_pageptime, state.totals.m_pageptime);
+      fputs("</tbody>\n", out_fp);
+   }
 
    /* Hourly/Daily avg/max totals */
-	fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
    fprintf(out_fp,"<tr><th>%s</th>\n<td>%s</td>\n<td>%s</td></tr>\n", config.lang.msg_mtot_hdt, config.lang.msg_h_avg, config.lang.msg_h_max);
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
-	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
 
    /* Max/Avg Hits per Hour */
    fprintf(out_fp,"<tr><th>%s</th>\n<td>%" PRIu64 "</td>\n<td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mhh, state.totals.t_hit/(24*days_in_month), state.totals.hm_hit);
@@ -855,20 +855,20 @@ void html_output_t::month_total_table()
    /* Max/Avg KBytes per Visit */
    if(state.totals.t_visits)
       fprintf(out_fp,"<tr><th>%s</th>\n<td>%.0f</td>\n<td>%.0f</td></tr>\n", config.lang.msg_mtot_mkv, (state.totals.t_xfer/1024.)/state.totals.t_visits, state.totals.max_v_xfer/1024.);
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    /**********************************************/
    /* response code totals */
-	fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_header_tbody\">\n", out_fp);
    fprintf(out_fp,"<tr><th colspan=\"3\">%s</th></tr>\n", config.lang.msg_mtot_rc);
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
-	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (i=0; i < state.response.size(); i++) {
       if (state.response[i].count != 0)
          fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.get_resp_code(state.response[i].get_scode()).desc, state.response[i].count);
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
    fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_visitors);
    fputs("</div>\n", out_fp);
@@ -892,12 +892,12 @@ void html_output_t::daily_total_table()
    /* Daily stats */
    fputs("\n<!-- Daily Totals Table -->\n", out_fp);
    fputs("<table id=\"daily_usage_table\" class=\"report_table totals_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    /* Daily statistics for ... */
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
-   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"								\
-                  "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"						\
+   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"                        \
+                  "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"                  \
                   "<th class=\"files_th\" colspan=\"4\">%s</th>\n"                \
                   "<th class=\"pages_th\" colspan=\"4\">%s</th>\n"                \
                   "<th class=\"visits_th\" colspan=\"4\">%s</th>\n"               \
@@ -921,18 +921,18 @@ void html_output_t::daily_total_table()
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th small_font_th\">%s</th>\n<th class=\"kbytes_th small_font_th\">%s</th>\n<th class=\"kbytes_th small_font_th\">%s</th>\n", config.lang.msg_h_total, config.lang.msg_h_avg, config.lang.msg_h_max);
 
    fputs("</tr>\n", out_fp);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
    /* skip beginning blank days in a month */
    for (i=0; i < hptr->lday; i++) {
-		if (state.t_daily[i].tm_hits != 0)
-			break;
-	}
+      if (state.t_daily[i].tm_hits != 0)
+         break;
+   }
 
    if(i == hptr->lday)
-		i=0;
+      i=0;
 
-	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
    for (; i < hptr->lday; i++) {
       fprintf(out_fp,"<tr%s><th>%d</th>\n", ((wday + i) % 7 == 6 || (wday + i) % 7 == 0) ? " class=\"weekend_tr\"" : "", i+1);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_hits, PCENT(state.t_daily[i].tm_hits, state.totals.t_hit), state.t_daily[i].h_hits_avg, state.t_daily[i].h_hits_max);
@@ -943,7 +943,7 @@ void html_output_t::daily_total_table()
       fprintf(out_fp,"<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%.0f</td>\n", state.t_daily[i].tm_xfer/1024., PCENT(state.t_daily[i].tm_xfer, state.totals.t_xfer), state.t_daily[i].h_xfer_avg/1024., state.t_daily[i].h_xfer_max/1024.);
       fputs("</tr>\n", out_fp);
    }
-	fputs("</tbody>\n", out_fp); 
+   fputs("</tbody>\n", out_fp); 
    fputs("</table>\n", out_fp);
 }
 
@@ -961,13 +961,13 @@ void html_output_t::hourly_total_table()
    fputs("\n<!-- Hourly Totals Table -->\n", out_fp);
    fputs("<table id=\"hourly_usage_table\" class=\"report_table totals_table\">\n", out_fp);
 
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
-   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"	\
-                  "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"				\
-                  "<th colspan=\"3\" class=\"files_th\">%s</th>\n"			\
-                  "<th colspan=\"3\" class=\"pages_th\">%s</th>\n"			\
+   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"   \
+                  "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"            \
+                  "<th colspan=\"3\" class=\"files_th\">%s</th>\n"         \
+                  "<th colspan=\"3\" class=\"pages_th\">%s</th>\n"         \
                   "<th colspan=\"3\" class=\"kbytes_th\">%s</th></tr>\n",
                   config.lang.msg_h_hour,
                   config.lang.msg_h_hits,
@@ -978,9 +978,9 @@ void html_output_t::hourly_total_table()
    fprintf(out_fp,"<th class=\"files_th small_font_th\">%s</th>\n<th colspan=\"2\" class=\"files_th small_font_th\">%s</th>\n", config.lang.msg_h_avg, config.lang.msg_h_total);
    fprintf(out_fp,"<th class=\"pages_th small_font_th\">%s</th>\n<th colspan=\"2\" class=\"pages_th small_font_th\">%s</th>\n", config.lang.msg_h_avg, config.lang.msg_h_total);
    fprintf(out_fp,"<th class=\"kbytes_th small_font_th\">%s</th>\n<th colspan=\"2\" class=\"kbytes_th small_font_th\">%s</th></tr>\n", config.lang.msg_h_avg, config.lang.msg_h_total);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
 
    for (i=0;i<24;i++)
    {
@@ -991,7 +991,7 @@ void html_output_t::hourly_total_table()
       fprintf(out_fp, "<td>%.0f</td>\n<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td></tr>\n", ((double)state.t_hourly[i].th_xfer/days_in_month)/1024., state.t_hourly[i].th_xfer/1024., PCENT(state.t_hourly[i].th_xfer, state.totals.t_xfer));
    }
 
-	fputs("</tbody>\n", out_fp); 
+   fputs("</tbody>\n", out_fp); 
    fputs("</table>\n", out_fp);
 }
 
@@ -1077,11 +1077,11 @@ void html_output_t::top_hosts_table(int flag)
       fputs("<a name=\"hosts\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    if (flag) 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
+      fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
    else      
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s);
+      fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s);
 
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -1096,9 +1096,9 @@ void html_output_t::top_hosts_table(int flag)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_hname);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    hptr = &h_array[0];
    for(i = 0; i < tot_num; i++) {
@@ -1114,7 +1114,7 @@ void html_output_t::top_hosts_table(int flag)
       if (config.shade_groups && (hptr->flag==OBJ_GRP))
          fputs("<tr class=\"group_shade_tr\">\n", out_fp);
       else 
-			fputs("<tr>\n", out_fp);
+         fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
            "<th>%u</th>\n"  \
@@ -1147,17 +1147,17 @@ void html_output_t::top_hosts_table(int flag)
       // output the span with the IP address as a title
       fprintf(out_fp, 
            "<td class=\"stats_data_item_td%s\"><span title=\"%s\">",
-			  hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str());
+           hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str());
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
-			fprintf(out_fp,"<strong>%s</strong></span></td></tr>\n", hptr->string.c_str());
+         fprintf(out_fp,"<strong>%s</strong></span></td></tr>\n", hptr->string.c_str());
       else 
-			fprintf(out_fp,"%s</span></td></tr>\n", hptr->hostname().c_str());
+         fprintf(out_fp,"%s</span></td></tr>\n", hptr->hostname().c_str());
 
       hptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] h_array;
 
@@ -1369,19 +1369,19 @@ void html_output_t::top_urls_table(int flag)
       fputs("<a name=\"urls\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    if (flag) 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url,config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer);
+      fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url,config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer);
    else 
-		fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u);
+      fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url, config.lang.msg_top_u);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
    fprintf(out_fp,"<th class=\"time_th\" colspan=\"2\" title=\"%s\">%s</th>\n", "avg/max (in seconds)", config.lang.msg_h_time);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_url);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
@@ -1390,7 +1390,7 @@ void html_output_t::top_urls_table(int flag)
       if (config.shade_groups && (uptr->flag==OBJ_GRP))
          fputs("<tr class=\"group_shade_tr\">\n", out_fp);
       else 
-			fputs("<tr>\n", out_fp);
+         fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
          "<th>%u</th>\n" \
@@ -1400,19 +1400,19 @@ void html_output_t::top_urls_table(int flag)
          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
          "<td>%0.3f</td><td>%0.3f</td>\n" \
          "<td class=\"stats_data_item_td%s\">", i+1, uptr->count, 
-			(state.totals.t_hit==0)?0:((double)uptr->count/(double)state.totals.t_hit)*100.0,
+         (state.totals.t_hit==0)?0:((double)uptr->count/(double)state.totals.t_hit)*100.0,
          uptr->xfer/1024.,
          (state.totals.t_xfer==0)?0:((double)uptr->xfer/(double)state.totals.t_xfer)*100.0,
-			uptr->avgtime, uptr->maxtime,
-			uptr->target ? " target" : ""
-			);
+         uptr->avgtime, uptr->maxtime,
+         uptr->target ? " target" : ""
+         );
 
       if (uptr->flag==OBJ_GRP)
       {
          if (config.hlite_groups)
             fprintf(out_fp,"<strong>%s</strong></td></tr>\n", uptr->string.c_str());
          else 
-				fprintf(out_fp,"%s</td></tr>\n", uptr->string.c_str());
+            fprintf(out_fp,"%s</td></tr>\n", uptr->string.c_str());
       }
       else {
          html_encoder_t html_encode(html_encoder, html_encoder_t::append);
@@ -1424,19 +1424,19 @@ void html_output_t::top_urls_table(int flag)
          if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
             fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
          }
-			else {
+         else {
             /* Web log  */
             if(config.is_secure_url(uptr->urltype))
                /* secure server mode, use https:// */
                fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
             else
-					/* otherwise use standard 'http://' */
+               /* otherwise use standard 'http://' */
                fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
          }
-		}
+      }
       uptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] u_array;
 
@@ -1500,7 +1500,7 @@ int html_output_t::all_urls_page(void)
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
                unode.xfer/1024.,
                (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
-				   unode.avgtime, unode.maxtime,
+               unode.avgtime, unode.maxtime,
                unode.string.c_str());
          }
       }
@@ -1527,7 +1527,7 @@ int html_output_t::all_urls_page(void)
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
             unode.xfer/1024.,
             (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
-				unode.avgtime, unode.maxtime,
+            unode.avgtime, unode.maxtime,
             (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
             unode.target ? " class=\"target\"" : "",
             dispurl);
@@ -1601,24 +1601,24 @@ void html_output_t::top_entry_table(int flag)
 
    if (flag) {
       fputs("<div id=\"top_exit_urls_report\">\n", out_fp);
-		fputs("<a name=\"exit\"></a>\n", out_fp); /* do anchor tag */
+      fputs("<a name=\"exit\"></a>\n", out_fp); /* do anchor tag */
    }
    else {
       fputs("<div id=\"top_entry_urls_report\">\n", out_fp);
-		fputs("<a name=\"entry\"></a>\n", out_fp);
+      fputs("<a name=\"entry\"></a>\n", out_fp);
    }
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of,
            (flag) ? state.totals.u_exit : state.totals.u_entry, (flag) ? config.lang.msg_top_ex : config.lang.msg_top_en);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_url);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
@@ -1644,19 +1644,19 @@ void html_output_t::top_entry_table(int flag)
 
       /* check for a service prefix (ie: http://) */
       if (strstr_ex(uptr->string, "://", 10, 3)!=NULL)
-			fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
-		else
+         fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
+      else
       {
          if(config.is_secure_url(uptr->urltype))
-				/* secure server mode, use https:// */
-				fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+            /* secure server mode, use https:// */
+            fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
          else
-				/* otherwise use standard 'http://' */
-				fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
-	   }
+            /* otherwise use standard 'http://' */
+            fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+      }
       uptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
 
    // output a note that robot activity are not included in this report 
@@ -1744,30 +1744,30 @@ void html_output_t::top_refs_table()
    fputs("<a name=\"referrers\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_ref);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    rptr = &r_array[0]; 
    for(i = 0; i < tot_num; i++) {
       /* shade grouping? */
       if(config.shade_groups && (rptr->flag==OBJ_GRP))
-			fputs("<tr class=\"group_shade_tr\">\n", out_fp);
+         fputs("<tr class=\"group_shade_tr\">\n", out_fp);
       else 
-			fputs("<tr>\n", out_fp);
+         fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-          "<th>%d</th>\n"				\
-          "<td>%" PRIu64 "</td>\n"				\
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
-          "<td>%" PRIu64 "</td>\n"				\
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
+          "<th>%d</th>\n"            \
+          "<td>%" PRIu64 "</td>\n"            \
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
+          "<td>%" PRIu64 "</td>\n"            \
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
           "<td class=\"stats_data_item_td\">",
           i+1,
           rptr->count, (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
@@ -1778,7 +1778,7 @@ void html_output_t::top_refs_table()
          if (config.hlite_groups)
             fprintf(out_fp,"<strong>%s</strong>", rptr->string.c_str());
          else 
-				fprintf(out_fp,"%s", rptr->string.c_str());
+            fprintf(out_fp,"%s", rptr->string.c_str());
       }
       else
       {
@@ -1801,7 +1801,7 @@ void html_output_t::top_refs_table()
       fputs("</td></tr>\n", out_fp);
       rptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] r_array;
 
@@ -1863,7 +1863,7 @@ void html_output_t::top_dl_table(void)
    fputs("<a name=\"downloads\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -1877,9 +1877,9 @@ void html_output_t::top_dl_table(void)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_hname);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    i=0;
    nptr = &dl_array[0];
@@ -1896,14 +1896,14 @@ void html_output_t::top_dl_table(void)
 
       fprintf(out_fp,
           "<tr>\n"                  \
-          "<th>%d</th>\n"				\
-          "<td>%" PRIu64 "</td>\n"		\
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
-          "<td>%.0f</td>\n"		\
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
-          "<td>%3.02f</td>\n"		\
-          "<td>%3.02f</td>\n"		\
-          "<td>%" PRIu64 "</td>\n"				\
+          "<th>%d</th>\n"            \
+          "<td>%" PRIu64 "</td>\n"      \
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
+          "<td>%.0f</td>\n"      \
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
+          "<td>%3.02f</td>\n"      \
+          "<td>%3.02f</td>\n"      \
+          "<td>%" PRIu64 "</td>\n"            \
           "<td class=\"stats_data_item_td\">%s</td>\n",
           i+1,
           nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
@@ -1925,7 +1925,7 @@ void html_output_t::top_dl_table(void)
 
       nptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] dl_array;
 
@@ -1942,7 +1942,7 @@ void html_output_t::top_dl_table(void)
          fputs("</tbody>\n", out_fp);
       }
    }
-	
+   
    fputs("</table>\n", out_fp);
    fputs("</div>\n", out_fp);
 }
@@ -2057,16 +2057,16 @@ void html_output_t::top_err_table(void)
    fputs("<a name=\"errors\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th class=\"errors_th\">%s</th>\n", config.lang.msg_h_status);
    fprintf(out_fp,"<th class=\"method_th\">%s</th>\n", config.lang.msg_h_method);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_url);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i=0; i < tot_num && iter.prev(rcnode); i++) {
       html_encoder_t html_encode(html_encoder, html_encoder_t::append);
@@ -2075,10 +2075,10 @@ void html_output_t::top_err_table(void)
 
       fprintf(out_fp,
           "<tr>\n"                  \
-          "<th>%d</th>\n"				\
-          "<td>%" PRIu64 "</td>\n"				\
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"		\
-          "<td title=\"%s\">%d</td>\n"				\
+          "<th>%d</th>\n"            \
+          "<td>%" PRIu64 "</td>\n"            \
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
+          "<td title=\"%s\">%d</td>\n"            \
           "<td>%s</td>" \
           "<td class=\"stats_data_item_td\">",
           i+1,rptr->count,
@@ -2091,7 +2091,7 @@ void html_output_t::top_err_table(void)
 
       fputs("</td></tr>\n", out_fp);
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    iter.close();
 
@@ -2107,7 +2107,7 @@ void html_output_t::top_err_table(void)
          fputs("</tbody>\n", out_fp);
       }
    }
-	
+   
    fputs("</table>\n", out_fp);
    fputs("</div>\n", out_fp);
 }
@@ -2327,7 +2327,7 @@ void html_output_t::top_agents_table()
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_agent);
    fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    aptr = &a_array[0];
    for(i = 0; i < tot_num; i++) {
@@ -2337,7 +2337,7 @@ void html_output_t::top_agents_table()
       if (config.shade_groups && (aptr->flag==OBJ_GRP))
          fputs("<tr class=\"group_shade_tr\">\n", out_fp);
       else 
-			fputs("<tr>\n", out_fp);
+         fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
           "<td>%d</td>\n" \
@@ -2357,19 +2357,19 @@ void html_output_t::top_agents_table()
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
             fprintf(out_fp,"<strong><span class=\"robot\">%s</span></strong>\n", aptr->string.c_str()); 
          else 
-			   fprintf(out_fp,"<span class=\"robot\">%s</span>", html_encode(aptr->string.c_str()));
+            fprintf(out_fp,"<span class=\"robot\">%s</span>", html_encode(aptr->string.c_str()));
       }
       else {
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
             fprintf(out_fp,"<strong>%s</strong>", aptr->string.c_str()); 
          else 
-			   fprintf(out_fp,"%s", html_encode(aptr->string.c_str()));
+            fprintf(out_fp,"%s", html_encode(aptr->string.c_str()));
       }
       fputs("</td></tr>\n", out_fp);
 
       aptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] a_array;
 
@@ -2500,17 +2500,17 @@ void html_output_t::top_search_table(void)
    fputs("<a name=\"search\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_search);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i = 0; i < tot_num && iter.prev(snode); i++) {
       html_encoder_t html_encode(html_encoder, html_encoder_t::append);
@@ -2552,7 +2552,7 @@ void html_output_t::top_search_table(void)
          fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td></tr>\n", html_encode(cp1));
       }
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    iter.close();
 
@@ -2720,7 +2720,7 @@ void html_output_t::top_users_table()
    fputs("<a name=\"users\"></a>\n", out_fp);       /* now do <a> tag   */
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -2729,9 +2729,9 @@ void html_output_t::top_users_table()
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"time_th\" title=\"%s\">%s</th>\n", "avg/max (in seconds)", config.lang.msg_h_time);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_uname);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    iptr = &i_array[0]; 
    for(i = 0; i < tot_num; i++) {
@@ -2739,7 +2739,7 @@ void html_output_t::top_users_table()
       if (config.shade_groups && (iptr->flag==OBJ_GRP))
          fputs("<tr class=\"group_shade_tr\">\n", out_fp);
       else 
-			fputs("<tr>\n", out_fp);
+         fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
            "<th>%d</td>\n"  \
@@ -2768,7 +2768,7 @@ void html_output_t::top_users_table()
          fprintf(out_fp,"%s</td></tr>\n", dispuser);
       iptr++;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    delete [] i_array;
 
@@ -2959,7 +2959,7 @@ void html_output_t::top_ctry_table()
 
    /* Now do the table */
    fputs("<table id=\"country_usage_table\" class=\"report_table stats_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"10\">%s %u %s %d %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
@@ -2968,7 +2968,7 @@ void html_output_t::top_ctry_table()
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_ctry);
 
-	fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i = 0; i < tot_num; i++) {
       if(ccarray[i]->count != 0) {
@@ -2994,7 +2994,7 @@ void html_output_t::top_ctry_table()
               ccarray[i]->cdesc.c_str());
       }
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
 
    // output a note that robot activity is not included in this report 
@@ -3044,7 +3044,7 @@ int html_output_t::write_main_index()
 
    /* year graph */
    if(!config.js_charts.isempty())
-		fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
+      fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
    else {
       string_t png_fname_lang;
 
@@ -3066,14 +3066,14 @@ int html_output_t::write_main_index()
    fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
 
    /* month table */
-	fputs("\n<!-- Monthly Summary Table -->\n", out_fp);
-	fputs("<table id=\"monthly_summary_table\" class=\"report_table monthly_summary_table\">\n", out_fp);
-	fputs("<thead>\n", out_fp);
+   fputs("\n<!-- Monthly Summary Table -->\n", out_fp);
+   fputs("<table id=\"monthly_summary_table\" class=\"report_table monthly_summary_table\">\n", out_fp);
+   fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"11\">%s</th></tr>\n", config.lang.msg_main_sum);
 
-	/*
-	 *	Summary table header
-	 */
+   /*
+    *   Summary table header
+    */
    fprintf(out_fp,"<tr><th rowspan=\"2\" style=\"text-align: left;\">%s</th>\n", config.lang.msg_h_mth);
    fprintf(out_fp,"<th colspan=\"4\">%s</th>\n", config.lang.msg_main_da);
    fprintf(out_fp,"<th colspan=\"6\">%s</th></tr>\n", config.lang.msg_main_mt);
@@ -3087,12 +3087,12 @@ int html_output_t::write_main_index()
    fprintf(out_fp,"<th class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
    fprintf(out_fp,"<th class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
    fprintf(out_fp,"<th class=\"hits_th\">%s</th></tr>\n", config.lang.msg_h_hits);
-	fputs("</thead>\n", out_fp);
+   fputs("</thead>\n", out_fp);
 
-	/*
-	 * Summary data section
-	 */
-	fputs("<tbody class=\"summary_data_tbody\">\n", out_fp);
+   /*
+    * Summary data section
+    */
+   fputs("<tbody class=\"summary_data_tbody\">\n", out_fp);
 
    iter = state.history.rbegin();
    while(iter != state.history.rend()) {
@@ -3117,12 +3117,12 @@ int html_output_t::write_main_index()
       gt_visits+= hptr->visits;
       gt_hosts += hptr->hosts;
    }
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
-	/*
-	 *	Summary totals section
-	 */
-	fputs("<tbody class=\"summary_footer_tbody\">\n", out_fp);
+   /*
+    *   Summary totals section
+    */
+   fputs("<tbody class=\"summary_footer_tbody\">\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_footer_tr\"><th colspan=\"5\">%s</th>\n", config.lang.msg_h_totals);
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_hosts);
    fprintf(out_fp,"<td>%.0f</td>\n", gt_xfer/1024.);
@@ -3130,7 +3130,7 @@ int html_output_t::write_main_index()
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_pages);
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_files);
    fprintf(out_fp,"<td>%" PRIu64 "</td></tr>\n", gt_hit);
-	fputs("</tbody>\n", out_fp);
+   fputs("</tbody>\n", out_fp);
 
    fputs("</table>\n", out_fp);
 

@@ -22,7 +22,7 @@
 //
 // Current numeric application version
 //
-#define VERSION			((unsigned int) ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (EDITION_LEVEL << 8) | (BUILD_NUMBER)))
+#define VERSION         ((unsigned int) ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (EDITION_LEVEL << 8) | (BUILD_NUMBER)))
 
 //
 // Application version component extractors
@@ -35,7 +35,7 @@
 //
 // Previous application versions for conditional processing
 //
-#define VERSION_3_3_1_5	   0x03030105u
+#define VERSION_3_3_1_5      0x03030105u
 #define VERSION_3_5_1_1    0x03050101u
 #define VERSION_3_8_0_4    0x03080004u
 

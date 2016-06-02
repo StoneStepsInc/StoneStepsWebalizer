@@ -19,9 +19,9 @@
 #include <vector>
 
 /* Parse codes */
-#define PARSE_CODE_ERROR	0
-#define PARSE_CODE_OK		1
-#define PARSE_CODE_IGNORE	2
+#define PARSE_CODE_ERROR      0
+#define PARSE_CODE_OK         1
+#define PARSE_CODE_IGNORE     2
 
 //
 //
@@ -35,30 +35,30 @@ struct field_desc;
 class parser_t {
    private:
       enum TLogFieldId {
-	      eDateTime,
-	      eDate,
-	      eTime,
-	      eClientIpAddress,
-	      eUserName,
-	      eWebsiteName,
-	      eWebsiteIpAddress,
-	      eWebsitePort,
-	      eHttpMethod,
-	      eUriStem,
-	      eUriQuery,
-	      eHttpStatus,
-	      eBytesReceived,
-	      eBytesSent,
-	      eBytesTotal,            // total bytes transferred
-	      eTimeTaken,					// milliseconds (IIS) or seconds (W3C)
-	      eProcTimeS,					// seconds
-	      eProcTimeMcS,				// microseconds
-	      eUserAgent,
-	      eReferrer,
-	      eCookie,
-	      eHttpRequestLine,			// GET / HTTP/1.1
-	      eRemoteLoginName,			// remote logname (from identd, if supplied). 
-	      eUnknown = -1				// must be last
+         eDateTime,
+         eDate,
+         eTime,
+         eClientIpAddress,
+         eUserName,
+         eWebsiteName,
+         eWebsiteIpAddress,
+         eWebsitePort,
+         eHttpMethod,
+         eUriStem,
+         eUriQuery,
+         eHttpStatus,
+         eBytesReceived,
+         eBytesSent,
+         eBytesTotal,            // total bytes transferred
+         eTimeTaken,               // milliseconds (IIS) or seconds (W3C)
+         eProcTimeS,               // seconds
+         eProcTimeMcS,            // microseconds
+         eUserAgent,
+         eReferrer,
+         eCookie,
+         eHttpRequestLine,         // GET / HTTP/1.1
+         eRemoteLoginName,         // remote logname (from identd, if supplied). 
+         eUnknown = -1            // must be last
       };
 
    private:

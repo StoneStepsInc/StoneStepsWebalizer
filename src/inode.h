@@ -19,13 +19,13 @@
 // User
 //
 struct inode_t : public base_node<inode_t> {
-      uint64_t count;                // request count
-      uint64_t files;                // files requested
-      uint64_t visit;                // visits started
-      tstamp_t tstamp;               // last request time
-      uint64_t xfer;                 // transfer amount, in bytes
-      double   avgtime;				    // average processing time (sec)
-      double   maxtime;              // maximum processing time (sec)
+      uint64_t count;               // request count
+      uint64_t files;               // files requested
+      uint64_t visit;               // visits started
+      tstamp_t tstamp;              // last request time
+      uint64_t xfer;                // transfer amount, in bytes
+      double   avgtime;             // average processing time (sec)
+      double   maxtime;             // maximum processing time (sec)
 
       public:
          typedef void (*s_unpack_cb_t)(inode_t& rnode, void *arg);

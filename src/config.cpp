@@ -58,9 +58,9 @@ config_t::config_t(void)
    //
    // public values
    //
-   conv_url_lower_case = false;		          // if true, URL stems will be converted lower case
-   bundle_groups = true;				          // bundle groups together?
-   no_def_index_alias = false;		          // ignore default index alias?
+   conv_url_lower_case = false;               // if true, URL stems will be converted lower case
+   bundle_groups = true;                      // bundle groups together?
+   no_def_index_alias = false;                // ignore default index alias?
    html_meta_noindex = true;                  // add noindex, nofollow?
    enable_phrase_values = false;
    upstream_traffic = false;                  // track upstream traffic?
@@ -116,7 +116,7 @@ config_t::config_t(void)
    swap_frequency = 100;
 
    http_port = DEF_HTTP_PORT;                 // HTTP port number
-   https_port = DEF_HTTPS_PORT;	             // HTTPS port number
+   https_port = DEF_HTTPS_PORT;               // HTTPS port number
 
    mangle_agent = 0;                          /* mangle user agents       */
    group_domains= 0;                          /* Group domains 0=none     */
@@ -240,22 +240,22 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
          fpath = make_path(ETCDIR, "webalizer.conf");
          if (!access(fpath, R_OK))
             get_config(fpath);
-	      else {
-		      if(argv[0] && *argv[0]) {
-			      cp1 = strchr(argv[0], 0);
+         else {
+            if(argv[0] && *argv[0]) {
+               cp1 = strchr(argv[0], 0);
 
-			      while(cp1 > argv[0] && *cp1 != '/' && *cp1 != '\\') cp1--;
+               while(cp1 > argv[0] && *cp1 != '/' && *cp1 != '\\') cp1--;
 
-			      if(cp1 > argv[0]) {
+               if(cp1 > argv[0]) {
                   fpath.assign(argv[0], cp1-argv[0]+1);
-				      fpath.append("webalizer.conf");
+                  fpath.append("webalizer.conf");
 
-				      if (!access(fpath,R_OK))
-					      get_config(fpath);
-			      }
-		      }
+                  if (!access(fpath,R_OK))
+                     get_config(fpath);
+               }
+            }
          }
-	   }
+      }
    }
 
    //
@@ -375,7 +375,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       db_trickle_rate = 100;
 
    if(dns_children > DNS_MAX_THREADS)
-		dns_children = DNS_MAX_THREADS;
+      dns_children = DNS_MAX_THREADS;
 
    enable_js = !html_js_path.isempty();
 
@@ -435,8 +435,8 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    }
 
    /* add default index. alias */
-	if(!no_def_index_alias)
-		index_alias.add_nlist("index.");
+   if(!no_def_index_alias)
+      index_alias.add_nlist("index.");
 
    //
    // Check if page types present. If no page types specified, we
@@ -456,7 +456,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       else if(log_type == LOG_IIS) {
          page_type.add_nlist("asp");
          page_type.add_nlist("aspx");
-	   }
+      }
       if (log_type == LOG_SQUID)
       {
          page_type.add_nlist("php");
@@ -644,202 +644,202 @@ void config_t::get_config(const char *fname)
                      //
                      // max key: 189; empty slots: 172, 184, 185 
                      //
-                     {"AcceptHostNames",     186},       // Accept host names instead of IP addresses?
-                     {"AllAgents",		      67},			// List all User Agents?
-                     {"AllDownloads",        123},       // List all downloads
-                     {"AllErrors",		      114},			// List All HTTP Errors?
+                     {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
+                     {"AllAgents",           67},           // List all User Agents?
+                     {"AllDownloads",        123},          // List all downloads
+                     {"AllErrors",           114},          // List All HTTP Errors?
                      {"AllHosts",            64},
-                     {"AllReferrers",	      66},			// List all Referrers?
-                     {"AllSearchStr",	      68},			// List all Search Strings?
-                     {"AllSites",		      64},			// List all sites?
-                     {"AllURLs",		         65},			// List all URLs?
-                     {"AllUsers",		      69},			// List all Users?
-                     {"ApacheLogFormat",     95},			// Apache LogFormat Directive
-                     {"Batch",               156},       // Batch processing?
-                     {"BatchProcessing",     156},       // Batch processing?
-                     {"BundleGroups",	      91},			// Bundle groups together?
-                     {"ConvURLsLowerCase",   89},			// Convert URL's to lower case
-                     {"CountryGraph",	      54},			// Display ctry graph (0=no)
-                     {"DailyGraph",		      86},			// Daily Graph (0=no)
-                     {"DailyStats",		      87},			// Daily Stats (0=no)
-                     {"DbCacheSize",         146},       // State database cache size
-                     {"DbDirect",            153},       // Use OS buffering?
-                     {"DbDSync",             154},       // Use write-through?
-                     {"DbExt",               148},       // State database file extension
-                     {"DbName",              145},       // State database file name
-                     {"DbPath",              144},       // State database path
-                     {"DbSeqCacheSize",      149},       // Database sequence cache size
-                     {"DbTrickleRate",       150},       // Database trickle rate
-                     {"Debug",		         8},		   // Produce debug information
-                     {"DNSCache",		      84},			// DNS Cache file name
-                     {"DNSCacheTTL",	      93},			// TTL of a DNS cache entry (days)
-                     {"DNSChildren",	      85},			// DNS Children (0=no DNS)
-                     {"DownloadPath",        119},       // Download path
-                     {"DownloadTimeout",     120},       // Download job timeout
-                     {"DSTEnd",              162},       // Daylight saving end date/time
-                     {"DSTOffset",           163},       // Daylight saving offset
-                     {"DSTStart",            161},       // Daylight saving start date/time
-                     {"DumpAgents",		      81},			// Dump user agents tab file
-                     {"DumpDownloads",       121},       // Dump downloads?
-                     {"DumpErrors",		      112},			// Dump HTTP errors?
-                     {"DumpExtension",	      76},			// Dump filename extension
-                     {"DumpHeader",		      77},			// Dump header as first rec?
+                     {"AllReferrers",        66},           // List all Referrers?
+                     {"AllSearchStr",        68},           // List all Search Strings?
+                     {"AllSites",            64},           // List all sites?
+                     {"AllURLs",             65},           // List all URLs?
+                     {"AllUsers",            69},           // List all Users?
+                     {"ApacheLogFormat",     95},           // Apache LogFormat Directive
+                     {"Batch",               156},          // Batch processing?
+                     {"BatchProcessing",     156},          // Batch processing?
+                     {"BundleGroups",        91},           // Bundle groups together?
+                     {"ConvURLsLowerCase",   89},           // Convert URL's to lower case
+                     {"CountryGraph",        54},           // Display ctry graph (0=no)
+                     {"DailyGraph",          86},           // Daily Graph (0=no)
+                     {"DailyStats",          87},           // Daily Stats (0=no)
+                     {"DbCacheSize",         146},          // State database cache size
+                     {"DbDirect",            153},          // Use OS buffering?
+                     {"DbDSync",             154},          // Use write-through?
+                     {"DbExt",               148},          // State database file extension
+                     {"DbName",              145},          // State database file name
+                     {"DbPath",              144},          // State database path
+                     {"DbSeqCacheSize",      149},          // Database sequence cache size
+                     {"DbTrickleRate",       150},          // Database trickle rate
+                     {"Debug",               8},            // Produce debug information
+                     {"DNSCache",            84},           // DNS Cache file name
+                     {"DNSCacheTTL",         93},           // TTL of a DNS cache entry (days)
+                     {"DNSChildren",         85},           // DNS Children (0=no DNS)
+                     {"DownloadPath",        119},          // Download path
+                     {"DownloadTimeout",     120},          // Download job timeout
+                     {"DSTEnd",              162},          // Daylight saving end date/time
+                     {"DSTOffset",           163},          // Daylight saving offset
+                     {"DSTStart",            161},          // Daylight saving start date/time
+                     {"DumpAgents",          81},           // Dump user agents tab file
+                     {"DumpDownloads",       121},          // Dump downloads?
+                     {"DumpErrors",          112},          // Dump HTTP errors?
+                     {"DumpExtension",       76},           // Dump filename extension
+                     {"DumpHeader",          77},           // Dump header as first rec?
                      {"DumpHosts",           78},
-                     {"DumpPath",		      75},			// Path for dump files
-                     {"DumpReferrers",	      80},			// Dump referrers tab file
-                     {"DumpSearchStr",	      83},			// Dump search str tab file
-                     {"DumpSites",		      78},			// Dump sites tab file
-                     {"DumpURLs",		      79},			// Dump urls tab file
-                     {"DumpUsers",		      82},			// Dump usernames tab file
-                     {"EnablePhraseValues",  117},		   // Enable phrases in configuration values
-                     {"ExcludeAgentArgs",    164},       // Exclude user agent arguments
-                     {"ExcludeSearchArg",	   109},			// Exclude a search argument
-                     {"GeoIPCity",           53},        // Output city name in reports?
-                     {"GeoIPDBPath",         141},       // Path to the GeoIP database file
-                     {"GMTTime",		         30},			// Local or UTC time?
-                     {"GraphBackgroundAlpha",130},       // Graph background transparency
-                     {"GraphBackgroundColor",105},		   // Graph background color
-                     {"GraphBorderWidth",    129},		   // Graph border width
-                     {"GraphFilesColor",     133},       // Graph files color
-                     {"GraphFontBold",	      101},			// True Type font path
-                     {"GraphFontMedium",     103},			// Medium font size in points
-                     {"GraphFontNormal",     100},			// True Type font path
-                     {"GraphFontSmall",      102},			// Small font size in points
-                     {"GraphFontSmoothing",  104},		   // Use font anti-aliasing?
-                     {"GraphGridlineColor",  124},       // Graph griline color
-                     {"GraphHitsColor",      132},       // Graph hits color
-                     {"GraphHostsColor",     134},       // Graph hosts color
-                     {"GraphLegend",	      51},			// Graph Legends (yes/no)
-                     {"GraphLegendColor",	   139},			// Graph legend color
-                     {"GraphLines",		      52},			// Graph Lines (0=none)
-                     {"GraphOutlineColor",   138},       // Graph bar outline color
-                     {"GraphPagesColor",     135},       // Graph pages color
-                     {"GraphShadowColor",	   106},			// Graph legend shadow color
-                     {"GraphTitleColor",     131},       // Graph title color
-                     {"GraphTrueColor",	   111},			// Create true-color images?
-                     {"GraphType",           115},       // Graph type (PNG, Flash-OFC, etc)
-                     {"GraphVisitsColor",    136},       // Graph visits color
-                     {"GraphVolumeColor",    137},       // Graph volume (transfer) color
-                     {"GraphWeekendColor",   140},       // Graph weekend color
-                     {"GroupAgent",		      34},			// Group Agents
-                     {"GroupAgentArgs",      167},       // Group agent arguments
-                     {"GroupDomains",	      62},			// Group domains (n=level)
-                     {"GroupHighlight",      36},			// BOLD Grouped entries
+                     {"DumpPath",            75},           // Path for dump files
+                     {"DumpReferrers",       80},           // Dump referrers tab file
+                     {"DumpSearchStr",       83},           // Dump search str tab file
+                     {"DumpSites",           78},           // Dump sites tab file
+                     {"DumpURLs",            79},           // Dump urls tab file
+                     {"DumpUsers",           82},           // Dump usernames tab file
+                     {"EnablePhraseValues",  117},          // Enable phrases in configuration values
+                     {"ExcludeAgentArgs",    164},          // Exclude user agent arguments
+                     {"ExcludeSearchArg",    109},          // Exclude a search argument
+                     {"GeoIPCity",           53},           // Output city name in reports?
+                     {"GeoIPDBPath",         141},          // Path to the GeoIP database file
+                     {"GMTTime",             30},           // Local or UTC time?
+                     {"GraphBackgroundAlpha",130},          // Graph background transparency
+                     {"GraphBackgroundColor",105},          // Graph background color
+                     {"GraphBorderWidth",    129},          // Graph border width
+                     {"GraphFilesColor",     133},          // Graph files color
+                     {"GraphFontBold",       101},          // True Type font path
+                     {"GraphFontMedium",     103},          // Medium font size in points
+                     {"GraphFontNormal",     100},          // True Type font path
+                     {"GraphFontSmall",      102},          // Small font size in points
+                     {"GraphFontSmoothing",  104},          // Use font anti-aliasing?
+                     {"GraphGridlineColor",  124},          // Graph griline color
+                     {"GraphHitsColor",      132},          // Graph hits color
+                     {"GraphHostsColor",     134},          // Graph hosts color
+                     {"GraphLegend",         51},           // Graph Legends (yes/no)
+                     {"GraphLegendColor",    139},          // Graph legend color
+                     {"GraphLines",          52},           // Graph Lines (0=none)
+                     {"GraphOutlineColor",   138},          // Graph bar outline color
+                     {"GraphPagesColor",     135},          // Graph pages color
+                     {"GraphShadowColor",    106},          // Graph legend shadow color
+                     {"GraphTitleColor",     131},          // Graph title color
+                     {"GraphTrueColor",      111},          // Create true-color images?
+                     {"GraphType",           115},          // Graph type (PNG, Flash-OFC, etc)
+                     {"GraphVisitsColor",    136},          // Graph visits color
+                     {"GraphVolumeColor",    137},          // Graph volume (transfer) color
+                     {"GraphWeekendColor",   140},          // Graph weekend color
+                     {"GroupAgent",          34},           // Group Agents
+                     {"GroupAgentArgs",      167},          // Group agent arguments
+                     {"GroupDomains",        62},           // Group domains (n=level)
+                     {"GroupHighlight",      36},           // BOLD Grouped entries
                      {"GroupHost",           32},
-                     {"GroupReferrer",	      33},			// Group Referrers
-                     {"GroupRobots",         159},       // Group Robots?
-                     {"GroupShading",	      35},			// Shade Grouped entries
-                     {"GroupSite",		      32},			// Group Sites
-                     {"GroupURL",		      31},			// Group URL's
-                     {"GroupURLDomains",     126},			// Group URL domains (proxy)
-                     {"GroupUser",		      74},			// Usernames to group
-                     {"HideAgent",		      19},			// User Agents to hide
+                     {"GroupReferrer",       33},           // Group Referrers
+                     {"GroupRobots",         159},          // Group Robots?
+                     {"GroupShading",        35},           // Shade Grouped entries
+                     {"GroupSite",           32},           // Group Sites
+                     {"GroupURL",            31},           // Group URL's
+                     {"GroupURLDomains",     126},          // Group URL domains (proxy)
+                     {"GroupUser",           74},           // Usernames to group
+                     {"HideAgent",           19},           // User Agents to hide
                      {"HideAllHosts",        63},
-                     {"HideAllSites",	      63},			// Hide ind. sites (0=no)
+                     {"HideAllSites",        63},           // Hide ind. sites (0=no)
                      {"HideHost",            16},
-                     {"HideReferrer",	      18},			// Referrers to hide
-                     {"HideRobots",          157},       // Hide robots?
-                     {"HideSite",		      16},			// Sites to hide
-                     {"HideURL",		         17},			// URL's to hide
-                     {"HideUser",		      71},			// Usernames to hide
-                     {"HistoryLength",	      143},			// Number of months in history
-                     {"HistoryName",	      39},			// Filename for history data
-                     {"HostName",		      4},		   // Hostname to use
-                     {"HourlyGraph",	      9},		   // Hourly stats graph
-                     {"HourlyStats",	      10},		   // Hourly stats table
-                     {"HTMLBody",		      42},			// HTML body code
-                     {"HTMLCssPath",	      98},			// URL path to webalizer.css
-                     {"HTMLEnd",		         43},			// HTML code at end
-                     {"HTMLExtension",	      40},			// HTML filename extension
-                     {"HTMLExtensionLang",   94},        // HTMLExtensionLang
-                     {"HTMLHead",		      21},			// HTML Top1 code
-                     {"HTMLJsPath",          128},       // HTML JavaScript Path
-                     {"HTMLMetaNoIndex",	   110},			// Add noindex, nofollow?
-                     {"HTMLPost",		      22},			// HTML Top2 code
-                     {"HTMLPre",		         41},			// HTML code at beginning
-                     {"HTMLTail",		      23},			// HTML Tail code
-                     {"HttpPort",		      96},			// HTTP port number
-                     {"HttpsPort",		      97},			// HTTPS port number
-                     {"IgnoreAgent",	      28},			// User Agents to ignore
-                     {"IgnoreHist",		      5},		   // Ignore history file
-                     {"IgnoreHost",		      25},			// Synonym for IgnoreSite
-                     {"IgnoreReferrer",      27},			// Referrers to ignore
-                     {"IgnoreReferrerPartial",	125},	   // Partial request (206)
-                     {"IgnoreRobots",        158},       // Ignore robots altogether?
-                     {"IgnoreSite",		      25},			// Sites to ignore
-                     {"IgnoreURL",		      26},			// Url's to ignore
-                     {"IgnoreUser",		      72},			// Usernames to ignore
-                     {"Include",		         118},			// Include a config file
-                     {"IncludeAgent",	      48},			// User Agents to include
-                     {"IncludeAgentArgs",    165},       // User agent argument to include
+                     {"HideReferrer",        18},           // Referrers to hide
+                     {"HideRobots",          157},          // Hide robots?
+                     {"HideSite",            16},           // Sites to hide
+                     {"HideURL",             17},           // URL's to hide
+                     {"HideUser",            71},           // Usernames to hide
+                     {"HistoryLength",       143},          // Number of months in history
+                     {"HistoryName",         39},           // Filename for history data
+                     {"HostName",            4},            // Hostname to use
+                     {"HourlyGraph",         9},            // Hourly stats graph
+                     {"HourlyStats",         10},           // Hourly stats table
+                     {"HTMLBody",            42},           // HTML body code
+                     {"HTMLCssPath",         98},           // URL path to webalizer.css
+                     {"HTMLEnd",             43},           // HTML code at end
+                     {"HTMLExtension",       40},           // HTML filename extension
+                     {"HTMLExtensionLang",   94},           // HTMLExtensionLang
+                     {"HTMLHead",            21},           // HTML Top1 code
+                     {"HTMLJsPath",          128},          // HTML JavaScript Path
+                     {"HTMLMetaNoIndex",     110},          // Add noindex, nofollow?
+                     {"HTMLPost",            22},           // HTML Top2 code
+                     {"HTMLPre",             41},           // HTML code at beginning
+                     {"HTMLTail",            23},           // HTML Tail code
+                     {"HttpPort",            96},           // HTTP port number
+                     {"HttpsPort",           97},           // HTTPS port number
+                     {"IgnoreAgent",         28},           // User Agents to ignore
+                     {"IgnoreHist",          5},            // Ignore history file
+                     {"IgnoreHost",          25},           // Synonym for IgnoreSite
+                     {"IgnoreReferrer",      27},           // Referrers to ignore
+                     {"IgnoreReferrerPartial",125},         // Partial request (206)
+                     {"IgnoreRobots",        158},          // Ignore robots altogether?
+                     {"IgnoreSite",          25},           // Sites to ignore
+                     {"IgnoreURL",           26},           // Url's to ignore
+                     {"IgnoreUser",          72},           // Usernames to ignore
+                     {"Include",             118},          // Include a config file
+                     {"IncludeAgent",        48},           // User Agents to include
+                     {"IncludeAgentArgs",    165},          // User agent argument to include
                      {"IncludeHost",         45},
-                     {"IncludeReferrer",     47},			// Referrers to include
-                     {"IncludeSearchArg",	   108},			// Include a search argument
-                     {"IncludeSite",	      45},			// Sites to always include
-                     {"IncludeURL",		      46},			// URL's to always include
-                     {"IncludeUser",	      73},			// Usernames to include
-                     {"Incremental",	      37},			// Incremental runs
-                     {"IncrementalName",     38},			// Filename for state data
-                     {"IndexAlias",		      20},			// Aliases for index.html
-                     {"JavaScriptCharts",    99},        // JavaScript charts package name
-                     {"JavaScriptChartsPath", 189},      // Alternative JavaScript charts path
-                     {"LanguageFile",	      90},			//	Language file
-                     {"LocalUTCOffset",      188},       // Do not use local UTC offset?
-                     {"LogDir",              183},       // Log directory
-                     {"LogFile",		         2},		   // Log file to use for input
-                     {"LogType",		         60},			// Log Type (clf/ftp/squid/iis)
-                     {"MangleAgents",	      24},			// Mangle User Agents
-                     {"MaxAgents",		      176},			// Maximum User Agents
-                     {"MaxDownloads",        180},       // Maximum downloads
-                     {"MaxErrors",		      179},			// Maximum HTTP Errors
-                     {"MaxHosts",            173},       // Maximum hosts
-                     {"MaxKHosts",           181},       // Maximum hosts (transfer)
-                     {"MaxKURLs",		      182},			// Maximum URLs (transfer)
-                     {"MaxReferrers",	      175},			// Maximum Referrers
-                     {"MaxSearchStr",	      177},			// Maximum Search Strings
-                     {"MaxURLs",		         174},			// Maximum URLs
-                     {"MaxUsers",		      178},			// Maximum Users
-                     {"MaxVisitLength",      187},       // Maximum visit length
-                     {"MemoryMode",          147},       // Memory or database mode?
-                     {"MonthlyTotals",       127},       // Output monthly totals report?
-                     {"NoDefaultIndexAlias", 92},		   // Ignore default index alias?
-                     {"OutputDir",		      1},		   // Output directory
-                     {"OutputFormat",        171},       // Output format
-                     {"PageEntryURL",        170},       // Show only pages in the entry report?
-                     {"PageType",		      49},			// Page Type (pageview)
-                     {"Quiet",		         6},		   // Run in quiet mode
-                     {"ReallyQuiet",	      29},			// Dont display ANY messages
-                     {"ReportTitle",	      3},		   // Title for reports
-                     {"Robot",               155},       // Robot user agent filter
-                     {"SearchEngine",	      61},			// SearchEngine strings
-                     {"SortSearchArgs",	   107},			// Sort search arguments ?
-                     {"SpamReferrer",        142},       // Spam referrer
-                     {"SwapFirstRecord",     151},       // First record # to start DB swapping
-                     {"SwapFrequency",       152},       // DB-swap each N record
-                     {"TargetDownloads",     169},       // Treat download URLs as targets?
-                     {"TargetURL",           168},       // Target URL pattern
-                     {"TimeMe",		         7},		   // Produce timing results
-                     {"TopAgents",		      14},			// Top User Agents
-                     {"TopCountries",	      15},			// Top Countries
-                     {"TopDownloads",        122},       // Top downloads
-                     {"TopEntry",		      57},			// Top Entry Pages
-                     {"TopErrors",		      113},			// Top HTTP errors
-                     {"TopExit",		         58},			// Top Exit Pages
+                     {"IncludeReferrer",     47},           // Referrers to include
+                     {"IncludeSearchArg",    108},          // Include a search argument
+                     {"IncludeSite",         45},           // Sites to always include
+                     {"IncludeURL",          46},           // URL's to always include
+                     {"IncludeUser",         73},           // Usernames to include
+                     {"Incremental",         37},           // Incremental runs
+                     {"IncrementalName",     38},           // Filename for state data
+                     {"IndexAlias",          20},           // Aliases for index.html
+                     {"JavaScriptCharts",    99},           // JavaScript charts package name
+                     {"JavaScriptChartsPath",189},          // Alternative JavaScript charts path
+                     {"LanguageFile",        90},           // Language file
+                     {"LocalUTCOffset",      188},          // Do not use local UTC offset?
+                     {"LogDir",              183},          // Log directory
+                     {"LogFile",             2},            // Log file to use for input
+                     {"LogType",             60},           // Log Type (clf/ftp/squid/iis)
+                     {"MangleAgents",        24},           // Mangle User Agents
+                     {"MaxAgents",           176},          // Maximum User Agents
+                     {"MaxDownloads",        180},          // Maximum downloads
+                     {"MaxErrors",           179},          // Maximum HTTP Errors
+                     {"MaxHosts",            173},          // Maximum hosts
+                     {"MaxKHosts",           181},          // Maximum hosts (transfer)
+                     {"MaxKURLs",            182},          // Maximum URLs (transfer)
+                     {"MaxReferrers",        175},          // Maximum Referrers
+                     {"MaxSearchStr",        177},          // Maximum Search Strings
+                     {"MaxURLs",             174},          // Maximum URLs
+                     {"MaxUsers",            178},          // Maximum Users
+                     {"MaxVisitLength",      187},          // Maximum visit length
+                     {"MemoryMode",          147},          // Memory or database mode?
+                     {"MonthlyTotals",       127},          // Output monthly totals report?
+                     {"NoDefaultIndexAlias", 92},           // Ignore default index alias?
+                     {"OutputDir",           1},            // Output directory
+                     {"OutputFormat",        171},          // Output format
+                     {"PageEntryURL",        170},          // Show only pages in the entry report?
+                     {"PageType",            49},           // Page Type (pageview)
+                     {"Quiet",               6},            // Run in quiet mode
+                     {"ReallyQuiet",         29},           // Dont display ANY messages
+                     {"ReportTitle",         3},            // Title for reports
+                     {"Robot",               155},          // Robot user agent filter
+                     {"SearchEngine",        61},           // SearchEngine strings
+                     {"SortSearchArgs",      107},          // Sort search arguments ?
+                     {"SpamReferrer",        142},          // Spam referrer
+                     {"SwapFirstRecord",     151},          // First record # to start DB swapping
+                     {"SwapFrequency",       152},          // DB-swap each N record
+                     {"TargetDownloads",     169},          // Treat download URLs as targets?
+                     {"TargetURL",           168},          // Target URL pattern
+                     {"TimeMe",              7},            // Produce timing results
+                     {"TopAgents",           14},           // Top User Agents
+                     {"TopCountries",        15},           // Top Countries
+                     {"TopDownloads",        122},          // Top downloads
+                     {"TopEntry",            57},           // Top Entry Pages
+                     {"TopErrors",           113},          // Top HTTP errors
+                     {"TopExit",             58},           // Top Exit Pages
                      {"TopHosts",            11},
                      {"TopKHosts",           55},
-                     {"TopKSites",		      55},			// Top sites (by KBytes)
-                     {"TopKURLs",		      56},			// Top URL's (by KBytes)
-                     {"TopReferrers",	      13},		   // Top Referrers
-                     {"TopSearch",		      59},			// Top Search Strings
-                     {"TopSites",		      11},		   // Top sites
-                     {"TopURLs",		         12},		   // Top URL's
-                     {"TopUsers",		      70},			// Top Usernames to show
-                     {"UpstreamTraffic",     88},        // Track upstream traffic?
-                     {"UseClassicMangleAgents",166},     // Use classic MangleAgents?
-                     {"UseHTTPS",		      44},			// Use https:// on URL's
-                     {"UTCOffset",           160},       // UTC/local time difference
-                     {"UTCTime",		         30},			// Local or UTC time?
-                     {"VisitTimeout",	      50}			// Visit timeout (seconds)
+                     {"TopKSites",           55},           // Top sites (by KBytes)
+                     {"TopKURLs",            56},           // Top URL's (by KBytes)
+                     {"TopReferrers",        13},           // Top Referrers
+                     {"TopSearch",           59},           // Top Search Strings
+                     {"TopSites",            11},           // Top sites
+                     {"TopURLs",             12},           // Top URL's
+                     {"TopUsers",            70},           // Top Usernames to show
+                     {"UpstreamTraffic",     88},           // Track upstream traffic?
+                     {"UseClassicMangleAgents",166},        // Use classic MangleAgents?
+                     {"UseHTTPS",            44},           // Use https:// on URL's
+                     {"UTCOffset",           160},          // UTC/local time difference
+                     {"UTCTime",             30},           // Local or UTC time?
+                     {"VisitTimeout",        50}            // Visit timeout (seconds)
                    };
 
    FILE *fp;
@@ -1155,13 +1155,13 @@ string_t& config_t::save_path_opt(const char *str, string_t& path) const
 {
    path.reset();
 
-	if(str == NULL || *str == 0)
-		return path;
+   if(str == NULL || *str == 0)
+      return path;
 
    path = str;
 
-	if(path[path.length()-1] != '/')
-		path += '/';
+   if(path[path.length()-1] != '/')
+      path += '/';
 
    return path;
 }
@@ -1201,13 +1201,13 @@ bool config_t::ispage(const string_t& url) const
 
 u_char config_t::get_url_type(u_short port) const
 {
-	if(port == http_port)
-		return (u_char) URL_TYPE_HTTP;
+   if(port == http_port)
+      return (u_char) URL_TYPE_HTTP;
 
-	if(port == https_port)
-		return (u_char) URL_TYPE_HTTPS;
+   if(port == https_port)
+      return (u_char) URL_TYPE_HTTPS;
 
-	return (u_char) URL_TYPE_OTHER;
+   return (u_char) URL_TYPE_OTHER;
 }
 
 bool config_t::is_secure_url(u_char urltype) const
@@ -1219,7 +1219,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
 {
    size_t nlen;
    int optind;
-	const char *nptr, *vptr;
+   const char *nptr, *vptr;
    bool longopt;
 
    // start with one to skip the executable path
@@ -1438,29 +1438,29 @@ int config_t::get_interval(const char *value, int div) const
 
 void config_t::read_help_xml(const char *fname)
 {
-	long fsize;
+   long fsize;
    FILE *file = NULL;
    string_t::char_buffer_t buffer;
    size_t cnt1 = 0, cnt2;
 
    // check if it's a bad name
-	if(fname == NULL || *fname == 0)
-		return;
+   if(fname == NULL || *fname == 0)
+      return;
 
    // open read-only
-	if((file = fopen(fname, "r")) == NULL)
+   if((file = fopen(fname, "r")) == NULL)
       goto errexit;
 
    // seek to the end to determine file size
-	if(fseek(file, 0, SEEK_END) == -1 || (fsize = ftell(file)) == -1L)
+   if(fseek(file, 0, SEEK_END) == -1 || (fsize = ftell(file)) == -1L)
       goto errexit;
 
    // reset file position to the beginning
-	if(fseek(file, 0, SEEK_SET) == -1)
+   if(fseek(file, 0, SEEK_SET) == -1)
       goto errexit;
       
    // allocate a block to hold the entire file and a zero terminator
-	if((buffer.resize(fsize+1)) == NULL)
+   if((buffer.resize(fsize+1)) == NULL)
       goto errexit;
 
    // read first three characters
@@ -1475,30 +1475,30 @@ void config_t::read_help_xml(const char *fname)
    if((cnt2 = fread(buffer+cnt1, sizeof(char), fsize-cnt1, file)) == 0)
       goto errexit;
 
-	fclose(file);
+   fclose(file);
 
    // truncate the buffer if it's too large (e.g. \r\n translation on Windows)
    if((long) (cnt1+cnt2) < fsize)
       buffer.resize(cnt1+cnt2+1);
 
    // terminate the string and attach to help_xml
-	buffer[cnt1+cnt2] = 0;
-	help_xml.attach(buffer, cnt1+cnt2);
+   buffer[cnt1+cnt2] = 0;
+   help_xml.attach(buffer, cnt1+cnt2);
 
    // report the file path
    messages.push_back(string_t::_format("%s %s", lang.msg_use_help, fname));
-	
-	return;
+   
+   return;
 
 errexit:
    // report that we couldn't read the file
    messages.push_back(string_t::_format("%s (%s)", lang.msg_file_err, fname));
 
-	if(buffer)
-	   free(buffer);
+   if(buffer)
+      free(buffer);
 
    if(file)
-	   fclose(file);
+      fclose(file);
 }
 
 bool config_t::is_maintenance(void) const

@@ -355,10 +355,10 @@ void webalizer_t::print_options(const char *pname)
 
 void webalizer_t::print_warranty(void)
 {
-	printf("THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL,\n"
-			 "BUT WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF\n"
-			 "MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE\n"
-			 "GNU GENERAL PUBLIC LICENSE V2 FOR MORE DETAILS.\n");
+   printf("THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL,\n"
+          "BUT WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF\n"
+          "MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE\n"
+          "GNU GENERAL PUBLIC LICENSE V2 FOR MORE DETAILS.\n");
 }
 
 /*********************************************/
@@ -394,7 +394,7 @@ void webalizer_t::print_version()
 void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 {
    ccnode_t *ccptr;
-	const string_t *group;
+   const string_t *group;
    const string_t *hostname;
    bool newhgrp = false;
    uint64_t vlen = (uint64_t) vnode.end.elapsed(vnode.start);
@@ -407,33 +407,33 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    // Try grouping by IP address or host name first
    //
-	if(config.group_sites.size() && ((hostname && (group = config.group_sites.isinglist(*hostname)) != NULL) ||
+   if(config.group_sites.size() && ((hostname && (group = config.group_sites.isinglist(*hostname)) != NULL) ||
                                                 ((group = config.group_sites.isinglist(hnode.string)) != NULL))) {
-		if(!put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-			if (config.verbose)
-				/* Error adding Site node, skipping ... */
-				fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, group->c_str());
-		}
-	}
-	else
-	{
-		/* Domain Grouping */
-		if (config.group_domains)
-		{
-			const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
-			if (domain) {
-				if(!put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-					if (config.verbose)
-						/* Error adding Site node, skipping ... */
-						fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, domain);
-				}
-			}
-		}
-	}
-	
-	// update the host group count
-	if(newhgrp)
-	   state.totals.t_grp_hosts++;
+      if(!put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
+         if (config.verbose)
+            /* Error adding Site node, skipping ... */
+            fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, group->c_str());
+      }
+   }
+   else
+   {
+      /* Domain Grouping */
+      if (config.group_domains)
+      {
+         const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
+         if (domain) {
+            if(!put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
+               if (config.verbose)
+                  /* Error adding Site node, skipping ... */
+                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, domain);
+            }
+         }
+      }
+   }
+   
+   // update the host group count
+   if(newhgrp)
+      state.totals.t_grp_hosts++;
 
    //
    // Update country counters, ignoring robot and spammer activity
@@ -507,8 +507,8 @@ void webalizer_t::mangle_user_agent(string_t& agent)
          if (config.mangle_agent < 5) {
             while (*cp1!='.'&&*cp1!=';'&&*cp1!='\0') *cp2++=*cp1++;
             if (*cp1!=';'&&*cp1!='\0') {
-             *cp2++=*cp1++;
-             *cp2++=*cp1++;
+               *cp2++=*cp1++;
+               *cp2++=*cp1++;
             }
          }
          
@@ -532,8 +532,8 @@ void webalizer_t::mangle_user_agent(string_t& agent)
             }
          }
          *cp2='\0';
-	   } else { /* nothing after "compatible", should we mangle? */
-	   /* not for now */
+      } else { /* nothing after "compatible", should we mangle? */
+         /* not for now */
       }
    } else {
       cp1=strstr(str,"Opera");  /* Opera flavor         */
@@ -564,7 +564,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
             }
          }
          *cp2='\0';
-		} else { 
+      } else { 
          cp1=strstr(str,"Mozilla");  /* Netscape flavor      */
          if (cp1!=NULL) {
             while (*cp1!='/'&&*cp1!=' '&&*cp1!='\0') *cp2++=*cp1++;
@@ -592,14 +592,14 @@ void webalizer_t::mangle_user_agent(string_t& agent)
                   *cp2++=' ';
                   *cp2++='(';
                   while (*cp1!=';'&&*cp1!=')'&&*cp1!='\0') 
-	                   *cp2++=*cp1++;
+                      *cp2++=*cp1++;
                   *cp2++=')';
                }
             }
             *cp2='\0';
          }
-		}
-	}
+      }
+   }
 
    agent = buffer;
 }
@@ -976,7 +976,7 @@ int webalizer_t::run(void)
 
 int webalizer_t::proc_logfile(void)
 {
-	int parse_code;
+   int parse_code;
    char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;
    unode_t *uptr;
@@ -1289,7 +1289,7 @@ int webalizer_t::proc_logfile(void)
                state.update_hourly_stats();
 
                if(config.is_dns_enabled())
-				      group_hosts_by_name();
+                  group_hosts_by_name();
 
                // save run data for the report generator
                stime = msecs();
@@ -1451,7 +1451,7 @@ int webalizer_t::proc_logfile(void)
 
          // add new hosts to the resolver queue
          if(config.is_dns_enabled() && newhost)
-			   dns_resolver.put_hnode(hptr);
+            dns_resolver.put_hnode(hptr);
 
          // use the host robot flag (ignore mid-visit ragent)
          robot = hptr->robot;
@@ -1543,11 +1543,11 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-			//
-			// User agents must be processed after client host addresses
-			// because visits for a user agent are counted based on the
-			// value of newvisit populated by put_hnode.
-			//
+         //
+         // User agents must be processed after client host addresses
+         // because visits for a user agent are counted based on the
+         // value of newvisit populated by put_hnode.
+         //
          // Ignore the robot flag if user agents are mangled to avoid  
          // mixing up robots and non-robots (i.e. if the mangled agent
          // string matches both).
@@ -1617,11 +1617,11 @@ int webalizer_t::proc_logfile(void)
 
          if(config.ntop_search) state.totals.t_search += newsrch;
 
-			/* 
-			// Monthly average and maximum hit/file/page processing time 
-			*/
-			state.totals.a_hitptime = AVG(state.totals.a_hitptime, ((double) log_rec.proc_time / 1000.), state.totals.t_hit);
-			state.totals.m_hitptime = MAX(state.totals.m_hitptime, ((double) log_rec.proc_time / 1000.));
+         /* 
+         // Monthly average and maximum hit/file/page processing time 
+         */
+         state.totals.a_hitptime = AVG(state.totals.a_hitptime, ((double) log_rec.proc_time / 1000.), state.totals.t_hit);
+         state.totals.m_hitptime = MAX(state.totals.m_hitptime, ((double) log_rec.proc_time / 1000.));
 
          /* if RC_OK, increase file counters */
          if (fileurl)
@@ -1630,8 +1630,8 @@ int webalizer_t::proc_logfile(void)
             state.t_daily[log_rec.tstamp.day-1].tm_files++;
             state.t_hourly[log_rec.tstamp.hour].th_files++;
 
-				state.totals.a_fileptime = AVG(state.totals.a_fileptime, ((double) log_rec.proc_time / 1000.), state.totals.t_file);
-				state.totals.m_fileptime = MAX(state.totals.m_fileptime, ((double) log_rec.proc_time / 1000.));
+            state.totals.a_fileptime = AVG(state.totals.a_fileptime, ((double) log_rec.proc_time / 1000.), state.totals.t_file);
+            state.totals.m_fileptime = MAX(state.totals.m_fileptime, ((double) log_rec.proc_time / 1000.));
 
             if(robot) state.totals.t_rfiles++;
          }
@@ -1642,8 +1642,8 @@ int webalizer_t::proc_logfile(void)
             state.t_daily[log_rec.tstamp.day-1].tm_pages++;
             state.t_hourly[log_rec.tstamp.hour].th_pages++;
 
-				state.totals.a_pageptime = AVG(state.totals.a_pageptime, ((double) log_rec.proc_time / 1000.), state.totals.t_page);
-				state.totals.m_pageptime = MAX(state.totals.m_pageptime, ((double) log_rec.proc_time / 1000.));
+            state.totals.a_pageptime = AVG(state.totals.a_pageptime, ((double) log_rec.proc_time / 1000.), state.totals.t_page);
+            state.totals.m_pageptime = MAX(state.totals.m_pageptime, ((double) log_rec.proc_time / 1000.));
 
             if(robot) state.totals.t_rpages++;
          }
@@ -1756,7 +1756,7 @@ int webalizer_t::proc_logfile(void)
       {
          if(config.is_dns_enabled()) {
             stime = msecs();
-			   dns_resolver.dns_wait();
+            dns_resolver.dns_wait();
             dns_time += elapsed(stime, msecs());
          }
 
@@ -1775,7 +1775,7 @@ int webalizer_t::proc_logfile(void)
          update_downloads(state.totals.cur_tstamp);
 
          if(config.is_dns_enabled())
-			   group_hosts_by_name();
+            group_hosts_by_name();
 
          // save run data for the report generator
          stime = msecs();
@@ -2054,7 +2054,7 @@ hnode_t *webalizer_t::put_hnode(
                bool     spammer,
                bool     robot,
                bool     target,
-					bool&		newvisit,               // new visit?
+               bool&      newvisit,               // new visit?
                bool&    newnode,                // new host node?
                bool&    newthost                // new host today?
                )
@@ -2089,7 +2089,7 @@ hnode_t *webalizer_t::put_hnode(
             
             cptr->visits = 1;
             
-			   newvisit = true;
+            newvisit = true;
 
             newnode = true;
             newthost = true;
@@ -2104,7 +2104,7 @@ hnode_t *webalizer_t::put_hnode(
       if(cptr->visit) {
          // check if the active visit has ended
          if((visit = update_visit(cptr, tstamp)) != NULL) {
-			   newvisit = true;
+            newvisit = true;
 
             // reuse the visit node to minimize memory allocations
             visit->reset(cptr->nodeid);
@@ -2113,11 +2113,11 @@ hnode_t *webalizer_t::put_hnode(
             cptr->visit->start = tstamp;
             cptr->visit->robot = robot;
             cptr->visits++;
-		   }
-		   else {
-		      if(!cptr->visit->dirty)
-		         cptr->visit->dirty = true;
-		   }
+         }
+         else {
+            if(!cptr->visit->dirty)
+               cptr->visit->dirty = true;
+         }
       }
       else {
          // no active visit - create one
@@ -2126,18 +2126,18 @@ hnode_t *webalizer_t::put_hnode(
          cptr->visit->robot = robot;
          cptr->visits++;
 
-			newvisit = true;
+         newvisit = true;
       }
 
       cptr->visit->hits++;
       if(fileurl) cptr->visit->files++;
       if(pageurl) cptr->visit->pages++;
       cptr->visit->xfer += xfer;
-		cptr->visit->end = tstamp;
-		
-		// check if the last hit was in the same day
-		if(tstamp.compare(cptr->tstamp, tstamp_t::tm_parts::DATE) > 0)
-		   newthost = true;
+      cptr->visit->end = tstamp;
+      
+      // check if the last hit was in the same day
+      if(tstamp.compare(cptr->tstamp, tstamp_t::tm_parts::DATE) > 0)
+         newthost = true;
    }
 
    // spam request may be not the first one, so check every time
@@ -2295,8 +2295,8 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
             cptr->flag = type;
             cptr->count= 1;
             cptr->xfer = xfer;
-			   cptr->avgtime = cptr->maxtime = proctime;
-			   cptr->update_url_type(config.get_url_type(port));
+            cptr->avgtime = cptr->maxtime = proctime;
+            cptr->update_url_type(config.get_url_type(port));
             cptr->exit = 0;
 
             if(target && !cptr->target)
@@ -2327,9 +2327,9 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
       }
       cptr->count++;
       cptr->xfer += xfer;
-		cptr->update_url_type(config.get_url_type(port));
-		cptr->avgtime = AVG(cptr->avgtime, proctime, cptr->count);
-		cptr->maxtime = MAX(cptr->maxtime, proctime);
+      cptr->update_url_type(config.get_url_type(port));
+      cptr->avgtime = AVG(cptr->avgtime, proctime, cptr->count);
+      cptr->maxtime = MAX(cptr->maxtime, proctime);
    }
 
    if(!cptr->dirty)
@@ -2425,8 +2425,8 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
       /* found... bump counter */
       cptr->count++;
       cptr->xfer += xfer;
-		if(newvisit)
-			cptr->visits++;
+      if(newvisit)
+         cptr->visits++;
    }
 
    if(!cptr->dirty)
@@ -2519,7 +2519,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
             nptr->count = 1;
             nptr->files = fileurl ? 1 : 0;
             nptr->xfer  = xfer;
-			   nptr->tstamp=tstamp;
+            nptr->tstamp=tstamp;
             nptr->avgtime = nptr->maxtime = proctime;
 
             /* set object type */
@@ -2542,8 +2542,8 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
       nptr->count++;
       if(fileurl) nptr->files++;
       nptr->xfer +=xfer;
-		nptr->avgtime = AVG(nptr->avgtime, proctime, nptr->count);
-		nptr->maxtime = MAX(nptr->maxtime, proctime);
+      nptr->avgtime = AVG(nptr->avgtime, proctime, nptr->count);
+      nptr->maxtime = MAX(nptr->maxtime, proctime);
 
       if(tstamp.elapsed(nptr->tstamp) >= config.visit_timeout)
          nptr->visit++;
@@ -3073,7 +3073,7 @@ int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logre
    // in debug mode.
    //
    if(config.debug_mode)
-	   lrecstr = buffer;
+      lrecstr = buffer;
 
    if((parse_code = parser.parse_record(buffer, reclen, logrec)) == PARSE_CODE_ERROR) {
 

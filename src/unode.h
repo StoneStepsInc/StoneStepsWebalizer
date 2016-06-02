@@ -25,21 +25,20 @@
 // out of memory at any time). 
 //
 struct unode_t : public base_node<unode_t> {
-      bool     hexenc : 1;           // any %xx sequences?
-      bool     target : 1;           // Target URL?
-      u_char   urltype;					 // URL type (e.g. URL_TYPE_HTTP)
-      u_short  pathlen;              // URL path length
-      uint64_t count;                // requests counter
-      uint64_t files;                // files counter 
-      uint64_t entry;                // entry page counter
-      uint64_t exit;                 // exit page counter
+      bool     hexenc : 1;          // any %xx sequences?
+      bool     target : 1;          // Target URL?
+      u_char   urltype;             // URL type (e.g. URL_TYPE_HTTP)
+      u_short  pathlen;             // URL path length
+      uint64_t count;               // requests counter
+      uint64_t files;               // files counter 
+      uint64_t entry;               // entry page counter
+      uint64_t exit;                // exit page counter
 
-      uint64_t vstref;               // visit references
+      uint64_t vstref;              // visit references
 
-      uint64_t xfer;                 // xfer size in bytes
-      double   avgtime;				    // average processing time (sec)
-      double   maxtime;              // maximum processing time (sec)
-
+      uint64_t xfer;                // xfer size in bytes
+      double   avgtime;             // average processing time (sec)
+      double   maxtime;             // maximum processing time (sec)
 
       public:
          typedef void (*s_unpack_cb_t)(unode_t& unode, void *arg);

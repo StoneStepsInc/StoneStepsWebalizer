@@ -67,7 +67,7 @@ struct  log_struct  {
 
       tstamp_t   tstamp;               // request time stamp
 
-      u_short    port;					   // HTTP port
+      u_short    port;                 // HTTP port
       u_short    resp_code;            // HTTP response code
 
    public:

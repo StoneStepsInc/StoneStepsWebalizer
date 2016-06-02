@@ -168,19 +168,19 @@ bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc,
    cp2 = cp1;
    while(*cp1 && (!fieldcnt || index < fieldcnt)) {
       /* break record up, terminate fields with '\0' */
-		switch (*cp1) {
+      switch (*cp1) {
          case '\\': if(bsesc) cp1 = proc_apache_escape_seq(cp1); break;
-			case '\t':
-			case ' ': if (b || q || p) break; *cp1 = 0; break;
-			case '"': if(noquotes) break; q^=1;  break;
-			case '[': if(noparen) break; if (q) break; b++; break;
-			case ']': if(noparen) break; if (q) break; if(b > 0) b--; break;
-			case '(': if(noparen) break; if (q) break; p++; break;
-			case ')': if(noparen) break; if (q) break; if(p > 0) p--; break;
-			case '\r': if(q) {*cp1 = '_'; break;} 
+         case '\t':
+         case ' ': if (b || q || p) break; *cp1 = 0; break;
+         case '"': if(noquotes) break; q^=1;  break;
+         case '[': if(noparen) break; if (q) break; b++; break;
+         case ']': if(noparen) break; if (q) break; if(b > 0) b--; break;
+         case '(': if(noparen) break; if (q) break; p++; break;
+         case ')': if(noparen) break; if (q) break; if(p > 0) p--; break;
+         case '\r': if(q) {*cp1 = '_'; break;} 
             *cp1++ = 0; if(*cp1 == '\n') *cp1-- = 0; else *--cp1 = '_'; break;
-			case '\n': 
-				if(q) *cp1 = '_'; else *cp1 = 0; break; 
+         case '\n': 
+            if(q) *cp1 = '_'; else *cp1 = 0; break; 
       }
       
       if(fieldcnt) {
@@ -222,7 +222,7 @@ bool parser_t::parse_clf_tstamp(const char *dt, tstamp_t& ts)
    if(dt == NULL || *dt == 0)
       return false;
 
-	if(dt[0] != '[' || dt[27] != ']' || dt[28] != 0)
+   if(dt[0] != '[' || dt[27] != ']' || dt[28] != 0)
       return false;
 
    month = 0;
@@ -310,7 +310,7 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
 
    return cp1;
 }
-		 
+       
 /*********************************************/
 /* PARSE_RECORD - uhhh, you know...          */
 /*********************************************/
@@ -324,21 +324,21 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
 
    /* call appropriate handler */
    switch (config.log_type) {
-		default:
-		case LOG_W3C:
-		   retval = parse_record_w3c(buffer, reclen, log_rec, false);
-		   break;
-		case LOG_IIS:
-			retval = parse_record_w3c(buffer, reclen, log_rec, true);
+      default:
+      case LOG_W3C:
+         retval = parse_record_w3c(buffer, reclen, log_rec, false);
+         break;
+      case LOG_IIS:
+         retval = parse_record_w3c(buffer, reclen, log_rec, true);
          break;
       case LOG_CLF:
-			retval = parse_record_clf(buffer, reclen, log_rec);
+         retval = parse_record_clf(buffer, reclen, log_rec);
          break;
-		case LOG_APACHE:
-			retval = parse_record_apache(buffer, reclen, log_rec);
+      case LOG_APACHE:
+         retval = parse_record_apache(buffer, reclen, log_rec);
          break;
       case LOG_SQUID: 
-			retval = parse_record_squid(buffer, reclen, log_rec);
+         retval = parse_record_squid(buffer, reclen, log_rec);
          break;
    }
 
@@ -484,147 +484,147 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
 
 bool parser_t::parse_apache_log_format(const char *format)
 {
-	const char *cptr = format;
-	const char *param;
-	u_int paramlen;
+   const char *cptr = format;
+   const char *param;
+   u_int paramlen;
 
    if(fields)
       delete [] fields;
    fields = NULL;
 
-	log_rec_fields.clear();
+   log_rec_fields.clear();
 
-	if(format == NULL || *format == 0)
-		return false;
+   if(format == NULL || *format == 0)
+      return false;
 
-	while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
+   while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
 
-	while(*cptr) {
-		paramlen = 0;
-		param = NULL;
+   while(*cptr) {
+      paramlen = 0;
+      param = NULL;
 
-		while(*cptr && (*cptr != '%')) cptr++;
+      while(*cptr && (*cptr != '%')) cptr++;
 
-		if(*cptr == 0)
-			break;
+      if(*cptr == 0)
+         break;
 
-		//
-		// Skip logging condition characters (comma-separated status codes, 
-		// optionally prefixed by an exclamation point). For example:
-		//
-		//		%400,501{User-agent}i
-		//		%!200,304,302{Referer}i
-		//
-		while(strchr("<>!,0123456789", *++cptr));
+      //
+      // Skip logging condition characters (comma-separated status codes, 
+      // optionally prefixed by an exclamation point). For example:
+      //
+      //      %400,501{User-agent}i
+      //      %!200,304,302{Referer}i
+      //
+      while(strchr("<>!,0123456789", *++cptr));
 
-		//
-		// Assign a pointer to the parameter inside parenthesis
-		//
-		if(*cptr == '{') {
-			param = ++cptr;
-			while(*cptr && (*cptr != '}')) {cptr++; paramlen++;}
-			if(*cptr++ != '}')
-				goto errexit;
-		}
+      //
+      // Assign a pointer to the parameter inside parenthesis
+      //
+      if(*cptr == '{') {
+         param = ++cptr;
+         while(*cptr && (*cptr != '}')) {cptr++; paramlen++;}
+         if(*cptr++ != '}')
+            goto errexit;
+      }
 
-		switch(*cptr) {
-			case 'a':
-			case 'h':
-				// h is a host!!!
-				log_rec_fields.push_back(eClientIpAddress);
-				break;
+      switch(*cptr) {
+         case 'a':
+         case 'h':
+            // h is a host!!!
+            log_rec_fields.push_back(eClientIpAddress);
+            break;
 
-			case 'l':
-				log_rec_fields.push_back(eRemoteLoginName);
-				break;
+         case 'l':
+            log_rec_fields.push_back(eRemoteLoginName);
+            break;
 
-			case 'u':
-				log_rec_fields.push_back(eUserName);
-				break;
+         case 'u':
+            log_rec_fields.push_back(eUserName);
+            break;
 
-			case 't':
-				if(paramlen) {
+         case 't':
+            if(paramlen) {
                if(config.verbose)
-					   fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
-					goto errexit;
-				}
-				log_rec_fields.push_back(eDateTime);
-				break;
+                  fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
+               goto errexit;
+            }
+            log_rec_fields.push_back(eDateTime);
+            break;
 
-			case 'r':
-				log_rec_fields.push_back(eHttpRequestLine);
-				break;
+         case 'r':
+            log_rec_fields.push_back(eHttpRequestLine);
+            break;
 
-			case 's':
-				log_rec_fields.push_back(eHttpStatus);
-				break;
+         case 's':
+            log_rec_fields.push_back(eHttpStatus);
+            break;
 
-			case 'b':
-			case 'B':
-			case 'O':
-				log_rec_fields.push_back(eBytesSent);
-				break;
+         case 'b':
+         case 'B':
+         case 'O':
+            log_rec_fields.push_back(eBytesSent);
+            break;
 
-			case 'T':
-				log_rec_fields.push_back(eProcTimeS);
-				break;
+         case 'T':
+            log_rec_fields.push_back(eProcTimeS);
+            break;
 
-			case 'D':
-				log_rec_fields.push_back(eProcTimeMcS);
-				break;
+         case 'D':
+            log_rec_fields.push_back(eProcTimeMcS);
+            break;
 
-			case 'A':
-				log_rec_fields.push_back(eWebsiteIpAddress);
-				break;
+         case 'A':
+            log_rec_fields.push_back(eWebsiteIpAddress);
+            break;
 
-			case 'p':
-				log_rec_fields.push_back(eWebsitePort);
-				break;
+         case 'p':
+            log_rec_fields.push_back(eWebsitePort);
+            break;
 
-			case 'm':
-				log_rec_fields.push_back(eHttpMethod);
-				break;
+         case 'm':
+            log_rec_fields.push_back(eHttpMethod);
+            break;
 
-			case 'U':
-				log_rec_fields.push_back(eUriStem);
-				break;
+         case 'U':
+            log_rec_fields.push_back(eUriStem);
+            break;
 
-			case 'q':
-				log_rec_fields.push_back(eUriQuery);
-				break;
+         case 'q':
+            log_rec_fields.push_back(eUriQuery);
+            break;
 
-			case 'I':
-				log_rec_fields.push_back(eBytesReceived);
-				break;
+         case 'I':
+            log_rec_fields.push_back(eBytesReceived);
+            break;
 
-			case 'v':
-			case 'V':
-				log_rec_fields.push_back(eWebsiteName);
-				break;
+         case 'v':
+         case 'V':
+            log_rec_fields.push_back(eWebsiteName);
+            break;
 
-			case 'i':
-				if(strncasecmp(param, "Referer", 7) == 0)
-					log_rec_fields.push_back(eReferrer);
-				else if(strncasecmp(param, "User-Agent", 10) == 0)
-					log_rec_fields.push_back(eUserAgent);
-				else
-					log_rec_fields.push_back(eUnknown);
-				break;
+         case 'i':
+            if(strncasecmp(param, "Referer", 7) == 0)
+               log_rec_fields.push_back(eReferrer);
+            else if(strncasecmp(param, "User-Agent", 10) == 0)
+               log_rec_fields.push_back(eUserAgent);
+            else
+               log_rec_fields.push_back(eUnknown);
+            break;
 
-			default:
-				log_rec_fields.push_back(eUnknown);
-				break;
-		}
-		cptr++;
-	}
+         default:
+            log_rec_fields.push_back(eUnknown);
+            break;
+      }
+      cptr++;
+   }
 
    fields = new field_desc[log_rec_fields.size()];
 
-	return (log_rec_fields.size()) ? true : false;
+   return (log_rec_fields.size()) ? true : false;
 
 errexit:
-	log_rec_fields.clear();
-	return false;
+   log_rec_fields.clear();
+   return false;
 }
 
 int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_rec)
@@ -633,8 +633,8 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
    size_t fldindex = 0, fieldcnt;
    const char *cp1, *cp2;
 
-	if(buffer == NULL || *buffer == 0)
-		return PARSE_CODE_ERROR;
+   if(buffer == NULL || *buffer == 0)
+      return PARSE_CODE_ERROR;
 
    fieldcnt = log_rec_fields.size();
 
@@ -644,112 +644,112 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
    if(!fmt_logrec(buffer, false, false, true, fieldcnt))
       return PARSE_CODE_ERROR;
 
-	while(fldindex < fieldcnt) {
-		slen = fields[fldindex].length;
-		cp1 = fields[fldindex].field;
+   while(fldindex < fieldcnt) {
+      slen = fields[fldindex].length;
+      cp1 = fields[fldindex].field;
 
       if(!cp1 || !slen)
          return PARSE_CODE_ERROR;
 
-		if(*cp1 == '"' && slen >= 2) {
-			cp1++; slen -= 2;
-		}
-		switch (log_rec_fields[fldindex]) {
-			case eClientIpAddress:
-				log_rec.hostname.assign(cp1, slen);
-				break;
+      if(*cp1 == '"' && slen >= 2) {
+         cp1++; slen -= 2;
+      }
+      switch (log_rec_fields[fldindex]) {
+         case eClientIpAddress:
+            log_rec.hostname.assign(cp1, slen);
+            break;
 
-			case eUserName:
-				log_rec.ident.assign(cp1, slen);
-				break;
+         case eUserName:
+            log_rec.ident.assign(cp1, slen);
+            break;
 
-			case eDateTime:
+         case eDateTime:
             if(!parse_clf_tstamp(cp1, log_rec.tstamp))
                return PARSE_CODE_ERROR;
 
-				break;
+            break;
 
-			case eHttpRequestLine:
+         case eHttpRequestLine:
             if((cp1 = parse_http_req_line(cp1, log_rec)) == NULL)
                return PARSE_CODE_ERROR;
 
             //
-				if(config.conv_url_lower_case) {
-					log_rec.url.tolower();
-					log_rec.srchargs.tolower();
-				}
+            if(config.conv_url_lower_case) {
+               log_rec.url.tolower();
+               log_rec.srchargs.tolower();
+            }
 
-				break;
+            break;
 
-			case eHttpStatus:
-				/* response code */
-				log_rec.resp_code = (u_short) atoi(cp1);
-				break;
+         case eHttpStatus:
+            /* response code */
+            log_rec.resp_code = (u_short) atoi(cp1);
+            break;
 
-			case eBytesReceived:
+         case eBytesReceived:
             if(config.upstream_traffic)
-				   log_rec.xfer_size += strtoul(cp1,NULL,10);
-				break;
+               log_rec.xfer_size += strtoul(cp1,NULL,10);
+            break;
 
-			case eBytesSent:
-				/* xfer size */
-				log_rec.xfer_size += strtoul(cp1,NULL,10);
-				break;
+         case eBytesSent:
+            /* xfer size */
+            log_rec.xfer_size += strtoul(cp1,NULL,10);
+            break;
 
-			case eReferrer:
+         case eReferrer:
             if((cp2 = strchr(cp1, '?')) != NULL) {
                log_rec.refer.assign(cp1, cp2-cp1); cp2++;
                log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
             }
             else
-				   log_rec.refer.assign(cp1, slen);
-				break;
+               log_rec.refer.assign(cp1, slen);
+            break;
 
-			case eUserAgent:
-				log_rec.agent.assign(cp1, slen);
-				break;
+         case eUserAgent:
+            log_rec.agent.assign(cp1, slen);
+            break;
 
-			case eUriStem:
-				log_rec.url.assign(cp1, slen);
+         case eUriStem:
+            log_rec.url.assign(cp1, slen);
 
-				if(config.conv_url_lower_case)
-					log_rec.url.tolower();
-				break;
+            if(config.conv_url_lower_case)
+               log_rec.url.tolower();
+            break;
 
-			case eUriQuery:
-				if(*cp1 == '?') {
-					cp1++; slen--;
-				}
-				if(slen) {
-					log_rec.srchargs.assign(cp1, slen);
-
-				   if(config.conv_url_lower_case)
-					   log_rec.srchargs.tolower();
+         case eUriQuery:
+            if(*cp1 == '?') {
+               cp1++; slen--;
             }
-				break;
+            if(slen) {
+               log_rec.srchargs.assign(cp1, slen);
 
-			case eHttpMethod:
-				log_rec.method.assign(cp1, slen);
-				break;
+               if(config.conv_url_lower_case)
+                  log_rec.srchargs.tolower();
+            }
+            break;
 
-			case eWebsitePort:
-				log_rec.port = (u_short) atoi(cp1);
-				break;
+         case eHttpMethod:
+            log_rec.method.assign(cp1, slen);
+            break;
 
-			case eProcTimeMcS:
-				log_rec.proc_time = usec2msec(strtoul(cp1, NULL, 10));
-				break;
+         case eWebsitePort:
+            log_rec.port = (u_short) atoi(cp1);
+            break;
 
-			case eProcTimeS:
-				log_rec.proc_time = strtoul(cp1, NULL, 10) * 1000;
-				break;
+         case eProcTimeMcS:
+            log_rec.proc_time = usec2msec(strtoul(cp1, NULL, 10));
+            break;
 
-			default:
-				break;
-		}
+         case eProcTimeS:
+            log_rec.proc_time = strtoul(cp1, NULL, 10) * 1000;
+            break;
 
-		fldindex++;
-	}
+         default:
+            break;
+      }
+
+      fldindex++;
+   }
 
    return PARSE_CODE_OK;     
 }
@@ -764,40 +764,40 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 //
 int parser_t::parse_w3c_log_directive(const char *buffer)
 {
-	const char *cptr = buffer, *cp2 = NULL;
-	size_t slen, i;
-	size_t bytes_i = SIZE_MAX, cs_bytes_i = SIZE_MAX, sc_bytes_i = SIZE_MAX;
-	
-	static struct {
-	   const char     *name;
-	   size_t          nlen;
-	   TLogFieldId    field_id;
-	} iis_fields[] = {
-		{"date",             4,    eDate},
-		{"time",             4,    eTime},
-		{"c-ip",             4,    eClientIpAddress},
-		{"cs-username",      11,   eUserName},
-		{"s-sitename",       10,   eWebsiteName},
-		{"s-ip",             4,    eWebsiteIpAddress},
-		{"s-port",           6,    eWebsitePort},
-		{"cs-method",        9,    eHttpMethod},
-		{"cs-uri-stem",      11,   eUriStem},
-		{"cs-uri-query",     12,   eUriQuery},
+   const char *cptr = buffer, *cp2 = NULL;
+   size_t slen, i;
+   size_t bytes_i = SIZE_MAX, cs_bytes_i = SIZE_MAX, sc_bytes_i = SIZE_MAX;
+   
+   static struct {
+      const char     *name;
+      size_t          nlen;
+      TLogFieldId    field_id;
+   } iis_fields[] = {
+      {"date",             4,    eDate},
+      {"time",             4,    eTime},
+      {"c-ip",             4,    eClientIpAddress},
+      {"cs-username",      11,   eUserName},
+      {"s-sitename",       10,   eWebsiteName},
+      {"s-ip",             4,    eWebsiteIpAddress},
+      {"s-port",           6,    eWebsitePort},
+      {"cs-method",        9,    eHttpMethod},
+      {"cs-uri-stem",      11,   eUriStem},
+      {"cs-uri-query",     12,   eUriQuery},
       {"sc-status",        9,    eHttpStatus},
-		{"sc-bytes",         8,    eBytesSent},
-		{"cs-bytes",         8,    eBytesReceived},
-		{"bytes",            5,    eBytesTotal},
-		{"time-taken",       10,   eTimeTaken},
-		{"cs(Cookie)",       10,   eCookie},
-		{"cs(User-Agent)",   14,   eUserAgent},
-		{"cs(Referer)",      11,   eReferrer}
-	};
-	
-	// initialize to indicate that neither is found
-	bytes_i = cs_bytes_i = sc_bytes_i = SIZE_MAX;
+      {"sc-bytes",         8,    eBytesSent},
+      {"cs-bytes",         8,    eBytesReceived},
+      {"bytes",            5,    eBytesTotal},
+      {"time-taken",       10,   eTimeTaken},
+      {"cs(Cookie)",       10,   eCookie},
+      {"cs(User-Agent)",   14,   eUserAgent},
+      {"cs(Referer)",      11,   eReferrer}
+   };
+   
+   // initialize to indicate that neither is found
+   bytes_i = cs_bytes_i = sc_bytes_i = SIZE_MAX;
 
-	if(buffer == NULL || *buffer == 0)
-		return PARSE_CODE_ERROR;
+   if(buffer == NULL || *buffer == 0)
+      return PARSE_CODE_ERROR;
 
    if(*cptr++ != '#')
       return PARSE_CODE_ERROR;
@@ -814,21 +814,21 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
       return PARSE_CODE_IGNORE;
    }
 
-	if(strncasecmp(cptr, "Fields:", 7))
-		return PARSE_CODE_IGNORE;
-	cptr += 7;
+   if(strncasecmp(cptr, "Fields:", 7))
+      return PARSE_CODE_IGNORE;
+   cptr += 7;
 
    if(fields)
       delete [] fields;
    fields = NULL;
 
-	log_rec_fields.clear();
-	
+   log_rec_fields.clear();
+   
    // skip whitespace
    while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
 
    // and parse the remainder of the line
-	while(*cptr && *cptr != '\r' && *cptr != '\n') {
+   while(*cptr && *cptr != '\r' && *cptr != '\n') {
 
       // find the end of the field name
       for(cp2 = cptr; *cp2 != ' ' && *cp2 && *cp2 != '\t' && *cp2 != '\r' && *cp2 != '\n'; cp2++);
@@ -837,30 +837,30 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 
       // find the field by name
       for(i = 0; i < sizeof(iis_fields)/sizeof(iis_fields[0]); i++) {
-		   if(slen == iis_fields[i].nlen && !strncasecmp(cptr, iis_fields[i].name, slen)) {
-			   
-			   // if we saw any of the bytes fields, remember the index
-			   switch (iis_fields[i].field_id) {
-			      case eBytesReceived: cs_bytes_i = log_rec_fields.size(); break;
-			      case eBytesSent: sc_bytes_i = log_rec_fields.size(); break;
-			      case eBytesTotal: bytes_i = log_rec_fields.size(); break;
-			   }
-			   
-			   // store the field identifier
-            log_rec_fields.push_back(iis_fields[i].field_id);			   
-			   
-			   break;
-			}
-		}
-		
-		// if we didn't find one, push eUnknown so we can skip it
-		if(i == sizeof(iis_fields)/sizeof(iis_fields[0]))
-		   log_rec_fields.push_back(eUnknown);
+         if(slen == iis_fields[i].nlen && !strncasecmp(cptr, iis_fields[i].name, slen)) {
+            
+            // if we saw any of the bytes fields, remember the index
+            switch (iis_fields[i].field_id) {
+               case eBytesReceived: cs_bytes_i = log_rec_fields.size(); break;
+               case eBytesSent: sc_bytes_i = log_rec_fields.size(); break;
+               case eBytesTotal: bytes_i = log_rec_fields.size(); break;
+            }
+            
+            // store the field identifier
+            log_rec_fields.push_back(iis_fields[i].field_id);            
+            
+            break;
+         }
+      }
+      
+      // if we didn't find one, push eUnknown so we can skip it
+      if(i == sizeof(iis_fields)/sizeof(iis_fields[0]))
+         log_rec_fields.push_back(eUnknown);
 
-		// move onto the next field and skip the whitespace
-		cptr = cp2;
-		while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
-	}
+      // move onto the next field and skip the whitespace
+      cptr = cp2;
+      while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
+   }
 
    // allocate storage for the field descriptors
    fields = new field_desc[log_rec_fields.size()];
@@ -905,7 +905,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
          log_rec_fields[cs_bytes_i] = eUnknown;
    }
    
-	return PARSE_CODE_IGNORE;
+   return PARSE_CODE_IGNORE;
 }
 
 //
@@ -913,52 +913,52 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 //
 // Returns:
 //
-//		PARSE_CODE_OK		- success 
-//		PARSE_CODE_ERROR	- failure 
-//		PARSE_CODE_IGNORE - ignore log record (e.g. header line)
+//      PARSE_CODE_OK      - success 
+//      PARSE_CODE_ERROR   - failure 
+//      PARSE_CODE_IGNORE - ignore log record (e.g. header line)
 //
 int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec, bool iis)
 {
    size_t slen;
-	size_t fldindex = 0, fieldcnt;
-	const char *cp1, *cp2;
-	bool tsdate = false, tstime = false;
+   size_t fldindex = 0, fieldcnt;
+   const char *cp1, *cp2;
+   bool tsdate = false, tstime = false;
    u_int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
-	if(buffer == NULL || *buffer == 0)
-		return PARSE_CODE_ERROR;
+   if(buffer == NULL || *buffer == 0)
+      return PARSE_CODE_ERROR;
 
-	//
-	// process log file header fields
-	//
-	if(*buffer == '#')
-		return parse_w3c_log_directive(buffer);
+   //
+   // process log file header fields
+   //
+   if(*buffer == '#')
+      return parse_w3c_log_directive(buffer);
 
    fieldcnt = log_rec_fields.size();
 
    if(fields == NULL || fieldcnt == 0)
       return PARSE_CODE_ERROR;
 
-	if(!fmt_logrec(buffer, true, true, false, fieldcnt))
+   if(!fmt_logrec(buffer, true, true, false, fieldcnt))
       return PARSE_CODE_ERROR;
 
-	while(fldindex < fieldcnt) {
+   while(fldindex < fieldcnt) {
       cp1 = fields[fldindex].field;
-		slen = fields[fldindex].length;
+      slen = fields[fldindex].length;
 
       if(!cp1 || !slen)
          return PARSE_CODE_ERROR;
 
-		switch (log_rec_fields[fldindex]) {
-			case eDate:
+      switch (log_rec_fields[fldindex]) {
+         case eDate:
             // <date>  = 4<digit> "-" 2<digit> "-" 2<digit>
-				year = (u_int) str2ul(cp1, &cp1);
-				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				month = (u_int) str2ul(cp1, &cp1);
-				if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
-				day = (u_int) str2ul(cp1);
+            year = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
+            month = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
+            day = (u_int) str2ul(cp1);
             tsdate = true;
-				break;
+            break;
 
          case eTime:
             // <time>  = 2<digit> ":" 2<digit> [":" 2<digit> ["." *<digit>]
@@ -967,85 +967,85 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
             min = (u_int) str2ul(cp1, &cp1);
             sec = (cp1 && *cp1 == ':') ? (u_int) str2ul(++cp1) : 0;
             tstime = true;
-				break;
-
-			case eClientIpAddress:
-				log_rec.hostname.assign(cp1, slen);
-				break;
-
-			case eUserName:
-				log_rec.ident.assign(cp1, slen);
-				break;
-
-			case eWebsiteName:
-			case eWebsiteIpAddress:
             break;
 
-			case eHttpMethod:
-				log_rec.method.assign(cp1, slen);
-				break;
+         case eClientIpAddress:
+            log_rec.hostname.assign(cp1, slen);
+            break;
 
-			case eWebsitePort:
-				log_rec.port = (u_short) atoi(cp1);
-				break;
+         case eUserName:
+            log_rec.ident.assign(cp1, slen);
+            break;
 
-			case eUriStem:
-				log_rec.url.assign(cp1, slen);
+         case eWebsiteName:
+         case eWebsiteIpAddress:
+            break;
 
-				if(config.conv_url_lower_case)
-					log_rec.url.tolower();
+         case eHttpMethod:
+            log_rec.method.assign(cp1, slen);
+            break;
 
-				break;
+         case eWebsitePort:
+            log_rec.port = (u_short) atoi(cp1);
+            break;
 
-			case eUriQuery:
-				log_rec.srchargs.assign(cp1, slen);
+         case eUriStem:
+            log_rec.url.assign(cp1, slen);
 
-				if(config.conv_url_lower_case)
-					log_rec.srchargs.tolower();
+            if(config.conv_url_lower_case)
+               log_rec.url.tolower();
 
-				break;
+            break;
 
-			case eHttpStatus:
-				log_rec.resp_code = (u_short) atoi(cp1);
-				break;
+         case eUriQuery:
+            log_rec.srchargs.assign(cp1, slen);
+
+            if(config.conv_url_lower_case)
+               log_rec.srchargs.tolower();
+
+            break;
+
+         case eHttpStatus:
+            log_rec.resp_code = (u_short) atoi(cp1);
+            break;
 
          // see comments in parse_w3c_log_directive
-			case eBytesReceived:
-			case eBytesSent:
-			case eBytesTotal:
-				log_rec.xfer_size += strtoul(cp1, NULL, 10);
-				break;
+         case eBytesReceived:
+         case eBytesSent:
+         case eBytesTotal:
+            log_rec.xfer_size += strtoul(cp1, NULL, 10);
+            break;
 
-			case eTimeTaken:
-			   if(iis) 
-				   log_rec.proc_time = strtoul(cp1, NULL, 10);                    // IIS logs time in milliseconds
-				else
-				   log_rec.proc_time = (uint64_t) (strtod(cp1, NULL) * 1000. + .5); // W3C requires time logged in seconds
-				break;
+         case eTimeTaken:
+            if(iis) 
+               log_rec.proc_time = strtoul(cp1, NULL, 10);                    // IIS logs time in milliseconds
+            else
+               log_rec.proc_time = (uint64_t) (strtod(cp1, NULL) * 1000. + .5); // W3C requires time logged in seconds
+            break;
 
-			case eUserAgent:
-				log_rec.agent.assign(cp1, slen);
+         case eUserAgent:
+            log_rec.agent.assign(cp1, slen);
             log_rec.agent.replace('+', ' ');
-				break;
+            break;
 
-			case eReferrer:
+         case eReferrer:
             if((cp2 = strchr(cp1, '?')) != NULL) {
                log_rec.refer.assign(cp1, cp2-cp1); cp2++;
                log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
             }
             else
-				   log_rec.refer.assign(cp1, slen);
-				break;
+               log_rec.refer.assign(cp1, slen);
+            break;
 
-			case eCookie:
-				break;
+         case eCookie:
+            break;
 
-			case eUnknown:
-				break;
-		}
+         case eUnknown:
+            break;
+      }
 
-		fldindex++;
-	}
+      fldindex++;
+   }
 
    // check if we got both, date and time
    if(tsdate && tstime)
@@ -1057,7 +1057,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
    else
       return PARSE_CODE_ERROR;
       
-	return fldindex == log_rec_fields.size() ? PARSE_CODE_OK : PARSE_CODE_ERROR;
+   return fldindex == log_rec_fields.size() ? PARSE_CODE_OK : PARSE_CODE_ERROR;
 }
 
 /*********************************************/
@@ -1082,7 +1082,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
 
    /* date/time */
    cp1 = fields[fldindex].field;
-   i=atoi(cp1);		/* get timestamp */
+   i=atoi(cp1);      /* get timestamp */
 
    /* format date/time field */
    log_rec.tstamp.reset(i);

@@ -27,7 +27,7 @@
 #include <db.h>                                /* DB header ****************/
 
 #ifdef _WIN32
-#	include <winsock2.h>
+#include <winsock2.h>
 #endif
 
 extern "C" {
@@ -64,8 +64,8 @@ struct dnode_t {
 //
 class dns_resolver_t {
    public:
-      uint64_t  dns_cached;					      // Number of IP addresses found in the DNS cache
-      uint64_t  dns_resolved;						// Number of IP addresses resolved by a DNS lookup
+      uint64_t  dns_cached;                     // Number of IP addresses found in the DNS cache
+      uint64_t  dns_resolved;                  // Number of IP addresses resolved by a DNS lookup
 
    private:
       const config_t& config;
@@ -73,7 +73,7 @@ class dns_resolver_t {
       MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
-      DB *dns_db;							         // DNS cache database
+      DB *dns_db;                              // DNS cache database
 
       time_t runtime;
       

@@ -76,27 +76,27 @@ void bmh_delta_table::reset(const string_t& str)
 }
 
 //
-//	strncpy_ex
+//   strncpy_ex
 //
-//	Copies at most destsize-1 source bytes to dest and terminates the 
+//   Copies at most destsize-1 source bytes to dest and terminates the 
 // resulting string with a zero. If srclen is zero, copies the source
 // character-by-character.
 //
-//	Unlike strncpy, this function doesn't pad the destination buffer 
+//   Unlike strncpy, this function doesn't pad the destination buffer 
 // with zeros.
 //
 size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen)
 {
-	size_t destlen, maxlen = destsize - 1;
+   size_t destlen, maxlen = destsize - 1;
    const char *cp1;
    char *cp2;
 
-	if(dest == NULL || src == NULL || destsize == 0)
-		return 0;
+   if(dest == NULL || src == NULL || destsize == 0)
+      return 0;
 
-	if(srclen) {
-	   destlen = MIN(srclen, maxlen);
-	   memcpy(dest, src, destlen);
+   if(srclen) {
+      destlen = MIN(srclen, maxlen);
+      memcpy(dest, src, destlen);
    }
    else {
       cp1 = src; cp2 = dest;
@@ -106,12 +106,12 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen)
 
    dest[destlen] = 0;
 
-	return destlen;
+   return destlen;
 }
 
 uint64_t usec2msec(uint64_t usec)
 {
-	return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
+   return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
 }
 
 size_t url_path_len(const char *url, size_t *urllen)
@@ -663,10 +663,10 @@ uint64_t ctry_idx(const char *str)
    if(str) {
       if(*str == '*')
          return 0;
-	   while(*cp1) {
-		   idx = (idx <<= 5) | (*cp1 - 'a' + 1);
-		   cp1++;
-	   }
+      while(*cp1) {
+         idx = (idx <<= 5) | (*cp1 - 'a' + 1);
+         cp1++;
+      }
    }
 
    return idx;
@@ -708,8 +708,8 @@ const char *get_domain(const char *str, size_t labelcnt)
    const char *cp;
    size_t i = labelcnt + 1;
 
-	if(str == NULL || *str == 0)
-		return NULL;
+   if(str == NULL || *str == 0)
+      return NULL;
 
    cp = &str[strlen(str)-1];
 

@@ -754,7 +754,7 @@ int graph_t::day_graph3(const char *fname,
       draw_graph_bar(im, x1, y1, x2, 315, c_volume);
    }
 
-   /* save as png	file */
+   /* save as png file */
    if ( (out = fopen(make_path(config.out_dir, fname), "wb")) != NULL)
    {
       gdImagePng(im, out);

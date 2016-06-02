@@ -4,11 +4,11 @@
 #define SYS_NMLN ((unsigned long) 256)
 
 struct utsname {
-	char sysname[SYS_NMLN];
-	char nodename[SYS_NMLN];
-	char release[SYS_NMLN];
-	char version[SYS_NMLN];
-	char machine[SYS_NMLN];
+   char sysname[SYS_NMLN];
+   char nodename[SYS_NMLN];
+   char release[SYS_NMLN];
+   char version[SYS_NMLN];
+   char machine[SYS_NMLN];
 };
 
 #ifdef __cplusplus

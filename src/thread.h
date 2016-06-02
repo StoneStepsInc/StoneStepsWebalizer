@@ -20,7 +20,7 @@ typedef unsigned (__stdcall *start_routine_t)(void*);
 #else
 typedef void *(*start_routine_t)(void*);
 #endif
-		  
+
 thread_t thread_create(start_routine_t start_routine, void *arg);
 void thread_destroy(thread_t thread);
 void msleep(unsigned long timeout);

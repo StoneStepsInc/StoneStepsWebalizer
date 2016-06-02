@@ -28,10 +28,10 @@
 //
 class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
    public:
-      tstamp_t cur_tstamp;                       // current timestamp
+      tstamp_t cur_tstamp;                         // current timestamp
 
-      u_int f_day;                               // first day of the month
-      u_int l_day;                               // last day of the month
+      u_int f_day;                                 // first day of the month
+      u_int l_day;                                 // last day of the month
 
       uint64_t max_v_hits;                         // maximum number of hits
       uint64_t max_v_files;                        // files
@@ -79,10 +79,10 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       uint64_t t_shosts;                           // spammer hosts
       uint64_t t_sxfer;                            // spammer transfer
 
-      double t_visit_avg;                        // average human visit length
+      double t_visit_avg;                          // average human visit length
       uint64_t t_visit_max;                        // maximum human visit length
 
-      double t_vconv_avg;                        // average converted visit length
+      double t_vconv_avg;                          // average converted visit length
       uint64_t t_vconv_max;                        // maximum converted visit length
 
       uint64_t max_hv_hits;                        // maximum number of hits
@@ -96,12 +96,12 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       uint64_t t_grp_refs;                         // total referrer groups
       uint64_t t_grp_agents;                       // total agent groups
 
-	   double a_hitptime;                         // average and maximum
-      double m_hitptime;		                   // hit, page and file       	
-	   double a_fileptime;                        // processing time
-      double m_fileptime;		
-	   double a_pageptime;
-      double m_pageptime;		
+      double a_hitptime;                           // average and maximum
+      double m_hitptime;                           // hit, page and file          
+      double a_fileptime;                          // processing time
+      double m_fileptime;      
+      double a_pageptime;
+      double m_pageptime;      
 
       uint64_t hm_hit;                             // current hourly hits maximum
       

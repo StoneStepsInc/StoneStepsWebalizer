@@ -63,8 +63,8 @@ node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t
 {
    node_t *lptr;
 
-	if(str.isempty())
-		return NULL;
+   if(str.isempty())
+      return NULL;
 
    while((lptr = iter.next()) != NULL) {
       if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table)) 
@@ -82,8 +82,8 @@ const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<
 {
    const node_t *lptr;
 
-	if(str.isempty())
-		return NULL;
+   if(str.isempty())
+      return NULL;
 
    while((lptr = iter.next()) != NULL) {
       if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table)) 

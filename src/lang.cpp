@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   lang.cpp	 
+   lang.cpp    
 */
 
 /*
@@ -33,10 +33,10 @@
 //
 //
 //
-#define LANG_VAR_CHAR	0					/* char **									*/
-#define LANG_VAR_CHARR	1					/* char *[]									*/
-#define LANG_VAR_RCARR	2					/* response_code[]						*/
-#define LANG_VAR_CCARR	3					/* country_code[]							*/
+#define LANG_VAR_CHAR   0               /* char **                           */
+#define LANG_VAR_CHARR   1               /* char *[]                           */
+#define LANG_VAR_RCARR   2               /* response_code[]                  */
+#define LANG_VAR_CCARR   3               /* country_code[]                     */
 
 //
 // Global strings
@@ -212,7 +212,7 @@ lang_t::country_t lang_t::ctry[] = {
          {"aw",        "Aruba"                             },
          {"az",        "Azerbaijan"                        },
          {"ax",        "Aland Islands"                     },
-         {"bl",	     "Saint Barthelemy"                  },
+         {"bl",        "Saint Barthelemy"                  },
          {"ba",        "Bosnia and Herzegovina"            },
          {"bb",        "Barbados"                          },
          {"bd",        "Bangladesh"                        },
@@ -335,7 +335,7 @@ lang_t::country_t lang_t::ctry[] = {
          {"ma",        "Morocco"                           },
          {"mc",        "Monaco"                            },
          {"md",        "Moldova"                           },
-         {"me",	     "Montenegro"                        },
+         {"me",        "Montenegro"                        },
          {"mf",        "Saint Martin"                      },
          {"mg",        "Madagascar"                        },
          {"mh",        "Marshall Islands"                  },
@@ -477,26 +477,26 @@ lang_t::lang_node_t::~lang_node_t(void)
 
 void lang_t::lang_hash_table::put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize)
 {
-	lang_node_t *lnode;
+   lang_node_t *lnode;
 
-	if(varname == NULL || *varname == 0)
-		return;
+   if(varname == NULL || *varname == 0)
+      return;
 
-	lnode = new lang_node_t;
+   lnode = new lang_node_t;
 
-	lnode->vartype = vartype;
-	lnode->varname = varname;
-	lnode->varptr = (u_char*) varptr;
-	lnode->maxcount = maxcount;
-	lnode->elemsize = elemsize;
+   lnode->vartype = vartype;
+   lnode->varname = varname;
+   lnode->varptr = (u_char*) varptr;
+   lnode->maxcount = maxcount;
+   lnode->elemsize = elemsize;
 
    put_node(hash_ex(0, varname), lnode);
 }
 
 const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t& varname)
 {
-	if(varname == NULL || *varname == 0)
-		return NULL;
+   if(varname == NULL || *varname == 0)
+      return NULL;
 
    return find_node(varname);
 }
@@ -785,331 +785,331 @@ lang_t::~lang_t(void)
 
 bool lang_t::read_lang_file(const char *fname, int verbose)
 {
-	long filelen;
-	size_t lang_len;
-	FILE *lang_file;
+   long filelen;
+   size_t lang_len;
+   FILE *lang_file;
 
-	if(fname == NULL || *fname == 0) {
+   if(fname == NULL || *fname == 0) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Language file name is invalid. ");
-		goto errexit;
-	}
+         fprintf(stderr, "ERROR: Language file name is invalid. ");
+      goto errexit;
+   }
 
-	if((lang_file = fopen(fname, "r")) == NULL) {
+   if((lang_file = fopen(fname, "r")) == NULL) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Cannot find the language file (%s). ", fname);
-		goto errexit;
-	}
+         fprintf(stderr, "ERROR: Cannot find the language file (%s). ", fname);
+      goto errexit;
+   }
 
-	if(fseek(lang_file, 0, SEEK_END) == -1 || (filelen = ftell(lang_file)) == -1L) {
+   if(fseek(lang_file, 0, SEEK_END) == -1 || (filelen = ftell(lang_file)) == -1L) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Cannot determine the length of the language file (%s). ", fname);
-		goto errexit;
-	}
+         fprintf(stderr, "ERROR: Cannot determine the length of the language file (%s). ", fname);
+      goto errexit;
+   }
 
-	if((lang_buffer = new u_char[filelen+1]) == NULL) {
+   if((lang_buffer = new u_char[filelen+1]) == NULL) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Cannot allocate memory to process the language file (%s). ", fname);
-		goto errexit;
-	}
+         fprintf(stderr, "ERROR: Cannot allocate memory to process the language file (%s). ", fname);
+      goto errexit;
+   }
 
-	if(fseek(lang_file, 0, SEEK_SET) == -1 || (lang_len = fread(lang_buffer, 1, filelen, lang_file)) == 0) {
+   if(fseek(lang_file, 0, SEEK_SET) == -1 || (lang_len = fread(lang_buffer, 1, filelen, lang_file)) == 0) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Cannot read the language file (%s)." , fname);
-		goto errexit;
-	}
+         fprintf(stderr, "ERROR: Cannot read the language file (%s)." , fname);
+      goto errexit;
+   }
 
-	fclose(lang_file);
+   fclose(lang_file);
 
-	lang_buffer[lang_len] = 0;
+   lang_buffer[lang_len] = 0;
 
-	return true;
+   return true;
 
 errexit:
    if(verbose > 1)
-	   fprintf(stderr, "Using default language (%s).\n\n", language);
-	return false;
+      fprintf(stderr, "Using default language (%s).\n\n", language);
+   return false;
 }
 
 void lang_t::init_lang_htab(void)
 {
-	put_lang_var("language", LANG_VAR_CHAR, &language, 1, sizeof(char*));
-	put_lang_var("language_code", LANG_VAR_CHAR, &language_code, 1, sizeof(char*));
+   put_lang_var("language", LANG_VAR_CHAR, &language, 1, sizeof(char*));
+   put_lang_var("language_code", LANG_VAR_CHAR, &language_code, 1, sizeof(char*));
 
-	put_lang_var("msg_processed", LANG_VAR_CHAR, &msg_processed, 1, sizeof(char*));
-	put_lang_var("msg_records", LANG_VAR_CHAR, &msg_records, 1, sizeof(char*));
-	put_lang_var("msg_addresses", LANG_VAR_CHAR, &msg_addresses, 1, sizeof(char*));
-	put_lang_var("msg_ignored", LANG_VAR_CHAR, &msg_ignored, 1, sizeof(char*));
-	put_lang_var("msg_bad", LANG_VAR_CHAR, &msg_bad, 1, sizeof(char*));
-	put_lang_var("msg_in", LANG_VAR_CHAR, &msg_in, 1, sizeof(char*));
-	put_lang_var("msg_seconds", LANG_VAR_CHAR, &msg_seconds, 1, sizeof(char*));
-	put_lang_var("msg_runtime", LANG_VAR_CHAR, &msg_runtime, 1, sizeof(char*));
-	put_lang_var("msg_dnstime", LANG_VAR_CHAR, &msg_dnstime, 1, sizeof(char*));
-	put_lang_var("msg_mnttime", LANG_VAR_CHAR, &msg_mnttime, 1, sizeof(char*));
-	put_lang_var("msg_rpttime", LANG_VAR_CHAR, &msg_rpttime, 1, sizeof(char*));
-	put_lang_var("msg_cmpctdb", LANG_VAR_CHAR, &msg_cmpctdb, 1, sizeof(char*));
-	put_lang_var("msg_nofile", LANG_VAR_CHAR, &msg_nofile, 1, sizeof(char*));
-	put_lang_var("msg_file_err", LANG_VAR_CHAR, &msg_file_err, 1, sizeof(char*));
-	put_lang_var("msg_use_help", LANG_VAR_CHAR, &msg_use_help, 1, sizeof(char*));
-	put_lang_var("msg_fpos_err", LANG_VAR_CHAR, &msg_fpos_err, 1, sizeof(char*));
+   put_lang_var("msg_processed", LANG_VAR_CHAR, &msg_processed, 1, sizeof(char*));
+   put_lang_var("msg_records", LANG_VAR_CHAR, &msg_records, 1, sizeof(char*));
+   put_lang_var("msg_addresses", LANG_VAR_CHAR, &msg_addresses, 1, sizeof(char*));
+   put_lang_var("msg_ignored", LANG_VAR_CHAR, &msg_ignored, 1, sizeof(char*));
+   put_lang_var("msg_bad", LANG_VAR_CHAR, &msg_bad, 1, sizeof(char*));
+   put_lang_var("msg_in", LANG_VAR_CHAR, &msg_in, 1, sizeof(char*));
+   put_lang_var("msg_seconds", LANG_VAR_CHAR, &msg_seconds, 1, sizeof(char*));
+   put_lang_var("msg_runtime", LANG_VAR_CHAR, &msg_runtime, 1, sizeof(char*));
+   put_lang_var("msg_dnstime", LANG_VAR_CHAR, &msg_dnstime, 1, sizeof(char*));
+   put_lang_var("msg_mnttime", LANG_VAR_CHAR, &msg_mnttime, 1, sizeof(char*));
+   put_lang_var("msg_rpttime", LANG_VAR_CHAR, &msg_rpttime, 1, sizeof(char*));
+   put_lang_var("msg_cmpctdb", LANG_VAR_CHAR, &msg_cmpctdb, 1, sizeof(char*));
+   put_lang_var("msg_nofile", LANG_VAR_CHAR, &msg_nofile, 1, sizeof(char*));
+   put_lang_var("msg_file_err", LANG_VAR_CHAR, &msg_file_err, 1, sizeof(char*));
+   put_lang_var("msg_use_help", LANG_VAR_CHAR, &msg_use_help, 1, sizeof(char*));
+   put_lang_var("msg_fpos_err", LANG_VAR_CHAR, &msg_fpos_err, 1, sizeof(char*));
 
-	put_lang_var("msg_log_err", LANG_VAR_CHAR, &msg_log_err, 1, sizeof(char*));
-	put_lang_var("msg_log_use", LANG_VAR_CHAR, &msg_log_use, 1, sizeof(char*));
-	put_lang_var("msg_log_done", LANG_VAR_CHAR, &msg_log_done, 1, sizeof(char*));
-	put_lang_var("msg_dir_err", LANG_VAR_CHAR, &msg_dir_err, 1, sizeof(char*));
-	put_lang_var("msg_dir_use", LANG_VAR_CHAR, &msg_dir_use, 1, sizeof(char*));
-	put_lang_var("msg_cur_dir", LANG_VAR_CHAR, &msg_cur_dir, 1, sizeof(char*));
-	put_lang_var("msg_hostname", LANG_VAR_CHAR, &msg_hostname, 1, sizeof(char*));
-	put_lang_var("msg_ign_hist", LANG_VAR_CHAR, &msg_ign_hist, 1, sizeof(char*));
-	put_lang_var("msg_no_hist", LANG_VAR_CHAR, &msg_no_hist, 1, sizeof(char*));
-	put_lang_var("msg_get_hist", LANG_VAR_CHAR, &msg_get_hist, 1, sizeof(char*));
-	put_lang_var("msg_put_hist", LANG_VAR_CHAR, &msg_put_hist, 1, sizeof(char*));
-	put_lang_var("msg_hist_err", LANG_VAR_CHAR, &msg_hist_err, 1, sizeof(char*));
-	put_lang_var("msg_bad_hist", LANG_VAR_CHAR, &msg_bad_hist, 1, sizeof(char*));
-	put_lang_var("msg_bad_conf", LANG_VAR_CHAR, &msg_bad_conf, 1, sizeof(char*));
-	put_lang_var("msg_bad_key", LANG_VAR_CHAR, &msg_bad_key, 1, sizeof(char*));
-	put_lang_var("msg_bad_date", LANG_VAR_CHAR, &msg_bad_date, 1, sizeof(char*));
-	put_lang_var("msg_ign_nscp", LANG_VAR_CHAR, &msg_ign_nscp, 1, sizeof(char*));
-	put_lang_var("msg_bad_rec", LANG_VAR_CHAR, &msg_bad_rec, 1, sizeof(char*));
-	put_lang_var("msg_no_vrec", LANG_VAR_CHAR, &msg_no_vrec, 1, sizeof(char*));
-	put_lang_var("msg_gen_rpt", LANG_VAR_CHAR, &msg_gen_rpt, 1, sizeof(char*));
-	put_lang_var("msg_gen_sum", LANG_VAR_CHAR, &msg_gen_sum, 1, sizeof(char*));
-	put_lang_var("msg_get_data", LANG_VAR_CHAR, &msg_get_data, 1, sizeof(char*));
-	put_lang_var("msg_put_data", LANG_VAR_CHAR, &msg_put_data, 1, sizeof(char*));
-	put_lang_var("msg_no_data", LANG_VAR_CHAR, &msg_no_data, 1, sizeof(char*));
-	put_lang_var("msg_bad_data", LANG_VAR_CHAR, &msg_bad_data, 1, sizeof(char*));
-	put_lang_var("msg_data_err", LANG_VAR_CHAR, &msg_data_err, 1, sizeof(char*));
-	put_lang_var("msg_dup_data", LANG_VAR_CHAR, &msg_dup_data, 1, sizeof(char*));
-	put_lang_var("msg_afm_err", LANG_VAR_CHAR, &msg_afm_err, 1, sizeof(char*));
-	put_lang_var("msg_ctrl_c", LANG_VAR_CHAR, &msg_ctrl_c, 1, sizeof(char*));
-	put_lang_var("msg_pars_err", LANG_VAR_CHAR, &msg_pars_err, 1, sizeof(char*));
-	put_lang_var("msg_use_conf", LANG_VAR_CHAR, &msg_use_conf, 1, sizeof(char*));
-	put_lang_var("msg_use_lang", LANG_VAR_CHAR, &msg_use_lang, 1, sizeof(char*));
-	put_lang_var("msg_use_db", LANG_VAR_CHAR, &msg_use_db, 1, sizeof(char*));
+   put_lang_var("msg_log_err", LANG_VAR_CHAR, &msg_log_err, 1, sizeof(char*));
+   put_lang_var("msg_log_use", LANG_VAR_CHAR, &msg_log_use, 1, sizeof(char*));
+   put_lang_var("msg_log_done", LANG_VAR_CHAR, &msg_log_done, 1, sizeof(char*));
+   put_lang_var("msg_dir_err", LANG_VAR_CHAR, &msg_dir_err, 1, sizeof(char*));
+   put_lang_var("msg_dir_use", LANG_VAR_CHAR, &msg_dir_use, 1, sizeof(char*));
+   put_lang_var("msg_cur_dir", LANG_VAR_CHAR, &msg_cur_dir, 1, sizeof(char*));
+   put_lang_var("msg_hostname", LANG_VAR_CHAR, &msg_hostname, 1, sizeof(char*));
+   put_lang_var("msg_ign_hist", LANG_VAR_CHAR, &msg_ign_hist, 1, sizeof(char*));
+   put_lang_var("msg_no_hist", LANG_VAR_CHAR, &msg_no_hist, 1, sizeof(char*));
+   put_lang_var("msg_get_hist", LANG_VAR_CHAR, &msg_get_hist, 1, sizeof(char*));
+   put_lang_var("msg_put_hist", LANG_VAR_CHAR, &msg_put_hist, 1, sizeof(char*));
+   put_lang_var("msg_hist_err", LANG_VAR_CHAR, &msg_hist_err, 1, sizeof(char*));
+   put_lang_var("msg_bad_hist", LANG_VAR_CHAR, &msg_bad_hist, 1, sizeof(char*));
+   put_lang_var("msg_bad_conf", LANG_VAR_CHAR, &msg_bad_conf, 1, sizeof(char*));
+   put_lang_var("msg_bad_key", LANG_VAR_CHAR, &msg_bad_key, 1, sizeof(char*));
+   put_lang_var("msg_bad_date", LANG_VAR_CHAR, &msg_bad_date, 1, sizeof(char*));
+   put_lang_var("msg_ign_nscp", LANG_VAR_CHAR, &msg_ign_nscp, 1, sizeof(char*));
+   put_lang_var("msg_bad_rec", LANG_VAR_CHAR, &msg_bad_rec, 1, sizeof(char*));
+   put_lang_var("msg_no_vrec", LANG_VAR_CHAR, &msg_no_vrec, 1, sizeof(char*));
+   put_lang_var("msg_gen_rpt", LANG_VAR_CHAR, &msg_gen_rpt, 1, sizeof(char*));
+   put_lang_var("msg_gen_sum", LANG_VAR_CHAR, &msg_gen_sum, 1, sizeof(char*));
+   put_lang_var("msg_get_data", LANG_VAR_CHAR, &msg_get_data, 1, sizeof(char*));
+   put_lang_var("msg_put_data", LANG_VAR_CHAR, &msg_put_data, 1, sizeof(char*));
+   put_lang_var("msg_no_data", LANG_VAR_CHAR, &msg_no_data, 1, sizeof(char*));
+   put_lang_var("msg_bad_data", LANG_VAR_CHAR, &msg_bad_data, 1, sizeof(char*));
+   put_lang_var("msg_data_err", LANG_VAR_CHAR, &msg_data_err, 1, sizeof(char*));
+   put_lang_var("msg_dup_data", LANG_VAR_CHAR, &msg_dup_data, 1, sizeof(char*));
+   put_lang_var("msg_afm_err", LANG_VAR_CHAR, &msg_afm_err, 1, sizeof(char*));
+   put_lang_var("msg_ctrl_c", LANG_VAR_CHAR, &msg_ctrl_c, 1, sizeof(char*));
+   put_lang_var("msg_pars_err", LANG_VAR_CHAR, &msg_pars_err, 1, sizeof(char*));
+   put_lang_var("msg_use_conf", LANG_VAR_CHAR, &msg_use_conf, 1, sizeof(char*));
+   put_lang_var("msg_use_lang", LANG_VAR_CHAR, &msg_use_lang, 1, sizeof(char*));
+   put_lang_var("msg_use_db", LANG_VAR_CHAR, &msg_use_db, 1, sizeof(char*));
 
-	put_lang_var("msg_dns_nocf", LANG_VAR_CHAR, &msg_dns_nocf, 1, sizeof(char*));
-	put_lang_var("msg_dns_nodb", LANG_VAR_CHAR, &msg_dns_nodb, 1, sizeof(char*));
-	put_lang_var("msg_dns_nolk", LANG_VAR_CHAR, &msg_dns_nolk, 1, sizeof(char*));
-	put_lang_var("msg_dns_usec", LANG_VAR_CHAR, &msg_dns_usec, 1, sizeof(char*));
-	put_lang_var("msg_dns_rslv", LANG_VAR_CHAR, &msg_dns_rslv, 1, sizeof(char*));
-	put_lang_var("msg_dns_init", LANG_VAR_CHAR, &msg_dns_init, 1, sizeof(char*));
-	put_lang_var("msg_dns_htrt", LANG_VAR_CHAR, &msg_dns_htrt, 1, sizeof(char*));
-	put_lang_var("msg_dns_geoe", LANG_VAR_CHAR, &msg_dns_geoe, 1, sizeof(char*));
-	put_lang_var("msg_dns_useg", LANG_VAR_CHAR, &msg_dns_useg, 1, sizeof(char*));
+   put_lang_var("msg_dns_nocf", LANG_VAR_CHAR, &msg_dns_nocf, 1, sizeof(char*));
+   put_lang_var("msg_dns_nodb", LANG_VAR_CHAR, &msg_dns_nodb, 1, sizeof(char*));
+   put_lang_var("msg_dns_nolk", LANG_VAR_CHAR, &msg_dns_nolk, 1, sizeof(char*));
+   put_lang_var("msg_dns_usec", LANG_VAR_CHAR, &msg_dns_usec, 1, sizeof(char*));
+   put_lang_var("msg_dns_rslv", LANG_VAR_CHAR, &msg_dns_rslv, 1, sizeof(char*));
+   put_lang_var("msg_dns_init", LANG_VAR_CHAR, &msg_dns_init, 1, sizeof(char*));
+   put_lang_var("msg_dns_htrt", LANG_VAR_CHAR, &msg_dns_htrt, 1, sizeof(char*));
+   put_lang_var("msg_dns_geoe", LANG_VAR_CHAR, &msg_dns_geoe, 1, sizeof(char*));
+   put_lang_var("msg_dns_useg", LANG_VAR_CHAR, &msg_dns_useg, 1, sizeof(char*));
 
-	put_lang_var("msg_nomem_ts", LANG_VAR_CHAR, &msg_nomem_ts, 1, sizeof(char*));
-	put_lang_var("msg_nomem_tr", LANG_VAR_CHAR, &msg_nomem_tr, 1, sizeof(char*));
-	put_lang_var("msg_nomem_tu", LANG_VAR_CHAR, &msg_nomem_tu, 1, sizeof(char*));
-	put_lang_var("msg_nomem_tc", LANG_VAR_CHAR, &msg_nomem_tc, 1, sizeof(char*));
-	put_lang_var("msg_nomem_ta", LANG_VAR_CHAR, &msg_nomem_ta, 1, sizeof(char*));
-	put_lang_var("msg_nomem_tsr", LANG_VAR_CHAR, &msg_nomem_tsr, 1, sizeof(char*));
-	put_lang_var("msg_nomem_ti", LANG_VAR_CHAR, &msg_nomem_ti, 1, sizeof(char*));
-	put_lang_var("msg_nomem_dh", LANG_VAR_CHAR, &msg_nomem_dh, 1, sizeof(char*));
-	put_lang_var("msg_nomem_mh", LANG_VAR_CHAR, &msg_nomem_mh, 1, sizeof(char*));
-	put_lang_var("msg_nomem_u", LANG_VAR_CHAR, &msg_nomem_u, 1, sizeof(char*));
-	put_lang_var("msg_nomem_a", LANG_VAR_CHAR, &msg_nomem_a, 1, sizeof(char*));
-	put_lang_var("msg_nomem_r", LANG_VAR_CHAR, &msg_nomem_r, 1, sizeof(char*));
-	put_lang_var("msg_nomem_sc", LANG_VAR_CHAR, &msg_nomem_sc, 1, sizeof(char*));
-	put_lang_var("msg_nomem_i", LANG_VAR_CHAR, &msg_nomem_i, 1, sizeof(char*));
-	put_lang_var("msg_nomem_rc", LANG_VAR_CHAR, &msg_nomem_rc, 1, sizeof(char*));
-	put_lang_var("msg_nomem_dl", LANG_VAR_CHAR, &msg_nomem_dl, 1, sizeof(char*));
+   put_lang_var("msg_nomem_ts", LANG_VAR_CHAR, &msg_nomem_ts, 1, sizeof(char*));
+   put_lang_var("msg_nomem_tr", LANG_VAR_CHAR, &msg_nomem_tr, 1, sizeof(char*));
+   put_lang_var("msg_nomem_tu", LANG_VAR_CHAR, &msg_nomem_tu, 1, sizeof(char*));
+   put_lang_var("msg_nomem_tc", LANG_VAR_CHAR, &msg_nomem_tc, 1, sizeof(char*));
+   put_lang_var("msg_nomem_ta", LANG_VAR_CHAR, &msg_nomem_ta, 1, sizeof(char*));
+   put_lang_var("msg_nomem_tsr", LANG_VAR_CHAR, &msg_nomem_tsr, 1, sizeof(char*));
+   put_lang_var("msg_nomem_ti", LANG_VAR_CHAR, &msg_nomem_ti, 1, sizeof(char*));
+   put_lang_var("msg_nomem_dh", LANG_VAR_CHAR, &msg_nomem_dh, 1, sizeof(char*));
+   put_lang_var("msg_nomem_mh", LANG_VAR_CHAR, &msg_nomem_mh, 1, sizeof(char*));
+   put_lang_var("msg_nomem_u", LANG_VAR_CHAR, &msg_nomem_u, 1, sizeof(char*));
+   put_lang_var("msg_nomem_a", LANG_VAR_CHAR, &msg_nomem_a, 1, sizeof(char*));
+   put_lang_var("msg_nomem_r", LANG_VAR_CHAR, &msg_nomem_r, 1, sizeof(char*));
+   put_lang_var("msg_nomem_sc", LANG_VAR_CHAR, &msg_nomem_sc, 1, sizeof(char*));
+   put_lang_var("msg_nomem_i", LANG_VAR_CHAR, &msg_nomem_i, 1, sizeof(char*));
+   put_lang_var("msg_nomem_rc", LANG_VAR_CHAR, &msg_nomem_rc, 1, sizeof(char*));
+   put_lang_var("msg_nomem_dl", LANG_VAR_CHAR, &msg_nomem_dl, 1, sizeof(char*));
 
-	put_lang_var("msg_big_rec", LANG_VAR_CHAR, &msg_big_rec, 1, sizeof(char*));
-	put_lang_var("msg_big_host", LANG_VAR_CHAR, &msg_big_host, 1, sizeof(char*));
-	put_lang_var("msg_big_date", LANG_VAR_CHAR, &msg_big_date, 1, sizeof(char*));
-	put_lang_var("msg_big_req", LANG_VAR_CHAR, &msg_big_req, 1, sizeof(char*));
-	put_lang_var("msg_big_ref", LANG_VAR_CHAR, &msg_big_ref, 1, sizeof(char*));
-	put_lang_var("msg_big_user", LANG_VAR_CHAR, &msg_big_user, 1, sizeof(char*));
-	put_lang_var("msg_big_url", LANG_VAR_CHAR, &msg_big_url, 1, sizeof(char*));
-	put_lang_var("msg_big_agnt", LANG_VAR_CHAR, &msg_big_agnt, 1, sizeof(char*));
-	put_lang_var("msg_big_srch", LANG_VAR_CHAR, &msg_big_srch, 1, sizeof(char*));
-	put_lang_var("msg_big_one", LANG_VAR_CHAR, &msg_big_one, 1, sizeof(char*));
-	put_lang_var("msg_no_open", LANG_VAR_CHAR, &msg_no_open, 1, sizeof(char*));
+   put_lang_var("msg_big_rec", LANG_VAR_CHAR, &msg_big_rec, 1, sizeof(char*));
+   put_lang_var("msg_big_host", LANG_VAR_CHAR, &msg_big_host, 1, sizeof(char*));
+   put_lang_var("msg_big_date", LANG_VAR_CHAR, &msg_big_date, 1, sizeof(char*));
+   put_lang_var("msg_big_req", LANG_VAR_CHAR, &msg_big_req, 1, sizeof(char*));
+   put_lang_var("msg_big_ref", LANG_VAR_CHAR, &msg_big_ref, 1, sizeof(char*));
+   put_lang_var("msg_big_user", LANG_VAR_CHAR, &msg_big_user, 1, sizeof(char*));
+   put_lang_var("msg_big_url", LANG_VAR_CHAR, &msg_big_url, 1, sizeof(char*));
+   put_lang_var("msg_big_agnt", LANG_VAR_CHAR, &msg_big_agnt, 1, sizeof(char*));
+   put_lang_var("msg_big_srch", LANG_VAR_CHAR, &msg_big_srch, 1, sizeof(char*));
+   put_lang_var("msg_big_one", LANG_VAR_CHAR, &msg_big_one, 1, sizeof(char*));
+   put_lang_var("msg_no_open", LANG_VAR_CHAR, &msg_no_open, 1, sizeof(char*));
 
-	put_lang_var("h_usage1", LANG_VAR_CHAR, &h_usage1, 1, sizeof(char*));
-	put_lang_var("h_usage2", LANG_VAR_CHAR, &h_usage2, 1, sizeof(char*));
+   put_lang_var("h_usage1", LANG_VAR_CHAR, &h_usage1, 1, sizeof(char*));
+   put_lang_var("h_usage2", LANG_VAR_CHAR, &h_usage2, 1, sizeof(char*));
 
-	put_lang_var("h_msg", LANG_VAR_CHARR, h_msg, HELPMSG_ARRAY_SIZE, sizeof(h_msg[0]));
+   put_lang_var("h_msg", LANG_VAR_CHARR, h_msg, HELPMSG_ARRAY_SIZE, sizeof(h_msg[0]));
 
-	put_lang_var("msg_hhdr_sp", LANG_VAR_CHAR, &msg_hhdr_sp, 1, sizeof(char*));
-	put_lang_var("msg_hhdr_gt", LANG_VAR_CHAR, &msg_hhdr_gt, 1, sizeof(char*));
+   put_lang_var("msg_hhdr_sp", LANG_VAR_CHAR, &msg_hhdr_sp, 1, sizeof(char*));
+   put_lang_var("msg_hhdr_gt", LANG_VAR_CHAR, &msg_hhdr_gt, 1, sizeof(char*));
 
-	put_lang_var("msg_main_us", LANG_VAR_CHAR, &msg_main_us, 1, sizeof(char*));
-	put_lang_var("msg_main_per", LANG_VAR_CHAR, &msg_main_per, 1, sizeof(char*));
-	put_lang_var("msg_main_sum", LANG_VAR_CHAR, &msg_main_sum, 1, sizeof(char*));
-	put_lang_var("msg_main_da", LANG_VAR_CHAR, &msg_main_da, 1, sizeof(char*));
-	put_lang_var("msg_main_mt", LANG_VAR_CHAR, &msg_main_mt, 1, sizeof(char*));
+   put_lang_var("msg_main_us", LANG_VAR_CHAR, &msg_main_us, 1, sizeof(char*));
+   put_lang_var("msg_main_per", LANG_VAR_CHAR, &msg_main_per, 1, sizeof(char*));
+   put_lang_var("msg_main_sum", LANG_VAR_CHAR, &msg_main_sum, 1, sizeof(char*));
+   put_lang_var("msg_main_da", LANG_VAR_CHAR, &msg_main_da, 1, sizeof(char*));
+   put_lang_var("msg_main_mt", LANG_VAR_CHAR, &msg_main_mt, 1, sizeof(char*));
 
-	put_lang_var("msg_main_plst", LANG_VAR_CHAR, &msg_main_plst, 1, sizeof(char*));
-	put_lang_var("msg_main_pmns", LANG_VAR_CHAR, &msg_main_pmns, 1, sizeof(char*));
+   put_lang_var("msg_main_plst", LANG_VAR_CHAR, &msg_main_plst, 1, sizeof(char*));
+   put_lang_var("msg_main_pmns", LANG_VAR_CHAR, &msg_main_pmns, 1, sizeof(char*));
 
-	put_lang_var("msg_hmth_du", LANG_VAR_CHAR, &msg_hmth_du, 1, sizeof(char*));
-	put_lang_var("msg_hmth_hu", LANG_VAR_CHAR, &msg_hmth_hu, 1, sizeof(char*));
+   put_lang_var("msg_hmth_du", LANG_VAR_CHAR, &msg_hmth_du, 1, sizeof(char*));
+   put_lang_var("msg_hmth_hu", LANG_VAR_CHAR, &msg_hmth_hu, 1, sizeof(char*));
 
-	put_lang_var("msg_h_by", LANG_VAR_CHAR, &msg_h_by, 1, sizeof(char*));
-	put_lang_var("msg_h_avg", LANG_VAR_CHAR, &msg_h_avg, 1, sizeof(char*));
-	put_lang_var("msg_h_max", LANG_VAR_CHAR, &msg_h_max, 1, sizeof(char*));
-	put_lang_var("msg_h_total", LANG_VAR_CHAR, &msg_h_total, 1, sizeof(char*));
-	put_lang_var("msg_h_totals", LANG_VAR_CHAR, &msg_h_totals, 1, sizeof(char*));
-	put_lang_var("msg_h_day", LANG_VAR_CHAR, &msg_h_day, 1, sizeof(char*));
-	put_lang_var("msg_h_mth", LANG_VAR_CHAR, &msg_h_mth, 1, sizeof(char*));
-	put_lang_var("msg_h_hour", LANG_VAR_CHAR, &msg_h_hour, 1, sizeof(char*));
-	put_lang_var("msg_h_hits", LANG_VAR_CHAR, &msg_h_hits, 1, sizeof(char*));
-	put_lang_var("msg_h_pages", LANG_VAR_CHAR, &msg_h_pages, 1, sizeof(char*));
-	put_lang_var("msg_h_visits", LANG_VAR_CHAR, &msg_h_visits, 1, sizeof(char*));
-	put_lang_var("msg_h_files", LANG_VAR_CHAR, &msg_h_files, 1, sizeof(char*));
-	put_lang_var("msg_h_hosts", LANG_VAR_CHAR, &msg_h_hosts, 1, sizeof(char*));
-	put_lang_var("msg_h_xfer", LANG_VAR_CHAR, &msg_h_xfer, 1, sizeof(char*));
-	put_lang_var("msg_h_avgtime", LANG_VAR_CHAR, &msg_h_avgtime, 1, sizeof(char*));
-	put_lang_var("msg_h_maxtime", LANG_VAR_CHAR, &msg_h_maxtime, 1, sizeof(char*));
-	put_lang_var("msg_h_hname", LANG_VAR_CHAR, &msg_h_hname, 1, sizeof(char*));
-	put_lang_var("msg_h_url", LANG_VAR_CHAR, &msg_h_url, 1, sizeof(char*));
-	put_lang_var("msg_h_agent", LANG_VAR_CHAR, &msg_h_agent, 1, sizeof(char*));
-	put_lang_var("msg_h_ref", LANG_VAR_CHAR, &msg_h_ref, 1, sizeof(char*));
-	put_lang_var("msg_h_ctry", LANG_VAR_CHAR, &msg_h_ctry, 1, sizeof(char*));
-	put_lang_var("msg_h_search", LANG_VAR_CHAR, &msg_h_search, 1, sizeof(char*));
-	put_lang_var("msg_h_uname", LANG_VAR_CHAR, &msg_h_uname, 1, sizeof(char*));
-	put_lang_var("msg_h_type", LANG_VAR_CHAR, &msg_h_type, 1, sizeof(char*));
-	put_lang_var("msg_h_status", LANG_VAR_CHAR, &msg_h_status, 1, sizeof(char*));
-	put_lang_var("msg_h_duration", LANG_VAR_CHAR, &msg_h_duration, 1, sizeof(char*));
-	put_lang_var("msg_h_method", LANG_VAR_CHAR, &msg_h_method, 1, sizeof(char*));
-	put_lang_var("msg_h_download", LANG_VAR_CHAR, &msg_h_download, 1, sizeof(char*));
-	put_lang_var("msg_h_count", LANG_VAR_CHAR, &msg_h_count, 1, sizeof(char*));
-	put_lang_var("msg_h_time", LANG_VAR_CHAR, &msg_h_time, 1, sizeof(char*));
-	put_lang_var("msg_h_spammer", LANG_VAR_CHAR, &msg_h_spammer, 1, sizeof(char*));
-	put_lang_var("msg_h_urls", LANG_VAR_CHAR, &msg_h_urls, 1, sizeof(char*));
-	put_lang_var("msg_h_refs", LANG_VAR_CHAR, &msg_h_refs, 1, sizeof(char*));
-	put_lang_var("msg_h_agents", LANG_VAR_CHAR, &msg_h_agents, 1, sizeof(char*));
-	put_lang_var("msg_h_chosts", LANG_VAR_CHAR, &msg_h_chosts, 1, sizeof(char*));
-	put_lang_var("msg_h_cvisits", LANG_VAR_CHAR, &msg_h_cvisits, 1, sizeof(char*));
+   put_lang_var("msg_h_by", LANG_VAR_CHAR, &msg_h_by, 1, sizeof(char*));
+   put_lang_var("msg_h_avg", LANG_VAR_CHAR, &msg_h_avg, 1, sizeof(char*));
+   put_lang_var("msg_h_max", LANG_VAR_CHAR, &msg_h_max, 1, sizeof(char*));
+   put_lang_var("msg_h_total", LANG_VAR_CHAR, &msg_h_total, 1, sizeof(char*));
+   put_lang_var("msg_h_totals", LANG_VAR_CHAR, &msg_h_totals, 1, sizeof(char*));
+   put_lang_var("msg_h_day", LANG_VAR_CHAR, &msg_h_day, 1, sizeof(char*));
+   put_lang_var("msg_h_mth", LANG_VAR_CHAR, &msg_h_mth, 1, sizeof(char*));
+   put_lang_var("msg_h_hour", LANG_VAR_CHAR, &msg_h_hour, 1, sizeof(char*));
+   put_lang_var("msg_h_hits", LANG_VAR_CHAR, &msg_h_hits, 1, sizeof(char*));
+   put_lang_var("msg_h_pages", LANG_VAR_CHAR, &msg_h_pages, 1, sizeof(char*));
+   put_lang_var("msg_h_visits", LANG_VAR_CHAR, &msg_h_visits, 1, sizeof(char*));
+   put_lang_var("msg_h_files", LANG_VAR_CHAR, &msg_h_files, 1, sizeof(char*));
+   put_lang_var("msg_h_hosts", LANG_VAR_CHAR, &msg_h_hosts, 1, sizeof(char*));
+   put_lang_var("msg_h_xfer", LANG_VAR_CHAR, &msg_h_xfer, 1, sizeof(char*));
+   put_lang_var("msg_h_avgtime", LANG_VAR_CHAR, &msg_h_avgtime, 1, sizeof(char*));
+   put_lang_var("msg_h_maxtime", LANG_VAR_CHAR, &msg_h_maxtime, 1, sizeof(char*));
+   put_lang_var("msg_h_hname", LANG_VAR_CHAR, &msg_h_hname, 1, sizeof(char*));
+   put_lang_var("msg_h_url", LANG_VAR_CHAR, &msg_h_url, 1, sizeof(char*));
+   put_lang_var("msg_h_agent", LANG_VAR_CHAR, &msg_h_agent, 1, sizeof(char*));
+   put_lang_var("msg_h_ref", LANG_VAR_CHAR, &msg_h_ref, 1, sizeof(char*));
+   put_lang_var("msg_h_ctry", LANG_VAR_CHAR, &msg_h_ctry, 1, sizeof(char*));
+   put_lang_var("msg_h_search", LANG_VAR_CHAR, &msg_h_search, 1, sizeof(char*));
+   put_lang_var("msg_h_uname", LANG_VAR_CHAR, &msg_h_uname, 1, sizeof(char*));
+   put_lang_var("msg_h_type", LANG_VAR_CHAR, &msg_h_type, 1, sizeof(char*));
+   put_lang_var("msg_h_status", LANG_VAR_CHAR, &msg_h_status, 1, sizeof(char*));
+   put_lang_var("msg_h_duration", LANG_VAR_CHAR, &msg_h_duration, 1, sizeof(char*));
+   put_lang_var("msg_h_method", LANG_VAR_CHAR, &msg_h_method, 1, sizeof(char*));
+   put_lang_var("msg_h_download", LANG_VAR_CHAR, &msg_h_download, 1, sizeof(char*));
+   put_lang_var("msg_h_count", LANG_VAR_CHAR, &msg_h_count, 1, sizeof(char*));
+   put_lang_var("msg_h_time", LANG_VAR_CHAR, &msg_h_time, 1, sizeof(char*));
+   put_lang_var("msg_h_spammer", LANG_VAR_CHAR, &msg_h_spammer, 1, sizeof(char*));
+   put_lang_var("msg_h_urls", LANG_VAR_CHAR, &msg_h_urls, 1, sizeof(char*));
+   put_lang_var("msg_h_refs", LANG_VAR_CHAR, &msg_h_refs, 1, sizeof(char*));
+   put_lang_var("msg_h_agents", LANG_VAR_CHAR, &msg_h_agents, 1, sizeof(char*));
+   put_lang_var("msg_h_chosts", LANG_VAR_CHAR, &msg_h_chosts, 1, sizeof(char*));
+   put_lang_var("msg_h_cvisits", LANG_VAR_CHAR, &msg_h_cvisits, 1, sizeof(char*));
 
-	put_lang_var("msg_hlnk_sum", LANG_VAR_CHAR, &msg_hlnk_sum, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_ds", LANG_VAR_CHAR, &msg_hlnk_ds, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_hs", LANG_VAR_CHAR, &msg_hlnk_hs, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_u", LANG_VAR_CHAR, &msg_hlnk_u, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_s", LANG_VAR_CHAR, &msg_hlnk_s, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_a", LANG_VAR_CHAR, &msg_hlnk_a, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_c", LANG_VAR_CHAR, &msg_hlnk_c, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_r", LANG_VAR_CHAR, &msg_hlnk_r, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_en", LANG_VAR_CHAR, &msg_hlnk_en, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_ex", LANG_VAR_CHAR, &msg_hlnk_ex, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_sr", LANG_VAR_CHAR, &msg_hlnk_sr, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_i", LANG_VAR_CHAR, &msg_hlnk_i, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_err", LANG_VAR_CHAR, &msg_hlnk_err, 1, sizeof(char*));
-	put_lang_var("msg_hlnk_dl", LANG_VAR_CHAR, &msg_hlnk_dl, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_sum", LANG_VAR_CHAR, &msg_hlnk_sum, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_ds", LANG_VAR_CHAR, &msg_hlnk_ds, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_hs", LANG_VAR_CHAR, &msg_hlnk_hs, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_u", LANG_VAR_CHAR, &msg_hlnk_u, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_s", LANG_VAR_CHAR, &msg_hlnk_s, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_a", LANG_VAR_CHAR, &msg_hlnk_a, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_c", LANG_VAR_CHAR, &msg_hlnk_c, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_r", LANG_VAR_CHAR, &msg_hlnk_r, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_en", LANG_VAR_CHAR, &msg_hlnk_en, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_ex", LANG_VAR_CHAR, &msg_hlnk_ex, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_sr", LANG_VAR_CHAR, &msg_hlnk_sr, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_i", LANG_VAR_CHAR, &msg_hlnk_i, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_err", LANG_VAR_CHAR, &msg_hlnk_err, 1, sizeof(char*));
+   put_lang_var("msg_hlnk_dl", LANG_VAR_CHAR, &msg_hlnk_dl, 1, sizeof(char*));
 
-	put_lang_var("msg_mtot_ms", LANG_VAR_CHAR, &msg_mtot_ms, 1, sizeof(char*));
-	put_lang_var("msg_mtot_th", LANG_VAR_CHAR, &msg_mtot_th, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tf", LANG_VAR_CHAR, &msg_mtot_tf, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tp", LANG_VAR_CHAR, &msg_mtot_tp, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tv", LANG_VAR_CHAR, &msg_mtot_tv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tx", LANG_VAR_CHAR, &msg_mtot_tx, 1, sizeof(char*));
-	put_lang_var("msg_mtot_us", LANG_VAR_CHAR, &msg_mtot_us, 1, sizeof(char*));
-	put_lang_var("msg_mtot_ur", LANG_VAR_CHAR, &msg_mtot_ur, 1, sizeof(char*));
-	put_lang_var("msg_mtot_ua", LANG_VAR_CHAR, &msg_mtot_ua, 1, sizeof(char*));
-	put_lang_var("msg_mtot_uu", LANG_VAR_CHAR, &msg_mtot_uu, 1, sizeof(char*));
-	put_lang_var("msg_mtot_ui", LANG_VAR_CHAR, &msg_mtot_ui, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mhd", LANG_VAR_CHAR, &msg_mtot_mhd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mhh", LANG_VAR_CHAR, &msg_mtot_mhh, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mfd", LANG_VAR_CHAR, &msg_mtot_mfd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mpd", LANG_VAR_CHAR, &msg_mtot_mpd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mvd", LANG_VAR_CHAR, &msg_mtot_mvd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mkd", LANG_VAR_CHAR, &msg_mtot_mkd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_rc", LANG_VAR_CHAR, &msg_mtot_rc, 1, sizeof(char*));
-	put_lang_var("msg_mtot_dl", LANG_VAR_CHAR, &msg_mtot_dl, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tcv", LANG_VAR_CHAR, &msg_mtot_tcv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_tch", LANG_VAR_CHAR, &msg_mtot_tch, 1, sizeof(char*));
-	put_lang_var("msg_mtot_hcr", LANG_VAR_CHAR, &msg_mtot_hcr, 1, sizeof(char*));
-	put_lang_var("msg_mtot_cvd", LANG_VAR_CHAR, &msg_mtot_cvd, 1, sizeof(char*));
-	put_lang_var("msg_mtot_conv", LANG_VAR_CHAR, &msg_mtot_conv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_rtot", LANG_VAR_CHAR, &msg_mtot_rtot, 1, sizeof(char*));
-	put_lang_var("msg_mtot_perf", LANG_VAR_CHAR, &msg_mtot_perf, 1, sizeof(char*));
-	put_lang_var("msg_mtot_hdt", LANG_VAR_CHAR, &msg_mtot_hdt, 1, sizeof(char*));
-	put_lang_var("msg_mtot_terr", LANG_VAR_CHAR, &msg_mtot_terr, 1, sizeof(char*));
+   put_lang_var("msg_mtot_ms", LANG_VAR_CHAR, &msg_mtot_ms, 1, sizeof(char*));
+   put_lang_var("msg_mtot_th", LANG_VAR_CHAR, &msg_mtot_th, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tf", LANG_VAR_CHAR, &msg_mtot_tf, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tp", LANG_VAR_CHAR, &msg_mtot_tp, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tv", LANG_VAR_CHAR, &msg_mtot_tv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tx", LANG_VAR_CHAR, &msg_mtot_tx, 1, sizeof(char*));
+   put_lang_var("msg_mtot_us", LANG_VAR_CHAR, &msg_mtot_us, 1, sizeof(char*));
+   put_lang_var("msg_mtot_ur", LANG_VAR_CHAR, &msg_mtot_ur, 1, sizeof(char*));
+   put_lang_var("msg_mtot_ua", LANG_VAR_CHAR, &msg_mtot_ua, 1, sizeof(char*));
+   put_lang_var("msg_mtot_uu", LANG_VAR_CHAR, &msg_mtot_uu, 1, sizeof(char*));
+   put_lang_var("msg_mtot_ui", LANG_VAR_CHAR, &msg_mtot_ui, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mhd", LANG_VAR_CHAR, &msg_mtot_mhd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mhh", LANG_VAR_CHAR, &msg_mtot_mhh, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mfd", LANG_VAR_CHAR, &msg_mtot_mfd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mpd", LANG_VAR_CHAR, &msg_mtot_mpd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mvd", LANG_VAR_CHAR, &msg_mtot_mvd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mkd", LANG_VAR_CHAR, &msg_mtot_mkd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_rc", LANG_VAR_CHAR, &msg_mtot_rc, 1, sizeof(char*));
+   put_lang_var("msg_mtot_dl", LANG_VAR_CHAR, &msg_mtot_dl, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tcv", LANG_VAR_CHAR, &msg_mtot_tcv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_tch", LANG_VAR_CHAR, &msg_mtot_tch, 1, sizeof(char*));
+   put_lang_var("msg_mtot_hcr", LANG_VAR_CHAR, &msg_mtot_hcr, 1, sizeof(char*));
+   put_lang_var("msg_mtot_cvd", LANG_VAR_CHAR, &msg_mtot_cvd, 1, sizeof(char*));
+   put_lang_var("msg_mtot_conv", LANG_VAR_CHAR, &msg_mtot_conv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_rtot", LANG_VAR_CHAR, &msg_mtot_rtot, 1, sizeof(char*));
+   put_lang_var("msg_mtot_perf", LANG_VAR_CHAR, &msg_mtot_perf, 1, sizeof(char*));
+   put_lang_var("msg_mtot_hdt", LANG_VAR_CHAR, &msg_mtot_hdt, 1, sizeof(char*));
+   put_lang_var("msg_mtot_terr", LANG_VAR_CHAR, &msg_mtot_terr, 1, sizeof(char*));
 
-	put_lang_var("msg_mtot_htot", LANG_VAR_CHAR, &msg_mtot_htot, 1, sizeof(char*));
-	put_lang_var("msg_mtot_stot", LANG_VAR_CHAR, &msg_mtot_stot, 1, sizeof(char*));
+   put_lang_var("msg_mtot_htot", LANG_VAR_CHAR, &msg_mtot_htot, 1, sizeof(char*));
+   put_lang_var("msg_mtot_stot", LANG_VAR_CHAR, &msg_mtot_stot, 1, sizeof(char*));
 
-	put_lang_var("msg_mtot_sph", LANG_VAR_CHAR, &msg_mtot_sph, 1, sizeof(char*));
-	put_lang_var("msg_mtot_spf", LANG_VAR_CHAR, &msg_mtot_spf, 1, sizeof(char*));
-	put_lang_var("msg_mtot_spp", LANG_VAR_CHAR, &msg_mtot_spp, 1, sizeof(char*));
+   put_lang_var("msg_mtot_sph", LANG_VAR_CHAR, &msg_mtot_sph, 1, sizeof(char*));
+   put_lang_var("msg_mtot_spf", LANG_VAR_CHAR, &msg_mtot_spf, 1, sizeof(char*));
+   put_lang_var("msg_mtot_spp", LANG_VAR_CHAR, &msg_mtot_spp, 1, sizeof(char*));
 
-	put_lang_var("msg_mtot_mhv", LANG_VAR_CHAR, &msg_mtot_mhv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mfv", LANG_VAR_CHAR, &msg_mtot_mfv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mpv", LANG_VAR_CHAR, &msg_mtot_mpv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mdv", LANG_VAR_CHAR, &msg_mtot_mdv, 1, sizeof(char*));
-	put_lang_var("msg_mtot_mkv", LANG_VAR_CHAR, &msg_mtot_mkv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mhv", LANG_VAR_CHAR, &msg_mtot_mhv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mfv", LANG_VAR_CHAR, &msg_mtot_mfv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mpv", LANG_VAR_CHAR, &msg_mtot_mpv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mdv", LANG_VAR_CHAR, &msg_mtot_mdv, 1, sizeof(char*));
+   put_lang_var("msg_mtot_mkv", LANG_VAR_CHAR, &msg_mtot_mkv, 1, sizeof(char*));
 
-	put_lang_var("msg_dtot_ds", LANG_VAR_CHAR, &msg_dtot_ds, 1, sizeof(char*));
+   put_lang_var("msg_dtot_ds", LANG_VAR_CHAR, &msg_dtot_ds, 1, sizeof(char*));
 
-	put_lang_var("msg_htot_hs", LANG_VAR_CHAR, &msg_htot_hs, 1, sizeof(char*));
+   put_lang_var("msg_htot_hs", LANG_VAR_CHAR, &msg_htot_hs, 1, sizeof(char*));
 
-	put_lang_var("msg_ctry_use", LANG_VAR_CHAR, &msg_ctry_use, 1, sizeof(char*));
+   put_lang_var("msg_ctry_use", LANG_VAR_CHAR, &msg_ctry_use, 1, sizeof(char*));
 
-	put_lang_var("msg_top_top", LANG_VAR_CHAR, &msg_top_top, 1, sizeof(char*));
-	put_lang_var("msg_top_of", LANG_VAR_CHAR, &msg_top_of, 1, sizeof(char*));
-	put_lang_var("msg_top_s", LANG_VAR_CHAR, &msg_top_s, 1, sizeof(char*));
-	put_lang_var("msg_top_u", LANG_VAR_CHAR, &msg_top_u, 1, sizeof(char*));
-	put_lang_var("msg_top_r", LANG_VAR_CHAR, &msg_top_r, 1, sizeof(char*));
-	put_lang_var("msg_top_a", LANG_VAR_CHAR, &msg_top_a, 1, sizeof(char*));
-	put_lang_var("msg_top_c", LANG_VAR_CHAR, &msg_top_c, 1, sizeof(char*));
-	put_lang_var("msg_top_en", LANG_VAR_CHAR, &msg_top_en, 1, sizeof(char*));
-	put_lang_var("msg_top_ex", LANG_VAR_CHAR, &msg_top_ex, 1, sizeof(char*));
-	put_lang_var("msg_top_sr", LANG_VAR_CHAR, &msg_top_sr, 1, sizeof(char*));
-	put_lang_var("msg_top_i", LANG_VAR_CHAR, &msg_top_i, 1, sizeof(char*));
-	put_lang_var("msg_v_hosts", LANG_VAR_CHAR, &msg_v_hosts, 1, sizeof(char*));
-	put_lang_var("msg_v_urls", LANG_VAR_CHAR, &msg_v_urls, 1, sizeof(char*));
-	put_lang_var("msg_v_refs", LANG_VAR_CHAR, &msg_v_refs, 1, sizeof(char*));
-	put_lang_var("msg_v_agents", LANG_VAR_CHAR, &msg_v_agents, 1, sizeof(char*));
-	put_lang_var("msg_v_search", LANG_VAR_CHAR, &msg_v_search, 1, sizeof(char*));
-	put_lang_var("msg_v_users", LANG_VAR_CHAR, &msg_v_users, 1, sizeof(char*));
-	put_lang_var("msg_h_errors", LANG_VAR_CHAR, &msg_h_errors, 1, sizeof(char*));
-	put_lang_var("msg_v_errors", LANG_VAR_CHAR, &msg_v_errors, 1, sizeof(char*));
-	put_lang_var("msg_h_downloads", LANG_VAR_CHAR, &msg_h_downloads, 1, sizeof(char*));
-	put_lang_var("msg_v_downloads", LANG_VAR_CHAR, &msg_v_downloads, 1, sizeof(char*));
-	put_lang_var("msg_ref_dreq", LANG_VAR_CHAR, &msg_ref_dreq, 1, sizeof(char*));
-	put_lang_var("msg_max_items", LANG_VAR_CHAR, &msg_max_items, 1, sizeof(char*));
+   put_lang_var("msg_top_top", LANG_VAR_CHAR, &msg_top_top, 1, sizeof(char*));
+   put_lang_var("msg_top_of", LANG_VAR_CHAR, &msg_top_of, 1, sizeof(char*));
+   put_lang_var("msg_top_s", LANG_VAR_CHAR, &msg_top_s, 1, sizeof(char*));
+   put_lang_var("msg_top_u", LANG_VAR_CHAR, &msg_top_u, 1, sizeof(char*));
+   put_lang_var("msg_top_r", LANG_VAR_CHAR, &msg_top_r, 1, sizeof(char*));
+   put_lang_var("msg_top_a", LANG_VAR_CHAR, &msg_top_a, 1, sizeof(char*));
+   put_lang_var("msg_top_c", LANG_VAR_CHAR, &msg_top_c, 1, sizeof(char*));
+   put_lang_var("msg_top_en", LANG_VAR_CHAR, &msg_top_en, 1, sizeof(char*));
+   put_lang_var("msg_top_ex", LANG_VAR_CHAR, &msg_top_ex, 1, sizeof(char*));
+   put_lang_var("msg_top_sr", LANG_VAR_CHAR, &msg_top_sr, 1, sizeof(char*));
+   put_lang_var("msg_top_i", LANG_VAR_CHAR, &msg_top_i, 1, sizeof(char*));
+   put_lang_var("msg_v_hosts", LANG_VAR_CHAR, &msg_v_hosts, 1, sizeof(char*));
+   put_lang_var("msg_v_urls", LANG_VAR_CHAR, &msg_v_urls, 1, sizeof(char*));
+   put_lang_var("msg_v_refs", LANG_VAR_CHAR, &msg_v_refs, 1, sizeof(char*));
+   put_lang_var("msg_v_agents", LANG_VAR_CHAR, &msg_v_agents, 1, sizeof(char*));
+   put_lang_var("msg_v_search", LANG_VAR_CHAR, &msg_v_search, 1, sizeof(char*));
+   put_lang_var("msg_v_users", LANG_VAR_CHAR, &msg_v_users, 1, sizeof(char*));
+   put_lang_var("msg_h_errors", LANG_VAR_CHAR, &msg_h_errors, 1, sizeof(char*));
+   put_lang_var("msg_v_errors", LANG_VAR_CHAR, &msg_v_errors, 1, sizeof(char*));
+   put_lang_var("msg_h_downloads", LANG_VAR_CHAR, &msg_h_downloads, 1, sizeof(char*));
+   put_lang_var("msg_v_downloads", LANG_VAR_CHAR, &msg_v_downloads, 1, sizeof(char*));
+   put_lang_var("msg_ref_dreq", LANG_VAR_CHAR, &msg_ref_dreq, 1, sizeof(char*));
+   put_lang_var("msg_max_items", LANG_VAR_CHAR, &msg_max_items, 1, sizeof(char*));
 
-	put_lang_var("msg_misc_pages", LANG_VAR_CHAR, &msg_misc_pages, 1, sizeof(char*));
-	put_lang_var("msg_misc_visitors", LANG_VAR_CHAR, &msg_misc_visitors, 1, sizeof(char*));
-	put_lang_var("msg_misc_robots", LANG_VAR_CHAR, &msg_misc_robots, 1, sizeof(char*));
+   put_lang_var("msg_misc_pages", LANG_VAR_CHAR, &msg_misc_pages, 1, sizeof(char*));
+   put_lang_var("msg_misc_visitors", LANG_VAR_CHAR, &msg_misc_visitors, 1, sizeof(char*));
+   put_lang_var("msg_misc_robots", LANG_VAR_CHAR, &msg_misc_robots, 1, sizeof(char*));
 
-	put_lang_var("s_month", LANG_VAR_CHARR, s_month, SMONTH_ARRAY_SIZE, sizeof(s_month[0]));
-	put_lang_var("l_month", LANG_VAR_CHARR, l_month, LMONTH_ARRAY_SIZE, sizeof(l_month[0]));
+   put_lang_var("s_month", LANG_VAR_CHARR, s_month, SMONTH_ARRAY_SIZE, sizeof(s_month[0]));
+   put_lang_var("l_month", LANG_VAR_CHARR, l_month, LMONTH_ARRAY_SIZE, sizeof(l_month[0]));
 
-	put_lang_var("response", LANG_VAR_RCARR, response, RESPCODE_ARRAY_SIZE, sizeof(response[0]));
+   put_lang_var("response", LANG_VAR_RCARR, response, RESPCODE_ARRAY_SIZE, sizeof(response[0]));
 
-	put_lang_var("msg_title", LANG_VAR_CHAR, &msg_title, 1, sizeof(char*));
-	put_lang_var("msg_h_other", LANG_VAR_CHAR, &msg_h_other, 1, sizeof(char*));
+   put_lang_var("msg_title", LANG_VAR_CHAR, &msg_title, 1, sizeof(char*));
+   put_lang_var("msg_h_other", LANG_VAR_CHAR, &msg_h_other, 1, sizeof(char*));
 
-	put_lang_var("ctry", LANG_VAR_CCARR, ctry, CCODE_ARRAY_SIZE, sizeof(ctry[0]));
+   put_lang_var("ctry", LANG_VAR_CCARR, ctry, CCODE_ARRAY_SIZE, sizeof(ctry[0]));
 
-	put_lang_var("msg_h_city", LANG_VAR_CHAR, &msg_h_city, 1, sizeof(char*));
+   put_lang_var("msg_h_city", LANG_VAR_CHAR, &msg_h_city, 1, sizeof(char*));
 }
 
 //
-//	See webalizer_lang.english for file format description
+//   See webalizer_lang.english for file format description
 //
 void lang_t::proc_lang_file(const char *fname, int verbose)
 {
-	u_char *name, *cptr, *cctld;
-	const lang_node_t *lnode;
-	int index;
-	bool endofinput, quoted;
+   u_char *name, *cptr, *cctld;
+   const lang_node_t *lnode;
+   int index;
+   bool endofinput, quoted;
    string_t str;
 
-	if(read_lang_file(fname, verbose) == false)
-		return;
+   if(read_lang_file(fname, verbose) == false)
+      return;
 
-	//
-	//	Initialize the language hash table
-	//
-	init_lang_htab();
-	
-	//
-	//	Parse the file content and re-assign existing language variables
-	//
-	cptr = lang_buffer;
+   //
+   //   Initialize the language hash table
+   //
+   init_lang_htab();
+   
+   //
+   //   Parse the file content and re-assign existing language variables
+   //
+   cptr = lang_buffer;
 
    //
    // Check for Unicode BOM sequences
@@ -1119,168 +1119,168 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
    }
    else if(cptr[0] == 0xFF && cptr[1] == 0xFE || cptr[0] == 0xFE && cptr[1] == 0xFF) {
       if(verbose)
-		   fprintf(stderr, "ERROR: Unicode language files must be stored in the UTF-8 format (%s)\n", fname);
+         fprintf(stderr, "ERROR: Unicode language files must be stored in the UTF-8 format (%s)\n", fname);
       return;
    }
 
-	while(*cptr) {
-		//
-		//	Skip comments, orphaned elements and empty lines
-		//
-		if(*cptr == '#') {
-			while(*cptr && !iseolchar(*cptr++));
-			continue;
-		}
+   while(*cptr) {
+      //
+      //   Skip comments, orphaned elements and empty lines
+      //
+      if(*cptr == '#') {
+         while(*cptr && !iseolchar(*cptr++));
+         continue;
+      }
 
-		if(*cptr == ' ' || *cptr == '\t') {							
-			while(*cptr && !iseolchar(*cptr++));
-			continue;
-		}
+      if(*cptr == ' ' || *cptr == '\t') {                     
+         while(*cptr && !iseolchar(*cptr++));
+         continue;
+      }
 
-		if(iseolchar(*cptr)) {
-			cptr++;
-			continue;
-		}
+      if(iseolchar(*cptr)) {
+         cptr++;
+         continue;
+      }
 
-		//
-		//	Extract the variable name and find its descriptor
-		//
-		name = cptr++;
-		while(*cptr && *cptr != ' ' && *cptr != '\t' && *cptr != '=') cptr++;
+      //
+      //   Extract the variable name and find its descriptor
+      //
+      name = cptr++;
+      while(*cptr && *cptr != ' ' && *cptr != '\t' && *cptr != '=') cptr++;
 
-		if(*cptr == 0) {
+      if(*cptr == 0) {
          if(verbose)
-			   fprintf(stderr, "The format of the language file is not valid (%s)\n", fname);
-			break;
-		}
+            fprintf(stderr, "The format of the language file is not valid (%s)\n", fname);
+         break;
+      }
 
-		*cptr++ = 0;
+      *cptr++ = 0;
 
-		if((lnode = ln_htab.find_lang_var(str.assign((const char*) name, cptr-name-1))) == NULL) {
-			while(!iseolchar(*cptr++));
+      if((lnode = ln_htab.find_lang_var(str.assign((const char*) name, cptr-name-1))) == NULL) {
+         while(!iseolchar(*cptr++));
          if(verbose)
-			   fprintf(stderr, "Unknown language variable (%s)\n", name);
-			continue;
-		}
+            fprintf(stderr, "Unknown language variable (%s)\n", name);
+         continue;
+      }
 
-		//
-		//	Skip to the first character of the value
-		//
-		while(*cptr == ' ' || *cptr == '\t' || *cptr == '=') cptr++;
+      //
+      //   Skip to the first character of the value
+      //
+      while(*cptr == ' ' || *cptr == '\t' || *cptr == '=') cptr++;
 
-		if(iseolchar(*cptr)) {
+      if(iseolchar(*cptr)) {
          if(verbose)
-			   fprintf(stderr, "Language variable (%s) is empty. The default value will be used.\n", name);
-			continue;
-		}
+            fprintf(stderr, "Language variable (%s) is empty. The default value will be used.\n", name);
+         continue;
+      }
 
-		//
-		//	Assign new values
-		//
-		switch(lnode->vartype) {
-			case LANG_VAR_CHAR:
-				*(u_char**)lnode->varptr = cptr;
-				while(!iseolchar(*cptr)) cptr++;
-				*cptr++ = 0;
-				break;
+      //
+      //   Assign new values
+      //
+      switch(lnode->vartype) {
+         case LANG_VAR_CHAR:
+            *(u_char**)lnode->varptr = cptr;
+            while(!iseolchar(*cptr)) cptr++;
+            *cptr++ = 0;
+            break;
 
-			case LANG_VAR_CHARR:
-			case LANG_VAR_RCARR:
-			case LANG_VAR_CCARR:
-				//
-				//	Loop through comma-separated array elements. The last element
-				// is the one that doesn't have a comma at the end of the line. 
-				// If element text contains commas, the entire element must be 
-				// enclosed in quotes. For example:
-				//
-				//		name = element, "elem-part, elem-part", element
-				//
-				endofinput = false;
-				cctld = NULL;
+         case LANG_VAR_CHARR:
+         case LANG_VAR_RCARR:
+         case LANG_VAR_CCARR:
+            //
+            //   Loop through comma-separated array elements. The last element
+            // is the one that doesn't have a comma at the end of the line. 
+            // If element text contains commas, the entire element must be 
+            // enclosed in quotes. For example:
+            //
+            //      name = element, "elem-part, elem-part", element
+            //
+            endofinput = false;
+            cctld = NULL;
 
-				for(index = 0; index < lnode->maxcount && !endofinput; index++) {
-					while(*cptr == ' ' || *cptr == '\t' || iseolchar(*cptr)) cptr++;
+            for(index = 0; index < lnode->maxcount && !endofinput; index++) {
+               while(*cptr == ' ' || *cptr == '\t' || iseolchar(*cptr)) cptr++;
 
-					if(*cptr == 0)
-						break;
+               if(*cptr == 0)
+                  break;
 
-					if((quoted = (*cptr == '"')))
-						cptr++;
+               if((quoted = (*cptr == '"')))
+                  cptr++;
 
-					//
-					// Interpret the input based on the variable type.
-					// 
-					if(lnode->vartype == LANG_VAR_CHARR)
-						((u_char**)lnode->varptr)[index] = cptr;
-					else if(lnode->vartype == LANG_VAR_RCARR) 
-						(((resp_code_t*) lnode->varptr)[index]).desc = (char*) cptr;
-					else if(lnode->vartype == LANG_VAR_CCARR) {
-						if(cctld == NULL) {
-							cctld = cptr;
-							index--;								// adjust index
-						}
-						else {
-							(((country_t*) lnode->varptr)[index]).ccode = (char*) cctld;
-							(((country_t*) lnode->varptr)[index]).desc = (char*) cptr;
-							cctld = NULL;
-						}
-					}
+               //
+               // Interpret the input based on the variable type.
+               // 
+               if(lnode->vartype == LANG_VAR_CHARR)
+                  ((u_char**)lnode->varptr)[index] = cptr;
+               else if(lnode->vartype == LANG_VAR_RCARR) 
+                  (((resp_code_t*) lnode->varptr)[index]).desc = (char*) cptr;
+               else if(lnode->vartype == LANG_VAR_CCARR) {
+                  if(cctld == NULL) {
+                     cctld = cptr;
+                     index--;                        // adjust index
+                  }
+                  else {
+                     (((country_t*) lnode->varptr)[index]).ccode = (char*) cctld;
+                     (((country_t*) lnode->varptr)[index]).desc = (char*) cptr;
+                     cctld = NULL;
+                  }
+               }
 
-					//
-					// Skip to the end of the element (ignore commas inside quotes)
-					//
-					while(*cptr && !iseolchar(*cptr) && (*cptr != ',' || quoted)) {
-						if(quoted && *cptr == '"') {
-							*cptr = 0;
-							quoted = false;
-						}
-						cptr++;
-					}
+               //
+               // Skip to the end of the element (ignore commas inside quotes)
+               //
+               while(*cptr && !iseolchar(*cptr) && (*cptr != ',' || quoted)) {
+                  if(quoted && *cptr == '"') {
+                     *cptr = 0;
+                     quoted = false;
+                  }
+                  cptr++;
+               }
 
-					if(*cptr == 0) {
-						endofinput = true;					// end of file
-						continue;
-					}
+               if(*cptr == 0) {
+                  endofinput = true;               // end of file
+                  continue;
+               }
 
-					if(iseolchar(*cptr)) {
-						endofinput = true;					// end of line
-						*cptr++ = 0;
-						continue;
-					}
+               if(iseolchar(*cptr)) {
+                  endofinput = true;               // end of line
+                  *cptr++ = 0;
+                  continue;
+               }
 
-					//
-					// Replace a comma with a zero terminator and skip to the next
-					// non-whitespace character. If there's an optional new line
-					// character, skip it too.
-					//
-					*cptr++ = 0;
-				}
+               //
+               // Replace a comma with a zero terminator and skip to the next
+               // non-whitespace character. If there's an optional new line
+               // character, skip it too.
+               //
+               *cptr++ = 0;
+            }
 
-				//
-				//	If the number of elements is less than the size of the destination 
-				// array, set the rest of the array to zeros.
-				//
-				if(index < lnode->maxcount)
-					memset(&lnode->varptr[index * lnode->elemsize], 0, lnode->elemsize * (lnode->maxcount - index));
+            //
+            //   If the number of elements is less than the size of the destination 
+            // array, set the rest of the array to zeros.
+            //
+            if(index < lnode->maxcount)
+               memset(&lnode->varptr[index * lnode->elemsize], 0, lnode->elemsize * (lnode->maxcount - index));
 
-				break;
+            break;
 
-			default:
-				break;
-		}
-	}
+         default:
+            break;
+      }
+   }
 
    lang_fname = fname;     // keep the name of the file for reference
 }
 
 void lang_t::cleanup_lang_data(void)
 {
-	ln_htab.clear();
+   ln_htab.clear();
 
-	if(lang_buffer) {
-		free(lang_buffer);
-		lang_buffer = NULL;
-	}
+   if(lang_buffer) {
+      free(lang_buffer);
+      lang_buffer = NULL;
+   }
 }
 
 void lang_t::put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize)

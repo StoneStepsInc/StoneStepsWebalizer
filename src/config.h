@@ -30,21 +30,21 @@
 #endif
 #endif
 
-#define DNS_CACHE_TTL     86400*30					// Default TTL of an entry in the DNS cache (in seconds)
+#define DNS_CACHE_TTL     86400*30                 // Default TTL of an entry in the DNS cache (in seconds)
 
-#define DNS_MAX_THREADS   100						   // Maximum number of DNS threads
+#define DNS_MAX_THREADS   100                      // Maximum number of DNS threads
 
-#define DB_DEF_CACHE_SIZE  ((uint32_t) 0)         // Default cache size (ignored)
-#define DB_MIN_CACHE_SIZE  ((uint32_t) 20 * 1024) // Minimum cache size (20K)
-#define DB_DEF_TRICKLE_RATE ((u_int) 5)         // Default database trickle rate
+#define DB_DEF_CACHE_SIZE  ((uint32_t) 0)          // Default cache size (ignored)
+#define DB_MIN_CACHE_SIZE  ((uint32_t) 20 * 1024)  // Minimum cache size (20K)
+#define DB_DEF_TRICKLE_RATE ((u_int) 5)            // Default database trickle rate
 
-#define FONT_SIZE_SMALL       8.                // points
-#define FONT_SIZE_MEDIUM      10.               // points
+#define FONT_SIZE_SMALL       8.                   // points
+#define FONT_SIZE_MEDIUM      10.                  // points
 
 /* Port numbers */
-#define PORT_UNKNOWN			   ((u_short) 0)
-#define DEF_HTTP_PORT	      ((u_short) 80)
-#define DEF_HTTPS_PORT	      ((u_short) 443)
+#define PORT_UNKNOWN             ((u_short) 0)
+#define DEF_HTTP_PORT            ((u_short) 80)
+#define DEF_HTTPS_PORT           ((u_short) 443)
 
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
 #define HALFBUFSIZE  (BUFSIZE >> 1)
@@ -75,7 +75,7 @@ class config_t {
       bool print_options;
       bool print_version;
       bool print_warranty;
-      bool time_me;                               // timing display flag      
+      bool time_me;                             // timing display flag      
 
       bool hide_robots;                          // hide robots?
       bool group_robots;                         // group robots?
@@ -97,7 +97,7 @@ class config_t {
 
       bool conv_url_lower_case;
       bool bundle_groups;
-      bool no_def_index_alias;				       // ignore default index alias? 
+      bool no_def_index_alias;                   // ignore default index alias? 
       bool html_meta_noindex;                    // add noindex, nofollow?      
       bool enable_phrase_values;
       bool upstream_traffic;
@@ -162,7 +162,7 @@ class config_t {
       bool page_entry;
 
       u_short  http_port;
-      u_short	https_port;
+      u_short   https_port;
 
       u_int mangle_agent;                        // mangle user agents       
       u_int group_domains;                       // Group domains 0=none     
@@ -221,7 +221,7 @@ class config_t {
       double font_size_small;
       double font_size_medium;
 
-      string_t apache_log_format;			       // is ApacheLogFormat valid?   
+      string_t apache_log_format;                // is ApacheLogFormat valid?   
       string_t font_file_normal;
       string_t font_file_bold;
 
@@ -252,7 +252,7 @@ class config_t {
       
       string_t dns_cache;                        // DNS cache file name      
       u_int dns_children;                        // # of DNS children        
-      u_int dns_cache_ttl;						       // Default TTL of a DNS cache entry 
+      u_int dns_cache_ttl;                       // Default TTL of a DNS cache entry 
 
       bool ignored_domain_names;                 // true if ignored hosts contain domain patterns
 

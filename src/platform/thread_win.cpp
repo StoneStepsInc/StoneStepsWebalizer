@@ -20,7 +20,7 @@ struct thread_handle_t {
 
 thread_t thread_create(start_routine_t start_routine, void *arg)
 {
-	unsigned int threadid;
+   unsigned int threadid;
    uintptr_t thread_handle;
    
    thread_handle = _beginthreadex(NULL, 0, start_routine, arg, 0, &threadid);
@@ -33,13 +33,13 @@ thread_t thread_create(start_routine_t start_routine, void *arg)
 
 void thread_destroy(thread_t thread)
 {
-	DWORD exitcode;
+   DWORD exitcode;
 
    if(thread) {
-	   if(!GetExitCodeThread(thread->thread_handle, &exitcode) && exitcode == STILL_ACTIVE)
-		   TerminateThread(thread->thread_handle, (DWORD) -1);
+      if(!GetExitCodeThread(thread->thread_handle, &exitcode) && exitcode == STILL_ACTIVE)
+         TerminateThread(thread->thread_handle, (DWORD) -1);
 
-	   CloseHandle(thread->thread_handle);
+      CloseHandle(thread->thread_handle);
 
       delete thread;
    }
@@ -57,5 +57,5 @@ uint64_t msecs(void)
 
 unsigned long thread_id(void)
 {
-	return (unsigned long) GetCurrentThreadId();
+   return (unsigned long) GetCurrentThreadId();
 }

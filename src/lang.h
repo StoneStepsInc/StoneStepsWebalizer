@@ -38,11 +38,11 @@ class lang_t {
       //
       // -----------------------------------------------------------------------
       struct lang_node_t : public htab_node_t<lang_node_t> {
-		      int                  vartype;
-		      string_t             varname;
-		      u_char	            *varptr;
-		      int		            maxcount;         // maximum array size (array types)
-		      size_t	            elemsize;         // size of a single element
+            int                  vartype;
+            string_t             varname;
+            u_char               *varptr;
+            int                  maxcount;         // maximum array size (array types)
+            size_t               elemsize;         // size of a single element
 
             public:
                lang_node_t(void);
