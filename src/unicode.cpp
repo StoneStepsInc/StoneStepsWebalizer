@@ -113,16 +113,16 @@ char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *
    return out;
 }
 
-const string_t& toutf8(const string_t& str, string_t& out)
+const string_t& cp1252utf8(const string_t& str, string_t& out)
 {
    extern const wchar_t CP1252_UCS2[];
 
    size_t osize = 0;
 
-   // return if the input string is empty or already contains only UTF-8 characters
-   if(str.isempty() || isutf8str(str)) {
+   // nothing to do if the input string is empty
+   if(str.isempty()) {
       out.reset();
-      return str;
+      return out;
    }
 
    // find out the size of the UTF-8 string

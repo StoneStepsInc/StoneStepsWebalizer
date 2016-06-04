@@ -144,22 +144,12 @@ bool isutf8str(const char *str);
 bool isutf8str(const char *str, size_t slen);
 
 //
-// Checks if str is a valid UTF-8 string and if not, assumes str to be a Windows 
-// 1252 string and converts it to a UTF-8 string. Returns out if conversion was
-// successful or NULL otherwise.
+// Converts Windows 1252 code page string to a UTF-8 string. Returns out if conversion
+// was successful or NULL otherwise. The third function always returns out, but clears
+// it if the conversion failed.
 //
 char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen = NULL);
 char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *olen = NULL);
-
-//
-// Checks if str is a valid UTF-8 string and if not, converts it to UTF-8. Returns 
-// a reference to str and clears out in the former case and a reference to out 
-// otherwise
-// 
-// Current implementation assumes Windows 1252 character set for all non-UTF-8 
-// strings. Additinoal source character set identifier may be added in the future 
-// as a parameter. 
-//
-const string_t& toutf8(const string_t& str, string_t& out);
+const string_t& cp1252utf8(const string_t& str, string_t& out);
 
 #endif // __UNICODE_H
