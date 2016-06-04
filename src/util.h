@@ -169,7 +169,6 @@ uint64_t str2ul(const char *str, const char **eptr = NULL, size_t len = ~0);
 int64_t str2l(const char *str, const char **eptr = NULL, size_t len = ~0);
 
 string_t cur_time(bool local_time);
-void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzname);
 
 uint64_t ctry_idx(const char *);
 string_t idx_ctry(uint64_t idx);

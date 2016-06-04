@@ -574,81 +574,24 @@ int64_t str2l(const char *str, const char **eptr, size_t len)
 
 string_t cur_time(bool local_time)
 {
+   size_t slen;
+   wchar_t wctstamp[256];
    char    timestamp[256];
    time_t  now;
 
    /* get system time */
    now = time(NULL);
    
-   /* convert to timestamp string (compatibility mode) */
+   // format time stamp for the current locale
    if (local_time)
-      strftime(timestamp,sizeof(timestamp),"%d-%b-%Y %H:%M %Z", localtime(&now));
+      slen = wcsftime(wctstamp, sizeof(wctstamp)/sizeof(wchar_t), L"%d-%b-%Y %H:%M %Z", localtime(&now));
    else
-      strftime(timestamp,sizeof(timestamp),"%d-%b-%Y %H:%M GMT", gmtime(&now));
-      
-   return string_t(timestamp);
-}
-
-void cur_time_ex(bool local_time, string_t& date, string_t& time, string_t *tzname)
-{
-   const struct tm *tmp;
-   char timestamp[256];
-   wchar_t wctstamp[256];
-   tstamp_t local, utc;
-   int offset, offshrs, offsmin;
-   time_t  now;
-   size_t slen;
-
-   if(tzname)
-      tzname->clear();
-
-   /* get system time */
-   now = ::time(NULL);
+      slen = wcsftime(wctstamp, sizeof(wctstamp)/sizeof(wchar_t), L"%d-%b-%Y %H:%M UTC", gmtime(&now));
    
-   // initialize the UTC time stamp first
-   utc.reset(now);
+   // convert the wide-character string to UTF-8
+   slen = ucs2utf8(wctstamp, slen, timestamp, sizeof(timestamp));
 
-   // if UTC time requested, print it out and return
-   if(!local_time) {
-      slen = snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d", utc.year, utc.month, utc.day);
-      date.assign(timestamp, slen);
-      
-      slen = snprintf(timestamp, sizeof(timestamp), "%02d:%02d:%02d", utc.hour, utc.min, utc.sec);
-      time.assign(timestamp, slen);
-      
-      return;
-   }
-   
-   *timestamp = 0;
-   
-   // obtain a pointer to the tm structure populated using local time
-   if((tmp = localtime(&now)) != NULL) {
-
-      // get the name of the time zone, if requested
-      if(tzname) {
-         // obtain the name in UCS-2 and convert it to UTF-8
-         slen = wcsftime(wctstamp, sizeof(wctstamp)/sizeof(wchar_t), L"%Z", tmp);
-         slen = ucs2utf8(wctstamp, slen, timestamp, sizeof(timestamp));
-         tzname->assign(timestamp, slen);
-      }
-
-      local.reset(tmp->tm_year+1900, tmp->tm_mon+1, tmp->tm_mday, tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
-      
-      // subtract UTC time from local time
-      offset = (int) (local.mktime() - utc.mktime());
-      
-      // compute hour and minute offset values
-      offshrs = abs(offset) / 3600;
-      offsmin = (abs(offset) / 60) % 60;
-      
-      // print the date
-      slen = snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d", local.year, local.month, local.day);
-      date.assign(timestamp, slen);
-
-      // and the time with UTC offset (by convention, -00:00 represents unknown offset, RFC-3339)
-      slen = snprintf(timestamp, sizeof(timestamp), "%02d:%02d:%02d%c%02d:%02d", local.hour, local.min, local.sec, (offset>=0)?'+':'-', offshrs, offsmin);
-      time.assign(timestamp, slen);
-   }
+   return string_t(timestamp, slen);
 }
 
 /*********************************************/
