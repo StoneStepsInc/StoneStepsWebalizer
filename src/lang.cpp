@@ -655,7 +655,7 @@ lang_t::lang_t(void)
    msg_h_files = "Files";
    msg_h_hosts = "Hosts";
    msg_h_chosts= "Converted Hosts";
-   msg_h_xfer  = "KBytes";
+   msg_h_xfer  = "Transfer";
    msg_h_avgtime = "AvgTime";
    msg_h_maxtime = "MaxTime";
    msg_h_hname = "Hostname";
@@ -699,7 +699,7 @@ lang_t::lang_t(void)
    msg_mtot_tf = "Total Files";
    msg_mtot_tp = "Total Pages";
    msg_mtot_tv = "Total Visits";
-   msg_mtot_tx = "Total KBytes";
+   msg_mtot_tx = "Total Transfer";
    msg_mtot_us = "Total Unique Hosts";
    msg_mtot_ur = "Total Unique Referrers";
    msg_mtot_ua = "Total Unique User Agents";
@@ -710,7 +710,7 @@ lang_t::lang_t(void)
    msg_mtot_mfd= "Files per Day";
    msg_mtot_mpd= "Pages per Day";
    msg_mtot_mvd= "Visits per Day";
-   msg_mtot_mkd= "KBytes per Day";
+   msg_mtot_mkd= "Transfer per Day";
    msg_mtot_rc = "Hits by Response Code";
    msg_mtot_sph = "Seconds per Hit";
    msg_mtot_spf = "Seconds per File";
@@ -719,7 +719,7 @@ lang_t::lang_t(void)
    msg_mtot_mfv = "Files per Visit";
    msg_mtot_mpv = "Pages per Visit";
    msg_mtot_mdv = "Visit Duration";
-   msg_mtot_mkv = "KBytes per Visit";
+   msg_mtot_mkv = "Transfer per Visit";
    msg_mtot_dl = "Total Downloads";
    msg_mtot_tcv = "Total Converted Visits";
    msg_mtot_tch = "Total Converted Hosts";
