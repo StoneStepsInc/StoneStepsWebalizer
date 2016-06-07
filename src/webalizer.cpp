@@ -443,6 +443,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 
       ccptr->count += vnode.hits;
       ccptr->files += vnode.files;
+      ccptr->pages += vnode.pages;
       ccptr->xfer += vnode.xfer;
       ccptr->visits++;
    }

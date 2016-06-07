@@ -252,9 +252,9 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("   renderHourlyUsageChart(hourly_usage_chart);\n\n", out_fp);
 
    //
-   // Country usage chart
+   // Country usage chart (v2 added a column for page counts)
    //
-   fputs("   var country_usage_chart = new CountryUsageChart(1, config, {\n", out_fp);
+   fputs("   var country_usage_chart = new CountryUsageChart(2, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -2960,10 +2960,11 @@ void html_output_t::top_ctry_table()
    /* Now do the table */
    fputs("<table id=\"country_usage_table\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"10\">%s %u %s %d %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %d %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_ctry);
@@ -2978,6 +2979,8 @@ void html_output_t::top_ctry_table()
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%" PRIu64 "</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
+              "<td>%" PRIu64 "</td>\n" \
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%.0f</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%" PRIu64 "</td>\n" \
@@ -2987,6 +2990,8 @@ void html_output_t::top_ctry_table()
               (t_hit==0)?0:((double)ccarray[i]->count/t_hit)*100.0,
               ccarray[i]->files,
               (t_file==0)?0:((double)ccarray[i]->files/t_file)*100.0,
+              ccarray[i]->pages,
+              (t_page==0)?0:((double)ccarray[i]->pages/t_page)*100.0,
               ccarray[i]->xfer/1024.,
               (t_xfer==0)?0:(ccarray[i]->xfer/t_xfer)*100.0,
               ccarray[i]->visits,

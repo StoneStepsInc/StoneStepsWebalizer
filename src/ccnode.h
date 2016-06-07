@@ -29,6 +29,7 @@ struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, publ
    string_t    cdesc;                  // country name
    uint64_t    count;                  // request count
    uint64_t    files;                  // files requested
+   uint64_t    pages;                  // pages requested
    uint64_t    visits;                 // visits started
    uint64_t    xfer;                   // transfer amount in bytes
 

@@ -15,7 +15,7 @@
 
 ccnode_t::ccnode_t(void) : htab_node_t<ccnode_t>(), keynode_t<uint64_t>(0)
 {
-   count = files = visits = 0; 
+   count = files = visits = pages = 0; 
    xfer = 0;
 }
 
@@ -25,6 +25,7 @@ ccnode_t::ccnode_t(const char *cc, const char *desc) : htab_node_t<ccnode_t>(), 
    cdesc = desc; 
    count = 0; 
    files = 0; 
+   pages = 0; 
    visits = 0;
    xfer = 0;
 }
@@ -33,6 +34,7 @@ void ccnode_t::update(const ccnode_t& ccnode)
 {
    count = ccnode.count; 
    files = ccnode.files; 
+   pages = ccnode.pages; 
    visits = ccnode.visits;
    xfer = ccnode.xfer;
 }
@@ -46,6 +48,7 @@ size_t ccnode_t::s_data_size(void) const
    return datanode_t<ccnode_t>::s_data_size() + 
             sizeof(uint64_t) * 3 +     // count, files, visits
             sizeof(uint64_t) +         // xfer 
+            sizeof(uint64_t) +         // pages
             s_size_of(ccode);
 }
 
@@ -67,7 +70,8 @@ size_t ccnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, files);
    ptr = serialize(ptr, xfer);
    ptr = serialize(ptr, visits);
-         serialize(ptr, ccode);
+   ptr = serialize(ptr, ccode);
+         serialize(ptr, pages);
 
    return datasize;
 }
@@ -95,10 +99,15 @@ size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = deserialize(ptr, visits);
    
    if(version >= 2)
-      deserialize(ptr, ccode);
+      ptr = deserialize(ptr, ccode);
    else
       ccode = idx_ctry(nodeid);
    
+   if(version >= 3)
+      deserialize(ptr, pages);
+   else
+      pages = 0;
+
    if(upcb)
       upcb(*this, arg);
 
@@ -115,7 +124,14 @@ size_t ccnode_t::s_data_size(const void *buffer)
    if(version < 2)
       return datasize;
 
-   return datasize + s_size_of<string_t>((u_char*) buffer + datasize);  // country code
+   datasize += s_size_of<string_t>((u_char*) buffer + datasize);  // country code
+
+   if(version < 3)
+      return datasize;
+
+   datasize += sizeof(uint64_t);       // pages
+
+   return datasize;
 }
 
 //

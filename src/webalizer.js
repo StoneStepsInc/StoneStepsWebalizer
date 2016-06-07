@@ -709,9 +709,15 @@ function getCountryUsageData(version, total_visits)
    var usage = {countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0};
    var visits = 0, disp_visits = 0;
    var percent;
+   var layout;
+   var layouts = [{columns: 10, i_visits: 7, i_country: 9},
+                  {columns: 12, i_visits: 9, i_country: 11}];
 
-   if(version != 1)
+   // make sure we have a table layout for this version
+   if(version < 1 || version > layouts.length)
       return usage;
+
+   layout = layouts[version-1];
 
    rows = getTableDataRows("country_usage_table");
 
@@ -728,10 +734,11 @@ function getCountryUsageData(version, total_visits)
    for(var i = 0; i < Math.min(rows.length, 10); i++) {
       var cells = rows[i].cells;
 
-      if(!cells || cells.length != 10)
+      // check that the total number of columns is right for this layout
+      if(!cells || cells.length != layout.columns)
          return usage;
 
-      visits = parseInt(cells.item(7).firstChild.data);
+      visits = parseInt(cells.item(layout.i_visits).firstChild.data);
 
       // update the total number of visits for displayed countries
       disp_visits += visits;
@@ -740,7 +747,7 @@ function getCountryUsageData(version, total_visits)
       percent = ((visits * 100) / total_visits).toFixed(1) + "%";
 
       usage.visits.push(visits);
-      usage.countries.push(cells.item(9).firstChild.data);
+      usage.countries.push(cells.item(layout.i_country).firstChild.data);
       usage.percent.push(percent);
    }
 
