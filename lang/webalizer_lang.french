@@ -374,7 +374,7 @@ msg_max_items = Le nombre maximum d'éléments est affiché
 
 msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
 
-#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+#/* short month names MUST BE 3 CHARS in size...*/
 s_month=  Jan, Fev, Mar,
                     Avr, Mai, Jun,
                     Jul, Aou, Sep,

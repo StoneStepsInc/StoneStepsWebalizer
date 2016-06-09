@@ -368,7 +368,7 @@ msg_misc_pages = Seiten - Dokument-Abfragen (z.B. html, asp, txt); Dateien - erf
 msg_misc_visitors = Besucher werden anhand der IP-Adressen identifiziert. Wenn zwei oder mehr Besucher sich die gleiche Adresse teilen (z.B. durch Firmen-Firewall), werden sie als ein Besucher gezählt.
 msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
 
-# /* short month names MUST BE 3 CHARS in size... pad if needed*/
+# /* short month names MUST BE 3 CHARS in size...*/
 # /* Keine Umlaute, gd 1.3 kann sie nicht darstellen */
 s_month = Jan, Feb, Mar,
           Apr, Mai, Jun,

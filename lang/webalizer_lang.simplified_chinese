@@ -335,7 +335,7 @@ msg_max_items = Maximum number of items is displayed
 
 msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
 
-#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+#/* short month names MUST BE 3 CHARS in size...*/
 s_month=  一月, 二月, 三月,
                     四月, 五月, 六月,
                     七月, 八月, 九月,

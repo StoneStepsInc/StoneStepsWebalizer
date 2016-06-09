@@ -354,7 +354,7 @@ msg_misc_pages = Sider: dokument forespørsler (f.eks. html, asp, txt).  Filer: 
 msg_misc_visitors = Besøkende blir identifisert av IP-adresser.  To eller flere besøkende som deler samme IP-adresse (f.eks. bak en brannmur) vil bli talt som en enkelt besøkende.
 msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
 
-#/* short month names MUST BE 3 CHARS in size... pad if needed*/
+#/* short month names MUST BE 3 CHARS in size...*/
 s_month=  Jan, Feb, Mar,
                     Apr, Mai, Jun,
                     Jul, Aug, Sep,

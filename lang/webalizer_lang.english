@@ -420,7 +420,7 @@ msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitor
 msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
 
 #
-# short month names MUST BE 3 CHARS in size... pad if needed
+# short month names MUST BE 3 CHARS in size...
 #
 s_month = Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
 
