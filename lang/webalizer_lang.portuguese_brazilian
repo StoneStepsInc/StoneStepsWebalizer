@@ -338,6 +338,8 @@ msg_v_downloads = Ver todos Downloads
 msg_ref_dreq = - (Direct Request)
 msg_max_items = Maximum number of items is displayed
 
+msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
+
 #/* short month names MUST BE 3 CHARS in size... pad if needed*/
 s_month=  Jan, Fev, Mar,
                     Abr, Mai, Jun,

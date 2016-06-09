@@ -359,6 +359,8 @@ msg_v_downloads = Zeige alle Downloads
 msg_ref_dreq = - (Direkte Anfrage)
 msg_max_items = Maximum number of items is displayed
 
+msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
+
 #
 # Miscellaneous
 #
