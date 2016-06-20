@@ -89,7 +89,8 @@ class lang_t {
       static const char *s_month[12];
       static const char *l_month[12];
 
-      static const char *msg_xfer_sfx[];
+      static const char *msg_unit_pfx[7];
+      const char *msg_xfer_unit;
 
       static resp_code_t response[];
 

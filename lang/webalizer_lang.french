@@ -372,7 +372,8 @@ msg_v_downloads = Voir tous les Téléchargements
 msg_ref_dreq = - (Requêtes directes)
 msg_max_items = Le nombre maximum d'éléments est affiché
 
-msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
+msg_unit_pfx = K, M, G, T, P, E, Z
+msg_xfer_unit = B
 
 #/* short month names MUST BE 3 CHARS in size...*/
 s_month=  Jan, Fev, Mar,

@@ -127,9 +127,9 @@ const char *lang_t::l_month[12]={ "January",  "February", "March",   "April",
 
 #define LMONTH_ARRAY_SIZE sizeof(l_month)/sizeof(l_month[0])
 
-const char *lang_t::msg_xfer_sfx[] = {"KB", "MB", "GB", "TB", "PB", "EB", "ZB"};
+const char *lang_t::msg_unit_pfx[] = {"K", "M", "G", "T", "P", "E", "Z"};
 
-#define XFER_SFX_ARRAY_SIZE sizeof(msg_xfer_sfx)/sizeof(msg_xfer_sfx[0])
+#define UNIT_PREFIX_ARRAY_SIZE sizeof(msg_unit_pfx)/sizeof(msg_unit_pfx[0])
 
 /* response code descriptions... order IS important!      */
 lang_t::resp_code_t lang_t::response[] =
@@ -775,6 +775,8 @@ lang_t::lang_t(void)
    msg_ref_dreq = "- (Direct Request)";
    msg_max_items = "Maximum number of items is displayed";
 
+   msg_xfer_unit = "B";
+
    msg_title   = "Usage Statistics for";
    msg_h_other = "Other";
 
@@ -1081,8 +1083,9 @@ void lang_t::init_lang_htab(void)
    put_lang_var("s_month", LANG_VAR_CHARR, s_month, SMONTH_ARRAY_SIZE, sizeof(s_month[0]));
    put_lang_var("l_month", LANG_VAR_CHARR, l_month, LMONTH_ARRAY_SIZE, sizeof(l_month[0]));
 
-   put_lang_var("msg_xfer_sfx", LANG_VAR_CHARR, msg_xfer_sfx, XFER_SFX_ARRAY_SIZE, sizeof(msg_xfer_sfx[0]));
- 
+   put_lang_var("msg_unit_pfx", LANG_VAR_CHARR, msg_unit_pfx, UNIT_PREFIX_ARRAY_SIZE, sizeof(msg_unit_pfx[0]));
+   put_lang_var("msg_xfer_unit", LANG_VAR_CHAR, &msg_xfer_unit, 1, sizeof(char*));
+
    put_lang_var("response", LANG_VAR_RCARR, response, RESPCODE_ARRAY_SIZE, sizeof(response[0]));
 
    put_lang_var("msg_title", LANG_VAR_CHAR, &msg_title, 1, sizeof(char*));

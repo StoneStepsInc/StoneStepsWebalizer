@@ -410,7 +410,8 @@ msg_v_downloads = View All Downloads
 msg_ref_dreq = - (Direct Request)
 msg_max_items = Maximum number of items is displayed
 
-msg_xfer_sfx = KB, MB, GB, TB, PB, EB, ZB
+msg_unit_pfx = K, M, G, T, P, E, Z
+msg_xfer_unit = B
 
 #
 # Miscellaneous
