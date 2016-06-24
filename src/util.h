@@ -184,6 +184,8 @@ bool is_ip4_address(const char *str);
 
 uint64_t elapsed(uint64_t stime, uint64_t etime);
 
+char *fmt_hr_num(uint64_t num, char *buffer, size_t& slen, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal);
+
 bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas);
 
 template <typename char_t>

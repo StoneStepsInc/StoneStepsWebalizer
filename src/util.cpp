@@ -22,10 +22,11 @@
 
 #include "util.h"
 
-#include <cstddef>
-
 #include "unicode.h"
 #include "tstamp.h"
+
+#include <cstddef>
+#include <memory>
 
 static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 
@@ -795,6 +796,63 @@ bool is_ip4_address(const char *cp)
 uint64_t elapsed(uint64_t stime, uint64_t etime)
 {
    return stime < etime ? etime-stime : (~stime+1)+etime;
+}
+
+//
+// Formats the specified number in a human-readable form, such as 12.3 MB, and sets
+// slen to the number of characters in the output buffer. 
+// 
+// The value of decimal indicates whether the number should be formatted in multiples 
+// of 1000 or 1024.
+//
+// The unit prefix array must contain enough elements to format the largest 64-bit
+// value, which is 18446744073709551615.
+//
+// The buffer must have sufficient room for the largest formatted number, which is
+// 999.8 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
+// prefix and the unit strings.
+//
+char *fmt_hr_num(uint64_t num, char *buffer, size_t& slen, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal)
+{
+   uint64_t kbyte = decimal ? 1000 : 1024;
+   unsigned int prefix = 0;
+   double result = (double) num;
+
+   // if the number is less than one kilobyte, just print the number
+   if(num < kbyte) {
+      slen = sprintf(buffer, "%" PRIu64, num);
+      return buffer;
+   }
+
+   // otherwise divide by a kilobyte in a loop to figure out the unit prefix
+   do {
+      result /= kbyte;
+      prefix++;
+   } while (result >= kbyte);
+
+   // print round numbers as integers and otherwise with one digit of precision
+   if((uint64_t) ((result * 10.) + .5) % 10 == 0)
+      slen = sprintf(buffer, "%" PRIu64, (uint64_t) result);
+   else
+      slen = sprintf(buffer, "%.1lf", result);
+
+   // add the separator between the number and the suffix
+   if(sep && *sep) {
+      strcpy(buffer + slen, sep);
+      slen += strlen(buffer + slen);
+   }
+
+   // add the unit prefix itself
+   strcpy(buffer + slen, msg_unit_pfx[prefix-1]);
+   slen += strlen(buffer + slen);
+
+   // and a unit, if there is one
+   if(unit && *unit) {
+      strcpy(buffer + slen, unit);
+      slen += strlen(buffer + slen);
+   }
+
+   return buffer;
 }
 
 //
