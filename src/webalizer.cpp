@@ -63,6 +63,7 @@
 
 #include <list>
 #include <memory>
+#include <exception>
 
 //
 //
@@ -2943,15 +2944,19 @@ int main(int argc, char *argv[])
 
          return retcode;
       }
-      catch(os_ex_t& err) {
+      catch (const std::exception &err) {
+         if(config.verbose)
+            fprintf(stderr, "%s\n", err.what());
+      }
+      catch(const os_ex_t& err) {
          if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
        }
-      catch (DbException &err) {
+      catch (const DbException &err) {
          if(config.verbose)
             fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
       }
-      catch (exception_t &err) {
+      catch (const exception_t &err) {
          if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
       }
@@ -2963,15 +2968,19 @@ int main(int argc, char *argv[])
 
       logproc.cleanup();
    }
-   catch(os_ex_t& err) {
+   catch (const std::exception &err) {
+      if(config.verbose)
+         fprintf(stderr, "%s\n", err.what());
+   }
+   catch(const os_ex_t& err) {
       if(config.verbose)
          fprintf(stderr, "%s\n", err.desc().c_str());
    }
-   catch (DbException &err) {
+   catch (const DbException &err) {
       if(config.verbose)
          fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
    }
-   catch (exception_t &err) {
+   catch (const exception_t &err) {
       if(config.verbose)
          fprintf(stderr, "%s\n", err.desc().c_str());
    }
