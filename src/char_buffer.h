@@ -84,6 +84,8 @@ class char_buffer_base {
 
       bool isempty(void) const {return bufsize == 0;}
 
+      bool isnull(void) const {return buffer == NULL;}
+
       //
       // Buffer memory management functions
       //
