@@ -24,6 +24,7 @@
 
 #include "unicode.h"
 #include "tstamp.h"
+#include "exception.h"
 
 #include <cstddef>
 #include <memory>
@@ -799,29 +800,37 @@ uint64_t elapsed(uint64_t stime, uint64_t etime)
 }
 
 //
-// Formats the specified number in a human-readable form, such as 12.3 MB, and sets
-// slen to the number of characters in the output buffer. 
+// Formats the specified number in a human-readable form, such as 12.3 MB, within the
+// output buffer and returns the number of characters in the buffer, including the 
+// null character. The function throws an exception if the output buffer is too small.
 // 
 // The value of decimal indicates whether the number should be formatted in multiples 
 // of 1000 or 1024.
 //
-// The unit prefix array must contain enough elements to format the largest 64-bit
-// value, which is 18446744073709551615.
+// The unit prefix array must contain enough elements to format the largest unsigned 
+// 64-bit value, which is 18446744073709551615.
 //
 // The buffer must have sufficient room for the largest formatted number, which is
-// 999.8 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
+// 999.9 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
 // prefix and the unit strings.
 //
-char *fmt_hr_num(uint64_t num, char *buffer, size_t& slen, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal)
+size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal)
 {
    uint64_t kbyte = decimal ? 1000 : 1024;
    unsigned int prefix = 0;
    double result = (double) num;
+   size_t olen, slen;
+   static const char *small_buffer = "Cannot format a human-readabale number because the output buffer is too small";
 
    // if the number is less than one kilobyte, just print the number
    if(num < kbyte) {
-      slen = sprintf(buffer, "%" PRIu64, num);
-      return buffer;
+      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, num);
+
+      // make sure the string fits in the buffer
+      if(olen >= buffer.capacity())
+         throw exception_t(0, small_buffer);
+
+      return olen + 1;
    }
 
    // otherwise divide by a kilobyte in a loop to figure out the unit prefix
@@ -832,27 +841,41 @@ char *fmt_hr_num(uint64_t num, char *buffer, size_t& slen, const char *sep, cons
 
    // print round numbers as integers and otherwise with one digit of precision
    if((uint64_t) ((result * 10.) + .5) % 10 == 0)
-      slen = sprintf(buffer, "%" PRIu64, (uint64_t) result);
+      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, (uint64_t) result);
    else
-      slen = sprintf(buffer, "%.1lf", result);
+      olen = snprintf(buffer, buffer.capacity(), "%.1lf", result);
+
+   // make sure the string fits in the buffer
+   if(olen >= buffer.capacity())
+      throw exception_t(0, small_buffer);
 
    // add the separator between the number and the suffix
    if(sep && *sep) {
-      strcpy(buffer + slen, sep);
-      slen += strlen(buffer + slen);
+      if((slen = strlen(sep)) >= buffer.capacity() - olen)
+         throw exception_t(0, small_buffer);
+
+      strcpy(buffer + olen, sep);
+      olen += slen;
    }
 
-   // add the unit prefix itself
-   strcpy(buffer + slen, msg_unit_pfx[prefix-1]);
-   slen += strlen(buffer + slen);
+   if((slen = strlen(msg_unit_pfx[prefix-1])) >= buffer.capacity() - olen)
+      throw exception_t(0, small_buffer);
+
+   // add the selected unit prefix
+   strcpy(buffer + olen, msg_unit_pfx[prefix-1]);
+   olen += slen;
 
    // and a unit, if there is one
    if(unit && *unit) {
-      strcpy(buffer + slen, unit);
-      slen += strlen(buffer + slen);
+      if((slen = strlen(unit)) >= buffer.capacity() - olen)
+         throw exception_t(0, small_buffer);
+
+      strcpy(buffer + olen, unit);
+      olen += slen;
    }
 
-   return buffer;
+   // account for the null character in the final length
+   return olen + 1;
 }
 
 //
