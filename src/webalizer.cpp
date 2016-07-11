@@ -2944,10 +2944,6 @@ int main(int argc, char *argv[])
 
          return retcode;
       }
-      catch (const std::exception &err) {
-         if(config.verbose)
-            fprintf(stderr, "%s\n", err.what());
-      }
       catch(const os_ex_t& err) {
          if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
@@ -2960,6 +2956,10 @@ int main(int argc, char *argv[])
          if(config.verbose)
             fprintf(stderr, "%s\n", err.desc().c_str());
       }
+      catch (const std::exception &err) {
+         if(config.verbose)
+            fprintf(stderr, "%s\n", err.what());
+      }
 
       //
       // If an exception was caught, try to clean up the log processor. If
@@ -2967,10 +2967,6 @@ int main(int argc, char *argv[])
       //
 
       logproc.cleanup();
-   }
-   catch (const std::exception &err) {
-      if(config.verbose)
-         fprintf(stderr, "%s\n", err.what());
    }
    catch(const os_ex_t& err) {
       if(config.verbose)
@@ -2983,6 +2979,10 @@ int main(int argc, char *argv[])
    catch (const exception_t &err) {
       if(config.verbose)
          fprintf(stderr, "%s\n", err.desc().c_str());
+   }
+   catch (const std::exception &err) {
+      if(config.verbose)
+         fprintf(stderr, "%s\n", err.what());
    }
 
    return -1;
