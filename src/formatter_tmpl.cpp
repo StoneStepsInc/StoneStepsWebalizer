@@ -14,9 +14,9 @@ formatter.cpp
 #include "util.h"
 
 #include <cstddef>
+#include <utility>
 
-template <typename ... format_params_t>
-buffer_formatter_t<format_params_t ...>::buffer_formatter_t(char *buffer, size_t bufsize, mode_t mode) : 
+buffer_formatter_t::buffer_formatter_t(char *buffer, size_t bufsize, mode_t mode) : 
    buffer(buffer), 
    bufsize(bufsize), 
    cptr(buffer), 
@@ -24,8 +24,7 @@ buffer_formatter_t<format_params_t ...>::buffer_formatter_t(char *buffer, size_t
 {
 }
 
-template <typename ... format_params_t>
-void buffer_formatter_t<format_params_t ...>::pop_scope(size_t scopeid)
+void buffer_formatter_t::pop_scope(size_t scopeid)
 {
    // make sure scopes are being destroyed in the proper order
    if(scopeid != scopes.size())
@@ -38,8 +37,7 @@ void buffer_formatter_t<format_params_t ...>::pop_scope(size_t scopeid)
    scopes.pop();
 }
 
-template <typename ... format_params_t>
-typename buffer_formatter_t<format_params_t ...>::scope_t buffer_formatter_t<format_params_t ...>::set_scope_mode(mode_t newmode)
+buffer_formatter_t::scope_t buffer_formatter_t::set_scope_mode(mode_t newmode)
 {
    // push the current formatter state onto the stack
    scopes.emplace(cptr, mode);
@@ -50,8 +48,8 @@ typename buffer_formatter_t<format_params_t ...>::scope_t buffer_formatter_t<for
    return scope_t(*this, scopes.size()); 
 }
 
-template <typename ... format_params_t>
-string_t::char_buffer_t buffer_formatter_t<format_params_t ...>::format(format_cb_t formatcb, format_params_t ... args)
+template <typename format_cb_t, typename ... format_param_t>
+string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, format_param_t&& ... arg)
 {
    size_t avsize, olen;
    string_t::char_buffer_t outbuf;
@@ -67,7 +65,7 @@ string_t::char_buffer_t buffer_formatter_t<format_params_t ...>::format(format_c
    string_t::char_buffer_t inbuf(cptr, avsize, true);
 
    // format the string in the available buffer space
-   olen = formatcb(inbuf, args ...);
+   olen = formatcb(inbuf, arg ...);
 
    // initialize in the output buffer as a holder buffer pointing to the formatted string
    outbuf.attach(cptr, olen, true);
@@ -79,13 +77,13 @@ string_t::char_buffer_t buffer_formatter_t<format_params_t ...>::format(format_c
    return outbuf;
 }
 
-template <typename ... format_params_t>
-const char *buffer_formatter_t<format_params_t ...>::operator () (format_cb_t formatcb, format_params_t ... args)
+template <typename format_cb_t, typename ... format_param_t>
+const char *buffer_formatter_t::operator () (format_cb_t&& formatcb, format_param_t&& ... arg)
 {
    //
    // format always returns a holder buffer, which is not affected by the buffer 
    // object's destructor, so we can just return the buffer pointer without 
    // detaching the underlying block of memory
    //
-   return format(formatcb, args ...).get_buffer();
+   return format(std::forward<format_cb_t>(formatcb), std::forward<format_param_t>(arg) ...).get_buffer();
 }
