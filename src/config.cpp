@@ -178,6 +178,9 @@ config_t::config_t(void)
    target_downloads = true;
    page_entry = true;
    
+   decimal_kbytes = false;
+   classic_kbytes = false;
+
    accept_host_names = false;
 
    // do not use the local machine's UTC offset by default
@@ -642,7 +645,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 189; empty slots: 172, 184, 185 
+                     // max key: 189; empty slots: 185 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -658,6 +661,7 @@ void config_t::get_config(const char *fname)
                      {"Batch",               156},          // Batch processing?
                      {"BatchProcessing",     156},          // Batch processing?
                      {"BundleGroups",        91},           // Bundle groups together?
+                     {"ClassicKBytes",       184},          // Output classic transfer amounts (xfer/1024)
                      {"ConvURLsLowerCase",   89},           // Convert URL's to lower case
                      {"CountryGraph",        54},           // Display ctry graph (0=no)
                      {"DailyGraph",          86},           // Daily Graph (0=no)
@@ -671,6 +675,7 @@ void config_t::get_config(const char *fname)
                      {"DbSeqCacheSize",      149},          // Database sequence cache size
                      {"DbTrickleRate",       150},          // Database trickle rate
                      {"Debug",               8},            // Produce debug information
+                     {"DecimalKBytes",       172},          // Use 1000, not 1024 as a transfer multiplier
                      {"DNSCache",            84},           // DNS Cache file name
                      {"DNSCacheTTL",         93},           // TTL of a DNS cache entry (days)
                      {"DNSChildren",         85},           // DNS Children (0=no DNS)
@@ -1077,6 +1082,7 @@ void config_t::get_config(const char *fname)
          case 169: target_downloads = (tolower(value[0]) == 'y'); break;
          case 170: page_entry = (tolower(value[0]) == 'y'); break;
          case 171: add_output_format(value.tolower()); break;
+         case 172: decimal_kbytes = (tolower(value[0]) == 'y'); break;
          case 173: max_hosts=str2ul(value); break;
          case 174: max_urls=str2ul(value); break;
          case 175: max_refs=str2ul(value); break;
@@ -1088,6 +1094,7 @@ void config_t::get_config(const char *fname)
          case 181: max_hosts_kb=str2ul(value); break;
          case 182: max_urls_kb=str2ul(value); break;
          case 183: log_dir = value; break;
+         case 184: classic_kbytes = (tolower(value[0]) == 'y'); break;
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
          case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;

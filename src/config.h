@@ -161,6 +161,9 @@ class config_t {
       bool target_downloads;
       bool page_entry;
 
+      bool decimal_kbytes;                       // Use 1000, not 1024 as a transfer multiplier
+      bool classic_kbytes;                       // Output classic transfer amounts (xfer/1024)
+
       u_short  http_port;
       u_short   https_port;
 
