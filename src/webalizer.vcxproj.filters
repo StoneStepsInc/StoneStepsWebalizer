@@ -229,6 +229,9 @@
     <ClCompile Include="encoder_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
+    <ClCompile Include="formatter.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -388,6 +391,9 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="unicode.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="formatter.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>

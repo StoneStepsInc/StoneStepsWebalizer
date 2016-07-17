@@ -186,6 +186,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="formatter.cpp" />
     <ClCompile Include="platform\exception_win.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\pch.h</PrecompiledHeaderFile>
@@ -293,6 +294,7 @@
     <ClInclude Include="encoder.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="exception.h" />
+    <ClInclude Include="formatter.h" />
     <ClInclude Include="graphs.h" />
     <ClInclude Include="hashtab.h" />
     <ClInclude Include="history.h" />
