@@ -582,7 +582,11 @@ function getDailyUsageData(version)
       usage.pages.push(parseInt(cells.item(9).firstChild.data));
       usage.visits.push(parseInt(cells.item(13).firstChild.data));
       usage.hosts.push(parseInt(cells.item(17).firstChild.data));
-      usage.xfer.push(parseInt(cells.item(21).firstChild.data));
+
+      if(cells.item(21).dataset.xfer)
+         usage.xfer.push(parseInt(cells.item(21).dataset.xfer));
+      else
+         usage.xfer.push(parseInt(cells.item(21).firstChild.data));
    }
 
    return usage;
@@ -646,7 +650,11 @@ function getHourlyUsageData(version)
       usage.hits.push(parseInt(cells.item(2).firstChild.data));
       usage.files.push(parseInt(cells.item(5).firstChild.data));
       usage.pages.push(parseInt(cells.item(8).firstChild.data));
-      usage.xfer.push(parseInt(cells.item(11).firstChild.data));
+
+      if(cells.item(11).dataset.xfer)
+         usage.xfer.push(parseInt(cells.item(11).dataset.xfer));
+      else
+         usage.xfer.push(parseInt(cells.item(11).firstChild.data));
    }
 
    return usage;
@@ -714,7 +722,7 @@ function getCountryUsageData(version, total_visits)
                   {columns: 12, i_visits: 9, i_country: 11}];
 
    // make sure we have a table layout for this version
-   if(version < 1 || version > layouts.length)
+   if(version < 1 || version >= layouts.length)
       return usage;
 
    layout = layouts[version-1];
@@ -848,7 +856,11 @@ function getMonthlySummaryData(version)
       usage.pages.push(parseInt(cells[8].firstChild.data));
       usage.visits.push(parseInt(cells[7].firstChild.data));
       usage.hosts.push(parseInt(cells[5].firstChild.data));
-      usage.xfer.push(parseInt(cells[6].firstChild.data));
+
+      if(cells[6].dataset.xfer)
+         usage.xfer.push(parseInt(cells[6].dataset.xfer));
+      else
+         usage.xfer.push(parseInt(cells[6].firstChild.data));
    }
 
    return usage;

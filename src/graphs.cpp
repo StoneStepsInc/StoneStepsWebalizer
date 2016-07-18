@@ -107,7 +107,10 @@ static char uppercase_x[] = "X";
 //
 //
 //
-graph_t::graph_t(const config_t& config) : config(config)
+graph_t::graph_t(const config_t& config) : 
+      config(config), 
+      xfer_fmt_buf(128), 
+      buffer_formatter(xfer_fmt_buf, xfer_fmt_buf.capacity(), buffer_formatter_t::overwrite)
 {
    out = NULL;
    im = NULL;
@@ -136,6 +139,22 @@ graph_t::graph_t(const config_t& config) : config(config)
 
 graph_t::~graph_t(void)
 {
+}
+
+const char *graph_t::fmt_xfer(uint64_t xfer)
+{
+   auto fmt_kbyte = [](string_t::char_buffer_t& buffer, double xfer) -> size_t
+   {
+      // buffer_formatter is never in the append mode in graph_t, so we never go beyond its capacity 
+      return snprintf(buffer, buffer.capacity(), "%.0f", xfer) + 1;
+   };
+
+   // check if we need to output classic transfer amounts without a human-readable suffix
+   if(config.classic_kbytes)
+      return buffer_formatter.format(fmt_kbyte, xfer / (config.decimal_kbytes ? 1000. : 1024.));
+
+   // buffer_formatter_t::format always returns a holder buffer, so we can return a pointer to the buffer memory
+   return buffer_formatter.format(fmt_hr_num, xfer, " ", config.lang.msg_unit_pfx, config.lang.msg_xfer_unit, config.decimal_kbytes);
 }
 
 //
@@ -423,8 +442,7 @@ int graph_t::year_graph6x(const history_t& history,
       if(hptr->xfer > fmaxval) fmaxval = hptr->xfer;         /* get max val    */
    }
    if (fmaxval <= 0) fmaxval = 1;
-   sprintf(maxvaltxt, "%.0f", fmaxval/1024.);
-   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, YGHH, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, YGHH, fmt_xfer(fmaxval), c_legend, false, NULL);
 
    /* transfer */
    iter = history.begin();
@@ -618,8 +636,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    for (i=0; i<31; i++)
       if (daily[i].tm_xfer > fmaxval) fmaxval = daily[i].tm_xfer;
    if (fmaxval <= 0) fmaxval = 1;
-   sprintf(maxvaltxt, "%.0f", fmaxval/1024.);
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 280, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 280, fmt_xfer(fmaxval), c_legend, false, NULL);
    
    for (i=0; i<31; i++)
    {
@@ -670,7 +687,7 @@ int graph_t::day_graph3(const char *fname,
       data1[i] = hourly[i].th_hits;
       data2[i] = hourly[i].th_files;
       data3[i] = hourly[i].th_pages;
-      xfer_ul[i] = (uint64_t) (hourly[i].th_xfer / 1024. + 0.5);
+      xfer_ul[i] = hourly[i].th_xfer;
    }
 
    draw_section_line(im, 512, 220);
@@ -704,8 +721,7 @@ int graph_t::day_graph3(const char *fname,
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
    _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
    
-   sprintf(maxvaltxt, "%" PRIu64 "", maxfer);
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, fmt_xfer(maxfer), c_legend, false, NULL);
 
    if (config.graph_legend)                          /* print color coded legends? */
    {
@@ -1008,3 +1024,7 @@ void graph_t::cleanup_graph_engine(void)
 {
 }
 
+//
+// Include templates
+//
+#include "formatter_tmpl.cpp"

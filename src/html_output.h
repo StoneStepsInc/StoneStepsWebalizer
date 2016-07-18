@@ -14,6 +14,7 @@
 #include "output.h"
 #include "graphs.h"
 #include "encoder.h"
+#include "formatter.h"
 
 //
 //
@@ -35,6 +36,8 @@ class html_output_t : public output_t {
       typedef buffer_encoder_t<encode_js_char> js_encoder_t;
 
    private:
+      string_t::char_buffer_t xfer_fmt_buf;  // buffer for formatting human-readable numbers
+
       FILE *out_fp;
 
       graph_t graph;
@@ -45,7 +48,11 @@ class html_output_t : public output_t {
       js_encoder_t js_encoder;
       js_encoder_t& js_encode;
 
+      buffer_formatter_t buffer_formatter;
+
    private:
+      const char *fmt_xfer(uint64_t xfer, bool pre = false);
+
       void write_html_head(const char *period, FILE *out_fp, page_type_t page_type);
       void write_html_tail(FILE *out_fp);
 

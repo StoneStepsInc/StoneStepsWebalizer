@@ -24,6 +24,7 @@
 #include "daily.h"
 #include "hourly.h"
 #include "config.h"
+#include "formatter.h"
 
 class history_t;
 
@@ -33,6 +34,9 @@ class history_t;
 class graph_t {
    private:
       const config_t& config;
+
+      string_t::char_buffer_t xfer_fmt_buf;
+      buffer_formatter_t buffer_formatter;
 
       int font_size_small_px;
       int font_size_medium_px;
@@ -73,6 +77,8 @@ class graph_t {
       void draw_section_line(gdImagePtr im, u_int gw, u_int y);
       void draw_grid_line(gdImagePtr im, u_int gw, u_int y);
       void draw_graph_bar(gdImagePtr im, u_int x1, u_int y1, u_int x2, u_int y2, int color);
+
+      const char *fmt_xfer(uint64_t xfer);
 
    public:
       graph_t(const config_t& _config);

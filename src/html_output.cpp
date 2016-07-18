@@ -52,7 +52,9 @@ html_output_t::html_output_t(const config_t& config, const state_t& state) :
       html_encoder(buffer, HALFBUFSIZE, html_encoder_t::overwrite), 
       html_encode(html_encoder),
       js_encoder(buffer+HALFBUFSIZE, HALFBUFSIZE, js_encoder_t::overwrite), 
-      js_encode(js_encoder)
+      js_encode(js_encoder),
+      xfer_fmt_buf(2048),
+      buffer_formatter(xfer_fmt_buf, xfer_fmt_buf.capacity(), buffer_formatter_t::overwrite)
 {
 }
 
@@ -71,6 +73,28 @@ bool html_output_t::init_output_engine(void)
 void html_output_t::cleanup_output_engine(void)
 {
    graph.cleanup_graph_engine();
+}
+
+const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
+{
+   auto fmt_kbyte = [](string_t::char_buffer_t& buffer, double xfer) -> size_t
+   {
+      size_t olen;
+      
+      olen = snprintf(buffer, buffer.capacity(), "%8.0f", xfer);
+
+      if(olen >= buffer.capacity())
+         throw exception_t(0, "Cannot format a transfer amount because the output buffer is too small");
+
+      return olen + 1;
+   };
+
+   // check if we need to output classic transfer amounts in KBytes
+   if(config.classic_kbytes)
+      return buffer_formatter.format(fmt_kbyte, xfer / (config.decimal_kbytes ? 1000. : 1024.));
+
+   // buffer_formatter_t::format always returns a holder buffer, so we can return a pointer to the buffer memory
+   return buffer_formatter.format(fmt_hr_num, xfer, pre ? " " : "&nbsp;", config.lang.msg_unit_pfx, config.lang.msg_xfer_unit, config.decimal_kbytes);
 }
 
 void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
@@ -140,7 +164,13 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
 
    fputs("   setupCharts(config);\n\n", out_fp);
 
-   fputs("   var monthly_summary_chart = new MonthlySummaryChart(1, config, {\n", out_fp);
+   //
+   // Monthly Summary Chart
+   //
+   // Versions:
+   //    v2    - added the data-xfer attribute
+   //
+   fputs("   var monthly_summary_chart = new MonthlySummaryChart(2, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
@@ -188,8 +218,11 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //
    // Daily usage chart
    //
+   // Versions:
+   //    v2    - added the data-xfer attribute
+   //
    u_int last_day = state.totals.cur_tstamp.last_month_day();
-   fputs("   var daily_usage_chart = new DailyUsageChart(1, config, {\n", out_fp);
+   fputs("   var daily_usage_chart = new DailyUsageChart(2, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -236,7 +269,10 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //
    // Hourly usage chart
    //
-   fputs("   var hourly_usage_chart = new HourlyUsageChart(1, config, {\n", out_fp);
+   // Versions:
+   //    v2    - added the data-xfer attribute
+   //
+   fputs("   var hourly_usage_chart = new HourlyUsageChart(2, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -252,9 +288,13 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("   renderHourlyUsageChart(hourly_usage_chart);\n\n", out_fp);
 
    //
-   // Country usage chart (v2 added a column for page counts)
+   // Country usage chart
    //
-   fputs("   var country_usage_chart = new CountryUsageChart(2, config, {\n", out_fp);
+   // Versions:
+   //    v2    - added a column for page counts
+   //    v3    - added the data-xfer attribute
+   //
+   fputs("   var country_usage_chart = new CountryUsageChart(3, config, {\n", out_fp);
 
    js_encode.set_scope_mode(js_encoder_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -694,7 +734,7 @@ void html_output_t::month_total_table()
    /* Total Visits */
    fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_visits);
    /* Total XFer */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_xfer/1024.);
+   fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\" data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_xfer, fmt_xfer(state.totals.t_xfer));
    /* Total Downloads */
    if(state.totals.t_downloads)
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_dl, state.totals.t_downloads);
@@ -727,7 +767,7 @@ void html_output_t::month_total_table()
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_page - state.totals.t_rpages - state.totals.t_spages);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n\n", config.lang.msg_mtot_tx, (state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\" data-xfer=\"%" PRIu64 "\">%s</td></tr>\n\n", config.lang.msg_mtot_tx, state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer, fmt_xfer(state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer));
 
       /* Total Non-Robot Hosts */
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n\n", config.lang.msg_mtot_us, state.totals.t_hosts - state.totals.t_rhosts - state.totals.t_shosts);
@@ -758,7 +798,13 @@ void html_output_t::month_total_table()
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mhv, (state.totals.t_hit - state.totals.t_rhits - state.totals.t_spmhits)/state.totals.t_hvisits_end, state.totals.max_hv_hits);
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mfv, (state.totals.t_file - state.totals.t_rfiles - state.totals.t_sfiles)/state.totals.t_hvisits_end, state.totals.max_hv_files);
          fprintf(out_fp,"<tr><th>%s</th><td>%" PRIu64 "</td><td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mpv, (state.totals.t_page - state.totals.t_rpages - state.totals.t_spages)/state.totals.t_hvisits_end, state.totals.max_hv_pages);
-         fprintf(out_fp,"<tr><th>%s</th><td>%.0f</td><td>%.0f</td></tr>\n", config.lang.msg_mtot_mkv, ((state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/1024.)/state.totals.t_hvisits_end, state.totals.max_hv_xfer/1024.);
+
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+         fprintf(out_fp,"<tr><th>%s</th><td data-xfer=\"%" PRIu64 "\">%s</td><td data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", config.lang.msg_mtot_mkv, 
+            (state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/state.totals.t_hvisits_end, 
+            fmt_xfer((state.totals.t_xfer - state.totals.t_rxfer - state.totals.t_sxfer)/state.totals.t_hvisits_end), 
+            state.totals.max_hv_xfer,
+            fmt_xfer(state.totals.max_hv_xfer));
          
          fprintf(out_fp,"<tr><th>%s</th><td>%.02f</td><td>%.02f</td></tr>\n", config.lang.msg_mtot_mdv, state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
 
@@ -782,7 +828,7 @@ void html_output_t::month_total_table()
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tf, state.totals.t_rfiles);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tp, state.totals.t_rpages);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_terr, state.totals.t_rerrors);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_rxfer/1024.);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\" data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_rxfer, fmt_xfer(state.totals.t_rxfer));
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_rvisits_end);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_rhosts);
       fputs("</tbody>\n", out_fp);
@@ -796,7 +842,7 @@ void html_output_t::month_total_table()
 
       fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_th, state.totals.t_spmhits);
-      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%.0f</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_sxfer/1024.);
+      fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\" data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", config.lang.msg_mtot_tx, state.totals.t_sxfer, fmt_xfer(state.totals.t_sxfer));
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_tv, state.totals.t_svisits_end);
       fprintf(out_fp,"<tr><th>%s</th>\n<td colspan=\"2\">%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_us, state.totals.t_shosts);
       fputs("</tbody>\n", out_fp);
@@ -850,11 +896,26 @@ void html_output_t::month_total_table()
    if(state.totals.t_visits_conv)
       fprintf(out_fp,"<tr><th>%s</th>\n<td>%.02f</td>\n<td>%.02f</td></tr>\n", config.lang.msg_mtot_cvd, state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
 
-   /* Max/Avg KBytes per Day */
-   fprintf(out_fp,"<tr><th>%s</th>\n<td>%.0f</td>\n<td>%.0f</td></tr>\n", config.lang.msg_mtot_mkd, (state.totals.t_xfer/1024.)/days_in_month,max_xfer/1024.);
+   /* Max/Avg Transfer per Day */
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+   fprintf(out_fp,"<tr><th>%s</th>\n<td data-xfer=\"%" PRIu64 "\">%s</td>\n<td data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", 
+      config.lang.msg_mtot_mkd, 
+      state.totals.t_xfer/days_in_month,
+      fmt_xfer(state.totals.t_xfer/days_in_month),
+      max_xfer,
+      fmt_xfer(max_xfer));
+
    /* Max/Avg KBytes per Visit */
-   if(state.totals.t_visits)
-      fprintf(out_fp,"<tr><th>%s</th>\n<td>%.0f</td>\n<td>%.0f</td></tr>\n", config.lang.msg_mtot_mkv, (state.totals.t_xfer/1024.)/state.totals.t_visits, state.totals.max_v_xfer/1024.);
+   if(state.totals.t_visits) {
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp,"<tr><th>%s</th>\n<td data-xfer=\"%" PRIu64 "\">%s</td>\n<td data-xfer=\"%" PRIu64 "\">%s</td></tr>\n", 
+         config.lang.msg_mtot_mkv, 
+         (uint64_t) ((double) state.totals.t_xfer / (double) state.totals.t_visits + .5), 
+         fmt_xfer((uint64_t) ((double) state.totals.t_xfer / (double) state.totals.t_visits + .5)), 
+         state.totals.max_v_xfer,
+         fmt_xfer(state.totals.max_v_xfer));
+   }
+
    fputs("</tbody>\n", out_fp);
 
    /**********************************************/
@@ -940,7 +1001,20 @@ void html_output_t::daily_total_table()
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_pages, PCENT(state.t_daily[i].tm_pages, state.totals.t_page), state.t_daily[i].h_pages_avg, state.t_daily[i].h_pages_max);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_visits, PCENT(state.t_daily[i].tm_visits, state.totals.t_visits), state.t_daily[i].h_visits_avg, state.t_daily[i].h_visits_max);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%" PRIu64 "</td>\n", state.t_daily[i].tm_hosts, PCENT(state.t_daily[i].tm_hosts, state.totals.t_hosts), state.t_daily[i].h_hosts_avg, state.t_daily[i].h_hosts_max);
-      fprintf(out_fp,"<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n<td>%.0f</td>\n<td>%.0f</td>\n", state.t_daily[i].tm_xfer/1024., PCENT(state.t_daily[i].tm_xfer, state.totals.t_xfer), state.t_daily[i].h_xfer_avg/1024., state.t_daily[i].h_xfer_max/1024.);
+
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp,"<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+         "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+         "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+         "<td data-xfer=\"%" PRIu64 "\">%s</td>\n", 
+         state.t_daily[i].tm_xfer,
+         fmt_xfer(state.t_daily[i].tm_xfer), 
+         PCENT(state.t_daily[i].tm_xfer, state.totals.t_xfer), 
+         (uint64_t) (state.t_daily[i].h_xfer_avg + .5), 
+         fmt_xfer((uint64_t) (state.t_daily[i].h_xfer_avg + .5)), 
+         state.t_daily[i].h_xfer_max,
+         fmt_xfer(state.t_daily[i].h_xfer_max));
+
       fputs("</tr>\n", out_fp);
    }
    fputs("</tbody>\n", out_fp); 
@@ -988,7 +1062,16 @@ void html_output_t::hourly_total_table()
       fprintf(out_fp, "<td>%" PRIu64 "</td>\n<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_hits/days_in_month, state.t_hourly[i].th_hits, PCENT(state.t_hourly[i].th_hits, state.totals.t_hit));
       fprintf(out_fp, "<td>%" PRIu64 "</td>\n<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_files/days_in_month, state.t_hourly[i].th_files, PCENT(state.t_hourly[i].th_files, state.totals.t_file));
       fprintf(out_fp, "<td>%" PRIu64 "</td>\n<td>%" PRIu64 "</td>\n<td class=\"data_percent_td\">%3.02f%%</td>\n", state.t_hourly[i].th_pages/days_in_month, state.t_hourly[i].th_pages, PCENT(state.t_hourly[i].th_pages, state.totals.t_page));
-      fprintf(out_fp, "<td>%.0f</td>\n<td>%.0f</td>\n<td class=\"data_percent_td\">%3.02f%%</td></tr>\n", ((double)state.t_hourly[i].th_xfer/days_in_month)/1024., state.t_hourly[i].th_xfer/1024., PCENT(state.t_hourly[i].th_xfer, state.totals.t_xfer));
+
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp, "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+         "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+         "<td class=\"data_percent_td\">%3.02f%%</td></tr>\n", 
+         (uint64_t) (((double)state.t_hourly[i].th_xfer/days_in_month) + .5), 
+         fmt_xfer((uint64_t) (((double)state.t_hourly[i].th_xfer/days_in_month) + .5)), 
+         state.t_hourly[i].th_xfer, 
+         fmt_xfer(state.t_hourly[i].th_xfer), 
+         PCENT(state.t_hourly[i].th_xfer, state.totals.t_xfer));
    }
 
    fputs("</tbody>\n", out_fp); 
@@ -1117,24 +1200,25 @@ void html_output_t::top_hosts_table(int flag)
          fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-           "<th>%u</th>\n"  \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%.0f</td>\n" \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%0.2f</td>\n" \
+           "<th>%u</th>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%0.2f</td>\n"
            "<td>%0.2f</td>\n",
            i+1,
            hptr->count, (state.totals.t_hit==0)?0:((double)hptr->count/state.totals.t_hit)*100.0,
            hptr->files, (state.totals.t_file==0)?0:((double)hptr->files/state.totals.t_file)*100.0,
            hptr->pages, (state.totals.t_page==0)?0:((double)hptr->pages/state.totals.t_page)*100.0,
-           hptr->xfer/1024.,(state.totals.t_xfer==0)?0:(hptr->xfer/state.totals.t_xfer)*100.0,
+           hptr->xfer, fmt_xfer(hptr->xfer),
+           (state.totals.t_xfer==0)?0:(hptr->xfer/state.totals.t_xfer)*100.0,
            hptr->visits,(state.totals.t_visits==0)?0:((double)hptr->visits/state.totals.t_visits)*100.0,
            hptr->visit_avg/60., hptr->visit_max/60.);
 
@@ -1226,11 +1310,12 @@ int html_output_t::all_hosts_page(void)
       while(iter.prev(hnode)) {
          if (hnode.flag == OBJ_GRP)
          {
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
-               hnode.xfer/1024.,(state.totals.t_xfer==0)?0:(hnode.xfer/state.totals.t_xfer)*100.0,
+               hnode.xfer, fmt_xfer(hnode.xfer, true),
+               (state.totals.t_xfer==0) ? .0 : PCENT(hnode.xfer, state.totals.t_xfer),
                hnode.visits,(state.totals.t_visits==0)?0:((double)hnode.visits/state.totals.t_visits)*100.0,
                hnode.visit_avg/60., hnode.visit_max/60.);
 
@@ -1258,11 +1343,12 @@ int html_output_t::all_hosts_page(void)
             if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || config.hidden_hosts.isinlist(hnode.name))
                continue;
 
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
-               hnode.xfer/1024.,(state.totals.t_xfer==0)?0:(hnode.xfer/state.totals.t_xfer)*100.0,
+               hnode.xfer, fmt_xfer(hnode.xfer, true),
+               (state.totals.t_xfer==0) ? .0 : PCENT(hnode.xfer, state.totals.t_xfer),
                hnode.visits,(state.totals.t_visits==0)?0:((double)hnode.visits/state.totals.t_visits)*100.0,
                hnode.visit_avg/60., hnode.visit_max/60.);
 
@@ -1393,15 +1479,15 @@ void html_output_t::top_urls_table(int flag)
          fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-         "<th>%u</th>\n" \
-         "<td>%" PRIu64 "</td>\n" \
-         "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-         "<td>%.0f</td>\n"\
-         "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-         "<td>%0.3f</td><td>%0.3f</td>\n" \
+         "<th>%u</th>\n"
+         "<td>%" PRIu64 "</td>\n"
+         "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+         "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+         "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+         "<td>%0.3f</td><td>%0.3f</td>\n"
          "<td class=\"stats_data_item_td%s\">", i+1, uptr->count, 
          (state.totals.t_hit==0)?0:((double)uptr->count/(double)state.totals.t_hit)*100.0,
-         uptr->xfer/1024.,
+         uptr->xfer, fmt_xfer(uptr->xfer),
          (state.totals.t_xfer==0)?0:((double)uptr->xfer/(double)state.totals.t_xfer)*100.0,
          uptr->avgtime, uptr->maxtime,
          uptr->target ? " target" : ""
@@ -1495,10 +1581,10 @@ int html_output_t::all_urls_page(void)
       
       while (iter.prev(unode)) {
          if (unode.flag == OBJ_GRP) {
-            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f   %s\n",
+            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f   %s\n",
                unode.count,
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
-               unode.xfer/1024.,
+               unode.xfer, fmt_xfer(unode.xfer, true),
                (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
                unode.avgtime, unode.maxtime,
                unode.string.c_str());
@@ -1522,10 +1608,10 @@ int html_output_t::all_urls_page(void)
 
          dispurl = (unode.hexenc) ? url_decode(unode.string, str).c_str() : unode.string.c_str();
          dispurl = html_encode(dispurl);
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
-            unode.xfer/1024.,
+            unode.xfer, fmt_xfer(unode.xfer, true),
             (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
             unode.avgtime, unode.maxtime,
             (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
@@ -1895,19 +1981,20 @@ void html_output_t::top_dl_table(void)
       }
 
       fprintf(out_fp,
-          "<tr>\n"                  \
-          "<th>%d</th>\n"            \
-          "<td>%" PRIu64 "</td>\n"      \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
-          "<td>%.0f</td>\n"      \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
-          "<td>%3.02f</td>\n"      \
-          "<td>%3.02f</td>\n"      \
-          "<td>%" PRIu64 "</td>\n"            \
+          "<tr>\n"
+          "<th>%d</th>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td>%3.02f</td>\n"
+          "<td>%3.02f</td>\n"
+          "<td>%" PRIu64 "</td>\n"
           "<td class=\"stats_data_item_td\">%s</td>\n",
           i+1,
           nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
-          nptr->sumxfer/1024., (state.totals.t_xfer == 0) ? 0 : ((nptr->sumxfer/1024.)/(state.totals.t_xfer/1024.))*100.0,
+          nptr->sumxfer, fmt_xfer(nptr->sumxfer),
+          (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
           nptr->avgtime, nptr->sumtime, 
           nptr->count,
           nptr->string.c_str());
@@ -2005,9 +2092,10 @@ int html_output_t::all_downloads_page(void)
             cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
       }
 
-      fprintf(out_fp,"%5" PRIu64 " %6.02f%%  %11.02f %6.02f%%  %6.02f  %6.02f   %6" PRIu64 "  %-32s",
+      fprintf(out_fp,"%5" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%11s</span> %6.02f%%  %6.02f  %6.02f   %6" PRIu64 "  %-32s",
          nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
-         nptr->sumxfer/1024., (state.totals.t_xfer == 0) ? 0 : ((nptr->sumxfer/1024.)/(state.totals.t_xfer/1024.))*100.0,
+         nptr->sumxfer, fmt_xfer(nptr->sumxfer, true),
+         (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
          nptr->string.c_str());
@@ -2340,17 +2428,18 @@ void html_output_t::top_agents_table()
          fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-          "<td>%d</td>\n" \
-          "<td>%" PRIu64 "</td>\n" \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-          "<td>%.0f</td>\n" \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-          "<td>%" PRIu64 "</td>\n" \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
+          "<td>%d</td>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
           "<td class=\"stats_data_item_td\">",
           i+1,
           aptr->count, (state.totals.t_hit==0)?0:((double)aptr->count/state.totals.t_hit)*100.0,
-          aptr->xfer/1024., (state.totals.t_xfer==0)?0:((double)aptr->xfer/state.totals.t_xfer)*100.0,
+          aptr->xfer, fmt_xfer(aptr->xfer),
+          (state.totals.t_xfer==0) ? .0 : PCENT(aptr->xfer, state.totals.t_xfer),
           aptr->visits, (state.totals.t_visits==0)?0:((double)aptr->visits/state.totals.t_visits)*100.0);
 
       if(aptr->robot) {
@@ -2423,9 +2512,10 @@ int html_output_t::all_agents_page(void)
       {
          if (anode.flag == OBJ_GRP)
          {
-            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
                 anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
-                anode.xfer/1024., (state.totals.t_xfer==0)?.0:(anode.xfer/state.totals.t_xfer)*100.0,
+                anode.xfer, fmt_xfer(anode.xfer, true),
+                (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
                 anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
 
             if(anode.robot)
@@ -2450,9 +2540,10 @@ int html_output_t::all_agents_page(void)
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
                      
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
              anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
-             anode.xfer/1024., (state.totals.t_xfer==0)?.0:(anode.xfer/state.totals.t_xfer)*100.0,
+             anode.xfer, fmt_xfer(anode.xfer, true),
+             (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
              anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
 
             html_encode(anode.string);
@@ -2742,20 +2833,21 @@ void html_output_t::top_users_table()
          fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-           "<th>%d</td>\n"  \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%.0f</td>\n" \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%" PRIu64 "</td>\n"  \
-           "<td class=\"data_percent_td\">%3.02f%%</td>\n"    \
-           "<td>%0.3f</td><td>%0.3f</td>\n" \
+           "<th>%d</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%" PRIu64 "</td>\n"
+           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+           "<td>%0.3f</td><td>%0.3f</td>\n"
            "<td class=\"stats_data_item_td\">",
            i+1,iptr->count,
            (state.totals.t_hit==0)?0:((double)iptr->count/state.totals.t_hit)*100.0,iptr->files,
-           (state.totals.t_file==0)?0:((double)iptr->files/state.totals.t_file)*100.0,iptr->xfer/1024.,
+           (state.totals.t_file==0)?0:((double)iptr->files/state.totals.t_file)*100.0,
+           iptr->xfer, fmt_xfer(iptr->xfer),
            (state.totals.t_xfer==0)?0:((double)iptr->xfer/state.totals.t_xfer)*100.0,iptr->visit,
            (state.totals.t_visits==0)?0:((double)iptr->visit/state.totals.t_visits)*100.0,
            iptr->avgtime, iptr->maxtime);
@@ -2821,10 +2913,11 @@ int html_output_t::all_users_page(void)
 
       while(iter.prev(inode)) {
          if (inode.flag == OBJ_GRP) {
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
                inode.count,
                (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
-               (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,inode.xfer/1024.,
+               (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,
+               inode.xfer, fmt_xfer(inode.xfer, true),
                (state.totals.t_xfer==0)?0:((double)inode.xfer/state.totals.t_xfer)*100.0,inode.visit,
                (state.totals.t_visits==0)?0:((double)inode.visit/state.totals.t_visits)*100.0,
                inode.avgtime, inode.maxtime,
@@ -2844,10 +2937,11 @@ int html_output_t::all_users_page(void)
          if(config.hidden_users.isinlist(inode.string))
             continue;
                
-         fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8.0f %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
+         fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
             inode.count,
             (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
-            (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,inode.xfer/1024.,
+            (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,
+            inode.xfer, fmt_xfer(inode.xfer, true),
             (state.totals.t_xfer==0)?0:((double)inode.xfer/state.totals.t_xfer)*100.0,inode.visit,
             (state.totals.t_visits==0)?0:((double)inode.visit/state.totals.t_visits)*100.0,
             inode.avgtime, inode.maxtime,
@@ -2981,7 +3075,7 @@ void html_output_t::top_ctry_table()
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%" PRIu64 "</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%.0f</td>\n" \
+              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%" PRIu64 "</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
@@ -2992,7 +3086,7 @@ void html_output_t::top_ctry_table()
               (t_file==0)?0:((double)ccarray[i]->files/t_file)*100.0,
               ccarray[i]->pages,
               (t_page==0)?0:((double)ccarray[i]->pages/t_page)*100.0,
-              ccarray[i]->xfer/1024.,
+              ccarray[i]->xfer, fmt_xfer(ccarray[i]->xfer),
               (t_xfer==0)?0:(ccarray[i]->xfer/t_xfer)*100.0,
               ccarray[i]->visits,
               (t_visits==0)?0:((double)ccarray[i]->visits/t_visits)*100.0,
@@ -3110,7 +3204,7 @@ int html_output_t::write_main_index()
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->pages/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->visits/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->hosts);
-      fprintf(out_fp,"<td>%.0f</td>\n", hptr->xfer/1024.);
+      fprintf(out_fp,"<td data-xfer=\"%" PRIu64 "\">%s</td>\n", hptr->xfer, fmt_xfer(hptr->xfer));
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->visits);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->pages);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->files);
@@ -3130,7 +3224,7 @@ int html_output_t::write_main_index()
    fputs("<tbody class=\"summary_footer_tbody\">\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_footer_tr\"><th colspan=\"5\">%s</th>\n", config.lang.msg_h_totals);
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_hosts);
-   fprintf(out_fp,"<td>%.0f</td>\n", gt_xfer/1024.);
+   fprintf(out_fp,"<td data-xfer=\"%" PRIu64 "\">%s</td>\n", gt_xfer, fmt_xfer(gt_xfer));
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_visits);
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_pages);
    fprintf(out_fp,"<td>%" PRIu64 "</td>\n", gt_files);
@@ -3145,7 +3239,11 @@ int html_output_t::write_main_index()
    return 0;
 }
 
+//
+// Include templates
+//
 #include "encoder_tmpl.cpp"
+#include "formatter_tmpl.cpp"
 
 //
 // Instantiate HTML and JavaScript encoder templates
