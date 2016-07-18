@@ -73,7 +73,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	danode.cpp keynode.cpp scnode.cpp sysnode.cpp \
 	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	hashtab_nodes.cpp config.cpp serialize.cpp \
-	html_output.cpp xml_output.cpp dump_output.cpp \
+	html_output.cpp dump_output.cpp \
 	database.cpp logfile.cpp cp1252_ucs2.cpp \
 	char_buffer.cpp unicode.cpp formatter.cpp \
    platform/exception_linux.cpp platform/event_pthread.cpp \
