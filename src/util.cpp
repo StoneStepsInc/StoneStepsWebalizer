@@ -816,14 +816,14 @@ uint64_t elapsed(uint64_t stime, uint64_t etime)
 //
 size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal)
 {
-   uint64_t kbyte = decimal ? 1000 : 1024;
+   double kbyte = decimal ? 1000. : 1024.;
    unsigned int prefix = 0;
    double result = (double) num;
    size_t olen, slen;
    static const char *small_buffer = "Cannot format a human-readabale number because the output buffer is too small";
 
    // if the number is less than one kilobyte, just print the number
-   if(num < kbyte) {
+   if(num < (uint64_t) kbyte) {
       olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, num);
 
       // make sure the string fits in the buffer
