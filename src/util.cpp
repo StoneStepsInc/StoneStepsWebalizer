@@ -839,9 +839,9 @@ size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep
       prefix++;
    } while (result >= kbyte);
 
-   // print round numbers as integers and otherwise with one digit of precision
+   // print round numbers as integers and otherwise with one digit of precision (e.g. print 4.96 as 5 and 4.93 as 4.9)
    if((uint64_t) ((result * 10.) + .5) % 10 == 0)
-      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, (uint64_t) result);
+      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, (uint64_t) (result + 0.5));
    else
       olen = snprintf(buffer, buffer.capacity(), "%.1lf", result);
 
