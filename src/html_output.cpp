@@ -149,6 +149,17 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
    if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\",\n", graph.get_volume_color());
    if(!graph.is_default_weekend_color()) fprintf(out_fp, "      weekend_color: \"#%06X\",\n", graph.get_weekend_color());
 
+   // output unit prefixes, transfer unit and whether one KB is 1000 or 1024 bytes
+   fputs("      unit_prefix: [", out_fp);
+   for(size_t i = 0; i < sizeof(config.lang.msg_unit_pfx) / sizeof(config.lang.msg_unit_pfx[0]); i++) {
+      if(i) fputs(", ", out_fp);
+      fprintf(out_fp, "\"%s\"", js_encode(config.lang.msg_unit_pfx[i]));
+   }
+   fputs("],\n", out_fp);
+      
+   fprintf(out_fp, "      xfer_unit: \"%s\",\n", js_encode(config.lang.msg_xfer_unit));
+   fprintf(out_fp, "      decimal_kbytes: %s,\n", config.decimal_kbytes ? "true" : "false");
+
    // output the language code for this report
    fprintf(out_fp, "      lang: \"%s\"\n", js_encode(config.lang.language_code));
 

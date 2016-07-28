@@ -95,7 +95,7 @@ function getMonthlySummaryMonths_Highcharts(monthly_summary)
 }
 
 //
-// Returns a series array containing Y axis avlues positionally corresponding
+// Returns a series array containing Y axis values positionally corresponding
 // to the X axis label array returned from getMonthlySummaryMonths_Highcharts.
 //
 function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
@@ -188,7 +188,7 @@ function renderDailyUsageChart(daily_usage)
          }
       },
       tooltip: {
-         headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>"
+         headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>"
       },
       series: [{
          animation: false,
@@ -228,7 +228,15 @@ function renderDailyUsageChart(daily_usage)
          yAxis: 2,
          color: daily_usage.config.xfer_color,
          name: daily_usage.chart.seriesNames.xfer,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.xfer)
+         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.xfer),
+         tooltip: {
+            headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>",
+            pointFormatter: function () 
+            {
+               return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(daily_usage.data.xfer_hr[this.x-1]) + "</b><br/>";
+            }
+         }
       }],
       //
       // The X axis is placed at a sufficient distance from the bottom of the frame 
@@ -286,7 +294,7 @@ function renderDailyUsageChart(daily_usage)
             align: "left",
             formatter: function()               // show only the last label and without a suffix (e.g. k for kilo, etc)
             {
-               if(this.isLast) return this.value;
+               return (this.isLast) ? this.value : null;
             },
             y: 12,
             x: 3
@@ -316,7 +324,7 @@ function renderDailyUsageChart(daily_usage)
             align: "left",
             formatter: function() 
             {
-               if(this.isLast) return this.value;
+               return (this.isLast) ? this.value : null;
             },
             y: 12,
             x: 3
@@ -346,7 +354,10 @@ function renderDailyUsageChart(daily_usage)
             align: "left",
             formatter: function() 
             {
-               if(this.isLast) return this.value;
+               if(this.isLast)
+                  return formatAxisLabel(this.value, " ", daily_usage.config);
+
+               return null;
             },
             y: 12,
             x: 3
@@ -393,7 +404,7 @@ function renderHourlyUsageChart(hourly_usage)
          }
       },
       tooltip: {
-         headerFormat: "<span style=\"font-size: 12px\">{point.key}</span><br/>"
+         headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>"
       },
       series: [{
          animation: false,
@@ -419,7 +430,15 @@ function renderHourlyUsageChart(hourly_usage)
          yAxis: 1,
          color: hourly_usage.config.xfer_color,
          name: hourly_usage.chart.seriesNames.xfer,
-         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.xfer)
+         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.xfer),
+         tooltip: {
+            headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>",
+            pointFormatter: function () 
+            {
+               return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(hourly_usage.data.xfer_hr[this.x]) + "</b><br/>";
+            }
+         }
       }],
       xAxis: {
          offset: -2,
@@ -452,9 +471,9 @@ function renderHourlyUsageChart(hourly_usage)
          labels: {
             enabled: true,
             align: "left",
-            formatter: function()
+            formatter: function() 
             {
-               if(this.isLast) return this.value;
+               return (this.isLast) ? this.value : null;
             },
             y: 12,
             x: 3
@@ -484,7 +503,10 @@ function renderHourlyUsageChart(hourly_usage)
             align: "left",
             formatter: function() 
             {
-               if(this.isLast) return this.value;
+               if(this.isLast)
+                  return formatAxisLabel(this.value, " ", hourly_usage.config);
+
+               return null;
             },
             y: 12,
             x: 3
@@ -605,16 +627,28 @@ function renderMonthlySummaryChart(monthly_summary)
          }
       },
       tooltip: {
+         //
+         // The tooltip formatter function allows us to output a custom point header that
+         // lists a full month and a year. However, having this function defined, disables 
+         // individual series pointFormatter calbacks.
+         //
          formatter: function ()
          {
-            // compute a zero-based offset in months from January 1st of the first year 
+            // compute a zero-based offset in months from January of the first history year 
             var monthOffset = monthly_summary.chart.firstMonth.month + this.point.x - 1;
+            var tooltipText;
+            
+            // for the transfer amount series (5) use human-readable transfer values when available
+            if(this.series.index == 5 && monthly_summary.data.xfer_hr[this.point.x])
+               tooltipText = htmlEncode(monthly_summary.data.xfer_hr[this.point.x]);
+            else
+               tooltipText = this.point.y;
 
-            // output full month and year before point data
+            // output full month and year before point data instead of the standard point header
             return "<span style=\"font-size: 12px\">" + htmlEncode(monthly_summary.chart.longMonths[monthOffset % 12]) + " " + 
                (monthly_summary.chart.firstMonth.year + Math.floor(monthOffset / 12)) + "</span><br/>" + 
                "<span style=\"color:" + this.point.color + "\">\u25CF</span> " + 
-               htmlEncode(this.series.name) + ": <b>" + this.y + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + tooltipText + "</b><br/>";
          }
       },
       series: [{
@@ -657,6 +691,12 @@ function renderMonthlySummaryChart(monthly_summary)
          name: monthly_summary.chart.seriesNames.xfer,
          data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.xfer)
       }],
+      //
+      // This is a category axis that lists only short month names. The numeric value of 
+      // point.x is in the range from zero to the history length minus one. See the tooltip 
+      // formatter function in this chart for an example on how to figure out month names 
+      // and numbers.
+      //
       xAxis: {
          type: "category",
          offset: -2,
@@ -691,7 +731,7 @@ function renderMonthlySummaryChart(monthly_summary)
             align: "left",
             formatter: function()
             {
-               if(this.isLast) return this.value;
+               return (this.isLast) ? this.value : null;
             },
             y: 12,
             x: 3
@@ -721,7 +761,7 @@ function renderMonthlySummaryChart(monthly_summary)
             align: "left",
             formatter: function() 
             {
-               if(this.isLast) return this.value;
+               return (this.isLast) ? this.value : null;
             },
             y: 12,
             x: 3
@@ -751,7 +791,10 @@ function renderMonthlySummaryChart(monthly_summary)
             align: "left",
             formatter: function() 
             {
-               if(this.isLast) return this.value;
+               if(this.isLast)
+                  return formatAxisLabel(this.value, " ", monthly_summary.config);
+
+               return null;
             },
             y: 12,
             x: 3
