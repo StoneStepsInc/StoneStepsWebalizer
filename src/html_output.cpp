@@ -159,6 +159,7 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
       
    fprintf(out_fp, "      xfer_unit: \"%s\",\n", js_encode(config.lang.msg_xfer_unit));
    fprintf(out_fp, "      decimal_kbytes: %s,\n", config.decimal_kbytes ? "true" : "false");
+   fprintf(out_fp, "      classic_kbytes: %s,\n", config.classic_kbytes ? "true" : "false");
 
    // output the language code for this report
    fprintf(out_fp, "      lang: \"%s\"\n", js_encode(config.lang.language_code));

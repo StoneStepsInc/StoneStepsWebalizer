@@ -433,6 +433,9 @@ function formatAxisLabel(num, sep, config)
    var result = num;
    var prefix = 0;
 
+   if(config.classic_kbytes)
+      return (result / kbyte).toFixed(0);
+
    if(num < kbyte)
       return num.toFixed(0);
 
