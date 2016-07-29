@@ -374,24 +374,26 @@ file request, etc).
 Stone Steps Webalizer will count in this case two visits, even though 
 the second visit did not request any pages.
 
-KBytes
+Transfer
 
-  The KBytes (kilobytes) value shows the amount of data, in KB, that
-was sent out by the server during the specified reporting period.  This
-value is generated directly from the log file, so it is up to the
-web server to produce accurate numbers in the logs  (some web servers
-do stupid things when it comes to reporting the number of bytes).  In
-general, this should be a fairly accurate representation of the amount
-of outgoing traffic the server had, regardless of the web servers
-reporting quirks.
+  The Transfer value shows the amount of data that was sent out by 
+the server during the specified reporting period. This value is 
+generated directly from the log file, so it is up to the web server 
+to produce accurate numbers in the logs. In general, this should be 
+a fairly accurate representation of the amount of traffic the server 
+had, regardless of the web servers reporting quirks.
 
 By default, most servers only log outgoing amounts (i.e. response 
 sizes). IIS and Apache may log incoming amounts as well (i.e. 
 request sizes). Stone Steps Webalizer will include this type of 
-traffic into the amount reported as KBytes if UpstreamTraffic is set 
-to 'yes' in the configuration file.
+traffic into the amount reported as Transfer if UpstreamTraffic is 
+set to 'yes' in the configuration file.
 
-Note: A kilobyte is 1024 bytes, not 1000 :)
+Transfer amounts are reported since v4.2 with a unit suffix, such as 
+12.3 GB, or as a number kilobytes. This behavior may be changed by 
+setting ClassicKBytes to "yes". One kilobyte is counted as either 1024 
+or 1000 bytes, depending on the value of the DecimalKBytes configuration 
+variable.
 
 Top Entry and Exit Pages
 
@@ -1474,7 +1476,7 @@ UpstreamTraffic
               Indicates whether to track upstream data transfers (i.e. 
               uploads) or not. Note that upstream and downstream transfer 
               amounts are not tracked separately - their values are added 
-              together and shown as KBytes. Default value: no
+              together and shown as Transfer. Default value: no
 
 Robot         Defines a pattern used to identify robot user agents, such
               as search engines. The pattern may contain a leading or a 
@@ -1524,6 +1526,24 @@ TargetDownload
               simplifies configuration.
               
               Default value: yes
+
+ClassicKBytes
+              Starting with v4.2, Stone Steps Webalizer shows transfer amounts in 
+              reports and charts as numbers with a unit suffix, such as KB, MB, GB, 
+              etc., as opposed to the traditional numbers of kilobytes. If you would 
+              like to revert to the previous behavior, set ClassicKBytes to "yes" in 
+              the configuration. You will also need to change the word Transfer to 
+              KBytes in the language file, so report titles look the same as before 
+              v4.2.
+
+              Default value: no
+
+DecimalKBytes
+              Traditionally, the Webalizer interpreted one kilobyte as 1024 bytes. 
+              You can set DecimalKBytes to "yes" to compute transfer amounts in 
+              multiples of 1000 bytes.
+
+              Default value: no
               
 DNS Resolution Configuration Options
 ------------------------------------              
@@ -1673,7 +1693,7 @@ GraphVisitsColor
     
 GraphVolumeColor
               Defines the color of the graph and legend associated with 
-              KBytes. The value must be specified as six hexadecimal 
+              Transfer. The value must be specified as six hexadecimal 
               digits, two for each color - red, green and blue. Default 
               value: FF0000 
     
