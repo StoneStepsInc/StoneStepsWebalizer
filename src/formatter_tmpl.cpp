@@ -12,6 +12,7 @@ formatter_tmpl.cpp
 #include "formatter.h"
 #include "tstring.h"
 #include "util.h"
+#include "exception.h"
 
 #include <cstddef>
 #include <utility>
@@ -24,7 +25,7 @@ string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, forma
 
    // check if cptr points one element past the end of the buffer
    if(cptr - buffer >= (std::ptrdiff_t) bufsize)
-      return outbuf;
+      throw exception_t(0, "Insufficient buffer space");
 
    // compute the remaining unused buffer size
    avsize = bufsize - (cptr-buffer);
@@ -35,7 +36,7 @@ string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, forma
    // format the string in the available buffer space
    olen = formatcb(inbuf, arg ...);
 
-   // initialize in the output buffer as a holder buffer pointing to the formatted string
+   // initialize the output buffer as a holder buffer pointing to the formatted string
    outbuf.attach(cptr, olen, true);
 
    // and move the current pointer past the last formatted character in the append mode
