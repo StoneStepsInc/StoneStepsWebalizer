@@ -131,7 +131,7 @@ graph_t::graph_t(const config_t& config) :
    graph_hosts_color = 0xFF8000;
    graph_pages_color = 0x00C0FF;
    graph_visits_color = 0xFFFF00;
-   graph_volume_color = 0xFF0000;
+   graph_xfer_color = 0xFF0000;
    graph_outline_color = 0x000000;
    graph_legend_color = 0x000000;
    graph_weekend_color = 0x00805C;
@@ -325,7 +325,7 @@ int graph_t::year_graph6x(const history_t& history,
    {
       /* Kbytes Legend */
       _gdImageString(im, GD_FONT_SMALL, msright+1, YGH-MB+2, config.lang.msg_h_xfer, c_shadow, false, NULL);
-      _gdImageString(im, GD_FONT_SMALL, msright, YGH-MB+1, config.lang.msg_h_xfer, c_volume, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, msright, YGH-MB+1, config.lang.msg_h_xfer, c_xfer, false, NULL);
 
       /* Hosts/Visits Legend */
       _gdImageString(im, GD_FONT_SMALL, msright+1, MT-font_size_small_px-2, config.lang.msg_h_hosts, c_shadow, false, NULL);
@@ -455,7 +455,7 @@ int graph_t::year_graph6x(const history_t& history,
       x2 = x1 + (MSBBW-1);
       y1 = YGH-MB-GBW-MSPT - (int) ((percent * (double)MSPH)+.5);
       if(y1 > YGH-MB-GBW-MSPT-1) continue;
-      draw_graph_bar(im, x1, y1, x2, YGH-MB-GBW-MSPT-1, c_volume);
+      draw_graph_bar(im, x1, y1, x2, YGH-MB-GBW-MSPT-1, c_xfer);
    }
 
    /* save png image */
@@ -535,7 +535,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    {
       /* Kbytes Legend */
       _gdImageStringUp(im, GD_FONT_SMALL, 494, 376, config.lang.msg_h_xfer, c_shadow, true, NULL);
-      _gdImageStringUp(im, GD_FONT_SMALL, 493, 375, config.lang.msg_h_xfer, c_volume, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 493, 375, config.lang.msg_h_xfer, c_xfer, true, NULL);
 
       /* Sites/Visits Legend */
       _gdImageStringUp(im, GD_FONT_SMALL, 494, 276, config.lang.msg_h_hosts, c_shadow, true, NULL);
@@ -645,7 +645,7 @@ int graph_t::month_graph6(const char *fname,          // filename
       x1 = 26 + (i*15);
       x2 = x1 + 10;
       y1 = (int) (375. - ( percent * 91.));
-      draw_graph_bar(im, x1, y1, x2, 375, c_volume);
+      draw_graph_bar(im, x1, y1, x2, 375, c_xfer);
    }
 
    /* open file for writing */
@@ -743,7 +743,7 @@ int graph_t::day_graph3(const char *fname,
 
       // KBytes
       _gdImageStringUp(im, GD_FONT_SMALL, 494, 316, config.lang.msg_h_xfer, c_shadow, true, NULL);
-      _gdImageStringUp(im, GD_FONT_SMALL, 493, 315, config.lang.msg_h_xfer, c_volume, true, &textsize);
+      _gdImageStringUp(im, GD_FONT_SMALL, 493, 315, config.lang.msg_h_xfer, c_xfer, true, &textsize);
       offset = textsize;
    }
 
@@ -767,7 +767,7 @@ int graph_t::day_graph3(const char *fname,
       x1 = ML+SBW+HSPL + HGSP(11) + (i*HGSW);
       x2 = x1 + 10;
       y1 = (int) (316. - (92./percent));
-      draw_graph_bar(im, x1, y1, x2, 315, c_volume);
+      draw_graph_bar(im, x1, y1, x2, 315, c_xfer);
    }
 
    /* save as png file */
@@ -908,7 +908,7 @@ void graph_t::init_graph(const char *title, int xsize, int ysize)
    c_hosts = gdImageColorAllocate(im, RED(graph_hosts_color), GREEN(graph_hosts_color), BLUE(graph_hosts_color));
    c_pages = gdImageColorAllocate(im, RED(graph_pages_color), GREEN(graph_pages_color), BLUE(graph_pages_color));
    c_visits = gdImageColorAllocate(im, RED(graph_visits_color), GREEN(graph_visits_color), BLUE(graph_visits_color));
-   c_volume = gdImageColorAllocate(im, RED(graph_volume_color), GREEN(graph_volume_color), BLUE(graph_volume_color));
+   c_xfer = gdImageColorAllocate(im, RED(graph_xfer_color), GREEN(graph_xfer_color), BLUE(graph_xfer_color));
    c_outline = gdImageColorAllocate(im, RED(graph_outline_color), GREEN(graph_outline_color), BLUE(graph_outline_color));
    c_legend = gdImageColorAllocate(im, RED(graph_legend_color), GREEN(graph_legend_color), BLUE(graph_legend_color));
    c_weekend = gdImageColorAllocate(im, RED(graph_weekend_color), GREEN(graph_weekend_color), BLUE(graph_weekend_color));
@@ -1010,7 +1010,7 @@ void graph_t::init_graph_engine(void)
    if(!config.graph_hosts_color.isempty()) graph_hosts_color = make_color(config.graph_hosts_color);
    if(!config.graph_pages_color.isempty()) graph_pages_color = make_color(config.graph_pages_color);
    if(!config.graph_visits_color.isempty()) graph_visits_color = make_color(config.graph_visits_color);
-   if(!config.graph_volume_color.isempty()) graph_volume_color = make_color(config.graph_volume_color);
+   if(!config.graph_xfer_color.isempty()) graph_xfer_color = make_color(config.graph_xfer_color);
    if(!config.graph_outline_color.isempty()) graph_outline_color = make_color(config.graph_outline_color);
    if(!config.graph_legend_color.isempty()) graph_legend_color = make_color(config.graph_legend_color);
    if(!config.graph_weekend_color.isempty()) graph_weekend_color = make_color(config.graph_weekend_color);

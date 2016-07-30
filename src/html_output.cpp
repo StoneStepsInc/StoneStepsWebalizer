@@ -146,7 +146,7 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
    if(!graph.is_default_pages_color()) fprintf(out_fp, "      pages_color: \"#%06X\",\n", graph.get_pages_color());
    if(!graph.is_default_visits_color()) fprintf(out_fp, "      visits_color: \"#%06X\",\n", graph.get_visits_color());
    if(!graph.is_default_hosts_color()) fprintf(out_fp, "      hosts_color: \"#%06X\",\n", graph.get_hosts_color());
-   if(!graph.is_default_volume_color()) fprintf(out_fp, "      xfer_color: \"#%06X\",\n", graph.get_volume_color());
+   if(!graph.is_default_xfer_color()) fprintf(out_fp, "      xfer_color: \"#%06X\",\n", graph.get_xfer_color());
    if(!graph.is_default_weekend_color()) fprintf(out_fp, "      weekend_color: \"#%06X\",\n", graph.get_weekend_color());
 
    // output unit prefixes, transfer unit and whether one KB is 1000 or 1024 bytes

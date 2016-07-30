@@ -44,7 +44,7 @@ class graph_t {
 
       /* colors */
       uint32_t black, white, dkgrey, red, blue, orange, green, cyan, yellow, purple, ltpurple, ltgreen, brown;
-      uint32_t c_shadow, c_background, c_gridline, c_hits, c_files, c_hosts, c_pages, c_visits, c_volume, c_outline, c_legend, c_weekend;
+      uint32_t c_shadow, c_background, c_gridline, c_hits, c_files, c_hosts, c_pages, c_visits, c_xfer, c_outline, c_legend, c_weekend;
 
       uint32_t graph_background;
       uint32_t graph_gridline;
@@ -55,7 +55,7 @@ class graph_t {
       uint32_t graph_hosts_color;
       uint32_t graph_pages_color;
       uint32_t graph_visits_color;
-      uint32_t graph_volume_color;
+      uint32_t graph_xfer_color;
       uint32_t graph_outline_color;
       uint32_t graph_legend_color;
       uint32_t graph_weekend_color;
@@ -97,7 +97,7 @@ class graph_t {
       uint32_t get_pages_color(void) const {return graph_pages_color;}
       uint32_t get_visits_color(void) const {return graph_visits_color;}
       uint32_t get_hosts_color(void) const {return graph_hosts_color;}
-      uint32_t get_volume_color(void) const {return graph_volume_color;}
+      uint32_t get_xfer_color(void) const {return graph_xfer_color;}
       uint32_t get_outline_color(void) const {return graph_outline_color;}
       uint32_t get_legend_color(void) const {return graph_legend_color;}
       uint32_t get_weekend_color(void) const {return graph_weekend_color;}
@@ -112,7 +112,7 @@ class graph_t {
       bool is_default_pages_color(void) const {return config.graph_pages_color.isempty() ? true : false;}
       bool is_default_visits_color(void) const {return config.graph_visits_color.isempty() ? true : false;}
       bool is_default_hosts_color(void) const {return config.graph_hosts_color.isempty() ? true : false;}
-      bool is_default_volume_color(void) const {return config.graph_volume_color.isempty() ? true : false;}
+      bool is_default_xfer_color(void) const {return config.graph_xfer_color.isempty() ? true : false;}
       bool is_default_outline_color(void) const {return config.graph_outline_color.isempty() ? true : false;}
       bool is_default_legend_color(void) const {return config.graph_legend_color.isempty() ? true : false;}
       bool is_default_weekend_color(void) const {return config.graph_weekend_color.isempty() ? true : false;}

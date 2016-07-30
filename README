@@ -1691,7 +1691,7 @@ GraphVisitsColor
               digits, two for each color - red, green and blue. Default 
               value: FFFF00 
     
-GraphVolumeColor
+GraphTransferColor
               Defines the color of the graph and legend associated with 
               Transfer. The value must be specified as six hexadecimal 
               digits, two for each color - red, green and blue. Default 

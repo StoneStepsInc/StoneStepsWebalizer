@@ -721,6 +721,7 @@ void config_t::get_config(const char *fname)
                      {"GraphPagesColor",     135},          // Graph pages color
                      {"GraphShadowColor",    106},          // Graph legend shadow color
                      {"GraphTitleColor",     131},          // Graph title color
+                     {"GraphTransferColor",  137},          // Graph transfer color
                      {"GraphTrueColor",      111},          // Create true-color images?
                      {"GraphType",           115},          // Graph type (PNG, Flash-OFC, etc)
                      {"GraphVisitsColor",    136},          // Graph visits color
@@ -1047,7 +1048,7 @@ void config_t::get_config(const char *fname)
          case 134: graph_hosts_color = value; break;
          case 135: graph_pages_color = value; break;
          case 136: graph_visits_color = value; break;
-         case 137: graph_volume_color = value; break;
+         case 137: graph_xfer_color = value; break;
          case 138: graph_outline_color = value; break;
          case 139: graph_legend_color = value; break;
          case 140: graph_weekend_color = value; break;

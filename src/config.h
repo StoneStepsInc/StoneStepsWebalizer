@@ -187,7 +187,7 @@ class config_t {
       string_t graph_hosts_color;
       string_t graph_pages_color;
       string_t graph_visits_color;
-      string_t graph_volume_color;
+      string_t graph_xfer_color;
       string_t graph_outline_color;
       string_t graph_legend_color;
       string_t graph_weekend_color;
