@@ -180,6 +180,7 @@
     </ClCompile>
     <ClCompile Include="dns_resolv.cpp" />
     <ClCompile Include="dump_output.cpp" />
+    <ClCompile Include="encoder.cpp" />
     <ClCompile Include="encoder_tmpl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

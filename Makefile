@@ -76,8 +76,9 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	html_output.cpp dump_output.cpp \
 	database.cpp logfile.cpp cp1252_ucs2.cpp \
 	char_buffer.cpp unicode.cpp formatter.cpp \
-   platform/exception_linux.cpp platform/event_pthread.cpp \
-   platform/mutex_pthread.cpp platform/thread_pthread.cpp 
+	platform/exception_linux.cpp platform/event_pthread.cpp \
+	platform/mutex_pthread.cpp platform/thread_pthread.cpp \
+	encoder.cpp 
 
 # list all libraries we use
 LIBS     := stdc++ dl pthread db_cxx gd z maxminddb

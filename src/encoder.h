@@ -141,4 +141,9 @@ class buffer_encoder_t {
       }
 };
 
+//
+//
+//
+template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str);
+
 #endif // __ENCODER_H
