@@ -142,8 +142,12 @@ class buffer_encoder_t {
 };
 
 //
+// Character encoding functions for encode_string
 //
-//
+char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc);
+char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc);
+char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc);
+
 template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str);
 
 #endif // __ENCODER_H

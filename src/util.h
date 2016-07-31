@@ -152,13 +152,6 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2);
 
 string_t& url_decode(const string_t& str, string_t& out);
 
-//
-// Character encoding functions (see buffer_encoder_t)
-//
-char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc);
-char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc);
-char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc);
-
 char from_hex(char);                           /* convert hex to dec  */
 const char *from_hex(const char *cp1, char *cp2);
 

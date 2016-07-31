@@ -14,6 +14,118 @@
 #include "util.h"
 #include "exception.h"
 
+char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc)
+{
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      obc = 6;
+      return op;
+   }
+
+   switch (*cp) {
+      case '<':
+         obc = 4;
+         memcpy(op, "&lt;", 4);
+         break;
+      case '>':
+         obc = 4;
+         memcpy(op, "&gt;", 4);
+         break;
+      case '&':
+         obc = 5;
+         memcpy(op, "&amp;", 5);
+         break;
+      case '"':
+         obc = 6;
+         memcpy(op, "&quot;", 6);
+         break;
+      case '\'':
+         obc = 6;
+         memcpy(op, "&#x27;", 6);
+         break;
+      default:
+         obc = cbc;
+         memcpy(op, cp, cbc);
+         break;
+      }
+      
+   return op;
+}
+
+char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc)
+{
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      encode_html_char(NULL, cbc, op, obc);
+      if(obc < 6)
+         obc = 6;
+      return op;
+   }
+         
+   if(*cp == '\'') {
+      obc = 6;
+      memcpy(op, "&apos;", 6);
+      return op;
+   }
+      
+   return encode_html_char(cp, cbc, op, obc);
+}
+
+char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc)
+{
+   // check if we need to return the length of the longest encoded sequence
+   if(cp == NULL) {
+      obc = 6;
+      return op;
+   }
+
+   switch (*cp) {
+      case '\'':
+         obc = 2;
+         memcpy(op, "\\'", 2);
+         break;
+      case '\"':
+         obc = 2;
+         memcpy(op, "\\\"", 2);
+         break;
+      case '\r':
+         obc = 2;
+         memcpy(op, "\\r", 2);
+         break;
+      case '\n':
+         obc = 2;
+         memcpy(op, "\\n", 2);
+         break;
+      case '\xE2':
+         // check if the sequence is either E2 80 A8 (LS) or E2 80 A9 (PS)
+         if(*(cp+1) == '\x80') {
+            if(*(cp+2) == '\xA8') {
+               obc = 6;
+               memcpy(op, "\\u2028", 6);
+            }
+            else if(*(cp+2) == '\xA9') {
+               obc = 6;
+               memcpy(op, "\\u2029", 6);
+            }
+            else {
+               obc = 3;
+               memcpy(op, cp, 3);
+            }
+         }
+         else {
+            obc = 3;
+            memcpy(op, cp, 3);
+         }
+         break;
+      default:
+         obc = cbc;
+         memcpy(op, cp, cbc);
+         break;
+   }
+
+   return op;
+}
+
 template <encode_char_t encode_char>
 size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
 {
