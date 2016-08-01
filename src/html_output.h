@@ -32,26 +32,16 @@ class html_output_t : public output_t {
       enum page_type_t {page_index, page_usage, page_all_items};
 
    private:
-      typedef buffer_encoder_t<encode_html_char> html_encoder_t;
-      typedef buffer_encoder_t<encode_js_char> js_encoder_t;
-
-   private:
-      string_t::char_buffer_t xfer_fmt_buf;  // buffer for formatting human-readable numbers
-
       FILE *out_fp;
 
       graph_t graph;
-
-      html_encoder_t html_encoder;           // HTML encoder (may be used for copying in local scopes)
-      html_encoder_t& html_encode;           // local scopes may define a new instance of html_encode
-
-      js_encoder_t js_encoder;
-      js_encoder_t& js_encode;
 
       buffer_formatter_t buffer_formatter;
 
    private:
       const char *fmt_xfer(uint64_t xfer, bool pre = false);
+      const char *html_encode(const char *str);
+      const char *js_encode(const char *str);
 
       void write_html_head(const char *period, FILE *out_fp, page_type_t page_type);
       void write_html_tail(FILE *out_fp);

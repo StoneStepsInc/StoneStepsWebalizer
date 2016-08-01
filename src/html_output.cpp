@@ -49,12 +49,7 @@
 html_output_t::html_output_t(const config_t& config, const state_t& state) : 
       output_t(config, state), 
       graph(config), 
-      html_encoder(buffer, HALFBUFSIZE, html_encoder_t::overwrite), 
-      html_encode(html_encoder),
-      js_encoder(buffer+HALFBUFSIZE, HALFBUFSIZE, js_encoder_t::overwrite), 
-      js_encode(js_encoder),
-      xfer_fmt_buf(2048),
-      buffer_formatter(xfer_fmt_buf, xfer_fmt_buf.capacity(), buffer_formatter_t::overwrite)
+      buffer_formatter(buffer, BUFSIZE, buffer_formatter_t::overwrite)
 {
 }
 
@@ -73,6 +68,16 @@ bool html_output_t::init_output_engine(void)
 void html_output_t::cleanup_output_engine(void)
 {
    graph.cleanup_graph_engine();
+}
+
+const char *html_output_t::html_encode(const char *str)
+{
+   return buffer_formatter.format(encode_string<encode_html_char>, str);
+}
+
+const char *html_output_t::js_encode(const char *str)
+{
+   return buffer_formatter.format(encode_string<encode_js_char>, str);
 }
 
 const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
@@ -99,7 +104,7 @@ const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
 
 void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 {
-   html_encoder.set_scope_mode(html_encoder_t::append),
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_%s.js\"></script>\n", html_encode(config.html_js_path.c_str()), html_encode(config.js_charts.c_str()));
 
    if(config.js_charts_paths.empty()) {
@@ -184,7 +189,7 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
    //
    fputs("   var monthly_summary_chart = new MonthlySummaryChart(2, config, {\n", out_fp);
 
-   js_encode.set_scope_mode(js_encoder_t::append),
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
 
    fputs("      shortMonths: [", out_fp);
@@ -236,7 +241,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    u_int last_day = state.totals.cur_tstamp.last_month_day();
    fputs("   var daily_usage_chart = new DailyUsageChart(2, config, {\n", out_fp);
 
-   js_encode.set_scope_mode(js_encoder_t::append),
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "      maxDay: %d,\n", last_day);
@@ -286,7 +291,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //
    fputs("   var hourly_usage_chart = new HourlyUsageChart(2, config, {\n", out_fp);
 
-   js_encode.set_scope_mode(js_encoder_t::append),
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fputs("      seriesNames: {\n", out_fp);
@@ -308,7 +313,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //
    fputs("   var country_usage_chart = new CountryUsageChart(3, config, {\n", out_fp);
 
-   js_encode.set_scope_mode(js_encoder_t::append),
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "     totalVisits: %" PRIu64 ",\n", state.totals.t_hvisits_end);
@@ -1513,7 +1518,7 @@ void html_output_t::top_urls_table(int flag)
             fprintf(out_fp,"%s</td></tr>\n", uptr->string.c_str());
       }
       else {
-         html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
          dispurl = html_encode(dispurl);
@@ -1616,7 +1621,7 @@ int html_output_t::all_urls_page(void)
          if(config.hidden_urls.isinlistex(unode.string, unode.pathlen, true))
             continue;
 
-         html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          dispurl = (unode.hexenc) ? url_decode(unode.string, str).c_str() : unode.string.c_str();
          dispurl = html_encode(dispurl);
@@ -1720,7 +1725,7 @@ void html_output_t::top_entry_table(int flag)
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       fputs("<tr>\n", out_fp);
       fprintf(out_fp,
@@ -1880,7 +1885,7 @@ void html_output_t::top_refs_table()
       }
       else
       {
-         html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          if (rptr->string.isempty())
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
@@ -2169,7 +2174,7 @@ void html_output_t::top_err_table(void)
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i=0; i < tot_num && iter.prev(rcnode); i++) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       rptr = &rcnode;
 
@@ -2242,7 +2247,7 @@ int html_output_t::all_errors_page(void)
    database_t::reverse_iterator<rcnode_t> iter = state.database.rbegin_errors("errors.hits");
 
    while(iter.prev(rcnode)) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       rptr = &rcnode;
       dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
@@ -2315,7 +2320,7 @@ int html_output_t::all_refs_page(void)
    database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.hits");
 
    while(iter.prev(rnode)) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       if(rnode.flag == OBJ_REG) {
          if(config.hidden_refs.isinlist(rnode.string))
@@ -2431,7 +2436,7 @@ void html_output_t::top_agents_table()
 
    aptr = &a_array[0];
    for(i = 0; i < tot_num; i++) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       /* shade grouping? */
       if (config.shade_groups && (aptr->flag==OBJ_GRP))
@@ -2546,7 +2551,7 @@ int html_output_t::all_agents_page(void)
    database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.visits");
 
    while(iter.prev(anode)) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       if(anode.flag == OBJ_REG) {
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
@@ -2616,7 +2621,7 @@ void html_output_t::top_search_table(void)
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i = 0; i < tot_num && iter.prev(snode); i++) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       sptr = &snode;
       fprintf(out_fp,
@@ -2712,7 +2717,7 @@ int html_output_t::all_search_page(void)
    fputs("----------------  ----------------  ----------------------\n\n", out_fp);
 
    while(iter.prev(snode)) {
-      html_encoder_t html_encode(html_encoder, html_encoder_t::append);
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       sptr = &snode;
       fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  ",
@@ -3254,10 +3259,4 @@ int html_output_t::write_main_index()
 //
 // Include templates
 //
-#include "encoder_tmpl.cpp"
 #include "formatter_tmpl.cpp"
-
-//
-// Instantiate HTML and JavaScript encoder templates
-//
-template class buffer_encoder_t<encode_html_char>;

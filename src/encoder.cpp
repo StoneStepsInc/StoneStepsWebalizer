@@ -165,7 +165,8 @@ size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
    // the check inside the loop guarantees that the buffer has room for the null character
    buffer[slen] = 0;
    
-   return slen;
+   // include the null character in the returned size
+   return slen + 1;
 }
 
 //
