@@ -72,12 +72,12 @@ void html_output_t::cleanup_output_engine(void)
 
 const char *html_output_t::html_encode(const char *str)
 {
-   return buffer_formatter.format(encode_string<encode_html_char>, str);
+   return buffer_formatter.format(encode_string<encode_char_html>, str);
 }
 
 const char *html_output_t::js_encode(const char *str)
 {
-   return buffer_formatter.format(encode_string<encode_js_char>, str);
+   return buffer_formatter.format(encode_string<encode_char_js>, str);
 }
 
 const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)

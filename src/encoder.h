@@ -34,9 +34,9 @@ typedef char *(*encode_char_t)(const char *cp, size_t cbc, char *op, size_t& obc
 //
 // Character encoding functions for encode_string
 //
-char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc);
-char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc);
-char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc);
+char *encode_char_html(const char *cp, size_t cbc, char *op, size_t& obc);
+char *encode_char_xml(const char *cp, size_t cbc, char *op, size_t& obc);
+char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc);
 
 template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str);
 

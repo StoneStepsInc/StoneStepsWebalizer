@@ -14,7 +14,7 @@
 #include "util.h"
 #include "exception.h"
 
-char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc)
+char *encode_char_html(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
    if(cp == NULL) {
@@ -52,11 +52,11 @@ char *encode_html_char(const char *cp, size_t cbc, char *op, size_t& obc)
    return op;
 }
 
-char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc)
+char *encode_char_xml(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
    if(cp == NULL) {
-      encode_html_char(NULL, cbc, op, obc);
+      encode_char_html(NULL, cbc, op, obc);
       if(obc < 6)
          obc = 6;
       return op;
@@ -68,10 +68,10 @@ char *encode_xml_char(const char *cp, size_t cbc, char *op, size_t& obc)
       return op;
    }
       
-   return encode_html_char(cp, cbc, op, obc);
+   return encode_char_html(cp, cbc, op, obc);
 }
 
-char *encode_js_char(const char *cp, size_t cbc, char *op, size_t& obc)
+char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
    if(cp == NULL) {
@@ -172,7 +172,6 @@ size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
 //
 // Instantiate templates
 //
-
-template size_t encode_string<encode_html_char>(string_t::char_buffer_t& buffer, const char *str);
-template size_t encode_string<encode_xml_char>(string_t::char_buffer_t& buffer, const char *str);
-template size_t encode_string<encode_js_char>(string_t::char_buffer_t& buffer, const char *str);
+template size_t encode_string<encode_char_html>(string_t::char_buffer_t& buffer, const char *str);
+template size_t encode_string<encode_char_xml>(string_t::char_buffer_t& buffer, const char *str);
+template size_t encode_string<encode_char_js>(string_t::char_buffer_t& buffer, const char *str);
