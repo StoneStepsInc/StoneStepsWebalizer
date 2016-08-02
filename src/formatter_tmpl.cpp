@@ -25,7 +25,7 @@ string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, forma
 
    // check if cptr points one element past the end of the buffer
    if(cptr - buffer >= (std::ptrdiff_t) bufsize)
-      throw exception_t(0, "Insufficient buffer space");
+      throw exception_t(0, "Insufficient buffer capacity");
 
    // compute the remaining unused buffer size
    avsize = bufsize - (cptr-buffer);
