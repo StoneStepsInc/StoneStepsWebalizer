@@ -117,7 +117,7 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
    else {
       // output all alternative JavaScript charts paths
       for(std::vector<string_t>::const_iterator i = config.js_charts_paths.begin(); i != config.js_charts_paths.end(); i++)
-         fprintf(out_fp, "<script src=\"%s\"></script>\n", js_encode(i->c_str()));
+         fprintf(out_fp, "<script src=\"%s\"></script>\n", html_encode(i->c_str()));
    }
 
    // output the script block for JavaScripts charts
