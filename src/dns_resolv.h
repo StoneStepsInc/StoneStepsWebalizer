@@ -42,22 +42,23 @@ struct hnode_t;
 struct dnode_t {
       hnode_t&       hnode;               // host node reference
       time_t         tstamp;              // when the name was resolved
-      sockaddr       addr;
       struct dnode_t *llist;
 
+      union {
+         sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
+         sockaddr_in    s_addr_ipv4;      // IPv4 socket address
+         sockaddr_in6   s_addr_ipv6;      // IPv6 socket address
+      };
+
    public:
-      dnode_t(hnode_t& hnode);
+      dnode_t(hnode_t& hnode, unsigned short sa_family);
 
       ~dnode_t(void);
 
       const string_t& key(void) const {return hnode.string;}
 
       nodetype_t get_type(void) const {return OBJ_REG;}
-
-      sockaddr_in& addr_ipv4(void) {return (sockaddr_in&) addr;}
-      const sockaddr_in& addr_ipv4(void) const {return (const sockaddr_in&) addr;}
-
-};                               /* DNS hash table node struct   */
+};
 
 //
 // DNS resolver

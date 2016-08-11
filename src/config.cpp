@@ -312,7 +312,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    glist::iterator grph_iter = group_sites.begin();
 
    while(grph_iter.next()) {
-      if(is_ip4_address(grph_iter.item()->name)) {
+      if(is_ip_address(grph_iter.item()->name)) {
          grph_iter.item()->name = string_t::_format("group_%s", grph_iter.item()->name.c_str());
          messages.push_back(string_t::_format("WARNING: A bare IP address in GroupHost is changed to %s\n", grph_iter.item()->name.c_str()));
       }

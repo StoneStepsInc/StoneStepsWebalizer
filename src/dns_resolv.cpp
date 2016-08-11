@@ -58,6 +58,7 @@
 #include "mutex.h"
 #include "event.h"
 #include "thread.h"
+#include "util.h"
 
 //
 //
@@ -89,13 +90,14 @@ struct dns_db_record {
 // DNS resolver node 
 //
 
-dnode_t::dnode_t(hnode_t& hnode) : hnode(hnode)
+dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode)
 {
    llist = NULL; 
    tstamp = 0; 
 
-   memset(&addr, 0, sizeof(addr));
-   addr.sa_family = AF_UNSPEC;
+   memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
+
+   s_addr_ip.sa_family = sa_family;
 }
 
 dnode_t::~dnode_t(void) 
@@ -148,6 +150,7 @@ dns_resolver_t::~dns_resolver_t(void)
 /*********************************************/
 bool dns_resolver_t::put_hnode(hnode_t *hnode)
 {
+   unsigned short sa_family;
    dnode_t* nptr;
 
    if(!dns_db && !geoip_db)
@@ -159,12 +162,22 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    
    mutex_lock(dnode_mutex);
    
-   //
-   // If we are accepting host names in place of IP addresses, derive 
-   // country code from the host name right here and return, so the 
-   // DNS cache file is not littered with bad IP addresses.
-   //
-   if(accept_host_names && !is_ip4_address(hnode->string)) {
+   if(is_ipv4_address(hnode->string))
+      sa_family = AF_INET;
+   else if(is_ipv6_address(hnode->string))
+      sa_family = AF_INET6;
+   else
+      sa_family = AF_UNSPEC;
+
+   if(sa_family == AF_UNSPEC) {
+      if(!accept_host_names) 
+         return false;
+
+      //
+      // If we are accepting host names in place of IP addresses, derive 
+      // country code from the host name right here and return, so the 
+      // DNS cache file is not littered with bad IP addresses.
+      //
       string_t::char_buffer_t ccode_buffer(hnode->ccode, hnode_t::ccode_size+1, true);
       string_t ccode(ccode_buffer, 0);
 
@@ -178,8 +191,7 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    mutex_unlock(dnode_mutex);
 
    // create a new DNS node
-   if((nptr = new dnode_t(*hnode)) != NULL)
-      memset(&nptr->addr, 0, sizeof(struct in_addr));
+   nptr = new dnode_t(*hnode, sa_family);
 
    // and insert it to the end of the list
    mutex_lock(dnode_mutex);
@@ -219,18 +231,21 @@ hnode_t *dns_resolver_t::get_hnode(void)
 void dns_resolver_t::process_dnode(dnode_t* dnode)
 {
    bool goodcc;
-   struct hostent *res_ent;
    string_t ccode;
    string_t::char_buffer_t ccode_buffer;
 
    if(!dnode)
       goto funcexit;
 
-   if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
-      goto funcexit;
-
-   // we got an IPv4 address and set the family identifier
-   dnode->addr.sa_family = AF_INET;
+   // convert the IP address string to the binary form
+   if(dnode->s_addr_ip.sa_family == AF_INET) {
+      if(inet_pton(AF_INET, dnode->hnode.string, &dnode->s_addr_ipv4.sin_addr) != 1)
+         goto funcexit;
+   }
+   else if(dnode->s_addr_ip.sa_family = AF_INET6) {
+      if(inet_pton(AF_INET6, dnode->hnode.string, &dnode->s_addr_ipv6.sin6_addr) != 1)
+         goto funcexit;
+   }
 
    dnode->tstamp = time(NULL);
 
@@ -239,18 +254,30 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    ccode.attach(ccode_buffer, 0);
 
    // try GeoIP first
-   goodcc = geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
+   goodcc = geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
 
    // resolve the domain name
    if(dns_db) {
-      if((res_ent = gethostbyaddr((const char*) &dnode->addr_ipv4().sin_addr.s_addr, sizeof(dnode->addr_ipv4().sin_addr.s_addr), AF_INET)) == NULL)
+      char hostname[NI_MAXHOST];
+
+      *hostname = 0;
+
+      if(dnode->s_addr_ip.sa_family == AF_INET) {
+         if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
+            goto funcexit;
+      }
+      if(dnode->s_addr_ip.sa_family == AF_INET6) {
+         if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
+            goto funcexit;
+      }
+      else
          goto funcexit;
 
       // make sure it's not empty
-      if(!res_ent->h_name || !*res_ent->h_name)
+      if(!*hostname)
          goto funcexit;
 
-      dnode->hnode.name = res_ent->h_name;
+      dnode->hnode.name = hostname;
 
       // if GeoIP failed, derive country code from the domain name
       if(!goodcc)
@@ -420,7 +447,7 @@ void dns_resolver_t::dns_clean_up(void)
 string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr)
 {
    hnode_t hnode(ipaddr);
-   dnode_t dnode(hnode);
+   dnode_t dnode(hnode, is_ipv4_address(ipaddr) ? AF_INET : is_ipv6_address(ipaddr) ? AF_INET6 : AF_UNSPEC);
 
    if(dns_db_get(&dnode, true))
       return string_t(ipaddr);
@@ -606,7 +633,7 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
       return false;
 
    // look up the IP address
-   result = MMDB_lookup_sockaddr(geoip_db, (sockaddr*) &ipaddr, &mmdb_error);
+   result = MMDB_lookup_sockaddr(geoip_db, &ipaddr, &mmdb_error);
 
    if(mmdb_error != MMDB_SUCCESS) {
       if(config.debug_mode)
@@ -716,12 +743,12 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
                if(*dnsrec->ccode)
                   dnode->hnode.set_ccode(dnsrec->ccode);
                else
-                  geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
+                  geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
             }
             else {
                dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
                dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
-               geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
+               geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
             }
 
             if (config.debug_mode)

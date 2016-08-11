@@ -173,7 +173,9 @@ bool is_abs_path(const char *path);
 string_t get_cur_path(void);
 string_t make_path(const char *base, const char *path);
 
-bool is_ip4_address(const char *str);
+bool is_ipv4_address(const char *str);
+bool is_ipv6_address(const char *str);
+bool is_ip_address(const char *str);
 
 uint64_t elapsed(uint64_t stime, uint64_t etime);
 
