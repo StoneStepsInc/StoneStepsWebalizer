@@ -41,33 +41,11 @@ struct hnode_t;
 //
 class dns_resolver_t {
    private:
-      //
-      // DNS host node
-      //
-      struct dnode_t {
-            hnode_t&       hnode;               // host node reference
-            time_t         tstamp;              // when the name was resolved
-            struct dnode_t *llist;
-
-            union {
-               sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
-               sockaddr_in    s_addr_ipv4;      // IPv4 socket address
-               sockaddr_in6   s_addr_ipv6;      // IPv6 socket address
-            };
-
-         public:
-            dnode_t(hnode_t& hnode, unsigned short sa_family);
-
-            ~dnode_t(void);
-
-            const string_t& key(void) const {return hnode.string;}
-
-            nodetype_t get_type(void) const {return OBJ_REG;}
-      };
+      struct dnode_t;
 
    public:
-      uint64_t  dns_cached;                     // Number of IP addresses found in the DNS cache
-      uint64_t  dns_resolved;                  // Number of IP addresses resolved by a DNS lookup
+      uint64_t  dns_cached;                  // Number of IP addresses found in the DNS cache
+      uint64_t  dns_resolved;                // Number of IP addresses resolved by a DNS lookup
 
    private:
       const config_t& config;
@@ -75,7 +53,7 @@ class dns_resolver_t {
       MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
-      DB *dns_db;                              // DNS cache database
+      DB *dns_db;                            // DNS cache database
 
       time_t runtime;
       
@@ -93,7 +71,7 @@ class dns_resolver_t {
       dnode_t *dnode_list;
       dnode_t *dnode_end;
       int dns_live_workers;                  // total number of DNS threads
-      uint64_t dns_unresolved;                 // number of addresses to resolve
+      uint64_t dns_unresolved;               // number of addresses to resolve
 
       queue_t<hnode_t>  hqueue;              // resolved host node queue
 
