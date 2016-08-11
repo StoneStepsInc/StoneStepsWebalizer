@@ -90,7 +90,7 @@ struct dns_db_record {
 // DNS resolver node 
 //
 
-dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode)
+dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode)
 {
    llist = NULL; 
    tstamp = 0; 
@@ -100,7 +100,7 @@ dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode)
    s_addr_ip.sa_family = sa_family;
 }
 
-dnode_t::~dnode_t(void) 
+dns_resolver_t::dnode_t::~dnode_t(void) 
 {
 }
 
