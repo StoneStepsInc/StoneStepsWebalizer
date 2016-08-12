@@ -2563,12 +2563,10 @@ int html_output_t::all_agents_page(void)
              (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
              anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
 
-            html_encode(anode.string);
-
             if(anode.robot)
-               fprintf(out_fp, "<span class=\"robot\">%s</span>", buffer);
+               fprintf(out_fp, "<span class=\"robot\">%s</span>", html_encode(anode.string));
             else
-               fprintf(out_fp, "%s", buffer);
+               fprintf(out_fp, "%s", html_encode(anode.string));
 
             fputs("\n", out_fp);
       }
