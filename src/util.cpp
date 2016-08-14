@@ -786,10 +786,37 @@ uint64_t elapsed(uint64_t stime, uint64_t etime)
 }
 
 //
-// Formats the specified number in a human-readable form, such as 12.3 MB, within the
-// output buffer and returns the number of characters in the buffer, including the 
-// null character. The function throws an exception if the output buffer is too small.
+// Formats text within the output buffer using a printf-style format and returns 
+// the number of characters in the buffer, including the null character. Throws 
+// an exception if the output buffer is too small.
+//
+// fmt_vprintf is intended as a callback formatter function for buffer_formatter_t.
+//
+size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list args)
+{
+   int res;
+   size_t olen;
+
+   if((res = vsnprintf(buffer, buffer.capacity(), fmt, args)) == -1)
+      throw exception_t(0, "Cannot format text because of a bad format string");
+
+   olen = (size_t) res;
+
+   // make sure the string fits in the buffer
+   if(olen >= buffer.capacity())
+      throw exception_t(0, "Cannot format text because the output buffer is too small");
+
+   return olen + 1;
+}
+
+//
+// Formats the specified number within the output buffer in a human-readable form, 
+// such as 12.3 MB, and returns the number of characters in the buffer, including 
+// the null character. The function throws an exception if the output buffer is too 
+// small.
 // 
+// fmt_num is intended as a callback formatter function for buffer_formatter_t.
+//
 // The value of decimal indicates whether the number should be formatted in multiples 
 // of 1000 or 1024.
 //
@@ -806,11 +833,17 @@ size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep
    unsigned int prefix = 0;
    double result = (double) num;
    size_t olen, slen;
+   int res;
    static const char *small_buffer = "Cannot format a human-readabale number because the output buffer is too small";
+   static const char *snprintf_error = "Cannot format a human-readabale number because of a bad format string";
 
    // if the number is less than one kilobyte, just print the number
    if(num < (uint64_t) kbyte) {
-      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, num);
+      // MSDN describes snprintf returning a negative number on error, not -1
+      if((res = snprintf(buffer, buffer.capacity(), "%" PRIu64, num)) < 0)
+         throw exception_t(0, snprintf_error);
+
+      olen = (size_t) res;
 
       // make sure the string fits in the buffer
       if(olen >= buffer.capacity())
@@ -827,9 +860,15 @@ size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep
 
    // print round numbers as integers and otherwise with one digit of precision (e.g. print 4.96 as 5 and 4.93 as 4.9)
    if((uint64_t) ((result * 10.) + .5) % 10 == 0)
-      olen = snprintf(buffer, buffer.capacity(), "%" PRIu64, (uint64_t) (result + 0.5));
+      res = snprintf(buffer, buffer.capacity(), "%" PRIu64, (uint64_t) (result + 0.5));
    else
-      olen = snprintf(buffer, buffer.capacity(), "%.1lf", result);
+      res = snprintf(buffer, buffer.capacity(), "%.1lf", result);
+
+   // MSDN describes snprintf returning a negative number on error, not -1
+   if(res < 0)
+      throw exception_t(0, snprintf_error);
+
+   olen = (size_t) res;
 
    // make sure the string fits in the buffer
    if(olen >= buffer.capacity())
