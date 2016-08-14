@@ -39,6 +39,7 @@ class html_output_t : public output_t {
       buffer_formatter_t buffer_formatter;
 
    private:
+      const char *fmt_printf(const char *fmt, ...);
       const char *fmt_xfer(uint64_t xfer, bool pre = false);
       const char *html_encode(const char *str);
       const char *js_encode(const char *str);

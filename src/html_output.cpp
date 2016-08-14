@@ -70,6 +70,21 @@ void html_output_t::cleanup_output_engine(void)
    graph.cleanup_graph_engine();
 }
 
+const char *html_output_t::fmt_printf(const char *fmt, ...)
+{
+   va_list args;
+
+   va_start(args, fmt);
+
+   // make sure we free va_list even if fmt_vprintf throws
+   struct va_list_wrapper_t {
+      va_list& args;
+      ~va_list_wrapper_t() {va_end(args);}
+   } va_list_wrapper = {args};
+
+   return buffer_formatter.format(fmt_vprintf, fmt, args);
+}
+
 const char *html_output_t::html_encode(const char *str)
 {
    return buffer_formatter.format(encode_string<encode_char_html>, str);
@@ -331,7 +346,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 /* WRITE_HTML_HEAD - output top of HTML page */
 /*********************************************/
 
-void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_t page_type)
+void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page_type_t page_type)
 {
    list_t<nnode_t>::iterator iter;                 /* used for HTMLhead processing */
 
@@ -368,7 +383,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    fprintf(out_fp,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n");
    if(config.html_meta_noindex)
       fputs("<meta name=\"robots\" content=\"noindex,nofollow\">\n", out_fp);
-   fprintf(out_fp,"<title>%s %s - %s</title>\n", config.rpt_title.c_str(), config.hname.c_str(), period);
+   fprintf(out_fp,"<title>%s %s - %s</title>\n", config.rpt_title.c_str(), config.hname.c_str(), report_title);
    fprintf(out_fp,"<link rel=\"stylesheet\" type=\"text/css\" href=\"%swebalizer.css\">\n", !config.html_css_path.isempty() ? config.html_css_path.c_str() : "");
    if(!config.html_js_path.isempty())
       fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
@@ -420,7 +435,7 @@ void html_output_t::write_html_head(const char *period, FILE *out_fp, page_type_
    fputs("\n<!-- Page Header -->\n", out_fp);
    fputs("<div class=\"page_header_div\">\n", out_fp);
    fprintf(out_fp,"<h1>%s %s</h1>\n", config.rpt_title.c_str(), config.hname.c_str());
-   fprintf(out_fp,"<div class=\"usage_summary_div\">\n<em>%s: %s</em><br>\n",config.lang.msg_hhdr_sp,period);
+   fprintf(out_fp,"<div class=\"usage_summary_div\">\n<em>%s: %s</em><br>\n",config.lang.msg_hhdr_sp,report_title);
    fprintf(out_fp,"%s %s\n</div>\n",config.lang.msg_hhdr_gt,cur_time(config.local_time).c_str());
    fputs("</div>\n\n", out_fp);
 
@@ -571,8 +586,8 @@ int html_output_t::write_monthly_report()
    /* first, open the file */
    if ( (out_fp=open_out_file(html_fname_lang))==NULL ) return 1;
 
-   sprintf(buffer,"%s %d", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
-   write_html_head(buffer, out_fp, page_usage);
+   const char *report_title = fmt_printf("%s %d", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+   write_html_head(report_title, out_fp, page_usage);
 
    month_links();
 
@@ -1299,8 +1314,8 @@ int html_output_t::all_hosts_page(void)
    /* open file */
    if ( (out_fp=open_out_file(site_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -1583,8 +1598,8 @@ int html_output_t::all_urls_page(void)
    /* open file */
    if ( (out_fp=open_out_file(url_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2074,8 +2089,8 @@ int html_output_t::all_downloads_page(void)
    /* open file */
    if ( (out_fp=open_out_file(dl_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2235,8 +2250,8 @@ int html_output_t::all_errors_page(void)
    /* open file */
    if ( (out_fp=open_out_file(err_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2289,8 +2304,8 @@ int html_output_t::all_refs_page(void)
    /* open file */
    if ( (out_fp=open_out_file(ref_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2513,8 +2528,8 @@ int html_output_t::all_agents_page(void)
    /* open file */
    if ( (out_fp=open_out_file(agent_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -2704,8 +2719,8 @@ int html_output_t::all_search_page(void)
    /* open file */
    if ( (out_fp=open_out_file(search_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
+   write_html_head(report_title, out_fp, page_all_items);
 
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
 
@@ -2913,8 +2928,8 @@ int html_output_t::all_users_page(void)
    /* open file */
    if ( (out_fp=open_out_file(user_fname))==NULL ) return 0;
 
-   sprintf(buffer,"%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
-   write_html_head(buffer, out_fp, page_all_items);
+   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
+   write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
@@ -3169,12 +3184,12 @@ int html_output_t::write_main_index()
       else
          png_fname_lang = png_fname;
 
-      sprintf(buffer,"%s %s",config.lang.msg_main_us,config.hname.c_str());
+      const char *chart_title = fmt_printf("%s %s",config.lang.msg_main_us,config.hname.c_str());
 
       if(makeimgs)
-         graph.year_graph6x(state.history, png_fname_lang, buffer, graphinfo->usage_width, graphinfo->usage_height);
+         graph.year_graph6x(state.history, png_fname_lang, chart_title, graphinfo->usage_width, graphinfo->usage_height);
 
-      fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), buffer, graphinfo->usage_width, graphinfo->usage_height);
+      fprintf(out_fp,"<div id=\"monthly_summary_graph\" class=\"graph_holder\" style=\"width: %dpx\"><img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" ></div>\n", graphinfo->usage_width, png_fname.c_str(), chart_title, graphinfo->usage_width, graphinfo->usage_height);
    }
 
    fprintf(out_fp,"<p class=\"note_p\">%s</p>\n", config.lang.msg_misc_pages);
