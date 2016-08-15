@@ -45,7 +45,6 @@
 output_t::output_t(const config_t& config, const state_t& state) : state(state), config(config)
 {
    makeimgs = false;
-   buffer = new char[BUFSIZE];
    graphinfo = NULL;
 }
 
@@ -53,8 +52,6 @@ output_t::~output_t(void)
 {
    if(makeimgs)
       delete graphinfo;
-
-   delete [] buffer;
 }
 
 /*********************************************/

@@ -32,6 +32,8 @@ class html_output_t : public output_t {
       enum page_type_t {page_index, page_usage, page_all_items};
 
    private:
+      char *buffer;                          // buffer for formatting, encoding, etc
+
       FILE *out_fp;
 
       graph_t graph;

@@ -37,8 +37,6 @@ class output_t {
       const config_t&   config;
       const state_t&    state;
 
-      char *buffer;                    // buffer for formatting, encoding, etc
-
       graphinfo_t *graphinfo;          // shared graph information 
 
    public:      

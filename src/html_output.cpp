@@ -48,6 +48,7 @@
 //
 html_output_t::html_output_t(const config_t& config, const state_t& state) : 
       output_t(config, state), 
+      buffer(new char[BUFSIZE]),
       graph(config), 
       buffer_formatter(buffer, BUFSIZE, buffer_formatter_t::overwrite)
 {
@@ -55,6 +56,7 @@ html_output_t::html_output_t(const config_t& config, const state_t& state) :
 
 html_output_t::~html_output_t(void)
 {
+   delete [] buffer;
 }
 
 bool html_output_t::init_output_engine(void)
