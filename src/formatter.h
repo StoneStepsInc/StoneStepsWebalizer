@@ -15,6 +15,7 @@ formatter.h
 
 #include <stddef.h>
 #include <stack>
+#include <vector>
 
 //
 // buffer_formatter_t
@@ -133,7 +134,7 @@ class buffer_formatter_t {
       const size_t   bufsize;          // size of the entire buffer
       mode_t         mode;             // move cptr forward after each format call?
 
-      std::stack<fmt_state_t> scopes;  // saved formatter scope state descriptors
+      std::stack<fmt_state_t, std::vector<fmt_state_t>> scopes;  // saved formatter scope state descriptors
 
    private:
       void pop_scope(size_t scopeid);
