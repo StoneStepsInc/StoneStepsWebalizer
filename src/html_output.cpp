@@ -1535,7 +1535,7 @@ void html_output_t::top_urls_table(int flag)
             fprintf(out_fp,"%s</td></tr>\n", uptr->string.c_str());
       }
       else {
-         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
+         const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
          dispurl = html_encode(dispurl);
@@ -1638,10 +1638,9 @@ int html_output_t::all_urls_page(void)
          if(config.hidden_urls.isinlistex(unode.string, unode.pathlen, true))
             continue;
 
-         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
          dispurl = (unode.hexenc) ? url_decode(unode.string, str).c_str() : unode.string.c_str();
-         dispurl = html_encode(dispurl);
+
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
@@ -1650,7 +1649,7 @@ int html_output_t::all_urls_page(void)
             unode.avgtime, unode.maxtime,
             (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
             unode.target ? " class=\"target\"" : "",
-            dispurl);
+            html_encode(dispurl));
       }
    }
    iter.close();
@@ -1742,7 +1741,7 @@ void html_output_t::top_entry_table(int flag)
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
+      const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
       fputs("<tr>\n", out_fp);
       fprintf(out_fp,
@@ -1902,7 +1901,7 @@ void html_output_t::top_refs_table()
       }
       else
       {
-         buffer_formatter.set_scope_mode(buffer_formatter_t::append);
+         const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          if (rptr->string.isempty())
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
@@ -2191,25 +2190,22 @@ void html_output_t::top_err_table(void)
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i=0; i < tot_num && iter.prev(rcnode); i++) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       rptr = &rcnode;
 
       fprintf(out_fp,
-          "<tr>\n"                  \
-          "<th>%d</th>\n"            \
-          "<td>%" PRIu64 "</td>\n"            \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
-          "<td title=\"%s\">%d</td>\n"            \
-          "<td>%s</td>" \
+          "<tr>\n"
+          "<th>%d</th>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td title=\"%s\">%d</td>\n"
+          "<td>%s</td>"
           "<td class=\"stats_data_item_td\">",
           i+1,rptr->count,
           (state.totals.t_hit == 0) ? 0: ((double)rptr->count/state.totals.t_hit)*100.0,
           config.lang.get_resp_code(rptr->respcode).desc, rptr->respcode, html_encode(rptr->method));
 
       dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-      dispurl = html_encode(dispurl);
-      fprintf(out_fp,"%s", dispurl);
+      fprintf(out_fp,"%s", html_encode(dispurl));
 
       fputs("</td></tr>\n", out_fp);
    }
@@ -2264,17 +2260,16 @@ int html_output_t::all_errors_page(void)
    database_t::reverse_iterator<rcnode_t> iter = state.database.rbegin_errors("errors.hits");
 
    while(iter.prev(rcnode)) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       rptr = &rcnode;
       dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-      dispurl = html_encode(dispurl);
+
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,"%-8" PRIu64 " %6.02f%%           %d  %12s  %s\n",
          rptr->count,
          (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
          rptr->respcode,
          html_encode(rptr->method),
-         dispurl);
+         html_encode(dispurl));
    }
 
    iter.close();
@@ -2337,24 +2332,22 @@ int html_output_t::all_refs_page(void)
    database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.hits");
 
    while(iter.prev(rnode)) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       if(rnode.flag == OBJ_REG) {
          if(config.hidden_refs.isinlist(rnode.string))
             continue;
       
          if(rnode.string.isempty())
             dispurl = config.lang.msg_ref_dreq;
-         else {
+         else
             dispurl = (rnode.hexenc) ? url_decode(rnode.string, str).c_str() : rnode.string.c_str();
-            dispurl = html_encode(dispurl);
-         }
+
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  %s\n",
             rnode.count,
             (state.totals.t_hit==0)?0:((double)rnode.count/state.totals.t_hit)*100.0,
             rnode.visits, 
             (state.totals.t_visits==0) ? 0 : ((double)rnode.visits/state.totals.t_visits)*100.0,
-            dispurl);
+            html_encode(dispurl));
       }
    }
 
@@ -2453,8 +2446,6 @@ void html_output_t::top_agents_table()
 
    aptr = &a_array[0];
    for(i = 0; i < tot_num; i++) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       /* shade grouping? */
       if (config.shade_groups && (aptr->flag==OBJ_GRP))
          fputs("<tr class=\"group_shade_tr\">\n", out_fp);
@@ -2568,8 +2559,6 @@ int html_output_t::all_agents_page(void)
    database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.visits");
 
    while(iter.prev(anode)) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       if(anode.flag == OBJ_REG) {
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
@@ -2636,8 +2625,6 @@ void html_output_t::top_search_table(void)
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
    for(i = 0; i < tot_num && iter.prev(snode); i++) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       sptr = &snode;
       fprintf(out_fp,
          "<tr>\n"
@@ -2732,8 +2719,6 @@ int html_output_t::all_search_page(void)
    fputs("----------------  ----------------  ----------------------\n\n", out_fp);
 
    while(iter.prev(snode)) {
-      buffer_formatter.set_scope_mode(buffer_formatter_t::append);
-
       sptr = &snode;
       fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  ",
          sptr->count,
