@@ -105,6 +105,8 @@ struct dns_resolver_t::dnode_t {
       const string_t& key(void) const {return hnode.string;}
 
       nodetype_t get_type(void) const {return OBJ_REG;}
+
+      bool fill_sockaddr(void);
 };
 
 //
@@ -123,6 +125,30 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hno
 
 dns_resolver_t::dnode_t::~dnode_t(void) 
 {
+}
+
+//
+// Converts the IP address string from the host node into a sockaddr of 
+// the appropriate type. 
+// 
+// Note that while we could do this in the constructor, having a separate 
+// method with a return value makes this operation more straightforward 
+// than handling exceptions thrown from the constructor or having to check 
+// some state data member that would indicate whether sockaddr is valid or 
+// not.
+//
+bool dns_resolver_t::dnode_t::fill_sockaddr(void)
+{
+   if(s_addr_ip.sa_family == AF_INET) {
+      if(inet_pton(AF_INET, hnode.string, &s_addr_ipv4.sin_addr) != 1)
+         return false;
+   }
+   else if(s_addr_ip.sa_family = AF_INET6) {
+      if(inet_pton(AF_INET6, hnode.string, &s_addr_ipv6.sin6_addr) != 1)
+         return false;
+   }
+
+   return true;
 }
 
 //
@@ -214,6 +240,10 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    // create a new DNS node
    nptr = new dnode_t(*hnode, sa_family);
 
+   // convert the IP address string to sockaddr
+   if(!nptr->fill_sockaddr())
+      return false;
+
    // and insert it to the end of the list
    mutex_lock(dnode_mutex);
    if(nptr) {
@@ -256,17 +286,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    string_t::char_buffer_t ccode_buffer;
 
    if(!dnode)
-      goto funcexit;
-
-   // convert the IP address string to the binary form
-   if(dnode->s_addr_ip.sa_family == AF_INET) {
-      if(inet_pton(AF_INET, dnode->hnode.string, &dnode->s_addr_ipv4.sin_addr) != 1)
-         goto funcexit;
-   }
-   else if(dnode->s_addr_ip.sa_family = AF_INET6) {
-      if(inet_pton(AF_INET6, dnode->hnode.string, &dnode->s_addr_ipv6.sin6_addr) != 1)
-         goto funcexit;
-   }
+      return;
 
    dnode->tstamp = time(NULL);
 
@@ -469,6 +489,10 @@ string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr)
 {
    hnode_t hnode(ipaddr);
    dnode_t dnode(hnode, is_ipv4_address(ipaddr) ? AF_INET : is_ipv6_address(ipaddr) ? AF_INET6 : AF_UNSPEC);
+
+   // convert the IP address string to sockaddr
+   if(!dnode.fill_sockaddr())
+      return string_t();
 
    if(dns_db_get(&dnode, true))
       return string_t(ipaddr);
