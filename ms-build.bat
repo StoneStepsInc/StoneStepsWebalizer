@@ -91,7 +91,6 @@ rem Create the directory structure for the final package
 rem
 if not exist build\%platform%\%version% mkdir build\%platform%\%version%
 if not exist build\%platform%\%version%\lang mkdir build\%platform%\%version%\lang
-if not exist build\%platform%\%version%\ofcharts mkdir build\%platform%\%version%\ofcharts
 
 rem
 rem Copy all binaries into the versioned package directory we just created
