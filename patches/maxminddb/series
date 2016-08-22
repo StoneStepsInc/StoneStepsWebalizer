@@ -2,3 +2,4 @@ vs12-hgignore.patch
 hgtags.patch
 vs14-hgignore.patch
 vs14-project-files.patch
+libmaxmainddb-v1-2-0.patch
