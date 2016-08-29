@@ -307,7 +307,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
          if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
             goto funcexit;
       }
-      if(dnode->s_addr_ip.sa_family == AF_INET6) {
+      else if(dnode->s_addr_ip.sa_family == AF_INET6) {
          if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
             goto funcexit;
       }
