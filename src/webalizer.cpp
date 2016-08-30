@@ -1247,13 +1247,8 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-         //
-         // Check for out of sequence records. If there are new log records that
-         // fall into the same second as the last record, these records will be
-         // ignored, which is slightly better than double-counting the records 
-         // that have already been processed.
-         //
-         if (rec_tstamp <= state.totals.cur_tstamp) {
+         // check for out of sequence records
+         if (rec_tstamp < state.totals.cur_tstamp) {
             total_ignore++; 
             continue; 
          }
