@@ -1,5 +1,5 @@
 --------------------------------------------------------------------
-4.2.0.7 [August of 2016] -- Stone Steps Inc. (www.stonesteps.ca)
+4.2.0.9 [04-Sep-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Replaced KBytes with human-readable transfer amounts in reports
  * Added ClassicKBytes to allow to revert KBytes amounts as original numbers
