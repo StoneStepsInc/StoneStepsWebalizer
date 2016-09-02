@@ -429,11 +429,12 @@ function createChartConfig(report_config)
 //
 function formatAxisLabel(num, sep, config)
 {
-   var kbyte = config.decimal_kbytes ? 1000 : 1024;
+   var kbyte = config.version && config.decimal_kbytes ? 1000 : 1024;
    var result = num;
    var prefix = 0;
 
-   if(config.classic_kbytes)
+   // config.version didn't exist prior to v2, when human-readable variables were introduced
+   if(!config.version || config.classic_kbytes)
       return (result / kbyte).toFixed(0);
 
    if(num < kbyte)
