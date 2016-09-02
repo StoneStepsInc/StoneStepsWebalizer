@@ -153,6 +153,14 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
    fputs("   var config = createChartConfig({\n", out_fp);
 
    //
+   // Configuration object versions:
+   //
+   //   v1  - doesn't exist
+   //   v2  - added human-readable variables
+   //
+   fputs("      version: 2,\n", out_fp);
+
+   //
    // Output custom colors, if any are defined in the configuration. Chart colors 
    // can also be changed in the chart prototype in webalizer.js. Prototype colors 
    // will take effect immediately in all reports that don't override colors via 
