@@ -104,10 +104,6 @@ class webalizer_t {
 
       char        *buffer;
 
-      char        *f_buf;                          // our_getfs buffer
-      char        *f_cp;                           // pointer into the buffer
-      int         f_end;                           // count to end of buffer
-
       uint64_t      total_rec;                       // Total Records Processed
       uint64_t      total_ignore;                    // Total Records Ignored
       uint64_t      total_bad;                       // Total Bad Records
@@ -142,8 +138,6 @@ class webalizer_t {
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);
       void filter_user_agent(string_t& agent, const string_t *ragent);
-
-      char *our_gzgets(gzFile fp, char *buf, int size);
 
       int prep_report(void);
       int end_month(void);

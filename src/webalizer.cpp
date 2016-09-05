@@ -75,7 +75,6 @@
 #ifdef _WIN32
 static BOOL WINAPI console_ctrl_handler(DWORD type);
 void __cdecl _win32_se_handler(unsigned int excode, _EXCEPTION_POINTERS *exinfo);
-void print_loaded_modules(void);
 #else
 static void console_ctrl_handler(int sig);
 #endif
@@ -106,16 +105,11 @@ webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config
    mnt_time = 0;
    rpt_time = 0;
 
-   f_buf = new char[GZ_BUFSIZE];              /* our_getfs buffer         */
-   f_cp = f_buf+GZ_BUFSIZE;                   /* pointer into the buffer  */
-   f_end = 0;
-
    buffer = new char[BUFSIZE];
 }
 
 webalizer_t::~webalizer_t(void)
 {
-   delete [] f_buf;
    delete [] buffer;
 }
 
@@ -2867,35 +2861,6 @@ void webalizer_t::update_downloads(const tstamp_t& tstamp)
    while((nptr = iter.next()) != NULL) {
       if((download = update_download(nptr, tstamp)) != NULL)
          delete download;
-   }
-}
-
-/*********************************************/
-/* OUR_GZGETS - enhanced gzgets for log only */
-/*********************************************/
-
-char *webalizer_t::our_gzgets(gzFile fp, char *buf, int size)
-{
-   char *out_cp=buf;      /* point to output */
-   while (1)
-   {
-      if(f_cp > (f_buf+f_end-1))     /* load? */
-      {
-         f_end=gzread(fp, f_buf, GZ_BUFSIZE);
-         if(f_end <= 0) 
-            return Z_NULL;
-         f_cp = f_buf;
-      }
-
-      if (--size)                   /* more? */
-      {
-         *out_cp++ = *f_cp;
-         if (*f_cp++ == '\n') { *out_cp='\0'; return buf; }
-      }
-      else { 
-         *out_cp='\0'; 
-         return buf; 
-      }
    }
 }
 
