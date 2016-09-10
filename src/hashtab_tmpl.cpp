@@ -134,32 +134,6 @@ node_t *hash_table<node_t, key_t>::put_node(uint64_t hashval, node_t *nptr)
 }
 
 template <typename node_t, typename key_t>
-void hash_table<node_t, key_t>::pop_node(uint64_t hashval, node_t *nptr)
-{
-   uint64_t hashidx;
-   node_t **pptr, *cptr;
-
-   if(nptr == NULL)
-      return;
-
-   hashidx = hashval % maxhash;
-   pptr = &htab[hashidx].head;
-   cptr = *pptr;
-
-   while(cptr != NULL) {
-      if(cptr == nptr) {
-         *pptr = cptr->next;
-         if(--htab[hashidx].count == 0)
-            emptycnt++;
-         count--;
-         return;
-      }
-      pptr = &cptr->next;
-      cptr = cptr->next;
-   }
-}
-
-template <typename node_t, typename key_t>
 const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key) const
 {
    node_t **pptr, *nptr, *prev = NULL;

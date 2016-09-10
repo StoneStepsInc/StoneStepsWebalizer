@@ -241,8 +241,6 @@ class hash_table {
 
       node_t *put_node(uint64_t hashval, node_t *nptr);
 
-      void pop_node(uint64_t hashval, node_t *nptr);
-
       //
       // miscellaneous
       //
