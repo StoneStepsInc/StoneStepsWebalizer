@@ -63,18 +63,8 @@
 //
 //
 //
-#define DNS_DB_REC_V1      ((u_int) 1)          // version[4], tstamp[4], ccode[2], hostname[]
 #define DNS_DB_REC_V2      ((u_int) 2)          // version[4], tstamp[8], ccode[2], hostname[]
-#define DNS_DB_REC_VER     DNS_DB_REC_V1        // current version
 #define DBBUFSIZE          8192                 // database buffer size
-
-//
-// DNS DB record (old)
-//
-struct dnsRecord { 
-   time_t    timeStamp;                           // Timestamp of resolv data
-   char      hostName[1];                       // Hostname (var length)
-};
 
 //
 // DNS DB record
@@ -739,7 +729,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 //
 // dns_db_get
 //
-//   Looks up the dnode->ipaddr in the database. If nocheck is true, the 
+// Looks up the dnode->ipaddr in the database. If nocheck is true, the 
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
@@ -748,7 +738,6 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
    bool retval = false;
    int dberror;
    DBT key, recdata;
-   time_t tstamp;
    dns_db_record *dnsrec;
 
    /* ensure we have a dns db */
@@ -779,27 +768,29 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
          break;
       case  0:
          dnsrec = (dns_db_record*) recdata.data;
-         tstamp = (dnsrec->version >= DNS_DB_REC_V1) ? dnsrec->tstamp : ((struct dnsRecord *)recdata.data)->timeStamp;
 
-         if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
-            if(dnsrec->version >= DNS_DB_REC_V1) {
-               dnode->tstamp = tstamp;
+         //
+         // DNS record version must be checked against the exact version number or against a small 
+         // range of version numbers starting with one (e.g. 1-256) because previous versions of 
+         // the record or records saved by other Webalizer forks will have either a 32-bit or a 
+         // 64-bit time_t value as the first data member, which, depending on the endianness, may 
+         // be a zero (64-bit time_t, big endian, before 2106) or a large number (32-bit time_t or
+         // 64-bit time_t, little endian, before 2106).
+         //
+         if(dnsrec->version == DNS_DB_REC_V2) {
+            if(nocheck || (runtime - dnsrec->tstamp) <= dns_cache_ttl) {
+               dnode->tstamp = dnsrec->tstamp;
                dnode->hnode.name = dnsrec->hostname;
-               if(*dnsrec->ccode)
-                  dnode->hnode.set_ccode(dnsrec->ccode);
-               else
-                  geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
+               dnode->hnode.set_ccode(dnsrec->ccode);
+               retval = true;
             }
-            else {
-               dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
-               dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
-               geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
-            }
+         }
 
+         if(retval) {
             if (config.debug_mode)
                fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
-            retval = true;
          }
+
          break;
 
       default: 
@@ -834,7 +825,7 @@ void dns_resolver_t::dns_db_put(dnode_t* dnode)
 
    recPtr = (dns_db_record*) buffer;
 
-   recPtr->version = DNS_DB_REC_VER;
+   recPtr->version = DNS_DB_REC_V2;
    recPtr->tstamp = dnode->tstamp;
 
    memcpy(&recPtr->ccode, dnode->hnode.ccode, sizeof(recPtr->ccode));
