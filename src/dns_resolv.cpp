@@ -71,7 +71,7 @@
 // DNS DB record (old)
 //
 struct dnsRecord { 
-   time_t    timeStamp;			                  // Timestamp of resolv data
+   time_t    timeStamp;                         // Timestamp of resolv data
    char      hostName[1];                       // Hostname (var length)
 };
 
@@ -156,11 +156,11 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    
    mutex_lock(dnode_mutex);
    
-      //
-      // If we are accepting host names in place of IP addresses, derive 
-      // country code from the host name right here and return, so the 
-      // DNS cache file is not littered with bad IP addresses.
-      //
+   //
+   // If we are accepting host names in place of IP addresses, derive 
+   // country code from the host name right here and return, so the 
+   // DNS cache file is not littered with bad IP addresses.
+   //
    if(accept_host_names && !is_ip4_address(hnode->string)) {
       string_t::char_buffer_t ccode_buffer(hnode->ccode, hnode_t::ccode_size+1, true);
       string_t ccode(ccode_buffer, 0);
@@ -223,8 +223,8 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    if(!dnode)
       goto funcexit;
 
-	if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
-		goto funcexit;
+   if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
+      goto funcexit;
 
    // we got an IPv4 address and set the family identifier
    dnode->addr.sa_family = AF_INET;
@@ -244,7 +244,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
          goto funcexit;
 
       // make sure it's not empty
-	   if(!res_ent->h_name || !*res_ent->h_name)
+      if(!res_ent->h_name || !*res_ent->h_name)
          goto funcexit;
 
       dnode->hnode.name = res_ent->h_name;
@@ -265,7 +265,7 @@ bool dns_resolver_t::dns_geoip_db(void) const
 }
 
 //
-//	dns_init
+// dns_init
 //
 bool dns_resolver_t::dns_init(void)
 {
@@ -364,7 +364,7 @@ bool dns_resolver_t::dns_init(void)
 }
 
 //
-//	dns_clean_up
+// dns_clean_up
 //
 void dns_resolver_t::dns_clean_up(void)
 {
@@ -420,7 +420,7 @@ string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr, void *buffer, 
    dnode_t dnode(hnode);
 
    if(!dns_db_get(&dnode, true, buffer, bufsize)) {
-   process_dnode(&dnode);
+      process_dnode(&dnode);
 
       dns_db_put(&dnode, buffer, bufsize);
    }
@@ -452,7 +452,7 @@ void dns_resolver_t::dns_wait(void)
 }
 
 //
-//	resolve_domain_name
+// resolve_domain_name
 //
 // Picks the next available IP address to resolve and calls process_dnode.
 // Returns true if any work was done (even unsuccessful), false otherwise.
@@ -667,7 +667,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 //
 // dns_db_get
 //
-//	Looks up the dnode->ipaddr in the database. If nocheck is true, the 
+// Looks up the dnode->ipaddr in the database. If nocheck is true, the 
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
@@ -709,7 +709,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
          dnsrec = (dns_db_record*) recdata.data;
          tstamp = (dnsrec->version >= DNS_DB_REC_V1) ? dnsrec->tstamp : ((struct dnsRecord *)recdata.data)->timeStamp;
 
-			if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
+         if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
             if(dnsrec->version >= DNS_DB_REC_V1) {
                dnode->tstamp = tstamp;
                dnode->hnode.name = dnsrec->hostname;
@@ -719,14 +719,14 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
                   geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
             else {
-				   dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
+               dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
                dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
                geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
-         }
+            }
 
             if (config.debug_mode)
                fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
-				retval = true;
+            retval = true;
          }
          break;
 
