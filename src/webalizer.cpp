@@ -1394,7 +1394,7 @@ int webalizer_t::proc_logfile(void)
                dns_resolver.dns_wait();
                dns_time += elapsed(stime, msecs());
 
-               if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname)) != NULL) {
+               if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname, buffer, BUFSIZE)) != NULL) {
                   total_ignore++; 
                   continue; 
                }
