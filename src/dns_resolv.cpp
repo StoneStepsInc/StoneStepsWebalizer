@@ -71,7 +71,7 @@
 // DNS DB record (old)
 //
 struct dnsRecord { 
-   time_t    timeStamp;			                  // Timestamp of resolv data
+   time_t    timeStamp;                         // Timestamp of resolv data
    char      hostName[1];                       // Hostname (var length)
 };
 
@@ -225,8 +225,8 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    if(!dnode)
       goto funcexit;
 
-	if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
-		goto funcexit;
+   if((dnode->addr_ipv4().sin_addr.s_addr = inet_addr(dnode->hnode.string)) == INADDR_NONE)
+         goto funcexit;
 
    // we got an IPv4 address and set the family identifier
    dnode->addr.sa_family = AF_INET;
@@ -246,7 +246,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
          goto funcexit;
 
       // make sure it's not empty
-	   if(!res_ent->h_name || !*res_ent->h_name)
+      if(!res_ent->h_name || !*res_ent->h_name)
          goto funcexit;
 
       dnode->hnode.name = res_ent->h_name;
@@ -257,7 +257,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    }
 
 funcexit:
-	if(debug_mode)
+   if(debug_mode)
       fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
 }
 
@@ -267,7 +267,7 @@ bool dns_resolver_t::dns_geoip_db(void) const
 }
 
 //
-//	dns_init
+// dns_init
 //
 bool dns_resolver_t::dns_init(void)
 {
@@ -366,7 +366,7 @@ bool dns_resolver_t::dns_init(void)
 }
 
 //
-//	dns_clean_up
+// dns_clean_up
 //
 void dns_resolver_t::dns_clean_up(void)
 {
@@ -454,7 +454,7 @@ void dns_resolver_t::dns_wait(void)
 }
 
 //
-//	resolve_domain_name
+// resolve_domain_name
 //
 // Picks the next available IP address to resolve and calls process_dnode.
 // Returns true if any work was done (even unsuccessful), false otherwise.
@@ -669,7 +669,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 //
 // dns_db_get
 //
-//	Looks up the dnode->ipaddr in the database. If nocheck is true, the 
+// Looks up the dnode->ipaddr in the database. If nocheck is true, the 
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
@@ -704,14 +704,14 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
    switch((dberror = dns_db->get(dns_db, NULL, &key, &recdata, 0)))
    {
       case  DB_NOTFOUND: 
-			if (debug_mode) 
+         if (debug_mode) 
             fprintf(stderr,"[%04x] ... not found\n", thread_id());
          break;
       case  0:
          dnsrec = (dns_db_record*) recdata.data;
          tstamp = (dnsrec->version >= DNS_DB_REC_V1) ? dnsrec->tstamp : ((struct dnsRecord *)recdata.data)->timeStamp;
 
-			if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
+         if(nocheck || (runtime - tstamp) <= dns_cache_ttl) {
             if(dnsrec->version >= DNS_DB_REC_V1) {
                dnode->tstamp = tstamp;
                dnode->hnode.name = dnsrec->hostname;
@@ -721,19 +721,19 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
                   geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
             else {
-				   dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
+               dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
                dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
                geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
-         }
+            }
 
-				if (debug_mode)
+            if (debug_mode)
                fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
-				retval = true;
+            retval = true;
          }
          break;
 
       default: 
-			if (debug_mode) 
+         if (debug_mode) 
             fprintf(stderr," error (%04x - %s)\n", dberror, db_strerror(dberror));
          break;
    }
