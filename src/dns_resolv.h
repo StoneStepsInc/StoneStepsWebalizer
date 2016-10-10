@@ -75,8 +75,6 @@ class dns_resolver_t {
 
       queue_t<hnode_t>  hqueue;              // resolved host node queue
 
-      u_char *buffer;
-
       string_t geoip_language;
 
    private:
@@ -92,15 +90,15 @@ class dns_resolver_t {
 
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city);
 
-      bool dns_db_get(dnode_t *dnode, bool nocheck);
+      bool dns_db_get(dnode_t *dnode, bool nocheck, void *buffer, size_t bufsize);
 
-      void dns_db_put(dnode_t *dnode);
+      void dns_db_put(const dnode_t *dnode, void *buffer, size_t bufsize);
 
       bool dns_db_open(const string_t& dns_cache);
 
       bool dns_db_close(void);
 
-      bool resolve_domain_name(void);
+      bool resolve_domain_name(void *buffer, size_t bufsize);
 
       void dns_worker_thread_proc(void);
 
@@ -123,7 +121,7 @@ class dns_resolver_t {
       void dns_clean_up(void);
       void dns_wait(void);
 
-      string_t dns_resolve_name(const string_t& ipaddr);
+      string_t dns_resolve_name(const string_t& ipaddr, void *buffer, size_t bufsize);
 
       bool put_hnode(hnode_t *hnode);
 

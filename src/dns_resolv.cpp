@@ -147,8 +147,6 @@ bool dns_resolver_t::dnode_t::fill_sockaddr(void)
 
 dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 {
-   buffer = new u_char[DBBUFSIZE];
-
    dnode_list = dnode_end = NULL;
 
    dnode_mutex = NULL;
@@ -179,7 +177,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
 dns_resolver_t::~dns_resolver_t(void)
 {
-   delete [] buffer;
 }
 
 /*********************************************/
@@ -475,7 +472,7 @@ void dns_resolver_t::dns_clean_up(void)
 // IMPORTANT: This method is synchronous and will cause major performance 
 // degradation when called directly by the log processing thread(s).
 //
-string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr)
+string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr, void *buffer, size_t bufsize)
 {
    hnode_t hnode(ipaddr);
    dnode_t dnode(hnode, is_ipv4_address(ipaddr) ? AF_INET : is_ipv6_address(ipaddr) ? AF_INET6 : AF_UNSPEC);
@@ -484,12 +481,11 @@ string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr)
    if(!dnode.fill_sockaddr())
       return string_t();
 
-   if(dns_db_get(&dnode, true))
-      return string_t(ipaddr);
+   if(!dns_db_get(&dnode, true, buffer, bufsize)) {
+      process_dnode(&dnode);
 
-   process_dnode(&dnode);
-
-   dns_db_put(&dnode);
+      dns_db_put(&dnode, buffer, bufsize);
+   }
 
    return string_t(hnode.name.isempty() ? ipaddr : hnode.name);
 }
@@ -523,7 +519,7 @@ void dns_resolver_t::dns_wait(void)
 // Picks the next available IP address to resolve and calls process_dnode.
 // Returns true if any work was done (even unsuccessful), false otherwise.
 //
-bool dns_resolver_t::resolve_domain_name(void)
+bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
 {
    bool cached = false, lookup = false;
    dnode_t* nptr;
@@ -549,11 +545,11 @@ bool dns_resolver_t::resolve_domain_name(void)
 
    // look it up in the database and if not found, resolve it
    lookup = true;
-   if(dns_db_get(nptr, false)) 
+   if(dns_db_get(nptr, false, buffer, bufsize)) 
       cached = true;
    else {
       process_dnode(nptr);
-      dns_db_put(nptr);
+      dns_db_put(nptr, buffer, bufsize);
    }
 
    mutex_lock(dnode_mutex);
@@ -628,10 +624,14 @@ void *dns_resolver_t::dns_worker_thread_proc(void *arg)
 
 void dns_resolver_t::dns_worker_thread_proc(void)
 {
+   unsigned char *buffer = new u_char[DBBUFSIZE];
+
    while(!dns_thread_stop) {
-      if(resolve_domain_name() == false)
+      if(resolve_domain_name(buffer, DBBUFSIZE) == false)
          msleep(200);
    }
+
+   delete [] buffer;
 
    dec_live_workers();
 }
@@ -733,7 +733,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
-bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
+bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size_t bufsize)
 {
    bool retval = false;
    int dberror;
@@ -806,7 +806,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
 /* DB_PUT - put key/val in the cache db      */
 /*********************************************/
 
-void dns_resolver_t::dns_db_put(dnode_t* dnode)
+void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsize)
 {
    DBT k, v;
    dns_db_record *recPtr = NULL;
