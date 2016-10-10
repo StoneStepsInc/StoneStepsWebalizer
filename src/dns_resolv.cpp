@@ -108,8 +108,6 @@ dnode_t::~dnode_t(void)
 
 dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 {
-   buffer = new u_char[DBBUFSIZE];
-
    dnode_list = dnode_end = NULL;
 
    dnode_mutex = NULL;
@@ -140,7 +138,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
 dns_resolver_t::~dns_resolver_t(void)
 {
-   delete [] buffer;
 }
 
 /*********************************************/
@@ -151,7 +148,7 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    bool retval = false;
    dnode_t* nptr;
 
-	if(!dns_db && !geoip_db)
+   if(!dns_db && !geoip_db)
       return false;
 
    /* skip bad hostnames */
@@ -160,11 +157,11 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    
    mutex_lock(dnode_mutex);
    
-   //
-   // If we are accepting host names in place of IP addresses, derive 
-   // country code from the host name right here and return, so the 
-   // DNS cache file is not littered with bad IP addresses.
-   //
+      //
+      // If we are accepting host names in place of IP addresses, derive 
+      // country code from the host name right here and return, so the 
+      // DNS cache file is not littered with bad IP addresses.
+      //
    if(accept_host_names && !is_ip4_address(hnode->string)) {
       string_t::char_buffer_t ccode_buffer(hnode->ccode, hnode_t::ccode_size+1, true);
       string_t ccode(ccode_buffer, 0);
@@ -234,7 +231,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    // we got an IPv4 address and set the family identifier
    dnode->addr.sa_family = AF_INET;
 
-	dnode->tstamp = time(NULL);
+   dnode->tstamp = time(NULL);
 
    // create an empty temporary string (must be attached because of the goto's above)
    ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
@@ -246,11 +243,11 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    // resolve the domain name
    if(dns_db) {
       if((res_ent = gethostbyaddr((const char*) &dnode->addr_ipv4().sin_addr.s_addr, sizeof(dnode->addr_ipv4().sin_addr.s_addr), AF_INET)) == NULL)
-		   goto funcexit;
+         goto funcexit;
 
-	   // make sure it's not empty
+      // make sure it's not empty
 	   if(!res_ent->h_name || !*res_ent->h_name)
-		   goto funcexit;
+         goto funcexit;
 
       dnode->hnode.name = res_ent->h_name;
 
@@ -261,7 +258,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
 
 funcexit:
 	if(debug_mode)
-		fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
+      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -283,25 +280,25 @@ bool dns_resolver_t::dns_init(void)
    accept_host_names = config.accept_host_names && config.ntop_ctrys;
 
 #ifdef _WIN32
-	WSADATA wsdata;
+   WSADATA wsdata;
 #endif
 
 #ifdef _WIN32
-	if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
+   if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
       if(verbose)
          fprintf(stderr, "Cannot initialize Windows sockets\n");
       return false;
-	}
+   }
 #endif
 
    // initialize synchronization primitives
-	if((dnode_mutex = mutex_create()) == NULL) {
+   if((dnode_mutex = mutex_create()) == NULL) {
       if(verbose)
          fprintf(stderr, "Cannot initialize DNS mutex\n");
       return false;
    }
 
-	if((hqueue_mutex = mutex_create()) == NULL) {
+   if((hqueue_mutex = mutex_create()) == NULL) {
       if(verbose)
          fprintf(stderr, "Cannot initialize the host queue mutex\n");
       return false;
@@ -316,12 +313,12 @@ bool dns_resolver_t::dns_init(void)
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
       if(!dns_db_open(config.dns_cache))  
-			dns_db = NULL;
+         dns_db = NULL;
       else {
          if (verbose > 1) {
-				/* Using DNS cache file <filaneme> */
-				printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
-			}
+            /* Using DNS cache file <filaneme> */
+            printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
+         }
       }
    }
 
@@ -355,17 +352,17 @@ bool dns_resolver_t::dns_init(void)
 
    }
 
-	time(&runtime);
+   time(&runtime);
 
-	if(dns_db || geoip_db)
-		dns_create_worker_threads();
+   if(dns_db || geoip_db)
+      dns_create_worker_threads();
 
    if (verbose > 1) {
-		/* DNS Lookup (#children): */
-		printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
+      /* DNS Lookup (#children): */
+      printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
    }
 
-	return (dns_db || geoip_db) ? true : false;
+   return (dns_db || geoip_db) ? true : false;
 }
 
 //
@@ -373,26 +370,26 @@ bool dns_resolver_t::dns_init(void)
 //
 void dns_resolver_t::dns_clean_up(void)
 {
-	u_int index;
-	u_int waitcnt = 300;
+   u_int index;
+   u_int waitcnt = 300;
 
-	dns_thread_stop = true;
+   dns_thread_stop = true;
 
    if(!config.is_dns_enabled())
       return;
 
-	while(get_live_workers() && waitcnt--)
-		msleep(50);
+   while(get_live_workers() && waitcnt--)
+      msleep(50);
 
    if(dnode_threads) {
-		for(index = 0; index < config.dns_children; index++) 
-			thread_destroy(dnode_threads[index]);
+      for(index = 0; index < config.dns_children; index++) 
+         thread_destroy(dnode_threads[index]);
       delete [] dnode_threads;
       dnode_threads = NULL;
    }
 
-	if(dns_db) 
-		dns_db_close();
+   if(dns_db) 
+      dns_db_close();
    dns_db = NULL;
 
    if(geoip_db) 
@@ -401,11 +398,11 @@ void dns_resolver_t::dns_clean_up(void)
    memset(&mmdb, 0, sizeof(MMDB_s));
 
    event_destroy(dns_done_event);
-	mutex_destroy(dnode_mutex);
-	mutex_destroy(hqueue_mutex);
+   mutex_destroy(dnode_mutex);
+   mutex_destroy(hqueue_mutex);
 
 #ifdef _WIN32
-		WSACleanup();
+      WSACleanup();
 #endif
 
 }
@@ -419,17 +416,16 @@ void dns_resolver_t::dns_clean_up(void)
 // IMPORTANT: This method is synchronous and will cause major performance 
 // degradation when called directly by the log processing thread(s).
 //
-string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr)
+string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr, void *buffer, size_t bufsize)
 {
    hnode_t hnode(ipaddr);
    dnode_t dnode(hnode);
 
-	if(dns_db_get(&dnode, true))
-		return string_t(ipaddr);
+   if(!dns_db_get(&dnode, true, buffer, bufsize)) {
+   process_dnode(&dnode);
 
-	process_dnode(&dnode);
-
-	dns_db_put(&dnode);
+      dns_db_put(&dnode, buffer, bufsize);
+   }
 
    return string_t(hnode.name.isempty() ? ipaddr : hnode.name);
 }
@@ -439,7 +435,7 @@ void dns_resolver_t::dns_wait(void)
    bool done = false;
 
    // if there are no workers, return right away
-	if(!config.is_dns_enabled())
+   if(!config.is_dns_enabled())
       return;
 
    // otherwise wait for all of them to finish
@@ -450,9 +446,9 @@ void dns_resolver_t::dns_wait(void)
       fprintf(stderr, "DNS event wait operation has failed - using polling to wait\n");
 
    while(!done) {
-	   mutex_lock(dnode_mutex);
+      mutex_lock(dnode_mutex);
       done = dns_unresolved == 0 ? true : false;
-	   mutex_unlock(dnode_mutex);
+      mutex_unlock(dnode_mutex);
       msleep(500);
    } 
 }
@@ -463,40 +459,40 @@ void dns_resolver_t::dns_wait(void)
 // Picks the next available IP address to resolve and calls process_dnode.
 // Returns true if any work was done (even unsuccessful), false otherwise.
 //
-bool dns_resolver_t::resolve_domain_name(void)
+bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
 {
-	bool cached = false, lookup = false;
-	dnode_t* nptr;
+   bool cached = false, lookup = false;
+   dnode_t* nptr;
    hnode_t *hnode;
 
-	mutex_lock(dnode_mutex);
+   mutex_lock(dnode_mutex);
 
-	if(dnode_list == NULL)
-		goto funcidle;
+   if(dnode_list == NULL)
+      goto funcidle;
 
    // check the node at the start of the queue
-	if((nptr = dnode_list) == NULL)
-		goto funcidle;
+   if((nptr = dnode_list) == NULL)
+      goto funcidle;
 
    // remove the node and set dnode_end to NULL if there no more nodes
-	if((dnode_list = dnode_list->llist) == NULL)
+   if((dnode_list = dnode_list->llist) == NULL)
       dnode_end = NULL;
 
    // reset the pointer to the next node
    nptr->llist = NULL;
 
-	mutex_unlock(dnode_mutex);
+   mutex_unlock(dnode_mutex);
 
    // look it up in the database and if not found, resolve it
-	lookup = true;
-	if(dns_db_get(nptr, false)) 
-		cached = true;
-	else {
-		process_dnode(nptr);
-		dns_db_put(nptr);
-	}
+   lookup = true;
+   if(dns_db_get(nptr, false, buffer, bufsize)) 
+      cached = true;
+   else {
+      process_dnode(nptr);
+      dns_db_put(nptr, buffer, bufsize);
+   }
 
-	mutex_lock(dnode_mutex);
+   mutex_lock(dnode_mutex);
 
    // recover the host node
    hnode = &nptr->hnode;
@@ -505,8 +501,8 @@ bool dns_resolver_t::resolve_domain_name(void)
    delete nptr;
 
    // update resolver stats
-	if(lookup) {
-		if(cached) 
+   if(lookup) {
+      if(cached) 
          dns_cached++; 
       else 
          dns_resolved++;
@@ -521,36 +517,36 @@ bool dns_resolver_t::resolve_domain_name(void)
    if(--dns_unresolved == 0)
       event_set(dns_done_event);
 
-	mutex_unlock(dnode_mutex);
+   mutex_unlock(dnode_mutex);
 
-	return true;
+   return true;
 
 funcidle:
-	mutex_unlock(dnode_mutex);
-	return false;
+   mutex_unlock(dnode_mutex);
+   return false;
 }
 
 void dns_resolver_t::inc_live_workers(void)
 {
-	mutex_lock(dnode_mutex);
-	dns_live_workers++;
-	mutex_unlock(dnode_mutex);
+   mutex_lock(dnode_mutex);
+   dns_live_workers++;
+   mutex_unlock(dnode_mutex);
 }
 
 void dns_resolver_t::dec_live_workers(void)
 {
-	mutex_lock(dnode_mutex);
-	dns_live_workers--;
-	mutex_unlock(dnode_mutex);
+   mutex_lock(dnode_mutex);
+   dns_live_workers--;
+   mutex_unlock(dnode_mutex);
 }
 
 int dns_resolver_t::get_live_workers(void)
 {
-	int retval;
-	mutex_lock(dnode_mutex);
-	retval = dns_live_workers;
-	mutex_unlock(dnode_mutex);
-	return retval;
+   int retval;
+   mutex_lock(dnode_mutex);
+   retval = dns_live_workers;
+   mutex_unlock(dnode_mutex);
+   return retval;
 }
 
 //
@@ -568,12 +564,16 @@ void *dns_resolver_t::dns_worker_thread_proc(void *arg)
 
 void dns_resolver_t::dns_worker_thread_proc(void)
 {
-	while(!dns_thread_stop) {
-		if(resolve_domain_name() == false)
-			msleep(200);
-	}
+   unsigned char *buffer = new u_char[DBBUFSIZE];
 
-	dec_live_workers();
+   while(!dns_thread_stop) {
+      if(resolve_domain_name(buffer, DBBUFSIZE) == false)
+         msleep(200);
+   }
+
+   delete [] buffer;
+
+   dec_live_workers();
 }
 
 //
@@ -583,13 +583,13 @@ void dns_resolver_t::dns_worker_thread_proc(void)
 //
 void dns_resolver_t::dns_create_worker_threads(void)
 {
-	u_int index;
+   u_int index;
 
-	dnode_threads = new thread_t[config.dns_children];
-	for(index = 0; index < config.dns_children; index++) {
-		inc_live_workers();
-		dnode_threads[index] = thread_create(dns_worker_thread_proc, this);
-	}
+   dnode_threads = new thread_t[config.dns_children];
+   for(index = 0; index < config.dns_children; index++) {
+      inc_live_workers();
+      dnode_threads[index] = thread_create(dns_worker_thread_proc, this);
+   }
 }
 
 bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city)
@@ -673,26 +673,26 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) con
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
-bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
+bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size_t bufsize)
 {
-	bool retval = false;
-	int dberror;
+   bool retval = false;
+   int dberror;
    DBT key, recdata;
    time_t tstamp;
    dns_db_record *dnsrec;
 
-	/* ensure we have a dns db */
+   /* ensure we have a dns db */
    if (!dns_db || !dnode) 
-		return false;
+      return false;
 
-	memset(&key, 0, sizeof(key));
-	memset(&recdata, 0, sizeof(recdata));
+   memset(&key, 0, sizeof(key));
+   memset(&recdata, 0, sizeof(recdata));
 
    key.data = (void*) dnode->hnode.string.c_str();
    key.size = (u_int32_t) dnode->hnode.string.length();
 
    // point the record to the internal buffer
-	recdata.flags = DB_DBT_USERMEM;
+   recdata.flags = DB_DBT_USERMEM;
    recdata.ulen = DBBUFSIZE;
    recdata.data = buffer;
 
@@ -705,8 +705,8 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
    {
       case  DB_NOTFOUND: 
 			if (debug_mode) 
-				fprintf(stderr,"[%04x] ... not found\n", thread_id());
-			break;
+            fprintf(stderr,"[%04x] ... not found\n", thread_id());
+         break;
       case  0:
          dnsrec = (dns_db_record*) recdata.data;
          tstamp = (dnsrec->version >= DNS_DB_REC_V1) ? dnsrec->tstamp : ((struct dnsRecord *)recdata.data)->timeStamp;
@@ -716,7 +716,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
                dnode->tstamp = tstamp;
                dnode->hnode.name = dnsrec->hostname;
                if(*dnsrec->ccode)
-                  dnode->hnode.set_ccode(dnsrec->ccode);
+               dnode->hnode.set_ccode(dnsrec->ccode);
                else
                   geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
             }
@@ -724,28 +724,28 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck)
 				   dnode->tstamp = ((struct dnsRecord *)recdata.data)->timeStamp;
                dnode->hnode.name = ((struct dnsRecord *)recdata.data)->hostName;
                geoip_get_ccode(dnode->hnode.string, dnode->addr, ccode, dnode->hnode.city);
-            }
+         }
 
 				if (debug_mode)
-					fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
+               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
 				retval = true;
-			}
-			break;
+         }
+         break;
 
       default: 
 			if (debug_mode) 
-				fprintf(stderr," error (%04x - %s)\n", dberror, db_strerror(dberror));
-			break;
+            fprintf(stderr," error (%04x - %s)\n", dberror, db_strerror(dberror));
+         break;
    }
 
-	return retval;
+   return retval;
 }
 
 /*********************************************/
 /* DB_PUT - put key/val in the cache db      */
 /*********************************************/
 
-void dns_resolver_t::dns_db_put(dnode_t* dnode)
+void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsize)
 {
    DBT k, v;
    dns_db_record *recPtr = NULL;
@@ -758,9 +758,9 @@ void dns_resolver_t::dns_db_put(dnode_t* dnode)
    nameLen = dnode->hnode.name.length() + 1;
 
    recSize = sizeof(dns_db_record) + nameLen;
-	
-	memset(&k, 0, sizeof(k));
-	memset(&v, 0, sizeof(v));
+   
+   memset(&k, 0, sizeof(k));
+   memset(&v, 0, sizeof(v));
 
    recPtr = (dns_db_record*) buffer;
 
@@ -790,7 +790,7 @@ void dns_resolver_t::dns_db_put(dnode_t* dnode)
 bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
 {
    struct stat  dbStat;
-	int major, minor, patch;
+   int major, minor, patch;
 
    /* double check filename was specified */
    if(dns_cache.isempty()) { 
@@ -798,13 +798,13 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
       return false; 
    }
 
-	db_version(&major, &minor, &patch);
+   db_version(&major, &minor, &patch);
 
-	if(major < 4 && minor < 3) {
+   if(major < 4 && minor < 3) {
       if(verbose)
-		   fprintf(stderr, "Error: The Berkeley DB library must be v4.3 or newer (found v%d.%d.%d).\n", major, minor, patch);
-		return false;
-	}
+         fprintf(stderr, "Error: The Berkeley DB library must be v4.3 or newer (found v%d.%d.%d).\n", major, minor, patch);
+      return false;
+   }
 
    /* minimal sanity check on it */
    if(stat(dns_cache, &dbStat) < 0) {
@@ -840,8 +840,8 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
 
 bool dns_resolver_t::dns_db_close(void)
 {
-	if(dns_db)
-		dns_db->close(dns_db, 0);
+   if(dns_db)
+      dns_db->close(dns_db, 0);
    dns_db = NULL;
 
    return true;
