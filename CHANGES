@@ -1,4 +1,9 @@
 --------------------------------------------------------------------
+4.0.7.x -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * [BUG] Fixed a concurrency bug in the DNS resolver that could report incorrect host names
+
+--------------------------------------------------------------------
 4.0.6.1 [22-May-2016] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Updated VS project files to VS2015
