@@ -16,7 +16,7 @@
 //
 #define VERSION_MAJOR           4
 #define VERSION_MINOR           0
-#define EDITION_LEVEL           6
+#define EDITION_LEVEL           7
 #define BUILD_NUMBER            1
 
 //
