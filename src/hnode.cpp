@@ -154,7 +154,7 @@ void hnode_t::reset(uint64_t nodeid)
    set_visit(NULL);
 }
 
-void hnode_t::set_ccode(const char _ccode[])
+void hnode_t::set_ccode(const char _ccode[2])
 {
    ccode[0] = _ccode[0];
    ccode[1] = _ccode[1];

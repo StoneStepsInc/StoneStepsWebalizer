@@ -106,7 +106,7 @@ struct hnode_t : public base_node<hnode_t> {
          
          void set_last_url(unode_t *unode) {if(visit) visit->set_lasturl(unode);}
 
-         void set_ccode(const char ccode[]);
+         void set_ccode(const char ccode[2]);
 
          string_t get_ccode(void) const {return string_t::hold(ccode);}
 

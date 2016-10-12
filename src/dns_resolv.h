@@ -21,10 +21,11 @@
 #include "event.h"
 #include "thread.h"
 #include "queue.h"
+#include "tstamp.h"
 
 #include "hnode.h"
 
-#include <db.h>                                /* DB header ****************/
+#include <db_cxx.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -53,9 +54,9 @@ class dns_resolver_t {
       MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
-      DB *dns_db;                            // DNS cache database
+      Db *dns_db;                            // DNS cache database
 
-      time_t runtime;
+      tstamp_t runtime;
       
       bool accept_host_names;
 

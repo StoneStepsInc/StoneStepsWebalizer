@@ -49,8 +49,6 @@
 #include <unistd.h>
 #endif
 
-#include <db.h>                                /* DB header ****************/
-
 #include "lang.h"                              /* language declares        */
 #include "hashtab.h"                           /* hash table functions     */
 #include "dns_resolv.h"                        /* our header               */
@@ -59,26 +57,64 @@
 #include "event.h"
 #include "thread.h"
 #include "util.h"
+#include "serialize.h"
+#include "tstamp.h"
 
 //
 //
 //
-#define DNS_DB_REC_V2      ((u_int) 2)          // version[4], tstamp[8], ccode[2], hostname[]
-#define DBBUFSIZE          8192                 // database buffer size
+#define DNS_DB_REC_V1      ((u_int) 1)          // dns_db_record
+#define DNS_DB_REC_V2      ((u_int) 2)          // dns_db_record
+#define DNS_DB_REC_V3      ((u_int) 3)          // initial version of serialized dnode_t
+#define DNS_DB_REC_VER_MAX ((u_int) 250)        // maximum valid record version
+
+#define DBBUFSIZE          ((size_t) 8192)      // database buffer size
 
 //
-// DNS DB record
+// The compatibility DNS DB record structure is saved to the database as a block of 
+// underlying memory of sizeof(dns_db_record) size. Consequently, the structure may 
+// contain only fundamental data types, cannot contain pointers, must use same data
+// representation (e.g. size of time_t) and have the same alignment requirements from 
+// a build to a build. It is currently used only to read old DNS records from the 
+// database.
 //
 struct dns_db_record {
-   u_int    version;                            // structure version
+   u_int    version;                            // structure version (v1 or v2)
    time_t   tstamp;                             // time when the address was resolved
    char     ccode[2];                           // two-character country code
    char     hostname[1];                        // host name (variable length)
 };
 
+//
+// DNS DB record
+//
+struct dns_db_record_t {
+   u_int       version;                         // structure version
+   char        ccode[hnode_t::ccode_size];      // two-character country code
+   bool        spammer;                         // caught spamming?
+   tstamp_t    tstamp;                          // time when the address was resolved
+   string_t    city;                            // city name
+   string_t    hostname;                        // host name
+
+   public:
+      dns_db_record_t(void) : version(0), spammer(false)
+      {
+         memset(ccode, 0, hnode_t::ccode_size);
+      }
+
+      size_t s_data_size(void) const;
+      
+      size_t s_pack_data(void *buffer, size_t bufsize) const;
+
+      size_t s_unpack_data(const void *buffer, size_t bufsize);
+};
+
+//
+// DNS resolver node
+//
 struct dns_resolver_t::dnode_t {
       hnode_t&       hnode;               // host node reference
-      time_t         tstamp;              // when the name was resolved
+      tstamp_t       tstamp;              // when the name was resolved
       struct dnode_t *llist;
 
       union {
@@ -100,14 +136,116 @@ struct dns_resolver_t::dnode_t {
 };
 
 //
+// DNS DB record
+//
+
+size_t dns_db_record_t::s_data_size(void) const
+{
+   return s_size_of(version) +
+            s_size_of(tstamp) +
+            hnode_t::ccode_size + 
+            s_size_of(hostname) + 
+            s_size_of(spammer);
+}
+
+size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
+{
+   void *ptr = buffer;
+
+   // make sure all data fits in the buffer
+   if(s_data_size() > bufsize)
+      return 0;
+
+   // serialize all data members
+   ptr = serialize(ptr, version);
+   ptr = serialize(ptr, tstamp);
+   ptr = serialize(ptr, ccode, hnode_t::ccode_size);
+   ptr = serialize(ptr, city);
+   ptr = serialize(ptr, hostname);
+   ptr = serialize(ptr, spammer);
+
+   // return the size of the serialized data
+   return (char*) ptr - (const char*) buffer;
+}
+
+size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
+{
+   u_int version;
+   const void *ptr = buffer;
+
+   if(bufsize < s_size_of(version))
+      return 0;
+
+   ptr = deserialize(ptr, version);
+
+   //
+   // DNS record version must be checked against the exact version number or against 
+   // a small range of version numbers starting with one (e.g. 1-250) because previous
+   // versions of the record or records saved by other Webalizer forks will have either 
+   // a 32-bit or a 64-bit time_t value as the first data member, which, depending on 
+   // the endianness, may be a zero (64-bit time_t, big endian, before 2106) or a large 
+   // number (32-bit time_t or 64-bit time_t, little endian, before 2106).
+   //
+   if(version  == 0 || version > DNS_DB_REC_VER_MAX)
+      return 0;
+
+   // DNS record v2 was never released, but may occur in intermediate source builds
+   if(version == DNS_DB_REC_V1 || version == DNS_DB_REC_V2) {
+      const dns_db_record *dnsrec = (const dns_db_record*)(buffer);
+
+      // make sure we have enough bytes for the entire structure
+      if(bufsize < sizeof(dns_db_record))
+         return 0;
+
+      //
+      // Search from the right end of the buffer for a null character in the host 
+      // name, just in case the record was saved with a different alignment or if 
+      // any data member had a different size. This way we may report an host name
+      // that is invalid, but will not reach past the end of the buffer.
+      //
+      const char *cp = (const char*) buffer + bufsize - 1;
+      while(cp != dnsrec->hostname && *cp) cp--;
+      
+      // error out if we didn't find a null character
+      if(*cp)
+         return 0;
+
+      tstamp.reset(dnsrec->tstamp);
+      hostname = dnsrec->hostname;
+
+      memcpy(ccode, dnsrec->ccode, hnode_t::ccode_size);
+
+      // reset data members that were not saved in dns_db_record
+      city.clear();
+      spammer = false;
+
+      //
+      // sizeof(dns_db_record) includes one byte for the null character in the 
+      // host name and we also need to add the number of bytes in the host name 
+      // and account for one more byte that was historically added to the database 
+      // record size.
+      //
+      return sizeof(dns_db_record) + hostname.length() + 1;
+   }
+
+   // read the reset of the record from the buffer
+   ptr = deserialize(ptr, tstamp);
+
+   ptr = deserialize(ptr, ccode, hnode_t::ccode_size);
+
+   ptr = deserialize(ptr, city);
+   ptr = deserialize(ptr, hostname);
+   ptr = deserialize(ptr, spammer);
+
+   return (const char*) ptr - (char*) buffer;
+}
+
+//
 // DNS resolver node 
 //
 
-dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode)
+dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode), llist(NULL)
 {
-   llist = NULL; 
-   tstamp = 0; 
-
    memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
    s_addr_ip.sa_family = sa_family;
@@ -275,7 +413,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    if(!dnode)
       return;
 
-   dnode->tstamp = time(NULL);
+   dnode->tstamp.reset(time(NULL));
 
    // create an empty temporary string (must be attached because of the goto's above)
    ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
@@ -314,7 +452,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
 
 funcexit:
    if(config.debug_mode)
-      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp));
+      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp.mktime()));
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -368,9 +506,7 @@ bool dns_resolver_t::dns_init(void)
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
-      if(!dns_db_open(config.dns_cache))  
-         dns_db = NULL;
-      else {
+      if(dns_db_open(config.dns_cache)) {  
          if (config.verbose > 1) {
             /* Using DNS cache file <filaneme> */
             printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
@@ -408,7 +544,8 @@ bool dns_resolver_t::dns_init(void)
 
    }
 
-   time(&runtime);
+   // get the current time once to avoid doing it for every host
+   runtime.reset(time(NULL));
 
    if(dns_db || geoip_db)
       dns_create_worker_threads();
@@ -446,7 +583,6 @@ void dns_resolver_t::dns_clean_up(void)
 
    if(dns_db) 
       dns_db_close();
-   dns_db = NULL;
 
    if(geoip_db) 
       MMDB_close(geoip_db);
@@ -737,8 +873,8 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
 {
    bool retval = false;
    int dberror;
-   DBT key, recdata;
-   dns_db_record *dnsrec;
+   Dbt key, recdata;
+   dns_db_record_t dnsrec;
 
    /* ensure we have a dns db */
    if (!dns_db || !dnode) 
@@ -747,48 +883,34 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
    memset(&key, 0, sizeof(key));
    memset(&recdata, 0, sizeof(recdata));
 
-   key.data = (void*) dnode->hnode.string.c_str();
-   key.size = (u_int32_t) dnode->hnode.string.length();
+   key.set_data((void*) dnode->hnode.string.c_str());
+   key.set_size((u_int32_t) dnode->hnode.string.length());
 
    // point the record to the internal buffer
-   recdata.flags = DB_DBT_USERMEM;
-   recdata.ulen = DBBUFSIZE;
-   recdata.data = buffer;
+   recdata.set_flags(DB_DBT_USERMEM);
+   recdata.set_ulen(bufsize);
+   recdata.set_data(buffer);
 
    if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode.string.c_str());
 
-   string_t::char_buffer_t ccode_buffer(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
-   string_t ccode(ccode_buffer, 0);
-
-   switch((dberror = dns_db->get(dns_db, NULL, &key, &recdata, 0)))
+   switch((dberror = dns_db->get(NULL, &key, &recdata, 0)))
    {
       case  DB_NOTFOUND: 
          if (config.debug_mode) 
             fprintf(stderr,"[%04x] ... not found\n", thread_id());
          break;
       case  0:
-         dnsrec = (dns_db_record*) recdata.data;
-
-         //
-         // DNS record version must be checked against the exact version number or against a small 
-         // range of version numbers starting with one (e.g. 1-256) because previous versions of 
-         // the record or records saved by other Webalizer forks will have either a 32-bit or a 
-         // 64-bit time_t value as the first data member, which, depending on the endianness, may 
-         // be a zero (64-bit time_t, big endian, before 2106) or a large number (32-bit time_t or
-         // 64-bit time_t, little endian, before 2106).
-         //
-         if(dnsrec->version == DNS_DB_REC_V2) {
-            if(nocheck || (runtime - dnsrec->tstamp) <= dns_cache_ttl) {
-               dnode->tstamp = dnsrec->tstamp;
-               dnode->hnode.name = dnsrec->hostname;
-               dnode->hnode.set_ccode(dnsrec->ccode);
+         if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
+            if(nocheck || runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
+               dnode->hnode.name = dnsrec.hostname;
+               dnode->hnode.set_ccode(dnsrec.ccode);
+               dnode->hnode.city = dnsrec.city;
+               dnode->hnode.spammer = dnsrec.spammer;
                retval = true;
             }
-         }
 
-         if(retval) {
-            if (config.debug_mode)
-               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(runtime, dnode->tstamp) / 86400.);
+            if (retval && config.debug_mode)
+               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), runtime.elapsed(dnode->tstamp) / 86400.);
          }
 
          break;
@@ -808,37 +930,34 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
 
 void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsize)
 {
-   DBT k, v;
-   dns_db_record *recPtr = NULL;
-   size_t nameLen, recSize;
+   Dbt k, v;
+   size_t recSize;
    int dberror;
+   dns_db_record_t dnsrec;
 
    if(!dns_db || !dnode)
       return;
 
-   nameLen = dnode->hnode.name.length() + 1;
+   dnsrec.version = DNS_DB_REC_V3;
+   dnsrec.tstamp = runtime;
+   dnsrec.city = dnode->hnode.city;
+   dnsrec.hostname = dnode->hnode.name;
+   dnsrec.spammer = dnode->hnode.spammer;
 
-   recSize = sizeof(dns_db_record) + nameLen;
+   memcpy(dnsrec.ccode, dnode->hnode.ccode, hnode_t::ccode_size);
+
+   recSize = dnsrec.s_pack_data(buffer, bufsize);
+
+   if(recSize == 0)
+      return;
    
-   memset(&k, 0, sizeof(k));
-   memset(&v, 0, sizeof(v));
+   k.set_data((void*) dnode->hnode.string.c_str());
+   k.set_size((u_int32_t) dnode->hnode.string.length());
 
-   recPtr = (dns_db_record*) buffer;
+   v.set_data(buffer);
+   v.set_size((u_int32_t) recSize);
 
-   recPtr->version = DNS_DB_REC_V2;
-   recPtr->tstamp = dnode->tstamp;
-
-   memcpy(&recPtr->ccode, dnode->hnode.ccode, sizeof(recPtr->ccode));
-
-   memcpy(&recPtr->hostname, dnode->hnode.name, nameLen);
-
-   k.data = (void*) dnode->hnode.string.c_str();
-   k.size = (u_int32_t) dnode->hnode.string.length();
-
-   v.data = recPtr;
-   v.size = (u_int32_t) recSize;
-
-   if((dberror = dns_db->put(dns_db, NULL, &k, &v, 0)) < 0) {
+   if((dberror = dns_db->put(NULL, &k, &v, 0)) < 0) {
       if(config.verbose)
          fprintf(stderr,"dns_db_put failed (%04x - %s)!\n", dberror, db_strerror(dberror));
    }
@@ -855,7 +974,6 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
 
    /* double check filename was specified */
    if(dns_cache.isempty()) { 
-      dns_db=NULL; 
       return false; 
    }
 
@@ -879,16 +997,17 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
       }
    }
   
-   if(db_create(&dns_db, NULL, 0)) {
-      if (config.verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
-      return false;                  /* disable cache */
-   }
+   dns_db = new Db(NULL, 0);
 
    /* open cache file */
-   if(dns_db->open(dns_db, NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))
+   if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))
    {
       /* Error: Unable to open DNS cache file <filename> */
       if (config.verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
+
+      delete dns_db;
+      dns_db = NULL;
+
       return false;                  /* disable cache */
    }
 
@@ -901,9 +1020,12 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
 
 bool dns_resolver_t::dns_db_close(void)
 {
-   if(dns_db)
-      dns_db->close(dns_db, 0);
-   dns_db = NULL;
+   if(dns_db) {
+      dns_db->close(0);
+
+      delete dns_db;
+      dns_db = NULL;
+   }
 
    return true;
 }
