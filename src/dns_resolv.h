@@ -105,7 +105,7 @@ class dns_resolver_t {
 
       void process_dnode(dnode_t *dnode);
 
-      bool dns_derive_ccode(const string_t& name, string_t& ccode) const;
+      static bool dns_derive_ccode(const string_t& name, string_t& ccode);
 
       #ifdef _WIN32
       static unsigned int __stdcall dns_worker_thread_proc(void *arg);

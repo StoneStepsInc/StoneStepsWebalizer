@@ -838,7 +838,7 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
 //
 // derives country code from the domain name
 //
-bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode) const
+bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
 {
    const char *label;
 
