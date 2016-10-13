@@ -170,7 +170,7 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
 
 size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
 {
-   u_int version;
+   u_int version = 0;
    const void *ptr = buffer;
 
    if(bufsize < s_size_of(version))
