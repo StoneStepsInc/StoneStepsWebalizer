@@ -332,8 +332,6 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    if(!hnode || hnode->string.isempty() || hnode->string[0] == ' ') 
       return false;
    
-   mutex_lock(dnode_mutex);
-   
    if(is_ipv4_address(hnode->string))
       sa_family = AF_INET;
    else if(is_ipv6_address(hnode->string))
@@ -356,12 +354,9 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
       hnode->name = hnode->string;
       dns_derive_ccode(hnode->name, ccode);
       
-      mutex_unlock(dnode_mutex);
       return true;
    }
    
-   mutex_unlock(dnode_mutex);
-
    // create a new DNS node
    nptr = new dnode_t(*hnode, sa_family);
 
