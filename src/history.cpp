@@ -147,19 +147,22 @@ const hist_month_t *history_t::find_month(u_int year, u_int month) const
 
 bool history_t::update(const hist_month_t *month)
 {
-   size_t i;
+   int i;
 
    if(month == NULL)
       return false;
 
-   // just add, if the history is empty
+   // if the history is empty, just add a new month/year pair
    if(months.size() == 0) {
       months.push_back(*month);
       return true;
    }
 
-   // find the right spot in the months array
-   for(i = months.size()-1; i >= 0; i--) {
+   // find the greatest month/year pair that is before the new one
+   for(i = (int) months.size() - 1; i >= 0; i--) {
+      if(month->year > months[i].year)
+         break;
+
       if(month->year == months[i].year) {
          if(month->month > months[i].month)
             break;
@@ -170,15 +173,15 @@ bool history_t::update(const hist_month_t *month)
             return true;
          }
       }
-
-      if(month->year > months[i].year)
-         break;
    }
    
-   // and insert the new month
-   months.insert(months.begin()+i+1, *month);
+   // and insert the new month after the month/year we found
+   months.insert(months.begin() + (i + 1), *month);
 
-   // length includes empty months in between, so delete one and check how many are left
+   //
+   // History length includes empty months in between, so delete the one from
+   // the start until history the length is within bounds.
+   //
    while(length() > max_length)
       months.erase(months.begin());
 
