@@ -13,6 +13,7 @@
 
 #include "types.h"
 #include <memory.h>
+#include <memory>
 
 //
 // 1. buffer_t maintains a resizable block of memory.
@@ -61,6 +62,9 @@ class buffer_t {
                buffer = (u_char*) realloc(buffer, newsize);
             else
                buffer = (u_char*) malloc(newsize);
+
+            if(buffer == NULL)
+               throw std::bad_alloc();
 
             bufsize = newsize;
          }
