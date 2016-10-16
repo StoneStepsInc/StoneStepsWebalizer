@@ -271,7 +271,7 @@ bool dns_resolver_t::dnode_t::fill_sockaddr(void)
       if(inet_pton(AF_INET, hnode.string, &s_addr_ipv4.sin_addr) != 1)
          return false;
    }
-   else if(s_addr_ip.sa_family = AF_INET6) {
+   else if(s_addr_ip.sa_family == AF_INET6) {
       if(inet_pton(AF_INET6, hnode.string, &s_addr_ipv6.sin6_addr) != 1)
          return false;
    }
