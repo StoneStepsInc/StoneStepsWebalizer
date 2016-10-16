@@ -603,12 +603,17 @@ bool parser_t::parse_apache_log_format(const char *format)
             break;
 
          case 'i':
-            if(strncasecmp(param, "Referer", 7) == 0)
-               log_rec_fields.push_back(eReferrer);
-            else if(strncasecmp(param, "User-Agent", 10) == 0)
-               log_rec_fields.push_back(eUserAgent);
-            else
+            // %{NAME}i must have header name
+            if(!param)
                log_rec_fields.push_back(eUnknown);
+            else {
+               if(strncasecmp(param, "Referer", 7) == 0)
+                  log_rec_fields.push_back(eReferrer);
+               else if(strncasecmp(param, "User-Agent", 10) == 0)
+                  log_rec_fields.push_back(eUserAgent);
+               else
+                  log_rec_fields.push_back(eUnknown);
+            }
             break;
 
          default:
