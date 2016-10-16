@@ -1259,13 +1259,16 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
          longopt = false;
          nlen = 1;
          nptr =  &argv[optind][1];
-         vptr = strchr("aAcCDeEFgIlmMnNoPrRsStuUx", *nptr) ? argv[++optind] : NULL;
-         if(vptr) {
-            if(*vptr == '-') {
-               if(verbose)
-                  fprintf(stderr, "Missing option value for -%s\n", nptr);
-               exit(1);
-            }
+
+         // check if it's an argument that takes a value
+         if(!strchr("aAcCDeEFgIlmMnNoPrRsStuUx", *nptr))
+            vptr = NULL;
+         else {
+            vptr = argv[++optind];
+
+            // error out if the next argument is missing or is another option
+            if(!vptr || *vptr == '-')
+               throw exception_t(0, string_t::_format("Missing option value for -%c", *nptr));
          }
       }
 
