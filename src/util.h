@@ -140,7 +140,6 @@ inline double PCENT(uint64_t val, uint64_t max) {return PCENT((double) val, (dou
 
 uint64_t usec2msec(uint64_t usec);
 
-size_t url_path_len(const char *url, size_t *urllen);
 bool is_http_redirect(size_t respcode);
 bool is_http_error(size_t respcode);
 

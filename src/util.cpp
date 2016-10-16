@@ -116,23 +116,6 @@ uint64_t usec2msec(uint64_t usec)
    return (usec / 1000) + ((usec % 1000 >= 500) ? 1 : 0);
 }
 
-size_t url_path_len(const char *url, size_t *urllen)
-{
-   size_t pathlen = 0;
-   const char *cptr = url;
-
-   while(cptr && *cptr) {
-      if(*cptr++ == '?')
-         break;
-      pathlen++;
-   }
-
-   if(urllen)
-      *urllen = pathlen + strlen(&url[pathlen]); 
-
-   return pathlen;
-}
-
 bool is_http_redirect(size_t respcode)
 {
    switch (respcode) {
