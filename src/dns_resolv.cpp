@@ -900,7 +900,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
                dnode->hnode.name = dnsrec.hostname;
                dnode->hnode.set_ccode(dnsrec.ccode);
                dnode->hnode.city = dnsrec.city;
-               dnode->hnode.spammer = dnsrec.spammer;
+               //dnode->hnode.spammer = dnsrec.spammer;  TODO: resolve concurrency issues
                retval = true;
             }
 
@@ -937,7 +937,7 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsi
    dnsrec.tstamp = runtime;
    dnsrec.city = dnode->hnode.city;
    dnsrec.hostname = dnode->hnode.name;
-   dnsrec.spammer = dnode->hnode.spammer;
+   dnsrec.spammer = false; // dnode->hnode.spammer;   TODO: resolve concurrency issues
 
    memcpy(dnsrec.ccode, dnode->hnode.ccode, hnode_t::ccode_size);
 

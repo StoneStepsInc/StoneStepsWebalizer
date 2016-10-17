@@ -27,9 +27,9 @@
 // into the host data, which requires the current log timestamp and cannot 
 // be done at the hnode_t level.
 //
-// 2. Host name and country code may only be accessed when the host node 
-// is not being processed by the DNS resolver, which is any time between 
-// dns_resolver_t::put_hnode and dns_resolver_t::get_hnode calls.
+// 2. Host name, city name and country code may only be accessed when the 
+// host node is not being processed by the DNS resolver, which is any time 
+// between dns_resolver_t::put_hnode and dns_resolver_t::get_hnode calls.
 //
 // 4. grp_visit is a linked list of ended visits that have not been grouped
 // because the host name has not been resolved. Visit nodes in this list 
