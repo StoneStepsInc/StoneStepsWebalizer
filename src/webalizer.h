@@ -131,7 +131,7 @@ class webalizer_t {
       void print_warranty(void);
       void print_version(void);
 
-      void srch_string(const string_t& refer, const string_t& srchargs, u_int& scount, bool newvisit);
+      bool srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms);
       void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
       void group_hosts_by_name(void);
       void filter_srchargs(string_t& srchargs);

@@ -982,7 +982,9 @@ int webalizer_t::proc_logfile(void)
    size_t reclen;
    const string_t *sptr, empty, *ragent;
    uint64_t stime;
-   u_int newsrch = 0;
+   bool newsrch = false;
+   u_short termcnt = 0;
+   string_t srchterms;
 
    uint64_t total_good = 0;
 
@@ -1317,8 +1319,30 @@ int webalizer_t::proc_logfile(void)
          /* DO SOME PRE-PROCESS FORMATTING            */
          /*********************************************/
 
+         // check against the spam referrers list
+         spammer = config.spam_refs.isinlist(log_rec.refer) != NULL;
+
+         // reset search terms
+         termcnt = 0;
+         srchterms.clear();
+
+         // if not a spammer, check if the query string contains any search terms
+         if(!spammer) {
+            if(config.log_type == LOG_SQUID) {
+               // count only successful requests (unlike with referrers)
+               if(log_rec.resp_code == RC_OK)
+                  spammer = srch_string(log_rec.url, log_rec.srchargs, termcnt, srchterms);
+            }
+            else {
+               // check if it's a partial request and ignore the referrer if requested
+               if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
+                  spammer = srch_string(log_rec.refer, log_rec.xsrchstr, termcnt, srchterms);
+               }
+            }
+         }
+
          // remember spammers
-         if((spammer = (config.spam_refs.isinlist(log_rec.refer) != NULL)))
+         if(spammer)
             put_spnode(log_rec.hostname);
 
          // run search arguments through the filters
@@ -1556,17 +1580,12 @@ int webalizer_t::proc_logfile(void)
 
          /* do search string stuff if needed     */
          if(config.ntop_search) {
-            // reset the new search node count
-            newsrch = 0;
-            if(config.log_type == LOG_SQUID) {
-               // count only successful requests (unlike with referrers)
-               if(log_rec.resp_code == RC_OK)
-                  srch_string(log_rec.url, log_rec.srchargs, newsrch, newvisit);
-            }
-            else {
-               // check if it's a partial request and ignore the referrer if requested
-               if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
-                  srch_string(log_rec.refer, log_rec.xsrchstr, newsrch, newvisit);
+            newsrch = false;
+            if(termcnt && !srchterms.isempty()) {
+               if(!put_snode(srchterms, termcnt, newvisit, newsrch)) {
+                  if (config.verbose)
+                     // Error adding search string node, skipping .... 
+                     fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, srchterms.c_str());
                }
             }
          }
@@ -1606,7 +1625,7 @@ int webalizer_t::proc_logfile(void)
             state.totals.ht_visits++;
          }
 
-         if(config.ntop_search) state.totals.t_search += newsrch;
+         if(config.ntop_search && newsrch) state.totals.t_search++;
 
          /* 
          // Monthly average and maximum hit/file/page processing time 
@@ -1910,24 +1929,23 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 /* SRCH_STRING - get search strings from ref */
 /*********************************************/
 
-void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_int& scount, bool newvisit)
+bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms)
 {
    const gnode_t *nptr = NULL;
    const char *cp1, *cp3;
    char *cp2, *bptr;
    int  sp_flg = 0;
-   u_short termcnt = 0;
    bool newsrch = false;
    size_t slen = 0, qlen = 0;
-   string_t str;
    glist::const_iterator iter = config.search_list.begin();
 
-   // reset the new node count
-   scount = 0;
+   // reset the search term string and count
+   srchterms.clear();
+   termcnt = 0;
 
    // ignore empty referrers and empty search strings
    if(srchargs.isempty() || refer.isempty())
-      return;
+      return false;
 
    //
    // Check if the referrer domain name matches any search engine in the list 
@@ -2014,20 +2032,11 @@ void webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          *bptr = 0;
 
          // [9]All Words[17]webalizer windows
-         str.append(cp3, bptr-cp3);
+         srchterms.append(cp3, bptr-cp3);
       }
    }
 
-   if(termcnt && !str.isempty()) {
-      if(!put_snode(str, termcnt, newvisit, newsrch)) {
-         if (config.verbose)
-            // Error adding search string node, skipping .... 
-            fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, str.c_str());
-      }
-      
-      // update the count if it's a new node
-      if(newsrch) scount++;
-   }
+   return false;
 }
 
 // -----------------------------------------------------------------------
