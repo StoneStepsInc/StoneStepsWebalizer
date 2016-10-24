@@ -25,9 +25,11 @@
 #include "database.h"
 #include "hashtab_nodes.h"
 #include "logfile.h"
+#include "pool_allocator.h"
 
 #include <zlib.h>
 #include <vector>
+#include <list>
 
 #ifndef _WIN32
 #include <netinet/in.h>       /* needed for in_addr structure definition   */
@@ -75,6 +77,10 @@ class webalizer_t {
          void reset(void) {logfile = NULL; logrec = NULL;}
       };
       
+      typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
+      typedef std::list<log_struct*, pool_allocator_t<log_struct, FOPEN_MAX>> logrec_list_t;
+      typedef std::list<logfile_t*, pool_allocator_t<logfile_t, FOPEN_MAX>> logfile_list_t;
+
       // user agent token types
       enum toktype_t {vertok, urltok, strtok};
 
@@ -144,6 +150,10 @@ class webalizer_t {
       int database_info(void);
       int compact_database(void);
       int proc_logfile(void);
+
+      void prep_logfiles(logfile_list_t& logfiles);
+      void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs);
+      bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs);
       
       int read_log_line(logfile_t& logfile); 
       int parse_log_record(char *buffer, size_t reclen, log_struct& logrec);
