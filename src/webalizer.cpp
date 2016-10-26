@@ -1001,7 +1001,7 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
 // are removed from the log file list, so when the function returns, the number
 // of log file states matches the number of log files. 
 //
-void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs)
+void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs)
 {
    int parse_code;
    int errnum = 0;
@@ -1077,9 +1077,9 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       }
       
       // find the spot in the list and insert the record (earlier timestamps first)
-      lfp_state_list_t::iterator j = lfp_state.begin();
-      while(j != lfp_state.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
-      lfp_state.insert(j, wlfs);
+      lfp_state_list_t::iterator j = lfp_states.begin();
+      while(j != lfp_states.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
+      lfp_states.insert(j, wlfs);
 
       // reset the working state and move onto the next log file
       wlfs.reset();
@@ -1106,7 +1106,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
 // determied by how many of them have log records in approximately same range
 // and how close log records are to each other. 
 //
-bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs)
+bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs)
 {
    int parse_code;
    int errnum = 0;
@@ -1116,7 +1116,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
    // If we have fewer states than log files, then we either need to add a 
    // state or remove the log file identified by wlfs from the list.
    //
-   while(lfp_state.size() < logfiles.size()) {
+   while(lfp_states.size() < logfiles.size()) {
       // the log file in wlfs may be closed if wlfs is returned to the state vector first time
       if(!wlfs.logfile->is_open() && (errnum = wlfs.logfile->open()) != 0) {
          /* Error: Can't open log file ... */
@@ -1154,22 +1154,22 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
       }
 
       // find the spot in the list and insert the record (earlier timestamps first)
-      lfp_state_list_t::iterator j = lfp_state.begin();
-      while(j != lfp_state.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
-      lfp_state.insert(j, wlfs);
+      lfp_state_list_t::iterator j = lfp_states.begin();
+      while(j != lfp_states.end() && wlfs.logrec->tstamp > j->logrec->tstamp) j++;
+      lfp_states.insert(j, wlfs);
       wlfs.reset();
    }
    
    // if there are no unprocessed states, we've gone through all log files
-   if(lfp_state.empty())
+   if(lfp_states.empty())
       return false;
 
    //
    // Get the first state and remove it from the list. The log file in the  
    // working state lets us keep track of which log file needs to be read from.
    //
-   wlfs = lfp_state.front();
-   lfp_state.pop_front();
+   wlfs = lfp_states.front();
+   lfp_states.pop_front();
 
    return true;
 }
@@ -1201,7 +1201,7 @@ int webalizer_t::proc_logfile(void)
    int retcode = 0, errnum = 0;
 
    lfp_state_t wlfs;                   // working log file state
-   lfp_state_list_t lfp_state;         // log file states ordered by log time
+   lfp_state_list_t lfp_states;        // log file states ordered by log time
    logfile_list_t logfiles;            // owns log files
    logrec_list_t logrecs;              // contains one log record per log file; owns log records
    
@@ -1211,7 +1211,7 @@ int webalizer_t::proc_logfile(void)
    prep_logfiles(logfiles);
 
    // populate log file states, so we have one log record per log file, ordered by time
-   prep_lfstates(logfiles, lfp_state, logrecs);
+   prep_lfstates(logfiles, lfp_states, logrecs);
 
    //
    // Main processing loop - go through the log files until we run out of them.
@@ -1225,7 +1225,7 @@ int webalizer_t::proc_logfile(void)
       }
    
       // get the next record in the working log file state structure
-      if(get_logrec(wlfs, logfiles, lfp_state, logrecs)) {
+      if(get_logrec(wlfs, logfiles, lfp_states, logrecs)) {
          log_struct& log_rec = *wlfs.logrec;
          
          newvisit = false;

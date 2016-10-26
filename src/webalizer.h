@@ -152,8 +152,8 @@ class webalizer_t {
       int proc_logfile(void);
 
       void prep_logfiles(logfile_list_t& logfiles);
-      void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs);
-      bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_state, logrec_list_t& logrecs);
+      void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);
+      bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);
       
       int read_log_line(logfile_t& logfile); 
       int parse_log_record(char *buffer, size_t reclen, log_struct& logrec);
