@@ -1182,14 +1182,12 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 
 int webalizer_t::proc_logfile(void)
 {
-   int parse_code;
    char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;
    unode_t *uptr;
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl;
    bool newrgrp, newugrp, newagrp, newigrp;
    bool pageurl, fileurl, httperr, robot, target, spammer, goodurl, entryurl, exiturl;
-   size_t reclen;
    const string_t *sptr, empty, *ragent;
    uint64_t stime;
    bool newsrch = false;
@@ -1198,7 +1196,7 @@ int webalizer_t::proc_logfile(void)
 
    uint64_t total_good = 0;
 
-   int retcode = 0, errnum = 0;
+   int retcode = 0;
 
    lfp_state_t wlfs;                   // working log file state
    lfp_state_list_t lfp_states;        // log file states ordered by log time
