@@ -354,8 +354,6 @@ class config_t {
       
       void add_output_format(const string_t& format);
       
-      void read_help_xml(const char *fname);
-
       void set_dst_range(const string_t *dst_start, const string_t *dst_end);
       
       void proc_stdin_log_files(void);
