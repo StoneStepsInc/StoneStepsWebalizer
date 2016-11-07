@@ -26,6 +26,19 @@
 // are intended to facilitate detaching/attaching memory from/to strings and should use
 // move semantics.
 //
+// 4. A const character buffer is a distinct type and const and non-const character 
+// buffers cannot be constructed from one another. 
+//
+// 5. A non-const character buffer uses malloc/realloc/free to manage buffer memory,
+// which makes it possible to reallocate buffer memory, while preserving data within
+// the buffer. The side effect of using realloc is that unused buffer bytes are also 
+// being copied when a buffer is being reallocated.
+//
+// A const character buffer uses new and delete operators to manage buffer memory, 
+// which make it possible to delete memory containing const characters, but prevents
+// us from copying existing data into a new buffer, which means that const character 
+// buffers cannot be resized.
+//
 template <typename char_t>
 class char_buffer_base {
    private:
@@ -59,6 +72,8 @@ class char_buffer_base {
       char_t *detach(size_t *bsize = NULL, bool *hold = NULL);
 
       char_buffer_base& resize(size_t size);
+
+      char_buffer_base& resize(size_t size, size_t datasize);
 
       size_t capacity(void) const {return bufsize;}
 

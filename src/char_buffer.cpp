@@ -10,7 +10,9 @@
 #include "pch.h"
 
 #include "char_buffer.h"
+#include "exception.h"
 #include <stdlib.h>
+#include <algorithm>
 
 template <typename char_t>
 char_buffer_base<char_t>::char_buffer_base(void) : buffer(NULL), bufsize(0), holder(false)
@@ -95,21 +97,63 @@ char_t *char_buffer_base<char_t>::detach(size_t *bsize, bool *hold)
 template <typename char_t>
 char_buffer_base<char_t>& char_buffer_base<char_t>::resize(size_t size)
 {
-   if(holder)
-      buffer = (char_t*) malloc(size * sizeof(char_t));
-   else
-      buffer = (char_t*) realloc(buffer, size * sizeof(char_t));
+   // copy as much data as fits in the new buffer if we don't know how much we have
+   return resize(size, bufsize);
+}
 
+template <typename char_t>
+char_buffer_base<char_t>& char_buffer_base<char_t>::resize(size_t size, size_t datasize)
+{
+   // make sure the size of the data within the buffer doesn't exceed buffer size
+   if(datasize > bufsize)
+      throw exception_t(0, "Cannot copy more data than there is in the buffer");
+
+   // allocate a new buffer, so we can copy data if needed
+   char_t *newbuf = alloc(size);
+
+   if(buffer) {
+      // copy as much data from the current buffer as the new one can take
+      if(size && datasize)
+         memcpy(newbuf, buffer, std::min(size, datasize) * sizeof(char_t));
+
+      // release the current buffer if we own the memory
+      if(!holder)
+         free(buffer);
+   }
+
+   // finish up and assign all data members
+   buffer = newbuf;
    bufsize = size;
    holder = false;
 
    return *this;
 }
 
+template <>
+char_buffer_base<const char>& char_buffer_base<const char>::resize(size_t size, size_t datasize)
+{
+   // see char_buffer_base<const char>::alloc
+   throw exception_t(0, "Cannot resize a const character buffer");
+}
+
 template <typename char_t>
 char_t *char_buffer_base<char_t>::alloc(char_t *buffer, size_t bufsize)
 {
-   return (char_t*) realloc(buffer, bufsize * sizeof(char_t));
+   return (char_t*) ::realloc(buffer, bufsize * sizeof(char_t));
+}
+
+template <>
+const char *char_buffer_base<const char>::alloc(const char *buffer, size_t bufsize)
+{
+   //
+   // We cannot use realloc with a const character buffer because it, effectively, 
+   // copies chracters into a block of memory that is supposed to contain const
+   // characters. It is possible to allocate a new block of memory, but in a static
+   // member function, the size of the the underlying memory block is unknown, and
+   // having the caller to maintain buffer size outside of this implementation would
+   // be quite error prone.
+   //
+   throw exception_t(0, "Cannot resize a const character buffer");
 }
 
 template <typename char_t>
@@ -118,10 +162,23 @@ char_t *char_buffer_base<char_t>::alloc(size_t bufsize)
    return (char_t*) malloc(bufsize * sizeof(char_t));
 }
 
+template <>
+const char *char_buffer_base<const char>::alloc(size_t bufsize)
+{
+   // use operator new, so we can delete a const buffer later
+   return new char[bufsize];
+}
+
 template <typename char_t>
 void char_buffer_base<char_t>::free(char_t *buffer)
 {
    ::free(buffer);
+}
+
+template <>
+void char_buffer_base<const char>::free(const char *buffer)
+{
+   delete [] buffer;
 }
 
 template <typename char_t>
@@ -134,3 +191,4 @@ size_t char_buffer_base<char_t>::memsize(size_t char_count)
 // Instantiate character buffer for narrow characters
 //
 template class char_buffer_base<char>;
+template class char_buffer_base<const char>;
