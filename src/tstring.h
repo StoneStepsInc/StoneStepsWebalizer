@@ -43,17 +43,7 @@
 // Read-only strings may be moved between string_t instances via the move constructor 
 // or the move assignment operator.
 //
-// 3. Constructors that take just a reference to char_buffer_t initialize a zero-length
-// string with the specified buffer. If these constructors are not explicitly declared, 
-// this code will construct a string with random characters:
-//
-//    char_buffer_t char_buffer(100);
-//    string_t str(char_buffer);
-//
-// , because it will be interpreted as:
-//
-//    char_buffer_t char_buffer(100);
-//    string_t str(char_buffer.operator char*());
+// 3. [removed]
 //
 // 4. Unlike with const_char_buffer_t, which can be used independently from char_buffer_t,
 // having a distinct string_base class defined with a const character type would make it 
@@ -116,9 +106,6 @@ class string_base {
 
       explicit string_base(const char_t *str);
       string_base(const char_t *str, size_t len) {init(); assign(str, len);}
-
-      // see #3 above
-      explicit string_base(char_buffer_t&& char_buffer) {init(); attach(std::move(char_buffer), 0);}
 
       string_base(char_buffer_t&& char_buffer, size_t len) {init(); attach(std::move(char_buffer), len);}
 
