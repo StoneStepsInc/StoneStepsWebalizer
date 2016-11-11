@@ -60,7 +60,7 @@ const void *deserialize(const void *ptr, string_t& value)
       string_t::char_buffer_t sp(slen+1);
       memcpy(sp, cp, slen);
       sp[slen] = 0;
-      value.attach(sp, slen);
+      value.attach(std::move(sp), slen);
    }
    else
       value.reset();

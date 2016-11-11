@@ -412,7 +412,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
 
    // create an empty temporary string (must be attached because of the goto's above)
    ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
-   ccode.attach(ccode_buffer, 0);
+   ccode.attach(std::move(ccode_buffer), 0);
 
    // try GeoIP first
    goodcc = geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);

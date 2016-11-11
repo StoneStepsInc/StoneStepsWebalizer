@@ -812,7 +812,7 @@ void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
    ua_groups.clear();
    
    if(ua)
-      agent.attach(ua, cp1-ua.get_buffer());    // attach the new string
+      agent.attach(std::move(ua), cp1-ua.get_buffer());    // attach the new string
    else
       agent.reset();                            // reset to an empty agent string
 }
@@ -1961,7 +1961,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    sa[cptr-buffer] = 0;
 
    // attach the memory block to the string
-   srchargs.attach(sa, cptr-buffer);
+   srchargs.attach(std::move(sa), cptr-buffer);
 
    sr_args.clear();
 }

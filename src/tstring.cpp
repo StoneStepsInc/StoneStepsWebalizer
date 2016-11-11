@@ -86,6 +86,28 @@ string_base<char_t>::string_base(string_base&& other) : string(other.string), sl
 }
 
 template <typename char_t>
+string_base<char_t>::string_base(const_char_buffer_t&& char_buffer, size_t len) : bufsize(0), holder(true)
+{
+   // cannot hold a NULL pointer
+   if(!char_buffer)
+      throw exception_t(0, ex_bad_char_buffer);
+
+   // check if the buffer is large enough to hold len plus the null character
+   if(len >= char_buffer.capacity())
+      throw exception_t(0, ex_bad_char_buffer);
+
+   // read-only strings must be null-terminated
+   if(char_buffer[len])
+      throw exception_t(0, ex_bad_char_buffer);
+
+   // move the string out of the buffer
+   c_string = char_buffer.detach(NULL, NULL);
+
+   // set the string length
+   slen = len;
+}
+
+template <typename char_t>
 string_base<char_t>::~string_base(void) 
 {
    if(string && !holder && string != empty_string)
@@ -481,8 +503,9 @@ typename string_base<char_t>::char_buffer_t string_base<char_t>::detach(void)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::attach(char_buffer_t& char_buffer, size_t len, bool readonly)
+string_base<char_t>& string_base<char_t>::attach(char_buffer_t&& char_buffer, size_t len)
 {
+   // cannot attach to a read-only string
    if(holder && !bufsize)
       throw exception_t(0, ex_readonly_string);
 
@@ -494,23 +517,13 @@ string_base<char_t>& string_base<char_t>::attach(char_buffer_t& char_buffer, siz
    if(len >= char_buffer.capacity())
       throw exception_t(0, ex_bad_char_buffer);
 
-   // read-only strings must be terminated
-   if(readonly && char_buffer[len])
-      throw exception_t(0, ex_bad_char_buffer);
-
    // release current memory block
    if(!holder && string != empty_string)
       char_buffer_t::free(string);
 
-   // configure the instance before the buffer is detached
-   if(!readonly) {
-      bufsize = char_buffer.capacity();
-      holder = char_buffer.isholder();
-   }
-   else {
-      bufsize = 0;
-      holder = true;
-   }
+   // set up string storage (can't pass bit fields into char_buffer_t::detach)
+   bufsize = char_buffer.capacity();
+   holder = char_buffer.isholder();
 
    // and attach the buffer supplied by the caller
    string = char_buffer.detach(NULL, NULL);
@@ -518,8 +531,8 @@ string_base<char_t>& string_base<char_t>::attach(char_buffer_t& char_buffer, siz
    // set the string length
    slen = len;
 
-   // and make sure modifiable strings are terminated
-   if(!readonly && string[slen])
+   // and make sure the string is null-terminated
+   if(string[slen])
       string[slen] = 0;
 
    return *this;
@@ -542,14 +555,11 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len)
    if(str[len])
       throw exception_t(0, ex_bad_hold_string);
 
-   //
-   // Cast away the constness of str so we can create a temporary holder buffer
-   // and initialize a read-only string.
-   //
-   char_buffer_base<char_t> char_buffer(const_cast<char_t*>(str), len+1, true);
+   // create a temporary holder buffer and initialize a read-only string.
+   const_char_buffer_t char_buffer(str, len+1, true);
 
    // create and return a read-only string (see note #2 in the class definition)
-   return string_base<char_t>(char_buffer, len, true);
+   return string_base<char_t>(char_buffer, len);
 }
 
 //

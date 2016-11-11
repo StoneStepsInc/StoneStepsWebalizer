@@ -140,7 +140,7 @@ const string_t& cp1252utf8(const string_t& str, string_t& out)
       return out;
 
    // attach the memory block to the output string
-   out.attach(omem, osize);
+   out.attach(std::move(omem), osize);
 
    return out;
 }

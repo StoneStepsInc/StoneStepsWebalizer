@@ -265,7 +265,7 @@ string_t& url_decode(const string_t& str, string_t& out)
       url_decode(str, optr, &olen);
       
       // and attach it back
-      out.attach(optr, olen);
+      out.attach(std::move(optr), olen);
    }
    
    return out;

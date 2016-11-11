@@ -14,6 +14,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
+#include <memory>
 
 #include "char_buffer.h"
 
@@ -54,6 +55,12 @@
 //    char_buffer_t char_buffer(100);
 //    string_t str(char_buffer.operator char*());
 //
+// 4. Unlike with const_char_buffer_t, which can be used independently from char_buffer_t,
+// having a distinct string_base class defined with a const character type would make it 
+// imposible to pass such string instances into functions that take string_t arguments. 
+// Read-only string_t instances are used instead to wrap string literals or other data that 
+// cannot be modified.
+// 
 template <typename char_t>
 class string_base {
    public:
@@ -61,16 +68,29 @@ class string_base {
 
       // char_buffer_base with a matching character type
       typedef char_buffer_base<char_t> char_buffer_t;
+      typedef char_buffer_base<const char_t> const_char_buffer_t;
 
       // fixed_char_buffer_t with a matching character type
       template <size_t BUFSIZE> using fixed_char_buffer_t = ::fixed_char_buffer_t<char_t, BUFSIZE>;
 
    private:
-      char_t   *string;             // string
+      //
+      // Both character pointers in the union have the same size and alignment requirements 
+      // and start at the same address, which allows us to assign a const character pointer, 
+      // such as a string literal, without a const cast. The string instance in this case 
+      // is set up as a read-only string, which guarantees that a non-const string pointer 
+      // is only used in contexts where it's interpreted as a const string (e.g. returning
+      // a string pointer from a const member function).
+      //
+      union {
+         char_t         *string;    // modifiable string
+         const char_t   *c_string;  // const string
+      };
+
       size_t   slen     : 31;       // length
       size_t            :  1;
       size_t   bufsize  : 31;       // buffer size, in characters, including the null character
-      size_t   holder   :  1;       // if true, does not own string memory
+      bool     holder   :  1;       // if true, does not own string memory
 
       static char_t empty_string[];
 
@@ -98,11 +118,11 @@ class string_base {
       string_base(const char_t *str, size_t len) {init(); assign(str, len);}
 
       // see #3 above
-      explicit string_base(char_buffer_t& char_buffer) {init(); attach(char_buffer, 0, false);}
-      explicit string_base(char_buffer_t&& char_buffer) {init(); attach(char_buffer, 0, false);}
+      explicit string_base(char_buffer_t&& char_buffer) {init(); attach(std::move(char_buffer), 0);}
 
-      string_base(char_buffer_t& char_buffer, size_t len, bool readonly) {init(); attach(char_buffer, len, readonly);}
-      string_base(char_buffer_t&& char_buffer, size_t len, bool readonly) {init(); attach(char_buffer, len, readonly);}
+      string_base(char_buffer_t&& char_buffer, size_t len) {init(); attach(std::move(char_buffer), len);}
+
+      string_base(const_char_buffer_t&& char_buffer, size_t len);
 
       ~string_base(void);
 
@@ -177,7 +197,7 @@ class string_base {
 
       char_buffer_t detach(void);
 
-      string_base& attach(char_buffer_t& str, size_t len, bool readonly = false);
+      string_base& attach(char_buffer_t&& str, size_t len);
 
       static string_base<char_t> hold(const char_t *str);
       static string_base<char_t> hold(const char_t *str, size_t len);
