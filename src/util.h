@@ -167,6 +167,7 @@ string_t idx_ctry(uint64_t idx);
 
 const char *get_domain(const char *, size_t);       /* return domain name  */
 char *get_url_domain(const char *url, char *buffer, size_t bsize);
+string_t::const_char_buffer_t get_url_host(const char *url, size_t slen);
 
 bool is_abs_path(const char *path);
 string_t get_cur_path(void);

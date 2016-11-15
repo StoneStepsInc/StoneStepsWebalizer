@@ -1372,12 +1372,13 @@ int webalizer_t::proc_logfile(void)
             if(config.log_type == LOG_SQUID) {
                // count only successful requests (unlike with referrers)
                if(log_rec.resp_code == RC_OK)
-                  spammer = srch_string(log_rec.url, log_rec.srchargs, termcnt, srchterms);
+                  srch_string(log_rec.url, log_rec.srchargs, termcnt, srchterms, false);
             }
             else {
                // check if it's a partial request and ignore the referrer if requested
                if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
-                  spammer = srch_string(log_rec.refer, log_rec.xsrchstr, termcnt, srchterms);
+                  if(srch_string(log_rec.refer, log_rec.xsrchstr, termcnt, srchterms, true))
+                     spammer = true;
                }
             }
          }
@@ -1966,11 +1967,41 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    sr_args.clear();
 }
 
+bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
+{
+   //
+   // Move one character at a time through the search string to see if we have any full 
+   // URLs. Note that while we could speed it up by skipping parts of the string we have
+   // identified, parsing would have to rely on well-formed URLs and spammers don't exactly 
+   // follow the rules (e.g. http://http://spamsite.com). 
+   //
+   for(const char *cp1 = str; (cp1 - str) < slen; cp1++) {
+      // check if there's a host name at this offset
+      string_t::const_char_buffer_t host = get_url_host(cp1, slen - (cp1 - str));
+
+      if(!host.isempty()) {
+         //
+         // People often mix up search engine input with the browser's URL input and
+         // some search engines generate search results with site's full URL in the 
+         // search strings. Check against the host name for the report to avoid flagging
+         // legitimate users as spammers. 
+         //
+         // TODO: expand this check to a list of site aliases
+         //
+         if(strncasecmp(host, config.hname.c_str(), host.capacity()))
+            return true;
+      }
+   }
+
+   // not a spammer
+   return false;
+}
+
 /*********************************************/
 /* SRCH_STRING - get search strings from ref */
 /*********************************************/
 
-bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms)
+bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck)
 {
    const gnode_t *nptr = NULL;
    const char *cp1, *cp3;
@@ -1978,6 +2009,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    int  sp_flg = 0;
    bool newsrch = false;
    size_t slen = 0, qlen = 0;
+   u_int dblscnt = 0;              // double slash count
    glist::const_iterator iter = config.search_list.begin();
 
    // reset the search term string and count
@@ -2019,6 +2051,8 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
       if(*cp1 == 0) continue;                         // If not found, continue  
 
+      dblscnt = 0;
+
       // copy and decode the search string 
       cp2 = buffer;
       while(*cp1 && *cp1!='&')
@@ -2028,9 +2062,17 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          else if(*cp1 == '+') 
             *cp2 = ' ', cp1++;                        // change + to space       
          else if(*cp1 < '\x20') 
-            *cp2='_', cp1++;                          // strip invalid chars     
+            *cp2='_', cp1++;                          // strip invalid chars
+         else if(*cp1 >= 'A' && *cp1 <= 'Z')     
+            *cp2 = (char) tolower(*cp1), cp1++;       // lowercase ASCII characters
          else
-            *cp2 = (char) tolower(*cp1), cp1++;       // normal character        
+            *cp2 = *cp1, cp1++;                       // copy other characters
+
+         // track if we saw at least one double-slash sequence
+         if(spamcheck && dblscnt != 2) {
+            if(*cp2 == '/') dblscnt++;
+            else if(dblscnt) dblscnt = 0;
+         }
 
          if (sp_flg && *cp2==' ') continue;           // compress spaces         
          if(*cp2==' ') sp_flg=1; else sp_flg=0;       // (flag spaces here)      
@@ -2050,7 +2092,13 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
       slen = cp2 - cp1;
 
       // store in the hash table if not empty
-      if(slen) {                                      
+      if(slen) {
+         // check for spam URLs, if requested, but only if we saw any double-slash sequences
+         if(spamcheck && dblscnt == 2) {
+            if(check_for_spam_urls(cp1, slen))
+               return true;
+         }
+                                            
          termcnt++;
          cp3 = bptr = &buffer[HALFBUFSIZE];
 
