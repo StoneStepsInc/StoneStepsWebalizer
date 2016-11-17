@@ -1187,8 +1187,8 @@ int webalizer_t::proc_logfile(void)
    unode_t *uptr;
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl;
    bool newrgrp, newugrp, newagrp, newigrp;
-   bool pageurl, fileurl, httperr, robot, target, spammer, goodurl, entryurl, exiturl;
-   const string_t *sptr, empty, *ragent;
+   bool pageurl, fileurl, httperr, robot = false, target, spammer = false, goodurl, entryurl, exiturl;
+   const string_t *sptr, empty, *ragent = NULL;
    uint64_t stime;
    bool newsrch = false;
    u_short termcnt = 0;
@@ -1360,21 +1360,22 @@ int webalizer_t::proc_logfile(void)
          /* DO SOME PRE-PROCESS FORMATTING            */
          /*********************************************/
 
-         // check against the spam referrers list
-         spammer = config.spam_refs.isinlist(log_rec.refer) != NULL;
+         // check non-proxy requests against the spam referrers list
+         if(config.log_type != LOG_SQUID)
+            spammer = config.spam_refs.isinlist(log_rec.refer) != NULL;
 
          // reset search terms
          termcnt = 0;
          srchterms.clear();
 
-         // if not a spammer, check if the query string contains any search terms
-         if(!spammer) {
-            if(config.log_type == LOG_SQUID) {
-               // count only successful requests (unlike with referrers)
-               if(log_rec.resp_code == RC_OK)
-                  srch_string(log_rec.url, log_rec.srchargs, termcnt, srchterms, false);
-            }
-            else {
+         // check if the query string contains any search terms
+         if(config.log_type == LOG_SQUID) {
+            // count only successful requests (unlike with referrers)
+            if(log_rec.resp_code == RC_OK)
+               srch_string(log_rec.url, log_rec.srchargs, termcnt, srchterms, false);
+         }
+         else {
+            if(!spammer) {
                // check if it's a partial request and ignore the referrer if requested
                if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
                   if(srch_string(log_rec.refer, log_rec.xsrchstr, termcnt, srchterms, true))
@@ -1419,8 +1420,11 @@ int webalizer_t::proc_logfile(void)
          // 7. Country totals do not include robot activity.
          //
          
-         // if robots can be ignored, set ragent now, otherwise, do it after the ignore check
-         ragent = config.ignore_robots ? config.robots.isinglist(log_rec.agent) : NULL;
+         // do not look up robot agent for proxy requests
+         if(config.log_type != LOG_SQUID) {
+            // if robots can be ignored, set ragent now, otherwise, do it after the ignore check
+            ragent = config.ignore_robots ? config.robots.isinglist(log_rec.agent) : NULL;
+         }
 
          //
          // Ignore/Include check
@@ -1460,9 +1464,12 @@ int webalizer_t::proc_logfile(void)
             }
          }
 
-         // if not ignored, check if a robot and set ragent (ignore spammers)
-         if(!config.ignore_robots)
-            ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
+         // do not look up robot agent for proxy requests
+         if(config.log_type != LOG_SQUID) {
+            // if not ignored, check if a robot and set ragent (ignore spammers)
+            if(!config.ignore_robots)
+               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
+         }
 
          /* Do we need to mangle? */
          if(config.mangle_agent) {
@@ -1485,9 +1492,12 @@ int webalizer_t::proc_logfile(void)
          httperr = is_http_error(log_rec.resp_code);
          target = goodurl ? config.target_urls.isinlist(log_rec.url) ? true : config.target_downloads && config.downloads.isinlist(log_rec.url) ? true : false : false;
          
-         // if appears to be not a spammer, check their past
-         if(!spammer)
-            spammer = state.sp_htab.find_key(log_rec.hostname);
+         // do not check proxy requests for spammers
+         if(config.log_type != LOG_SQUID) {
+            // if appears to be not a spammer, check their past
+            if(!spammer)
+               spammer = state.sp_htab.find_key(log_rec.hostname);
+         }
          
          // initialize those that may be not set otherwise (e.g. if URL is not added)
          newurl = newagent = newuser = newerr = newref = newdl = newrgrp = newugrp = newagrp = newigrp = false;
@@ -1510,8 +1520,11 @@ int webalizer_t::proc_logfile(void)
          if(config.is_dns_enabled() && newhost)
             dns_resolver.put_hnode(hptr);
 
-         // use the host robot flag (ignore mid-visit ragent)
-         robot = hptr->robot;
+         // proxy logs do not contain any robot activity
+         if(config.log_type != LOG_SQUID) {
+            // use the host robot flag (ignore mid-visit ragent)
+            robot = hptr->robot;
+         }
 
          //
          // Entry URL may be not the first URL in the visit either because the
