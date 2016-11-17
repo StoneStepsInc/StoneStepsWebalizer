@@ -144,7 +144,7 @@ class webalizer_t {
       void filter_srchargs(string_t& srchargs);
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);
-      void filter_user_agent(string_t& agent, const string_t *ragent);
+      void filter_user_agent(string_t& agent);
 
       int prep_report(void);
       int end_month(void);

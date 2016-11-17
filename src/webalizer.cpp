@@ -599,7 +599,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
    agent = buffer;
 }
 
-void webalizer_t::filter_user_agent(string_t& agent, const string_t *ragent)
+void webalizer_t::filter_user_agent(string_t& agent)
 {
    //
    // Typical user agent strings:
@@ -1423,7 +1423,8 @@ int webalizer_t::proc_logfile(void)
          // do not look up robot agent for proxy requests
          if(config.log_type != LOG_SQUID) {
             // if robots can be ignored, set ragent now, otherwise, do it after the ignore check
-            ragent = config.ignore_robots ? config.robots.isinglist(log_rec.agent) : NULL;
+            if(!config.ignore_robots)
+               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
          }
 
          //
@@ -1476,7 +1477,7 @@ int webalizer_t::proc_logfile(void)
             if (config.use_classic_mangler)
                mangle_user_agent(log_rec.agent);
             else
-               filter_user_agent(log_rec.agent, ragent);
+               filter_user_agent(log_rec.agent);
          }
             
          /* Bump response code totals */
