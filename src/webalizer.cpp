@@ -1989,7 +1989,7 @@ bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
    // identified, parsing would have to rely on well-formed URLs and spammers don't exactly 
    // follow the rules (e.g. http://http://spamsite.com). 
    //
-   for(const char *cp1 = str; (cp1 - str) < slen; cp1++) {
+   for(const char *cp1 = str; (size_t) (cp1 - str) < slen; cp1++) {
       // check if there's a host name at this offset
       string_t::const_char_buffer_t host = get_url_host(cp1, slen - (cp1 - str));
 
