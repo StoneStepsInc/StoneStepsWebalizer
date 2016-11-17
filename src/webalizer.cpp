@@ -1402,20 +1402,17 @@ int webalizer_t::proc_logfile(void)
          //
          // 2. Robot hits are ignored based just on the user agent string
          //
-         // 3. Hosts are marked as robots when user agent matches one of 
-         // the Robot entries and only when an hnode is created. If a human
-         // and a robot share the same IP address, this address will be 
-         // marked as robot or non-robot depending on which user agent was 
-         // active when the first hit was made.
+         // 3. Hosts are marked as robots when user agent matches one of the Robot entries 
+         // and only when an hnode is created. If a human and a robot share the same IP 
+         // address, this address will be marked as robot or non-robot depending on which 
+         // user agent was active when the first request was made.
          //
-         // 4. A visit is marked as a robot visit when the user agent 
-         // matches one of the Robot entries and a vnode is created, 
-         // regardless whether the host is marked as a robot or not.
-         // The robot flag in the visit is purely informational. See
-         // vnode_t for details.
+         // 4. A visit is marked as a robot visit when the user agent matches one of the 
+         // Robot entries and a vnode is created, regardless whether the host is marked 
+         // as a robot or not. The robot flag in the visit is purely informational. See
+         // note #4 in vnode_t for details.
          //
-         // 5. A user agent is marked as a robot if the current visit is 
-         // marked as a robot.
+         // 5. A user agent is marked as a robot if the current visit is marked as a robot.
          //
          // 7. Country totals do not include robot activity.
          //
