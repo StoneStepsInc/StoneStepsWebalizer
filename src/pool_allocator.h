@@ -42,7 +42,7 @@ public:
       mempool.reserve(POOLSIZE);
    }
 
-   pool_allocator_t(pool_allocator_t&& other) : stdalloc(other.stdalloc)
+   pool_allocator_t(pool_allocator_t&& other) : stdalloc(std::move(other.stdalloc))
    {
       mempool.reserve(POOLSIZE);
       mempool = std::move(other.mempool);
@@ -55,7 +55,7 @@ public:
    }
 
    template <typename U>
-   pool_allocator_t(pool_allocator_t<U, POOLSIZE>&& other) : stdalloc(other.stdalloc)
+   pool_allocator_t(pool_allocator_t<U, POOLSIZE>&& other) : stdalloc(std::forward<std::allocator<U>>(other.stdalloc))
    {
       mempool.reserve(POOLSIZE);
    }
