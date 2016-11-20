@@ -887,7 +887,7 @@ int webalizer_t::run(void)
    }
    else if(config.end_month) {
       retcode = end_month();
-      rpt_time += elapsed(start_ts, msecs());
+      mnt_time += elapsed(start_ts, msecs());
    }
    else if(config.db_info) {
       retcode = database_info();
