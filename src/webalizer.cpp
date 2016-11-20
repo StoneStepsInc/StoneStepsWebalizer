@@ -91,8 +91,6 @@ static bool abort_signal = false;   // true if Ctrl-C was pressed
 //
 webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
 {
-   check_dup = false;                         /* check for dup flag       */
-
    total_rec   =0;                            /* Total Records Processed     */
    total_ignore=0;                            /* Total Records Ignored       */
    total_bad   =0;                            /* Total Bad Records           */
@@ -208,10 +206,6 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
          /* Error: Unable to restore run data (error num) */
          throw exception_t(0, string_t::_format("%s (%d)\n", config.lang.msg_bad_data, i));
       }
-
-      // enable duplicate time stamp checking if in the incremental mode
-      if(config.incremental)
-         check_dup = true;
    }
 
    if(!config.db_info) {
@@ -1196,6 +1190,8 @@ int webalizer_t::proc_logfile(void)
    uint64_t total_good = 0;
 
    int retcode = 0;
+
+   bool check_dup = config.incremental;   // enable duplicate time stamp checking in the incremental mode
 
    lfp_state_t wlfs;                   // working log file state
    lfp_state_list_t lfp_states;        // log file states ordered by log time

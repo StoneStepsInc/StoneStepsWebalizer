@@ -106,8 +106,6 @@ class webalizer_t {
 
       std::vector<output_t*> output;
 
-      bool        check_dup;                       // check for dups flag
-
       char        *buffer;
 
       uint64_t      total_rec;                       // Total Records Processed
