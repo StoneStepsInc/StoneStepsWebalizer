@@ -114,9 +114,6 @@ class webalizer_t {
       uint64_t      total_ignore;                    // Total Records Ignored
       uint64_t      total_bad;                       // Total Bad Records
 
-      uint64_t      start_ts;                        // start of the run
-      uint64_t      end_ts;                          // end of the run
-
       uint64_t      dns_time;                        // DNS wait time
       uint64_t      mnt_time;                        // maintenance time (saving state, etc)
       uint64_t      rpt_time;                        // report time

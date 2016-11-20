@@ -97,9 +97,6 @@ webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config
    total_ignore=0;                            /* Total Records Ignored       */
    total_bad   =0;                            /* Total Bad Records           */
 
-   start_ts = 0;                              /* program timers              */
-   end_ts = 0;
-
    dns_time = 0;
    mnt_time = 0;
    rpt_time = 0;
@@ -890,6 +887,8 @@ int webalizer_t::compact_database(void)
 
 int webalizer_t::run(void)
 {
+   uint64_t start_ts;                        // start of the run
+   uint64_t end_ts;                          // end of the run
    uint64_t tot_time, proc_time;                    /* temporary time storage      */
    u_int rps;
    int retcode;
