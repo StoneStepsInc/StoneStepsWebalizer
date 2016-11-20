@@ -839,23 +839,15 @@ int webalizer_t::end_month(void)
 
 int webalizer_t::database_info(void)
 {
-   uint64_t stime = msecs();
-
    state.database_info();
-
-   mnt_time += elapsed(stime, msecs());
 
    return 0;
 }
 
 int webalizer_t::prep_report(void)
 {
-   uint64_t stime = msecs();
-
    write_monthly_report();
    write_main_index();
-
-   rpt_time += elapsed(stime, msecs());
 
    return 0;
 }
@@ -865,8 +857,6 @@ int webalizer_t::compact_database(void)
    u_int bytes;
    int error;
 
-   uint64_t stime = msecs();
-   
    if((error = state.database.compact(bytes)) == 0) {
       if(config.verbose > 1)
          printf("%s: %d KB\n", config.lang.msg_cmpctdb, bytes/1024);
@@ -874,8 +864,6 @@ int webalizer_t::compact_database(void)
    else
       fprintf(stderr, "Cannot compact the database (%d)\n", error);
    
-   mnt_time += elapsed(stime, msecs());
-      
    return 0;
 }
 
@@ -889,14 +877,22 @@ int webalizer_t::run(void)
 
    start_ts = msecs();
 
-   if(config.prep_report)
+   if(config.prep_report) {
       retcode = prep_report();
-   else if(config.compact_db)
+      rpt_time += elapsed(start_ts, msecs());
+   }
+   else if(config.compact_db) {
       retcode = compact_database();
-   else if(config.end_month)
+      mnt_time += elapsed(start_ts, msecs());
+   }
+   else if(config.end_month) {
       retcode = end_month();
-   else if(config.db_info)
+      rpt_time += elapsed(start_ts, msecs());
+   }
+   else if(config.db_info) {
       retcode = database_info();
+      mnt_time += elapsed(start_ts, msecs());
+   }
    else
       retcode = proc_logfile();
 
