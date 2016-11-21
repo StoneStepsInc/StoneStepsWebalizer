@@ -97,6 +97,13 @@ class webalizer_t {
          void reset(const char *str, toktype_t type) {start = str; namelen = mjverlen = mnverlen = arglen = 0; argtype = type;}
       };
 
+      // various processing times collected across multiple calls
+      struct proc_times_t {
+         uint64_t dns_time = 0;                    // DNS wait time
+         uint64_t mnt_time = 0;                    // maintenance time (saving state, etc)
+         uint64_t rpt_time = 0;                    // report time
+      };
+
    private:
       const config_t& config;
       
@@ -141,7 +148,7 @@ class webalizer_t {
       int end_month(void);
       int database_info(void);
       int compact_database(void);
-      int proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& rpt_time);
+      int proc_logfile(proc_times_t& ptms);
 
       void prep_logfiles(logfile_list_t& logfiles);
       void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);

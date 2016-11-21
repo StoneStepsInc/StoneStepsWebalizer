@@ -864,9 +864,7 @@ int webalizer_t::run(void)
    uint64_t start_ts;                        // start of the run
    uint64_t end_ts;                          // end of the run
    uint64_t tot_time, proc_time;                    /* temporary time storage      */
-   uint64_t dns_time = 0;                    // DNS wait time
-   uint64_t mnt_time = 0;                    // maintenance time (saving state, etc)
-   uint64_t rpt_time = 0;                    // report time
+   proc_times_t ptms;
    u_int rps;
    int retcode;
 
@@ -874,22 +872,22 @@ int webalizer_t::run(void)
 
    if(config.prep_report) {
       retcode = prep_report();
-      rpt_time += elapsed(start_ts, msecs());
+      ptms.rpt_time += elapsed(start_ts, msecs());
    }
    else if(config.compact_db) {
       retcode = compact_database();
-      mnt_time += elapsed(start_ts, msecs());
+      ptms.mnt_time += elapsed(start_ts, msecs());
    }
    else if(config.end_month) {
       retcode = end_month();
-      mnt_time += elapsed(start_ts, msecs());
+      ptms.mnt_time += elapsed(start_ts, msecs());
    }
    else if(config.db_info) {
       retcode = database_info();
-      mnt_time += elapsed(start_ts, msecs());
+      ptms.mnt_time += elapsed(start_ts, msecs());
    }
    else
-      retcode = proc_logfile(dns_time, mnt_time, rpt_time);
+      retcode = proc_logfile(ptms);
 
    end_ts = msecs();              
    
@@ -897,7 +895,7 @@ int webalizer_t::run(void)
    if (config.time_me || config.verbose > 1) {
       /* get total (end-start) and processing time */
       tot_time = elapsed(start_ts, end_ts);
-      proc_time = tot_time-dns_time-mnt_time-rpt_time;
+      proc_time = tot_time - ptms.dns_time - ptms.mnt_time - ptms.rpt_time;
 
       if(!config.prep_report && !config.compact_db && !config.end_month && !config.db_info) {
          // output number of processed, ignored and bad records
@@ -932,15 +930,15 @@ int webalizer_t::run(void)
          }
 
          // report total DNS time
-         printf("%s %.2f %s\n", config.lang.msg_dnstime, dns_time/1000., config.lang.msg_seconds);
+         printf("%s %.2f %s\n", config.lang.msg_dnstime, ptms.dns_time/1000., config.lang.msg_seconds);
       }
 
       // report total report generation time
       if(!config.batch && !config.compact_db && !config.end_month && !config.db_info)
-         printf("%s %.2f %s\n", config.lang.msg_rpttime, rpt_time/1000., config.lang.msg_seconds);
+         printf("%s %.2f %s\n", config.lang.msg_rpttime, ptms.rpt_time/1000., config.lang.msg_seconds);
 
       // report maintenance and total run time
-      printf("%s %.2f %s\n", config.lang.msg_mnttime, mnt_time/1000., config.lang.msg_seconds);
+      printf("%s %.2f %s\n", config.lang.msg_mnttime, ptms.mnt_time/1000., config.lang.msg_seconds);
       printf("%s %.2f %s\n", config.lang.msg_runtime, tot_time/1000., config.lang.msg_seconds);
    }
 
@@ -1164,7 +1162,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 //
 // -----------------------------------------------------------------------
 
-int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& rpt_time)
+int webalizer_t::proc_logfile(proc_times_t& ptms)
 {
    char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;
@@ -1292,7 +1290,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
                if(config.is_dns_enabled()) {
                   stime = msecs();
                   dns_resolver.dns_wait();
-                  dns_time += elapsed(stime, msecs());
+                  ptms.dns_time += elapsed(stime, msecs());
                }
 
                //
@@ -1320,7 +1318,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
                   // report generator uses saved state data
                   return 1;
                }
-               mnt_time += elapsed(stime, msecs());
+               ptms.mnt_time += elapsed(stime, msecs());
 
                // generate monthly reports if not in batch mode
                if(!config.batch) {
@@ -1328,12 +1326,12 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
                   if(!state.database.attach_indexes(true))
                      throw exception_t(0, "Cannot create secondary database indexes");
                   write_monthly_report();                /* generate HTML for month */
-                  rpt_time += elapsed(stime, msecs());
+                  ptms.rpt_time += elapsed(stime, msecs());
                }
 
                stime = msecs();
                state.clear_month();
-               mnt_time += elapsed(stime, msecs());
+               ptms.mnt_time += elapsed(stime, msecs());
             }
          }
 
@@ -1439,7 +1437,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
             if (config.is_dns_enabled() && config.ignored_domain_names) {
                stime = msecs();
                dns_resolver.dns_wait();
-               dns_time += elapsed(stime, msecs());
+               ptms.dns_time += elapsed(stime, msecs());
 
                if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname, buffer, BUFSIZE)) != NULL) {
                   total_ignore++; 
@@ -1775,7 +1773,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
             if(total_rec && total_good % config.swap_frequency == 0) {
                stime = msecs();
                state.swap_out();
-               mnt_time += elapsed(stime, msecs());
+               ptms.mnt_time += elapsed(stime, msecs());
             }
          }
       }
@@ -1806,7 +1804,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
          if(config.is_dns_enabled()) {
             stime = msecs();
             dns_resolver.dns_wait();
-            dns_time += elapsed(stime, msecs());
+            ptms.dns_time += elapsed(stime, msecs());
          }
 
          //
@@ -1833,7 +1831,7 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
             if (config.verbose) 
                fprintf(stderr,"%s\n",config.lang.msg_data_err);
          }
-         mnt_time += elapsed(stime, msecs());
+         ptms.mnt_time += elapsed(stime, msecs());
 
          // generate intermediate reports if not in batch mode
          if(!config.batch) {
@@ -1842,14 +1840,14 @@ int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& 
                throw exception_t(0, "Cannot create secondary database indexes");
             write_monthly_report();             /* write monthly HTML file  */
             write_main_index();                 /* write main HTML file     */
-            rpt_time += elapsed(stime, msecs());
+            ptms.rpt_time += elapsed(stime, msecs());
          }
 
          // if it's the last log for the month, roll over the database
          if(config.last_log) {
             stime = msecs();
             state.clear_month();
-            mnt_time += elapsed(stime, msecs());
+            ptms.mnt_time += elapsed(stime, msecs());
          }
 
       }
