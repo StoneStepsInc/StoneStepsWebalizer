@@ -816,8 +816,6 @@ void webalizer_t::filter_user_agent(string_t& agent)
 //
 int webalizer_t::end_month(void)
 {
-   uint64_t stime = msecs();
-   
    update_visits(tstamp_t());
    update_downloads(tstamp_t());
    
@@ -831,8 +829,6 @@ int webalizer_t::end_month(void)
    }
    
    state.clear_month();
-   
-   rpt_time += elapsed(stime, msecs());
 
    return 0;
 }
