@@ -95,10 +95,6 @@ webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config
    total_ignore=0;                            /* Total Records Ignored       */
    total_bad   =0;                            /* Total Bad Records           */
 
-   dns_time = 0;
-   mnt_time = 0;
-   rpt_time = 0;
-
    buffer = new char[BUFSIZE];
 }
 
@@ -868,6 +864,9 @@ int webalizer_t::run(void)
    uint64_t start_ts;                        // start of the run
    uint64_t end_ts;                          // end of the run
    uint64_t tot_time, proc_time;                    /* temporary time storage      */
+   uint64_t dns_time = 0;                    // DNS wait time
+   uint64_t mnt_time = 0;                    // maintenance time (saving state, etc)
+   uint64_t rpt_time = 0;                    // report time
    u_int rps;
    int retcode;
 
@@ -890,7 +889,7 @@ int webalizer_t::run(void)
       mnt_time += elapsed(start_ts, msecs());
    }
    else
-      retcode = proc_logfile();
+      retcode = proc_logfile(dns_time, mnt_time, rpt_time);
 
    end_ts = msecs();              
    
@@ -1165,7 +1164,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 //
 // -----------------------------------------------------------------------
 
-int webalizer_t::proc_logfile(void)
+int webalizer_t::proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& rpt_time)
 {
    char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;

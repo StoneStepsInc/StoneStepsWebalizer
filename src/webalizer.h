@@ -96,7 +96,7 @@ class webalizer_t {
          ua_token_t(void) {start = NULL; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
          void reset(const char *str, toktype_t type) {start = str; namelen = mjverlen = mnverlen = arglen = 0; argtype = type;}
       };
-      
+
    private:
       const config_t& config;
       
@@ -112,10 +112,6 @@ class webalizer_t {
       uint64_t      total_ignore;                    // Total Records Ignored
       uint64_t      total_bad;                       // Total Bad Records
 
-      uint64_t      dns_time;                        // DNS wait time
-      uint64_t      mnt_time;                        // maintenance time (saving state, etc)
-      uint64_t      rpt_time;                        // report time
-      
       std::vector<ua_token_t> ua_args;                // user agent argument tokens
       std::vector<size_t>     ua_groups;              // user agent group indexes (ua_args)
       
@@ -145,7 +141,7 @@ class webalizer_t {
       int end_month(void);
       int database_info(void);
       int compact_database(void);
-      int proc_logfile(void);
+      int proc_logfile(uint64_t& dns_time, uint64_t& mnt_time, uint64_t& rpt_time);
 
       void prep_logfiles(logfile_list_t& logfiles);
       void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);
