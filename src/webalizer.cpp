@@ -3120,6 +3120,10 @@ int webalizer_t::read_log_line(logfile_t& logfile)
             break;
          }
       }
+
+      // check if this was the last line in the file
+      if(reclen == 0)
+         break;
    }
    
    return reclen;
