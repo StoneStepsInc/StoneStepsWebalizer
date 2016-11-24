@@ -64,11 +64,6 @@
 #include <memory>
 #include <exception>
 
-//
-//
-//
-#define GZ_BUFSIZE BUFSIZE                    /* our_getfs buffer size    */
-
 /* internal function prototypes */
 
 #ifdef _WIN32
