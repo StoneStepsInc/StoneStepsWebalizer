@@ -91,10 +91,6 @@ static bool abort_signal = false;   // true if Ctrl-C was pressed
 //
 webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
 {
-   total_rec   =0;                            /* Total Records Processed     */
-   total_ignore=0;                            /* Total Records Ignored       */
-   total_bad   =0;                            /* Total Bad Records           */
-
    buffer = new char[BUFSIZE];
 }
 
@@ -865,6 +861,7 @@ int webalizer_t::run(void)
    uint64_t end_ts;                          // end of the run
    uint64_t tot_time, proc_time;                    /* temporary time storage      */
    proc_times_t ptms;
+   logrec_counts_t lrcnt;
    u_int rps;
    int retcode;
 
@@ -887,7 +884,7 @@ int webalizer_t::run(void)
       ptms.mnt_time += elapsed(start_ts, msecs());
    }
    else
-      retcode = proc_logfile(ptms);
+      retcode = proc_logfile(ptms, lrcnt);
 
    end_ts = msecs();              
    
@@ -899,27 +896,27 @@ int webalizer_t::run(void)
 
       if(!config.prep_report && !config.compact_db && !config.end_month && !config.db_info) {
          // output number of processed, ignored and bad records
-         printf("%s %" PRIu64 " %s ", config.lang.msg_processed, total_rec, config.lang.msg_records);
-         if (total_ignore) {
-            printf("(%" PRIu64 " %s",total_ignore, config.lang.msg_ignored);
-            if (total_bad) 
-               printf(", %" PRIu64 " %s) ",total_bad, config.lang.msg_bad);
+         printf("%s %" PRIu64 " %s ", config.lang.msg_processed, lrcnt.total_rec, config.lang.msg_records);
+         if (lrcnt.total_ignore) {
+            printf("(%" PRIu64 " %s", lrcnt.total_ignore, config.lang.msg_ignored);
+            if (lrcnt.total_bad) 
+               printf(", %" PRIu64 " %s) ", lrcnt.total_bad, config.lang.msg_bad);
             else
                printf(") ");
          }
-         else if (total_bad) 
-            printf("(%" PRIu64 " %s) ",total_bad, config.lang.msg_bad);
+         else if (lrcnt.total_bad) 
+            printf("(%" PRIu64 " %s) ", lrcnt.total_bad, config.lang.msg_bad);
 
          // output processing time
          printf("%s %.2f %s", config.lang.msg_in, proc_time/1000., config.lang.msg_seconds);
 
          /* calculate records per second */
          if (tot_time)
-            rps = ((u_int)((double)total_rec/(proc_time/1000.)));
+            rps = ((u_int)((double) lrcnt.total_rec / (proc_time / 1000.)));
          else 
             rps = 0;
 
-         if(rps > 0 && rps <= total_rec)
+         if(rps > 0 && rps <= lrcnt.total_rec)
             printf(", %d/sec\n", rps);
          else  
             printf("\n");
@@ -983,7 +980,7 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
 // are removed from the log file list, so when the function returns, the number
 // of log file states matches the number of log files. 
 //
-void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs)
+void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
    int parse_code;
    int errnum = 0;
@@ -1006,7 +1003,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       }
 
       // read the log record into the buffer
-      if((reclen = read_log_line(**i)) == 0) {
+      if((reclen = read_log_line(**i, lrcnt)) == 0) {
          // report if there's no more data
          printf("%s %s\n", config.lang.msg_log_done, (*i)->get_fname().c_str());
 
@@ -1035,14 +1032,14 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       }
 
       // parse the log line
-      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec)) == PARSE_CODE_ERROR) {
-         total_bad++;
+      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, lrcnt.total_rec)) == PARSE_CODE_ERROR) {
+         lrcnt.total_bad++;
          continue;
       }
       
       // skip log file directives, etc
       if(parse_code == PARSE_CODE_IGNORE) {
-         total_ignore++;
+         lrcnt.total_ignore++;
          continue;
       }
       
@@ -1088,7 +1085,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
 // determied by how many of them have log records in approximately same range
 // and how close log records are to each other. 
 //
-bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs)
+bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
    int parse_code;
    int errnum = 0;
@@ -1106,7 +1103,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
       }
 
       // use logfile from wlfs, which was populated in the previous iteration
-      if((reclen = read_log_line(*wlfs.logfile)) == 0) {
+      if((reclen = read_log_line(*wlfs.logfile, lrcnt)) == 0) {
          logfile_list_t::iterator i;
             
          // report that we are done with this log file
@@ -1125,13 +1122,13 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
       }
          
       // parse the log line
-      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec)) == PARSE_CODE_ERROR) {
-         total_bad++;
+      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, lrcnt.total_rec)) == PARSE_CODE_ERROR) {
+         lrcnt.total_bad++;
          continue;
       }
          
       if(parse_code == PARSE_CODE_IGNORE) {
-         total_ignore++;
+         lrcnt.total_ignore++;
          continue;
       }
 
@@ -1162,7 +1159,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 //
 // -----------------------------------------------------------------------
 
-int webalizer_t::proc_logfile(proc_times_t& ptms)
+int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
    char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;
@@ -1193,7 +1190,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
    prep_logfiles(logfiles);
 
    // populate log file states, so we have one log record per log file, ordered by time
-   prep_lfstates(logfiles, lfp_states, logrecs);
+   prep_lfstates(logfiles, lfp_states, logrecs, lrcnt);
 
    //
    // Main processing loop - go through the log files until we run out of them.
@@ -1207,7 +1204,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
       }
    
       // get the next record in the working log file state structure
-      if(get_logrec(wlfs, logfiles, lfp_states, logrecs)) {
+      if(get_logrec(wlfs, logfiles, lfp_states, logrecs, lrcnt)) {
          log_struct& log_rec = *wlfs.logrec;
          
          newvisit = false;
@@ -1230,7 +1227,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
             if ( rec_tstamp <= state.totals.cur_tstamp )
             {
                /* if it is, assume we have already processed and ignore it  */
-               total_ignore++;
+               lrcnt.total_ignore++;
                continue;
             }
 
@@ -1269,7 +1266,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
 
          // check for out of sequence records
          if (rec_tstamp < state.totals.cur_tstamp) {
-            total_ignore++; 
+            lrcnt.total_ignore++; 
             continue; 
          }
 
@@ -1419,17 +1416,17 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
               (config.include_users.isinlist(log_rec.ident)==NULL)    )
          {
             if(ragent && config.ignore_robots)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
             if (config.ignored_hosts.isinlist(log_rec.hostname) != NULL)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
             if (config.ignored_urls.isinlist(log_rec.url)!=NULL)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
             if (config.ignored_agents.isinlist(log_rec.agent)!=NULL)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
             if (config.ignored_refs.isinlist(log_rec.refer)!=NULL)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
             if (config.ignored_users.isinlist(log_rec.ident)!=NULL)
-              { total_ignore++; continue; }
+              { lrcnt.total_ignore++; continue; }
 
             /* 
             // If IgnoreHost contains domain patterns, wait for DNS results
@@ -1440,7 +1437,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
                ptms.dns_time += elapsed(stime, msecs());
 
                if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname, buffer, BUFSIZE)) != NULL) {
-                  total_ignore++; 
+                  lrcnt.total_ignore++; 
                   continue; 
                }
             }
@@ -1770,7 +1767,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
          // swap out hash tables in the database mode
          //
          if(!config.memory_mode && total_good >= config.swap_first_record) {
-            if(total_rec && total_good % config.swap_frequency == 0) {
+            if(lrcnt.total_rec && total_good % config.swap_frequency == 0) {
                stime = msecs();
                state.swap_out();
                ptms.mnt_time += elapsed(stime, msecs());
@@ -1799,7 +1796,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms)
    {
       if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
 
-      if (total_rec > (total_ignore+total_bad))                         /* did we process any?   */
+      if (lrcnt.total_rec > (lrcnt.total_ignore + lrcnt.total_bad))  /* did we process any?   */
       {
          if(config.is_dns_enabled()) {
             stime = msecs();
@@ -3071,7 +3068,7 @@ static void console_ctrl_handler(int sig)
 }
 #endif
 
-int webalizer_t::read_log_line(logfile_t& logfile)
+int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
 {
    int reclen = 0, errnum = 0;
 
@@ -3086,17 +3083,17 @@ int webalizer_t::read_log_line(logfile_t& logfile)
       if(config.log_type == LOG_IIS && *buffer == 0)
          return 0;
 
-      total_rec++;
+      lrcnt.total_rec++;
       
       // if the buffer is not full, return
       if(reclen < BUFSIZE-1 || buffer[BUFSIZE-1] == '\n')
          return reclen;
       
-      total_bad++;                     /* bump bad record counter      */
+      lrcnt.total_bad++;              /* bump bad record counter      */
 
       // full buffer - report record number, file name and the record if running in debug mode
       if (config.verbose) {
-         fprintf(stderr,"%s (%" PRIu64 " - %s)",config.lang.msg_big_rec, total_rec, logfile.get_fname().c_str());
+         fprintf(stderr,"%s (%" PRIu64 " - %s)",config.lang.msg_big_rec, lrcnt.total_rec, logfile.get_fname().c_str());
          if (config.debug_mode) 
             fprintf(stderr,":\n%s",buffer);
          else 
@@ -3129,7 +3126,7 @@ int webalizer_t::read_log_line(logfile_t& logfile)
    return reclen;
 }
 
-int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logrec)
+int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logrec, uint64_t recnum)
 {
    int parse_code;
    string_t lrecstr;
@@ -3147,7 +3144,7 @@ int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logre
       /* really bad record... */
       if (config.verbose)
       {
-         fprintf(stderr,"%s (%" PRIu64 ")", config.lang.msg_bad_rec, total_rec);
+         fprintf(stderr,"%s (%" PRIu64 ")", config.lang.msg_bad_rec, recnum);
          if (config.debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
          else fprintf(stderr,"\n");
       }

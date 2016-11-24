@@ -104,6 +104,13 @@ class webalizer_t {
          uint64_t rpt_time = 0;                    // report time
       };
 
+      // run time log record counts
+      struct logrec_counts_t {
+         uint64_t total_rec = 0;                   // total records processed
+         uint64_t total_ignore = 0;                // total records ignored
+         uint64_t total_bad = 0;                   // total bad records
+      };
+
    private:
       const config_t& config;
       
@@ -114,10 +121,6 @@ class webalizer_t {
       std::vector<output_t*> output;
 
       char        *buffer;
-
-      uint64_t      total_rec;                       // Total Records Processed
-      uint64_t      total_ignore;                    // Total Records Ignored
-      uint64_t      total_bad;                       // Total Bad Records
 
       std::vector<ua_token_t> ua_args;                // user agent argument tokens
       std::vector<size_t>     ua_groups;              // user agent group indexes (ua_args)
@@ -148,14 +151,14 @@ class webalizer_t {
       int end_month(void);
       int database_info(void);
       int compact_database(void);
-      int proc_logfile(proc_times_t& ptms);
+      int proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt);
 
       void prep_logfiles(logfile_list_t& logfiles);
-      void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);
-      bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs);
+      void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt);
+      bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt);
       
-      int read_log_line(logfile_t& logfile); 
-      int parse_log_record(char *buffer, size_t reclen, log_struct& logrec);
+      int read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt); 
+      int parse_log_record(char *buffer, size_t reclen, log_struct& logrec, uint64_t recnum);
 
       //
       // put_xnode methods
