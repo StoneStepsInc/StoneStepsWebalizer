@@ -1156,7 +1156,6 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 
 int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
-   char *cp1;                            /* generic char pointers       */
    hnode_t *hptr;
    unode_t *uptr;
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl;
@@ -1167,6 +1166,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    bool newsrch = false;
    u_short termcnt = 0;
    string_t srchterms;
+   string_t urlhost;
 
    uint64_t total_good = 0;
 
@@ -1181,6 +1181,9 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    
    tm_ranges_t::iterator dst_iter = config.dst_ranges.begin();
    
+   // reserve enough memory for most URL hosts
+   urlhost.reserve(128);
+
    // populate the list of log files and make sure they are readable
    prep_logfiles(logfiles);
 
@@ -1702,8 +1705,8 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          }
 
          // URL domain grouping
-         if(config.group_url_domains && (cp1 = get_url_domain(log_rec.url, buffer, BUFSIZE)) != NULL) {
-            const char *domain = get_domain(cp1, config.group_url_domains);
+         if(config.group_url_domains && !get_url_host(log_rec.url, urlhost).isempty()) {
+            const char *domain = get_domain(urlhost.c_str(), config.group_url_domains);
             if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
                if (config.verbose)
                   /* Error adding URL node, skipping ... */

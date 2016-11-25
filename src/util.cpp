@@ -578,24 +578,28 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
    return string_t::const_char_buffer_t(cp1, cp2 - cp1, true);
 }
 
-char *get_url_domain(const char *url, char *buffer, size_t bsize)
+string_t& get_url_host(const char *url, string_t& domain)
 {
    const char *cp1 = url;
    string_t::const_char_buffer_t host;
 
+   domain.reset();
+
    if(!url || !*url)
-      return NULL;
+      return domain;
 
    host = get_url_host(url, strlen(url));
 
    if(!host || !*host)
-      return NULL;
+      return domain;
 
    // ignore IP addresses
    if(isdigitex(host[0])) 
-      return NULL;
+      return domain;
 
-   return (strncpy_ex(buffer, bsize, host, host.capacity()) == host.capacity()) ? buffer : NULL;
+   domain.assign(host, host.capacity());
+
+   return domain;
 }
 
 bool is_abs_path(const char *path)
