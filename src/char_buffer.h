@@ -83,7 +83,7 @@ class char_buffer_base {
 
       bool operator == (const char_t *ptr) const {return buffer == ptr;}
 
-      bool operator == (const char_buffer_base& other) const {return buffer == other.buffer && holder == other.holder && bufsize - other.bufsize;}
+      bool operator == (const char_buffer_base& other) const {return buffer == other.buffer && holder == other.holder && bufsize == other.bufsize;}
 
       char_t *operator + (size_t offset) {return offset < bufsize ? buffer + offset : NULL;}
 
