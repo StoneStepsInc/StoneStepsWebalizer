@@ -66,6 +66,7 @@ template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 template<typename char_t> const char_t string_base<char_t>::ex_readonly_string[] = "Cannot change a read-only string";
 template<typename char_t> const char_t string_base<char_t>::ex_bad_char_buffer[] = "Bad character buffer";
 template<typename char_t> const char_t string_base<char_t>::ex_bad_hold_string[] = "Bad string to hold";
+template<typename char_t> const char_t string_base<char_t>::ex_holder_resize[] = "Cannot resize a string holder";
 
 //
 //
@@ -125,16 +126,6 @@ string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
    other.init();
 
    return *this;
-}
-
-template <typename char_t>
-void string_base<char_t>::make_bad_string(void)
-{
-   if(string != empty_string && bufsize > 1) {
-      slen = bufsize - 1;
-      memset(string, '#', char_buffer_t::memsize(slen));
-      string[slen] = 0;
-   }
 }
 
 //
@@ -216,30 +207,27 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str)
 }
 
 template <typename char_t>
-bool string_base<char_t>::realloc_buffer(size_t len)
+void string_base<char_t>::realloc_buffer(size_t len)
 {
    if(holder && !bufsize)
       throw exception_t(0, ex_readonly_string);
 
    // fail if we don't own the storage
    if(holder)
-      return false;
+      throw exception_t(0, ex_holder_resize);
 
-   // if we have enough storage, we are done
-   if(bufsize > len)
-      return true;
+   // bufsize includes the null terminator and len does not
+   if(len >= bufsize) {
+      // allocate storage in multiples of four, plus one for the null terminator
+      bufsize = (((len >> 2) + 1) << 2) + 1;
 
-   // allocate storage in multiples of four, plus one for the zero terminator
-   bufsize = (((len >> 2) + 1) << 2) + 1;
-
-   if(string != empty_string)
-      string = char_buffer_t::alloc(string, bufsize);
-   else {
-      string = char_buffer_t::alloc(bufsize);
-      *string = 0;
+      if(string != empty_string)
+         string = char_buffer_t::alloc(string, bufsize);
+      else {
+         string = char_buffer_t::alloc(bufsize);
+         *string = 0;
+      }
    }
-
-   return true;
 }
 
 template <typename char_t>
@@ -254,12 +242,8 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len)
       return *this;
 
    // bufsize must be greater than slen at this point
-   if(bufsize - slen <= len) {
-      if(!realloc_buffer(slen+len)) {
-         make_bad_string();
-         return *this;
-      }
-   }
+   if(bufsize - slen <= len)
+      realloc_buffer(slen+len);
    
    memcpy(&string[slen], str, char_buffer_t::memsize(len));
    slen += len;
@@ -404,12 +388,8 @@ string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list v
    }
 
    // if the string is empty, allocate enough storage to hold the format
-   if(string == empty_string) {
-      if(!realloc_buffer(strlen_(fmt))) {
-         make_bad_string();
-         return *this;
-      }
-   }
+   if(string == empty_string)
+      realloc_buffer(strlen_(fmt));
 
    //
    // The code below calls vsnprintf multiple times in order to make sure 
@@ -455,10 +435,7 @@ string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list v
 
       __VA_END__(valist_);
       
-      if(!realloc_buffer(bufsize << 1)) {
-         make_bad_string();
-         return *this;
-      }
+      realloc_buffer(bufsize << 1);
       
       __VA_COPY__(valist_, valist);
    }

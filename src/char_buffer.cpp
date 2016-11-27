@@ -139,7 +139,13 @@ char_buffer_base<const char>& char_buffer_base<const char>::resize(size_t size, 
 template <typename char_t>
 char_t *char_buffer_base<char_t>::alloc(char_t *buffer, size_t bufsize)
 {
-   return (char_t*) ::realloc(buffer, bufsize * sizeof(char_t));
+   char_t *newbuf = (char_t*) ::realloc(buffer, bufsize * sizeof(char_t));
+
+   // if we failed to allocate memory, the old buffer should be freed by its owner
+   if(!newbuf)
+      throw std::bad_alloc();
+
+   return newbuf;
 }
 
 template <>
@@ -159,7 +165,12 @@ const char *char_buffer_base<const char>::alloc(const char *buffer, size_t bufsi
 template <typename char_t>
 char_t *char_buffer_base<char_t>::alloc(size_t bufsize)
 {
-   return (char_t*) malloc(bufsize * sizeof(char_t));
+   char_t *newbuf = (char_t*) malloc(bufsize * sizeof(char_t));
+
+   if(!newbuf)
+      throw std::bad_alloc();
+
+   return newbuf;
 }
 
 template <>

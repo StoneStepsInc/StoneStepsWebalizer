@@ -87,13 +87,12 @@ class string_base {
       static const char_t ex_readonly_string[];
       static const char_t ex_bad_char_buffer[];
       static const char_t ex_bad_hold_string[];
+      static const char_t ex_holder_resize[];
 
    private:
       void init(void);
 
-      void make_bad_string(void);
-
-      bool realloc_buffer(size_t len);
+      void realloc_buffer(size_t len);
 
    public:
       static const size_t npos;
