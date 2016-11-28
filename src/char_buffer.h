@@ -114,6 +114,11 @@ class char_buffer_base {
 };
 
 //
+// Define buffer_t as a generic byte buffer
+//
+typedef char_buffer_base<unsigned char> buffer_t;
+
+//
 // A fixed-size character buffer that can be used as a temporary storage in a local 
 // scope. For example, this code creates a temporary string without having to allocate
 // memory:

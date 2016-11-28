@@ -203,3 +203,4 @@ size_t char_buffer_base<char_t>::memsize(size_t char_count)
 //
 template class char_buffer_base<char>;
 template class char_buffer_base<const char>;
+template class char_buffer_base<unsigned char>;

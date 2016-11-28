@@ -36,7 +36,7 @@
 
 #define FILEMASK              0664              // database file access mask (rw-rw-r--)
 
-#define DBBUFSIZE             32768             // shared buffer for key and data
+const size_t DBBUFSIZE = 32768;                 // shared buffer for key and data
 
 //
 // B-Tree comparison function template for BDB v6 and up (top) and for prior versions 

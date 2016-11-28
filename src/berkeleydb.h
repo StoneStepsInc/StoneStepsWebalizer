@@ -14,7 +14,7 @@
 #include "tstring.h"
 #include "tstamp.h"
 #include "serialize.h"
-#include "buffer.h"
+#include "char_buffer.h"
 
 #include "event.h"
 #include "thread.h"
