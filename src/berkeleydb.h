@@ -111,64 +111,6 @@ class berkeleydb_t {
 
    private:
       // -----------------------------------------------------------------
-      // buffer_allocator_t
-      //
-      // Objects derived from buffer_allocator_t allow table_t instances to
-      // reuse buffers in a more optimal way defined by the allocator owner,
-      // which minimizes memory allocations without having to use a single
-      // large buffer.
-      //
-      class buffer_allocator_t {
-         public:
-            virtual buffer_t get_buffer(void) = 0;
-
-            virtual void release_buffer(buffer_t&& buffer) = 0;
-      };
-
-      // -----------------------------------------------------------------
-      // buffer_holder_t is a convenience class to help manage temporary
-      // buffers. The intended use is as follows:
-      //
-      //  buffer_t&& buffer = buffer_holder_t(*buffer_allocator).buffer;
-      //
-      // However, VC++ 2013 fails to recognize that the rvalue reference 
-      // is bound to a subobject of a temporary and creates a new buffer_t
-      // temporary. VC 2015 fixes this problem, but until the project is 
-      // upgraded, a local buffer_holder_t instance must be created to 
-      // maintain a valid buffer_t instance.
-      //
-      // Note that operator buffer_t&& cannot be used to access the member 
-      // variable buffer because the temporary buffer holder in the example 
-      // above, which buffer is a subobject of, is bound to the return value
-      // reference, which in turn initializes the local variable buffer, but 
-      // the return value is destroyed after this line, causing the buffer 
-      // holder to be destroyed as well.
-      // -----------------------------------------------------------------
-      class buffer_holder_t {
-         private:
-            buffer_allocator_t&  allocator;
-
-         public:
-            buffer_t             buffer;
-
-         public:
-            buffer_holder_t(buffer_allocator_t& allocator) : allocator(allocator), buffer(allocator.get_buffer()) {}
-
-            buffer_holder_t(const buffer_holder_t&) = delete;
-
-            buffer_holder_t(buffer_holder_t&& other) = delete;
-
-            ~buffer_holder_t(void) {allocator.release_buffer(std::move(buffer));}
-
-            buffer_holder_t& operator = (const buffer_holder_t&) = delete;
-
-            buffer_holder_t& operator = (buffer_holder_t&&) = delete;
-
-            // see notes in the class definition
-            operator buffer_t&& (void) = delete;
-      };
-
-      // -----------------------------------------------------------------
       //
       // cursor iterators
       //
@@ -450,6 +392,8 @@ class berkeleydb_t {
 
          public:
             buffer_t get_buffer(void);
+
+            buffer_t get_buffer(size_t size);
 
             void release_buffer(buffer_t&& buffer);
       };

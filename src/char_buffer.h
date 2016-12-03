@@ -114,7 +114,7 @@ class char_buffer_base {
 };
 
 //
-// Define buffer_t as a generic byte buffer
+// A generic byte buffer type
 //
 typedef char_buffer_base<unsigned char> buffer_t;
 
@@ -138,5 +138,79 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
       {
       }
 };
+
+//
+// char_buffer_allocator_tmpl
+//
+// Objects derived from char_buffer_allocator_tmpl may be used to maintain reusable
+// buffers in an optimal way defined by the allocator implementation in order to 
+// minimize buffer memory allocations, without having to use a single large buffer.
+//
+// Use get_buffer() if all cached buffers have the same size or if it makes sense
+// to allocate and reuse a small number of buffers that are large enough for all
+// intended uses. The caller is expected to ensure that returned buffers are resized 
+// as needed and the number of cached buffers doesn't exceed some reasonable limit.
+//
+// Use get_buffer(size_t) if it's not known how many buffers will be needed and if 
+// the size of each buffer varies greatly. The allocator in this case will return a 
+// buffer that is equal or greater than the requested size, minimizing the total 
+// amount of memory used by all buffers.
+//
+template <typename char_t>
+class char_buffer_allocator_tmpl {
+   public:
+      virtual char_buffer_base<char_t> get_buffer(void) = 0;
+
+      virtual char_buffer_base<char_t> get_buffer(size_t size) = 0;
+
+      virtual void release_buffer(char_buffer_base<char_t>&& buffer) = 0;
+};
+
+//
+// char_buffer_holder_tmpl is a convenience class to help manage temporary buffers 
+// within a local scope. For example:
+//
+//  char_buffer_base<char_t>&& buffer = buffer_holder_t(*buffer_allocator).buffer;
+//
+// Note that the life of a temporary object bound to a reference to a return value
+// of a method is not extended beyond the end of the expression, which means that 
+// the buffer data member must be accessed directly for this to work.
+//
+// VC++ 2013 fails to recognize that the reference is bound to a subobject of a 
+// temporary and the buffer holder and the buffer at the end of the line. VC 2015 
+// fixes this problem.
+//
+template <typename char_t>
+class char_buffer_holder_tmpl {
+   private:
+      char_buffer_allocator_tmpl<char_t>&  allocator;
+
+   public:
+      char_buffer_base<char_t>             buffer;
+
+   public:
+      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t>& allocator) : allocator(allocator), buffer(allocator.get_buffer()) {}
+
+      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t>& allocator, size_t size) : allocator(allocator), buffer(allocator.get_buffer(size)) {}
+
+      char_buffer_holder_tmpl(const char_buffer_holder_tmpl&) = delete;
+
+      char_buffer_holder_tmpl(char_buffer_holder_tmpl&& other) = delete;
+
+      ~char_buffer_holder_tmpl(void) {allocator.release_buffer(std::move(buffer));}
+
+      char_buffer_holder_tmpl& operator = (const char_buffer_holder_tmpl&) = delete;
+
+      char_buffer_holder_tmpl& operator = (char_buffer_holder_tmpl&&) = delete;
+
+      // see notes in the class definition
+      operator char_buffer_base<char_t>&& (void) = delete;
+};
+
+//
+// Buffer allocator and buffer holder types for a generic byte buffer
+//
+typedef char_buffer_allocator_tmpl<unsigned char> buffer_allocator_t;
+typedef char_buffer_holder_tmpl<unsigned char> buffer_holder_t;
 
 #endif // __CHAR_BUFFER_H

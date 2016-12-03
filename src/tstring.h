@@ -63,6 +63,10 @@ class string_base {
       // fixed_char_buffer_t with a matching character type
       template <size_t BUFSIZE> using fixed_char_buffer_t = ::fixed_char_buffer_t<char_t, BUFSIZE>;
 
+      // character buffer allocator and holder types
+      typedef char_buffer_allocator_tmpl<char_t> char_buffer_allocator_t;
+      typedef char_buffer_holder_tmpl<char_t> char_buffer_holder_t;
+
    private:
       //
       // Both character pointers in the union have the same size and alignment requirements 
