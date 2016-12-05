@@ -913,31 +913,6 @@ berkeleydb_t::reverse_iterator<node_t> berkeleydb_t::table_t::rbegin(const char 
    return reverse_iterator<node_t>(*buffer_allocator, *this, dbname);
 }
 
-//
-// buffer_queue_t
-//
-buffer_t berkeleydb_t::buffer_queue_t::get_buffer(void)
-{
-   buffer_t buffer;
-
-   if(!buffers.empty()) {
-      buffer = std::move(buffers.back());
-      buffers.pop_back();
-   }
-
-   return buffer;
-}
-
-buffer_t berkeleydb_t::buffer_queue_t::get_buffer(size_t size)
-{
-   return std::move(get_buffer().resize(size, 0));
-}
-
-void berkeleydb_t::buffer_queue_t::release_buffer(buffer_t&& buffer)
-{
-   buffers.push_back(std::move(buffer));
-}
-
 // -----------------------------------------------------------------------
 //
 // berkeleydb_t

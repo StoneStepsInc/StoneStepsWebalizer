@@ -15,6 +15,7 @@
 #include "tstamp.h"
 #include "serialize.h"
 #include "char_buffer.h"
+#include "char_buffer_stack.h"
 
 #include "event.h"
 #include "thread.h"
@@ -63,6 +64,13 @@ class berkeleydb_t {
       #else
       #define __gcc_bug11407__(cb) cb
       #endif
+
+      //
+      // Define buffer allocator and holder types for internal use
+      //
+      typedef char_buffer_allocator_tmpl<unsigned char> buffer_allocator_t;
+      typedef char_buffer_stack_tmpl<unsigned char> buffer_stack_t;
+      typedef char_buffer_holder_tmpl<unsigned char> buffer_holder_t;
 
    public:
       template <typename node_t> class iterator; 
@@ -383,21 +391,6 @@ class berkeleydb_t {
             bool prev(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
 
-      //
-      // A queue of buffers shared between all table_t objects
-      //
-      class buffer_queue_t : public buffer_allocator_t {
-         private:
-            std::vector<buffer_t>   buffers;
-
-         public:
-            buffer_t get_buffer(void);
-
-            buffer_t get_buffer(size_t size);
-
-            void release_buffer(buffer_t&& buffer);
-      };
-
    private:
       void reset_db_handles(void);
 
@@ -441,7 +434,7 @@ class berkeleydb_t {
       DbEnv             dbenv;
       Db                sequences;
 
-      buffer_queue_t    buffer_queue;
+      buffer_stack_t    buffer_stack;
 
       std::vector<table_t*> tables;
 
@@ -457,7 +450,7 @@ class berkeleydb_t {
    protected:
       void add_table(table_t& table) {tables.push_back(&table);}
 
-      table_t make_table(void) {return table_t(dbenv, sequences, buffer_queue);}
+      table_t make_table(void) {return table_t(dbenv, sequences, buffer_stack);}
 
    public:
       berkeleydb_t(config_t&& config);

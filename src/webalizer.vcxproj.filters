@@ -235,6 +235,9 @@
     <ClCompile Include="formatter_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
+    <ClCompile Include="char_buffer_stack.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -397,6 +400,9 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="formatter.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="char_buffer_stack.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>

@@ -156,12 +156,10 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
 // buffer that is equal or greater than the requested size, minimizing the total 
 // amount of memory used by all buffers.
 //
-template <typename char_t>
+template <typename char_t, typename ... alloc_params_t>
 class char_buffer_allocator_tmpl {
    public:
-      virtual char_buffer_base<char_t> get_buffer(void) = 0;
-
-      virtual char_buffer_base<char_t> get_buffer(size_t size) = 0;
+      virtual char_buffer_base<char_t> get_buffer(alloc_params_t ... args) = 0;
 
       virtual void release_buffer(char_buffer_base<char_t>&& buffer) = 0;
 };
@@ -180,18 +178,16 @@ class char_buffer_allocator_tmpl {
 // temporary and the buffer holder and the buffer at the end of the line. VC 2015 
 // fixes this problem.
 //
-template <typename char_t>
+template <typename char_t, typename ... alloc_params_t>
 class char_buffer_holder_tmpl {
    private:
-      char_buffer_allocator_tmpl<char_t>&  allocator;
+      char_buffer_allocator_tmpl<char_t, alloc_params_t ...>&  allocator;
 
    public:
       char_buffer_base<char_t>             buffer;
 
    public:
-      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t>& allocator) : allocator(allocator), buffer(allocator.get_buffer()) {}
-
-      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t>& allocator, size_t size) : allocator(allocator), buffer(allocator.get_buffer(size)) {}
+      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t, alloc_params_t ...>& allocator, alloc_params_t ... alloc_args) : allocator(allocator), buffer(allocator.get_buffer(alloc_args ...)) {}
 
       char_buffer_holder_tmpl(const char_buffer_holder_tmpl&) = delete;
 
@@ -206,11 +202,5 @@ class char_buffer_holder_tmpl {
       // see notes in the class definition
       operator char_buffer_base<char_t>&& (void) = delete;
 };
-
-//
-// Buffer allocator and buffer holder types for a generic byte buffer
-//
-typedef char_buffer_allocator_tmpl<unsigned char> buffer_allocator_t;
-typedef char_buffer_holder_tmpl<unsigned char> buffer_holder_t;
 
 #endif // __CHAR_BUFFER_H
