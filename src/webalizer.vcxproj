@@ -189,6 +189,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="p2_buffer_allocator.cpp" />
     <ClCompile Include="platform\exception_win.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\pch.h</PrecompiledHeaderFile>
@@ -308,6 +309,7 @@
     <ClInclude Include="logrec.h" />
     <ClInclude Include="mutex.h" />
     <ClInclude Include="output.h" />
+    <ClInclude Include="p2_buffer_allocator.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="platform\sys\utsname.h" />
