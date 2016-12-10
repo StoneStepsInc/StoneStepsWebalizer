@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   char_buffer_queue.h
+   char_buffer_stack.h
 */
 #ifndef CHAR_BUFFER_STACK_H
 #define CHAR_BUFFER_STACK_H
@@ -36,7 +36,5 @@ class char_buffer_stack_tmpl : public char_buffer_allocator_tmpl<char_t> {
 
       void release_buffer(char_buffer_base<char_t>&& buffer) override;
 };
-
-
 
 #endif // CHAR_BUFFER_STACK_H

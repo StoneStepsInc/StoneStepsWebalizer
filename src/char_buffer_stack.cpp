@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   char_buffer_queue.cpp
+   char_buffer_stack.cpp
 */
 #include "pch.h"
 
@@ -31,7 +31,7 @@ void char_buffer_stack_tmpl<char_t>::release_buffer(char_buffer_base<char_t>&& b
 }
 
 //
-// Instatiate char buffer queue for its intended character types
+// Instatiate the char buffer stack for its intended character types
 //
 template char_buffer_stack_tmpl<char>;
 template char_buffer_stack_tmpl<unsigned char>;
