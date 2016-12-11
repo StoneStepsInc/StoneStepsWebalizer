@@ -86,12 +86,13 @@ static bool abort_signal = false;   // true if Ctrl-C was pressed
 //
 webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
 {
-   buffer = new char[BUFSIZE];
+   // preallocate all character buffers we need for log processing
+   buffer_allocator.release_buffer(string_t::char_buffer_t(BUFSIZE));
+   buffer_allocator.release_buffer(string_t::char_buffer_t(BUFSIZE));
 }
 
 webalizer_t::~webalizer_t(void)
 {
-   delete [] buffer;
 }
 
 bool webalizer_t::initialize(int argc, const char * const argv[])
@@ -461,6 +462,7 @@ void webalizer_t::proc_index_alias(string_t& url)
 
 void webalizer_t::mangle_user_agent(string_t& agent)
 {
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    const char *str, *cp1;
    char *cp2;
 
@@ -977,6 +979,7 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
 //
 void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    int parse_code;
    int errnum = 0;
    size_t reclen;
@@ -998,7 +1001,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       }
 
       // read the log record into the buffer
-      if((reclen = read_log_line(**i, lrcnt)) == 0) {
+      if((reclen = read_log_line(buffer, **i, lrcnt)) == 0) {
          // report if there's no more data
          printf("%s %s\n", config.lang.msg_log_done, (*i)->get_fname().c_str());
 
@@ -1082,6 +1085,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
 //
 bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    int parse_code;
    int errnum = 0;
    size_t reclen;
@@ -1098,7 +1102,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
       }
 
       // use logfile from wlfs, which was populated in the previous iteration
-      if((reclen = read_log_line(*wlfs.logfile, lrcnt)) == 0) {
+      if((reclen = read_log_line(buffer, *wlfs.logfile, lrcnt)) == 0) {
          logfile_list_t::iterator i;
             
          // report that we are done with this log file
@@ -1434,6 +1438,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
                dns_resolver.dns_wait();
                ptms.dns_time += elapsed(stime, msecs());
 
+               string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
                if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname, buffer, BUFSIZE)) != NULL) {
                   lrcnt.total_ignore++; 
                   continue; 
@@ -1882,6 +1887,7 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 
 void webalizer_t::filter_srchargs(string_t& srchargs)
 {
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    arginfo_t arginfo;
    char *cptr;
    string_t::char_buffer_t sa;
@@ -1993,6 +1999,8 @@ bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
 
 bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck)
 {
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
+   string_t::char_buffer_t&& termbuf = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    const gnode_t *nptr = NULL;
    const char *cp1, *cp3;
    char *cp2, *bptr;
@@ -2090,7 +2098,9 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          }
                                             
          termcnt++;
-         cp3 = bptr = &buffer[HALFBUFSIZE];
+
+         // build the search terms string in the the search term buffer
+         cp3 = bptr = termbuf;
 
          // [9]All Words
          *bptr++ = '[';
@@ -3066,12 +3076,12 @@ static void console_ctrl_handler(int sig)
 }
 #endif
 
-int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
+int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfile, logrec_counts_t& lrcnt)
 {
    int reclen = 0, errnum = 0;
 
    // read the line ad check if there's no more data; EOF is checked in logfile_t::get_line
-   while((reclen = logfile.get_line(buffer, BUFSIZE, &errnum)) != 0) {
+   while((reclen = logfile.get_line(buffer, buffer.capacity(), &errnum)) != 0) {
       
       // in case of an error, throw an exception - errors cannot be just reported as bad log lines
       if(reclen == -1)
@@ -3084,7 +3094,7 @@ int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
       lrcnt.total_rec++;
       
       // if the buffer is not full, return
-      if(reclen < BUFSIZE-1 || buffer[BUFSIZE-1] == '\n')
+      if(reclen < buffer.capacity()-1 || buffer[buffer.capacity()-1] == '\n')
          return reclen;
       
       lrcnt.total_bad++;              /* bump bad record counter      */
@@ -3099,7 +3109,7 @@ int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
       }
 
       /* get the rest of the record */
-      while((reclen = logfile.get_line(buffer, BUFSIZE, &errnum)) != 0) {
+      while((reclen = logfile.get_line(buffer, buffer.capacity(), &errnum)) != 0) {
          // handle errors
          if(reclen == -1)
             throw exception_t(0, string_t::_format("%s: %s (%d)", config.lang.msg_file_err, logfile.get_fname().c_str(), errnum));
@@ -3109,7 +3119,7 @@ int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
             fprintf(stderr,"%s",buffer);
 
          // if at the end of the oversized record, print EOL and move on to the next line
-         if(reclen < BUFSIZE-1) {
+         if(reclen < buffer.capacity()-1) {
             if (config.debug_mode && config.verbose)
                fprintf(stderr,"\n");
             break;
@@ -3124,7 +3134,7 @@ int webalizer_t::read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt)
    return reclen;
 }
 
-int webalizer_t::parse_log_record(char *buffer, size_t reclen, log_struct& logrec, uint64_t recnum)
+int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, uint64_t recnum)
 {
    int parse_code;
    string_t lrecstr;

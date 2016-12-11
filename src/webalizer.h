@@ -26,6 +26,7 @@
 #include "hashtab_nodes.h"
 #include "logfile.h"
 #include "pool_allocator.h"
+#include "p2_buffer_allocator.h"
 
 #include <zlib.h>
 #include <vector>
@@ -51,6 +52,10 @@
 //
 class webalizer_t {
    private:
+      // character buffer allocator and holder types
+      typedef p2_buffer_allocator_tmpl<string_t::char_type> buffer_allocator_t;
+      typedef char_buffer_holder_tmpl<string_t::char_type, size_t> buffer_holder_t;
+      
       // search argument descriptor
       struct arginfo_t {
          const char  *name;
@@ -76,7 +81,7 @@ class webalizer_t {
          
          void reset(void) {logfile = NULL; logrec = NULL;}
       };
-      
+
       typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
       typedef std::list<log_struct*, pool_allocator_t<log_struct, FOPEN_MAX>> logrec_list_t;
       typedef std::list<logfile_t*, pool_allocator_t<logfile_t, FOPEN_MAX>> logfile_list_t;
@@ -120,7 +125,7 @@ class webalizer_t {
 
       std::vector<output_t*> output;
 
-      char        *buffer;
+      buffer_allocator_t buffer_allocator;
 
       std::vector<ua_token_t> ua_args;                // user agent argument tokens
       std::vector<size_t>     ua_groups;              // user agent group indexes (ua_args)
@@ -157,8 +162,8 @@ class webalizer_t {
       void prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt);
       bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt);
       
-      int read_log_line(logfile_t& logfile, logrec_counts_t& lrcnt); 
-      int parse_log_record(char *buffer, size_t reclen, log_struct& logrec, uint64_t recnum);
+      int read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfile, logrec_counts_t& lrcnt); 
+      int parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, uint64_t recnum);
 
       //
       // put_xnode methods

@@ -63,8 +63,7 @@ class string_base {
       // fixed_char_buffer_t with a matching character type
       template <size_t BUFSIZE> using fixed_char_buffer_t = ::fixed_char_buffer_t<char_t, BUFSIZE>;
 
-      // character buffer allocator and holder types
-      template <typename ... alloc_params_t> using char_buffer_allocator_t = char_buffer_allocator_tmpl<char_t, alloc_params_t ...>;
+      // character buffer holder type with arbitrary allocation parameters
       template <typename ... alloc_params_t> using char_buffer_holder_t = char_buffer_holder_tmpl<char_t, alloc_params_t ...>;
 
    private:

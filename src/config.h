@@ -47,7 +47,6 @@
 #define DEF_HTTPS_PORT           ((u_short) 443)
 
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
-#define HALFBUFSIZE  (BUFSIZE >> 1)
       
 // -----------------------------------------------------------------
 //
