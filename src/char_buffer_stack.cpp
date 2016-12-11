@@ -33,5 +33,5 @@ void char_buffer_stack_tmpl<char_t>::release_buffer(char_buffer_base<char_t>&& b
 //
 // Instatiate the char buffer stack for its intended character types
 //
-template char_buffer_stack_tmpl<char>;
-template char_buffer_stack_tmpl<unsigned char>;
+template class char_buffer_stack_tmpl<char>;
+template class char_buffer_stack_tmpl<unsigned char>;

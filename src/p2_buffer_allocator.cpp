@@ -64,5 +64,5 @@ void p2_buffer_allocator_tmpl<char_t>::release_buffer(char_buffer_base<char_t>&&
 //
 // Instatiate the power of two char buffer allocator for its intended character types
 //
-template p2_buffer_allocator_tmpl<char>;
-template p2_buffer_allocator_tmpl<unsigned char>;
+template class p2_buffer_allocator_tmpl<char>;
+template class p2_buffer_allocator_tmpl<unsigned char>;
