@@ -3103,7 +3103,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
       if (config.verbose) {
          fprintf(stderr,"%s (%" PRIu64 " - %s)",config.lang.msg_big_rec, lrcnt.total_rec, logfile.get_fname().c_str());
          if (config.debug_mode) 
-            fprintf(stderr,":\n%s",buffer);
+            fprintf(stderr,":\n%s",buffer.get_buffer());
          else 
             fprintf(stderr,"\n");
       }
@@ -3116,7 +3116,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
 
          // print this buffer
          if (config.debug_mode && config.verbose) 
-            fprintf(stderr,"%s",buffer);
+            fprintf(stderr,"%s",buffer.get_buffer());
 
          // if at the end of the oversized record, print EOL and move on to the next line
          if(reclen < buffer.capacity()-1) {
