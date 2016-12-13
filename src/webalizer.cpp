@@ -3094,7 +3094,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
       lrcnt.total_rec++;
       
       // if the buffer is not full, return
-      if(reclen < buffer.capacity()-1 || buffer[buffer.capacity()-1] == '\n')
+      if((size_t) reclen < buffer.capacity()-1 || buffer[buffer.capacity()-1] == '\n')
          return reclen;
       
       lrcnt.total_bad++;              /* bump bad record counter      */
@@ -3119,7 +3119,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
             fprintf(stderr,"%s",buffer.get_buffer());
 
          // if at the end of the oversized record, print EOL and move on to the next line
-         if(reclen < buffer.capacity()-1) {
+         if((size_t) reclen < buffer.capacity()-1) {
             if (config.debug_mode && config.verbose)
                fprintf(stderr,"\n");
             break;
