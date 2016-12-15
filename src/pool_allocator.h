@@ -1,3 +1,15 @@
+/*
+   webalizer - a web server log analysis program
+
+   Copyright (c) 2004-2016, Stone Steps Inc. (www.stonesteps.ca)
+
+   See COPYING and Copyright files for additional licensing and copyright information 
+   
+   pool_allocator.h
+*/
+#ifndef POOL_ALLOCATOR_H
+#define POOL_ALLOCATOR_H
+
 #include <memory>
 #include <vector>
 #include <limits.h>
@@ -135,3 +147,5 @@ public:
        return stdalloc.max_size();
     }
 };
+
+#endif // POOL_ALLOCATOR_H
