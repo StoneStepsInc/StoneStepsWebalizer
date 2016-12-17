@@ -142,10 +142,10 @@ public:
       stdalloc.destroy(object);
    }
 
-    size_type max_size(void) const
-    {
-       return stdalloc.max_size();
-    }
+   size_type max_size(void) const
+   {
+      return stdalloc.max_size();
+   }
 };
 
 #endif // POOL_ALLOCATOR_H
