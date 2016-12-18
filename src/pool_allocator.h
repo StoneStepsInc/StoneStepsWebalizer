@@ -75,7 +75,7 @@ public:
    ~pool_allocator_t(void)
    {
       for(typename std::vector<T*>::iterator iter = mempool.begin(); iter != mempool.end(); iter++)
-         deallocate(*iter, 1);
+         stdalloc.deallocate(*iter, 1);
       mempool.clear();
    }
 
