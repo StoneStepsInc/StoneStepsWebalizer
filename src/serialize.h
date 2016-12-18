@@ -7,8 +7,8 @@
 
     serialize.h
 */
-#ifndef __SERIALIZE_H
-#define __SERIALIZE_H
+#ifndef SERIALIZE_H
+#define SERIALIZE_H
 
 #include "util.h"
 #include "tstring.h"
@@ -275,4 +275,4 @@ inline int64_t s_compare<string_t>(const void *buf1, const void *buf2)
    return strncmp_ex(cp1, slen1, cp2, slen2);
 }
 
-#endif // __SERIALIZE_H
+#endif // SERIALIZE_H

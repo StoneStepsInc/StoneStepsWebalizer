@@ -7,8 +7,8 @@
 
     anode.h
 */
-#ifndef __ANODE_H
-#define __ANODE_H
+#ifndef ANODE_H
+#define ANODE_H
 
 #include "hashtab.h"
 #include "basenode.h"
@@ -56,4 +56,4 @@ struct anode_t : public base_node<anode_t> {
 class a_hash_table : public hash_table<anode_t> {
 };
 
-#endif // __ANODE_H
+#endif // ANODE_H

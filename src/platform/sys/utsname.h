@@ -1,5 +1,5 @@
-#ifndef __UTSNAME_H
-#define __UTSNAME_H
+#ifndef UTSNAME_H
+#define UTSNAME_H
 
 #define SYS_NMLN ((unsigned long) 256)
 
@@ -16,4 +16,4 @@ extern "C"
 #endif
 int uname(struct utsname *name);
 
-#endif // __UTSNAME_H
+#endif // UTSNAME_H

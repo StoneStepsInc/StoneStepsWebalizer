@@ -7,8 +7,8 @@
 
     daily.h
 */
-#ifndef __DAILY_H
-#define __DAILY_H
+#ifndef DAILY_H
+#define DAILY_H
 
 #include "types.h"
 #include "keynode.h"
@@ -64,5 +64,5 @@ struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
          static size_t s_data_size(const void *buffer, bool fixver);
 };
 
-#endif // __DAILY_H
+#endif // DAILY_H
 

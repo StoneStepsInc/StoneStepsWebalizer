@@ -7,8 +7,8 @@
 
    exception.h
 */
-#ifndef __EXCEPTION_H
-#define __EXCEPTION_H
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
 
 #include "types.h"
 #include "tstring.h"
@@ -44,4 +44,4 @@ class os_ex_t : public exception_t {
 //
 void set_os_ex_translator(void);
 
-#endif // __EXCEPTION_H
+#endif // EXCEPTION_H

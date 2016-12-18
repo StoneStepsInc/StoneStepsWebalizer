@@ -7,8 +7,8 @@
 
     database.h
 */
-#ifndef __DATABASE_H
-#define __DATABASE_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include "config.h"
 #include "hashtab.h"
@@ -291,4 +291,4 @@ class database_t : public berkeleydb_t {
       bool get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const;
 };
 
-#endif // __DATABASE_H
+#endif // DATABASE_H

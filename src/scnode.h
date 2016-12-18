@@ -7,8 +7,8 @@
 
    scnode.h
 */
-#ifndef __SCNODE_H
-#define __SCNODE_H
+#ifndef SCNODE_H
+#define SCNODE_H
 
 #include "types.h"
 #include "keynode.h"
@@ -82,4 +82,4 @@ class sc_hash_table {
       const scnode_t& operator [] (size_t index) const;
 };
 
-#endif // __SCNODE_H
+#endif // SCNODE_H

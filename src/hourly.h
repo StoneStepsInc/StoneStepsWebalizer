@@ -7,8 +7,8 @@
 
     hourly.h
 */
-#ifndef __HOURLY_H
-#define __HOURLY_H
+#ifndef HOURLY_H
+#define HOURLY_H
 
 #include "types.h"
 #include "keynode.h"
@@ -43,5 +43,5 @@ struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
          static size_t s_data_size(const void *buffer, bool fixver);
 };
 
-#endif // __HOURLY_H
+#endif // HOURLY_H
 

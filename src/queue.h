@@ -7,8 +7,8 @@
    
    queue.h
 */
-#ifndef __QUEUE_H
-#define __QUEUE_H
+#ifndef QUEUE_H
+#define QUEUE_H
 
 #include "types.h"
 #include <stddef.h>
@@ -62,4 +62,4 @@ class queue_t {
       type_t *remove(void);
 };
 
-#endif // __QUEUE_H
+#endif // QUEUE_H

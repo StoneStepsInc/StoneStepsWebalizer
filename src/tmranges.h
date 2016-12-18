@@ -8,8 +8,8 @@
     tmranges.h
 */
 
-#ifndef __TMRANGE_H
-#define __TMRANGE_H
+#ifndef TMRANGE_H
+#define TMRANGE_H
 
 #include <time.h>
 
@@ -44,4 +44,4 @@ class tm_ranges_t {
       bool is_in_range(const tstamp_t& tstamp, iterator& cur_range) const;
 };
 
-#endif // __TMRANGE_H
+#endif // TMRANGE_H

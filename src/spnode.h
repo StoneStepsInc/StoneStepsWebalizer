@@ -7,8 +7,8 @@
 
     spnode.h
 */
-#ifndef __SPNODE_H
-#define __SPNODE_H
+#ifndef SPNODE_H
+#define SPNODE_H
 
 #include "hashtab.h"
 #include "basenode.h"
@@ -36,5 +36,5 @@ struct spnode_t : public base_node<spnode_t> {
 class sp_hash_table : public hash_table<spnode_t> {
 };
 
-#endif // __SPNODE_H
+#endif // SPNODE_H
 

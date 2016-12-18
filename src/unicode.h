@@ -8,8 +8,8 @@
    unicode.h
 */
 
-#ifndef __UNICODE_H
-#define __UNICODE_H
+#ifndef UNICODE_H
+#define UNICODE_H
 
 #include "tstring.h"
 
@@ -152,4 +152,4 @@ char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen = NULL);
 char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *olen = NULL);
 const string_t& cp1252utf8(const string_t& str, string_t& out);
 
-#endif // __UNICODE_H
+#endif // UNICODE_H

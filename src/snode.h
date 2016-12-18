@@ -7,8 +7,8 @@
 
     snode.h
 */
-#ifndef __SNODE_H
-#define __SNODE_H
+#ifndef SNODE_H
+#define SNODE_H
 
 #include "hashtab.h"
 #include "basenode.h"
@@ -60,4 +60,4 @@ struct snode_t : public base_node<snode_t> {
 class s_hash_table : public hash_table<snode_t> {
 };
 
-#endif // __SNODE_H
+#endif // SNODE_H

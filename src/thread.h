@@ -7,8 +7,8 @@
 
     thread.h
 */
-#ifndef __THREAD_H
-#define __THREAD_H
+#ifndef THREAD_H
+#define THREAD_H
 
 #include "types.h"
 
@@ -27,4 +27,4 @@ void msleep(unsigned long timeout);
 uint64_t msecs(void);
 unsigned long thread_id(void);
 
-#endif /* __THREAD_H */
+#endif /* THREAD_H */

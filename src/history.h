@@ -8,8 +8,8 @@
     history.h
 */
 
-#ifndef __HISTORY_H
-#define __HISTORY_H
+#ifndef HISTORY_H
+#define HISTORY_H
 
 #include "types.h"
 #include "config.h"
@@ -100,5 +100,5 @@ class history_t {
       void put_history(void);
 };
 
-#endif // __HISTORY_H
+#endif // HISTORY_H
 

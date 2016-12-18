@@ -8,8 +8,8 @@
     mutex.h
 */
 
-#ifndef __MUTEX_H
-#define __MUTEX_H
+#ifndef MUTEX_H
+#define MUTEX_H
 
 struct mutex_handle_t;
 typedef mutex_handle_t *mutex_t;
@@ -19,4 +19,4 @@ void mutex_destroy(mutex_t mutex);
 void mutex_lock(mutex_t mutex);
 void mutex_unlock(mutex_t mutex);
 
-#endif /* __MUTEX_H */
+#endif /* MUTEX_H */

@@ -7,8 +7,8 @@
 
     sysnode.h
 */
-#ifndef __SYSNODE_H
-#define __SYSNODE_H
+#ifndef SYSNODE_H
+#define SYSNODE_H
 
 #include "keynode.h"
 #include "datanode.h"
@@ -69,4 +69,4 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       static size_t s_data_size(const void *buffer);
 };
 
-#endif // __SYSNODE_H
+#endif // SYSNODE_H

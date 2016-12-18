@@ -8,8 +8,8 @@
 
    version.h
 */
-#ifndef __VERSION_H
-#define __VERSION_H
+#ifndef VERSION_H
+#define VERSION_H
 
 //
 // Current application version components
@@ -44,5 +44,5 @@
 //
 #define MIN_APP_DB_VERSION 0x0400000Cu
 
-#endif // __VERSION_H
+#endif // VERSION_H
 

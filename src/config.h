@@ -9,8 +9,8 @@
    config.h
 */
 
-#ifndef __CONFIG_H
-#define __CONFIG_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include "linklist.h"
 #include "tstring.h"
@@ -385,4 +385,4 @@ class config_t {
       int get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_iter) const;
 };
 
-#endif // __CONFIG_H
+#endif // CONFIG_H

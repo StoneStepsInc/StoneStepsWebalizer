@@ -7,8 +7,8 @@
 
     rnode.h
 */
-#ifndef __RNODE_H
-#define __RNODE_H
+#ifndef RNODE_H
+#define RNODE_H
 
 #include "hashtab.h"
 #include "types.h"
@@ -51,4 +51,4 @@ struct rnode_t : public base_node<rnode_t> {
 class r_hash_table : public hash_table<rnode_t> {
 };
 
-#endif // __RNODE_H
+#endif // RNODE_H

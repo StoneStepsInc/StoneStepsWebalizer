@@ -8,8 +8,8 @@
 
    dump_output.h
 */
-#ifndef __DUMP_OUTPUT_H
-#define __DUMP_OUTPUT_H
+#ifndef DUMP_OUTPUT_H
+#define DUMP_OUTPUT_H
 
 #include "output.h"
 
@@ -55,4 +55,4 @@ class dump_output_t : public output_t {
       virtual int write_monthly_report(void);
 };
 
-#endif // __DUMP_OUTPUT_H
+#endif // DUMP_OUTPUT_H

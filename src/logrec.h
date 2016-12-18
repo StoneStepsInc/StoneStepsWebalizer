@@ -8,8 +8,8 @@
     logrec.h
 */
 
-#ifndef __LOGREC_H
-#define __LOGREC_H
+#ifndef LOGREC_H
+#define LOGREC_H
 
 #include "tstring.h"
 #include "tstamp.h"
@@ -78,4 +78,4 @@ struct  log_struct  {
       void normalize(u_int log_type);
 };
 
-#endif // __LOGREC_H
+#endif // LOGREC_H

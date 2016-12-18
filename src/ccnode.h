@@ -7,8 +7,8 @@
 
     ccnode.h
 */
-#ifndef __CCNODE_H
-#define __CCNODE_H
+#ifndef CCNODE_H
+#define CCNODE_H
 
 #include "hashtab.h"
 #include "types.h"
@@ -76,4 +76,4 @@ class cc_hash_table : public hash_table<ccnode_t> {
       ccnode_t& get_ccnode(const string_t& ccode);
 };
 
-#endif // __CCNODE_H
+#endif // CCNODE_H

@@ -7,8 +7,8 @@
 
     berkeleydb.h
 */
-#ifndef __BERKELEYDB_H
-#define __BERKELEYDB_H
+#ifndef BERKELEYDB_H
+#define BERKELEYDB_H
 
 #include "keynode.h"
 #include "tstring.h"
@@ -505,5 +505,5 @@ int sc_extract_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 template <typename node_t, s_field_cb_t extract>
 int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-#endif // __BERKELEYDB_H
+#endif // BERKELEYDB_H
 

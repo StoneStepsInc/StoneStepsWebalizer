@@ -8,8 +8,8 @@
     event.h
 */
 
-#ifndef __EVENT_H
-#define __EVENT_H
+#ifndef EVENT_H
+#define EVENT_H
 
 #include "types.h"
 
@@ -28,4 +28,4 @@ event_result_t event_wait(event_t event, uint32_t timeout);
 bool event_set(event_t event);
 bool event_reset(event_t event);
 
-#endif /* __EVENT_H */
+#endif /* EVENT_H */

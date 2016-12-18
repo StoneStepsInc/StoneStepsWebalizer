@@ -7,8 +7,8 @@
 
    pch.h
 */
-#ifndef __PCH_H
-#define __PCH_H
+#ifndef PCH_H
+#define PCH_H
 
 #include <time.h>
 #include <stdio.h>
@@ -23,4 +23,4 @@
 #include "char_buffer.h"
 #include "types.h"
 
-#endif // __PCH_H
+#endif // PCH_H

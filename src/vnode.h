@@ -7,8 +7,8 @@
 
     vnode.h
 */
-#ifndef __VNODE_H
-#define __VNODE_H
+#ifndef VNODE_H
+#define VNODE_H
 
 #include "keynode.h"
 #include "datanode.h"
@@ -89,4 +89,4 @@ struct vnode_t : public list_node_t<vnode_t>, public keynode_t<uint64_t>, public
          static size_t s_data_size(const void *buffer);
 };
 
-#endif // __VNODE_H
+#endif // VNODE_H

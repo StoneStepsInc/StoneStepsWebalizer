@@ -7,8 +7,8 @@
 
     encoder.h
 */
-#ifndef __ENCODER_H
-#define __ENCODER_H
+#ifndef ENCODER_H
+#define ENCODER_H
 
 #include "unicode.h"
 
@@ -40,4 +40,4 @@ char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc);
 
 template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str);
 
-#endif // __ENCODER_H
+#endif // ENCODER_H

@@ -7,8 +7,8 @@
 
     danode.h
 */
-#ifndef __DANODE_H
-#define __DANODE_H
+#ifndef DANODE_H
+#define DANODE_H
 
 #include "keynode.h"
 #include "datanode.h"
@@ -49,5 +49,5 @@ struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
 };
 
 
-#endif // __DANODE_H
+#endif // DANODE_H
 

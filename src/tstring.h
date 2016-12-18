@@ -8,8 +8,8 @@
    tstring.h
 */
 
-#ifndef __TSTRING_H
-#define __TSTRING_H
+#ifndef TSTRING_H
+#define TSTRING_H
 
 #include <stdarg.h>
 #include <string.h>
@@ -197,4 +197,4 @@ class string_base {
 //
 typedef string_base<char> string_t;
 
-#endif // __TSTRING_H
+#endif // TSTRING_H

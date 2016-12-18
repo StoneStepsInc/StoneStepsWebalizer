@@ -7,8 +7,8 @@
 
     unode.h
 */
-#ifndef __UNODE_H
-#define __UNODE_H
+#ifndef UNODE_H
+#define UNODE_H
 
 #include "hashtab.h"
 #include "basenode.h"
@@ -91,4 +91,4 @@ class u_hash_table : public hash_table<unode_t> {
       u_hash_table(void) : hash_table<unode_t>(LMAXHASH) {}
 };
 
-#endif // __UNODE_H
+#endif // UNODE_H

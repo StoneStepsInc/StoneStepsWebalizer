@@ -8,8 +8,8 @@
    char_buffer.h
 */
 
-#ifndef __CHAR_BUFFER_H
-#define __CHAR_BUFFER_H
+#ifndef CHAR_BUFFER_H
+#define CHAR_BUFFER_H
 
 #include <stddef.h>
 
@@ -203,4 +203,4 @@ class char_buffer_holder_tmpl {
       operator char_buffer_base<char_t>&& (void) = delete;
 };
 
-#endif // __CHAR_BUFFER_H
+#endif // CHAR_BUFFER_H

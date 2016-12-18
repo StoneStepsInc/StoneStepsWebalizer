@@ -7,8 +7,8 @@
 
     basenode.h
 */
-#ifndef __BASENODE_H
-#define __BASENODE_H
+#ifndef BASENODE_H
+#define BASENODE_H
 
 #include "tstring.h"
 #include "types.h"
@@ -66,4 +66,4 @@ struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, publi
          static bool s_is_group(const void *buffer, size_t bufsize);
 };
 
-#endif // __BASENODE_H
+#endif // BASENODE_H

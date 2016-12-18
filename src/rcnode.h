@@ -7,8 +7,8 @@
 
     rcnode.h
 */
-#ifndef __RCNODE_H
-#define __RCNODE_H
+#ifndef RCNODE_H
+#define RCNODE_H
 
 #include "basenode.h"
 #include "types.h"
@@ -73,4 +73,4 @@ class rc_hash_table : public hash_table<rcnode_t> {
       rc_hash_table(void) : hash_table<rcnode_t>(SMAXHASH) {}
 };
 
-#endif // __RCNODE_H
+#endif // RCNODE_H

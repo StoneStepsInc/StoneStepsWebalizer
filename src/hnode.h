@@ -7,8 +7,8 @@
 
     hnode.h
 */
-#ifndef __HNODE_H
-#define __HNODE_H
+#ifndef HNODE_H
+#define HNODE_H
 
 #include "linklist.h"
 #include "hashtab.h"
@@ -143,4 +143,4 @@ class h_hash_table : public hash_table<hnode_t> {
       h_hash_table(void) : hash_table<hnode_t>(LMAXHASH) {}
 };
 
-#endif // __HNODE_H
+#endif // HNODE_H

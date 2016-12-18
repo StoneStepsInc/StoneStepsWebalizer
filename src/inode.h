@@ -7,8 +7,8 @@
 
     inode.h
 */
-#ifndef __INODE_H
-#define __INODE_H
+#ifndef INODE_H
+#define INODE_H
 
 #include "hashtab.h"
 #include "basenode.h"
@@ -58,4 +58,4 @@ class i_hash_table : public hash_table<inode_t> {
       i_hash_table(void) : hash_table<inode_t>(LMAXHASH) {}
 };
 
-#endif // __INODE_H
+#endif // INODE_H

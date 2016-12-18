@@ -7,8 +7,8 @@
 
     dlnode.h
 */
-#ifndef __DLNODE_H
-#define __DLNODE_H
+#ifndef DLNODE_H
+#define DLNODE_H
 
 #include "hashtab.h"
 #include "types.h"
@@ -92,5 +92,5 @@ class dl_hash_table : public hash_table<dlnode_t> {
       dl_hash_table(void) : hash_table<dlnode_t>() {}
 };
 
-#endif // __DLNODE_H
+#endif // DLNODE_H
 

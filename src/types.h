@@ -8,8 +8,8 @@
     types.h
 */
 
-#ifndef __TYPES_H
-#define __TYPES_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <cinttypes>
 
@@ -29,5 +29,5 @@ typedef unsigned int   u_int;
 #define PRI_SZ   "zu"
 #endif
 
-#endif // __TYPES_H
+#endif // TYPES_H
 

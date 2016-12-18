@@ -7,8 +7,8 @@
 
     totals.h
 */
-#ifndef __TOTALS_H
-#define __TOTALS_H
+#ifndef TOTALS_H
+#define TOTALS_H
 
 #include "keynode.h"
 #include "datanode.h"
@@ -130,4 +130,4 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       static size_t s_data_size(const void *buffer);
 };
 
-#endif // __TOTALS_H
+#endif // TOTALS_H

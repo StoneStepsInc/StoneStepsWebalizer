@@ -8,8 +8,8 @@
     tstamp.h
 */
 
-#ifndef __TSTAMP_H
-#define __TSTAMP_H
+#ifndef TSTAMP_H
+#define TSTAMP_H
 
 #include <time.h>
 
@@ -120,4 +120,4 @@ struct tstamp_t {
       static u_int last_month_day(u_int year, u_int month);
 };
 
-#endif // __TSTAMP_H
+#endif // TSTAMP_H

@@ -9,8 +9,8 @@
    util.h
 */
 
-#ifndef __UTIL_H
-#define __UTIL_H
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <stddef.h>
 #include <time.h>
@@ -197,4 +197,4 @@ inline bool isxdigitex(int ch) {return ch >= '0' && ch <= '9' || ch >= 'A' && ch
 inline bool isspaceex(int ch) {return ch == ' ' || ch == '\t';}
 inline bool iswspaceex(int ch) {return isspaceex(ch) || ch == '\r' || ch == '\n';}
 
-#endif // __UTIL_H
+#endif // UTIL_H

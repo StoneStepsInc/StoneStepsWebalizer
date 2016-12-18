@@ -8,8 +8,8 @@
 
    html_output.h
 */
-#ifndef __HTML_OUTPUT_H
-#define __HTML_OUTPUT_H
+#ifndef HTML_OUTPUT_H
+#define HTML_OUTPUT_H
 
 #include "output.h"
 #include "graphs.h"
@@ -106,4 +106,4 @@ class html_output_t : public output_t {
       virtual bool graph_support(void) const {return config.js_charts.isempty();}
 };
 
-#endif // __HTML_OUTPUT_H
+#endif // HTML_OUTPUT_H
