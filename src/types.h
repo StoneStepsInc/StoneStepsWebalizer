@@ -19,15 +19,5 @@ typedef unsigned short u_short;
 typedef unsigned int   u_int;
 #endif
 
-//
-// VC++ uses the I specifier for the same purpose as defined for the z specifier
-// by C99. Use a macro similar to PRIx to print size_t values.
-//
-#if defined(_MSC_VER)
-#define PRI_SZ   "Iu"
-#else
-#define PRI_SZ   "zu"
-#endif
-
 #endif // TYPES_H
 
