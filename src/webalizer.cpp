@@ -605,6 +605,9 @@ void webalizer_t::filter_user_agent(string_t& agent)
    
    static const char o_arg[] = {';', ' '};      // argument's output delimiters
    
+   std::vector<ua_token_t, ua_token_alloc_t> ua_args(ua_token_alloc);      // user agent argument tokens
+   std::vector<size_t, ua_grp_idx_alloc_t>   ua_groups(ua_grp_idx_alloc);  // grouped tokens within ua_args (indexes)
+
    ua_token_t token;
    const char *delims = str_delims;             // active delimiters
    char *cp1, *cp2;
@@ -626,6 +629,10 @@ void webalizer_t::filter_user_agent(string_t& agent)
       agent.reset();
       return;
    }
+
+   // most user agents will have less than 16 tokens
+   ua_args.reserve(16);
+   ua_groups.reserve(16);
    
    // save the initial string length   
    ualen = agent.length();
@@ -1887,6 +1894,7 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 
 void webalizer_t::filter_srchargs(string_t& srchargs)
 {
+   std::vector<arginfo_t, srch_arg_alloc_t> sr_args(srch_arg_alloc);
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    arginfo_t arginfo;
    char *cptr;
@@ -1894,6 +1902,9 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
 
    if(srchargs.isempty())
       return; 
+
+   // there are rarely more than 4-5 search arguments
+   sr_args.reserve(8);
 
    // if no sorting or filtering is requested, return
    if(!config.sort_srch_args && config.incl_srch_args.isempty() && config.excl_srch_args.isempty())

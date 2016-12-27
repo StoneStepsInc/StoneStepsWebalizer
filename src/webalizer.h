@@ -64,6 +64,9 @@ class webalizer_t {
          
          arginfo_t(void) {name = NULL; namelen = arglen = 0;}
       };
+
+      // search argument vector allocator
+      typedef pool_allocator_t<arginfo_t, 8> srch_arg_alloc_t;
       
       // log file parser state (does not own either of the objects)
       struct lfp_state_t {
@@ -102,6 +105,10 @@ class webalizer_t {
          void reset(const char *str, toktype_t type) {start = str; namelen = mjverlen = mnverlen = arglen = 0; argtype = type;}
       };
 
+      // user agent token allocators
+      typedef pool_allocator_t<ua_token_t, 8> ua_token_alloc_t;
+      typedef pool_allocator_t<size_t, 8> ua_grp_idx_alloc_t;
+
       // various processing times collected across multiple calls
       struct proc_times_t {
          uint64_t dns_time = 0;                    // DNS wait time
@@ -127,10 +134,10 @@ class webalizer_t {
 
       buffer_allocator_t buffer_allocator;
 
-      std::vector<ua_token_t> ua_args;                // user agent argument tokens
-      std::vector<size_t>     ua_groups;              // user agent group indexes (ua_args)
-      
-      std::vector<arginfo_t>  sr_args;                // search string arguments
+      ua_token_alloc_t ua_token_alloc;          // pooled user agent token allocator
+      ua_grp_idx_alloc_t ua_grp_idx_alloc;
+
+      srch_arg_alloc_t srch_arg_alloc;          // pooled search argument allocator 
 
    private:
       bool init_output_engines(void);
