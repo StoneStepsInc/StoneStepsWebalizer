@@ -109,7 +109,7 @@ class memory_pool_t {
       void dump_oldest_bucket(void)
       {
          // current and maximum age iterators
-         std::map<size_t, bucket_t>::iterator i = mempool.begin(), mi = i;
+         typename std::map<size_t, bucket_t>::iterator i = mempool.begin(), mi = i;
 
          // make sure there's at least one bucket in the pool
          if(i == mempool.end())
@@ -134,7 +134,7 @@ class memory_pool_t {
 
       void *allocate(size_t size)
       {
-         std::map<size_t, bucket_t>::iterator bi = mempool.find(size);
+         typename std::map<size_t, bucket_t>::iterator bi = mempool.find(size);
 
          if(bi == mempool.end()) {
             // if we've reached the pool size limit, dump the least used bucket
@@ -151,7 +151,7 @@ class memory_pool_t {
 
       void deallocate(void *block, size_t size)
       {
-         std::map<size_t, bucket_t>::iterator bi = mempool.find(size);
+         typename std::map<size_t, bucket_t>::iterator bi = mempool.find(size);
          
          if(bi != mempool.end())
             bi->second.put_block(++life, block);
