@@ -253,6 +253,17 @@ class pool_allocator_t {
       {
          mempool->deallocate(area, count * sizeof(T));
       }
+
+      template <typename U, typename ...Args>
+      void construct(U *block, Args&&... args)
+      {
+         new (block) U(std::forward<Args>(args)...);
+      }
+
+      void destroy(pointer object)
+      {
+         object->~T();
+      }
 };
 
 #endif // POOL_ALLOCATOR_H
