@@ -19,10 +19,11 @@
 //
 // [Unicode v5 ch.3 p.103]
 //
-// Scalar Value        First Byte  Second Byte Third Byte
-// 00000000 0xxxxxxx   0xxxxxxx
-// 00000yyy yyxxxxxx   110yyyyy    10xxxxxx
-// zzzzyyyy yyxxxxxx   1110zzzz    10yyyyyy    10xxxxxx
+// Scalar Value                  First Byte  Second Byte Third Byte  Fourth Byte
+// 00000000 0xxxxxxx             0xxxxxxx
+// 00000yyy yyxxxxxx             110yyyyy    10xxxxxx
+// zzzzyyyy yyxxxxxx             1110zzzz    10yyyyyy    10xxxxxx
+// 000uuuuu zzzzyyyy yyxxxxxx    11110uuu    10uuzzzz    10yyyyyy    10xxxxxx
 //
 inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
@@ -31,23 +32,39 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 
    // 1-byte character
    if(wchar <= L'\x7F') {
-      *out++ = (char) wchar & L'\x7F';
+      *out++ = (char) (wchar & L'\x7F');
       return 1;
    }
    
    // 2-byte sequence
    if(wchar <= L'\x7FF') {
-      *out++ = (char) (wchar >> 6) | L'\xC0';
-      *out++ = (char) (wchar & L'\x3F') | L'\x80';
+      *out++ = (char) ((wchar >> 6) | L'\xC0');
+      *out++ = (char) ((wchar & L'\x3F') | L'\x80');
       return 2;
    }
 
    // 3-byte sequence
-   *out++ = (char) (wchar >> 12) | L'\xE0';
-   *out++ = (char) ((wchar & L'\xFC0') >> 6) | L'\x80';
-   *out = (char) (wchar & L'\x3F') | L'\x80';
+   if(wchar <= L'\xFFFF') {
+      *out++ = (char) ((wchar >> 12) | L'\xE0');
+      *out++ = (char) (((wchar >> 6) & L'\x3F') | L'\x80');
+      *out = (char) ((wchar & L'\x3F') | L'\x80');
+      return 3;
+   }
 
-   return 3;
+   // GCC implements wchar_t as a 4-byte entity on many platforms
+#if WCHAR_MAX > 0xFFFF
+   // 4-byte sequence
+   if(wchar <= L'\0x10FFFF') {
+      *out++ = (char) ((wchar >> 18) | L'\xF0');
+      *out++ = (char) (((wchar >> 12) & L'\x3F') | L'\xE0');
+      *out++ = (char) (((wchar >> 6) & L'\x3F') | L'\x80');
+      *out = (char) ((wchar & L'\x3F') | L'\x80');
+      return 4;
+   }
+#endif
+
+   // no conversion is done
+   return 0;
 }
 
 //
@@ -56,7 +73,7 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 //
 inline size_t ucs2utf8size(wchar_t wchar)
 {
-   return (wchar <= L'\x7F') ? 1 : (wchar <= L'\x7FF') ? 2 : 3;
+   return (wchar <= L'\x7F') ? 1 : (wchar <= L'\x7FF') ? 2 : (wchar <= L'\xFFFF') ? 3 : 4;
 }
 
 //
