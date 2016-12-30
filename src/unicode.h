@@ -53,8 +53,14 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 
    // GCC implements wchar_t as a 4-byte entity on many platforms
 #if WCHAR_MAX > 0xFFFF
+   //
+   // GCC v4.8.3 incorrectly reports L'\x10FFFF' as a literal that is too long 
+   // for its type. Later versions of GCC fix this issue (checked v6.3.0), but 
+   // in the meantime cast wchar explicitly to a 32-bit integer to avoid this
+   // warning.
+   //
    // 4-byte sequence
-   if(wchar <= L'\0x10FFFF') {
+   if((uint32_t) wchar <= 0x10FFFF) {
       *out++ = (char) ((wchar >> 18) | L'\xF0');
       *out++ = (char) (((wchar >> 12) & L'\x3F') | L'\xE0');
       *out++ = (char) (((wchar >> 6) & L'\x3F') | L'\x80');
