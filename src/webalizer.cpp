@@ -1990,12 +1990,11 @@ bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
          //
          // People often mix up search engine input with the browser's URL input and
          // some search engines generate search results with site's full URL in the 
-         // search strings. Check against the host name for the report to avoid flagging
-         // legitimate users as spammers. 
+         // search strings. Check against the site aliases list to avoid flagging 
+         // legitimate users as spammers, but if this host is not found in the list, 
+         // consider it a spammer.
          //
-         // TODO: expand this check to a list of site aliases
-         //
-         if(strncasecmp(host, config.hname.c_str(), host.capacity()))
+         if(!config.site_aliases.isinlistex(host, host.capacity(), false))
             return true;
       }
    }

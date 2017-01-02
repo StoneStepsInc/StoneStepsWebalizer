@@ -622,16 +622,22 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       }
    }
 
-   //
-   // prepare and report the hostname
-   //
+   // convert all site aliases to lower case
+   nlist::iterator site_alias_it = site_aliases.begin();
+   while(!site_alias_it.next())
+      site_alias_it.item()->string.tolower();
+
+   // if no site name was supplied, use the reporting server host name
    if (hname.isempty()) {
       if (uname(&system_info))
          hname = "localhost";
       else
          hname = system_info.nodename;
+         hname.tolower();
    }
 
+   // add the primary site host name to the list of site aliases
+   site_aliases.add_nlist(hname.c_str());
 }
 
 static int cmp_conf_kw(const void *e1, const void *e2)
@@ -645,7 +651,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 189; empty slots: 185 
+                     // max key: 189; empty slots:  
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -818,6 +824,8 @@ void config_t::get_config(const char *fname)
                      {"ReportTitle",         3},            // Title for reports
                      {"Robot",               155},          // Robot user agent filter
                      {"SearchEngine",        61},           // SearchEngine strings
+                     {"SiteAlias",           185},          // One or more site aliases
+                     {"SiteName",            4},            // Synonym for HostName
                      {"SortSearchArgs",      107},          // Sort search arguments ?
                      {"SpamReferrer",        142},          // Spam referrer
                      {"SwapFirstRecord",     151},          // First record # to start DB swapping
@@ -1096,6 +1104,7 @@ void config_t::get_config(const char *fname)
          case 182: max_urls_kb=str2ul(value); break;
          case 183: log_dir = value; break;
          case 184: classic_kbytes = (tolower(value[0]) == 'y'); break;
+         case 185: site_aliases.add_nlist(value); break;
          case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
          case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;
