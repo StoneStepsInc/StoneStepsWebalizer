@@ -74,8 +74,6 @@ struct  log_struct  {
       log_struct(void);
 
       void reset(void);
-
-      void normalize(u_int log_type);
 };
 
 #endif // LOGREC_H

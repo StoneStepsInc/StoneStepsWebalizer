@@ -342,8 +342,23 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
          break;
    }
 
-   if(retval == PARSE_CODE_OK)
-      log_rec.normalize(config.log_type);
+   // if the record is good, convert all domain names to lower case
+   if(retval == PARSE_CODE_OK) {
+      if(config.log_type == LOG_SQUID) {
+         // convert the scheme and the host name to lower case
+         string_t::const_char_buffer_t host = get_url_host(log_rec.url.c_str(), log_rec.url.length());
+         if(!host.isempty())
+            log_rec.url.tolower(0, host - log_rec.url.c_str() + host.capacity());
+      } else {
+         // convert the scheme and the host name in the referrer to lower case
+         string_t::const_char_buffer_t host = get_url_host(log_rec.refer.c_str(), log_rec.refer.length());
+         if(!host.isempty())
+            log_rec.refer.tolower(0, host - log_rec.refer.c_str() + host.capacity());
+      }
+
+      // convert possible host names and IPv6 addresses to lower case
+      log_rec.hostname.tolower();
+   }
 
    return retval;
 }
@@ -375,7 +390,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
       return PARSE_CODE_IGNORE;
 
    eob = buffer + reclen;                      /* calculate end of buffer     */
-   fmt_logrec(buffer, false, false, false, 0); /* seperate fields with \0's   */
+   fmt_logrec(buffer, false, false, false, 0); /* separate fields with 0's    */
 
    //
    // IP address
@@ -411,8 +426,9 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
 
    if(cp2 <= cp1) return PARSE_CODE_ERROR;
 
-   if(log_rec.ident.assign(cp1, cp2-cp1).length() == 0)
-      log_rec.ident = "-";
+   // assign only if it's not an empty field
+   if(cp2-cp1 && (*cp1 != '-' || *(cp1+1)))
+      log_rec.ident.assign(cp1, cp2-cp1);
 
    cp1 = cpx;
 
@@ -452,14 +468,17 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    if(cp1++ >= eob) return PARSE_CODE_OK;
 
    //
-   // get referrer if present
+   // get the referrer, if present
    //
    cp2 = cp1;
 
    while(*cp2 && cp2 < eob && *cp2 != '?' && *cp2 != '\n') cp2++;
    if (cp2 >= eob) return PARSE_CODE_OK;
    if(*cp1 == '"') {cp1++; if(*cp2 != '?') cp2--;}
-   log_rec.refer.assign(cp1, cp2-cp1);
+
+   // assign only if it's not an empty field
+   if(cp2-cp1 && (*cp1 != '-' || *(cp1+1)))
+      log_rec.refer.assign(cp1, cp2-cp1);
 
    if(*cp2 == '?') {
       cp1 = ++cp2;
@@ -469,15 +488,18 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    }
    while(*cp2 && cp2 < eob) cp2++;
    if(++cp2 >= eob) return PARSE_CODE_OK;
-   cp1 = cp2;
 
    //
    // user agent, if present
    //
+   cp1 = cp2;
    while(*cp2 && cp2 < eob) cp2++;
    if (cp2 >= eob) return PARSE_CODE_OK;
    if(*cp1 == '"') {cp1++; cp2--;}
-   log_rec.agent.assign(cp1, cp2-cp1);
+
+   // assign only if it's not an empty field
+   if(cp2-cp1 && (*cp1 != '-' || *(cp1+1)))
+      log_rec.agent.assign(cp1, cp2-cp1);
 
    return PARSE_CODE_OK;     /* maybe a valid record, return with TRUE */
 }
@@ -665,7 +687,8 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             break;
 
          case eUserName:
-            log_rec.ident.assign(cp1, slen);
+            if(slen && (slen > 1 || *cp1 != '-'))
+               log_rec.ident.assign(cp1, slen);
             break;
 
          case eDateTime:
@@ -702,16 +725,19 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             break;
 
          case eReferrer:
-            if((cp2 = strchr(cp1, '?')) != NULL) {
-               log_rec.refer.assign(cp1, cp2-cp1); cp2++;
-               log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
+            if(slen && (slen > 1 || *cp1 != '-')) {
+               if((cp2 = strchr(cp1, '?')) != NULL) {
+                  log_rec.refer.assign(cp1, cp2-cp1); cp2++;
+                  log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
+               }
+               else
+                  log_rec.refer.assign(cp1, slen);
             }
-            else
-               log_rec.refer.assign(cp1, slen);
             break;
 
          case eUserAgent:
-            log_rec.agent.assign(cp1, slen);
+            if(slen && (slen > 1 || *cp1 != '-'))
+               log_rec.agent.assign(cp1, slen);
             break;
 
          case eUriStem:
@@ -725,7 +751,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             if(*cp1 == '?') {
                cp1++; slen--;
             }
-            if(slen) {
+            if(slen && (slen > 1 || *cp1 != '-')) {
                log_rec.srchargs.assign(cp1, slen);
 
                if(config.conv_url_lower_case)
@@ -979,7 +1005,8 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
             break;
 
          case eUserName:
-            log_rec.ident.assign(cp1, slen);
+            if(slen && (slen > 1 || *cp1 != '-'))
+               log_rec.ident.assign(cp1, slen);
             break;
 
          case eWebsiteName:
@@ -1003,10 +1030,12 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
             break;
 
          case eUriQuery:
-            log_rec.srchargs.assign(cp1, slen);
+            if(slen && (slen > 1 || *cp1 != '-')) {
+               log_rec.srchargs.assign(cp1, slen);
 
-            if(config.conv_url_lower_case)
-               log_rec.srchargs.tolower();
+               if(config.conv_url_lower_case)
+                  log_rec.srchargs.tolower();
+            }
 
             break;
 
@@ -1029,17 +1058,21 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
             break;
 
          case eUserAgent:
-            log_rec.agent.assign(cp1, slen);
-            log_rec.agent.replace('+', ' ');
+            if(slen && (slen > 1 || *cp1 != '-')) {
+               log_rec.agent.assign(cp1, slen);
+               log_rec.agent.replace('+', ' ');
+            }
             break;
 
          case eReferrer:
-            if((cp2 = strchr(cp1, '?')) != NULL) {
-               log_rec.refer.assign(cp1, cp2-cp1); cp2++;
-               log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
+            if(slen && (slen > 1 || *cp1 != '-')) {
+               if((cp2 = strchr(cp1, '?')) != NULL) {
+                  log_rec.refer.assign(cp1, cp2-cp1); cp2++;
+                  log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
+               }
+               else
+                  log_rec.refer.assign(cp1, slen);
             }
-            else
-               log_rec.refer.assign(cp1, slen);
             break;
 
          case eCookie:
@@ -1141,7 +1174,10 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
 
    /* IDENT (authuser) field */
    fldindex++;
-   log_rec.ident.assign(fields[fldindex].field, fields[fldindex].length);
+
+   // assign only if it's not an empty field
+   if(fields[fldindex].length && (fields[fldindex].length > 1 || *fields[fldindex].field != '-'))
+      log_rec.ident.assign(fields[fldindex].field, fields[fldindex].length);
 
    /* we have no interest in the remaining fields */
    return PARSE_CODE_OK;
