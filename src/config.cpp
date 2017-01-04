@@ -624,7 +624,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 
    // convert all site aliases to lower case
    nlist::iterator site_alias_it = site_aliases.begin();
-   while(!site_alias_it.next())
+   while(site_alias_it.next())
       site_alias_it.item()->string.tolower();
 
    // if no site name was supplied, use the reporting server host name
