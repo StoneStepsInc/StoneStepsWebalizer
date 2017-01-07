@@ -14,12 +14,6 @@
 #include "tstring.h"
 #include "tstamp.h"
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <netinet/in.h>                // needed for in_addr structure definition
-#endif
-
 #define MAXURL   4096                  // Max HTTP request/URL field size
 #define MAXMETHOD 16                   // HTTP method
 
