@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <memory>
+#include <locale>
 
 #include "char_buffer.h"
 
@@ -87,6 +88,8 @@ class string_base {
 
       static char_t empty_string[];
 
+      static const std::locale& locale;
+
       static const char_t ex_readonly_string[];
       static const char_t ex_bad_char_buffer[];
       static const char_t ex_bad_hold_string[];
@@ -96,6 +99,9 @@ class string_base {
       void init(void);
 
       void realloc_buffer(size_t len);
+
+      template <char_t convchar(char_t, const std::locale&)> 
+      string_base& transform(size_t start, size_t length);
 
    public:
       static const size_t npos;
@@ -168,8 +174,8 @@ class string_base {
       bool operator >= (const char_t *str) const {return compare(str) <= 0 ? true : false;}
       bool operator <= (const char_t *str) const {return compare(str) <= 0 ? true : false;}
 
-      string_base& tolower(size_t start = 0, size_t end = 0);
-      string_base& toupper(size_t start = 0, size_t end = 0);
+      string_base& tolower(size_t start = 0, size_t length = SIZE_MAX);
+      string_base& toupper(size_t start = 0, size_t length = SIZE_MAX);
 
       string_base& replace(char_t from, char_t to);
 

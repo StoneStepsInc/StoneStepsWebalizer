@@ -11,6 +11,7 @@
 
 #include "tstring.h"
 #include "exception.h"
+#include "unicode.h"
 
 #include <memory.h>
 #include <stdio.h>
@@ -60,6 +61,8 @@ inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wc
 //
 // Static data members
 //
+template <typename char_t> const std::locale& string_base<char_t>::locale = std::locale::classic();
+
 template<typename char_t> char_t string_base<char_t>::empty_string[] = {0};
 template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 
@@ -276,44 +279,47 @@ int string_base<char_t>::compare_ci(const char_t *str) const
    return stricmp_(string, str ? str : empty_string);
 }
 
-template <typename char_t>
-string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t end)
+template <>
+template <char convchar(char, const std::locale&)>
+string_base<char>& string_base<char>::transform(size_t start, size_t length)
 {
-   char_t *cp1, *cp2;
+   char *cp1, *cp2;
+   size_t chsz;
 
    if(holder && !bufsize)
       throw exception_t(0, ex_readonly_string);
 
-   if(end == 0 || end >= slen)
-      end = slen-1;
-
-   if(start >= slen || start > end)
+   if(start >= slen)
       return *this;
 
-   for(cp1 = &string[start], cp2 = &string[end]; cp1 <= cp2; cp1++) 
-      *cp1 = (char) ::tolower(*cp1);
+   // cannot check for (start + length > slen) because length is defaulted to SIZE_MAX
+   if(length - start > slen - start)
+      length = slen - start;
+
+   // walk through UTF-8 characters from start to end
+   for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1 += chsz) { 
+      // TODO: throw instead, once we can guarantee that only UTF-8 strings are in play
+      if((chsz = utf8size(cp1)) == 0)
+         return (*this);
+
+      // only convert one-byte (ASCII) characters
+      if(chsz == 1)
+         *cp1 = convchar(*cp1, locale);
+   }
 
    return *this;
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t end)
+string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t length)
 {
-   char_t *cp1, *cp2;
+   return transform<std::tolower<char_t>>(start, length);
+}
 
-   if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
-
-   if(end == 0 || end >= slen)
-      end = slen-1;
-
-   if(start >= slen || start > end)
-      return *this;
-
-   for(cp1 = &string[start], cp2 = &string[end]; cp1 <= cp2; cp1++) 
-      *cp1 = (char) ::toupper(*cp1);
-
-   return *this;
+template <typename char_t>
+string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t length)
+{
+   return transform<std::toupper<char_t>>(start, length);
 }
 
 template <typename char_t>
