@@ -91,8 +91,6 @@
     </Midl>
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -114,8 +112,6 @@
     </Midl>
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -135,9 +131,7 @@
       <TypeLibraryName>.\Release/webalizer.tlb</TypeLibraryName>
       <HeaderFileName />
     </Midl>
-    <ClCompile>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
+    <ClCompile />
     <Link>
       <OutputFile>$(OutDir)webalizer.exe</OutputFile>
     </Link>
@@ -148,9 +142,7 @@
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
-    <ClCompile>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
+    <ClCompile />
     <Link>
       <OutputFile>$(OutDir)webalizer.exe</OutputFile>
     </Link>
