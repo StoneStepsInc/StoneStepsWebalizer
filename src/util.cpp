@@ -579,13 +579,13 @@ const char *get_domain(const char *str, size_t labelcnt)
 
 string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
 {
-   const char *cp1 = url, *cp2;
+   const char *cp1 = url, *cp2, *atp = NULL, *colp = NULL;
 
    if(!cp1 || !*cp1 || !slen)
       return string_t::const_char_buffer_t();
 
    //
-   // [http[s]:]//www.site.com[:port]/path
+   // [http[s]:]//[user[:password]@]]www.site.com[:port][/path]
    //
    if(slen >= 4 && !strncasecmp(cp1, "http", 4)) {
       cp1 += 4;
@@ -606,10 +606,29 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
    if(slen - (cp1 - url) < 2 || *cp1 != '/' || *(cp1 + 1) != '/')
       return string_t::const_char_buffer_t();
 
+   // skip both slashes
    cp1 += 2;
 
-   // look for either the port number or the first slash or the end of the string
-   for(cp2 = cp1; ((size_t) (cp2 - url) < slen) && *cp2 != '/' && *cp2 != ':'; cp2++);
+   // look for either the first slash or the end of the string
+   for(cp2 = cp1; ((size_t) (cp2 - url) < slen) && *cp2 != '/'; cp2++) {
+      if(*cp2 == ':') {
+         // a colon may start a password or a port
+         colp = cp2;
+      }
+      else if(*cp2 == '@') {
+         atp = cp2;
+         // if we saw a colon, it was a password separator
+         colp = NULL;
+      }
+   }
+
+   // if we saw an at sign, skip the user name and password
+   if(atp)
+      cp1 = atp + 1;
+
+   // a non-NULL colon pointer points is a port delimiter
+   if(colp)
+      cp2 = colp;
 
    // return a host name wrapped into a const character holder buffer
    return string_t::const_char_buffer_t(cp1, cp2 - cp1, true);
