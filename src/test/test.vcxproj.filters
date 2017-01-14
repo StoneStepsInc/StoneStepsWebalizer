@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="obj">
+      <UniqueIdentifier>{6f16ce7d-c732-470d-887f-726cad06b012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="obj\Debug">
+      <UniqueIdentifier>{6e7c76b5-91e3-4d21-81d1-f011a06dea1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="obj\Release">
+      <UniqueIdentifier>{22bbef28-876d-434d-a892-3b7766df2287}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pchtest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ut_caseconv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ut_hostname.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ut_formatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pchtest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\..\build\Win32\Debug\obj\tstring.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\char_buffer.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\char_buffer_stack.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\cp1252_ucs2.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\encoder.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\exception_win.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\formatter.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\p2_buffer_allocator.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\serialize.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\unicode.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\tstamp.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\pch.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\char_buffer.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\cp1252_ucs2.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\encoder.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\exception_win.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\formatter.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\pch.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\serialize.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\tstamp.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\tstring.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\unicode.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\char_buffer_stack.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+  </ItemGroup>
+</Project>
