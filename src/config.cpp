@@ -920,7 +920,7 @@ void config_t::get_config(const char *fname)
          case 2:  log_fnames.push_back(value);break;              // LogFile
          case 3:  rpt_title = value; break;                       // ReportTitle
          case 4:  hname=value; break;                             // HostName
-         case 5:  ignore_hist=(tolower(value[0])=='y'); break;    // IgnoreHist
+         case 5:  ignore_hist=(string_t::tolower(value[0])=='y'); break;    // IgnoreHist
          case 6:  verbose=(value[0]=='n')?2:1; break;             // Quiet
          case 7:  time_me=(value[0]=='n')?0:1; break;             // TimeMe
          case 8:  debug_mode=(value[0]=='n')?0:1; break;          // Debug
@@ -945,13 +945,13 @@ void config_t::get_config(const char *fname)
          case 27: ignored_refs.add_nlist(value); break;           // IgnoreReferrer
          case 28: ignored_agents.add_nlist(value); break;         // IgnoreAgent
          case 29: if (value[0]=='y') verbose=0; break;            // ReallyQuiet
-         case 30: local_time=(tolower(*value)=='y') ? false : true; break; // GMTTime
+         case 30: local_time=(string_t::tolower(*value)=='y') ? false : true; break; // GMTTime
          case 31: group_urls.add_glist(value); break;             // GroupURL
          case 32: group_sites.add_glist(value); break;            // GroupSite
          case 33: group_refs.add_glist(value); break;             // GroupReferrer
          case 34: group_agents.add_glist(value); break;           // GroupAgent
-         case 35: shade_groups=(tolower(value[0])=='y'); break;   // GroupShading
-         case 36: hlite_groups=(tolower(value[0])=='y'); break;   // GroupHighlight
+         case 35: shade_groups=(string_t::tolower(value[0])=='y'); break;   // GroupShading
+         case 36: hlite_groups=(string_t::tolower(value[0])=='y'); break;   // GroupHighlight
          case 37: incremental=(value[0]=='y')?true:false; break;  // Incremental
          case 38: state_fname=value; break;                       // State FName
          case 39: hist_fname=value; break;                        // History FName
@@ -959,37 +959,37 @@ void config_t::get_config(const char *fname)
          case 41: html_pre.add_nlist(value); break;               // HTML Pre code
          case 42: html_body.add_nlist(value); break;              // HTML Body code
          case 43: html_end.add_nlist(value); break;               // HTML End code
-         case 44: use_https=(tolower(value[0])=='y'); break;      // Use https://
+         case 44: use_https=(string_t::tolower(value[0])=='y'); break;      // Use https://
          case 45: include_sites.add_nlist(value); break;          // IncludeSite
          case 46: include_urls.add_nlist(value); break;           // IncludeURL
          case 47: include_refs.add_nlist(value); break;           // IncludeReferrer
          case 48: include_agents.add_nlist(value); break;         // IncludeAgent
          case 49: page_type.add_nlist(value); break;              // PageType
          case 50: visit_timeout=get_interval(value); break;       // VisitTimeout
-         case 51: graph_legend=(tolower(value[0])=='y'); break;   // GraphLegend
+         case 51: graph_legend=(string_t::tolower(value[0])=='y'); break;   // GraphLegend
          case 52: graph_lines = atoi(value); break;               // GraphLines
-         case 53: geoip_city = (tolower(value[0])=='y'); break;   // GeoIPCity
-         case 54: ctry_graph=(tolower(value[0])=='y'); break;     // CountryGraph
+         case 53: geoip_city = (string_t::tolower(value[0])=='y'); break;   // GeoIPCity
+         case 54: ctry_graph=(string_t::tolower(value[0])=='y'); break;     // CountryGraph
          case 55: ntop_sitesK = atoi(value); break;               // TopKSites (KB)
          case 56: ntop_urlsK  = atoi(value); break;               // TopKUrls (KB)
          case 57: ntop_entry  = atoi(value); break;               // Top Entry pgs
          case 58: ntop_exit   = atoi(value); break;               // Top Exit pages
          case 59: ntop_search = atoi(value); break;               // Top Search pgs
-         case 60: log_type=(tolower(value[0])=='s')?
-              LOG_SQUID:(tolower(value[0])=='c')?
-              LOG_CLF: (tolower(value[0])=='a')?
-              LOG_APACHE : (tolower(value[0])=='w')?
+         case 60: log_type=(string_t::tolower(value[0])=='s')?
+              LOG_SQUID:(string_t::tolower(value[0])=='c')?
+              LOG_CLF: (string_t::tolower(value[0])=='a')?
+              LOG_APACHE : (string_t::tolower(value[0])=='w')?
               LOG_W3C : LOG_IIS;
               break;                                              // LogType
          case 61: search_list.add_glist(value, true); break;      // SearchEngine
          case 62: group_domains=atoi(value); break;               // GroupDomains
-         case 63: hide_hosts=(tolower(value[0])=='y'); break;     // HideAllSites
-         case 64: all_hosts=(tolower(value[0])=='y'); break;      // All Sites?
-         case 65: all_urls=(tolower(value[0])=='y'); break;       // All URL's?
-         case 66: all_refs=(tolower(value[0])=='y'); break;       // All Refs
-         case 67: all_agents=(tolower(value[0])=='y'); break;     // All Agents?
-         case 68: all_search=(tolower(value[0])=='y'); break;     // All Srch str
-         case 69: all_users=(tolower(value[0])=='y'); break;      // All Users?
+         case 63: hide_hosts=(string_t::tolower(value[0])=='y'); break;     // HideAllSites
+         case 64: all_hosts=(string_t::tolower(value[0])=='y'); break;      // All Sites?
+         case 65: all_urls=(string_t::tolower(value[0])=='y'); break;       // All URL's?
+         case 66: all_refs=(string_t::tolower(value[0])=='y'); break;       // All Refs
+         case 67: all_agents=(string_t::tolower(value[0])=='y'); break;     // All Agents?
+         case 68: all_search=(string_t::tolower(value[0])=='y'); break;     // All Srch str
+         case 69: all_users=(string_t::tolower(value[0])=='y'); break;      // All Users?
          case 70: ntop_users=atoi(value); break;                  // TopUsers
          case 71: hidden_users.add_nlist(value); break;           // HideUser
          case 72: ignored_users.add_nlist(value); break;          // IgnoreUser
@@ -997,24 +997,24 @@ void config_t::get_config(const char *fname)
          case 74: group_users.add_glist(value); break;            // GroupUser
          case 75: dump_path=value; break;                         // DumpPath
          case 76: dump_ext=value; break;                          // Dumpfile ext
-         case 77: dump_header=(tolower(value[0])=='y'); break;    // DumpHeader?
-         case 78: dump_hosts=(tolower(value[0])=='y'); break;     // DumpSites?
-         case 79: dump_urls=(tolower(value[0])=='y'); break;      // DumpURLs?
-         case 80: dump_refs=(tolower(value[0])=='y'); break;      // DumpReferrers?
-         case 81: dump_agents=(tolower(value[0])=='y'); break;    // DumpAgents?
-         case 82: dump_users=(tolower(value[0])=='y'); break;     // DumpUsers?
-         case 83: dump_search=(tolower(value[0])=='y'); break;    // DumpSrchStrs?
+         case 77: dump_header=(string_t::tolower(value[0])=='y'); break;    // DumpHeader?
+         case 78: dump_hosts=(string_t::tolower(value[0])=='y'); break;     // DumpSites?
+         case 79: dump_urls=(string_t::tolower(value[0])=='y'); break;      // DumpURLs?
+         case 80: dump_refs=(string_t::tolower(value[0])=='y'); break;      // DumpReferrers?
+         case 81: dump_agents=(string_t::tolower(value[0])=='y'); break;    // DumpAgents?
+         case 82: dump_users=(string_t::tolower(value[0])=='y'); break;     // DumpUsers?
+         case 83: dump_search=(string_t::tolower(value[0])=='y'); break;    // DumpSrchStrs?
          case 84: dns_cache=value; break;                         // DNSCache fname
          case 85: dns_children=atoi(value); break;                // DNSChildren
-         case 86: daily_graph=(tolower(value[0])=='y'); break;    // HourlyGraph
-         case 87: daily_stats=(tolower(value[0])=='y'); break;    // HourlyStats
-         case 88: upstream_traffic = (tolower(value[0]) == 'y') ? true : false; break;
-         case 89: conv_url_lower_case = (tolower(value[0]) == 'y') ? true : false; break;
+         case 86: daily_graph=(string_t::tolower(value[0])=='y'); break;    // HourlyGraph
+         case 87: daily_stats=(string_t::tolower(value[0])=='y'); break;    // HourlyStats
+         case 88: upstream_traffic = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 89: conv_url_lower_case = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 90: lang.proc_lang_file(value, verbose); break;
-         case 91: bundle_groups = (tolower(value[0]) == 'y') ? true : false; break;
-         case 92: no_def_index_alias = (tolower(value[0]) == 'y') ? true : false; break;
+         case 91: bundle_groups = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 92: no_def_index_alias = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 93: dns_cache_ttl = atoi(value) * 86400; if(dns_cache_ttl == 0) dns_cache_ttl = DNS_CACHE_TTL; break;
-         case 94: html_ext_lang = (tolower(value[0]) == 'y') ? true : false; break;
+         case 94: html_ext_lang = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 95: apache_log_format = value; break;
          case 96: http_port = (u_short) atoi(value); break;
          case 97: https_port = (u_short) atoi(value); break;
@@ -1024,29 +1024,29 @@ void config_t::get_config(const char *fname)
          case 101: font_file_bold = value; break;
          case 102: font_size_small = atof(value); break;
          case 103: font_size_medium = atof(value); break;
-         case 104: font_anti_aliasing = (tolower(value[0]) == 'y') ? true : false; break;
+         case 104: font_anti_aliasing = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 105: graph_background = value; break;
          case 106: graph_shadow = value; break;
-         case 107: sort_srch_args = (tolower(value[0]) == 'y') ? true : false; break;
+         case 107: sort_srch_args = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 108: incl_srch_args.add_nlist(value);   break;
          case 109: excl_srch_args.add_nlist(value);   break;
-         case 110: html_meta_noindex = (tolower(value[0]) == 'y') ? true : false; break;
-         case 111: graph_true_color = (tolower(value[0]) == 'y') ? true : false; break;
-         case 112: dump_errors = (tolower(value[0]) == 'y') ? true : false; break;
+         case 110: html_meta_noindex = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 111: graph_true_color = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 112: dump_errors = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 113: ntop_errors = atoi(value); break;
-         case 114: all_errors=(tolower(value[0])=='y'); break;    // List all errors?
+         case 114: all_errors=(string_t::tolower(value[0])=='y'); break;    // List all errors?
          case 115: graph_type = value.tolower(); break;
-         case 117: set_enable_phrase_values(tolower(value[0]) == 'y'); break;
+         case 117: set_enable_phrase_values(string_t::tolower(value[0]) == 'y'); break;
          case 118: includes.add_glist(value); break;
          case 119: downloads.add_glist(value); break;
          case 120: download_timeout = get_interval(value); break;
-         case 121: dump_downloads = (tolower(value[0]) == 'y') ? true : false; break;
+         case 121: dump_downloads = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 122: ntop_downloads = atoi(value); break;
-         case 123: all_downloads=(tolower(value[0]) == 'y'); break;
+         case 123: all_downloads=(string_t::tolower(value[0]) == 'y'); break;
          case 124: graph_gridline = value; break;
-         case 125: ignore_referrer_partial = (tolower(value[0]) == 'y') ? true : false; break;
+         case 125: ignore_referrer_partial = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 126: group_url_domains=atoi(value); break;
-         case 127: monthly_totals_stats=(tolower(value[0]) == 'y') ? true : false; break;
+         case 127: monthly_totals_stats=(string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 128: save_path_opt(value, html_js_path); break;
          case 129: graph_border_width = atoi(value); if(graph_border_width > 7) graph_border_width = 7; break;
          case 130: graph_background_alpha = atoi(value); if(graph_background_alpha > 100) graph_background_alpha = 100; break;
@@ -1066,32 +1066,32 @@ void config_t::get_config(const char *fname)
          case 144: db_path = value; break;
          case 145: db_fname = value; break;
          case 146: db_cache_size = get_db_cache_size(value); break;
-         case 147: memory_mode = (tolower(value[0]) == 'y') ? true : false; break;
+         case 147: memory_mode = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 148: db_fname_ext = value; break;
          case 149: db_seq_cache_size = atoi(value); break;
          case 150: db_trickle_rate = atoi(value); break;
          case 151: swap_first_record = atoi(value) * 1000; break;
          case 152: swap_frequency = atoi(value) * 1000; break;
-         case 153: db_direct = (tolower(value[0]) == 'y') ? true : false; break;
-         case 154: db_dsync = (tolower(value[0]) == 'y') ? true : false; break;
+         case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 154: db_dsync = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;
-         case 156: batch = (tolower(value[0]) == 'y') ? true : false; break;
-         case 157: hide_robots = (tolower(value[0]) == 'y') ? true : false; break;
-         case 158: ignore_robots = (tolower(value[0]) == 'y') ? true : false; break;
-         case 159: group_robots = (tolower(value[0]) == 'y') ? true : false; break;
+         case 156: batch = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 157: hide_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 158: ignore_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 159: group_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 160: utc_offset = get_interval(value, 60); break;
          case 161: set_dst_range(&value, NULL); break;
          case 162: set_dst_range(NULL, &value); break;
          case 163: dst_offset = get_interval(value, 60); break;
          case 164: excl_agent_args.add_nlist(value); break;
          case 165: incl_agent_args.add_nlist(value); break;
-         case 166: use_classic_mangler = (tolower(value[0]) == 'y'); break;
+         case 166: use_classic_mangler = (string_t::tolower(value[0]) == 'y'); break;
          case 167: group_agent_args.add_glist(value); break;
          case 168: target_urls.add_nlist(value); break;
-         case 169: target_downloads = (tolower(value[0]) == 'y'); break;
-         case 170: page_entry = (tolower(value[0]) == 'y'); break;
+         case 169: target_downloads = (string_t::tolower(value[0]) == 'y'); break;
+         case 170: page_entry = (string_t::tolower(value[0]) == 'y'); break;
          case 171: add_output_format(value.tolower()); break;
-         case 172: decimal_kbytes = (tolower(value[0]) == 'y'); break;
+         case 172: decimal_kbytes = (string_t::tolower(value[0]) == 'y'); break;
          case 173: max_hosts=str2ul(value); break;
          case 174: max_urls=str2ul(value); break;
          case 175: max_refs=str2ul(value); break;
@@ -1103,11 +1103,11 @@ void config_t::get_config(const char *fname)
          case 181: max_hosts_kb=str2ul(value); break;
          case 182: max_urls_kb=str2ul(value); break;
          case 183: log_dir = value; break;
-         case 184: classic_kbytes = (tolower(value[0]) == 'y'); break;
+         case 184: classic_kbytes = (string_t::tolower(value[0]) == 'y'); break;
          case 185: site_aliases.add_nlist(value); break;
-         case 186: accept_host_names = (tolower(value[0]) == 'y'); break;
+         case 186: accept_host_names = (string_t::tolower(value[0]) == 'y'); break;
          case 187: max_visit_length = get_interval(value); break;
-         case 188: local_utc_offset =  (tolower(value[0]) == 'y'); break;
+         case 188: local_utc_offset =  (string_t::tolower(value[0]) == 'y'); break;
          case 189: js_charts_paths.push_back(value); break;
       }
    }
@@ -1319,10 +1319,10 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'D': dns_cache=vptr; break;                           // DNS Cache filename
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
-          case 'F': log_type=(tolower(vptr[0])=='s')?
-               LOG_SQUID: (tolower(vptr[0])=='c')?
-               LOG_CLF: (tolower(vptr[0])=='a')?
-               LOG_APACHE: (tolower(vptr[0])=='w')?
+          case 'F': log_type=(string_t::tolower(vptr[0])=='s')?
+               LOG_SQUID: (string_t::tolower(vptr[0])=='c')?
+               LOG_CLF: (string_t::tolower(vptr[0])=='a')?
+               LOG_APACHE: (string_t::tolower(vptr[0])=='w')?
                LOG_W3C: LOG_IIS; 
             break;                            // define log type
           case 'g': group_domains=atoi(vptr);break;                  // GroupDomains (0=no)
@@ -1437,7 +1437,7 @@ int config_t::get_interval(const char *value, int div) const
    while(*cp == ' ') cp++;
 
    // process optional suffixes
-   switch (tolower(*cp)) {
+   switch (string_t::tolower(*cp)) {
       case 'h':
          if(div == 3600)
             return time;

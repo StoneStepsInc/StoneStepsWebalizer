@@ -153,6 +153,14 @@ inline size_t utf8size(const char *cp)
 }
 
 //
+// Checks if the character is a valid one-byte UTF-8 character (i.e. control and ASCII)
+//
+inline bool isutf8char(char chr)
+{
+   return in_range<'\x00', '\x7F'>(chr);
+}
+
+//
 // Converts a UCS-2 string to a UTF-8 string. Returns the size of the result, in bytes,
 // not including the null character, if one was inserted. If slen was provided, all slen 
 // characters will be converted, whether they contain a null character or not. 

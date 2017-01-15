@@ -177,6 +177,9 @@ class string_base {
       string_base& tolower(size_t start = 0, size_t length = SIZE_MAX);
       string_base& toupper(size_t start = 0, size_t length = SIZE_MAX);
 
+      static char_t tolower(char_t chr);
+      static char_t toupper(char_t chr);
+
       string_base& replace(char_t from, char_t to);
 
       string_base& truncate(size_t at);

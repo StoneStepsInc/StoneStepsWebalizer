@@ -33,9 +33,9 @@ TEST_CLASS(StringCaseConversion) {
          mstest::Assert::AreEqual("abc123xyz", s1.tolower(), "Convert to lower case all characters in a string"); 
 
          mstest::Assert::AreEqual("aBC123XYz", s1.toupper(1, 7), "Convert to upper case middle characters of a string");
-         mstest::Assert::AreEqual("aBc123xyz", s1.tolower(2), "Convert to lower case all characters after the 2nd");
+         mstest::Assert::AreEqual("aBc123xyz", s1.tolower((size_t) 2), "Convert to lower case all characters after the 2nd");
 
-         mstest::Assert::AreEqual("aBc123xyz", s1.toupper(10), "Convert to upper case starting at past string length (no-op)");
+         mstest::Assert::AreEqual("aBc123xyz", s1.toupper((size_t) 10), "Convert to upper case starting at past string length (no-op)");
          mstest::Assert::AreEqual("aBc123xyz", s1.toupper(10, 32), "Convert to upper case starting at past string length, with length (no-op)");
 
          mstest::Assert::AreEqual("ABC123XYZ", s1.toupper(0, 9), "Convert to upper case all characters from 0th to exactly the string length");
@@ -57,9 +57,9 @@ TEST_CLASS(StringCaseConversion) {
          mstest::Assert::AreEqual(u8"abc\u00A3xyz", s1.tolower(), "Convert to lower case all characters in a string"); 
 
          mstest::Assert::AreEqual(u8"aBC\u00A3XYz", s1.toupper(1, 6), "Convert to upper case middle characters of a string");
-         mstest::Assert::AreEqual(u8"aBc\u00A3xyz", s1.tolower(2), "Convert to lower case all characters after the 2nd");
+         mstest::Assert::AreEqual(u8"aBc\u00A3xyz", s1.tolower((size_t) 2), "Convert to lower case all characters after the 2nd");
 
-         mstest::Assert::AreEqual(u8"aBc\u00A3xyz", s1.toupper(10), "Convert to upper case starting at past string length (no-op)");
+         mstest::Assert::AreEqual(u8"aBc\u00A3xyz", s1.toupper((size_t) 10), "Convert to upper case starting at past string length (no-op)");
          mstest::Assert::AreEqual(u8"aBc\u00A3xyz", s1.toupper(10, 32), "Convert to upper case starting at past string length, with length (no-op)");
 
          mstest::Assert::AreEqual(u8"ABC\u00A3XYZ", s1.toupper(0, 9), "Convert to upper case all characters from 0th to exactly the string length");
@@ -81,9 +81,9 @@ TEST_CLASS(StringCaseConversion) {
          mstest::Assert::AreEqual(u8"abc\u898Bxyz", s1.tolower(), "Convert to lower case all characters in a string"); 
 
          mstest::Assert::AreEqual(u8"aBC\u898BXYz", s1.toupper(1, 7), "Convert to upper case middle characters of a string");
-         mstest::Assert::AreEqual(u8"aBc\u898Bxyz", s1.tolower(2), "Convert to lower case all characters after the 2nd");
+         mstest::Assert::AreEqual(u8"aBc\u898Bxyz", s1.tolower((size_t) 2), "Convert to lower case all characters after the 2nd");
 
-         mstest::Assert::AreEqual(u8"aBc\u898Bxyz", s1.toupper(10), "Convert to upper case starting at past string length (no-op)");
+         mstest::Assert::AreEqual(u8"aBc\u898Bxyz", s1.toupper((size_t) 10), "Convert to upper case starting at past string length (no-op)");
          mstest::Assert::AreEqual(u8"aBc\u898Bxyz", s1.toupper(10, 32), "Convert to upper case starting at past string length, with length (no-op)");
 
          mstest::Assert::AreEqual(u8"ABC\u898BXYZ", s1.toupper(0, 9), "Convert to upper case all characters from 0th to exactly the string length");

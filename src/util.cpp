@@ -591,7 +591,7 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
       cp1 += 4;
 
       if(slen >= 5) {
-         if(tolower(*cp1) == 's')
+         if(string_t::tolower(*cp1) == 's')
             cp1++;
       }
 

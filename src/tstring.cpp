@@ -322,6 +322,20 @@ string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t length)
    return transform<std::toupper<char_t>>(start, length);
 }
 
+template <>
+char string_base<char>::tolower(char chr)
+{
+   // convert only ASCII characters
+   return (isutf8char(chr)) ? std::tolower(chr, locale) : chr;
+}
+
+template <>
+char string_base<char>::toupper(char chr)
+{
+   // convert only ASCII characters
+   return (isutf8char(chr)) ? std::toupper(chr, locale) : chr;
+}
+
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::replace(char_t from, char_t to)
 {

@@ -2074,7 +2074,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
          else if(*cp1 < '\x20') 
             *cp2='_', cp1++;                          // strip invalid chars
          else if(*cp1 >= 'A' && *cp1 <= 'Z')     
-            *cp2 = (char) tolower(*cp1), cp1++;       // lowercase ASCII characters
+            *cp2 = string_t::tolower(*cp1), cp1++;    // lowercase ASCII characters
          else
             *cp2 = *cp1, cp1++;                       // copy other characters
 
