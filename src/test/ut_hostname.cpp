@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   ut_string.cpp
+   ut_hostname.cpp
 */
 #include "pchtest.h"
 
@@ -121,7 +121,7 @@ TEST_CLASS(URLHostNameParser) {
       }
 
        BEGIN_TEST_METHOD_ATTRIBUTE(BadURL)
-         TEST_DESCRIPTION(L"A malfored URL should produce an empty host")
+         TEST_DESCRIPTION(L"A malformed URL should produce an empty host")
          TEST_METHOD_ATTRIBUTE(L"Category", L"URL")
        END_TEST_METHOD_ATTRIBUTE()
 

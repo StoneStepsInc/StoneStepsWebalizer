@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   ut_string.cpp
+   ut_caseconv.cpp
 */
 #include "pchtest.h"
 
