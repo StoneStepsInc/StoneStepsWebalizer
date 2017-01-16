@@ -227,7 +227,7 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
          if(str1[i1] == lastch) {
             // if it does, compare all other characters
             if(!memcmp(&str1[i1-l2+1], str2, l2-1))
-               return &str1[i1];
+               return &str1[i1-l2+1];
          }
          // move the pattern to match the character we just compared
          i1 += (*delta)[(u_char)str1[i1]];
@@ -239,10 +239,10 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
       while(*cptr && l1 >= l2) {
          // try to match the pattern left-to-right
          cp1 = cptr; cp2 = str2;
-         while(*cp1 && *cp2 && *cp1 == *cp2 && cp1 != &cptr[l1]) cp1++, cp2++;
+         while(*cp1 && *cp2 && *cp1 == *cp2 && cp1 != &cptr[l1] && cp2 != &str2[l2]) cp1++, cp2++;
 
          // if at the end of the pattern, return
-         if(*cp2 == 0)
+         if(*cp2 == 0 || cp2 == &str2[l2])
             return cptr;
 
          // move the string pointer and reduce the remaining length
