@@ -32,6 +32,9 @@
     <ClCompile Include="ut_formatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_strsrch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
