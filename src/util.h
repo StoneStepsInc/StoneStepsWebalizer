@@ -146,7 +146,9 @@ uint64_t usec2msec(uint64_t usec);
 bool is_http_redirect(size_t respcode);
 bool is_http_error(size_t respcode);
 
-const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2 = 0, const bmh_delta_table *delta = NULL);
+const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta = NULL);
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta = NULL);
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta = NULL);
 
 size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen);
 

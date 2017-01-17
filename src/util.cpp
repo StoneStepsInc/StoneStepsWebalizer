@@ -205,15 +205,11 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
    const char *cp1, *cp2, *cptr;
    char lastch;
 
-   if(str1 == NULL || *str1 == 0 || str2 == NULL || *str2 == 0)
+   // empty and NULL strings never match
+   if(!str1 || !*str1 || !str2 || !*str2 || !l1 || !l2)
       return NULL;
 
-   if(l1 == 0)
-      l1 = strlen(str1);
-
-   if(l2 == 0)
-      l2 = strlen(str2);
-
+   // return NULL if the sub-string is longer then the string
    if(l2 > l1) 
       return NULL;
 
@@ -251,6 +247,16 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
    }
 
    return NULL;
+}
+
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta)
+{
+   return strstr_ex(str1, str2, l1, str2 ? strlen(str2) : 0, delta);
+}
+
+const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta)
+{
+   return strstr_ex(str1, str2, str1 ? strlen(str1) : 0, str2 ? strlen(str2) : 0, delta);
 }
 
 int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
