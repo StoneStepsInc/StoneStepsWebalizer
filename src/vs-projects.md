@@ -37,7 +37,7 @@ webalizer_debug.props).
 
 This Utility-type project copies 3rd-party dynamic libraries from their build locations 
 outside of this solution into the project output directory to facilitate debugging and
-testing. Each 3rd-party library copylibs is configured as a custom-built item type and 
+testing. Each 3rd-party library in copylibs is configured as a custom-built item type and 
 uses the script in the Custom Build Tool section of the copylibs.props property sheet.
 
 The copylibs project also includes all webalizer*.props property sheets to allow its
@@ -59,7 +59,7 @@ to the solution folder for each item, which could then define the structure of t
 package.
 
 The package project is set up to use a phony target called phony-package-target that is never
-up to date, which forced Visual Studio to build the package project every time, regardless
+up to date, which forces Visual Studio to build the package project every time, regardless
 whether the command was Build or Rebuild. This makes it easier to maintain the list of files,
 without having to list each output file in the target list.
 
