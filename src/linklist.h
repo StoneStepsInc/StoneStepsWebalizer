@@ -167,15 +167,15 @@ class base_list : public list_t<node_t> {
       
       ~base_list(void) {}
 
-      const string_t *isinlist(const string_t& str) const;
+      const string_t *isinlist(const string_t& str, bool nocase = false) const;
 
-      const string_t *isinlistex(const char *str, size_t slen, bool substr) const;
+      const string_t *isinlistex(const char *str, size_t slen, bool substr, bool nocase = false) const;
 
-      const node_t *find_node_ex(const char *str, size_t slen, bool substr) const;
+      const node_t *find_node_ex(const char *str, size_t slen, bool substr, bool nocase = false) const;
 
-      static node_t *find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next = false);
+      static node_t *find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next = false, bool nocase = false);
 
-      static const node_t *find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next = false);
+      static const node_t *find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next = false, bool nocase = false);
 };
 
 // list struct for IGNORE and HIDE items
@@ -236,7 +236,7 @@ class glist : public base_list<gnode_t> {
 
       const string_t *isinglist(const char *str, size_t slen, bool substr) const;
 
-      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL);
+      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL, bool nocase = false);
 
       void set_enable_phrase_values(bool enable) {enable_phrase_values = enable;}
 };

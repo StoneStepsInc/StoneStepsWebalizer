@@ -1994,9 +1994,7 @@ bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
          // legitimate users as spammers, but if this host is not found in the list, 
          // consider it a spammer.
          //
-         // TODO: this search should be done case-insensitively
-         //
-         if(!config.site_aliases.isinlistex(host, host.capacity(), false))
+         if(!config.site_aliases.isinlistex(host, host.capacity(), false, true))
             return true;
       }
    }

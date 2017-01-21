@@ -146,9 +146,9 @@ uint64_t usec2msec(uint64_t usec);
 bool is_http_redirect(size_t respcode);
 bool is_http_error(size_t respcode);
 
-const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta = NULL);
-const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta = NULL);
-const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta = NULL);
+const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta = NULL, bool nocase = false);
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta = NULL, bool nocase = false);
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta = NULL, bool nocase = false);
 
 size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen);
 
@@ -187,16 +187,18 @@ uint64_t elapsed(uint64_t stime, uint64_t etime);
 size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list args);
 size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal);
 
-bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas);
+bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas, bool nocase = false);
 
 template <typename char_t>
 const char_t *strptr(const char_t *str, const char_t *defstr = NULL);
 
 // avoid any locale-specific checks and conversions
-inline bool isalphaex(int ch) {return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z';}
-inline bool isdigitex(int ch) {return ch >= '0' && ch <= '9';}
-inline bool isxdigitex(int ch) {return ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f';}
-inline bool isspaceex(int ch) {return ch == ' ' || ch == '\t';}
-inline bool iswspaceex(int ch) {return isspaceex(ch) || ch == '\r' || ch == '\n';}
+inline bool islowerex(char ch) {return ch >= 'a' && ch <= 'z';}
+inline bool isupperex(char ch) {return ch >= 'A' && ch <= 'Z';}
+inline bool isalphaex(char ch) {return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z';}
+inline bool isdigitex(char ch) {return ch >= '0' && ch <= '9';}
+inline bool isxdigitex(char ch) {return ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f';}
+inline bool isspaceex(char ch) {return ch == ' ' || ch == '\t';}
+inline bool iswspaceex(char ch) {return isspaceex(ch) || ch == '\r' || ch == '\n';}
 
 #endif // UTIL_H

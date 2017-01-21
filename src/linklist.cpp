@@ -26,21 +26,21 @@ static gnode_t *new_gnode(const char *, size_t, const char *, size_t);  /* new g
 //
 
 template <typename node_t>
-const string_t *base_list<node_t>::isinlist(const string_t& str) const
+const string_t *base_list<node_t>::isinlist(const string_t& str, bool nocase) const
 {
    const node_t *lptr;
-   return ((lptr = find_node_ex(str.c_str(), str.length(), true)) != NULL) ? &lptr->string : NULL;
+   return ((lptr = find_node_ex(str.c_str(), str.length(), true, nocase)) != NULL) ? &lptr->string : NULL;
 }
 
 template <typename node_t>
-const string_t *base_list<node_t>::isinlistex(const char *str, size_t slen, bool substr) const
+const string_t *base_list<node_t>::isinlistex(const char *str, size_t slen, bool substr, bool nocase) const
 {
    const node_t *lptr;
-   return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->string : NULL;
+   return ((lptr = find_node_ex(str, slen, substr, nocase)) != NULL) ? &lptr->string : NULL;
 }
 
 template <typename node_t>
-const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool substr) const
+const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool substr, bool nocase) const
 {
    const node_t *lptr;
 
@@ -51,7 +51,7 @@ const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool
       if(!lptr->string)
          continue; 
 
-      if(isinstrex(str, lptr->string, slen, lptr->string.length(), substr, &lptr->delta_table)) 
+      if(isinstrex(str, lptr->string, slen, lptr->string.length(), substr, &lptr->delta_table, nocase)) 
          return lptr;
    }
 
@@ -59,7 +59,7 @@ const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool
 }
 
 template <typename node_t>
-node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next)
+node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next, bool nocase)
 {
    node_t *lptr;
 
@@ -67,7 +67,7 @@ node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t
       return NULL;
 
    while((lptr = iter.next()) != NULL) {
-      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table)) 
+      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase)) 
          return lptr;
 
       if(next)
@@ -78,7 +78,7 @@ node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t
 }
 
 template <typename node_t>
-const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next)
+const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next, bool nocase)
 {
    const node_t *lptr;
 
@@ -86,7 +86,7 @@ const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<
       return NULL;
 
    while((lptr = iter.next()) != NULL) {
-      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table)) 
+      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase)) 
          return lptr;
 
       if(next)
@@ -238,7 +238,7 @@ const string_t *glist::isinglist(const char *str, size_t slen, bool substr) cons
    return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->name : NULL;
 }
 
-void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr)
+void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr, bool nocase)
 {
    size_t slen;
    iterator iter = begin();
@@ -247,7 +247,7 @@ void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr
    slen = (str && *str) ? strlen(str) : 0;
 
    while((nptr = iter.next()) != NULL) {
-      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, &nptr->delta_table)))
+      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, &nptr->delta_table, nocase)))
          cb(nptr->string, ptr);
    }
 }

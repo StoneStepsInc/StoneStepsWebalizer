@@ -28,6 +28,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <algorithm>
 
 static char *url_decode(const char *str, char *out, size_t *slen = NULL);
 
@@ -199,7 +200,7 @@ bool is_http_error(size_t respcode)
 //      abcab       move by delta['b'] = 3
 //         abcab    match
 //
-const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta)
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, const bmh_delta_table *delta, bool nocase)
 {
    size_t i1;
    const char *cp1, *cp2, *cptr;
@@ -219,14 +220,36 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
       i1 = l2 - 1;
 
       while(i1 < l1) {
+         //
+         // For case-insensitive searches we need to check upper and lower character case 
+         // slots in the case-sensitive delta table. Check character case of the selected
+         // string character and pick the case conversion function that changes its case
+         // to the opposite.
+         //
+         char (*flipcase)(char) = nocase ? islowerex(str1[i1]) ? (char (*)(char)) string_t::toupper : (char (*)(char)) string_t::tolower : NULL;
+
          // check if the last character of the pattern matches the string character
-         if(str1[i1] == lastch) {
+         if(str1[i1] == lastch || nocase && flipcase(str1[i1]) == lastch) {
             // if it does, compare all other characters
-            if(!memcmp(&str1[i1-l2+1], str2, l2-1))
-               return &str1[i1-l2+1];
+            if(nocase) {
+               if(!strncasecmp(&str1[i1-l2+1], str2, l2-1))
+                  return &str1[i1-l2+1];
+            } else {
+               if(!memcmp(&str1[i1-l2+1], str2, l2-1))
+                  return &str1[i1-l2+1];
+            }
          }
-         // move the pattern to match the character we just compared
-         i1 += (*delta)[(u_char)str1[i1]];
+
+         //
+         // Use the offset from the delta table to move the pattern along the string, so the 
+         // string character we just compared matches the rightmost same pattern character. 
+         // For case-insensitive searches pick the smallest distance from the delta table to 
+         // move the pattern.
+         //
+         if(nocase)
+            i1 += std::min((*delta)[(u_char)str1[i1]], (*delta)[(u_char)flipcase(str1[i1])]);
+         else
+            i1 += (*delta)[(u_char)str1[i1]];
       }
    }
    else {
@@ -235,7 +258,16 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
       while(*cptr && l1 >= l2) {
          // try to match the pattern left-to-right
          cp1 = cptr; cp2 = str2;
-         while(*cp1 && *cp2 && *cp1 == *cp2 && cp1 != &cptr[l1] && cp2 != &str2[l2]) cp1++, cp2++;
+         while(*cp1 && *cp2 && cp1 != &cptr[l1] && cp2 != &str2[l2]) {
+            if(nocase) {
+               if(string_t::tolower(*cp1) != string_t::tolower(*cp2))
+                  break;
+            } else {
+               if(*cp1 != *cp2)
+                  break;
+            }
+            cp1++; cp2++;
+         }
 
          // if at the end of the pattern, return
          if(*cp2 == 0 || cp2 == &str2[l2])
@@ -249,14 +281,14 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
    return NULL;
 }
 
-const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta)
+const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta, bool nocase)
 {
-   return strstr_ex(str1, str2, l1, str2 ? strlen(str2) : 0, delta);
+   return strstr_ex(str1, str2, l1, str2 ? strlen(str2) : 0, delta, nocase);
 }
 
-const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta)
+const char *strstr_ex(const char *str1, const char *str2, const bmh_delta_table *delta, bool nocase)
 {
-   return strstr_ex(str1, str2, str1 ? strlen(str1) : 0, str2 ? strlen(str2) : 0, delta);
+   return strstr_ex(str1, str2, str1 ? strlen(str1) : 0, str2 ? strlen(str2) : 0, delta, nocase);
 }
 
 int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
@@ -996,58 +1028,62 @@ size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep
 //    cplen - length of the pattern; if non-zero, it *must* indicate the 
 //            exact length of the pattern
 //
-bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas)
+bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas, bool nocase)
 {
    const char *cp1,*cp2,*eos;
 
-   if(str == NULL || *str == 0 || cp == NULL || *cp == 0)
-      return 0;
+   if(!str || !*str || !cp || !*cp || !slen || !cplen)
+      return false;
 
-   if(slen == 0)
-      slen = strlen(str);
    eos = &str[slen];
 
-   if(cplen == 0)
-      cplen = strlen(cp);
-
    cp1 = &cp[cplen-1];
-   if (*cp=='*')
-   {
+
+   if (*cp=='*') {
       if(slen < cplen-1)
          return false;
 
       /* if leading wildcard, start from end */
       cp2 = &str[slen-1];
-      while (cp1 != cp && cp2 != str)
-      {
+      while (cp1 != cp && cp2 != str) {
          if (*cp1 == '*') return true;
-         if (*cp1-- != *cp2--) return false;
+         if(nocase) {
+            if(string_t::tolower(*cp1--) != string_t::tolower(*cp2--)) 
+               return false;
+         } else {
+            if(*cp1-- != *cp2--) 
+               return false;
+         }
       }
       return (cp1 == cp) ? true : false;
    }
-   else
-   {
-      if(substr && *cp1 != '*') {
-         /* if no leading/trailing wildcard, just strstr */
-         return (strstr_ex(str, cp, slen, cplen, deltas) != NULL);
-      }
 
-      if(*cp1 == '*') {
-         if(slen < cplen-1) 
+   if(substr && *cp1 != '*') {
+      /* if no leading/trailing wildcard, just strstr */
+      return (strstr_ex(str, cp, slen, cplen, deltas, nocase) != NULL);
+   }
+
+   if(*cp1 == '*') {
+      if(slen < cplen-1) 
+         return false;
+   }
+   else if(slen < cplen) 
+      return false;
+
+   /* otherwise do normal forward scan */
+   cp1 = cp; cp2 = str;
+   while (cp2 != eos) {
+      if (*cp1=='*') return true;
+      if(nocase) {
+         if(string_t::tolower(*cp1++) != string_t::tolower(*cp2++)) 
+            return false;
+      } else {
+         if (*cp1++!=*cp2++) 
             return false;
       }
-      else if(slen < cplen) 
-         return false;
-
-      /* otherwise do normal forward scan */
-      cp1 = cp; cp2 = str;
-      while (cp2 != eos)
-      {
-         if (*cp1=='*') return true;
-         if (*cp1++!=*cp2++) return false;
-      }
-      return (*cp1 == '*' || (*cp1 == 0 && cp2 == eos)) ? true : false;
    }
+
+   return (*cp1 == '*' || (*cp1 == 0 && cp2 == eos)) ? true : false;
 }
 
 template <typename char_t>
