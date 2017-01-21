@@ -15,10 +15,10 @@
 namespace mstest = Microsoft::VisualStudio::CppUnitTestFramework;
 
 //
-// URLHostNameParser
+// StringSearch
 //
 namespace sswtest {
-TEST_CLASS(URLHostNameParser) {
+TEST_CLASS(StringSearch) {
    public:
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrDeltaSearch)
          TEST_DESCRIPTION(L"Sub-string search with a delta table")
@@ -45,7 +45,7 @@ TEST_CLASS(URLHostNameParser) {
          mstest::Assert::AreEqual(18, strstr_ex(str, "abcdef", str.length(), srch.length(), &dt) - str.c_str(), L"Search is using only a part of the sub-string");
 
          //
-         // Search the start of the string without the sub-seting
+         // Search the start of the string without the sub-string
          //
          mstest::Assert::IsNull(strstr_ex(str, "abcdef", 21, srch.length(), &dt), L"Search a part of the string without the sub-string");
 
@@ -74,7 +74,7 @@ TEST_CLASS(URLHostNameParser) {
          string_t srch("abcd");
 
          //
-         // Look for a sub-string that is present in the string using
+         // Look for a sub-string that is present in the string without a delta table
          //
          mstest::Assert::AreEqual(18, strstr_ex(str, srch, nullptr) - str.c_str(), L"String and sub-string are null-terminated");
          mstest::Assert::AreEqual(18, strstr_ex(str, srch, str.length(), nullptr) - str.c_str(), L"Sub-string is null-terminated");
@@ -82,7 +82,7 @@ TEST_CLASS(URLHostNameParser) {
          mstest::Assert::AreEqual(18, strstr_ex(str, "abcdef", str.length(), srch.length(), nullptr) - str.c_str(), L"Search is using only a part of the sub-string");
 
          //
-         // Search the start of the string without the sub-seting
+         // Search the start of the string without the sub-string
          //
          mstest::Assert::IsNull(strstr_ex(str, "abcdef", 21, srch.length(), nullptr), L"Search a part of the string without the sub-string");
 
