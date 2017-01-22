@@ -818,8 +818,8 @@ bool is_ipv6_address(const char *cp)
          if(dgcnt)
             return false;
 
-         // cannot have more than six digits in a group
-         if(xcnt + dcnt > 6)
+         // cannot have more than four hex digits in a group
+         if(xcnt + dcnt > 4)
             return false;
 
          // cannot have more than seven 16-bit groups with compression or more than eight without
