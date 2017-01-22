@@ -22,7 +22,7 @@ TEST_CLASS(StringSearch) {
    public:
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrDeltaSearch)
          TEST_DESCRIPTION(L"Sub-string search with a delta table")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"String")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"Sub-string Search")
       END_TEST_METHOD_ATTRIBUTE()
 
       TEST_METHOD(SubStrDeltaSearch)
@@ -63,7 +63,7 @@ TEST_CLASS(StringSearch) {
 
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrSearch)
          TEST_DESCRIPTION(L"Sub-string search without a delta table")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"String")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"Sub-string Search")
       END_TEST_METHOD_ATTRIBUTE()
 
       TEST_METHOD(SubStrSearch)
@@ -99,7 +99,7 @@ TEST_CLASS(StringSearch) {
 
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrDeltaSearchNoCase)
          TEST_DESCRIPTION(L"Case-insensitive sub-string search with a delta table")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"String")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"Sub-string Search")
       END_TEST_METHOD_ATTRIBUTE()
 
       TEST_METHOD(SubStrDeltaSearchNoCase)
@@ -140,7 +140,7 @@ TEST_CLASS(StringSearch) {
 
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrSearchNoCase)
          TEST_DESCRIPTION(L"Case-insensitive sub-string search without a delta table")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"String")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"Sub-string Search")
       END_TEST_METHOD_ATTRIBUTE()
 
       TEST_METHOD(SubStrSearchNoCase)
@@ -180,7 +180,7 @@ TEST_CLASS(StringSearch) {
 
       BEGIN_TEST_METHOD_ATTRIBUTE(SubStrEmptyOrNull)
          TEST_DESCRIPTION(L"Match empty or NULL strings and sub-strings")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"String")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"Sub-string Search")
       END_TEST_METHOD_ATTRIBUTE()
 
       TEST_METHOD(SubStrEmptyOrNull)
