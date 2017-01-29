@@ -90,10 +90,11 @@ class string_base {
 
       static const std::locale& locale;
 
-      static const char_t ex_readonly_string[];
-      static const char_t ex_bad_char_buffer[];
-      static const char_t ex_bad_hold_string[];
-      static const char_t ex_holder_resize[];
+      static const char ex_readonly_string[];
+      static const char ex_bad_char_buffer[];
+      static const char ex_bad_hold_string[];
+      static const char ex_holder_resize[];
+      static const char ex_not_implemented[];
 
    private:
       void init(void);

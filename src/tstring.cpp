@@ -66,10 +66,11 @@ template <typename char_t> const std::locale& string_base<char_t>::locale = std:
 template<typename char_t> char_t string_base<char_t>::empty_string[] = {0};
 template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 
-template<typename char_t> const char_t string_base<char_t>::ex_readonly_string[] = "Cannot change a read-only string";
-template<typename char_t> const char_t string_base<char_t>::ex_bad_char_buffer[] = "Bad character buffer";
-template<typename char_t> const char_t string_base<char_t>::ex_bad_hold_string[] = "Bad string to hold";
-template<typename char_t> const char_t string_base<char_t>::ex_holder_resize[] = "Cannot resize a string holder";
+template<typename char_t> const char string_base<char_t>::ex_readonly_string[] = "Cannot change a read-only string";
+template<typename char_t> const char string_base<char_t>::ex_bad_char_buffer[] = "Bad character buffer";
+template<typename char_t> const char string_base<char_t>::ex_bad_hold_string[] = "Bad string to hold";
+template<typename char_t> const char string_base<char_t>::ex_holder_resize[] = "Cannot resize a string holder";
+template<typename char_t> const char string_base<char_t>::ex_not_implemented[] = "Not implemented";
 
 //
 //
