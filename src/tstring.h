@@ -157,6 +157,12 @@ class string_base {
       int compare_ci(const char_t *str, size_t count) const;
       int compare_ci(const char_t *str) const;
 
+      static int compare(const char_t *str1, const char_t *str2);
+      static int compare(const char_t *str1, const char_t *str2, size_t count);
+
+      static int compare_ci(const char_t *str1, const char_t *str2);
+      static int compare_ci(const char_t *str1, const char_t *str2, size_t count);
+
       string_base& operator += (const string_base& str) {return append(str);}
       string_base& operator += (const char_t *str) {return append(str);}
       string_base& operator += (char_t chr) {return append(&chr, 1);}

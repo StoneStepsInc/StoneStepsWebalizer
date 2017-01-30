@@ -22,13 +22,9 @@
 #include <ctype.h>
 
 #ifdef _WIN32
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
 #define vsnwprintf _vsnwprintf
-#define wcsncasecmp _wcsnicmp
-#define wcscasecmp _wcsicmp
 #else
 #define vsnwprintf vswprintf
 #endif
@@ -40,23 +36,39 @@
 inline static size_t strlen_(const char *str) {return (size_t) strlen(str);}
 inline static size_t strlen_(const wchar_t *str) {return (size_t) wcslen(str);}
 
-inline static int strcmp_(const char *s1, const char *s2) {return strcmp(s1, s2);}
-inline static int strcmp_(const wchar_t *s1, const wchar_t *s2) {return wcscmp(s1, s2);}
-
-inline static int stricmp_(const char *s1, const char *s2) {return strcasecmp(s1, s2);}
-inline static int stricmp_(const wchar_t *s1, const wchar_t *s2) {return wcscasecmp(s1, s2);}
-
-inline static int strncmp_(const char *s1, const char *s2, size_t count) {return strncmp(s1, s2, (size_t) count);}
-inline static int strncmp_(const wchar_t *s1, const wchar_t *s2, size_t count) {return wcsncmp(s1, s2, (size_t) count);}
-
-inline static int strnicmp_(const char *s1, const char *s2, size_t count) {return strncasecmp(s1, s2, (size_t) count);}
-inline static int strnicmp_(const wchar_t *s1, const wchar_t *s2, size_t count) {return wcsncasecmp(s1, s2, (size_t) count);}
-
 inline static int vsnprintf_(char *buffer, size_t count, const char *fmt, va_list valist) {return vsnprintf(buffer, (size_t) count, fmt, valist);}
 inline static int vsnprintf_(wchar_t *buffer, size_t count, const wchar_t *fmt, va_list valist) {return vsnwprintf(buffer, (size_t) count, fmt, valist);}
 
 inline static const char *strchr_(const char *str, char chr) {return strchr(str, chr);}
 inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wcschr(str, chr);}
+
+//
+// It is unspecified whether char and wchar_t are signed or unsigned, which may lead
+// to an incorrect character value subtraction result if the high-order bit of one of
+// the characters is set. The template specializations below cast each character type
+// and size to the size-matching unsigned type to avoid sign extension, which would 
+// lead to incorrect subtraction results.
+//
+template <typename char_t, size_t char_size = sizeof(char_t)>
+inline int char_diff(char_t ch1, char_t ch2) = delete;
+
+template <>
+inline int char_diff<char, sizeof(char)>(char ch1, char ch2)
+{
+   return (unsigned char) ch1 - (unsigned char) ch2;
+}
+
+template <>
+inline int char_diff<wchar_t, sizeof(unsigned short)>(wchar_t ch1, wchar_t ch2)
+{
+   return (unsigned short) ch1 - (unsigned short) ch2;
+}
+
+template <>
+inline int char_diff<wchar_t, sizeof(unsigned int)>(wchar_t ch1, wchar_t ch2)
+{
+   return (unsigned int) ch1 - (unsigned int) ch2;
+}
 
 //
 // Static data members
@@ -259,25 +271,111 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len)
 template <typename char_t>
 int string_base<char_t>::compare(const char_t *str, size_t count) const
 {
-   return strncmp_(string, str ? str : empty_string, count);
+   return compare(string, str ? str : empty_string, count);
 }
 
 template <typename char_t>
 int string_base<char_t>::compare(const char_t *str) const
 {
-   return strcmp_(string, str ? str : empty_string);
+   return compare(string, str ? str : empty_string);
 }
 
 template <typename char_t>
 int string_base<char_t>::compare_ci(const char_t *str, size_t count) const
 {
-   return strnicmp_(string, str ? str : empty_string, count);
+   return compare_ci(string, str ? str : empty_string, count);
 }
 
 template <typename char_t>
 int string_base<char_t>::compare_ci(const char_t *str) const
 {
-   return stricmp_(string, str ? str : empty_string);
+   return compare_ci(string, str ? str : empty_string);
+}
+
+template <typename char_t>
+int string_base<char_t>::compare(const char_t *str1, const char_t *str2)
+{
+   return compare(str1, str2, SIZE_MAX);
+}
+
+template <typename char_t>
+int string_base<char_t>::compare(const char_t *str1, const char_t *str2, size_t count)
+{
+   // if either of the strings is NULL, consider it an empty string
+   if(!str1)
+      str1 = empty_string;
+
+   if(!str2)
+      str2 = empty_string;
+
+   //
+   // For case-sensitive simple comparisons (i.e. no normaization, etc) individual code 
+   // units can be compared. Note that 'count' contains the number of code units and not 
+   // characters.
+   //
+   for(const char_t *cp1 = str1, *cp2 = str2; (*cp1 || *cp2) && count; cp1++, cp2++, count--) {
+      // one of the characters may be a null character if on of the strings is shorter
+      if(*cp1 != *cp2)
+         return char_diff(*cp1, *cp2);
+   }
+
+   return 0;
+}
+
+template <typename char_t>
+int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2)
+{
+   return compare_ci(str1, str2, SIZE_MAX);
+}
+
+template <typename char_t>
+int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2, size_t count)
+{
+   throw exception_t(0, ex_not_implemented);
+}
+
+template <>
+int string_base<char>::compare_ci(const char *str1, const char *str2, size_t count)
+{
+   size_t chsz1, chsz2;
+   const char *cp1 = str1, *cp2 = str2;
+
+   // if either of the strings is NULL, consider it an empty string
+   if(!str1)
+      str1 = empty_string;
+
+   if(!str2)
+      str2 = empty_string;
+
+   while((*cp1 || *cp2) && count) {
+      // TODO: throw instead, once we can guarantee that only UTF-8 strings are in play
+      if((chsz1 = utf8size(cp1)) == 0)
+         return -1;
+
+      if((chsz2 = utf8size(cp2)) == 0)
+         return -1;
+
+      if(chsz1 == 1 && chsz2 == 1) {
+         // compare ASCII characters case-insensitively
+         if(string_base<char>::tolower(*cp1) != string_base<char>::tolower(*cp2))
+            return (unsigned char) *cp1 - (unsigned char) *cp2;
+         cp1++, cp2++;
+         count--;
+      }
+      else {
+         // the first byte in a valid UTF-8 sequence is different for all character sizes
+         if(chsz1 != chsz2)
+            return (unsigned char) *cp1 - (unsigned char) *cp2;
+
+         // compare same-size characters byte-by-byte
+         for(; chsz1; cp1++, cp2++, chsz1--, count--) {
+            if(*cp1 != *cp2)
+               return (unsigned char) *cp1 - (unsigned char) *cp2;
+         }
+      }
+   }
+
+   return 0;
 }
 
 template <>
