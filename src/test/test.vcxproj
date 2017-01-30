@@ -144,6 +144,7 @@
     <ClCompile Include="ut_formatter.cpp" />
     <ClCompile Include="ut_hostname.cpp" />
     <ClCompile Include="ut_ipaddr.cpp" />
+    <ClCompile Include="ut_strcmp.cpp" />
     <ClCompile Include="ut_strsrch.cpp" />
   </ItemGroup>
   <ItemGroup>
