@@ -662,4 +662,3 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len)
 // Instantiate the string template (see comments at the end of hashtab.cpp)
 //
 template class string_base<char>;
-

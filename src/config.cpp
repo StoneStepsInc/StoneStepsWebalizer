@@ -642,7 +642,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 
 static int cmp_conf_kw(const void *e1, const void *e2)
 {
-   return strcasecmp(((kwinfo*)e1)->keyword, ((kwinfo*)e2)->keyword);
+   return string_t::compare_ci(((kwinfo*)e1)->keyword, ((kwinfo*)e2)->keyword);
 }
 
 void config_t::get_config(const char *fname)
@@ -1283,25 +1283,25 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
 
       // process long options
       if(longopt) {
-         if(!strncasecmp(nptr, "help", nlen))
+         if(!string_t::compare_ci(nptr, "help", nlen))
             print_options = true;
-         else if(!strncasecmp(nptr, "prepare-report", nlen))
+         else if(!string_t::compare_ci(nptr, "prepare-report", nlen))
             prep_report = true;
-         else if(!strncasecmp(nptr, "last-log", nlen))
+         else if(!string_t::compare_ci(nptr, "last-log", nlen))
             last_log = true;
-         else if(!strncasecmp(nptr, "version", nlen))
+         else if(!string_t::compare_ci(nptr, "version", nlen))
             print_version = true;
-         else if(!strncasecmp(nptr, "warranty", nlen))
+         else if(!string_t::compare_ci(nptr, "warranty", nlen))
             print_warranty = true;
-         else if(!strncasecmp(nptr, "batch", nlen))
+         else if(!string_t::compare_ci(nptr, "batch", nlen))
             batch = true;
-         else if(!strncasecmp(nptr, "compact-db", nlen))
+         else if(!string_t::compare_ci(nptr, "compact-db", nlen))
             compact_db = true;
-         else if(!strncasecmp(nptr, "end-month", nlen))
+         else if(!string_t::compare_ci(nptr, "end-month", nlen))
             end_month = true;
-         else if(!strncasecmp(nptr, "db-info", nlen))
+         else if(!string_t::compare_ci(nptr, "db-info", nlen))
             db_info = true;
-         else if(!strncasecmp(nptr, "pipe-log-names", nlen))
+         else if(!string_t::compare_ci(nptr, "pipe-log-names", nlen))
             pipe_log_names  = true;
          else
             messages.push_back(string_t::_format("WARNING: Unknown option --%s\n", string_t(nptr, nlen).c_str()));

@@ -659,7 +659,7 @@ void webalizer_t::filter_user_agent(string_t& agent)
             continue;
          }
          else if(*cp2 == 'h') {
-            if(!strncasecmp(++cp2, "ttp://", 6)) {
+            if(!string_t::compare_ci(++cp2, "ttp://", 6)) {
                // make it a URL token
                token.argtype = urltok;
                delims = url_delims;

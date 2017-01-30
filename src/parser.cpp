@@ -228,7 +228,7 @@ bool parser_t::parse_clf_tstamp(const char *dt, tstamp_t& ts)
    month = 0;
 
    for(int index = 0; index < 12; index++) {
-      if(strncasecmp(log_month[index], &dt[4], 3) == 0) { 
+      if(string_t::compare_ci(log_month[index], &dt[4], 3) == 0) { 
          month = index + 1; 
          break; 
       }
@@ -629,9 +629,9 @@ bool parser_t::parse_apache_log_format(const char *format)
             if(!param)
                log_rec_fields.push_back(eUnknown);
             else {
-               if(strncasecmp(param, "Referer", 7) == 0)
+               if(string_t::compare_ci(param, "Referer", 7) == 0)
                   log_rec_fields.push_back(eReferrer);
-               else if(strncasecmp(param, "User-Agent", 10) == 0)
+               else if(string_t::compare_ci(param, "User-Agent", 10) == 0)
                   log_rec_fields.push_back(eUserAgent);
                else
                   log_rec_fields.push_back(eUnknown);
@@ -834,7 +834,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
       return PARSE_CODE_ERROR;
    
    // if it's the date directive, store it in case the log doesn't have dates
-   if(!strncasecmp(cptr, "Date:", 5)) {
+   if(!string_t::compare_ci(cptr, "Date:", 5)) {
       cptr += 5;
       while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
       
@@ -845,7 +845,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
       return PARSE_CODE_IGNORE;
    }
 
-   if(strncasecmp(cptr, "Fields:", 7))
+   if(string_t::compare_ci(cptr, "Fields:", 7))
       return PARSE_CODE_IGNORE;
    cptr += 7;
 
@@ -868,7 +868,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 
       // find the field by name
       for(i = 0; i < sizeof(iis_fields)/sizeof(iis_fields[0]); i++) {
-         if(slen == iis_fields[i].nlen && !strncasecmp(cptr, iis_fields[i].name, slen)) {
+         if(slen == iis_fields[i].nlen && !string_t::compare_ci(cptr, iis_fields[i].name, slen)) {
             
             // if we saw any of the bytes fields, remember the index
             switch (iis_fields[i].field_id) {

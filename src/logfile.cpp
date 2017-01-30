@@ -23,7 +23,7 @@ logfile_t::logfile_t(const string_t& fname) : log_fname(fname)
    
    reopen_offset = 0;
 
-   gz_log = log_fname.length() > 3 && !strcasecmp((log_fname.c_str()+log_fname.length()-3), ".gz");
+   gz_log = log_fname.length() > 3 && !string_t::compare_ci((log_fname.c_str()+log_fname.length()-3), ".gz");
 }
 
 logfile_t::~logfile_t(void)

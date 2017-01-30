@@ -1918,7 +1918,7 @@ void html_output_t::top_refs_table()
             dispurl = html_encode(dispurl);
             href = html_encode(rptr->string);
             // make a link only if the scheme is http or https
-            if(!strncasecmp(href, "http", 4) && 
+            if(!string_t::compare_ci(href, "http", 4) && 
                   (*(cp1 = &href[4]) == ':' || (*cp1 == 's' && *++cp1 == ':')) && *++cp1 == '/' && *++cp1 == '/')
                fprintf(out_fp,"<a href=\"%s\">%s</a>", href, dispurl);
             else

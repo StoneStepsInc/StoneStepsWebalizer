@@ -19,11 +19,6 @@
 
 #include "char_buffer.h"
 
-#ifdef _WIN32
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#endif
-
 //
 // string_base
 //

@@ -528,11 +528,11 @@ bool dns_resolver_t::dns_init(void)
          // use it.
          //
          for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
-            if(!strncasecmp(mmdb.metadata.languages.names[i], config.lang.language_code, 2)) {
+            if(!string_t::compare_ci(mmdb.metadata.languages.names[i], config.lang.language_code, 2)) {
                geoip_language.assign(config.lang.language_code, 2);
                break;
             }
-            else if(geoip_language.isempty() && !strncasecmp(mmdb.metadata.languages.names[i], "en", 2))
+            else if(geoip_language.isempty() && !string_t::compare_ci(mmdb.metadata.languages.names[i], "en", 2))
                geoip_language.assign("en", 2);
          }
       }

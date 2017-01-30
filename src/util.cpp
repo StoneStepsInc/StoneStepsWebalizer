@@ -232,7 +232,7 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
          if(str1[i1] == lastch || nocase && flipcase(str1[i1]) == lastch) {
             // if it does, compare all other characters
             if(nocase) {
-               if(!strncasecmp(&str1[i1-l2+1], str2, l2-1))
+               if(!string_t::compare_ci(&str1[i1-l2+1], str2, l2-1))
                   return &str1[i1-l2+1];
             } else {
                if(!memcmp(&str1[i1-l2+1], str2, l2-1))
@@ -625,7 +625,7 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
    //
    // [http[s]:]//[user[:password]@]]www.site.com[:port][/path]
    //
-   if(slen >= 4 && !strncasecmp(cp1, "http", 4)) {
+   if(slen >= 4 && !string_t::compare_ci(cp1, "http", 4)) {
       cp1 += 4;
 
       if(slen >= 5) {
