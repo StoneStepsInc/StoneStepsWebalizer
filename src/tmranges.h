@@ -11,7 +11,7 @@
 #ifndef TMRANGE_H
 #define TMRANGE_H
 
-#include <time.h>
+#include <ctime>
 
 #include "types.h"
 #include "tstamp.h"

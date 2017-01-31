@@ -11,7 +11,7 @@
 
 #include "tstamp.h"
 #include "util.h"
-#include <ctype.h>
+#include <cctype>
 
 tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of)
 {

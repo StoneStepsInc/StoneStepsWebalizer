@@ -11,7 +11,7 @@
 #ifndef TSTAMP_H
 #define TSTAMP_H
 
-#include <time.h>
+#include <ctime>
 
 #include "types.h"
 #include "tstring.h"

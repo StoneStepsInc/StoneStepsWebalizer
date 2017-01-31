@@ -14,7 +14,7 @@
 #include <vector>
 #include <stack>
 #include <map>
-#include <limits.h>
+#include <climits>
 
 // -----------------------------------------------------------------------
 // memory_pool_t

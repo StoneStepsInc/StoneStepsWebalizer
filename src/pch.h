@@ -10,13 +10,13 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <memory.h>
-#include <wchar.h>
-#include <limits.h>
+#include <cwchar>
+#include <climits>
 
 #include "tstring.h"
 #include "tstamp.h"

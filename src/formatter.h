@@ -13,7 +13,7 @@ formatter.h
 #include "tstring.h"
 #include "exception.h"
 
-#include <stddef.h>
+#include <cstddef>
 #include <stack>
 #include <vector>
 

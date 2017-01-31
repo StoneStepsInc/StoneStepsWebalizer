@@ -9,8 +9,8 @@
 */
 #include "pch.h"
 
-#include <stdio.h>
-#include <ctype.h>
+#include <cstdio>
+#include <cctype>
 
 #ifdef _WIN32
 #include <io.h>
@@ -19,7 +19,7 @@
 #include <sys/utsname.h>
 #endif
 
-#include <limits.h>
+#include <climits>
 
 #include "config.h"
 #include "linklist.h"

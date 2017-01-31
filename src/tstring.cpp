@@ -14,12 +14,12 @@
 #include "unicode.h"
 
 #include <memory.h>
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <ctype.h>
+#include <cstdio>
+#include <cstring>
+#include <climits>
+#include <cstdlib>
+#include <cwchar>
+#include <cctype>
 
 #ifdef _WIN32
 #define snprintf _snprintf

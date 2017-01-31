@@ -12,7 +12,7 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "config.h"
 

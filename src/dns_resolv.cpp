@@ -14,11 +14,11 @@
 /* STANDARD INCLUDES                         */
 /*********************************************/
 
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 #include <sys/stat.h>
 #include <errno.h>
 

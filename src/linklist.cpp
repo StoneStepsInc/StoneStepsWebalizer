@@ -10,8 +10,8 @@
 */
 #include "pch.h"
 
-#include <string.h>
-#include <ctype.h>
+#include <cstring>
+#include <cctype>
 
 #include "lang.h"
 #include "linklist.h"

@@ -11,7 +11,7 @@
 #define QUEUE_H
 
 #include "types.h"
-#include <stddef.h>
+#include <cstddef>
 
 // -----------------------------------------------------------------------
 //

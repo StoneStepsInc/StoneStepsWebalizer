@@ -11,7 +11,7 @@
 
 #include <windows.h>
 #include <errno.h>
-#include <stdio.h>
+#include <cstdio>
 #include "utsname.h"
 
 //

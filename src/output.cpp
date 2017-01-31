@@ -13,11 +13,11 @@
 /* STANDARD INCLUDES                         */
 /*********************************************/
 
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 
 #ifndef _WIN32
 #include <unistd.h>                           /* normal stuff             */

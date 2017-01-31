@@ -14,9 +14,9 @@
 /* STANDARD INCLUDES                         */
 /*********************************************/
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#include <cstdlib>
+#include <cstring>
+#include <climits>
 
 #include "util.h"
 #include "hashtab.h"

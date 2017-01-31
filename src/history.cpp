@@ -13,7 +13,7 @@
 #include "history.h"
 #include "lang.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 //
 //

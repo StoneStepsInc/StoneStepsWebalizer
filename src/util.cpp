@@ -10,9 +10,9 @@
 */
 #include "pch.h"
 
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cctype>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <direct.h>

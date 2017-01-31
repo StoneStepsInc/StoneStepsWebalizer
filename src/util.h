@@ -12,9 +12,9 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <stddef.h>
-#include <time.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <ctime>
+#include <cstdlib>
 
 #include "types.h"
 #include "tstring.h"

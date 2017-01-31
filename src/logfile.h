@@ -11,7 +11,7 @@
 #define _LOGFILE_H
 
 #include <zlib.h>
-#include <stdio.h>
+#include <cstdio>
 
 #include "tstring.h"
 #include "types.h"

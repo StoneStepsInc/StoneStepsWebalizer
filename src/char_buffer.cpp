@@ -11,7 +11,7 @@
 
 #include "char_buffer.h"
 #include "exception.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <algorithm>
 
 template <typename char_t>

@@ -12,7 +12,7 @@
 
 #include "unicode.h"
 
-#include <stddef.h>
+#include <cstddef>
 
 //
 // encode_string uses encode_char_t to encode a single vaid UTF-8 character.
