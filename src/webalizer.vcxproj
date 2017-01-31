@@ -163,6 +163,7 @@
     <ClCompile Include="char_buffer.cpp" />
     <ClCompile Include="char_buffer_stack.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="cp1252.cpp" />
     <ClCompile Include="cp1252_ucs2.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="datanode_tmpl.cpp">

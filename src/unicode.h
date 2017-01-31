@@ -11,7 +11,7 @@
 #ifndef UNICODE_H
 #define UNICODE_H
 
-#include "tstring.h"
+#include <cstddef>
 
 //
 // Converts the UCS-2 character to a UTF-8 sequence and returns the number of bytes 
@@ -173,14 +173,5 @@ size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 //
 bool isutf8str(const char *str);
 bool isutf8str(const char *str, size_t slen);
-
-//
-// Converts Windows 1252 code page string to a UTF-8 string. Returns out if conversion
-// was successful or NULL otherwise. The third function always returns out, but clears
-// it if the conversion failed.
-//
-char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen = NULL);
-char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *olen = NULL);
-const string_t& cp1252utf8(const string_t& str, string_t& out);
 
 #endif // UNICODE_H
