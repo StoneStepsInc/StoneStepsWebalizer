@@ -3,18 +3,14 @@
 //
 // Windows-1252 to UCS2 translation table
 //
-// HTML5 refers the W3C's character encoding standard, which defines that documents 
+// HTML5 refers to the W3C's character encoding standard, which defines that documents 
 // labeled as Latin1 (ISO-8859-1) must be parsed as Windows code page 1252. The main 
 // difference between the two is that CP-1252 uses the space occupied by control 
 // characters in Latin1 to hold some Windows characters, such as smart quotes, etc.
 //
-// C++ 2003 does not allow characters from the basic character set appear in a 
-// universal character name. For example, \u0041 or L'\u0041' are both considered 
-// invalid because they both correspond to the character A from the basic character 
-// set. C++ 2011 clarifies that only characters outside quoted characters or quoted 
-// strings should be considered invalid, but some compilers still generate syntax 
-// errors for universal character names like L'\u0041'. Use hexadecimal character 
-// literals instead.
+// Use hexadecimal character literals to make sure that UCS2 values are not converted
+// to some alternative execution character set (e.g. if GCC's -fwide-exec-charset is 
+// used).
 //
 // The Unicode replacement character (U+FFFD) is used for Windows-1252 code points 
 // that are not defined in CP1252.
