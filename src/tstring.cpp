@@ -378,6 +378,41 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
    return 0;
 }
 
+//
+// VC++ 2015 has some strange bug that reports this method defined outside of this 
+// class as if it doesn't match the declaration. When the method is defined inside
+// the class, no error is generated. The bug seems to relate to whether any string_t 
+// specializations were seen before the out-of-class definition. Moving this method 
+// definition above an unrelated specialized method in the source file makes the 
+// compile error go away in some cases, but it comes back if string_t is used in some 
+// other unrelated include file. Skip this method definition for the time being and
+// use only the char specializtion that follows this method.
+//
+#if 0
+template <typename char_t>
+template <char_t convchar(char_t, const std::locale&)>
+string_base<char_t>& string_base<char_t>::transform(size_t start, size_t length)
+{
+   char_t *cp1, *cp2;
+
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   if(start >= slen)
+      return *this;
+
+   // cannot check for (start + length > slen) because length is defaulted to SIZE_MAX
+   if(length - start > slen - start)
+      length = slen - start;
+
+   // walk through characters from start to end
+   for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1 += chsz)
+      *cp1 = convchar(*cp1, locale);
+
+   return *this;
+}
+#endif
+
 template <>
 template <char convchar(char, const std::locale&)>
 string_base<char>& string_base<char>::transform(size_t start, size_t length)
