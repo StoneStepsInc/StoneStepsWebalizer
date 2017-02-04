@@ -2089,12 +2089,12 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
       // trim trailing spaces
       cp3 = buffer;                                       
-      while(cp2 > cp3 && isspaceex(*(cp2-1))) cp2--;
+      while(cp2 > cp3 && string_t::isspace(*(cp2-1))) cp2--;
       *cp2 = 0;
 
       // trim leading spaces
       cp1 = buffer;
-      while(*cp1 && isspaceex(*cp1)) cp1++;           
+      while(*cp1 && string_t::isspace(*cp1)) cp1++;           
 
       // hold on to the query length
       slen = cp2 - cp1;

@@ -20,6 +20,14 @@
 #include "char_buffer.h"
 
 //
+// This macro forms a member tempate function call with all supported character types,
+// so the right one for the current string template character type can be returned by
+// the character literal selection function. This macro is undefined at the end of this
+// file because it can only be used within the string_base class definition.
+//
+#define CHLT(c) select_char_literal<char_t>(c, L ## c)
+
+//
 // string_base
 //
 // 1. string_base may be used to manage three kinds of strings:
@@ -98,6 +106,22 @@ class string_base {
 
       template <char_t convchar(char_t, const std::locale&)> 
       string_base& transform(size_t start, size_t length);
+
+      //
+      // This member function is intended to be used with CHLT macro that generates a call 
+      // of this function with all types of character literals supported by string_base, so 
+      // each function specialization can select the matching parameter type and return its 
+      // value. This, in turn, allows us to use character literals that are compatible with
+      // the string character type without casting.
+      //
+      template <typename char_t>
+      char_t select_char_literal(char ch, wchar_t wch) = delete;
+
+      template <>
+      static inline char select_char_literal(char ch, wchar_t wch) {return ch;}
+
+      template <>
+      static inline wchar_t select_char_literal(char ch, wchar_t wch) {return wch;}
 
    public:
       static const size_t npos;
@@ -182,6 +206,20 @@ class string_base {
       static char_t tolower(char_t chr);
       static char_t toupper(char_t chr);
 
+      //
+      // These functions avoid any locale-specific checks and conversions that may be
+      // done by the equivalent standard library functions and instead evaluate only 
+      // ASCII characters, which is sufficient for the purposes of this project.
+      //
+      static inline bool islower(char_t ch) {return ch >= CHLT('a') && ch <= CHLT('z');}
+      static inline bool isupper(char_t ch) {return ch >= CHLT('A') && ch <= CHLT('Z');}
+      static inline bool isalpha(char_t ch) {return ch >= CHLT('A') && ch <= CHLT('Z') || ch >= CHLT('a') && ch <= CHLT('z');}
+      static inline bool isdigit(char_t ch) {return ch >= CHLT('0') && ch <= '9';}
+      static inline bool isalnum(char_t ch) {return isalpha(ch) || isdigit(ch);}
+      static inline bool isxdigit(char_t ch) {return ch >= CHLT('0') && ch <= CHLT('9') || ch >= CHLT('A') && ch <= CHLT('F') || ch >= CHLT('a') && ch <= CHLT('f');}
+      static inline bool isspace(char_t ch) {return ch == CHLT(' ') || ch == CHLT('\t');}
+      static inline bool iswspace(char_t ch) {return isspace(ch) || ch == CHLT('\r') || ch == CHLT('\n');}
+
       string_base& replace(char_t from, char_t to);
 
       string_base& truncate(size_t at);
@@ -202,6 +240,11 @@ class string_base {
       static string_base<char_t> hold(const char_t *str);
       static string_base<char_t> hold(const char_t *str, size_t len);
 };
+
+//
+// Undefine this macro because it can only be used within string_base
+//
+#undef CHLT
 
 //
 //

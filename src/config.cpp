@@ -878,25 +878,25 @@ void config_t::get_config(const char *fname)
    while ( (fgets(buffer,BUFSIZE,fp)) != NULL)
    {
       /* skip comments and blank lines */
-      if(*buffer =='#' || iswspaceex(*buffer) ) continue;
+      if(*buffer =='#' || string_t::iswspace(*buffer) ) continue;
 
       // skip to the first non-alphanum character
       cp1 = cp2 = buffer;
-      while(isalnum(*cp2)) cp2++;
+      while(string_t::isalnum(*cp2)) cp2++;
       
       // hold onto the keyword
       keyword.assign(cp1, cp2-cp1);
 
       // skip leading whitespace before the value
       cp1 = cp2;
-      while(*cp1 != '\n' && *cp1 != '\0' && isspaceex(*cp1)) cp1++;
+      while(*cp1 != '\n' && *cp1 != '\0' && string_t::isspace(*cp1)) cp1++;
       
       // find the end of the line
       cp2 = cp1;
       while(*cp2 != '\n' && *cp2 != '\0') cp2++;
       
       // move backwards until we find a non-whitespace character
-      while(cp2 != cp1 && iswspaceex(*cp2)) cp2--;
+      while(cp2 != cp1 && string_t::iswspace(*cp2)) cp2--;
       if(*cp2 != 0 && *cp2 != '\n') cp2++;
 
       // ignore empty values

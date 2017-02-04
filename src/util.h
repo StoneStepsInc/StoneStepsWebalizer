@@ -192,13 +192,4 @@ bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool 
 template <typename char_t>
 const char_t *strptr(const char_t *str, const char_t *defstr = NULL);
 
-// avoid any locale-specific checks and conversions
-inline bool islowerex(char ch) {return ch >= 'a' && ch <= 'z';}
-inline bool isupperex(char ch) {return ch >= 'A' && ch <= 'Z';}
-inline bool isalphaex(char ch) {return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z';}
-inline bool isdigitex(char ch) {return ch >= '0' && ch <= '9';}
-inline bool isxdigitex(char ch) {return ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f';}
-inline bool isspaceex(char ch) {return ch == ' ' || ch == '\t';}
-inline bool iswspaceex(char ch) {return isspaceex(ch) || ch == '\r' || ch == '\n';}
-
 #endif // UTIL_H

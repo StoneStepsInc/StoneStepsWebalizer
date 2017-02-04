@@ -191,14 +191,14 @@ bool glist::add_glist(const char *str, bool srcheng)
    if(enable_phrase_values)
       while(*cp2 && *cp2 != '\t') cp2++;
    else
-      while(*cp2 && !isspaceex(*cp2)) cp2++;
+      while(*cp2 && !string_t::isspace(*cp2)) cp2++;
 
    // trim trailing spaces
    vlen = cp2 - cp1;
-   while(isspaceex(cp1[vlen-1])) vlen--;
+   while(string_t::isspace(cp1[vlen-1])) vlen--;
 
    // find the first character of the name
-   while(*cp2 && (isspaceex(*cp2))) cp2++;
+   while(*cp2 && (string_t::isspace(*cp2))) cp2++;
 
    // if a search engine entry, locate the entry qualifier
    if(srcheng && (cp3 = strchr(cp2, '=')) != NULL) {

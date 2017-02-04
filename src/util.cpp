@@ -226,7 +226,7 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
          // string character and pick the case conversion function that changes its case
          // to the opposite.
          //
-         char (*flipcase)(char) = nocase ? islowerex(str1[i1]) ? (char (*)(char)) string_t::toupper : (char (*)(char)) string_t::tolower : NULL;
+         char (*flipcase)(char) = nocase ? string_t::islower(str1[i1]) ? (char (*)(char)) string_t::toupper : (char (*)(char)) string_t::tolower : NULL;
 
          // check if the last character of the pattern matches the string character
          if(str1[i1] == lastch || nocase && flipcase(str1[i1]) == lastch) {
@@ -358,7 +358,7 @@ char *url_decode(const char *str, char *out, size_t *slen)
       if (*cp1=='%')                            /* Found an escape?        */
       {
          cp1++;
-         if(isxdigitex(*cp1) && isxdigitex(*(cp1+1)))/* ensure a hex digit      */
+         if(string_t::isxdigit(*cp1) && string_t::isxdigit(*(cp1+1)))/* ensure a hex digit      */
             cp1 = from_hex(cp1, cp2++);
          else 
             *cp2++='%';
@@ -478,12 +478,12 @@ uint64_t str2ul(const char *str, const char **eptr, size_t len)
    if(eptr)
       *eptr = NULL;
 
-   if(str == NULL || *str == 0 || len == 0 || !isdigitex(*cp))
+   if(str == NULL || *str == 0 || len == 0 || !string_t::isdigit(*cp))
       return 0;
 
    value = *cp++ - '0';
 
-   while(*cp && (size_t) (cp - str) < len && isdigitex(*cp)) {
+   while(*cp && (size_t) (cp - str) < len && string_t::isdigit(*cp)) {
       value *= 10;
       value += *cp++ - '0';
    }
@@ -604,7 +604,7 @@ const char *get_domain(const char *str, size_t labelcnt)
 
    cp = &str[strlen(str)-1];
 
-   if (isdigitex(*cp)) return NULL;   /* ignore IP addresses */
+   if (string_t::isdigit(*cp)) return NULL;   /* ignore IP addresses */
 
    while(cp != str) {
       if(*cp == '.')
@@ -688,7 +688,7 @@ string_t& get_url_host(const char *url, string_t& domain)
       return domain;
 
    // ignore IP addresses
-   if(isdigitex(host[0])) 
+   if(string_t::isdigit(host[0])) 
       return domain;
 
    domain.assign(host, host.capacity());
@@ -766,7 +766,7 @@ bool is_ipv4_address(const char *cp)
       return false;
 
    for(gcnt = 0, dcnt = 0; *cp; cp++) {
-      if(isdigitex(*cp)) {
+      if(string_t::isdigit(*cp)) {
          // if it's the first digit in the group, increment group count
          if(!dcnt) gcnt++;
          
@@ -806,10 +806,10 @@ bool is_ipv6_address(const char *cp)
    //
    do {
       // check for decimal digits first, so hex check only counts A-F
-      if(*cp && isdigitex(*cp)) {
+      if(*cp && string_t::isdigit(*cp)) {
          dcnt++;
       }
-      else if(*cp && isxdigitex(*cp)) {
+      else if(*cp && string_t::isxdigit(*cp)) {
          xcnt++;
       }
       // check if it's a colon or the end of an all-colon IPv6 address
