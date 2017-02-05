@@ -331,7 +331,24 @@ int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2)
 template <typename char_t>
 int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2, size_t count)
 {
-   throw exception_t(0, ex_not_implemented);
+   size_t chsz1, chsz2;
+   const char *cp1 = str1, *cp2 = str2;
+
+   // if either of the strings is NULL, consider it an empty string
+   if(!str1)
+      str1 = empty_string;
+
+   if(!str2)
+      str2 = empty_string;
+
+   while((*cp1 || *cp2) && count) {
+      if(tolower(*cp1) != tolower(*cp2))
+         return char_diff(tolower(*cp1), tolower(*cp2));
+      cp1++, cp2++;
+      count--;
+   }
+
+   return 0;
 }
 
 template <>
@@ -468,6 +485,18 @@ char string_base<char>::toupper(char chr)
 {
    // convert only ASCII characters
    return (isutf8char(chr)) ? std::toupper(chr, locale) : chr;
+}
+
+template <typename char_t>
+char_t string_base<char_t>::tolower(char_t chr)
+{
+   return std::tolower(chr, locale);
+}
+
+template <typename char_t>
+char_t string_base<char_t>::toupper(char_t chr)
+{
+   return std::toupper(chr, locale);
 }
 
 template <typename char_t>
