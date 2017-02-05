@@ -407,7 +407,7 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
 //
 #if 0
 template <typename char_t>
-template <char_t convchar(char_t, const std::locale&)>
+template <char_t convchar(char_t)>
 string_base<char_t>& string_base<char_t>::transform(size_t start, size_t length)
 {
    char_t *cp1, *cp2;
@@ -424,14 +424,14 @@ string_base<char_t>& string_base<char_t>::transform(size_t start, size_t length)
 
    // walk through characters from start to end
    for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1 += chsz)
-      *cp1 = convchar(*cp1, locale);
+      *cp1 = convchar(*cp1);
 
    return *this;
 }
 #endif
 
 template <>
-template <char convchar(char, const std::locale&)>
+template <char convchar(char)>
 string_base<char>& string_base<char>::transform(size_t start, size_t length)
 {
    char *cp1, *cp2;
@@ -455,7 +455,7 @@ string_base<char>& string_base<char>::transform(size_t start, size_t length)
 
       // only convert one-byte (ASCII) characters
       if(chsz == 1)
-         *cp1 = convchar(*cp1, locale);
+         *cp1 = convchar(*cp1);
    }
 
    return *this;
@@ -464,13 +464,13 @@ string_base<char>& string_base<char>::transform(size_t start, size_t length)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t length)
 {
-   return transform<std::tolower<char_t>>(start, length);
+   return transform<tolower>(start, length);
 }
 
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t length)
 {
-   return transform<std::toupper<char_t>>(start, length);
+   return transform<toupper>(start, length);
 }
 
 template <>

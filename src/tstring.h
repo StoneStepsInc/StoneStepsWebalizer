@@ -104,7 +104,7 @@ class string_base {
 
       void realloc_buffer(size_t len);
 
-      template <char_t convchar(char_t, const std::locale&)> 
+      template <char_t convchar(char_t)> 
       string_base& transform(size_t start, size_t length);
 
       //
