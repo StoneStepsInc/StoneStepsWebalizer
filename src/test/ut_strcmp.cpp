@@ -133,5 +133,33 @@ TEST_CLASS(StringCompare) {
          mstest::Assert::IsTrue(string_t::compare_ci(u8"abc\u00c3xyz", u8"abc\u898Bxyz", 6) < 0, L"A string with a Latin character is less than one with a Kanji character");
          mstest::Assert::IsTrue(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u00c3xyz", 6) > 0, L"A string with with a Kanji character is greater than one with a Latin character");
       }
+
+      BEGIN_TEST_METHOD_ATTRIBUTE(CompareStringsSortOrder)
+         TEST_DESCRIPTION(L"Case-sensitive string sort order")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"String Comparison")
+      END_TEST_METHOD_ATTRIBUTE()
+
+      TEST_METHOD(CompareStringsSortOrder)
+      {
+         mstest::Assert::IsTrue(string_t::compare("A", "X") < string_t::compare("M", "X"), L"'A' is further from 'X' than 'M' is from 'X'");
+         mstest::Assert::IsTrue(string_t::compare("X", "A") > string_t::compare("X", "M"), L"'X' is further from 'A' than 'X' is from 'M'");
+
+         mstest::Assert::IsTrue(string_t::compare("A", "x") < string_t::compare("M", "x"), L"'A' is further from 'x' than 'M' is from 'x'");
+         mstest::Assert::IsTrue(string_t::compare("x", "A") > string_t::compare("x", "M"), L"'x' is further from 'A' than 'x' is from 'M'");
+      }
+
+      BEGIN_TEST_METHOD_ATTRIBUTE(CompareStringsSortOrderNoCase)
+         TEST_DESCRIPTION(L"Case-insensitive string sort order")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"String Comparison")
+      END_TEST_METHOD_ATTRIBUTE()
+
+      TEST_METHOD(CompareStringsSortOrderNoCase)
+      {
+         mstest::Assert::IsTrue(string_t::compare_ci("A", "X") < string_t::compare_ci("M", "X"), L"'A' is further from 'X' than 'M' is from 'X'");
+         mstest::Assert::IsTrue(string_t::compare_ci("X", "A") > string_t::compare_ci("X", "M"), L"'X' is further from 'A' than 'X' is from 'M'");
+
+         mstest::Assert::IsTrue(string_t::compare_ci("A", "X") == string_t::compare_ci("A", "x"), L"'A' is as far from 'X' as is 'a' from 'x'");
+         mstest::Assert::IsTrue(string_t::compare_ci("X", "A") == string_t::compare_ci("x", "A"), L"'X' is as far from 'A' as is 'x' from 'a'");
+      }
 };
 }

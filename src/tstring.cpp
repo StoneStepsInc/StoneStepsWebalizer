@@ -357,8 +357,8 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
 
       if(chsz1 == 1 && chsz2 == 1) {
          // compare ASCII characters case-insensitively
-         if(string_base<char>::tolower(*cp1) != string_base<char>::tolower(*cp2))
-            return (unsigned char) *cp1 - (unsigned char) *cp2;
+         if(tolower(*cp1) != tolower(*cp2))
+            return char_diff(tolower(*cp1), tolower(*cp2));
          cp1++, cp2++;
          count--;
       }
