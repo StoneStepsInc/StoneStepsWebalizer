@@ -396,14 +396,14 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
 }
 
 //
-// VC++ 2015 has some strange bug that reports this method defined outside of this 
-// class as if it doesn't match the declaration. When the method is defined inside
-// the class, no error is generated. The bug seems to relate to whether any string_t 
-// specializations were seen before the out-of-class definition. Moving this method 
-// definition above an unrelated specialized method in the source file makes the 
-// compile error go away in some cases, but it comes back if string_t is used in some 
-// other unrelated include file. Skip this method definition for the time being and
-// use only the char specializtion that follows this method.
+// VC++ 2015 has some strange bug that reports this method as if it doesn't match 
+// the declaration if it is defined outside of its class. When the method is defined 
+// inside its class, no error is generated. The bug seems to depend on whether any 
+// string_t specializations were seen before the out-of-class definition. Moving 
+// this method definition above some unrelated specialized method in this source file 
+// makes the compile error go away in some cases, but it comes back if string_t is 
+// used in some other unrelated include file. Skip this method definition for the 
+// time being and use only the char specializtion that follows this method.
 //
 #if 0
 template <typename char_t>

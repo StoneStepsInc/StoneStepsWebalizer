@@ -104,8 +104,13 @@ class string_base {
 
       void realloc_buffer(size_t len);
 
+      //
+      // Unless this method is either defined right here or declared as deleted, VC++ 2015
+      // reports its declaration below this class or a definitin in tstring.cpp as if it
+      // doesn't match its declaration. 
+      //
       template <char_t convchar(char_t)> 
-      string_base& transform(size_t start, size_t length);
+      string_base& transform(size_t start, size_t length) = delete;
 
       //
       // This member function is intended to be used with CHLT macro that generates a call 
@@ -114,14 +119,8 @@ class string_base {
       // value. This, in turn, allows us to use character literals that are compatible with
       // the string character type without casting.
       //
-      template <typename char_t>
-      char_t select_char_literal(char ch, wchar_t wch) = delete;
-
-      template <>
-      static inline char select_char_literal(char ch, wchar_t wch) {return ch;}
-
-      template <>
-      static inline wchar_t select_char_literal(char ch, wchar_t wch) {return wch;}
+      template <typename slct_char_t>
+      static slct_char_t select_char_literal(char ch, wchar_t wch) = delete;
 
    public:
       static const size_t npos;
@@ -240,6 +239,28 @@ class string_base {
       static string_base<char_t> hold(const char_t *str);
       static string_base<char_t> hold(const char_t *str, size_t len);
 };
+
+//
+// Declare explicit specializations for methods that require special handling of
+// UTF-8 characters
+//
+template <> 
+template <>
+inline char string_base<char>::select_char_literal(char ch, wchar_t wch) {return ch;}
+
+template <> 
+template <>
+inline wchar_t string_base<wchar_t>::select_char_literal(char ch, wchar_t wch) {return wch;}
+
+template <> 
+char string_base<char>::tolower(char chr);
+
+template <> 
+char string_base<char>::toupper(char chr);
+
+template <> 
+template <char convchar(char)>
+string_base<char>& string_base<char>::transform(size_t start, size_t length);
 
 //
 // Undefine this macro because it can only be used within string_base
