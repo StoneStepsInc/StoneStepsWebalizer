@@ -30,6 +30,13 @@
 #endif
 
 //
+// Define the same macro as was used in tstring.h, so we don't make this rather
+// short macro name linger throughout the project and possibly cause any conflicts.
+// See the same macro in tstring.h for more details.
+//
+#define CHLT(c) select_char_literal<char_t>(c, L ## c)
+
+//
 // A set of overloaded functions, so we can use the same name for equivalent 
 // narrow-character and wide-character functions.
 //
@@ -721,3 +728,4 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len)
 // Instantiate the string template (see comments at the end of hashtab.cpp)
 //
 template class string_base<char>;
+
