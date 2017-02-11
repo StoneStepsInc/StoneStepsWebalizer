@@ -395,20 +395,8 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
    return 0;
 }
 
-//
-// VC++ 2015 has some strange bug that reports this method as if it doesn't match 
-// the declaration if it is defined outside of its class. When the method is defined 
-// inside its class, no error is generated. The bug seems to depend on whether any 
-// string_t specializations were seen before the out-of-class definition. Moving 
-// this method definition above some unrelated specialized method in this source file 
-// makes the compile error go away in some cases, but it comes back if string_t is 
-// used in some other unrelated include file. Skip this method definition for the 
-// time being and use only the char specializtion that follows this method.
-//
-#if 0
 template <typename char_t>
-template <char_t convchar(char_t)>
-string_base<char_t>& string_base<char_t>::transform(size_t start, size_t length)
+string_base<char_t>& string_base<char_t>::transform(char_t (*convchar)(char_t), size_t start, size_t length)
 {
    char_t *cp1, *cp2;
 
@@ -423,16 +411,14 @@ string_base<char_t>& string_base<char_t>::transform(size_t start, size_t length)
       length = slen - start;
 
    // walk through characters from start to end
-   for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1 += chsz)
+   for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1++)
       *cp1 = convchar(*cp1);
 
    return *this;
 }
-#endif
 
 template <>
-template <char convchar(char)>
-string_base<char>& string_base<char>::transform(size_t start, size_t length)
+string_base<char>& string_base<char>::transform(char (*convchar)(char), size_t start, size_t length)
 {
    char *cp1, *cp2;
    size_t chsz;
@@ -464,13 +450,13 @@ string_base<char>& string_base<char>::transform(size_t start, size_t length)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::tolower(size_t start, size_t length)
 {
-   return transform<tolower>(start, length);
+   return transform(tolower, start, length);
 }
 
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t length)
 {
-   return transform<toupper>(start, length);
+   return transform(toupper, start, length);
 }
 
 template <>
