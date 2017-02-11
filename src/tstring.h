@@ -15,7 +15,6 @@
 #include <cstring>
 #include <cstdio>
 #include <memory>
-#include <locale>
 
 #include "char_buffer.h"
 
@@ -54,7 +53,18 @@
 // imposible to pass such string instances into functions that take string_t arguments. 
 // Read-only string_t instances are used instead to wrap string literals or other data that 
 // cannot be modified.
-// 
+//
+// 5. When string_base is instantiated for char, the intended character set is UTF-8 and
+// any other character encoding, such as various Windows code pages, will not work. The 
+// side effect of having a single char value passed into member functions such as tolower
+// is that they can only operate on ASCII characters. Implementing support for arbitrary 
+// UTF-8 characters would require a character abstraction that could take the form of a 
+// char sequence (UTF-8) or a single wchar_t character or a sequence of char16_t or a single 
+// char32_t character. Given how this class is used within this project, where case-dependent 
+// comparisons and conversions are done only against ASCII characters, only ASCII characters
+// are recognized in functions that deal with character case.
+//
+ 
 template <typename char_t>
 class string_base {
    public:
@@ -90,8 +100,6 @@ class string_base {
       bool     holder   :  1;       // if true, does not own string memory
 
       static char_t empty_string[];
-
-      static const std::locale& locale;
 
       static const char ex_readonly_string[];
       static const char ex_bad_char_buffer[];

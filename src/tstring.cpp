@@ -73,8 +73,6 @@ inline int char_diff<wchar_t, sizeof(unsigned int)>(wchar_t ch1, wchar_t ch2)
 //
 // Static data members
 //
-template <typename char_t> const std::locale& string_base<char_t>::locale = std::locale::classic();
-
 template<typename char_t> char_t string_base<char_t>::empty_string[] = {0};
 template<typename char_t> const size_t string_base<char_t>::npos = (size_t) -1;
 
@@ -459,30 +457,41 @@ string_base<char_t>& string_base<char_t>::toupper(size_t start, size_t length)
    return transform(toupper, start, length);
 }
 
+//
+// The char specialization of tolower can only handle UTF-8 characters in the ASCII
+// range, which according to UnicodeData.txt from unicode.org is contiguous for upper
+// and lower case characters, so we can just use the difference between the character
+// 'A' of the appropriate case.
+//
 template <>
 char string_base<char>::tolower(char chr)
 {
    // convert only ASCII characters
-   return (isutf8char(chr)) ? std::tolower(chr, locale) : chr;
+   return (isutf8char(chr) && isupper(chr)) ? 'a' + (chr - 'A') : chr;
 }
 
 template <>
 char string_base<char>::toupper(char chr)
 {
    // convert only ASCII characters
-   return (isutf8char(chr)) ? std::toupper(chr, locale) : chr;
+   return (isutf8char(chr) && islower(chr)) ? 'A' + (chr - 'a') : chr;
 }
 
+//
+// See #5 above class definition
+//
 template <typename char_t>
 char_t string_base<char_t>::tolower(char_t chr)
 {
-   return std::tolower(chr, locale);
+   // convert only ASCII characters
+   return isupper(chr) ? CHLT('a') + (chr - CHLT('A')) : chr;
 }
 
 template <typename char_t>
 char_t string_base<char_t>::toupper(char_t chr)
 {
-   return std::toupper(chr, locale);
+   // convert only ASCII characters
+   return islower(chr) ? CHLT('A') + (chr - CHLT('a')) : chr;
 }
 
 template <typename char_t>
