@@ -21,14 +21,6 @@
 #include <cwchar>
 #include <cctype>
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define vsnwprintf _vsnwprintf
-#else
-#define vsnwprintf vswprintf
-#endif
-
 //
 // Define the same macro as was used in tstring.h, so we don't make this rather
 // short macro name linger throughout the project and possibly cause any conflicts.
@@ -42,9 +34,6 @@
 //
 inline static size_t strlen_(const char *str) {return (size_t) strlen(str);}
 inline static size_t strlen_(const wchar_t *str) {return (size_t) wcslen(str);}
-
-inline static int vsnprintf_(char *buffer, size_t count, const char *fmt, va_list valist) {return vsnprintf(buffer, (size_t) count, fmt, valist);}
-inline static int vsnprintf_(wchar_t *buffer, size_t count, const wchar_t *fmt, va_list valist) {return vsnwprintf(buffer, (size_t) count, fmt, valist);}
 
 inline static const char *strchr_(const char *str, char chr) {return strchr(str, chr);}
 inline static const wchar_t *strchr_(const wchar_t *str, wchar_t chr) {return wcschr(str, chr);}
@@ -88,6 +77,7 @@ template<typename char_t> const char string_base<char_t>::ex_bad_char_buffer[] =
 template<typename char_t> const char string_base<char_t>::ex_bad_hold_string[] = "Bad string to hold";
 template<typename char_t> const char string_base<char_t>::ex_holder_resize[] = "Cannot resize a string holder";
 template<typename char_t> const char string_base<char_t>::ex_not_implemented[] = "Not implemented";
+template<typename char_t> const char string_base<char_t>::ex_fmt_error[] = "Cannot format a string";
 
 //
 //
@@ -563,6 +553,9 @@ string_base<char_t>& string_base<char_t>::format(const char_t *fmt, ...)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list valist)
 {
+   va_list ap;
+   int plen;
+
    // can't format a read-only string
    if(holder && !bufsize)
       throw exception_t(0, ex_readonly_string);
@@ -572,60 +565,82 @@ string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list v
       return *this;
    }
 
+   // copy valist in case if we need to reallocate memory and use it again
+   va_copy(ap, valist);
+
    // if the string is empty, allocate enough storage to hold the format
    if(string == empty_string)
       realloc_buffer(strlen_(fmt));
 
    //
-   // The code below calls vsnprintf multiple times in order to make sure 
-   // sufficient buffer is allocated. When compiled using GCC x64, valist 
-   // becomes unusable after the first vsnprintf call, so we have to create 
-   // a copy of valist before every vsnprintf call. However, the official 
-   // status of the vs_copy macro in the context of C++ is quite vague, as 
-   // it is not listed in the standard (14882:2003) and is not implemented 
-   // by some compilers (e.g. Visual C++).
+   // Unlike vsnprintf, vswprintf does not return the number of characters that would 
+   // be printed if the buffer was large enough and instead returns a negative value
+   // if the formatted string doesn't fit in the buffer. Double the size of the buffer 
+   // in each iteration until the string fits or until we reached the amount of memory 
+   // we can afford.
    //
-#if defined(va_copy) || defined(__va_copy)
-   #if defined(va_copy)
-      #define __VA_DEFINE__(dst, src) va_list dst; va_copy(dst, src)
-      #define __VA_COPY__(dst, src) va_copy(dst, src)
-   #elif defined __va_copy
-      #define __VA_DEFINE__(dst, src) va_list dst; __va_copy(dst, src)
-      #define __VA_COPY__(dst, src) __va_copy(dst, src)
-   #endif
-   #define __VA_END__(va)  va_end(va)
-#else
-   //
-   // If we don't know how to copy the list, leave it alone. Copying the 
-   // list variable by assignment doesn't seem very reliable because the 
-   // list may be implemented as a pointer to the stack frame or as some 
-   // form of structure holding variable arguments or a pointer to such 
-   // structure. Hopefully, the environment that doesn't provide va_copy 
-   // will not render the list unusable inside vsnprintf. Visual C++ is 
-   // one example of such environment.
-   //
-   #define __VA_DEFINE__(dst, src) va_list& dst = src
-   #define __VA_COPY__(dst, src) 
-   #define __VA_END__(va)
-#endif
-
-   __VA_DEFINE__(valist_, valist);
-
-   //
-   // If slen is equal to the buffer size or if -1 is returned (converted 
-   // to unsigned), the buffer is too small. Double the buffer size and 
-   // try again.
-   //
-   while((slen = vsnprintf_(string, bufsize, fmt, valist_)) >= bufsize) {
-
-      __VA_END__(valist_);
-      
+   while((plen = vswprintf(string, bufsize, fmt, ap)) >= (int) bufsize || plen < 0) {
+      va_end(ap);
+      if(bufsize > 500 * 1024) {
+         reset();
+         throw exception_t(0, ex_fmt_error);
+      }
       realloc_buffer(bufsize << 1);
-      
-      __VA_COPY__(valist_, valist);
+      va_copy(ap, valist);
    }
    
-   __VA_END__(valist_);
+   va_end(ap);
+
+   slen = (size_t) plen;
+
+   return *this;
+}
+
+template <>
+string_base<char>& string_base<char>::format_va(const char *fmt, va_list valist)
+{
+   va_list ap;
+   int plen;
+
+   // can't format a read-only string
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   if(!fmt) {
+      reset();
+      return *this;
+   }
+
+   // copy valist in case if we need to reallocate memory and use it again
+   va_copy(ap, valist);
+
+   // if the string is empty, allocate enough storage to hold the format
+   if(string == empty_string)
+      realloc_buffer(strlen(fmt));
+
+   //
+   // vsnprintf returns the number of bytes in the buffer if it was large enough 
+   // or the number of bytes that would be in the buffer if it had enough room or 
+   // -1 in case of an error. Reallocate the buffer to fit the formatted string in 
+   // the second case and skip the loop in the latter. Note that we need to cast 
+   // bufsize to int to make sure the negative number (-1) isn't converted to an 
+   // unsigned value on platforms where size_t is the same size as int.
+   // 
+   while((plen = vsnprintf(string, bufsize, fmt, ap)) >= (int) bufsize) {
+      va_end(ap);
+      realloc_buffer(plen);
+      va_copy(ap, valist);
+   }
+   
+   va_end(ap);
+
+   // check if there was a formatting error
+   if(plen < 0) {
+      reset();
+      throw exception_t(0, ex_fmt_error);
+   }
+
+   slen = (size_t) plen;
 
    return *this;
 }

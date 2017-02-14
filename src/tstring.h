@@ -106,6 +106,7 @@ class string_base {
       static const char ex_bad_hold_string[];
       static const char ex_holder_resize[];
       static const char ex_not_implemented[];
+      static const char ex_fmt_error[];
 
    private:
       void init(void);
@@ -265,6 +266,9 @@ char string_base<char>::tolower(char chr);
 
 template <> 
 char string_base<char>::toupper(char chr);
+
+template <>
+string_base<char>& string_base<char>::format_va(const char *fmt, va_list valist);
 
 template <> 
 string_base<char>& string_base<char>::transform(char (*convchar)(char), size_t start, size_t length);
