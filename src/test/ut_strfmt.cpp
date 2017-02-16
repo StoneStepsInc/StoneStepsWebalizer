@@ -34,6 +34,7 @@ TEST_CLASS(StringFormatting) {
          mstest::Assert::AreEqual("ABC12345678901234567890XYZ", str.format("%s", "ABC12345678901234567890XYZ"), L"Format a string with insufficient initial internal buffer size");
          mstest::Assert::AreEqual("ABC123456789XYZ", str.format("ABC%dXYZ", 123456789), L"Format a string with a sufficient internal buffer size");
 
+         // test the static formatting function
          mstest::Assert::AreEqual("ABC12345678901234567890XYZ", string_t::_format("%s", "ABC12345678901234567890XYZ"), L"Format a string with an empty initial internal buffer size");
          mstest::Assert::AreEqual("ABC123456789XYZ", string_t::_format("ABC%dXYZ", 123456789), L"Format a string with a format length less than the resulting string legth");
       }
