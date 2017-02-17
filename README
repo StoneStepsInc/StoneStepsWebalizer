@@ -1,5 +1,5 @@
 **************************************************************************
-Stone Steps Webalizer (v4.2.0)
+Stone Steps Webalizer (v4.2.1)
 
 Copyright (c) 2004-2016, Stone Steps Inc. (www.stonesteps.ca)
 
@@ -518,7 +518,7 @@ General Options
           command line or in a configuration file, The Webalizer attempts
           to determine the hostname using a 'uname' system call.  If this
           fails, "localhost" will be used as the hostname.
-          Config file keyword: HostName
+          Config file keyword: SiteName
 
 -o dir    This options specifies the output directory for the reports.
           If not specified here or in a configuration file, the current
@@ -957,7 +957,7 @@ ReportTitle   This specifies the title to use for the generated reports.
               default of "Usage Statistics for" is used.
               Command line argument: -t
 
-HostName      This defines the hostname.  The hostname is used in the
+SiteName      This defines the site hostname. The hostname is used in the
               report title as well as being prepended to URL's in the
               "Top URL's" table.  This allows The Webalizer to be run
               on "virtual" web servers, or servers that do not reside
@@ -966,6 +966,11 @@ HostName      This defines the hostname.  The hostname is used in the
               attempts to get the hostname via a 'uname' system call,
               and if that fails, will default to "localhost".
               Command line argument: -n
+
+SiteAlias     Specifies an alternative site host name. Multiple SiteAlias
+              entries can be used in configuration files to register more
+              than one alias. Site aliases are used as a white list when
+              checking for spam links in search strings.
 
 UseHTTPS      Causes the links in the 'Top URL's' table to use 'https://'
               instead of the default 'http://' prefix.  Not much use if
