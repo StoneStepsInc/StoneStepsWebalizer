@@ -1409,8 +1409,11 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          
          // do not look up robot agent for proxy requests
          if(config.log_type != LOG_SQUID) {
-            // if robots can be ignored, set ragent now, otherwise, do it after the ignore check
-            if(!config.ignore_robots)
+            //
+            // If robots can be ignored, set ragent now, otherwise, do it after the ignore 
+            // check, so we avoid a look-up if matches some other ignore criteria.
+            //
+            if(config.ignore_robots)
                ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
          }
 
