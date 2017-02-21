@@ -80,8 +80,6 @@ class state_t {
 
       char              *buffer;
 
-      bool              stfile;                  // old state file?
-
       sysnode_t         sysnode;
 
    private:

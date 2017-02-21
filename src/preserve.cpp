@@ -51,7 +51,6 @@
 
 state_t::state_t(const config_t& config) : config(config), history(config), database(config), response(config.lang.resp_code_count())
 {
-   stfile = false;
    buffer = new char[BUFSIZE];
 
    v_ended.reserve(128);
@@ -360,16 +359,13 @@ int state_t::save_state(void)
    history.put_history();
 
    //
-
    // If there's an old state file, delete it
    //
    if (config.incremental) {
       // delete the old state file, if there is one
-      if(stfile) {
-         if(!del_state_file()) {
-            if(config.verbose)
-               fprintf(stderr, "Cannot delete the state file (%s). Delete the file manually before the next run\n", config.state_fname.c_str());
-         }
+      if(!del_state_file()) {
+         if(config.verbose)
+            fprintf(stderr, "Cannot delete the state file (%s). Delete the file manually before the next run\n", config.state_fname.c_str());
       }
    }
 
