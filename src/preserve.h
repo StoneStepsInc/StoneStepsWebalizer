@@ -36,13 +36,6 @@ class webalizer_t;
 // items, such as URLs or hosts. The state is stored in the database between 
 // runs.
 //
-// 2. While the history is a data member, it's not a part of the monthly state
-// and it's restored and saved outside of the state restore/save methods. History 
-// contains a collection of totals for each month. A history record may be updated 
-// using current monthly state after the state is restored and when the state is 
-// being saved. The former case works even when there is no history file available, 
-// which means that a new history file will be created. 
-//
 class state_t {
    friend class webalizer_t;
 
@@ -72,7 +65,6 @@ class state_t {
       std::vector<uint64_t> dl_ended;            // ended active download node IDs
 
       history_t   history;
-                                                 // see note #2 above
       database_t  database;
 
    private:
