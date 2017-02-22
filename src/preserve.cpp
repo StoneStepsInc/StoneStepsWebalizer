@@ -646,14 +646,11 @@ int state_t::restore_state(void)
       history.get_history();
 
    //
-   // History file may be mising, empty or incomplete at this point. Update current 
-   // history to recover the data for this month from the current database file. In 
-   // the worse cae scenario we just write same data twice (i.e. the line created 
-   // from the current state).
+   // If the history file is missing or there is no record of this month, update 
+   // history from the state database for this month.
    //
-   // TODO: revisit this - should not overwrite existing data
-   //
-   history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
+   if(!history.find_month(totals.cur_tstamp.year, totals.cur_tstamp.month))
+      history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
 
    //
    // No need to restore the rest in the report-only mode
