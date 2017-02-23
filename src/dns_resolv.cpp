@@ -114,7 +114,6 @@ struct dns_db_record_t {
 //
 struct dns_resolver_t::dnode_t {
       hnode_t&       hnode;               // host node reference
-      tstamp_t       tstamp;              // when the name was resolved
       struct dnode_t *llist;
 
       union {
@@ -404,11 +403,14 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    bool goodcc;
    string_t ccode;
    string_t::char_buffer_t ccode_buffer;
+   time_t stime;
 
    if(!dnode)
       return;
 
-   dnode->tstamp.reset(time(NULL));
+   // remember the time if we need to report how long it took us to resolve this address later
+   if(config.debug_mode)
+      stime = time(NULL);
 
    // create an empty temporary string (must be attached because of the goto's above)
    ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
@@ -447,7 +449,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
 
 funcexit:
    if(config.debug_mode)
-      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), dnode->tstamp.mktime()));
+      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), stime));
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -905,7 +907,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
             }
 
             if (retval && config.debug_mode)
-               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), runtime.elapsed(dnode->tstamp) / 86400.);
+               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
          }
 
          break;
