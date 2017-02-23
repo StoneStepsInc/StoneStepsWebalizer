@@ -124,6 +124,9 @@ u_int history_t::first_month(void) const
    //      <-- 9 -->
    //      <---------------- 38 ---------------->
    //
+   //    ((12 - (38 - 5) % 12) % 12) + 1 = 4
+   //    ((12 - (24 - 12) % 12) % 12) + 1 = 1
+   //
    // Subtract the last few months, so we can figure out the number of months in the 
    // partial year in front of the history range (the first % 12). We need the second 
    // modulo division to account for the history length being a multiple of 12.
