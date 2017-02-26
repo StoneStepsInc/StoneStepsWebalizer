@@ -47,8 +47,6 @@
 // webalizer_t
 //
 // -----------------------------------------------------------------------
-// 1. ua_args, ua_groups and sr_args are stored in the class to minimize
-// memory allocations.
 //
 class webalizer_t {
    private:
