@@ -6,6 +6,7 @@
  * Added spammer detection when a spam URL is disguised as a search string
  * Disabled spammer and robot checks for Squid logs
  * Changed case-insensitive comparisons and conversions to ignore non-ASCII characters
+ * Reworked DNS resolver to maintain historical spammer data and to reduce the footprint
  * [BUG] Fixed a bug that mangled non-ASCII characters in search strings
  * [BUG] Fixed a concurrency bug in the DNS resolver that could report incorrect host names
 
