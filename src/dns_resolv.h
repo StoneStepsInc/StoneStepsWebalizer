@@ -42,7 +42,7 @@ struct hnode_t;
 //
 class dns_resolver_t {
    private:
-      struct dnode_t;
+      class dnode_t;
 
    public:
       uint64_t  dns_cached;                  // Number of IP addresses found in the DNS cache
@@ -74,7 +74,7 @@ class dns_resolver_t {
       int dns_live_workers;                  // total number of DNS threads
       uint64_t dns_unresolved;               // number of addresses to resolve
 
-      queue_t<hnode_t>  hqueue;              // resolved host node queue
+      queue_t<dnode_t>  hqueue;              // resolved host node queue
 
       string_t geoip_language;
 
@@ -104,6 +104,8 @@ class dns_resolver_t {
       void dns_worker_thread_proc(void);
 
       void process_dnode(dnode_t *dnode);
+
+      void queue_dnode(dnode_t *dnode);
 
       static bool dns_derive_ccode(const string_t& name, string_t& ccode);
 

@@ -423,9 +423,11 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 }
 
 //
-// group_hosts_by_name should be called only when DNS resolution is enabled
+// process_resolved_hosts retrieves resolved host nodes from the DNS resolver
+// and aggregates visits collected for each host pending host name and country 
+// information becoming available.
 //
-void webalizer_t::group_hosts_by_name(void)
+void webalizer_t::process_resolved_hosts(void)
 {
    vnode_t *vptr;
    hnode_t *hptr;
@@ -1169,7 +1171,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
    hnode_t *hptr;
    unode_t *uptr;
-   bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl;
+   bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl, newspammer;
    bool newrgrp, newugrp, newagrp, newigrp;
    bool pageurl, fileurl, httperr, robot = false, target, spammer = false, goodurl, entryurl, exiturl;
    const string_t *sptr, empty, *ragent = NULL;
@@ -1216,7 +1218,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
       if(get_logrec(wlfs, logfiles, lfp_states, logrecs, lrcnt)) {
          log_struct& log_rec = *wlfs.logrec;
          
-         newvisit = false;
+         newspammer = newthost = newvisit = false;
 
          /*********************************************/
          /* GOOD RECORD, CHECK INCREMENTAL/TIMESTAMPS */
@@ -1313,7 +1315,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
                state.update_hourly_stats();
 
                if(config.is_dns_enabled())
-                  group_hosts_by_name();
+                  process_resolved_hosts();
 
                // save run data for the report generator
                stime = msecs();
@@ -1501,15 +1503,15 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // function.
          //
          if((hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
-            spammer, ragent != NULL, target, newvisit, newhost, newthost)) == NULL)
+            spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer)) == NULL)
          {
             if (config.verbose)
                /* Error adding host node (monthly), skipping .... */
                fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, log_rec.hostname.c_str());
          }
 
-         // add new hosts to the resolver queue
-         if(config.is_dns_enabled() && newhost)
+         // send a new host or a host that was just identfied as a spammer to the DNS resolver
+         if(config.is_dns_enabled() && (newhost || newspammer))
             dns_resolver.put_hnode(hptr);
 
          // proxy logs do not contain any robot activity
@@ -1770,11 +1772,18 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             }
          }
 
-         // update group counts (host counts are updated in group_hosts_by_name)
+         // update group counts (host counts are updated in process_resolved_hosts)
          if(newugrp) state.totals.t_grp_urls++;
          if(newigrp) state.totals.t_grp_users++;
          if(newrgrp) state.totals.t_grp_refs++;
          if(newagrp) state.totals.t_grp_agents++;
+
+         //
+         // Retrieve all resolved host nodes and group host names and countries
+         //
+         if(config.is_dns_enabled())
+            process_resolved_hosts();
+
 
          //
          // swap out hash tables in the database mode
@@ -1832,7 +1841,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          update_downloads(state.totals.cur_tstamp);
 
          if(config.is_dns_enabled())
-            group_hosts_by_name();
+            process_resolved_hosts();
 
          // save run data for the report generator
          stime = msecs();
@@ -2156,9 +2165,10 @@ hnode_t *webalizer_t::put_hnode(
                bool     spammer,
                bool     robot,
                bool     target,
-               bool&      newvisit,               // new visit?
+               bool&    newvisit,               // new visit?
                bool&    newnode,                // new host node?
-               bool&    newthost                // new host today?
+               bool&    newthost,               // new host today?
+               bool&    newspammer              // spammer status changed?
                )
 {
    bool found = true;
@@ -2166,7 +2176,7 @@ hnode_t *webalizer_t::put_hnode(
    hnode_t *cptr;
    vnode_t *visit;
 
-   newnode = newvisit = newthost = false;
+   newnode = newvisit = newthost = newspammer = false;
 
    hashval = hash_ex(0, ipaddr);
 
@@ -2195,6 +2205,7 @@ hnode_t *webalizer_t::put_hnode(
 
             newnode = true;
             newthost = true;
+            newspammer = spammer;
             
             found = false;
          }
@@ -2240,11 +2251,14 @@ hnode_t *webalizer_t::put_hnode(
       // check if the last hit was in the same day
       if(tstamp.compare(cptr->tstamp, tstamp_t::tm_parts::DATE) > 0)
          newthost = true;
-   }
 
-   // spam request may be not the first one, so check every time
-   if(spammer && !cptr->spammer)
-      cptr->spammer = spammer;
+      // spam request may be not the first one, so check every time
+      if(spammer && !cptr->spammer) {
+         cptr->spammer = spammer;
+         newspammer = true;
+      }
+
+   }
 
    // update the last hit time stamp
    cptr->tstamp = tstamp;
@@ -2888,8 +2902,8 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
       visit->storage = false;
    }
 
-   // if DNS resolution is disabled, update host groups now
-   if(!config.is_dns_enabled())
+   // if DNS resolution is disabled or if the host name has been resolved, update host groups now
+   if(!config.is_dns_enabled() || hptr->resolved)
       group_host_by_name(*hptr, *visit);
    else {
       // otherwise, queue a copy of the visit for grouping when the host name is available

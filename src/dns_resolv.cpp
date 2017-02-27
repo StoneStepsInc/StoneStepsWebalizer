@@ -112,9 +112,23 @@ struct dns_db_record_t {
 //
 // DNS resolver node
 //
-struct dns_resolver_t::dnode_t {
-      hnode_t&       hnode;               // host node reference
-      struct dnode_t *llist;
+class dns_resolver_t::dnode_t {
+   friend hnode_t *dns_resolver_t::get_hnode(void);
+
+   private:
+      hnode_t        *m_hnode;            // modifiable host node
+
+   public:
+      const hnode_t  *hnode;              // read-only host node
+      class dnode_t  *llist;
+
+      string_t       hostaddr;            // only populated when hnode is NULL
+
+      string_t       hostname;
+      string_t       ccode;
+      string_t       city;
+
+      bool           spammer;
 
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
@@ -122,14 +136,15 @@ struct dns_resolver_t::dnode_t {
          sockaddr_in6   s_addr_ipv6;      // IPv6 socket address
       };
 
+   private:
+      void remove_host_node(void);
+
    public:
       dnode_t(hnode_t& hnode, unsigned short sa_family);
 
       ~dnode_t(void);
 
-      const string_t& key(void) const {return hnode.string;}
-
-      nodetype_t get_type(void) const {return OBJ_REG;}
+      const string_t& key(void) const {return hnode ? hnode->string : hostaddr;}
 
       bool fill_sockaddr(void);
 };
@@ -199,7 +214,7 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
       //
       // Search from the right end of the buffer for a null character in the host 
       // name, just in case the record was saved with a different alignment or if 
-      // any data member had a different size. This way we may report an host name
+      // any data member had a different size. This way we may report a host name
       // that is invalid, but will not reach past the end of the buffer.
       //
       const char *cp = (const char*) buffer + bufsize - 1;
@@ -243,11 +258,23 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
 // DNS resolver node 
 //
 
-dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : hnode(hnode), llist(NULL)
+dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : 
+      hnode(hnode.resolved ? NULL : &hnode), 
+      m_hnode(hnode.resolved ? NULL : &hnode), 
+      llist(NULL), 
+      spammer(hnode.spammer)
 {
    memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
    s_addr_ip.sa_family = sa_family;
+
+   // if the node has been resolved, then it's an update and we copy all values from the host node
+   if(hnode.resolved) {
+      hostaddr = hnode.string;
+      hostname = hnode.name;
+      ccode.assign(hnode.ccode, hnode_t::ccode_size);
+      city = hnode.city;
+   }
 }
 
 dns_resolver_t::dnode_t::~dnode_t(void) 
@@ -266,16 +293,29 @@ dns_resolver_t::dnode_t::~dnode_t(void)
 //
 bool dns_resolver_t::dnode_t::fill_sockaddr(void)
 {
+   // this method may only be called if we have a host node
+   if(!hnode)
+      return false;
+
    if(s_addr_ip.sa_family == AF_INET) {
-      if(inet_pton(AF_INET, hnode.string, &s_addr_ipv4.sin_addr) != 1)
+      if(inet_pton(AF_INET, hnode->string, &s_addr_ipv4.sin_addr) != 1)
          return false;
    }
    else if(s_addr_ip.sa_family == AF_INET6) {
-      if(inet_pton(AF_INET6, hnode.string, &s_addr_ipv6.sin6_addr) != 1)
+      if(inet_pton(AF_INET6, hnode->string, &s_addr_ipv6.sin6_addr) != 1)
          return false;
    }
 
    return true;
+}
+
+void dns_resolver_t::dnode_t::remove_host_node(void)
+{
+   if(hnode) {
+      hostaddr = hnode->string;
+      hnode = NULL;
+      m_hnode = NULL;
+   }
 }
 
 //
@@ -360,34 +400,84 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    nptr = new dnode_t(*hnode, sa_family);
 
    // convert the IP address string to sockaddr
-   if(!nptr->fill_sockaddr())
+   if(!nptr->fill_sockaddr()) {
+      delete nptr;
       return false;
+   }
+
+   // grab the current spammer flag (may change as the log is being processed)
+   nptr->spammer = hnode->spammer;
 
    // and insert it to the end of the list
+   queue_dnode(nptr);
+
+   return true;
+}
+void dns_resolver_t::queue_dnode(dnode_t *dnode)
+{
    mutex_lock(dnode_mutex);
-   if(nptr) {
+   if(dnode) {
       if(dnode_end == NULL)
-         dnode_list = nptr;
+         dnode_list = dnode;
       else
-         dnode_end->llist = nptr;
-      dnode_end = nptr;
+         dnode_end->llist = dnode;
+      dnode_end = dnode;
+
+      // block the main thread until all queued nodes are processed
+      event_reset(dns_done_event);
 
       // notify resolver threads
-      event_reset(dns_done_event);
       dns_unresolved++;
    }
    mutex_unlock(dnode_mutex);
-
-   return true;
 }
 
 hnode_t *dns_resolver_t::get_hnode(void)
 {
    hnode_t *hnode;
+   dnode_t *dnode;
 
    mutex_lock(hqueue_mutex);
-   hnode = hqueue.remove();
+   dnode = hqueue.remove();
    mutex_unlock(hqueue_mutex);
+
+   // return if there are no resolved nodes
+   if(!dnode)
+      return NULL;
+
+   hnode = dnode->m_hnode;
+
+   // indicate that the host node has gone through the DNS resolver
+   hnode->resolved = true;
+
+   // copy all resolved dnode_t values into the host node
+   hnode->set_ccode(dnode->ccode.c_str());
+   hnode->name = dnode->hostname;
+   hnode->city = dnode->city;
+
+   //
+   // If the spammer flag is the same in both nodes, we are done. However, neither
+   // of the fags isset and if the spammer flag is set in the host node at a later 
+   // time, the caller must queue the host for an update in the DNS database. 
+   //
+   // If dnode_t has the spammer flag set and the host node doesn't, it means that 
+   // we found this address in the DNS database and it was recorded as a spammer.
+   // Update the host node to reflect the same. 
+   // 
+   // If it's the other way around and the host node has the spammer flag set and
+   // the dnode_t doesn't, then we need to update the DNS database to reflect that
+   // the host node was caught spamming after it was queued for DNS resolution.
+   //
+   if(!hnode->spammer && dnode->spammer) {
+      hnode->spammer = true;
+      delete dnode;
+   }
+   else if(hnode->spammer && !dnode->spammer) {
+      dnode->remove_host_node();
+      queue_dnode(dnode);
+   }
+   else
+      delete dnode;
 
    return hnode;
 }
@@ -401,23 +491,18 @@ hnode_t *dns_resolver_t::get_hnode(void)
 void dns_resolver_t::process_dnode(dnode_t* dnode)
 {
    bool goodcc;
-   string_t ccode;
    string_t::char_buffer_t ccode_buffer;
    time_t stime;
 
-   if(!dnode)
+   if(!dnode || !dnode->hnode)
       return;
 
    // remember the time if we need to report how long it took us to resolve this address later
    if(config.debug_mode)
       stime = time(NULL);
 
-   // create an empty temporary string (must be attached because of the goto's above)
-   ccode_buffer.attach(dnode->hnode.ccode, hnode_t::ccode_size+1, true);
-   ccode.attach(std::move(ccode_buffer), 0);
-
    // try GeoIP first
-   goodcc = geoip_get_ccode(dnode->hnode.string, dnode->s_addr_ip, ccode, dnode->hnode.city);
+   goodcc = geoip_get_ccode(dnode->hnode->string, dnode->s_addr_ip, dnode->ccode, dnode->city);
 
    // resolve the domain name
    if(dns_db) {
@@ -440,16 +525,16 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
       if(!*hostname)
          goto funcexit;
 
-      dnode->hnode.name = hostname;
+      dnode->hostname = hostname;
 
       // if GeoIP failed, derive country code from the domain name
       if(!goodcc)
-         dns_derive_ccode(dnode->hnode.name, ccode);
+         dns_derive_ccode(dnode->hostname, dnode->ccode);
    }
 
 funcexit:
    if(config.debug_mode)
-      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode.string.c_str(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), difftime(time(NULL), stime));
+      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -656,7 +741,6 @@ bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
 {
    bool cached = false, lookup = false;
    dnode_t* nptr;
-   hnode_t *hnode;
 
    mutex_lock(dnode_mutex);
 
@@ -676,22 +760,22 @@ bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
 
    mutex_unlock(dnode_mutex);
 
-   // look it up in the database and if not found, resolve it
-   lookup = true;
-   if(dns_db_get(nptr, false, buffer, bufsize)) 
-      cached = true;
-   else {
-      process_dnode(nptr);
+   // check if we just need to update a DNS record
+   if(!nptr->hnode)
       dns_db_put(nptr, buffer, bufsize);
+   else {
+      // if we have a host node, look it up in the database and if not found, resolve it
+      lookup = true;
+      if(dns_db_get(nptr, false, buffer, bufsize)) 
+         cached = true;
+      else {
+         process_dnode(nptr);
+
+         dns_db_put(nptr, buffer, bufsize);
+      }
    }
 
    mutex_lock(dnode_mutex);
-
-   // recover the host node
-   hnode = &nptr->hnode;
-
-   // done with dnode, can be deleted
-   delete nptr;
 
    // update resolver stats
    if(lookup) {
@@ -701,10 +785,16 @@ bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
          dns_resolved++;
    }
 
-   // add the node to the queue of resolved nodes
-   mutex_lock(hqueue_mutex);
-   hqueue.add(hnode);
-   mutex_unlock(hqueue_mutex);
+   if(nptr->hnode) {
+      // add the node to the queue of resolved nodes
+      mutex_lock(hqueue_mutex);
+      hqueue.add(nptr);
+      mutex_unlock(hqueue_mutex);
+   }
+   else {
+      // if we just updated the DNS record, delete dnode_t
+      delete nptr;
+   }
 
    // if there are no more unresolved addresses, signal the event
    if(--dns_unresolved == 0)
@@ -880,15 +970,15 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
    memset(&key, 0, sizeof(key));
    memset(&recdata, 0, sizeof(recdata));
 
-   key.set_data((void*) dnode->hnode.string.c_str());
-   key.set_size((u_int32_t) dnode->hnode.string.length());
+   key.set_data((void*) dnode->hnode->string.c_str());
+   key.set_size((u_int32_t) dnode->hnode->string.length());
 
    // point the record to the internal buffer
    recdata.set_flags(DB_DBT_USERMEM);
    recdata.set_ulen(bufsize);
    recdata.set_data(buffer);
 
-   if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode.string.c_str());
+   if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode->string.c_str());
 
    switch((dberror = dns_db->get(NULL, &key, &recdata, 0)))
    {
@@ -899,15 +989,15 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
       case  0:
          if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
             if(nocheck || runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
-               dnode->hnode.name = dnsrec.hostname;
-               dnode->hnode.set_ccode(dnsrec.ccode);
-               dnode->hnode.city = dnsrec.city;
-               //dnode->hnode.spammer = dnsrec.spammer;  TODO: resolve concurrency issues
+               dnode->hostname = dnsrec.hostname;
+               dnode->ccode.assign(dnsrec.ccode, hnode_t::ccode_size);
+               dnode->city = dnsrec.city;
+               dnode->spammer = dnsrec.spammer;
                retval = true;
             }
 
             if (retval && config.debug_mode)
-               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hnode.name.isempty() ? "NXDOMAIN" : dnode->hnode.name.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
+               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
          }
 
          break;
@@ -937,19 +1027,21 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsi
 
    dnsrec.version = DNS_DB_REC_V3;
    dnsrec.tstamp = runtime;
-   dnsrec.city = dnode->hnode.city;
-   dnsrec.hostname = dnode->hnode.name;
-   dnsrec.spammer = false; // dnode->hnode.spammer;   TODO: resolve concurrency issues
 
-   memcpy(dnsrec.ccode, dnode->hnode.ccode, hnode_t::ccode_size);
+   // record contents must come from dnode_t
+   dnsrec.city = dnode->city;
+   dnsrec.hostname = dnode->hostname;
+   dnsrec.spammer = dnode->spammer;
+
+   memcpy(dnsrec.ccode, dnode->ccode.c_str(), hnode_t::ccode_size);
 
    recSize = dnsrec.s_pack_data(buffer, bufsize);
 
    if(recSize == 0)
       return;
-   
-   k.set_data((void*) dnode->hnode.string.c_str());
-   k.set_size((u_int32_t) dnode->hnode.string.length());
+
+   k.set_data((void*) dnode->key().c_str());
+   k.set_size((u_int32_t) dnode->key().length());
 
    v.set_data(buffer);
    v.set_size((u_int32_t) recSize);
@@ -1026,3 +1118,13 @@ bool dns_resolver_t::dns_db_close(void)
 
    return true;
 }
+
+//
+//
+//
+#include "queue_tmpl.cpp"
+
+//
+//
+//
+template class queue_t<dns_resolver_t::dnode_t>;

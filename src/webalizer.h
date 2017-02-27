@@ -48,6 +48,36 @@
 //
 // -----------------------------------------------------------------------
 //
+// 1. Host nodes need to be resolved before their visits can be attributed 
+// to various groups (i.e. address, domain name and country groups) and marked 
+// as safe (or not) based on historical host address data from the DNS database.
+//
+// New host nodes go through the following stages before they end up in the 
+// monthly state database:
+//
+//                         dns.put_hnode              dns.get_hnode
+//  log processor -----+========+==========+================+========+-------
+//                new hnode_t   |     access hnode          ^   group hnode
+//                              v                   done    |
+//  DNS resolver  --------------+===+==+==+==+==+=====+-----+-----------------
+//                                GeoIP, DNS, spammer
+//
+// A host node that has been retrieved from the DNS resolver will have its
+// resolved member set to true. While a host node is moving through the DNS
+// resolver, some of its members, such as the IP address, will be accessed
+// concurrently (the equal sign on the diagram) and cannot be modified by
+// either of the threads above. 
+//
+// Note that dns.put_node/get_node run in the context of the log processor 
+// thread and may modify the host node either before the DNS resolver thread 
+// starts resolving the host node in question or after it finished processing 
+// this host node.
+//
+// There's a short period of time between dns.put_hnode and dns.get_hnode 
+// when non-spam requests for historic spammer hosts may be not counted as 
+// as spam. Addressing this deficiency requires significant redesign around
+// visit processing and will be done at some later time.
+//
 class webalizer_t {
    private:
       // character buffer allocator and holder types
@@ -151,7 +181,7 @@ class webalizer_t {
       bool check_for_spam_urls(const char *str, size_t slen) const;
       bool srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck);
       void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
-      void group_hosts_by_name(void);
+      void process_resolved_hosts(void);
       void filter_srchargs(string_t& srchargs);
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);
@@ -173,7 +203,7 @@ class webalizer_t {
       //
       // put_xnode methods
       //
-      hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost);
+      hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost, bool& newspammer);
       hnode_t *put_hnode(const string_t& grpname, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
 
       rnode_t *put_rnode(const string_t&, nodetype_t type, uint64_t, bool newvisit, bool& newnode);

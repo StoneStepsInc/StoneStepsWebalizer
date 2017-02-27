@@ -29,6 +29,7 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    max_v_xfer = 0;
    spammer = false;
    robot = false;
+   resolved = false;
    ccode[0] = ccode[1] = ccode[2] = 0;
    visit = NULL;
    dlref = 0;
@@ -39,6 +40,7 @@ hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
+   resolved = hnode.resolved;
    count = hnode.count;
    files = hnode.files;
    pages = hnode.pages;
@@ -75,6 +77,7 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
 {
    spammer = false;
    robot = false;
+   resolved = false;
    count = 0;
    files = pages = visits = visits_conv = 0;
    visit_avg = .0;
@@ -291,6 +294,9 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
       city.clear();
 
    visit = NULL;
+
+   // all hosts in the state database are assumed to be resolved
+   resolved = true;
    
    if(upcb)
       upcb(*this, active, arg);

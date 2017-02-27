@@ -16,5 +16,4 @@
 //
 //
 //
-template class queue_t<hnode_t>;
 
