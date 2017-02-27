@@ -380,8 +380,8 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    // Try grouping by IP address or host name first
    //
-   if(config.group_sites.size() && ((hostname && (group = config.group_sites.isinglist(*hostname)) != NULL) ||
-                                                ((group = config.group_sites.isinglist(hnode.string)) != NULL))) {
+   if(config.group_hosts.size() && ((hostname && (group = config.group_hosts.isinglist(*hostname)) != NULL) ||
+                                                ((group = config.group_hosts.isinglist(hnode.string)) != NULL))) {
       if(!put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
          if (config.verbose)
             /* Error adding Site node, skipping ... */
@@ -1423,7 +1423,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // Ignore/Include check
          //
 
-         if ( (config.include_sites.isinlist(log_rec.hostname)==NULL) &&
+         if ( (config.include_hosts.isinlist(log_rec.hostname)==NULL) &&
               (config.include_urls.isinlist(log_rec.url)==NULL)       &&
               (config.include_refs.isinlist(log_rec.refer)==NULL)     &&
               (config.include_agents.isinlist(log_rec.agent)==NULL)   &&

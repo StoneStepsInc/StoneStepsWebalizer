@@ -118,10 +118,10 @@ class config_t {
       bool use_https;                            // use 'https://' on URL's  
       bool graph_legend;                         // graph legend (1=yes)     
       bool fold_seq_err;                         // fold seq err (0=no)      
-      bool hide_hosts;                           // Hide ind. sites (0=no)   
+      bool hide_hosts;                           // Hide ind. hosts (0=no)   
       bool html_ext_lang;                        // HTMLExtensionLang
 
-      bool all_hosts;                            // List All sites (0=no)    
+      bool all_hosts;                            // List All hosts (0=no)    
       bool all_urls;                             // List All URL's (0=no)    
       bool all_refs;                             // List All Referrers       
       bool all_agents;                           // List All User Agents     
@@ -206,8 +206,8 @@ class config_t {
       u_int max_visit_length;                   // maximum visit length, in seconds
       u_int download_timeout;                   // download job timeout (seconds)
 
-      uint32_t ntop_sites;                         // top n sites to display   
-      uint32_t ntop_sitesK;                        // top n sites (by kbytes)  
+      uint32_t ntop_hosts;                         // top n hostss to display   
+      uint32_t ntop_hostsK;                        // top n hosts (by kbytes)  
       uint32_t ntop_urls;                          // top n url's to display   
       uint32_t ntop_urlsK;                         // top n url's (by kbytes)  
       uint32_t ntop_entry;                         // top n entry url's        
@@ -261,7 +261,7 @@ class config_t {
       //
       // "Group" lists
       //
-      glist group_sites;
+      glist group_hosts;
       glist group_urls;
       glist group_refs;
       glist group_agents;
@@ -297,7 +297,7 @@ class config_t {
       //
       // "Include" lists
       //
-      nlist include_sites;
+      nlist include_hosts;
       nlist include_urls;
       nlist include_refs;
       nlist include_agents;

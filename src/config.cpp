@@ -136,8 +136,8 @@ config_t::config_t(void)
    max_visit_length = 0;
    download_timeout = 180;                    // download job timeout (seconds)
 
-   ntop_sites = 30;                           /* top n sites to display   */
-   ntop_sitesK = 10;                          /* top n sites (by kbytes)  */
+   ntop_hosts = 30;                           /* top n sites to display   */
+   ntop_hostsK = 10;                          /* top n sites (by kbytes)  */
    ntop_urls = 30;                            /* top n url's to display   */
    ntop_urlsK = 10;                           /* top n url's (by kbytes)  */
    ntop_entry = 10;                           /* top n entry url's        */
@@ -154,7 +154,7 @@ config_t::config_t(void)
    max_hosts = max_urls = max_refs = max_agents = max_search = max_users = max_errors = max_downloads = 500;
    
    // display only top hosts and URLs sorted by transfer
-   max_hosts_kb = ntop_sitesK; 
+   max_hosts_kb = ntop_hostsK; 
    max_urls_kb = ntop_urlsK;
 
    font_size_small = FONT_SIZE_SMALL;
@@ -302,14 +302,14 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    }
 
    //
-   // Make sure group_sites does not contain bare IP addresses, as it
+   // Make sure group_hosts does not contain bare IP addresses, as it
    // would cause collisions in hm_htab and the database. In order to
    // group by a single address, give this group a name that is not an
    // IP address:
    //
    // GroupHost   127.0.0.1   localhost
    //
-   glist::iterator grph_iter = group_sites.begin();
+   glist::iterator grph_iter = group_hosts.begin();
 
    while(grph_iter.next()) {
       if(is_ip_address(grph_iter.item()->name)) {
@@ -482,8 +482,8 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(ntop_exit > i)  ntop_exit=i;
    
    // make sure maximums are not less than tops
-   if(max_hosts < ntop_sites) max_hosts = ntop_sites;
-   if(max_hosts_kb < ntop_sitesK) max_hosts_kb = ntop_sitesK;
+   if(max_hosts < ntop_hosts) max_hosts = ntop_hosts;
+   if(max_hosts_kb < ntop_hostsK) max_hosts_kb = ntop_hostsK;
    if(max_urls < ntop_urls) max_urls = ntop_urls;
    if(max_urls_kb < ntop_urlsK) max_urls_kb = ntop_urlsK;
    if(max_refs < ntop_refs) max_refs = ntop_refs;
@@ -926,7 +926,7 @@ void config_t::get_config(const char *fname)
          case 8:  debug_mode=(value[0]=='n')?0:1; break;          // Debug
          case 9:  hourly_graph=(value[0]=='n')?false:true; break; // HourlyGraph
          case 10: hourly_stats=(value[0]=='n')?false:true; break; // HourlyStats
-         case 11: ntop_sites = atoi(value); break;                // TopSites
+         case 11: ntop_hosts = atoi(value); break;                // TopSites
          case 12: ntop_urls = atoi(value); break;                 // TopURLs
          case 13: ntop_refs = atoi(value); break;                 // TopRefs
          case 14: ntop_agents = atoi(value); break;               // TopAgents
@@ -947,7 +947,7 @@ void config_t::get_config(const char *fname)
          case 29: if (value[0]=='y') verbose=0; break;            // ReallyQuiet
          case 30: local_time=(string_t::tolower(*value)=='y') ? false : true; break; // GMTTime
          case 31: group_urls.add_glist(value); break;             // GroupURL
-         case 32: group_sites.add_glist(value); break;            // GroupSite
+         case 32: group_hosts.add_glist(value); break;            // GroupSite
          case 33: group_refs.add_glist(value); break;             // GroupReferrer
          case 34: group_agents.add_glist(value); break;           // GroupAgent
          case 35: shade_groups=(string_t::tolower(value[0])=='y'); break;   // GroupShading
@@ -960,7 +960,7 @@ void config_t::get_config(const char *fname)
          case 42: html_body.add_nlist(value); break;              // HTML Body code
          case 43: html_end.add_nlist(value); break;               // HTML End code
          case 44: use_https=(string_t::tolower(value[0])=='y'); break;      // Use https://
-         case 45: include_sites.add_nlist(value); break;          // IncludeSite
+         case 45: include_hosts.add_nlist(value); break;          // IncludeSite
          case 46: include_urls.add_nlist(value); break;           // IncludeURL
          case 47: include_refs.add_nlist(value); break;           // IncludeReferrer
          case 48: include_agents.add_nlist(value); break;         // IncludeAgent
@@ -970,7 +970,7 @@ void config_t::get_config(const char *fname)
          case 52: graph_lines = atoi(value); break;               // GraphLines
          case 53: geoip_city = (string_t::tolower(value[0])=='y'); break;   // GeoIPCity
          case 54: ctry_graph=(string_t::tolower(value[0])=='y'); break;     // CountryGraph
-         case 55: ntop_sitesK = atoi(value); break;               // TopKSites (KB)
+         case 55: ntop_hostsK = atoi(value); break;               // TopKSites (KB)
          case 56: ntop_urlsK  = atoi(value); break;               // TopKUrls (KB)
          case 57: ntop_entry  = atoi(value); break;               // Top Entry pgs
          case 58: ntop_exit   = atoi(value); break;               // Top Exit pages
@@ -1346,7 +1346,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'r': hidden_refs.add_nlist(vptr); break;              // Hide referrer
           case 'R': ntop_refs=atoi(vptr); break;                     // Top referrers
           case 's': hidden_hosts.add_nlist(vptr); break;             // Hide site
-          case 'S': ntop_sites=atoi(vptr); break;                    // Top sites
+          case 'S': ntop_hosts=atoi(vptr); break;                    // Top sites
           case 't': rpt_title=vptr; break;                           // Report title
           case 'T': time_me=1; break;                                // TimeMe
           case 'u': hidden_urls.add_nlist(vptr); break;              // hide URL
@@ -1368,7 +1368,7 @@ void config_t::set_enable_phrase_values(bool enable)
 
    search_list.set_enable_phrase_values(enable);
    group_urls.set_enable_phrase_values(enable);
-   group_sites.set_enable_phrase_values(enable);
+   group_hosts.set_enable_phrase_values(enable);
    group_refs.set_enable_phrase_values(enable);
    group_agents.set_enable_phrase_values(enable);
    group_users.set_enable_phrase_values(enable);

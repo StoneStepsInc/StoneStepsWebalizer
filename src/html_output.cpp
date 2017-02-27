@@ -531,11 +531,11 @@ void html_output_t::write_error_report(void)
 void html_output_t::write_host_report(void)
 {
    // Top sites table (by hits)
-   if (config.ntop_sites) 
+   if (config.ntop_hosts) 
       top_hosts_table(0); 
 
    // Top Sites table (by kbytes)
-   if (config.ntop_sitesK)                      
+   if (config.ntop_hostsK)                      
       top_hosts_table(1);
 }
 
@@ -720,7 +720,7 @@ void html_output_t::month_links()
       fprintf(out_fp,"<td><a href=\"#downloads\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_dl);
    if (config.ntop_errors && state.totals.t_err)
       fprintf(out_fp,"<td><a href=\"#errors\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_err);
-   if (config.ntop_sites || config.ntop_sitesK)
+   if (config.ntop_hosts || config.ntop_hostsK)
       fprintf(out_fp,"<td><a href=\"#hosts\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_s);
    if (config.ntop_refs && state.totals.t_ref)
       fprintf(out_fp,"<td><a href=\"#referrers\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_r);
@@ -1141,7 +1141,7 @@ void html_output_t::top_hosts_table(int flag)
       return;
 
    /* get max to do... */
-   ntop_num = (flag) ? config.ntop_sitesK : config.ntop_sites;
+   ntop_num = (flag) ? config.ntop_hostsK : config.ntop_hosts;
    tot_num = (a_ctr > ntop_num) ? ntop_num : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
@@ -1198,7 +1198,7 @@ void html_output_t::top_hosts_table(int flag)
    else
       fputs("<div id=\"top_hosts_kbytes_report\">\n", out_fp);
 
-   if(!flag || (flag && !config.ntop_sites))                  /* now do <a> tag   */
+   if(!flag || (flag && !config.ntop_hosts))                  /* now do <a> tag   */
       fputs("<a name=\"hosts\"></a>\n", out_fp);
 
    fputs("<table class=\"report_table stats_table\">\n", out_fp);
@@ -1287,7 +1287,7 @@ void html_output_t::top_hosts_table(int flag)
 
    delete [] h_array;
 
-   if(!flag || (flag && !config.ntop_sites))
+   if(!flag || (flag && !config.ntop_hosts))
    {
       if(config.all_hosts && tot_num == ntop_num && a_ctr > ntop_num) {
          if (all_hosts_page())
