@@ -681,33 +681,6 @@ void dns_resolver_t::dns_clean_up(void)
 
 }
 
-//
-// dns_resolve_name 
-//
-// Resolves the IP address to a domain name. If the domain name is not 
-// found, returns the IP address.
-//
-// IMPORTANT: This method is synchronous and will cause major performance 
-// degradation when called directly by the log processing thread(s).
-//
-string_t dns_resolver_t::dns_resolve_name(const string_t& ipaddr, void *buffer, size_t bufsize)
-{
-   hnode_t hnode(ipaddr);
-   dnode_t dnode(hnode, is_ipv4_address(ipaddr) ? AF_INET : is_ipv6_address(ipaddr) ? AF_INET6 : AF_UNSPEC);
-
-   // convert the IP address string to sockaddr
-   if(!dnode.fill_sockaddr())
-      return string_t();
-
-   if(!dns_db_get(&dnode, true, buffer, bufsize)) {
-      process_dnode(&dnode);
-
-      dns_db_put(&dnode, buffer, bufsize);
-   }
-
-   return string_t(hnode.name.isempty() ? ipaddr : hnode.name);
-}
-
 void dns_resolver_t::dns_wait(void)
 {
    bool done = false;

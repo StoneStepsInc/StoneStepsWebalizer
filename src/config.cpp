@@ -50,7 +50,6 @@ config_t::config_t(void)
    db_info = false;
    end_month = false;
    memory_mode = true;
-   ignored_domain_names = false;
    user_config = false;
 
    pipe_log_names  = false;
@@ -1151,17 +1150,16 @@ void config_t::add_ignored_host(const char *value)
 {
    const char *cptr;
 
-   if(value == NULL)
+   if(!value || !*value)
       return;
 
    //
-   // If the pattern contains a domain name, set ignored_domain_names
-   // to true (this will slow down log processing)
+   // Ignore and report patterns that don't look like IP addresses
    //
-   for(cptr = value; !ignored_domain_names && *cptr != 0; cptr++) {
-      if(strchr("0123456789.*ABCDEF:", *cptr) == NULL) {
-         ignored_domain_names = true;
-         break;
+   for(cptr = value; *cptr != 0; cptr++) {
+      if(strchr("0123456789.*:ABCDEFabcdef", *cptr) == NULL) {
+         messages.push_back(string_t::_format("IgnoreHost patterns cannot contain domain names: %s\n", value));
+         return;
       }
    }
 

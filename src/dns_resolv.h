@@ -124,8 +124,6 @@ class dns_resolver_t {
       void dns_clean_up(void);
       void dns_wait(void);
 
-      string_t dns_resolve_name(const string_t& ipaddr, void *buffer, size_t bufsize);
-
       bool put_hnode(hnode_t *hnode);
 
       hnode_t *get_hnode(void);

@@ -256,8 +256,6 @@ class config_t {
       u_int dns_children;                        // # of DNS children        
       u_int dns_cache_ttl;                       // Default TTL of a DNS cache entry 
 
-      bool ignored_domain_names;                 // true if ignored hosts contain domain patterns
-
       //
       // "Group" lists
       //

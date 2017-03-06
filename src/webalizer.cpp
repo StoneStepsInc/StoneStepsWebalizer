@@ -1441,21 +1441,6 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
               { lrcnt.total_ignore++; continue; }
             if (config.ignored_users.isinlist(log_rec.ident)!=NULL)
               { lrcnt.total_ignore++; continue; }
-
-            /* 
-            // If IgnoreHost contains domain patterns, wait for DNS results
-            */
-            if (config.is_dns_enabled() && config.ignored_domain_names) {
-               stime = msecs();
-               dns_resolver.dns_wait();
-               ptms.dns_time += elapsed(stime, msecs());
-
-               string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
-               if(config.ignored_hosts.isinlist(dns_resolver.dns_resolve_name(log_rec.hostname, buffer, BUFSIZE)) != NULL) {
-                  lrcnt.total_ignore++; 
-                  continue; 
-               }
-            }
          }
 
          // do not look up robot agent for proxy requests
