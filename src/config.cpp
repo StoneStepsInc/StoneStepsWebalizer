@@ -1159,7 +1159,7 @@ void config_t::add_ignored_host(const char *value)
    // to true (this will slow down log processing)
    //
    for(cptr = value; !ignored_domain_names && *cptr != 0; cptr++) {
-      if(strchr("0123456789.*", *cptr) == NULL) {
+      if(strchr("0123456789.*ABCDEF:", *cptr) == NULL) {
          ignored_domain_names = true;
          break;
       }
