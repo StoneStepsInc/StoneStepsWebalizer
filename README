@@ -602,18 +602,13 @@ General Options
           (using the -N command line switch or DNSChildren configuration
           keyword).  The filename is relative to the default output
           directory if an absolute path is not specified (ie: starts
-          with a leading '/').  This option is only available if DNS
-          support was enabled at compile time, otherwise an 'Invalid
-          Keyword' error will be generated.  See the DNS.README file
-          for additional information regarding DNS lookups.
+          with a leading '/').
 
--N num    Number of DNS child processes to use for reverse DNS lookups.
-          If specified, a DNSCache name MUST be specified also.  If you
-          do not wish a DNS cache file to be generated, specify a value
-          of zero ('0') to disable it.  This does not prevent using an
-          existing cache file, only the generation of one at run time.
-          See the DNS.README file for additional information regarding
-          DNS lookups.
+-N num    Number of DNS child processes to use for reverse DNS and GeoIP
+          lookups. If specified, DNSCache or GeoIPDBPath must also be 
+          specified. If you do not wish a DNS cache file to be generated, 
+          omit DNSCache to disable DNS resolution. A value '0' will 
+          disable DNS and GeoIP look-ups.
           
 --prepare-report
           
@@ -1585,15 +1580,23 @@ GeoIPCity     Value "yes" will instruct Stone Steps Webalizer to look up
               City database for this parameter to have any effect.
               Default value: yes
 
-DNSChildren   The number of DNS children processes to run in order to
-              resolve IP addresses to domain names or lookup country 
-              codes in the GeoIP database. Use a value of 
-              zero ('0') to disable. If disabled, both, DNS and GeoIP 
-              lookups will be disabled.
+DNSChildren   Number of DNS child processes to use for reverse DNS and GeoIP
+              lookups. If specified, DNSCache or GeoIPDBPath must also be 
+              specified. If you do not wish a DNS cache file to be generated, 
+              omit DNSCache to disable DNS resolution. A value '0' will 
+              disable DNS and GeoIP look-ups.
 
 DNSCacheTTL   Specifies Time To Live (TTL) in days for DNS cache entries. 
               In most cases it is reasonable to set this value to 30 days. 
               Default value: 30
+
+DNSLookups    Specifies whether to resolve host IP addresses to domain 
+              names (yes) or not (no) if DNSCache and DNSChildren are 
+              configured to enable DNS components. When set to 'no', 
+              DNS resolution is disabled, but the DNSCache database is 
+              still used to preserve some IP address information, such 
+              as whether some IP address is marked as a spammer, etc. 
+              Default: yes
               
 AcceptHostNames
               Specifies whether accept host names instead of IP addresses 

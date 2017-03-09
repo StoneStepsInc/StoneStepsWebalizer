@@ -57,6 +57,10 @@
 // anything. Instead, messages are collected in a vector, and will
 // be output after the copyright message has been printed.
 //
+// 2. dns_lookups is intended to disable resolving host addresses via
+// DNS look-ups, while using the DNS database to maintain host address 
+// information that persists outside monthly state databases.
+//
 class config_t {
    private:
       struct dst_pair_t {
@@ -255,6 +259,8 @@ class config_t {
       string_t dns_cache;                        // DNS cache file name      
       u_int dns_children;                        // # of DNS children        
       u_int dns_cache_ttl;                       // Default TTL of a DNS cache entry 
+
+      bool dns_lookups;                          // Perform DNS look-ups for host addresses?
 
       //
       // "Group" lists

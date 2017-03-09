@@ -35,6 +35,7 @@ extern "C" {
 #include <maxminddb.h>
 }
 
+class dns_resolver_t;
 struct hnode_t;
 
 //
@@ -43,6 +44,18 @@ struct hnode_t;
 class dns_resolver_t {
    private:
       class dnode_t;
+
+      // worker thread context
+      struct wrk_ctx_t {
+         dns_resolver_t&   dns_resolver;
+         Db                *dns_db = NULL;
+         void              *buffer = NULL;
+         size_t            bufsize = 0;
+
+         wrk_ctx_t(dns_resolver_t& dns_resolver) : dns_resolver(dns_resolver)
+         {
+         }
+      };
 
    public:
       uint64_t  dns_cached;                  // Number of IP addresses found in the DNS cache
@@ -54,7 +67,7 @@ class dns_resolver_t {
       MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
-      Db *dns_db;                            // DNS cache database
+      std::vector<wrk_ctx_t> wrk_ctxs;       // DNS cache database
 
       tstamp_t runtime;
       
@@ -64,7 +77,7 @@ class dns_resolver_t {
       mutex_t hqueue_mutex;
       event_t dns_done_event;
 
-      thread_t *dnode_threads;
+      std::vector<thread_t> workers;         // worker threads
       bool dns_thread_stop;
 
       u_int dns_cache_ttl;
@@ -91,17 +104,17 @@ class dns_resolver_t {
 
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city);
 
-      bool dns_db_get(dnode_t *dnode, bool nocheck, void *buffer, size_t bufsize);
+      bool dns_db_get(dnode_t *dnode, Db *dns_db, bool nocheck, void *buffer, size_t bufsize);
 
-      void dns_db_put(const dnode_t *dnode, void *buffer, size_t bufsize);
+      void dns_db_put(const dnode_t *dnode, Db *dns_db, void *buffer, size_t bufsize);
 
-      bool dns_db_open(const string_t& dns_cache);
+      Db *dns_db_open(const string_t& dns_cache);
 
-      bool dns_db_close(void);
+      void dns_db_close(Db *dns_db);
 
-      bool resolve_domain_name(void *buffer, size_t bufsize);
+      bool resolve_domain_name(Db *dns_db, void *buffer, size_t bufsize);
 
-      void dns_worker_thread_proc(void);
+      void dns_worker_thread_proc(wrk_ctx_t& wrk_ctx);
 
       void process_dnode(dnode_t *dnode);
 

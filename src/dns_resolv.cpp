@@ -334,8 +334,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
    memset(&mmdb, 0, sizeof(MMDB_s));
    geoip_db = NULL;
 
-   dns_db   = NULL;
-   dnode_threads = NULL;
    dns_thread_stop = false;
 
    dns_live_workers = 0;
@@ -364,7 +362,7 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    unsigned short sa_family;
    dnode_t* nptr;
 
-   if(!dns_db && !geoip_db)
+   if(wrk_ctxs.empty() && !geoip_db)
       return false;
 
    /* skip bad hostnames */
@@ -505,7 +503,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    goodcc = geoip_get_ccode(dnode->hnode->string, dnode->s_addr_ip, dnode->ccode, dnode->city);
 
    // resolve the domain name
-   if(dns_db) {
+   if(config.dns_lookups) {
       char hostname[NI_MAXHOST];
 
       *hostname = 0;
@@ -533,7 +531,7 @@ void dns_resolver_t::process_dnode(dnode_t* dnode)
    }
 
 funcexit:
-   if(config.debug_mode)
+   if(config.dns_lookups && config.debug_mode)
       fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
 }
 
@@ -588,11 +586,33 @@ bool dns_resolver_t::dns_init(void)
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
-      if(dns_db_open(config.dns_cache)) {  
-         if (config.verbose > 1) {
-            /* Using DNS cache file <filaneme> */
-            printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
-         }
+      //
+      // Open a database handle for each thread to work around a bug in Berkeley DB 
+      // threaded Db handles. 
+      //
+      // Berkeley DB API reference describes that one Db handle can be used by multiple 
+      // threads if it is opened with the DB_THREAD flag, which worked for years in this 
+      // code while there were DNS calls that took time between BDB calls. With the 
+      // introduction of DNSLookups, BDB calls are more frequent and multiple DNS worker 
+      // threads started to get blocked indefinitely in the Db handle code on Windows. 
+      //
+      // This issue can be worked around either by introducing a shared DbEnv with a 
+      // DB_INIT_LOCK flag or by using a dedicated Db handle per DNS worker thread. The 
+      // latter approach is used here because threaded Db handles serialize calls from 
+      // multiple DNS worker threads.
+      //
+      for(size_t index = 0; index < config.dns_children; index++) {
+         // push a new DNS worker context into the vector
+         wrk_ctxs.emplace_back(*this);
+
+         // dns_db_open will report errors
+         if((wrk_ctxs.back().dns_db = dns_db_open(config.dns_cache)) == NULL)
+            return false;
+      }
+
+      if (config.verbose > 1) {
+         /* Using DNS cache file <filaneme> */
+         printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
       }
    }
 
@@ -629,7 +649,7 @@ bool dns_resolver_t::dns_init(void)
    // get the current time once to avoid doing it for every host
    runtime.reset(time(NULL));
 
-   if(dns_db || geoip_db)
+   if(!wrk_ctxs.empty() || geoip_db)
       dns_create_worker_threads();
 
    if (config.verbose > 1) {
@@ -637,7 +657,7 @@ bool dns_resolver_t::dns_init(void)
       printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
    }
 
-   return (dns_db || geoip_db) ? true : false;
+   return (wrk_ctxs.size() || geoip_db) ? true : false;
 }
 
 //
@@ -656,15 +676,17 @@ void dns_resolver_t::dns_clean_up(void)
    while(get_live_workers() && waitcnt--)
       msleep(50);
 
-   if(dnode_threads) {
-      for(index = 0; index < config.dns_children; index++) 
-         thread_destroy(dnode_threads[index]);
-      delete [] dnode_threads;
-      dnode_threads = NULL;
+   if(!wrk_ctxs.empty()) {
+      // free all resources (buffers are deleted in the thread)
+      for(index = 0; index < wrk_ctxs.size(); index++) { 
+         thread_destroy(workers[index]);
+         dns_db_close(wrk_ctxs[index].dns_db);
+      }
    }
 
-   if(dns_db) 
-      dns_db_close();
+   // don't leave dangling pointers behind
+   workers.clear();
+   wrk_ctxs.clear();
 
    if(geoip_db) 
       MMDB_close(geoip_db);
@@ -710,7 +732,7 @@ void dns_resolver_t::dns_wait(void)
 // Picks the next available IP address to resolve and calls process_dnode.
 // Returns true if any work was done (even unsuccessful), false otherwise.
 //
-bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
+bool dns_resolver_t::resolve_domain_name(Db *dns_db, void *buffer, size_t bufsize)
 {
    bool cached = false, lookup = false;
    dnode_t* nptr;
@@ -735,16 +757,16 @@ bool dns_resolver_t::resolve_domain_name(void *buffer, size_t bufsize)
 
    // check if we just need to update a DNS record
    if(!nptr->hnode)
-      dns_db_put(nptr, buffer, bufsize);
+      dns_db_put(nptr, dns_db, buffer, bufsize);
    else {
       // if we have a host node, look it up in the database and if not found, resolve it
       lookup = true;
-      if(dns_db_get(nptr, false, buffer, bufsize)) 
+      if(dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
          cached = true;
       else {
          process_dnode(nptr);
 
-         dns_db_put(nptr, buffer, bufsize);
+         dns_db_put(nptr, dns_db, buffer, bufsize);
       }
    }
 
@@ -814,20 +836,23 @@ unsigned int __stdcall dns_resolver_t::dns_worker_thread_proc(void *arg)
 void *dns_resolver_t::dns_worker_thread_proc(void *arg)
 #endif
 {
-   ((dns_resolver_t*) arg)->dns_worker_thread_proc();
+   dns_resolver_t::wrk_ctx_t *wrk_ctx = (dns_resolver_t::wrk_ctx_t*) arg;
+   wrk_ctx->dns_resolver.dns_worker_thread_proc(*wrk_ctx);
    return 0;
 }
 
-void dns_resolver_t::dns_worker_thread_proc(void)
+void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t& wrk_ctx)
 {
-   unsigned char *buffer = new u_char[DBBUFSIZE];
+   wrk_ctx.buffer = new u_char[DBBUFSIZE];
+   wrk_ctx.bufsize = DBBUFSIZE;
 
    while(!dns_thread_stop) {
-      if(resolve_domain_name(buffer, DBBUFSIZE) == false)
+      if(resolve_domain_name(wrk_ctx.dns_db, wrk_ctx.buffer, wrk_ctx.bufsize) == false)
          msleep(200);
    }
 
-   delete [] buffer;
+   delete [] wrk_ctx.buffer;
+   wrk_ctx.buffer = NULL;
 
    dec_live_workers();
 }
@@ -839,12 +864,10 @@ void dns_resolver_t::dns_worker_thread_proc(void)
 //
 void dns_resolver_t::dns_create_worker_threads(void)
 {
-   u_int index;
-
-   dnode_threads = new thread_t[config.dns_children];
-   for(index = 0; index < config.dns_children; index++) {
+   // create as many worker threads as we have worker contexts
+   for(size_t index = 0; index < wrk_ctxs.size(); index++) {
       inc_live_workers();
-      dnode_threads[index] = thread_create(dns_worker_thread_proc, this);
+      workers.push_back(thread_create(dns_worker_thread_proc, &wrk_ctxs[index]));
    }
 }
 
@@ -929,7 +952,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
-bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size_t bufsize)
+bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *buffer, size_t bufsize)
 {
    bool retval = false;
    int dberror;
@@ -988,7 +1011,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, bool nocheck, void *buffer, size
 /* DB_PUT - put key/val in the cache db      */
 /*********************************************/
 
-void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsize)
+void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    Dbt k, v;
    size_t recSize;
@@ -1025,32 +1048,28 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, void *buffer, size_t bufsi
    }
 }
 
-/*********************************************/
-/* OPEN_CACHE - open our cache file RDONLY   */
-/*********************************************/
-
-bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
+Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
 {
    struct stat  dbStat;
    int major, minor, patch;
+   Db *dns_db = NULL;
 
    /* double check filename was specified */
-   if(dns_cache.isempty()) { 
-      return false; 
-   }
+   if(dns_cache.isempty())
+      return NULL; 
 
    db_version(&major, &minor, &patch);
 
    if(major < 4 && minor < 3) {
       if(config.verbose)
          fprintf(stderr, "Error: The Berkeley DB library must be v4.3 or newer (found v%d.%d.%d).\n", major, minor, patch);
-      return false;
+      return NULL;
    }
 
    /* minimal sanity check on it */
    if(stat(dns_cache, &dbStat) < 0) {
       if(errno != ENOENT) 
-         return false;
+         return NULL;
    }
    else {
       if(!dbStat.st_size)  /* bogus file, probably from a crash */
@@ -1070,26 +1089,19 @@ bool dns_resolver_t::dns_db_open(const string_t& dns_cache)
       delete dns_db;
       dns_db = NULL;
 
-      return false;                  /* disable cache */
+      return NULL;
    }
 
-   return true;
+   return dns_db;
 }
 
-/*********************************************/
-/* CLOSE_CACHE - close our RDONLY cache      */
-/*********************************************/
-
-bool dns_resolver_t::dns_db_close(void)
+void dns_resolver_t::dns_db_close(Db *dns_db)
 {
    if(dns_db) {
       dns_db->close(0);
 
       delete dns_db;
-      dns_db = NULL;
    }
-
-   return true;
 }
 
 //

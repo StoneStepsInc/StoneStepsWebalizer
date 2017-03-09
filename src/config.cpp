@@ -170,6 +170,7 @@ config_t::config_t(void)
 
    dns_children = 0;                          /* DNS children (0=don't do)*/
    dns_cache_ttl= DNS_CACHE_TTL;              /* Default TTL of a DNS cache entry */
+   dns_lookups = true;
 
    dst_offset = utc_offset = 0;
 
@@ -650,7 +651,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 189; empty slots:  
+                     // max key: 190; empty slots:  
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -684,6 +685,7 @@ void config_t::get_config(const char *fname)
                      {"DNSCache",            84},           // DNS Cache file name
                      {"DNSCacheTTL",         93},           // TTL of a DNS cache entry (days)
                      {"DNSChildren",         85},           // DNS Children (0=no DNS)
+                     {"DNSLookups",          190},          // Perform DNS look-ups for host addresses?
                      {"DownloadPath",        119},          // Download path
                      {"DownloadTimeout",     120},          // Download job timeout
                      {"DSTEnd",              162},          // Daylight saving end date/time
@@ -1108,6 +1110,7 @@ void config_t::get_config(const char *fname)
          case 187: max_visit_length = get_interval(value); break;
          case 188: local_utc_offset =  (string_t::tolower(value[0]) == 'y'); break;
          case 189: js_charts_paths.push_back(value); break;
+         case 190: dns_lookups =  (string_t::tolower(value[0]) == 'y'); break;
       }
    }
    fclose(fp);
