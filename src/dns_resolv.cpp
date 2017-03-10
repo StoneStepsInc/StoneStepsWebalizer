@@ -481,12 +481,12 @@ hnode_t *dns_resolver_t::get_hnode(void)
 }
 
 //
-// process_dnode
+// resolve_domain_name
 //
 // Resolves the IP address in dnode to a domain name and looks up country
 // code for this address.
 //
-void dns_resolver_t::process_dnode(dnode_t* dnode)
+void dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 {
    bool goodcc;
    string_t::char_buffer_t ccode_buffer;
@@ -727,12 +727,12 @@ void dns_resolver_t::dns_wait(void)
 }
 
 //
-//   resolve_domain_name
+// process_node
 //
-// Picks the next available IP address to resolve and calls process_dnode.
+// Picks the next available IP address to resolve and calls resolve_domain_name.
 // Returns true if any work was done (even unsuccessful), false otherwise.
 //
-bool dns_resolver_t::resolve_domain_name(Db *dns_db, void *buffer, size_t bufsize)
+bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 {
    bool cached = false, lookup = false;
    dnode_t* nptr;
@@ -764,7 +764,7 @@ bool dns_resolver_t::resolve_domain_name(Db *dns_db, void *buffer, size_t bufsiz
       if(dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
          cached = true;
       else {
-         process_dnode(nptr);
+         resolve_domain_name(nptr);
 
          dns_db_put(nptr, dns_db, buffer, bufsize);
       }
@@ -847,7 +847,7 @@ void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t& wrk_ctx)
    wrk_ctx.bufsize = DBBUFSIZE;
 
    while(!dns_thread_stop) {
-      if(resolve_domain_name(wrk_ctx.dns_db, wrk_ctx.buffer, wrk_ctx.bufsize) == false)
+      if(process_node(wrk_ctx.dns_db, wrk_ctx.buffer, wrk_ctx.bufsize) == false)
          msleep(200);
    }
 

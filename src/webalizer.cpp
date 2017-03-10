@@ -424,8 +424,8 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 
 //
 // process_resolved_hosts retrieves resolved host nodes from the DNS resolver
-// and aggregates visits collected for each host pending host name and country 
-// information becoming available.
+// and aggregates visits collected for each host while host name and country 
+// information was not available.
 //
 void webalizer_t::process_resolved_hosts(void)
 {
@@ -1768,7 +1768,6 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(config.is_dns_enabled())
             process_resolved_hosts();
-
 
          //
          // swap out hash tables in the database mode

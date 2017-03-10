@@ -112,11 +112,11 @@ class dns_resolver_t {
 
       void dns_db_close(Db *dns_db);
 
-      bool resolve_domain_name(Db *dns_db, void *buffer, size_t bufsize);
+      bool process_node(Db *dns_db, void *buffer, size_t bufsize);
 
       void dns_worker_thread_proc(wrk_ctx_t& wrk_ctx);
 
-      void process_dnode(dnode_t *dnode);
+      void resolve_domain_name_(dnode_t *dnode);
 
       void queue_dnode(dnode_t *dnode);
 
