@@ -486,53 +486,44 @@ hnode_t *dns_resolver_t::get_hnode(void)
 // Resolves the IP address in dnode to a domain name and looks up country
 // code for this address.
 //
-void dns_resolver_t::resolve_domain_name(dnode_t* dnode)
+bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 {
-   bool goodcc;
-   string_t::char_buffer_t ccode_buffer;
    time_t stime;
+   char hostname[NI_MAXHOST];
 
    if(!dnode || !dnode->hnode)
-      return;
+      return false;
+
+   dnode->hostname.clear();
 
    // remember the time if we need to report how long it took us to resolve this address later
    if(config.debug_mode)
       stime = time(NULL);
 
-   // try GeoIP first
-   goodcc = geoip_get_ccode(dnode->hnode->string, dnode->s_addr_ip, dnode->ccode, dnode->city);
+   *hostname = 0;
 
-   // resolve the domain name
-   if(config.dns_lookups) {
-      char hostname[NI_MAXHOST];
-
-      *hostname = 0;
-
-      if(dnode->s_addr_ip.sa_family == AF_INET) {
-         if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
-            goto funcexit;
-      }
-      else if(dnode->s_addr_ip.sa_family == AF_INET6) {
-         if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
-            goto funcexit;
-      }
-      else
+   if(dnode->s_addr_ip.sa_family == AF_INET) {
+      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
          goto funcexit;
-
-      // make sure it's not empty
-      if(!*hostname)
-         goto funcexit;
-
-      dnode->hostname = hostname;
-
-      // if GeoIP failed, derive country code from the domain name
-      if(!goodcc)
-         dns_derive_ccode(dnode->hostname, dnode->ccode);
    }
+   else if(dnode->s_addr_ip.sa_family == AF_INET6) {
+      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
+         goto funcexit;
+   }
+   else
+      goto funcexit;
+
+   // make sure it's not empty
+   if(!*hostname)
+      goto funcexit;
+
+   dnode->hostname = hostname;
 
 funcexit:
    if(config.dns_lookups && config.debug_mode)
       fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
+
+   return !dnode->hostname.isempty();
 }
 
 bool dns_resolver_t::dns_geoip_db(void) const
@@ -764,7 +755,16 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
       if(dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
          cached = true;
       else {
-         resolve_domain_name(nptr);
+         // look up country code in the GeoIP database first
+         bool goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city);
+
+         // resolve the IP address if requested
+         if(config.dns_lookups) {
+            if(resolve_domain_name(nptr) && !goodcc) {
+               // if GeoIP failed, derive country code from the domain name
+               dns_derive_ccode(nptr->hostname, nptr->ccode);
+            }
+         }
 
          dns_db_put(nptr, dns_db, buffer, bufsize);
       }

@@ -116,7 +116,7 @@ class dns_resolver_t {
 
       void dns_worker_thread_proc(wrk_ctx_t& wrk_ctx);
 
-      void resolve_domain_name_(dnode_t *dnode);
+      bool resolve_domain_name(dnode_t *dnode);
 
       void queue_dnode(dnode_t *dnode);
 
