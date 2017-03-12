@@ -37,6 +37,8 @@
 #include "lang.h"
 #include "parser.h"
 #include "util.h"
+#include "cp1252.h"
+#include "unicode.h"
 
 #include <vector>
 
@@ -358,6 +360,15 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
 
       // convert possible host names and IPv6 addresses to lower case
       log_rec.hostname.tolower();
+
+      //
+      // If the referrer is not encoded as UTF-8, treat it as code page 1252 because we 
+      // cannot figure out actual character encoding
+      //
+      if(!isutf8str(log_rec.refer)) {
+         string_t cpref(log_rec.refer);
+         cp1252utf8(cpref, log_rec.refer);
+      }
    }
 
    return retval;
