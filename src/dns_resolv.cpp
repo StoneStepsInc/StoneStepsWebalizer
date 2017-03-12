@@ -398,14 +398,14 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    // create a new DNS node
    nptr = new dnode_t(*hnode, sa_family);
 
-   // convert the IP address string to sockaddr
-   if(!nptr->fill_sockaddr()) {
-      delete nptr;
-      return false;
+   // check if this node should be resolved
+   if(nptr->hnode) {
+      // convert the IP address string to sockaddr
+      if(!nptr->fill_sockaddr()) {
+         delete nptr;
+         return false;
+      }
    }
-
-   // grab the current spammer flag (may change as the log is being processed)
-   nptr->spammer = hnode->spammer;
 
    // and insert it to the end of the list
    queue_dnode(nptr);
