@@ -1022,7 +1022,7 @@ void berkeleydb_t::delete_db(Db *db)
 bool berkeleydb_t::open(void)
 {
    u_int32_t dbflags = readonly ? DB_RDONLY : DB_CREATE;
-   u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
+   u_int32_t envflags = DB_CREATE | DB_INIT_LOCK | DB_INIT_MPOOL | DB_PRIVATE;
 
    // do some additional initialization for threaded environment
    if(!readonly && trickle) {
