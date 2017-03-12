@@ -67,6 +67,7 @@ class dns_resolver_t {
       MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
+      DbEnv *dns_db_env;
       std::vector<wrk_ctx_t> wrk_ctxs;       // DNS cache database
 
       tstamp_t runtime;

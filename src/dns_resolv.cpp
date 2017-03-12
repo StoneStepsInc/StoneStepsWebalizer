@@ -333,6 +333,7 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
    memset(&mmdb, 0, sizeof(MMDB_s));
    geoip_db = NULL;
+   dns_db_env = NULL;
 
    dns_thread_stop = false;
 
@@ -577,6 +578,23 @@ bool dns_resolver_t::dns_init(void)
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
+      dns_db_env = new DbEnv(0);
+
+      //
+      // We need a Berkeley DB environment to deal with a threading bug in BDB that 
+      // causes some of successful Db::put calls using distinct Db handles in separate
+      // threads would lose data before it is written into the database on disk. The 
+      // visible effect of this bug was that a small number of IP addresses would go 
+      // through DNS resolution again and again when more than one DNS handle was used
+      // concurrently. 
+      //
+      u_int32_t dbenv_flags = DB_CREATE | DB_INIT_LOCK | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
+
+      if(dns_db_env->open(config.dns_db_path, dbenv_flags, 0664)) {
+         if (config.verbose) 
+            fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, config.dns_cache.c_str());
+      }
+      
       //
       // Open a database handle for each thread to work around a bug in Berkeley DB 
       // threaded Db handles. 
@@ -597,7 +615,7 @@ bool dns_resolver_t::dns_init(void)
          wrk_ctxs.emplace_back(*this);
 
          // dns_db_open will report errors
-         if((wrk_ctxs.back().dns_db = dns_db_open(config.dns_cache)) == NULL)
+         if((wrk_ctxs.back().dns_db = dns_db_open(config.dns_db_fname)) == NULL)
             return false;
       }
 
@@ -664,6 +682,7 @@ void dns_resolver_t::dns_clean_up(void)
    if(!config.is_dns_enabled())
       return;
 
+   // wait for 15 seconds for DNS workers to stop
    while(get_live_workers() && waitcnt--)
       msleep(50);
 
@@ -675,14 +694,23 @@ void dns_resolver_t::dns_clean_up(void)
       }
    }
 
+   // delete the BDB environment, if we have one
+   if(dns_db_env) {
+      dns_db_env->close(0);
+      delete dns_db_env;
+      dns_db_env = NULL;
+   }
+
    // don't leave dangling pointers behind
    workers.clear();
    wrk_ctxs.clear();
 
-   if(geoip_db) 
+   // close the GeoIP database and clean-up its structures
+   if(geoip_db) {
       MMDB_close(geoip_db);
-   geoip_db = NULL;
-   memset(&mmdb, 0, sizeof(MMDB_s));
+      geoip_db = NULL;
+      memset(&mmdb, 0, sizeof(MMDB_s));
+   }
 
    event_destroy(dns_done_event);
    mutex_destroy(dnode_mutex);
@@ -1078,7 +1106,7 @@ Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
       }
    }
   
-   dns_db = new Db(NULL, 0);
+   dns_db = new Db(dns_db_env, 0);
 
    /* open cache file */
    if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))

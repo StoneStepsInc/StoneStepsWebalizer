@@ -257,6 +257,8 @@ class config_t {
       std::vector<string_t> log_fnames;          // all input log file names
       
       string_t dns_cache;                        // DNS cache file name      
+      string_t dns_db_path;                      // DNS cache directory
+      string_t dns_db_fname;                     // DNS cache file name
       u_int dns_children;                        // # of DNS children        
       u_int dns_cache_ttl;                       // Default TTL of a DNS cache entry 
 
@@ -363,6 +365,8 @@ class config_t {
       
       void proc_stdin_log_files(void);
 
+      void set_dns_db_path(const char *path);
+      
    public:
       config_t(void);
 
@@ -377,7 +381,7 @@ class config_t {
       bool is_secure_url(u_char urltype) const;
 
       string_t get_db_path(void) const;
-      
+
       bool is_default_db(void) const;
 
       void report_config(void) const;

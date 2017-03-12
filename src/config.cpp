@@ -380,6 +380,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(dns_children > DNS_MAX_THREADS)
       dns_children = DNS_MAX_THREADS;
 
+   // enable JavaScript in reports if we have the source file
    enable_js = !html_js_path.isempty();
 
    // process all DST ranges we collected
@@ -1005,7 +1006,7 @@ void config_t::get_config(const char *fname)
          case 81: dump_agents=(string_t::tolower(value[0])=='y'); break;    // DumpAgents?
          case 82: dump_users=(string_t::tolower(value[0])=='y'); break;     // DumpUsers?
          case 83: dump_search=(string_t::tolower(value[0])=='y'); break;    // DumpSrchStrs?
-         case 84: dns_cache=value; break;                         // DNSCache fname
+         case 84: set_dns_db_path(value); break;                  // DNSCache fname
          case 85: dns_children=atoi(value); break;                // DNSChildren
          case 86: daily_graph=(string_t::tolower(value[0])=='y'); break;    // HourlyGraph
          case 87: daily_stats=(string_t::tolower(value[0])=='y'); break;    // HourlyStats
@@ -1317,7 +1318,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'c': user_config = true; get_config(vptr); break;     // User Config file
           case 'C': ntop_ctrys=atoi(vptr); break;                    // Top countries
           case 'd': debug_mode=1; break;                             // Debug
-          case 'D': dns_cache=vptr; break;                           // DNS Cache filename
+          case 'D': set_dns_db_path(vptr); break;                    // DNS Cache filename
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
           case 'F': log_type=(string_t::tolower(vptr[0])=='s')?
@@ -1414,6 +1415,54 @@ uint32_t config_t::get_db_cache_size(const char *value) const
 string_t config_t::get_db_path(void) const
 {
    return make_path(db_path, (is_default_db()) ? db_fname : report_db_name) + '.' + db_fname_ext;
+}
+
+void config_t::set_dns_db_path(const char *path)
+{
+   // ignore if empty path
+   if(!path || !*path)
+      return;
+
+   // skip to the end of the path, so we can find the last path separator
+   const char *cp = path;
+   for(cp = path; *cp; cp++);
+
+   // hold on to the path length
+   size_t plen = cp - path;
+
+   // walk the string back until we find a slash or walk past the first character
+   while(cp >= path) {
+      if(*cp == '/' || *cp == '\\')
+         break;
+      cp--;
+   }
+
+   // if we didn't find a path separator, use the current directory
+   if(cp < path) {
+      dns_db_path = get_cur_path();
+      dns_db_fname.assign(path, plen);
+      dns_cache = make_path(dns_db_path, dns_db_fname);
+      return;
+   }
+
+   // include the slash in the path
+   cp++;
+
+   // split an absolute path onto a directory and a file name
+   if(is_abs_path(path)) {
+      dns_db_path.assign(path, cp - path);
+      dns_db_fname.assign(cp, plen - (cp - path));
+      dns_cache.assign(path, plen);
+      return;
+   }
+
+   // hold onto the relative path in the argument path
+   string_t rpath(path, cp - path);
+
+   // set up path components
+   dns_db_path = make_path(get_cur_path(), rpath);
+   dns_db_fname.assign(cp, plen - (cp - path));
+   dns_cache = make_path(dns_db_path, dns_db_fname);
 }
 
 bool config_t::is_default_db(void) const
