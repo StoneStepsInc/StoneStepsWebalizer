@@ -330,13 +330,13 @@ string_t& url_decode(const string_t& str, string_t& out)
    out.reset();
    
    if(!str.isempty()) {
-      // allocate enough memory
+      // a decoded string is shorter than or same size as the original
       out.reserve(str.length());
       
-      // and detach the block
+      // and detach the memory
       optr = out.detach();
       
-      // decode the string in place 
+      // decode the string into the buffer
       url_decode(str, optr, &olen);
       
       // and attach it back
@@ -350,6 +350,7 @@ char *url_decode(const char *str, char *out, size_t *slen)
 {
    const char *cp1 = str;
    char *cp2 = out;
+   char chr[2] = {0};
 
    if (!str || !out) 
       return NULL;                              /* make sure strings valid */
@@ -358,8 +359,15 @@ char *url_decode(const char *str, char *out, size_t *slen)
       if (*cp1=='%')                            /* Found an escape?        */
       {
          cp1++;
-         if(string_t::isxdigit(*cp1) && string_t::isxdigit(*(cp1+1)))/* ensure a hex digit      */
-            cp1 = from_hex(cp1, cp2++);
+         if(string_t::isxdigit(*cp1) && string_t::isxdigit(*(cp1+1))) { /* ensure a hex digit      */
+            from_hex(cp1, chr);
+
+            // do not decode URL component separators, so the URL is still usable
+            if(strchr("&=?#", *chr))
+               *cp2++ = '%', *cp2++ = *cp1++, *cp2++ = *cp1++;
+            else
+               *cp2++ = *chr, cp1 += 2;
+         }
          else 
             *cp2++='%';
       }
