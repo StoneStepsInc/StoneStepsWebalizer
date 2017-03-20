@@ -363,7 +363,7 @@ char *url_decode(const char *str, char *out, size_t *slen)
             from_hex(cp1, chr);
 
             // do not decode URL component separators, so the URL is still usable
-            if(strchr("&=?#", *chr))
+            if(strchr("&=?#%", *chr))
                *cp2++ = '%', *cp2++ = *cp1++, *cp2++ = *cp1++;
             else
                *cp2++ = *chr, cp1 += 2;
