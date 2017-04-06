@@ -44,6 +44,9 @@
     <ClCompile Include="ut_strfmt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_normurl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -125,6 +128,9 @@
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\char_buffer_stack.obj">
       <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj">
+      <Filter>obj\Debug</Filter>
     </Object>
   </ItemGroup>
 </Project>

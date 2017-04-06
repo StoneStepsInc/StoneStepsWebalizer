@@ -144,6 +144,7 @@
     <ClCompile Include="ut_formatter.cpp" />
     <ClCompile Include="ut_hostname.cpp" />
     <ClCompile Include="ut_ipaddr.cpp" />
+    <ClCompile Include="ut_normurl.cpp" />
     <ClCompile Include="ut_strcmp.cpp" />
     <ClCompile Include="ut_strfmt.cpp" />
     <ClCompile Include="ut_strsrch.cpp" />
@@ -155,6 +156,7 @@
     <Object Include="..\..\build\Win32\Debug\obj\char_buffer_stack.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj" />
     <Object Include="..\..\build\Win32\Debug\obj\cp1252_ucs2.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>

@@ -362,49 +362,16 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
       log_rec.hostname.tolower();
 
       //
-      // If any of user-supplied strings in the log are not encoded as UTF-8, treat 
-      // them as if they are encoded as code page 1252 because there is no way to 
-      // figure out the actual character encoding. Note that URL-encoded sequences
-      // are not checked or converted at this point because it would corrupt strings
-      // containing URL-encoded sequences (e.g. a=b%26x%3Dy would become a=b&x=y).
+      // Normalize all strings that may have URL encoding
       //
       string_t cpstr;
 
-      // URL
-      if(!isutf8str(log_rec.url)) {
-         cpstr = log_rec.url;
-         cp1252utf8(cpstr, log_rec.url);
-      }
-
-      // referrer URL
-      if(!isutf8str(log_rec.refer)) {
-         cpstr = log_rec.refer;
-         cp1252utf8(cpstr, log_rec.refer);
-      }
-
-      // user agent
-      if(!isutf8str(log_rec.agent)) {
-         cpstr = log_rec.agent;
-         cp1252utf8(cpstr, log_rec.agent);
-      }
-
-      // URL query strings
-      if(!isutf8str(log_rec.srchargs)) {
-         cpstr = log_rec.srchargs;
-         cp1252utf8(cpstr, log_rec.srchargs);
-      }
-
-      // user name
-      if(!isutf8str(log_rec.ident)) {
-         cpstr = log_rec.ident;
-         cp1252utf8(cpstr, log_rec.ident);
-      }
-
-      // referrer URL query strings
-      if(!isutf8str(log_rec.xsrchstr)) {
-         cpstr = log_rec.xsrchstr;
-         cp1252utf8(cpstr, log_rec.xsrchstr);
-      }
+      norm_url_str(log_rec.url, cpstr);
+      norm_url_str(log_rec.refer, cpstr);
+      norm_url_str(log_rec.agent, cpstr);
+      norm_url_str(log_rec.srchargs, cpstr);
+      norm_url_str(log_rec.ident, cpstr);
+      norm_url_str(log_rec.xsrchstr, cpstr);
    }
 
    return retval;

@@ -154,9 +154,10 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen);
 
 int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2);
 
-string_t& url_decode(const string_t& str, string_t& out);
+void norm_url_str(string_t& str, string_t& strbuf);
 
-char from_hex(char);                           /* convert hex to dec  */
+string_t& url_encode(const string_t& str, string_t& out);
+
 const char *from_hex(const char *cp1, char *cp2);
 
 const char *cstr2str(const char *cp, string_t& str);

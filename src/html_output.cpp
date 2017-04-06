@@ -1545,9 +1545,9 @@ void html_output_t::top_urls_table(int flag)
       else {
          const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
-         dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-         dispurl = html_encode(dispurl);
-         href = html_encode(uptr->string);
+         dispurl = html_encode(uptr->string);
+         href = html_encode(url_encode(uptr->string, str));
+
          /* check for a service prefix (ie: http://) */
          if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
             fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
@@ -1596,8 +1596,6 @@ int html_output_t::all_urls_page(void)
    unode_t  unode;
    string_t url_fname;
    FILE     *out_fp;
-   const char *dispurl;
-   string_t str;
 
    /* generate file name */
    url_fname.format("url_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
@@ -1646,8 +1644,6 @@ int html_output_t::all_urls_page(void)
          if(config.hidden_urls.isinlistex(unode.string, unode.pathlen, true))
             continue;
 
-         dispurl = (unode.hexenc) ? url_decode(unode.string, str).c_str() : unode.string.c_str();
-
          buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
             unode.count,
@@ -1657,7 +1653,7 @@ int html_output_t::all_urls_page(void)
             unode.avgtime, unode.maxtime,
             (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
             unode.target ? " class=\"target\"" : "",
-            html_encode(dispurl));
+            html_encode(unode.string));
       }
    }
    iter.close();
@@ -1765,9 +1761,8 @@ void html_output_t::top_entry_table(int flag)
           (flag)?((state.totals.t_exit==0)?0:((double)uptr->exit/state.totals.t_exit)*100.0)
                 :((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0));
 
-      dispurl = (uptr->hexenc) ? url_decode(uptr->string, str).c_str() : uptr->string.c_str();
-      dispurl = html_encode(dispurl);
-      href = html_encode(uptr->string);
+      dispurl = html_encode(uptr->string);
+      href = html_encode(url_encode(uptr->string, str));
 
       /* check for a service prefix (ie: http://) */
       if (strstr_ex(uptr->string, "://", 10, 3)!=NULL)
@@ -1914,9 +1909,9 @@ void html_output_t::top_refs_table()
          if (rptr->string.isempty())
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
          else {
-            dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-            dispurl = html_encode(dispurl);
-            href = html_encode(rptr->string);
+            dispurl = html_encode(rptr->string);
+            href = html_encode(url_encode(rptr->string, str));
+
             // make a link only if the scheme is http or https
             if(!string_t::compare_ci(href, "http", 4) && 
                   (*(cp1 = &href[4]) == ':' || (*cp1 == 's' && *++cp1 == ':')) && *++cp1 == '/' && *++cp1 == '/')
@@ -2167,7 +2162,6 @@ void html_output_t::top_err_table(void)
    u_int i;
    const rcnode_t *rptr;
    rcnode_t rcnode;
-   const char *dispurl;
    string_t str;
 
    if(state.totals.t_err == 0) return;
@@ -2212,8 +2206,7 @@ void html_output_t::top_err_table(void)
           (state.totals.t_hit == 0) ? 0: ((double)rptr->count/state.totals.t_hit)*100.0,
           config.lang.get_resp_code(rptr->respcode).desc, rptr->respcode, html_encode(rptr->method));
 
-      dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
-      fprintf(out_fp,"%s", html_encode(dispurl));
+      fprintf(out_fp,"%s", html_encode(rptr->string));
 
       fputs("</td></tr>\n", out_fp);
    }
@@ -2244,8 +2237,6 @@ int html_output_t::all_errors_page(void)
    const rcnode_t *rptr;
    string_t err_fname;
    FILE     *out_fp;
-   const char *dispurl;
-   string_t str;
 
    /* generate file name */
    err_fname.format("err_%04d%02d.%s",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.html_ext.c_str());
@@ -2269,7 +2260,6 @@ int html_output_t::all_errors_page(void)
 
    while(iter.prev(rcnode)) {
       rptr = &rcnode;
-      dispurl = (rptr->hexenc) ? url_decode(rptr->string, str).c_str() : rptr->string.c_str();
 
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,"%-8" PRIu64 " %6.02f%%           %d  %12s  %s\n",
@@ -2277,7 +2267,7 @@ int html_output_t::all_errors_page(void)
          (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
          rptr->respcode,
          html_encode(rptr->method),
-         html_encode(dispurl));
+         html_encode(rptr->string));
    }
 
    iter.close();
@@ -2347,7 +2337,7 @@ int html_output_t::all_refs_page(void)
          if(rnode.string.isempty())
             dispurl = config.lang.msg_ref_dreq;
          else
-            dispurl = (rnode.hexenc) ? url_decode(rnode.string, str).c_str() : rnode.string.c_str();
+            dispurl = rnode.string;
 
          buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  %s\n",
@@ -2877,7 +2867,7 @@ void html_output_t::top_users_table()
            (state.totals.t_visits==0)?0:((double)iptr->visit/state.totals.t_visits)*100.0,
            iptr->avgtime, iptr->maxtime);
 
-      dispuser = url_decode(iptr->string, str).c_str();
+      dispuser = iptr->string;
       dispuser = html_encode(dispuser);
       if(iptr->flag == OBJ_GRP && config.hlite_groups)
          fprintf(out_fp,"<strong>%s</strong></td></tr>\n", dispuser); 
