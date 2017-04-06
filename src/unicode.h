@@ -93,8 +93,10 @@ inline bool in_range(unsigned char ch)
 }
 
 //
-// Returns the number of bytes in a UTF-8 character or zero if the sequence has any
-// bytes outside of the ranges defined for UTF-8 characters. 
+// Returns the number of bytes in a UTF-8 character or a zero if the sequence has any
+// bytes outside of the ranges defined for UTF-8 characters. If maxcnt is specified,
+// at most maxcnt bytes will be evaluated and a zero will be returned if the sequence 
+// of maxcnt bytes does not represent a complete UTF-8 character.
 //
 // IMPORTANT: this function does not check whether the UTF-8 character is valid and
 // will just count bytes based on the ranges described below. For example, the 0x01
@@ -113,19 +115,25 @@ inline bool in_range(unsigned char ch)
 // U+40000  .. U+FFFFF  F1..F3      80..BF      80..BF      80..BF
 // U+100000 .. U+10FFFF F4          80..8F      80..BF      80..BF
 //
-inline size_t utf8size(const char *cp)
+inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 {
-   if(!cp)
+   if(!cp || !maxcnt || maxcnt > 4)
       return 0;
 
    // 1-byte character (including zero terminator)
    if(in_range<'\x00', '\x7F'>(*cp))
       return 1;
    
+   if(maxcnt < 2)
+      return 0;
+
    // 2-byte sequences
    if(in_range<'\xC2', '\xDF'>(*cp))
       return in_range<'\x80', '\xBF'>(*(cp+1)) ? 2 : 0;
    
+   if(maxcnt < 3)
+      return 0;
+
    // 3-byte sequences
    if(*cp == '\xE0')
       return in_range<'\xA0', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
@@ -138,6 +146,9 @@ inline size_t utf8size(const char *cp)
       
    if(in_range<'\xEE', '\xEF'>(*cp))
       return in_range<'\x80', '\xBF'>(*(cp+1)) && in_range<'\x80', '\xBF'>(*(cp+2)) ? 3 : 0;
+
+   if(maxcnt < 4)
+      return 0;
 
    // 4-byte sequences
    if(*cp == '\xF0')
