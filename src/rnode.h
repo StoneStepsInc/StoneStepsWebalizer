@@ -18,7 +18,6 @@
 // Referrer
 //
 struct rnode_t : public base_node<rnode_t> {   
-      bool     hexenc;              // any %xx sequences?
       uint64_t count;               // request count
       uint64_t visits;              // visits started
 
@@ -26,7 +25,7 @@ struct rnode_t : public base_node<rnode_t> {
          typedef void (*s_unpack_cb_t)(rnode_t& rnode, void *arg);
 
       public:
-         rnode_t(void) : base_node<rnode_t>() {hexenc = false; count = 0;}
+         rnode_t(void) : base_node<rnode_t>() {count = 0;}
          rnode_t(const rnode_t& rnode);
          rnode_t(const string_t& ref);
 

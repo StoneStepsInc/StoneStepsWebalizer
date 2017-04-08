@@ -17,7 +17,6 @@
 //
 rnode_t::rnode_t(const rnode_t& rnode) : base_node<rnode_t>(rnode)
 {
-   hexenc = rnode.hexenc;
    count = rnode.count;
    visits = rnode.visits;
 }
@@ -26,7 +25,6 @@ rnode_t::rnode_t(const string_t& ref) : base_node<rnode_t>(ref)
 {
    count = 0;
    visits = 0;
-   hexenc = (ref && strchr(ref, '%')) ? true : false;
 }
 
 //
@@ -55,7 +53,7 @@ size_t rnode_t::s_pack_data(void *buffer, size_t bufsize) const
    base_node<rnode_t>::s_pack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
 
-   ptr = serialize(ptr, hexenc);
+   ptr = serialize(ptr, false);
    ptr = serialize(ptr, count);
 
    ptr = serialize(ptr, s_hash_value());
@@ -82,7 +80,8 @@ size_t rnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
    base_node<rnode_t>::s_unpack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
 
-   ptr = deserialize(ptr, hexenc);
+   ptr = s_skip_field<bool>(ptr);            // hexenc
+
    ptr = deserialize(ptr, count);
 
    ptr = s_skip_field<uint64_t>(ptr);      // value hash
@@ -101,11 +100,13 @@ size_t rnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
 size_t rnode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
-   size_t datasize = base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t) * 2;
-   
+   size_t datasize = base_node<rnode_t>::s_data_size(buffer) + 
+         sizeof(u_char) +                 // hexenc
+         sizeof(uint64_t) * 2;            // count, value hash
+
    if(version < 2)
       return datasize;
-      
+
    return datasize + sizeof(uint64_t);   // visits
 }
 

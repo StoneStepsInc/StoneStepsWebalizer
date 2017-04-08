@@ -22,7 +22,6 @@
 
 unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid) 
 {
-   hexenc = false; 
    target = false;
    count = files = entry = exit = 0; 
    xfer = 0;
@@ -34,7 +33,6 @@ unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid)
 
 unode_t::unode_t(const unode_t& unode) : base_node<unode_t>(unode) 
 {
-   hexenc = unode.hexenc; 
    target = unode.target;
    count = unode.count;
    files = unode.files;
@@ -63,7 +61,6 @@ unode_t::unode_t(const string_t& urlpath, const string_t& srchargs) : base_node<
       string += srchargs;
    }
 
-   hexenc = (strchr(string, '%')) ? true : false; 
    target = false;
    urltype = URL_TYPE_UNKNOWN;
 
@@ -79,7 +76,6 @@ void unode_t::reset(uint64_t nodeid)
 {
    base_node<unode_t>::reset(nodeid);
 
-   hexenc = false;
    target = false; 
    count = files = entry = exit = 0; 
    xfer = 0;
@@ -106,10 +102,10 @@ u_char unode_t::update_url_type(u_char type)
 size_t unode_t::s_data_size(void) const
 {
    return base_node<unode_t>::s_data_size() + 
-            sizeof(u_char) * 3 + 
-            sizeof(u_short) + 
-            sizeof(uint64_t) * 5 + 
-            sizeof(double) * 2 + 
+            sizeof(u_char) * 3 +       // hexenc, target, urltype 
+            sizeof(u_short) +          // pathlen
+            sizeof(uint64_t) * 5 +     // count, files, entry, exit, value hash
+            sizeof(double) * 2 +       // avgtime, maxtime
             sizeof(uint64_t);          // xfer
 }
 
@@ -127,7 +123,7 @@ size_t unode_t::s_pack_data(void *buffer, size_t bufsize) const
    base_node<unode_t>::s_pack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = serialize(ptr, hexenc);
+   ptr = serialize(ptr, false);
    ptr = serialize(ptr, urltype);
    ptr = serialize(ptr, pathlen);
    ptr = serialize(ptr, count);
@@ -162,7 +158,8 @@ size_t unode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
    base_node<unode_t>::s_unpack_data(buffer, bufsize);
    ptr = (u_char*) buffer + basesize;
 
-   ptr = deserialize(ptr, tmp); hexenc = tmp;
+   ptr = s_skip_field<bool>(ptr);         // hexenc
+
    ptr = deserialize(ptr, urltype);
    ptr = deserialize(ptr, pathlen);
    ptr = deserialize(ptr, count);
@@ -194,10 +191,10 @@ size_t unode_t::s_data_size(const void *buffer)
 {
    u_short version = s_node_ver(buffer);
    size_t datasize = base_node<unode_t>::s_data_size(buffer) + 
-            sizeof(u_char) * 2 + 
-            sizeof(u_short) + 
-            sizeof(uint64_t) * 5 + 
-            sizeof(double) +
+            sizeof(u_char) * 2 +       // hexenc, urltype 
+            sizeof(u_short) +          // pathlen
+            sizeof(uint64_t) * 5 +     // count, files, entry, exit, value hash
+            sizeof(double) +           // avgtime, maxtime
             sizeof(uint64_t);          // xfer
 
    if(version < 2)

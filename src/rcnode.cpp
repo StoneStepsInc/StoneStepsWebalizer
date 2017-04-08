@@ -23,7 +23,6 @@
 rcnode_t::rcnode_t(const rcnode_t& rcnode) : base_node<rcnode_t>(rcnode)
 {
    count = rcnode.count;
-   hexenc = rcnode.hexenc;
    method = rcnode.method;
    respcode = rcnode.respcode;
 }
@@ -31,7 +30,6 @@ rcnode_t::rcnode_t(const rcnode_t& rcnode) : base_node<rcnode_t>(rcnode)
 rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respcode) : base_node<rcnode_t>(url) 
 {
    count = 0; 
-   hexenc = (url && strchr(url, '%')) ? true : false;
    method = _method;
    respcode = _respcode;
 }
@@ -55,7 +53,11 @@ bool rc_hash_table::compare(const rcnode_t *nptr, const void *param) const
 
 size_t rcnode_t::s_data_size(void) const
 {
-   return base_node<rcnode_t>::s_data_size() + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of(method);
+   return base_node<rcnode_t>::s_data_size() + 
+               sizeof(u_char) +              // hexenc
+               sizeof(u_short) +             // respcode
+               sizeof(uint64_t) * 2 +        // count, value hash
+               s_size_of(method);            // method
 }
 
 size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -72,7 +74,7 @@ size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
    base_node<rcnode_t>::s_pack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
 
-   ptr = serialize(ptr, hexenc);
+   ptr = serialize(ptr, false);
    ptr = serialize(ptr, respcode);
    ptr = serialize(ptr, count);
    ptr = serialize(ptr, method);
@@ -96,12 +98,13 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    base_node<rcnode_t>::s_unpack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
 
-   ptr = deserialize(ptr, hexenc);
+   ptr = s_skip_field<bool>(ptr);            // hexenc
+
    ptr = deserialize(ptr, respcode);
    ptr = deserialize(ptr, count);
    ptr = deserialize(ptr, method);
 
-   ptr = s_skip_field<uint64_t>(ptr);      // value hash
+   ptr = s_skip_field<uint64_t>(ptr);        // value hash
    
    if(upcb)
       upcb(*this, arg);
@@ -116,9 +119,15 @@ uint64_t rcnode_t::s_hash_value(void) const
 
 size_t rcnode_t::s_data_size(const void *buffer)
 {
-   size_t basesize = base_node<rcnode_t>::s_data_size(buffer);
-   // value hash follows the method when serialized
-   return basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t) * 2 + s_size_of<string_t>((u_char*)buffer + basesize + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t));
+   size_t datasize = base_node<rcnode_t>::s_data_size(buffer) +
+         sizeof(u_char) +              // hexenc
+         sizeof(u_short) +             // respcode
+         sizeof(uint64_t) * 2;         // count, value hash
+
+   // method
+   datasize += s_size_of<string_t>((const u_char*) buffer + datasize);
+
+   return datasize;
 }
 
 const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize)

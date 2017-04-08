@@ -19,7 +19,6 @@
 // 1. rcnode_t tracks URLs that resulted in an HTTP error
 //
 struct rcnode_t : public base_node<rcnode_t> { 
-      bool           hexenc;           // any %xx sequences?
       u_short        respcode;         // HTTP status code
       uint64_t       count;            // request count
       string_t       method;           // HTTP method
@@ -28,7 +27,7 @@ struct rcnode_t : public base_node<rcnode_t> {
          typedef void (*s_unpack_cb_t)(rcnode_t& rcnode, void *arg);
 
       public:
-         rcnode_t(void) : base_node<rcnode_t>() {count = 0; hexenc = false; respcode = 0;}
+         rcnode_t(void) : base_node<rcnode_t>() {count = 0; respcode = 0;}
          rcnode_t(const rcnode_t& rcnode);
          rcnode_t(const string_t& method, const string_t& url, u_short respcode);
 

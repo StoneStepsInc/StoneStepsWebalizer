@@ -25,7 +25,6 @@
 // out of memory at any time). 
 //
 struct unode_t : public base_node<unode_t> {
-      bool     hexenc : 1;          // any %xx sequences?
       bool     target : 1;          // Target URL?
       u_char   urltype;             // URL type (e.g. URL_TYPE_HTTP)
       u_short  pathlen;             // URL path length
