@@ -132,5 +132,8 @@
     <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj">
       <Filter>obj\Debug</Filter>
     </Object>
+    <Object Include="..\..\build\Win32\Release\obj\cp1252.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
   </ItemGroup>
 </Project>

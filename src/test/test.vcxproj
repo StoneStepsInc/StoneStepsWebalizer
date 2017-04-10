@@ -156,7 +156,9 @@
     <Object Include="..\..\build\Win32\Debug\obj\char_buffer_stack.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj" />
+    <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="..\..\build\Win32\Debug\obj\cp1252_ucs2.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>
@@ -194,6 +196,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\char_buffer_stack.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\cp1252.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\cp1252_ucs2.obj">
