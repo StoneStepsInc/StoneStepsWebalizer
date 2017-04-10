@@ -999,7 +999,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *
 
    // point the record to the internal buffer
    recdata.set_flags(DB_DBT_USERMEM);
-   recdata.set_ulen(bufsize);
+   recdata.set_ulen((u_int32_t) bufsize);
    recdata.set_data(buffer);
 
    if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode->string.c_str());

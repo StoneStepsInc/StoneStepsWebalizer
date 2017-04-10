@@ -3092,7 +3092,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
    int reclen = 0, errnum = 0;
 
    // read the line ad check if there's no more data; EOF is checked in logfile_t::get_line
-   while((reclen = logfile.get_line(buffer, buffer.capacity(), &errnum)) != 0) {
+   while((reclen = logfile.get_line(buffer, (u_int) buffer.capacity(), &errnum)) != 0) {
       
       // in case of an error, throw an exception - errors cannot be just reported as bad log lines
       if(reclen == -1)
@@ -3120,7 +3120,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
       }
 
       /* get the rest of the record */
-      while((reclen = logfile.get_line(buffer, buffer.capacity(), &errnum)) != 0) {
+      while((reclen = logfile.get_line(buffer, (u_int) buffer.capacity(), &errnum)) != 0) {
          // handle errors
          if(reclen == -1)
             throw exception_t(0, string_t::_format("%s: %s (%d)", config.lang.msg_file_err, logfile.get_fname().c_str(), errnum));

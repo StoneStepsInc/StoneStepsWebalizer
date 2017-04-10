@@ -27,7 +27,7 @@ char_buffer_base<char_t> p2_buffer_allocator_tmpl<char_t>::get_buffer(size_t buf
    bufsize = ceilp2((uint32_t) std::max(bufsize, (size_t) 256u));
 
    // get the bucket for the requested buffer size
-   buffer_stack_t& buffer_stack = buffers[tzbits(bufsize) - 8];
+   buffer_stack_t& buffer_stack = buffers[tzbits((uint32_t) bufsize) - 8];
 
    // and either return a buffer from the top of the stack or allocate a new one
    if(buffer_stack.empty())
@@ -52,7 +52,7 @@ void p2_buffer_allocator_tmpl<char_t>::release_buffer(char_buffer_base<char_t>&&
       buffer.resize(bufsize);
 
    // get the bucket for the requested buffer size
-   buffer_stack_t& buffer_stack = buffers[tzbits(bufsize) - 8];
+   buffer_stack_t& buffer_stack = buffers[tzbits((uint32_t) bufsize) - 8];
 
    // keep a few buffers and deallocate any extras
    if(buffer_stack.size() <= 16)
