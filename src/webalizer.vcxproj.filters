@@ -26,12 +26,6 @@
       <UniqueIdentifier>{5fb64b85-8852-4da4-8831-17b0a093b9ad}</UniqueIdentifier>
       <Extensions>lib</Extensions>
     </Filter>
-    <Filter Include="Libraries\Debug">
-      <UniqueIdentifier>{6e9faf0e-a2ed-4c5c-ba97-914511abe1de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Libraries\Release">
-      <UniqueIdentifier>{1d77b9e4-104a-4d43-ba6f-310eac894a62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\templates">
       <UniqueIdentifier>{edb4d8ba-9fda-4d44-98b2-1470a8fe28bc}</UniqueIdentifier>
     </Filter>
@@ -49,12 +43,6 @@
     </Filter>
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{611c384c-bedb-4ce2-9901-8aa6384a8861}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Libraries\Debug64">
-      <UniqueIdentifier>{3c851c82-8b56-4e11-a5ed-9a34081ff706}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Libraries\Release64">
-      <UniqueIdentifier>{7866c5f3-dc02-49e9-8d8d-47c7da8d935c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -421,53 +409,17 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(GDDir)windows\Debug\gd2.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="$(GDLibDir)$(GDLibName).lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(BDBDir)build_windows\Win32\Debug\libdb60d.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="$(BDBLibDir)$(BDBLibName).lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(GeoIPDir)projects\VS14\Debug\libmaxminddbd.lib">
-      <Filter>Libraries\Debug</Filter>
+    <Library Include="$(GeoIPLibDir)$(GeoIPLibName).lib">
+      <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(ZLibDir)contrib\vstudio\vc14\x86\ZlibDebugStatic\zlib12.lib">
-      <Filter>Libraries\Debug</Filter>
-    </Library>
-    <Library Include="$(GDDir)windows\Debug64\gd2.lib">
-      <Filter>Libraries\Debug64</Filter>
-    </Library>
-    <Library Include="$(BDBDir)build_windows\x64\Debug\libdb60d.lib">
-      <Filter>Libraries\Debug64</Filter>
-    </Library>
-    <Library Include="$(GeoIPDir)projects\VS14\x64\Debug\libmaxminddbd.lib">
-      <Filter>Libraries\Debug64</Filter>
-    </Library>
-    <Library Include="$(ZLibDir)contrib\vstudio\vc14\x64\ZlibDebugStatic\zlib12.lib">
-      <Filter>Libraries\Debug64</Filter>
-    </Library>
-    <Library Include="$(GDDir)windows\Release64\gd2.lib">
-      <Filter>Libraries\Release64</Filter>
-    </Library>
-    <Library Include="$(BDBDir)build_windows\x64\Release\libdb60.lib">
-      <Filter>Libraries\Release64</Filter>
-    </Library>
-    <Library Include="$(GeoIPDir)projects\VS14\x64\Release\libmaxminddb.lib">
-      <Filter>Libraries\Release64</Filter>
-    </Library>
-    <Library Include="$(ZLibDir)contrib\vstudio\vc14\x64\ZlibReleaseStatic\zlib12.lib">
-      <Filter>Libraries\Release64</Filter>
-    </Library>
-    <Library Include="$(GDDir)windows\Release\gd2.lib">
-      <Filter>Libraries\Release</Filter>
-    </Library>
-    <Library Include="$(BDBDir)build_windows\Win32\Release\libdb60.lib">
-      <Filter>Libraries\Release</Filter>
-    </Library>
-    <Library Include="$(GeoIPDir)projects\VS14\Release\libmaxminddb.lib">
-      <Filter>Libraries\Release</Filter>
-    </Library>
-    <Library Include="$(ZLibDir)contrib\vstudio\vc14\x86\ZlibReleaseStatic\zlib12.lib">
-      <Filter>Libraries\Release</Filter>
+    <Library Include="$(ZLibLibDir)$(ZLibName).lib">
+      <Filter>Libraries</Filter>
     </Library>
   </ItemGroup>
 </Project>
