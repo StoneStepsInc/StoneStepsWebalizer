@@ -13,6 +13,25 @@ code required to build webalizer.exe for all platforms. This project uses proper
 sheets described below and listed in the order of their precedence, from lower to 
 higher.
 
+The webalizer.vcxproj and webalizer.vcxproj.filters files were edited to reference 
+3rd-party libraries via user macros defined within the property sheets. Following
+top-level macros are defined:
+
+BDBDir         - home directory of the Berkeley DB source
+GDDir          - home directory of the GD source
+GeoIPDir       - home directory of the MaxMind's GeoIP source
+ZLibDir        - home directory of the ZLib source
+
+BDBLibDir      - directory path of the Berkeley DB library
+GDLibDir       - directory path of the GD library
+GeoIPLibDir    - directory path of the MaxMind's GeoIP library
+ZLibLibDir     - directory path of the ZLib library
+
+BDBLibName     - the name of the Berkeley DB library file
+GDLibName      - the name of the GD library file
+GeoIPLibName   - the name of the MaxMind's GeoIP library file
+ZLibName       - the name of the ZLib library file
+
 ### weblizer.props
 
 This property sheet contains common settings for all platforms and configurations, 
@@ -67,3 +86,8 @@ This project also includes all webalizer*.props property sheets to allow its scr
 references to the combined user-defined macros in these property sheets.
 
 The package project is configured to build only for release configurations.
+
+## test
+
+A unit test project. Currently includes object files from the webalizer project build for
+linking purposes.
