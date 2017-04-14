@@ -154,7 +154,7 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen);
 
 int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2);
 
-void norm_url_str(string_t& str, string_t& strbuf);
+void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf);
 
 string_t& url_encode(const string_t& str, string_t& out);
 

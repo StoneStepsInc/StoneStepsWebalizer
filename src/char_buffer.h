@@ -175,8 +175,8 @@ class char_buffer_allocator_tmpl {
 // the buffer data member must be accessed directly for this to work.
 //
 // VC++ 2013 fails to recognize that the reference is bound to a subobject of a 
-// temporary and the buffer holder and the buffer at the end of the line. VC 2015 
-// fixes this problem.
+// temporary and destroys the buffer holder and the buffer at the end of the line. 
+// VC 2015 fixes this problem.
 //
 template <typename char_t, typename ... alloc_params_t>
 class char_buffer_holder_tmpl {

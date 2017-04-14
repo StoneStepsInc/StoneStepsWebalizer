@@ -352,9 +352,8 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
 // The strbuf parameter is used as an intermediary string buffer to minimize memory
 // allocations when the caller needs to normalize multiple URL strings one after another.
 //
-void norm_url_str(string_t& str, string_t& strbuf)
+void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
 {
-   string_t::char_buffer_t buf;
    size_t chsz, of;
    const char *cp1, *cp2;
    char *bcp;
@@ -398,24 +397,22 @@ void norm_url_str(string_t& str, string_t& strbuf)
       return;
 
    //
-   // A 3-byte URL-encoded sequence translates into one byte of output. A non-UTF-8 
-   // character will be interpreted as CP1252 and translates into a 2-byte UTF-8 
-   // sequence. The size of the remainder of the original string should be large 
-   // enough to cover most cases and more memory will be allocated as required.
+   // A 3-byte URL-encoded sequence translates into one byte of output. A misplaced percent 
+   // character or a control character translates into three bytes of URL-encoded output. 
+   // The size of the remainder of the original string should be large enough to cover most 
+   // cases and more memory will be allocated, if required.
    //
-   strbuf.reserve(str.length() - (cp1 - str.c_str()));
+   strbuf.resize(str.length() - (cp1 - str.c_str()) + sizeof(char), 0);
 
-   // detach the buffer to operate on characters directly
-   buf = strbuf.detach();
-   bcp = buf;
-
+   // set up the source and the destination pointers
+   bcp = strbuf;
    cp2 = cp1;
 
    // decode URL-encoded sequences and fix misplaced % characters
    while(*cp2) {
       // check if we have room for at least one URL-encoded sequence and the null character
-      if(buf.capacity() - (bcp - buf) < 4)
-         bcp = realloc_buffer(buf, bcp);
+      if(strbuf.capacity() - (bcp - strbuf) < 4)
+         bcp = realloc_buffer(strbuf, bcp);
 
       if(*cp2 != '%')
          // URL-encode control charactrs and copy anything else
@@ -441,17 +438,17 @@ void norm_url_str(string_t& str, string_t& strbuf)
       }
    }
 
-   // attach the buffer back to the buffer string
-   strbuf.attach(std::move(buf), bcp - buf);
+   // add a null character to the buffer string
+   strbuf[bcp - strbuf] = 0;
 
    // hold onto the current offset to the first URL-encoded sequence or a non-UTF-8 character
    of = cp1 - str.c_str();
 
    // detach the source buffer and set up the pointers to copy characters from the buffer string
-   buf = str.detach();
+   string_t::char_buffer_t buf = str.detach();
    bcp = buf + of;
 
-   cp2 = strbuf.c_str();
+   cp2 = strbuf;
 
    // convert all non-UTF-8 characters as if they are in CP1252
    while(*cp2) {

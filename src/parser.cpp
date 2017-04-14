@@ -364,14 +364,14 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
       //
       // Normalize all strings that may have URL encoding
       //
-      string_t cpstr;
+      string_t::char_buffer_t strbuf;
 
-      norm_url_str(log_rec.url, cpstr);
-      norm_url_str(log_rec.refer, cpstr);
-      norm_url_str(log_rec.agent, cpstr);
-      norm_url_str(log_rec.srchargs, cpstr);
-      norm_url_str(log_rec.ident, cpstr);
-      norm_url_str(log_rec.xsrchstr, cpstr);
+      norm_url_str(log_rec.url, strbuf);
+      norm_url_str(log_rec.refer, strbuf);
+      norm_url_str(log_rec.agent, strbuf);
+      norm_url_str(log_rec.srchargs, strbuf);
+      norm_url_str(log_rec.ident, strbuf);
+      norm_url_str(log_rec.xsrchstr, strbuf);
    }
 
    return retval;

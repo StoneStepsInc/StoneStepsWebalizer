@@ -26,7 +26,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeASCII)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc";
          norm_url_str(str, strbuf);
@@ -40,7 +41,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeMalformed)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc%xyz";
          norm_url_str(str, strbuf);
@@ -54,7 +56,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeCP1252)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc\xA3xyz";
          norm_url_str(str, strbuf);
@@ -68,7 +71,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeURLEncoded)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc%25xyz";
          norm_url_str(str, strbuf);
@@ -94,7 +98,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeURLEncodedCP1252)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc%A3xyz";
          norm_url_str(str, strbuf);
@@ -108,7 +113,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeURLEncodedKanji)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = "abc%E8%A8%98xyz";
          norm_url_str(str, strbuf);
@@ -130,7 +136,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeUTF8)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          str = u8"abc\u68A1xyz\u6890";
          norm_url_str(str, strbuf);
@@ -148,7 +155,8 @@ TEST_CLASS(URLNormalizer) {
 
       TEST_METHOD(NormalizeControl)
       {
-         string_t str, strbuf;
+         string_t str;
+         string_t::char_buffer_t strbuf;
 
          // control characters are URL-encoded to make them visible
          str = "x\x01.\x05.\x10.\x19.\x20y";
