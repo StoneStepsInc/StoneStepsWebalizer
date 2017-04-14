@@ -2057,7 +2057,13 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 
       dblscnt = 0;
 
-      // copy and decode the search string 
+      //
+      // The entire search string is normalized, so all control characters and reserved 
+      // URL characters are URL-encoded, but ASCII characters are not. All characters 
+      // are represented by well-formed UTF-8 sequences. We can now safely decode all 
+      // URL-encoded sequences and transform some characters in the process, as described 
+      // in the comments below. 
+      //
       cp2 = buffer;
       while(*cp1 && *cp1!='&')
       {
@@ -2065,12 +2071,14 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
             cp1 = from_hex(++cp1, cp2);
          else if(*cp1 == '+') 
             *cp2 = ' ', cp1++;                        // change + to space       
-         else if(*cp1 < '\x20') 
-            *cp2='_', cp1++;                          // strip invalid chars
          else if(*cp1 >= 'A' && *cp1 <= 'Z')     
             *cp2 = string_t::tolower(*cp1), cp1++;    // lowercase ASCII characters
          else
             *cp2 = *cp1, cp1++;                       // copy other characters
+
+         // replace control characters with underscores
+         if(*cp2 < '\x20')
+            *cp2 = '_';
 
          // track if we saw at least one double-slash sequence
          if(spamcheck && dblscnt != 2) {
