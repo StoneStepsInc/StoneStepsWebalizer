@@ -1595,7 +1595,8 @@ DNSLookups    Specifies whether to resolve host IP addresses to domain
               configured to enable DNS components. When set to 'no', 
               DNS resolution is disabled, but the DNSCache database is 
               still used to preserve some IP address information, such 
-              as whether some IP address is marked as a spammer, etc. 
+              as whether some IP address is marked as a spammer, from
+              month to month. 
               Default: yes
               
 AcceptHostNames
