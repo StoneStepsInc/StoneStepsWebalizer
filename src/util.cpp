@@ -42,7 +42,7 @@ static char from_hex(char c);
 // with the code \xE2 is converted to an integer without a cast to 
 // an unsigned char, the resulting index will be -30:
 //
-//  const char *str = "Ô";           // 0xE2 (226)
+//  const char *str = "\xE2";        // 0xE2 (226)
 //  int n = deltas[str[0]];          // index = -30 ((int) 0xE2)
 //  int m = deltas[(u_char)str[0]];  // index = 226 ((int)(u_char) 0xE2)
 //
