@@ -2077,7 +2077,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
             *cp2 = *cp1, cp1++;                       // copy other characters
 
          // replace control characters with underscores
-         if(*cp2 < '\x20')
+         if((unsigned char) *cp2 < '\x20')
             *cp2 = '_';
 
          // track if we saw at least one double-slash sequence
