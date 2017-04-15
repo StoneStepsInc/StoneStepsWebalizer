@@ -49,7 +49,7 @@ class dns_resolver_t {
       struct wrk_ctx_t {
          dns_resolver_t&   dns_resolver;
          Db                *dns_db = NULL;
-         void              *buffer = NULL;
+         u_char            *buffer = NULL;
          size_t            bufsize = 0;
 
          wrk_ctx_t(dns_resolver_t& dns_resolver) : dns_resolver(dns_resolver)
