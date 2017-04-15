@@ -425,8 +425,8 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
          if(string_t::isxdigit(*cp2) && string_t::isxdigit(*(cp2+1))) {
             from_hex(cp2, chr);
 
-            // do not decode URL component separators because it is irreversible
-            if(strchr(":/?#[]@!$&'()*+,;=%", *chr))
+            // do not decode URL component separators because it is irreversible or control characters
+            if((unsigned char) *chr < '\x20' || strchr(":/?#[]@!$&'()*+,;=%", *chr))
                *bcp++ = '%', *bcp++ = string_t::toupper(*cp2++), *bcp++ = string_t::toupper(*cp2++);
             else
                *bcp++ = *chr, cp2 += 2;
@@ -558,10 +558,6 @@ const char *from_hex(const char *cp1, char *cp2)
    // convert the hex number to an octet
    *cp2 = from_hex(*cp1++) << 4;
    *cp2 |= from_hex(*cp1++);
-
-   // change control characters to underscore
-   if((unsigned char) *cp2 < '\x20') 
-      *cp2 = '_';
 
    return cp1;
 }

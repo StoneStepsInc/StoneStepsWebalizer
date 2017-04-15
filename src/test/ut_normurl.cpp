@@ -163,10 +163,10 @@ TEST_CLASS(URLNormalizer) {
          norm_url_str(str, strbuf);
          mstest::Assert::AreEqual("x%01.%05.%10.%19. y", str, L"Normalize a string with control characters");
 
-         // URL-encoded control characters are historically converted to underscores
+         // URL-encoded control characters are left unchanged
          str = "x%01.%05.%10.%19.%20y";
          norm_url_str(str, strbuf);
-         mstest::Assert::AreEqual("x_._._._. y", str, L"Normalize a string with URL-encoded control characters");
+         mstest::Assert::AreEqual("x%01.%05.%10.%19. y", str, L"Normalize a string with URL-encoded control characters");
       }
 
       BEGIN_TEST_METHOD_ATTRIBUTE(URLEncodeNormString)
