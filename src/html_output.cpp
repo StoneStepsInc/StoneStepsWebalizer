@@ -1425,7 +1425,6 @@ void html_output_t::top_urls_table(int flag)
    u_int i;
    uint32_t tot_num, ntop_num; 
    const unode_t *uptr;
-   const char *href, *dispurl;
    unode_t *u_array;
    string_t str;
 
@@ -1545,21 +1544,29 @@ void html_output_t::top_urls_table(int flag)
       else {
          const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
-         dispurl = html_encode(uptr->string);
-         href = html_encode(url_encode(uptr->string, str));
-
-         /* check for a service prefix (ie: http://) */
-         if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
-            fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
+         if(!is_safe_url(uptr->string)) {
+            // output unsafe URLs without a link and leave multibyte characters unencoded
+            fprintf(out_fp, "%s\n", html_encode(uptr->string));
          }
          else {
-            /* Web log  */
-            if(config.is_secure_url(uptr->urltype))
-               /* secure server mode, use https:// */
-               fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
-            else
-               /* otherwise use standard 'http://' */
-               fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+            const char *href, *dispurl;
+
+            dispurl = html_encode(uptr->string);
+            href = html_encode(url_encode(uptr->string, str));
+
+            /* check for a service prefix (ie: http://) */
+            if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
+               fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
+            }
+            else {
+               /* Web log  */
+               if(config.is_secure_url(uptr->urltype))
+                  /* secure server mode, use https:// */
+                  fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+               else
+                  /* otherwise use standard 'http://' */
+                  fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+            }
          }
       }
       uptr++;
@@ -1674,7 +1681,6 @@ void html_output_t::top_entry_table(int flag)
    uint32_t tot_num;
    u_int i;
    unode_t unode;
-   const char *href, *dispurl;
    unode_t *u_array;
    const unode_t *uptr;
    string_t str;
@@ -1761,21 +1767,30 @@ void html_output_t::top_entry_table(int flag)
           (flag)?((state.totals.t_exit==0)?0:((double)uptr->exit/state.totals.t_exit)*100.0)
                 :((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0));
 
-      dispurl = html_encode(uptr->string);
-      href = html_encode(url_encode(uptr->string, str));
-
-      /* check for a service prefix (ie: http://) */
-      if (strstr_ex(uptr->string, "://", 10, 3)!=NULL)
-         fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
-      else
-      {
-         if(config.is_secure_url(uptr->urltype))
-            /* secure server mode, use https:// */
-            fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
-         else
-            /* otherwise use standard 'http://' */
-            fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+      if(!is_safe_url(uptr->string)) {
+         // output unsafe URLs without a link and leave multibyte characters unencoded
+         fprintf(out_fp, "%s\n", html_encode(uptr->string));
       }
+      else {      
+         const char *href, *dispurl;
+
+         dispurl = html_encode(uptr->string);
+         href = html_encode(url_encode(uptr->string, str));
+
+         /* check for a service prefix (ie: http://) */
+         if (strstr_ex(uptr->string, "://", 10, 3)!=NULL)
+            fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
+         else
+         {
+            if(config.is_secure_url(uptr->urltype))
+               /* secure server mode, use https:// */
+               fprintf(out_fp, "<a href=\"https://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+            else
+               /* otherwise use standard 'http://' */
+               fprintf(out_fp, "<a href=\"http://%s%s\">%s</a></td></tr>\n", config.hname.c_str(), href, dispurl);
+         }
+      }
+
       uptr++;
    }
    fputs("</tbody>\n", out_fp);
@@ -1801,7 +1816,7 @@ void html_output_t::top_refs_table()
    u_int i;
    const rnode_t *rptr;
    rnode_t *r_array;
-   const char *href, *dispurl, *cp1;
+   const char *cp1;
    string_t str;
 
    // return if nothing to process
@@ -1909,15 +1924,23 @@ void html_output_t::top_refs_table()
          if (rptr->string.isempty())
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
          else {
-            dispurl = html_encode(rptr->string);
-            href = html_encode(url_encode(rptr->string, str));
+            if(!is_safe_url(rptr->string)) {
+               // output unsafe URLs without a link and leave multibyte characters unencoded
+               fprintf(out_fp, "%s\n", html_encode(rptr->string));
+            }
+            else {
+               const char *href, *dispurl;
 
-            // make a link only if the scheme is http or https
-            if(!string_t::compare_ci(href, "http", 4) && 
-                  (*(cp1 = &href[4]) == ':' || (*cp1 == 's' && *++cp1 == ':')) && *++cp1 == '/' && *++cp1 == '/')
-               fprintf(out_fp,"<a href=\"%s\">%s</a>", href, dispurl);
-            else
-               fprintf(out_fp,"%s", dispurl);
+               dispurl = html_encode(rptr->string);
+               href = html_encode(url_encode(rptr->string, str));
+
+               // make a link only if the scheme is http or https
+               if(!string_t::compare_ci(href, "http", 4) && 
+                     (*(cp1 = &href[4]) == ':' || (*cp1 == 's' && *++cp1 == ':')) && *++cp1 == '/' && *++cp1 == '/')
+                  fprintf(out_fp,"<a href=\"%s\">%s</a>", href, dispurl);
+               else
+                  fprintf(out_fp,"%s", dispurl);
+            }
          }
       }
       fputs("</td></tr>\n", out_fp);
@@ -2287,7 +2310,6 @@ int html_output_t::all_refs_page(void)
    rnode_t  rnode;
    string_t ref_fname;
    FILE     *out_fp;
-   const char *dispurl;
    string_t str;
 
    /* generate file name */
@@ -2334,6 +2356,8 @@ int html_output_t::all_refs_page(void)
          if(config.hidden_refs.isinlist(rnode.string))
             continue;
       
+         const char *dispurl;
+
          if(rnode.string.isempty())
             dispurl = config.lang.msg_ref_dreq;
          else
@@ -3252,6 +3276,53 @@ int html_output_t::write_main_index()
 
    fclose(out_fp);
    return 0;
+}
+
+bool html_output_t::is_safe_url(const string_t& url)
+{
+   size_t chsz;
+   const char *cp;
+   char chr[2] = {0};
+
+   // consider empty strings safe for the purposes of this method
+   if(url.isempty())
+      return true;
+
+   cp = url.c_str();
+
+   while(*cp) {
+      // all characters must be UTF-8 encoded at this point
+      if((chsz = utf8size(cp)) == 0)
+         throw std::invalid_argument("Bad UTF-8 character in the URL");
+
+      // consider all multibyte characters safe
+      if(chsz > 1)
+         cp += chsz;
+      else if(*cp == '%') {
+         cp++;
+
+         // treat maformed percent encoding as unsafe
+         if(!string_t::isxdigit(*cp) || !string_t::isxdigit(*(cp+1)))
+            return false;
+
+         from_hex(cp, chr);
+
+         // consider control characters unsafe, even if encoded
+         if((unsigned char) *chr < '\x20')
+            return false;
+
+         cp += 2;
+      }
+      else {
+         // consider control characters unsafe
+         if((unsigned char) *cp < '\x20')
+            return false;
+
+         cp++;
+      }
+   }
+
+   return true;
 }
 
 //

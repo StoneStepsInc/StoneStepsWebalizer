@@ -89,6 +89,8 @@ class html_output_t : public output_t {
       int all_search_page(void);
       int all_users_page(void);
 
+      bool is_safe_url(const string_t& url);
+
    public:
       html_output_t(const config_t& config, const state_t& state);
 
