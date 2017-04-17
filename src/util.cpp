@@ -511,7 +511,7 @@ string_t& url_encode(const string_t& str, string_t& out)
          throw std::invalid_argument("Bad UTF-8 character in the URL");
 
       // check if the buffer has enough room for the next sequence
-      if(buf.capacity() < (chsz == 1 ? 2 : (chsz * 3) + 1)) {
+      if(buf.capacity() - (bcp - buf) < (chsz == 1 ? 2 : (chsz * 3) + 1)) {
          of = bcp - buf;
          // half of the minimum (32) should be enough to accommodate 4 * 3 + 1 bytes
          buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2));
