@@ -8,6 +8,9 @@
  * Disabled spammer and robot checks for Squid logs
  * Changed case-insensitive comparisons and conversions to ignore non-ASCII characters
  * Reworked DNS resolver to maintain historical spammer data and to reduce the footprint
+ * Introduced URL normalization that recognizes the same URL encoded differently
+ * Enforced UTF-8 encoding in all URL-encoded input text values
+ * Changed reports to render URLs containing control characters unclickable
  * [BUG] Fixed a bug that mangled non-ASCII characters in search strings
  * [BUG] Fixed a concurrency bug in the DNS resolver that could report incorrect host names
 
