@@ -1248,23 +1248,3 @@ bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool 
 
    return (*cp1 == '*' || (*cp1 == 0 && cp2 == eos)) ? true : false;
 }
-
-template <typename char_t>
-const char_t *strptr(const char_t *str, const char_t *defstr)
-{
-   static const char_t empty[1] = {0};
-   
-   if(str)
-      return str;
-      
-   if(defstr)
-      return defstr;
-      
-   return empty;
-}
-
-//
-// Instantiate templates
-//
-template const char *strptr<char>(const char *str, const char *defstr);
-template const wchar_t *strptr<wchar_t>(const wchar_t *str, const wchar_t *defstr);

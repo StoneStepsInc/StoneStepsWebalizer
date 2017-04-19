@@ -190,7 +190,4 @@ size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep
 
 bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas, bool nocase = false);
 
-template <typename char_t>
-const char_t *strptr(const char_t *str, const char_t *defstr = NULL);
-
 #endif // UTIL_H
