@@ -1085,7 +1085,7 @@ size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list arg
 // the null character. The function throws an exception if the output buffer is too 
 // small.
 // 
-// fmt_num is intended as a callback formatter function for buffer_formatter_t.
+// fmt_hr_num is intended as a callback formatter function for buffer_formatter_t.
 //
 // The value of decimal indicates whether the number should be formatted in multiples 
 // of 1000 or 1024.
