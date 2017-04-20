@@ -547,7 +547,7 @@ function renderCountryUsageChart(country_usage)
          layout: "vertical",
          align: "right",
          verticalAlign: "middle",
-         itemMarginBottom: 15,
+         itemMarginBottom: 10,                  // in pixels
          labelFormatter: function ()
          {
             return this.name + 
