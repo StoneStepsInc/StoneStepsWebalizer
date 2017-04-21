@@ -126,7 +126,7 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
-         fputs("<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>\n", out_fp);
+         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/4.2/adapters/standalone-framework.js\"></script>\n", out_fp);
          // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
          fputs("<script src=\"https://code.highcharts.com/4.2/highcharts.js\"></script>\n", out_fp);
       }
