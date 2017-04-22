@@ -239,15 +239,15 @@ function renderDailyUsageChart(daily_usage)
          }
       }],
       //
-      // The X axis is placed at a sufficient distance from the bottom of the frame 
-      // to accommodate labels, ticks and padding. All plots, on the other hand, are
-      // placed at a distance measured from the top of the frame, so the bottom of
-      // the lowest plot doesn't align with the X axis and the latter needs to be
-      // moved down a few pixels, depending on the chart frame size, label font size, 
-      // etc. Given current settings, the offset is two pixels.
+      // The X axis is placed at the base of the plot area, which leaves sufficient room 
+      // for labels, ticks and padding at the bottom of the frame. All charts, on the other 
+      // hand, are placed at a distance measured from the top of the frame, so the bottom 
+      // of the lowest chart may not align with the X axis. The X axis can be moved up by
+      // assigning offset a negative value, but cannot be moved below the base line of the
+      // plot area. If this is required, adjust the top property of the lowest yAxis object. 
       //
       xAxis: {
-         offset: -2,
+         offset: 0,
          allowDecimals: false,
          lineColor: daily_usage.config.gridline_color,
          tickColor: daily_usage.config.gridline_color,
@@ -268,7 +268,7 @@ function renderDailyUsageChart(daily_usage)
          }
       },
       //
-      // Daily usage chart is 450px high. Each Y-axis is 110px high and are stcked
+      // Daily usage chart is 450px high. Each Y-axis is 110px high and are stacked
       // with a 20px gap between them by setting their `top` property. The `offset`
       // property for each chart must be set to zero to prevent each axis shifted 
       // right to accommodate the next axis, which would be necessary if charts 
@@ -336,7 +336,7 @@ function renderDailyUsageChart(daily_usage)
          }
       },{
          height: 110,
-         top: 300,
+         top: 299,                              // should be 300; adjusted to align with the X axis
          offset: 0,
          max: daily_usage.getDailyUsageMaxXfer(),
          allowDecimals: false,
@@ -441,7 +441,7 @@ function renderHourlyUsageChart(hourly_usage)
          }
       }],
       xAxis: {
-         offset: -2,
+         offset: 0,
          allowDecimals: false,
          lineColor: hourly_usage.config.gridline_color,
          tickColor: hourly_usage.config.gridline_color,
@@ -485,7 +485,7 @@ function renderHourlyUsageChart(hourly_usage)
          }
       },{
          height: 150,
-         top: 260,
+         top: 259,                              // should be 260; adjusted to align with the X axis
          offset: 0,
          max: hourly_usage.getHourlyUsageMaxXfer(),
          allowDecimals: false,
@@ -699,7 +699,7 @@ function renderMonthlySummaryChart(monthly_summary)
       //
       xAxis: {
          type: "category",
-         offset: -2,
+         offset: 0,
          tickAmount: monthly_summary.chart.monthCount,
          categories: getMonthlySummaryMonths_Highcharts(monthly_summary.chart),
          allowDecimals: false,
@@ -773,7 +773,7 @@ function renderMonthlySummaryChart(monthly_summary)
          }
       },{
          height: 110,
-         top: 300,
+         top: 299,                                 // should be 300; adjusted to align with the X axis
          offset: 0,
          max: monthly_summary.getMonthlySummaryMaxXfer(),
          allowDecimals: false,
