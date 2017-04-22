@@ -126,15 +126,15 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
-         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/4.2/adapters/standalone-framework.js\"></script>\n", out_fp);
          // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
-         fputs("<script src=\"https://code.highcharts.com/stock/4.2/highstock.js\"></script>\n", out_fp);
+         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/4.2/adapters/standalone-framework.js\"></script>\n", out_fp);
+         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/stock/4.2/highstock.js\"></script>\n", out_fp);
       }
    }
    else {
       // output all alternative JavaScript charts paths
       for(std::vector<string_t>::const_iterator i = config.js_charts_paths.begin(); i != config.js_charts_paths.end(); i++)
-         fprintf(out_fp, "<script src=\"%s\"></script>\n", html_encode(i->c_str()));
+         fprintf(out_fp, "<script type=\"text/javascript\" src=\"%s\"></script>\n", html_encode(i->c_str()));
    }
 
    // output the script block for JavaScripts charts
