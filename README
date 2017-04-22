@@ -1741,12 +1741,18 @@ JavaScriptCharts
 
               https://shop.highsoft.com/faq#Non-Commercial-0
 
+              For more information about the JavaScript charts package used 
+              in this implementation see this page:
+
+              https://www.highcharts.com/products/highstock
+
 JavaScriptChartsPath
               JavaScripts charts by default will use implementation scripts
               from the 3rd-party chart vendor's location. If you would like
-              to serve charts scripts from your servers, specify as many of 
-              these variables as you need in the configuration file and each 
-              will be output in the report's head element.
+              to serve charts scripts from your servers or use some alternative, 
+              JavaScript charts integration, specify as many of these variables 
+              as you need in the configuration file and each will be output in 
+              the head element of each report.
 
 Database Configuration Options
 ------------------------------
