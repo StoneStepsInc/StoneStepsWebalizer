@@ -117,17 +117,13 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    // check if the output directory has write access
    if(access(config.out_dir, R_OK | W_OK)) {
       /* Error: Can't change directory to ... */
-      if(config.verbose)
-         fprintf(stderr, "%s %s\n", config.lang.msg_dir_err,config.out_dir.c_str());
-      exit(1);
+      throw exception_t(0, string_t::_format("%s %s", config.lang.msg_dir_err,config.out_dir.c_str()));
    }
 
    // check if the database directory has write access
    if(access(config.db_path, R_OK | W_OK)) {
       /* Error: Can't change directory to ... */
-      if(config.verbose)
-         fprintf(stderr, "%s %s\n", config.lang.msg_dir_err, config.db_path.c_str());
-      exit(1);
+      throw exception_t(0, string_t::_format("%s %s", config.lang.msg_dir_err, config.db_path.c_str()));
    }
 
    // initialize components we need for log file processing
@@ -142,9 +138,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
 
       // initialize the log file parser
       if(!parser.init_parser(config.log_type)) {
-         if(config.verbose)
-            fprintf(stderr, "%s\n", config.lang.msg_pars_err);
-         exit(1);
+         throw exception_t(0, string_t::_format("%s", config.lang.msg_pars_err));
       }
    }
 
@@ -153,9 +147,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    //
    if(!config.compact_db && !config.end_month && !config.db_info) {
       if(!init_output_engines()) {
-         if(config.verbose)
-            fprintf(stderr, "Cannot initialize output engine\n");
-         exit(1);
+         throw exception_t(0, "Cannot initialize output engine");
       }
    }
 
@@ -163,9 +155,7 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    // Initialize the state engine
    //
    if(!state.initialize()) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot initialize the state engine\n");
-      exit(1);
+      throw exception_t(0, "Cannot initialize the state engine");
    }
 
    //
@@ -3062,7 +3052,7 @@ int main(int argc, char *argv[])
          fprintf(stderr, "%s\n", err.what());
    }
 
-   return -1;
+   return EXIT_FAILURE;
 }
 
 //
