@@ -74,7 +74,7 @@ size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
    base_node<rcnode_t>::s_pack_data(buffer, bufsize);
    ptr = &((u_char*)buffer)[basesize];
 
-   ptr = serialize(ptr, false);
+   ptr = serialize(ptr, false);              // hexenc
    ptr = serialize(ptr, respcode);
    ptr = serialize(ptr, count);
    ptr = serialize(ptr, method);
@@ -122,12 +122,12 @@ size_t rcnode_t::s_data_size(const void *buffer)
    size_t datasize = base_node<rcnode_t>::s_data_size(buffer) +
          sizeof(u_char) +              // hexenc
          sizeof(u_short) +             // respcode
-         sizeof(uint64_t) * 2;         // count, value hash
+         sizeof(uint64_t);             // count
 
    // method
    datasize += s_size_of<string_t>((const u_char*) buffer + datasize);
 
-   return datasize;
+   return datasize + sizeof(uint64_t); // value hash;
 }
 
 const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize)
