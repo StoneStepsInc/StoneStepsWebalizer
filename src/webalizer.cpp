@@ -95,7 +95,7 @@ webalizer_t::~webalizer_t(void)
 {
 }
 
-bool webalizer_t::initialize(int argc, const char * const argv[])
+void webalizer_t::initialize(int argc, const char * const argv[])
 {
    u_int i;
    utsname system_info;
@@ -177,11 +177,9 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
       if(config.verbose > 1 && !config.db_info) 
          printf("%s '%s'\n",config.lang.msg_hostname,config.hname.c_str());
    }
-
-   return true;
 }
 
-bool webalizer_t::cleanup(void)
+void webalizer_t::cleanup(void)
 {
    if(config.is_dns_enabled())
       dns_resolver.dns_clean_up();
@@ -191,8 +189,6 @@ bool webalizer_t::cleanup(void)
    cleanup_output_engines();
 
    state.cleanup();
-
-   return true;
 }
 
 bool webalizer_t::init_output_engines(void)

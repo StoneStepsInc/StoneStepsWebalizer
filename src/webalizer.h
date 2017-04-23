@@ -226,9 +226,9 @@ class webalizer_t {
 
       ~webalizer_t(void);
 
-      bool initialize(int argc, const char * const argv[]);
+      void initialize(int argc, const char * const argv[]);
 
-      bool cleanup(void);
+      void cleanup(void);
 
       int run(void);
 
