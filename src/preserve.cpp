@@ -778,14 +778,13 @@ int state_t::restore_state(void)
    return 0;
 }
 
+//
+// Checks the database version and updates all fields that may need to be changed
+// to be compatible with the current application version. Always updates the last
+// application version in the system node, even if no other work was done.
+//
 int state_t::upgrade_database(void)
 {
-   vnode_t vnode;
-   danode_t danode;
-   hnode_t hnode;
-   dlnode_t dlnode;
-   totals_t totals_node;
-
    // sysnode is not populated if the databases is new or has been truncated
    if(!sysnode.appver)
       return 0;
@@ -800,7 +799,7 @@ int state_t::upgrade_database(void)
    // instructions (i.e. fix version) and new callback data.
    //
    if(sysnode.appver < VERSION_3_3_1_5 && !sysnode.fixed_dhv) {
-      // fix daily totals_node one day at a time
+      // fix daily totals nodes one day at a time
       for(int i = 0; i < 31; i++) {
          daily_t daily_totals(i);
 
@@ -813,7 +812,7 @@ int state_t::upgrade_database(void)
             return 5;
       }
 
-      // fix hourly totals_node one hour at a time
+      // fix hourly totals nodes one hour at a time
       for(int i = 0; i < 24; i++) {
          hourly_t hourly_totals(i);
 
@@ -836,16 +835,18 @@ int state_t::upgrade_database(void)
    }
 
    //
-   // Read current totals into a separate node, so we don't have any upgrade 
-   // data lingering in the state's totals_node after the database is upgraded.
-   //
-   if(!database.get_tgnode_by_id(totals_node, NULL, NULL))
-      return 3;
-   
-   //
    // Recover missing record counts
    //   
    if(sysnode.appver < VERSION_3_5_1_1) {
+      totals_t totals_node;
+
+      //
+      // Read current totals into a separate node, so we don't have any upgrade 
+      // data lingering in the state's totals_node after the database is upgraded.
+      //
+      if(!database.get_tgnode_by_id(totals_node, NULL, NULL))
+         return 3;
+   
       // if there are search string hits, but no record count, get it from the database
       if(totals_node.t_srchits && !totals_node.t_search)
          totals_node.t_search = database.get_scount();
@@ -870,12 +871,11 @@ int state_t::upgrade_database(void)
       if(!totals_node.t_grp_agents)
          totals_node.t_grp_agents = database.get_acount() - totals_node.t_agent;
 
+      // update the totals_node in the database
+      if(!database.put_tgnode(totals_node))
+         return 1;
    }
    
-   // update the totals_node in the database
-   if(!database.put_tgnode(totals_node))
-      return 1;
-
    // update the last application version and save sysnode
    sysnode.appver_last = VERSION;
 
