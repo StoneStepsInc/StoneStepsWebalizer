@@ -174,10 +174,6 @@ class webalizer_t {
       void write_main_index(void);
       void write_monthly_report(void);
       
-      void print_options(const char *pname);
-      void print_warranty(void);
-      void print_version(void);
-
       bool check_for_spam_urls(const char *str, size_t slen) const;
       bool srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck);
       void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
@@ -235,6 +231,10 @@ class webalizer_t {
       bool cleanup(void);
 
       int run(void);
+
+      void print_options(const char *pname);
+      void print_warranty(void);
+      void print_version(void);
 
       //
       //

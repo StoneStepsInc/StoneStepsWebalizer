@@ -100,28 +100,10 @@ bool webalizer_t::initialize(int argc, const char * const argv[])
    u_int i;
    utsname system_info;
 
-   // check if version is requested
-   if(config.print_version) {
-      print_version();
-      exit(1);
-   }
-
    // be polite and announce yourself...
    if(config.verbose > 1) {
       uname(&system_info);
       printf("\nStone Steps Webalizer v%s (%s %s)\n\n", state_t::get_app_version().c_str(), system_info.sysname, system_info.release);
-   }
-
-   // check if help is requested
-   if(config.print_options) {
-      print_options(argv[0]);
-      exit(1);
-   }
-
-   // check if warranty is requested
-   if(config.print_warranty) {
-      print_warranty();
-      exit(1);
    }
 
    // report procesed language file
@@ -2996,6 +2978,24 @@ int main(int argc, char *argv[])
       config.initialize(get_cur_path(), argc, argv);
       
       webalizer_t logproc(config);
+
+      // check if version is requested
+      if(config.print_version) {
+         logproc.print_version();
+         return 1;
+      }
+
+      // check if warranty is requested
+      if(config.print_warranty) {
+         logproc.print_warranty();
+         return 1;
+      }
+
+      // check if help is requested
+      if(config.print_options) {
+         logproc.print_options(argv[0]);
+         return 1;
+      }
 
       try {
          // set the Ctrl-C handler
