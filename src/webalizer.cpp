@@ -2965,6 +2965,13 @@ int main(int argc, char *argv[])
       
       webalizer_t logproc(config);
 
+      //
+      // Route commands that don't require webalizer_t initialized right away. Note
+      // that these commands exited with code one historically, so this exit code
+      // doesn't indicate an actual failure, but rather that no log processing was
+      // done. This may change in the future.
+      //
+
       // check if version is requested
       if(config.print_version) {
          logproc.print_version();
