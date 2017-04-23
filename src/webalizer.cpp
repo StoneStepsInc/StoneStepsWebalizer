@@ -1828,7 +1828,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
       }
 
       /* Whew, all done! Exit with completion status (0) */
-      retcode = 0;
+      retcode = EXIT_SUCCESS;
    }
    else
    {
@@ -1836,7 +1836,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
       if (config.verbose) 
          printf("%s\n",config.lang.msg_no_vrec);
 
-      retcode = 1;
+      retcode = EXIT_FAILURE;
    }
 
    return retcode;
@@ -2959,7 +2959,7 @@ void webalizer_t::update_downloads(const tstamp_t& tstamp)
 int main(int argc, char *argv[])
 {
    config_t config;
-   int retcode = 0;
+   int retcode = EXIT_SUCCESS;
 
    set_os_ex_translator();
 
@@ -2972,19 +2972,19 @@ int main(int argc, char *argv[])
       // check if version is requested
       if(config.print_version) {
          logproc.print_version();
-         return 1;
+         return EXIT_FAILURE;
       }
 
       // check if warranty is requested
       if(config.print_warranty) {
          logproc.print_warranty();
-         return 1;
+         return EXIT_FAILURE;
       }
 
       // check if help is requested
       if(config.print_options) {
          logproc.print_options(argv[0]);
-         return 1;
+         return EXIT_FAILURE;
       }
 
       try {
