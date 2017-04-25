@@ -742,10 +742,6 @@ bool database_t::get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t 
 // -----------------------------------------------------------------------
 #include "berkeleydb_tmpl.cpp"
 
-#if defined(_WIN32) && (_MSC_VER == 1200)
-#pragma warning(disable:4660) // template-class specialization 'type' is already instantiated
-#endif
-
 // keynode_t
 template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 template int bt_compare_cb<keynode_t<uint64_t>::s_compare_key>(Db *db, const Dbt *dbt1, const Dbt *dbt2);

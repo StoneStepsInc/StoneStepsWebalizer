@@ -18,10 +18,6 @@
 #include "basenode_tmpl.cpp"
 #include "hashtab_tmpl.cpp"
 
-#if defined(_WIN32) && (_MSC_VER == 1200)
-#pragma warning(disable:4660) // template-class specialization 'type' is already instantiated
-#endif
-
 //
 // initialize specialized node versions
 //
@@ -78,10 +74,6 @@ template class datanode_t<hourly_t>;
 template class datanode_t<sysnode_t>;
 
 //
-// VC6 generates erroneous warnings if node templates are instantiated explicitly
-//
-#if _MSC_VER != 1200
-//
 // hash table nodes
 //
 template struct htab_node_t<hnode_t>;
@@ -94,7 +86,6 @@ template struct htab_node_t<rcnode_t>;
 template struct htab_node_t<dlnode_t>;
 template struct htab_node_t<spnode_t>;
 template struct htab_node_t<ccnode_t>;
-#endif
 
 //
 // hash tables
