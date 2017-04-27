@@ -527,11 +527,6 @@ funcexit:
    return !dnode->hostname.isempty();
 }
 
-bool dns_resolver_t::dns_geoip_db(void) const
-{
-   return geoip_db ? true : false;
-}
-
 //
 //   dns_init
 //

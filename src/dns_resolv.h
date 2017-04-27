@@ -93,8 +93,6 @@ class dns_resolver_t {
       string_t geoip_language;
 
    private:
-      bool dns_geoip_db(void) const;
-
       void inc_live_workers(void);
 
       void dec_live_workers(void);
