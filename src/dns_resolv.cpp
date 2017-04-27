@@ -242,7 +242,7 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
       return sizeof(dns_db_record) + hostname.length() + 1;
    }
 
-   // read the reset of the record from the buffer
+   // read the rest of the record from the buffer
    ptr = deserialize(ptr, tstamp);
 
    ptr = deserialize(ptr, ccode, hnode_t::ccode_size);
@@ -455,17 +455,19 @@ hnode_t *dns_resolver_t::get_hnode(void)
    hnode->city = dnode->city;
 
    //
-   // If the spammer flag is the same in both nodes, we are done. However, neither
-   // of the fags isset and if the spammer flag is set in the host node at a later 
-   // time, the caller must queue the host for an update in the DNS database. 
+   // If the spammer flag is the same in both nodes, we are done. However, if neither
+   // of the flags was set and if the spammer flag is set in the host node at a later 
+   // time, when the node is outside of the DNS resolver, the host must be queued for 
+   // an update via put_hnode.
    //
-   // If dnode_t has the spammer flag set and the host node doesn't, it means that 
-   // we found this address in the DNS database and it was recorded as a spammer.
-   // Update the host node to reflect the same. 
+   // If dnode_t has the spammer flag set and the host node doesn't, it means that we 
+   // found this address in the DNS database and it was recorded as a spammer. Update 
+   // the host node to reflect the same. 
    // 
    // If it's the other way around and the host node has the spammer flag set and
    // the dnode_t doesn't, then we need to update the DNS database to reflect that
-   // the host node was caught spamming after it was queued for DNS resolution.
+   // the host node was caught spamming after it was originally queued for DNS 
+   // resolution.
    //
    if(!hnode->spammer && dnode->spammer) {
       hnode->spammer = true;
