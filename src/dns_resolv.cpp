@@ -66,6 +66,7 @@
 #define DNS_DB_REC_V1      ((u_int) 1)          // dns_db_record
 #define DNS_DB_REC_V2      ((u_int) 2)          // dns_db_record
 #define DNS_DB_REC_V3      ((u_int) 3)          // initial version of serialized dnode_t
+#define DNS_DB_REC_V4      ((u_int) 4)          // added GeoIP database build time 
 #define DNS_DB_REC_VER_MAX ((u_int) 250)        // maximum valid record version
 
 #define DBBUFSIZE          ((size_t) 8192)      // database buffer size
@@ -95,9 +96,10 @@ struct dns_db_record_t {
    tstamp_t    tstamp;                          // time when the address was resolved
    string_t    city;                            // city name
    string_t    hostname;                        // host name
+   uint64_t    geoip_tstamp;                    // GeoIP build time
 
    public:
-      dns_db_record_t(void) : version(0), spammer(false)
+      dns_db_record_t(void) : version(0), spammer(false), geoip_tstamp(0)
       {
          memset(ccode, 0, hnode_t::ccode_size);
       }
@@ -130,6 +132,8 @@ class dns_resolver_t::dnode_t {
 
       bool           spammer;
 
+      uint64_t       geoip_tstamp;
+
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
          sockaddr_in    s_addr_ipv4;      // IPv4 socket address
@@ -159,7 +163,8 @@ size_t dns_db_record_t::s_data_size(void) const
             s_size_of(tstamp) +
             hnode_t::ccode_size + 
             s_size_of(hostname) + 
-            s_size_of(spammer);
+            s_size_of(spammer) + 
+            s_size_of(geoip_tstamp);
 }
 
 size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -177,6 +182,7 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, city);
    ptr = serialize(ptr, hostname);
    ptr = serialize(ptr, spammer);
+   ptr = serialize(ptr, geoip_tstamp);
 
    // return the size of the serialized data
    return (char*) ptr - (const char*) buffer;
@@ -251,6 +257,9 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
    ptr = deserialize(ptr, hostname);
    ptr = deserialize(ptr, spammer);
 
+   if(version >= DNS_DB_REC_V4)
+      ptr = deserialize(ptr, geoip_tstamp);
+
    return (const char*) ptr - (char*) buffer;
 }
 
@@ -262,7 +271,8 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       hnode(hnode.resolved ? NULL : &hnode), 
       m_hnode(hnode.resolved ? NULL : &hnode), 
       llist(NULL), 
-      spammer(hnode.spammer)
+      spammer(hnode.spammer),
+      geoip_tstamp(0)
 {
    memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
@@ -486,8 +496,7 @@ hnode_t *dns_resolver_t::get_hnode(void)
 //
 // resolve_domain_name
 //
-// Resolves the IP address in dnode to a domain name and looks up country
-// code for this address.
+// Resolves the IP address in dnode to a domain name for this address.
 //
 bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 {
@@ -779,19 +788,30 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
       lookup = true;
       if(dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
          cached = true;
-      else {
-         // look up country code in the GeoIP database first
-         bool goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city);
 
-         // resolve the IP address if requested
-         if(config.dns_lookups) {
+      //
+      // Resolve the address if it's not cached and/or look up the country code if it's 
+      // empty and the GeoIP database is newer than the one we used when we saved the 
+      // address in the DNS database. 
+      //
+      if(!cached || geoip_db && nptr->ccode.isempty() && geoip_db->metadata.build_epoch > nptr->geoip_tstamp) {
+         bool goodcc = false;
+         
+         // look up country code in the GeoIP database if there is a GeoIP database
+         if(geoip_db)
+            goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city);
+
+         // resolve the IP address if requested and not in the database already
+         if(!cached && config.dns_lookups) {
             if(resolve_domain_name(nptr) && !goodcc) {
                // if GeoIP failed, derive country code from the domain name
                dns_derive_ccode(nptr->hostname, nptr->ccode);
             }
          }
 
-         dns_db_put(nptr, dns_db, buffer, bufsize);
+         // update the database if it's a new IP address or if we found a country code for an existing one
+         if(!cached || goodcc)
+            dns_db_put(nptr, dns_db, buffer, bufsize);
       }
    }
 
@@ -905,11 +925,11 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    MMDB_lookup_result_s result;
    MMDB_entry_data_s entry_data;
 
+   if(!geoip_db)
+      throw std::runtime_error("GeoIP database is not open");
+
    ccode.reset();
    city.reset();
-
-   if(!geoip_db)
-      return false;
 
    // look up the IP address
    result = MMDB_lookup_sockaddr(geoip_db, &ipaddr, &mmdb_error);
@@ -945,7 +965,13 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
       }
    }
 
-   return true;
+   //
+   // Some IP addresses may be found in the database, but do not have a country code. An 
+   // example of this are addresses that have no designated country and there is no value 
+   // in country/iso_code, but other fields, such as continent/code, have values, so the 
+   // look-up succeeds. Return true only if we found a country code for this IP address.
+   //
+   return !ccode.isempty();
 }
 
 //
@@ -1014,6 +1040,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *
                dnode->ccode.assign(dnsrec.ccode, hnode_t::ccode_size);
                dnode->city = dnsrec.city;
                dnode->spammer = dnsrec.spammer;
+               dnode->geoip_tstamp = dnsrec.geoip_tstamp;
                retval = true;
             }
 
@@ -1046,13 +1073,17 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
    if(!dns_db || !dnode)
       return;
 
-   dnsrec.version = DNS_DB_REC_V3;
+   dnsrec.version = DNS_DB_REC_V4;
    dnsrec.tstamp = runtime;
 
    // record contents must come from dnode_t
    dnsrec.city = dnode->city;
    dnsrec.hostname = dnode->hostname;
    dnsrec.spammer = dnode->spammer;
+
+   // if we have a GeoIP database, hold onto its build time
+   if(geoip_db)
+      dnsrec.geoip_tstamp = geoip_db->metadata.build_epoch;
 
    memcpy(dnsrec.ccode, dnode->ccode.c_str(), hnode_t::ccode_size);
 
