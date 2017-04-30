@@ -348,7 +348,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
    dns_thread_stop = false;
 
    dns_live_workers = 0;
-   dns_unresolved = 0;
 
    dns_cache_ttl = 0;
    
