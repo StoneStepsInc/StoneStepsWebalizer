@@ -634,30 +634,28 @@ bool dns_resolver_t::dns_init(void)
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
       if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS) {
-         if(config.verbose)
-            fprintf(stderr, "%s %s (%d - %s)\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
+         fprintf(stderr, "%s %s (%d - %s)\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
+         return false;
       }
-      else {
-         if (config.verbose > 1) 
-            printf("%s %s\n", lang_t::msg_dns_useg, config.geoip_db_path.c_str());
 
-         geoip_db = &mmdb;
+      if (config.verbose > 1) 
+         printf("%s %s\n", lang_t::msg_dns_useg, config.geoip_db_path.c_str());
 
-         //
-         // Find out if the selected language is in the list of languages provided in
-         // the GeoIP database. If we didn't find one, but there's English available, 
-         // use it.
-         //
-         for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
-            if(!string_t::compare_ci(mmdb.metadata.languages.names[i], config.lang.language_code, 2)) {
-               geoip_language.assign(config.lang.language_code, 2);
-               break;
-            }
-            else if(geoip_language.isempty() && !string_t::compare_ci(mmdb.metadata.languages.names[i], "en", 2))
-               geoip_language.assign("en", 2);
+      geoip_db = &mmdb;
+
+      //
+      // Find out if the selected language is in the list of languages provided in
+      // the GeoIP database. If we didn't find one, but there's English available, 
+      // use it.
+      //
+      for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
+         if(!string_t::compare_ci(mmdb.metadata.languages.names[i], config.lang.language_code, 2)) {
+            geoip_language.assign(config.lang.language_code, 2);
+            break;
          }
+         else if(geoip_language.isempty() && !string_t::compare_ci(mmdb.metadata.languages.names[i], "en", 2))
+            geoip_language.assign("en", 2);
       }
-
    }
 
    // get the current time once to avoid doing it for every host
