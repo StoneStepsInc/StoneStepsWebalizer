@@ -372,9 +372,6 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    unsigned short sa_family;
    dnode_t* nptr;
 
-   if(wrk_ctxs.empty() && !geoip_db)
-      return false;
-
    /* skip bad hostnames */
    if(!hnode || hnode->string.isempty() || hnode->string[0] == ' ') 
       return false;
@@ -404,6 +401,10 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
       return true;
    }
    
+   // need workers to resolve IP addresses or look them up in the GeoIP database
+   if(wrk_ctxs.empty())
+      return false;
+
    // create a new DNS node
    nptr = new dnode_t(*hnode, sa_family);
 
