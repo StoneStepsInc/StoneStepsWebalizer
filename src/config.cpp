@@ -377,8 +377,23 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(db_trickle_rate > 100)
       db_trickle_rate = 100;
 
-   if(dns_children > DNS_MAX_THREADS)
-      dns_children = DNS_MAX_THREADS;
+   // check DNS/GeoIP settings
+   if(dns_children) {
+      if(dns_children > DNS_MAX_THREADS)
+         dns_children = DNS_MAX_THREADS;
+
+      //
+      // If DNS look-ups are enabled, DNS cache database must be configured to store
+      // resolved host names. Otherwise, a GeoIP database must be configured to keep
+      // workers busy. The DNS cache database may be optionally opened in the latter
+      // case to preserve IP address information, such as whether it was used by a 
+      // spammer. Note that after this point the number of DNS workers greater than 
+      // zero indicates that DNS/GeoIP functionality is enabled. Non-empty database
+      // paths will be validated by the DNS resolver.
+      //
+      if(dns_lookups && dns_cache.isempty() || !dns_lookups && geoip_db_path.isempty())
+         throw exception_t(0, lang.msg_dns_init);
+   }
 
    // enable JavaScript in reports if we have the source file
    enable_js = !html_js_path.isempty();

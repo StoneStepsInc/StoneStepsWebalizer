@@ -130,10 +130,8 @@ void webalizer_t::initialize(int argc, const char * const argv[])
    if(!config.is_maintenance()) {
       // initialize DNS resolver if the number of workers is set to a non-zero value
       if(config.is_dns_enabled()) {
-         if(dns_resolver.dns_init() == false) {
-            if(config.verbose)
-               printf("%s\n", lang_t::msg_dns_init);
-         }
+         if(!dns_resolver.dns_init())
+            throw exception_t(0, lang_t::msg_dns_init);
       }
 
       // initialize the log file parser
