@@ -688,8 +688,10 @@ bool dns_resolver_t::dns_init(void)
    runtime.reset(time(NULL));
 
    // create worker threads to handle DNS and GeoIP requests
-   if(!wrk_ctxs.empty())
-      dns_create_worker_threads();
+   for(size_t index = 0; index < wrk_ctxs.size(); index++) {
+      inc_live_workers();
+      workers.push_back(thread_create(dns_worker_thread_proc, &wrk_ctxs[index]));
+   }
 
    if (config.verbose > 1) {
       /* DNS Lookup (#children): */
@@ -925,20 +927,6 @@ void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t& wrk_ctx)
    wrk_ctx.buffer = NULL;
 
    dec_live_workers();
-}
-
-//
-// dns_create_worker_threads
-//
-// Creates DNS resolver worker threads. 
-//
-void dns_resolver_t::dns_create_worker_threads(void)
-{
-   // create as many worker threads as we have worker contexts
-   for(size_t index = 0; index < wrk_ctxs.size(); index++) {
-      inc_live_workers();
-      workers.push_back(thread_create(dns_worker_thread_proc, &wrk_ctxs[index]));
-   }
 }
 
 bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city)

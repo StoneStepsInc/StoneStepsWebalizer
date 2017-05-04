@@ -99,8 +99,6 @@ class dns_resolver_t {
 
       int get_live_workers(void);
 
-      void dns_create_worker_threads(void);
-
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city);
 
       bool dns_db_get(dnode_t *dnode, Db *dns_db, bool nocheck, void *buffer, size_t bufsize);
