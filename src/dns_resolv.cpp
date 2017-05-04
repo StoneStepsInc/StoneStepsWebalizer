@@ -362,6 +362,32 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
 dns_resolver_t::~dns_resolver_t(void)
 {
+   //
+   // If the dns_init failed, DNS resolver may be partially initialized and there 
+   // will be no active worker threads. Clean up all resources that may have been 
+   // allocated in this case (e.g. worker thread buffers will not be allocated). 
+   // This code will not run if dns_clean_up was called.
+   //
+   if(!wrk_ctxs.empty() && !get_live_workers()) {
+      for(size_t index = 0; index < wrk_ctxs.size(); index++) {
+         if(wrk_ctxs[index].dns_db)
+            dns_db_close(wrk_ctxs[index].dns_db);
+      }
+
+      wrk_ctxs.clear();
+
+      if(dns_db_env) {
+         dns_db_env->close(0);
+         delete dns_db_env;
+      }
+
+      if(geoip_db)
+         MMDB_close(geoip_db);
+
+      event_destroy(dns_done_event);
+      mutex_destroy(dnode_mutex);
+      mutex_destroy(hqueue_mutex);
+   }
 }
 
 /*********************************************/
@@ -543,9 +569,9 @@ funcexit:
 //
 bool dns_resolver_t::dns_init(void)
 {
-   // check if needs to initialize
-   if(!config.is_dns_enabled())
-      return true;
+   // dns_init shouldn't be called if there are no workers configured
+   if(!config.dns_children)
+      throw std::runtime_error("The number of DNS workers cannot be zero");
 
    dns_cache_ttl = config.dns_cache_ttl;
    
@@ -579,6 +605,10 @@ bool dns_resolver_t::dns_init(void)
          fprintf(stderr, "Cannot initialize DNS event\n");
       return false;
    }
+
+   // initialize a context for each worker thread
+   for(size_t index = 0; index < config.dns_children; index++)
+      wrk_ctxs.emplace_back(*this);
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
@@ -614,12 +644,9 @@ bool dns_resolver_t::dns_init(void)
       // latter approach is used here because threaded Db handles serialize calls from 
       // multiple DNS worker threads.
       //
-      for(size_t index = 0; index < config.dns_children; index++) {
-         // push a new DNS worker context into the vector
-         wrk_ctxs.emplace_back(*this);
-
+      for(size_t index = 0; index < wrk_ctxs.size(); index++) {
          // dns_db_open will report errors
-         if((wrk_ctxs.back().dns_db = dns_db_open(config.dns_db_fname)) == NULL)
+         if((wrk_ctxs[index].dns_db = dns_db_open(config.dns_db_fname)) == NULL)
             return false;
       }
 
@@ -660,7 +687,8 @@ bool dns_resolver_t::dns_init(void)
    // get the current time once to avoid doing it for every host
    runtime.reset(time(NULL));
 
-   if(!wrk_ctxs.empty() || geoip_db)
+   // create worker threads to handle DNS and GeoIP requests
+   if(!wrk_ctxs.empty())
       dns_create_worker_threads();
 
    if (config.verbose > 1) {
@@ -668,7 +696,7 @@ bool dns_resolver_t::dns_init(void)
       printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
    }
 
-   return (wrk_ctxs.size() || geoip_db) ? true : false;
+   return true;
 }
 
 //
@@ -679,10 +707,11 @@ void dns_resolver_t::dns_clean_up(void)
    u_int index;
    u_int waitcnt = 300;
 
-   dns_thread_stop = true;
+   // make sure the DNS resolver is initialized
+   if(workers.empty())
+      throw std::runtime_error("DNS resolver is not initialized");
 
-   if(!config.is_dns_enabled())
-      return;
+   dns_thread_stop = true;
 
    // wait for 15 seconds for DNS workers to stop
    while(get_live_workers() && waitcnt--)
@@ -728,9 +757,9 @@ void dns_resolver_t::dns_wait(void)
 {
    bool done = false;
 
-   // if there are no workers, return right away
-   if(!config.is_dns_enabled())
-      return;
+   // make sure the DNS resolver is initialized
+   if(workers.empty())
+      throw std::runtime_error("DNS resolver is not initialized");
 
    // otherwise wait for all of them to finish
    if(event_wait(dns_done_event, (uint32_t) -1) == EVENT_OK)
@@ -782,7 +811,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
    else {
       // if we have a host node, look it up in the database and if not found, resolve it
       lookup = true;
-      if(dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
+      if(dns_db && dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
          cached = true;
 
       //
@@ -798,7 +827,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
             goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city);
 
          // resolve the IP address if requested and not in the database already
-         if(!cached && config.dns_lookups) {
+         if(dns_db && !cached && config.dns_lookups) {
             if(resolve_domain_name(nptr) && !goodcc) {
                // if GeoIP failed, derive country code from the domain name
                dns_derive_ccode(nptr->hostname, nptr->ccode);
@@ -806,7 +835,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
          }
 
          // update the database if it's a new IP address or if we found a country code for an existing one
-         if(!cached || goodcc)
+         if(dns_db && (!cached || goodcc))
             dns_db_put(nptr, dns_db, buffer, bufsize);
       }
    }
