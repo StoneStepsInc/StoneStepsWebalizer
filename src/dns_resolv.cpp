@@ -553,9 +553,7 @@ bool dns_resolver_t::dns_init(void)
 
 #ifdef _WIN32
    WSADATA wsdata;
-#endif
 
-#ifdef _WIN32
    if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
       if(config.verbose)
          fprintf(stderr, "Cannot initialize Windows sockets\n");
