@@ -98,21 +98,6 @@ webalizer_t::~webalizer_t(void)
 void webalizer_t::initialize(int argc, const char * const argv[])
 {
    u_int i;
-   utsname system_info;
-
-   // be polite and announce yourself...
-   if(config.verbose > 1) {
-      uname(&system_info);
-      printf("\nStone Steps Webalizer v%s (%s %s)\n\n", state_t::get_app_version().c_str(), system_info.sysname, system_info.release);
-   }
-
-   // report procesed language file
-   if(config.verbose > 1)
-      config.lang.report_lang_fname();
-
-   // report processed configuration files
-   if(config.verbose > 1)
-      config.report_config();
 
    // check if the output directory has write access
    if(access(config.out_dir, R_OK | W_OK)) {
@@ -300,6 +285,20 @@ void webalizer_t::print_warranty(void)
           "GNU GENERAL PUBLIC LICENSE V2 FOR MORE DETAILS.\n");
 }
 
+void webalizer_t::print_intro(void)
+{
+   utsname system_info;
+
+   if(config.verbose > 1) {
+      uname(&system_info);
+
+      printf("\nStone Steps Webalizer v%s (%s %s)\n\n", 
+               state_t::get_app_version().c_str(), 
+               system_info.sysname, 
+               system_info.release);
+   }
+}
+
 /*********************************************/
 /* PRINT_VERSION                             */
 /*********************************************/
@@ -308,12 +307,14 @@ void webalizer_t::print_version()
 {
    utsname system_info;
 
+   // for a quiet run just print the version
    if(config.verbose == 0) {
       printf("%s\n", state_t::get_app_version().c_str());
       return;
    }
 
    uname(&system_info);
+
    printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n",   
                state_t::get_app_version().c_str(),
                system_info.sysname,system_info.release,
@@ -323,6 +324,17 @@ void webalizer_t::print_version()
    if (config.debug_mode) {
       printf("Mod date: %s\n", __DATE__);
       printf("\nDefault config dir: %s\n\n", ETCDIR);
+   }
+}
+
+void webalizer_t::print_config(void)
+{
+   if(config.verbose > 1) {
+      // report procesed language file
+      config.lang.report_lang_fname();
+
+      // report processed configuration files
+      config.report_config();
    }
 }
 
@@ -2987,6 +2999,12 @@ int main(int argc, char *argv[])
          logproc.print_options(argv[0]);
          return EXIT_FAILURE;
       }
+
+      // be polite and announce yourself...
+      logproc.print_intro();
+
+      // print current configuration
+      logproc.print_config();
 
       try {
          // set the Ctrl-C handler

@@ -235,6 +235,8 @@ class webalizer_t {
       void print_options(const char *pname);
       void print_warranty(void);
       void print_version(void);
+      void print_intro(void);
+      void print_config(void);
 
       //
       //
