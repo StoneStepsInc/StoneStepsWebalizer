@@ -201,10 +201,22 @@ config_t::~config_t(void)
    lang.cleanup_lang_data();
 }
 
-/*********************************************/
-/* GET_CONFIG - get configuration file info  */
-/*********************************************/
-
+//
+// Reads command line options and then reads configuration files. Configuration
+// issues are classified as warning messages, errors and unrecoverable errors.
+//
+// Warnings are collected in the `messages` vector and will be reported when 
+// report_config is called. The configuration object can be used without any 
+// restrictions in this case. 
+//
+// Errors are collected in the `errors` vector and if this vector is not empty, 
+// config_t::is_bad will return true and the configuration object can be used
+// only to report the configuration and not for log processing. Errors can be
+// reported via report_errors.
+//
+// Unrecoverable errors are thrown as exceptions and the configuration object
+// should not be used in this case. 
+//
 void config_t::initialize(const string_t& basepath, int argc, const char * const argv[])
 {
    const char *cp1;
@@ -392,7 +404,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       // paths will be validated by the DNS resolver.
       //
       if(dns_lookups && dns_cache.isempty() || !dns_lookups && geoip_db_path.isempty())
-         throw exception_t(0, lang.msg_dns_init);
+         errors.emplace_back(lang.msg_dns_init);
    }
 
    // enable JavaScript in reports if we have the source file
@@ -410,19 +422,19 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       
       // report if either start or end timestamp is missing
       if(dst_pair.dst_start.isempty())
-         throw exception_t(0, string_t::_format("Missing DST start time this end time: %s", dst_pair.dst_end.c_str()));
+         errors.push_back(string_t::_format("Missing DST start time this end time: %s", dst_pair.dst_end.c_str()));
 
       if(dst_pair.dst_end.isempty())
-         throw exception_t(0, string_t::_format("Missing DST end time for this start time: %s", dst_pair.dst_start.c_str()));
+         errors.push_back(string_t::_format("Missing DST end time for this start time: %s", dst_pair.dst_start.c_str()));
       
       // create actual timestamps (always in local time)
       tstamp_t dst_start, dst_end;
 
       if(!dst_start.parse(dst_pair.dst_start, utc_offset))
-         throw exception_t(0, string_t::_format("Ivalid DST start timestamp: %s", dst_pair.dst_start.c_str()));
+         errors.push_back(string_t::_format("Ivalid DST start timestamp: %s", dst_pair.dst_start.c_str()));
 
       if(!dst_end.parse(dst_pair.dst_end, utc_offset))
-         throw exception_t(0, string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
+         errors.push_back(string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
 
       // and make sure the end time stamp has the DST offset from UTC
       if(local_time && dst_offset)
@@ -430,7 +442,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 
       // add the range if there's nothing wrong with it
       if(!dst_ranges.add_range(dst_start, dst_end))
-         throw exception_t(0, string_t::_format("Cannot add a DST range from %s to %s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
+         errors.push_back(string_t::_format("Cannot add a DST range from %s to %s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
    }
    
    // clean up a bit and clear the text timestamps
@@ -1164,6 +1176,12 @@ void config_t::report_config(void) const
       for(i = 0; i < config_fnames.size(); i++)
          printf("%s %s\n", lang.msg_use_conf, config_fnames[i].c_str());
    }
+}
+
+void config_t::report_errors(void) const
+{
+   for(size_t i = 0; i < errors.size(); i++)
+      printf("%s\n", errors[i].c_str());
 }
 
 void config_t::add_ignored_host(const char *value)

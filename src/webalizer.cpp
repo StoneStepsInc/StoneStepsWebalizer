@@ -3003,6 +3003,11 @@ int main(int argc, char *argv[])
       // be polite and announce yourself...
       logproc.print_intro();
 
+      if(config.is_bad()) {
+         config.report_errors();
+         return EXIT_FAILURE;
+      }
+
       // print current configuration
       logproc.print_config();
 

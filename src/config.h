@@ -71,6 +71,7 @@ class config_t {
    private:
       std::vector<string_t> config_fnames;
       std::vector<string_t> messages;
+      std::vector<string_t> errors;
       std::vector<dst_pair_t> dst_pairs;
       bool user_config;
 
@@ -386,6 +387,10 @@ class config_t {
 
       void report_config(void) const;
       
+      void report_errors(void) const;
+
+      bool is_bad(void) const {return !errors.empty();}
+
       bool is_maintenance(void) const;
 
       bool is_dns_enabled(void) const;
