@@ -1,7 +1,7 @@
 --------------------------------------------------------------------
-4.2.1.x [xx-Mar-2017] -- Stone Steps Inc. (www.stonesteps.ca)
+4.2.1.x [xx-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Added DNSLookups configuration variable to use the DNS database as a generic host database
+ * Added DNSLookups configuration variable to use the DNS database as a generic host database (e.g. track spammers)
  * Added SiteName as a more descriptive synonym for HostName
  * Added SiteAlias to track white-listed site names
  * Added spammer detection when a spam URL is disguised as a search string
@@ -11,6 +11,8 @@
  * Introduced URL normalization that recognizes the same URL encoded differently
  * Enforced UTF-8 encoding in all URL-encoded input text values
  * Changed reports to render URLs containing control characters unclickable
+ * Switched Highcharts to Highstock to take advantage of stacked axes
+ * Multiple Highcharts improvements
  * [BUG] Fixed a bug that mangled non-ASCII characters in search strings
  * [BUG] Fixed a concurrency bug in the DNS resolver that could report incorrect host names
 
