@@ -1181,7 +1181,7 @@ void config_t::report_config(void) const
 void config_t::report_errors(void) const
 {
    for(size_t i = 0; i < errors.size(); i++)
-      printf("%s\n", errors[i].c_str());
+      fprintf(stderr, "%s\n", errors[i].c_str());
 }
 
 void config_t::add_ignored_host(const char *value)
