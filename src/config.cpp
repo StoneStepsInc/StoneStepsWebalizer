@@ -995,7 +995,7 @@ void config_t::get_config(const char *fname)
          case 47: include_refs.add_nlist(value); break;           // IncludeReferrer
          case 48: include_agents.add_nlist(value); break;         // IncludeAgent
          case 49: page_type.add_nlist(value); break;              // PageType
-         case 50: visit_timeout=get_interval(value); break;       // VisitTimeout
+         case 50: visit_timeout=get_interval(value, errors); break;  // VisitTimeout
          case 51: graph_legend=(string_t::tolower(value[0])=='y'); break;   // GraphLegend
          case 52: graph_lines = atoi(value); break;               // GraphLines
          case 53: geoip_city = (string_t::tolower(value[0])=='y'); break;   // GeoIPCity
@@ -1069,7 +1069,7 @@ void config_t::get_config(const char *fname)
          case 117: set_enable_phrase_values(string_t::tolower(value[0]) == 'y'); break;
          case 118: includes.add_glist(value); break;
          case 119: downloads.add_glist(value); break;
-         case 120: download_timeout = get_interval(value); break;
+         case 120: download_timeout = get_interval(value, errors); break;
          case 121: dump_downloads = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 122: ntop_downloads = atoi(value); break;
          case 123: all_downloads=(string_t::tolower(value[0]) == 'y'); break;
@@ -1109,10 +1109,10 @@ void config_t::get_config(const char *fname)
          case 157: hide_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 158: ignore_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 159: group_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
-         case 160: utc_offset = get_interval(value, 60); break;
+         case 160: utc_offset = get_interval(value, errors) / 60; break;  // in minutes
          case 161: set_dst_range(&value, NULL); break;
          case 162: set_dst_range(NULL, &value); break;
-         case 163: dst_offset = get_interval(value, 60); break;
+         case 163: dst_offset = get_interval(value, errors) / 60; break;  // in minutes
          case 164: excl_agent_args.add_nlist(value); break;
          case 165: incl_agent_args.add_nlist(value); break;
          case 166: use_classic_mangler = (string_t::tolower(value[0]) == 'y'); break;
@@ -1136,7 +1136,7 @@ void config_t::get_config(const char *fname)
          case 184: classic_kbytes = (string_t::tolower(value[0]) == 'y'); break;
          case 185: site_aliases.add_nlist(value); break;
          case 186: accept_host_names = (string_t::tolower(value[0]) == 'y'); break;
-         case 187: max_visit_length = get_interval(value); break;
+         case 187: max_visit_length = get_interval(value, errors); break;
          case 188: local_utc_offset =  (string_t::tolower(value[0]) == 'y'); break;
          case 189: js_charts_paths.push_back(value); break;
          case 190: dns_lookups =  (string_t::tolower(value[0]) == 'y'); break;
@@ -1370,7 +1370,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'I': index_alias.add_nlist(vptr); break;              // Index alias
           case 'l': graph_lines=atoi(vptr); break;                   // Graph Lines
           case 'L': graph_legend=false; break;                           // Graph Legends
-          case 'm': visit_timeout=get_interval(vptr); break;         // Visit Timeout
+          case 'm': visit_timeout=get_interval(vptr, errors); break; // Visit Timeout
           case 'M': mangle_agent=atoi(vptr); break;                  // mangle user agents
           case 'n': hname=vptr; break;                               // Hostname
           case 'N': dns_children=atoi(vptr); break;                  // # of DNS children
@@ -1504,7 +1504,21 @@ bool config_t::is_default_db(void) const
    return !prep_report && !compact_db && !db_info;
 }
 
-int config_t::get_interval(const char *value, int div) const
+//
+// Converts a string representation of a time iterval to the number of seconds.
+// 
+// Optional suffixes `h`, `m` and `s` are recognized and interpreted as hours, 
+// minutes and seconds. In the latter case no numeric conversion is done, but 
+// the suffix may still be useful to make it clear what units are used. Only 
+// the first character of the suffix is evaluated, so hour, hours, hrs, etc, 
+// are all the same. Intervals may be negative (e.g. -5h) or positive (e.g. 5h 
+// or +5h). 
+//
+// There is not special return value for an error, but if a malformed interval 
+// string is passed in, the method returns a zero and the error will be pushed 
+// into the errors vector. 
+//
+int config_t::get_interval(const char *value, std::vector<string_t>& errors) const
 {
    int time;
    const char *cp;
@@ -1514,30 +1528,30 @@ int config_t::get_interval(const char *value, int div) const
 
    time = (int) str2l(value, &cp);
    
-   if(!cp)
-      throw exception_t(0, string_t::_format("Invalid time interval value (%s)", value));
+   if(!cp) {
+      errors.push_back(string_t::_format("Invalid time interval value (%s)", value));
+      return 0;
+   }
 
    // skip spaces
    while(*cp == ' ') cp++;
 
-   // process optional suffixes
-   switch (string_t::tolower(*cp)) {
-      case 'h':
-         if(div == 3600)
+   if(*cp) {
+      // process optional suffixes
+      switch (string_t::tolower(*cp)) {
+         case 'h':
+            return time * 3600;
+         case 'm':
+            return time * 60;
+         case 's':
             return time;
-
-         time *= 3600;
-         break;
-
-      case 'm':
-         if(div == 60)
-            return time;
-
-         time *= 60;
-         break;
+         default:
+            errors.push_back(string_t::_format("Invalid time interval suffix (%s)", value));
+            return 0;
+      }
    }
 
-   return div > 1 ? time / div : time;
+   return time;
 }
 
 bool config_t::is_maintenance(void) const

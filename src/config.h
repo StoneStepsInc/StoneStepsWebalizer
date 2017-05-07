@@ -354,7 +354,7 @@ class config_t {
 
       uint32_t get_db_cache_size(const char *value) const;
 
-      int get_interval(const char *value, int div = 1) const;
+      int get_interval(const char *value, std::vector<string_t>& errors) const;
 
       void process_includes(void);
 
