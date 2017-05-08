@@ -3078,7 +3078,7 @@ void webalizer_t::ctrl_c_handler(void)
 // If Ctrl-C is not handled properly, both Berkeley databases may get damaged 
 //
 #ifdef _WIN32
-static BOOL WINAPI console_ctrl_handler(DWORD type)
+static BOOL WINAPI console_ctrl_c_handler(DWORD type)
 {
    switch(type) {
       case CTRL_C_EVENT:
@@ -3095,7 +3095,7 @@ static BOOL WINAPI console_ctrl_handler(DWORD type)
 
 void set_ctrl_c_handler(void)
 {
-   SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
+   SetConsoleCtrlHandler(console_ctrl_c_handler, TRUE);
 }
 
 void reset_ctrl_c_handler(void)
@@ -3103,7 +3103,7 @@ void reset_ctrl_c_handler(void)
    SetConsoleCtrlHandler(NULL, FALSE);
 }
 #else
-static void console_ctrl_handler(int sig)
+static void console_ctrl_c_handler(int sig)
 {
    switch(sig) {
       case SIGINT:
@@ -3115,7 +3115,7 @@ static void console_ctrl_handler(int sig)
 void set_ctrl_c_handler(void)
 {
    struct sigaction sa = {};
-   sa.sa_handler = console_ctrl_handler;
+   sa.sa_handler = console_ctrl_c_handler;
 
    sigaction(SIGINT, &sa, NULL);
 }
