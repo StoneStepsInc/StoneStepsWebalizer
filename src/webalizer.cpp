@@ -3105,11 +3105,8 @@ void reset_ctrl_c_handler(void)
 #else
 static void console_ctrl_c_handler(int sig)
 {
-   switch(sig) {
-      case SIGINT:
-         webalizer_t::ctrl_c_handler();
-         break;
-   }
+   if(sig == SIGINT)
+      webalizer_t::ctrl_c_handler();
 }
 
 void set_ctrl_c_handler(void)
