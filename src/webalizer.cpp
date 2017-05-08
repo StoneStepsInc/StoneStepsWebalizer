@@ -3107,7 +3107,6 @@ static void console_ctrl_handler(int sig)
 {
    switch(sig) {
       case SIGINT:
-         signal(SIGINT, SIG_IGN);
          webalizer_t::ctrl_c_handler();
          break;
    }
@@ -3115,12 +3114,18 @@ static void console_ctrl_handler(int sig)
 
 void set_ctrl_c_handler(void)
 {
-   signal(SIGINT, console_ctrl_handler);
+   struct sigaction sa = {};
+   sa.sa_handler = console_ctrl_handler;
+
+   sigaction(SIGINT, &sa, NULL);
 }
 
 void reset_ctrl_c_handler(void)
 {
-   signal(SIGINT, SIG_DFL);
+   struct sigaction sa = {};
+   sa.sa_handler = SIG_DFL;
+
+   sigaction(SIGINT, &sa, NULL);
 }
 #endif
 
