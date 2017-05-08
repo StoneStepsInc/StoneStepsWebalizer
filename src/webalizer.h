@@ -152,6 +152,8 @@ class webalizer_t {
       };
 
    private:
+      static bool abort_signal;
+      
       const config_t& config;
       
       parser_t    parser;
@@ -231,6 +233,8 @@ class webalizer_t {
       void cleanup(void);
 
       int run(void);
+
+      static void ctrl_c_handler(void);
 
       void print_options(const char *pname);
       void print_warranty(void);

@@ -66,12 +66,8 @@
 
 /* internal function prototypes */
 
-#ifdef _WIN32
-static BOOL WINAPI console_ctrl_handler(DWORD type);
-void __cdecl _win32_se_handler(unsigned int excode, _EXCEPTION_POINTERS *exinfo);
-#else
-static void console_ctrl_handler(int sig);
-#endif
+static void set_ctrl_c_handler(void);
+static void reset_ctrl_c_handler(void);
 
 /*********************************************/
 /* GLOBAL VARIABLES                          */
@@ -79,7 +75,7 @@ static void console_ctrl_handler(int sig);
 
 static const char *copyright   = "Copyright (c) 2004-2017, Stone Steps Inc. (www.stonesteps.ca)";
 
-static bool abort_signal = false;   // true if Ctrl-C was pressed
+bool webalizer_t::abort_signal = false;   // true if Ctrl-C was pressed
 
 //
 //
@@ -3013,11 +3009,7 @@ int main(int argc, char *argv[])
 
       try {
          // set the Ctrl-C handler
-#ifdef _WIN32
-         SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
-#else
-         signal(SIGINT, console_ctrl_handler);
-#endif 
+         set_ctrl_c_handler();
 
          // initialize the log processor
          logproc.initialize(argc, argv);
@@ -3029,9 +3021,7 @@ int main(int argc, char *argv[])
          logproc.cleanup();
 
          // remove the Ctrl-C handler
-#ifndef _WIN32
-         signal(SIGINT, NULL);   // $$$ check if setting it to NULL is the right way to reset the handler
-#endif
+         reset_ctrl_c_handler();
 
          return retcode;
       }
@@ -3079,6 +3069,11 @@ int main(int argc, char *argv[])
    return EXIT_FAILURE;
 }
 
+void webalizer_t::ctrl_c_handler(void)
+{
+   abort_signal = true;
+}
+
 //
 // If Ctrl-C is not handled properly, both Berkeley databases may get damaged 
 //
@@ -3091,11 +3086,21 @@ static BOOL WINAPI console_ctrl_handler(DWORD type)
       case CTRL_CLOSE_EVENT:
       case CTRL_LOGOFF_EVENT:
       case CTRL_SHUTDOWN_EVENT:
-         abort_signal = true;
+         webalizer_t::ctrl_c_handler();
          return TRUE;
    }
 
    return FALSE;
+}
+
+void set_ctrl_c_handler(void)
+{
+   SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
+}
+
+void reset_ctrl_c_handler(void)
+{
+   SetConsoleCtrlHandler(NULL, FALSE);
 }
 #else
 static void console_ctrl_handler(int sig)
@@ -3103,9 +3108,19 @@ static void console_ctrl_handler(int sig)
    switch(sig) {
       case SIGINT:
          signal(SIGINT, SIG_IGN);
-         abort_signal = true;
+         webalizer_t::ctrl_c_handler();
          break;
    }
+}
+
+void set_ctrl_c_handler(void)
+{
+   signal(SIGINT, console_ctrl_handler);
+}
+
+void reset_ctrl_c_handler(void)
+{
+   signal(SIGINT, SIG_DFL);
 }
 #endif
 
