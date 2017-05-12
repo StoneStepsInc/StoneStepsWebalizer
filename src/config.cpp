@@ -160,7 +160,6 @@ config_t::config_t(void)
    font_size_medium = FONT_SIZE_MEDIUM;
 
    rpt_title = lang.msg_title;
-   state_fname = "webalizer.current";         /* run state file name      */
    hist_fname = "webalizer.hist";             /* name of history file     */
    html_ext = "html";                         /* HTML file prefix         */
    dump_ext = "tab";                          /* Dump file prefix         */
@@ -680,7 +679,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 190; empty slots:  
+                     // max key: 190; empty slots: 38 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -821,7 +820,6 @@ void config_t::get_config(const char *fname)
                      {"IncludeURL",          46},           // URL's to always include
                      {"IncludeUser",         73},           // Usernames to include
                      {"Incremental",         37},           // Incremental runs
-                     {"IncrementalName",     38},           // Filename for state data
                      {"IndexAlias",          20},           // Aliases for index.html
                      {"JavaScriptCharts",    99},           // JavaScript charts package name
                      {"JavaScriptChartsPath",189},          // Alternative JavaScript charts path
@@ -983,7 +981,6 @@ void config_t::get_config(const char *fname)
          case 35: shade_groups=(string_t::tolower(value[0])=='y'); break;   // GroupShading
          case 36: hlite_groups=(string_t::tolower(value[0])=='y'); break;   // GroupHighlight
          case 37: incremental=(value[0]=='y')?true:false; break;  // Incremental
-         case 38: state_fname=value; break;                       // State FName
          case 39: hist_fname=value; break;                        // History FName
          case 40: html_ext=value; break;                          // HTML extension
          case 41: html_pre.add_nlist(value); break;               // HTML Pre code

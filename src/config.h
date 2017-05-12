@@ -233,7 +233,6 @@ class config_t {
       string_t font_file_bold;
 
       string_t hname;                            // hostname for reports     
-      string_t state_fname;                      // run state file name      
       string_t hist_fname;                       // name of history file     
       string_t html_ext;                         // HTML file prefix         
       string_t dump_ext;                         // Dump file prefix         

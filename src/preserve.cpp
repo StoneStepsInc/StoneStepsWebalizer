@@ -63,17 +63,6 @@ state_t::~state_t(void)
    delete [] buffer;
 }
 
-bool state_t::is_state_file(void)
-{
-   // check if there's an old state file (webalizer.current)
-   return !access(make_path(config.out_dir, config.state_fname), F_OK);
-}
-
-bool state_t::del_state_file(void)
-{
-   return is_state_file() ? !unlink(make_path(config.out_dir, config.state_fname)) : true;
-}
-
 bool state_t::eval_hnode_cb(const hnode_t *hnode, void *arg)
 {
    // do not swap out node if there are active visits or downloads
@@ -357,17 +346,6 @@ int state_t::save_state(void)
    //
    history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
    history.put_history();
-
-   //
-   // If there's an old state file, delete it
-   //
-   if (config.incremental) {
-      // delete the old state file, if there is one
-      if(!del_state_file()) {
-         if(config.verbose)
-            fprintf(stderr, "Cannot delete the state file (%s). Delete the file manually before the next run\n", config.state_fname.c_str());
-      }
-   }
 
    return 0;            /* successful, return with good return code      */
 }

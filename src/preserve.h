@@ -97,10 +97,6 @@ class state_t {
 
       void init_counters(void);
 
-      bool is_state_file(void);
-
-      bool del_state_file(void);
-
       static void unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this);
