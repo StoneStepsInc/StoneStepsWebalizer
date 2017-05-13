@@ -175,7 +175,7 @@ o If either of the configuration files contained 'Include' directives,
 o If --prepare-report was specified on the command line, the last 
   argument will be interpreted as a database file name. In this case a 
   report will be generated from the data stored in the database and 
-  not log files will be processed.
+  no log files will be processed.
 
 o If a log file was specified, it is opened and made ready for
   processing. If no log file was given, or the filename '-' is
@@ -199,11 +199,10 @@ o A history file is searched for.  This file keeps previous month
   however may be changed using the "HistoryName" configuration file
   keyword.
 
-o If incremental processing was specified, a database file containing 
-  the internal state data of the program at the end of a previous 
-  run is searched for and opened, if found.  The default database 
-  file is 'webalizer.db' and is kept in the directory specified 
-  using the DbPath configuration variable.
+o A database file containing the internal state data of the program at 
+  the end of a previous run is searched for and opened, if found. The 
+  default database file is 'webalizer.db' and is kept in the directory 
+  specified using the DbPath configuration variable.
 
 o Main processing begins on the log file. If the log spans multiple
   months, a separate HTML document is created for each month.
@@ -214,22 +213,36 @@ o After main processing, the main 'index.html' page is created, which
 o A new history file is saved to disk, which includes totals generated
   by The Webalizer during the current run.
 
-o If incremental processing was specified, the database file is 
-  updated to contain the internal state data at the end of this run.
+o The database file is updated to contain the internal state data at the 
+  end of this run.
 
 
 Incremental Processing
 ----------------------
 
-Version 1.2x of The Webalizer adds incremental run capability.  Simply
-put, this allows processing large log files by breaking them up into
-smaller pieces, and processing these pieces instead.  What this means
-in real terms is that you can now rotate your log files as often as you
-want, and still be able to produce monthly usage statistics without the
-loss of any detail.  This is accomplished by saving and restoring all
-relevant internal data to a disk file between runs.  Doing so allows the
-program to 'start where it left off' so to speak, and allows the
-preservation of detail from one run to the next.
+Incremental processing preserves current log items and numbers that you 
+see in all reports, such as URLs, IP addresses, request counts, transfer 
+amounts, etc., in a database file called webalizer.db and adds new items
+to this database or updates numbers for existing items when new log files
+are processed. 
+
+Originally, incremental processing was an optional mode that made it possible 
+for website administrators to process multiple rollover log files created by 
+the web server in the course of one month. The non-incremental mode remained 
+the default mode and was intended for large log files that contained one or 
+more months worth of data. With the rapid increase of web traffic over the 
+years, large log files became hard to manage and most website administrators 
+choose to rotate their logs either by size or by date. Given this trend, the 
+incremental mode was changed to be the default processing mode in Stone Steps
+Webalizer v4.2.1. 
+
+IMPORTANT: Stone Steps Webalizer uses the time stamp in each log record to 
+track log records that have been already processed and if your logs are rotated 
+based on the log size, the time stamp in the first few records of each new log 
+may fall into the same second as last records of the previous log and will be
+ignored when that log will be processed. Configure your log rotation based on
+the date instead to avoid this, so each new log has distinct log record time 
+stamps.
 
 Some special precautions need to be taken when using the incremental
 run capability of The Webalizer.  Configuration options should not be
@@ -251,9 +264,7 @@ processed records, and not produce duplication of statistics.  The
 only time this may break is if you have duplicate timestamps in two
 separate log files... any records in the second log file that do have
 the same timestamp as the last record in the previous log file processed,
-will be discarded as if they had already been processed.  There are
-lots of ways to prevent this however, for example, stopping the web
-server before rotating logs will prevent this situation.  This setup
+will be discarded as if they had already been processed.  This setup
 also necessitates that you always process logs in chronological order,
 otherwise data loss will occur as a result of the timestamp compare.
 
@@ -262,8 +273,9 @@ Output Produced
 
 The Webalizer produces several reports (html) and graphics for each
 month processed.  In addition, a summary page is generated for the
-current and previous months, a history file is created and if 
-incremental mode is used, the current month's processed data.
+current and previous months, a history file is created and the current 
+month's processed data.
+
 The exact location and names of these files can be changed using
 configuration files and command line options.  The files produced,
 (default names) are:
@@ -280,7 +292,7 @@ ref_YYYYMM.html         - All referrers listing (if enabled)
 agent_YYYYMM.html       - All user agents listing (if enabled)
 search_YYYYMM.html      - All search strings listing (if enabled)
 webalizer.hist          - Previous month history (may be changed)
-webalizer.db             - Incremental Data (may be changed)
+webalizer.db            - Incremental Data (may be changed)
 webalizer_YYYYMM.db     - Incremental Data (may be changed)
 site_YYYYMM.tab         - tab delimited hosts file
 url_YYYYMM.tab          - tab delimited urls file
@@ -467,19 +479,6 @@ General Options
           the HTML documents, if any, will not be deleted) on the main
           index.html (yearly) web page.
           Config file keyword: IgnoreHist
-
--p        Preserve state (incremental processing).  This allows the
-          processing of partial logs in increments.  At the end of
-          the program, all relevant internal data is saved, so that
-          it may be restored the next time the program is run.  This
-          allows sites that must rotate their logs more than once a
-          month to still be able to use The Webalizer, and not worry
-          about having to gather and feed an entire months logs to
-          the program at the end of the month.  See the section on
-          "Incremental Processing" below for additional information.
-          The default is to not perform incremental processing.  Use
-          this command line option to enable the feature.
-          Config file keyword: Incremental
 
 -q        Quiet mode.  Normally, The Webalizer will produce various
           messages while it runs letting you know what it's doing.
@@ -1286,8 +1285,7 @@ Incremental   This allows incremental processing to be enabled or disabled.
               This feature saves the 'internal state' of the program so that
               it may be restored in following runs.  See the section above
               titled "Incremental Processing" for additional information.
-              The value may be 'yes' or 'no', with the default being 'no'.
-              Command line argument: -p
+              The value may be 'yes' or 'no', with the default being 'yes'.
 
 ApacheLogFormat
               Defines the format Stone Steps Webalizer will use when 
