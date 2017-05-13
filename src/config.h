@@ -366,6 +366,8 @@ class config_t {
       void proc_stdin_log_files(void);
 
       void set_dns_db_path(const char *path);
+
+      void deprecated_p_option(void);
       
    public:
       config_t(void);

@@ -75,7 +75,7 @@ config_t::config_t(void)
    ctry_graph = true;                         // country graph display
    shade_groups = true;                       // Group shading 0=no 1=yes
    hlite_groups = true;                       /* Group hlite 0=no 1=yes   */
-   incremental = false;                       /* incremental mode 1=yes   */
+   incremental = true;                        /* incremental mode 1=yes   */
    use_https = false;                         /* use 'https://' on URL's  */
    graph_legend = true;                       /* graph legend (1=yes)     */
    fold_seq_err = false;                      /* fold seq err (0=no)      */
@@ -1372,7 +1372,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'n': hname=vptr; break;                               // Hostname
           case 'N': dns_children=atoi(vptr); break;                  // # of DNS children
           case 'o': out_dir=vptr; break;                             // Output directory
-          case 'p': incremental=true; break;                         // Incremental run
+          case 'p': deprecated_p_option(); break;                      // Incremental run (obsolete)
           case 'P': page_type.add_nlist(vptr); break;                // page view types
           case 'q': verbose=1; break;                                // Quiet (verbose=1)
           case 'Q': verbose=0; break;                                // Really Quiet
@@ -1625,4 +1625,9 @@ int config_t::get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_
       return utc_offset + dst_offset;
 
    return utc_offset;
+}
+
+void config_t::deprecated_p_option(void)
+{
+   messages.emplace_back("Option -p is deprecated. Incremental processing is the default mode now.");
 }
