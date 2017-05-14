@@ -1,7 +1,7 @@
 **************************************************************************
 Stone Steps Webalizer (v4.2.1)
 
-Copyright (c) 2004-2016, Stone Steps Inc. (www.stonesteps.ca)
+Copyright (c) 2004-2017, Stone Steps Inc. (www.stonesteps.ca)
 
 The version of The Webalizer provided with this distribution is a fork 
 based on the version 2.01-10 of the original Webalizer: 
@@ -41,9 +41,6 @@ In addition, the Webalizer also supports DNS and GeoIP lookup capabilities.
 Installing the Webalizer
 ------------------------
 
-While we do not provide an installer, it is easy to install and 
-configure Stone Steps Webalizer following the instructions below. 
-
   o Windows
 
 Create a directory where you intend to keep Stone Steps Webalizer 
@@ -77,6 +74,7 @@ before the executable can be launched:
   * GD Library v2 or newer
   * Berkeley DB v4.3 or newer
   * ZLIB v1 or newer
+  * MaxMindDB v1.2 or newer
 
 Create a directory where you intend to keep Stone Steps Webalizer 
 files (e.g. /usr/local/webalizer) and run the commands shown below to 
@@ -123,7 +121,7 @@ where Stone Steps Webalizer will generate reports.
 
 In order to build the executable from the source, you also will need
 development versions of the libraries listed in the Linux sub-section
-above, as well as GCC v4 installed.
+above, as well as GCC v4 or newer installed.
 
 Change to the directory where you extracted the source and type the
 following command:
@@ -718,7 +716,7 @@ Given the string "yourmama/was/here", the arguments "was", "*here" and
           as you like on the command line.
           Config file keyword: HideReferrer
 
--s name   This option allows hiding of sites from the "Top Hosts" table
+-s name   This option allows hiding of hosts from the "Top Hosts" table
           in the report.  Normally, you will only want to hide your own
           domain name from the report, as it usually is one of the top
           hosts to visit your web server.  This option is of no use if
@@ -2155,7 +2153,7 @@ DumpHeader    Allows a header record to be written as the first record
               of the file.  Value can be either 'yes' or 'no',  with
               the default being 'no'.
 
-DumpHosts     Dump tab delimited sites file.  Value can be either 
+DumpHosts     Dump tab delimited hosts file.  Value can be either 
               'yes' or 'no', with the default being 'no'. The filename 
               used is site_YYYYMM.tab (YYYY=year, MM=month).
 
