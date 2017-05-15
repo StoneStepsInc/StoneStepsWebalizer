@@ -33,16 +33,8 @@
 #define BUILD_NUMBER_EX(version)      (((unsigned int) version      ) & 0xFFu)
 
 //
-// Previous application versions for conditional processing
-//
-#define VERSION_3_3_1_5      0x03030105u
-#define VERSION_3_5_1_1    0x03050101u
-#define VERSION_3_8_0_4    0x03080004u
-
-//
 // Minimum application version in the state database we can load
 //
 #define MIN_APP_DB_VERSION 0x0400000Cu
 
 #endif // VERSION_H
-
