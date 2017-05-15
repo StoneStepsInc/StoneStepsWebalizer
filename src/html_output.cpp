@@ -398,7 +398,8 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    if(!config.html_js_path.isempty())
       fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
-   if(!config.js_charts.isempty())
+   // do not generate JavaScript charts links for an all-items page
+   if(page_type != page_all_items && !config.js_charts.isempty())
       write_js_charts_head(out_fp, page_type);
 
    iter = config.html_head.begin();
