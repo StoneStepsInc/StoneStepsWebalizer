@@ -1680,13 +1680,15 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             }
          }
 
-         // URL domain grouping
-         if(config.group_url_domains && !get_url_host(log_rec.url, urlhost).isempty()) {
-            const char *domain = get_domain(urlhost.c_str(), config.group_url_domains);
-            if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
-               if (config.verbose)
-                  /* Error adding URL node, skipping ... */
-                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, domain);
+         // group URL domains for proxy requests
+         if(config.log_type == LOG_SQUID) {
+            if(config.group_url_domains && !get_url_host(log_rec.url, urlhost).isempty()) {
+               const char *domain = get_domain(urlhost.c_str(), config.group_url_domains);
+               if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
+                  if (config.verbose)
+                     /* Error adding URL node, skipping ... */
+                     fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, domain);
+               }
             }
          }
 
