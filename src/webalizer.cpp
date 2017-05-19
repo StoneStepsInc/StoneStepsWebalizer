@@ -587,10 +587,11 @@ void webalizer_t::filter_user_agent(string_t& agent)
    ua_token_t token;
    const char *delims = str_delims;             // active delimiters
    char *cp1, *cp2;
-   string_t::char_buffer_t ua;
+   string_t::char_buffer_t ua, ua2;
    size_t ualen, arglen, t_arglen = 0;
    const string_t *str;
    bool skiptok = false;
+   bool cpinplace = true;                       // copy arguments in place
    
    // return if user agent string is empty
    if(agent.isempty())
@@ -708,6 +709,10 @@ void webalizer_t::filter_user_agent(string_t& agent)
                      // and update the total length (arg's output delimiters still included)
                      t_arglen += token.arglen;
                      t_arglen -= arglen;
+
+                     // copy in-place only if the aliased name is not longer than the argument
+                     if(cpinplace && str->length() > arglen)
+                        cpinplace = false;
                   }
                }
             }
@@ -737,12 +742,20 @@ void webalizer_t::filter_user_agent(string_t& agent)
       // there are extra ';' and ' ' at the end
       t_arglen -= sizeof(o_arg);
 
-      // allocate a new memory block only if the new string is greater
-      if(t_arglen > ualen)
-         ua.resize(t_arglen+1);
+      //
+      // If the final user agent string is shorter than or equal to the original 
+      // and there are no replacement tokens, we can move existing tokens within 
+      // the existing buffer because tokens can only be shortened or filtered out. 
+      // Otherwise, if the final user agent string is longer or any of its tokens
+      // come from the replacement list, allocate a new buffer.
+      //
+      if(cpinplace && t_arglen <= ualen)
+         ua2 = std::move(ua);
+      else
+         ua2.resize(t_arglen+1);
       
       // form a new user agent string
-      cp1 = ua;
+      cp1 = ua2;
       for(size_t i = 0; i < ua_args.size(); i++) {
          if(i) {
             for(size_t j = 0; j < sizeof(o_arg); j++) 
@@ -764,7 +777,8 @@ void webalizer_t::filter_user_agent(string_t& agent)
             arglen = ua_args[i].arglen;
          
          // copy the token and advance the pointer   
-         memcpy(cp1, ua_args[i].start, arglen);
+         if(cp1 != ua_args[i].start)
+            memmove(cp1, ua_args[i].start, arglen);
          cp1 += arglen;
       }
       *cp1 = 0;
@@ -774,8 +788,8 @@ void webalizer_t::filter_user_agent(string_t& agent)
    ua_args.clear();
    ua_groups.clear();
    
-   if(ua)
-      agent.attach(std::move(ua), cp1-ua.get_buffer());    // attach the new string
+   if(ua2)
+      agent.attach(std::move(ua2), cp1-ua2.get_buffer());    // attach the new string
    else
       agent.reset();                            // reset to an empty agent string
 }
