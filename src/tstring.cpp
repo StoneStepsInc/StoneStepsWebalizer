@@ -129,6 +129,14 @@ string_base<char_t>::~string_base(void)
 template <typename char_t>
 string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
 {
+   if(holder && !bufsize)
+      throw exception_t(0, ex_readonly_string);
+
+   // free the existing string if it was allocated
+   if(!holder && string != empty_string)
+      char_buffer_t::free(string);
+
+   // and take over the other string
    string = other.string;
    slen = other.slen;
    bufsize = other.bufsize;
