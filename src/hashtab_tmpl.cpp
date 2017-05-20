@@ -36,6 +36,7 @@ hash_table<node_t, key_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_
 template <typename node_t, typename key_t>
 hash_table<node_t, key_t>::~hash_table(void)
 {
+   clear();
    delete [] htab;
 }
 
