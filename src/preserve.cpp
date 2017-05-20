@@ -650,6 +650,7 @@ int state_t::restore_state(void)
          if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
             return 20;
          put_hnode(hnode);
+         hnode.reset();
       }}
 
       {// restore active download jobs 
@@ -659,6 +660,7 @@ int state_t::restore_state(void)
          if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
             return 21;
          put_dlnode(dlnode);
+         dlnode.reset();
       }}
 
       // indicate that hash tables contain only some database data
