@@ -198,7 +198,7 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
 
 void html_output_t::write_js_charts_head_index(FILE *out_fp)
 {
-   fputs("function onLoadIndexPage()\n", out_fp); 
+   fputs("function setupIndexPageCharts()\n", out_fp); 
    fputs("{\n", out_fp);
 
    write_js_charts_head_js_config(out_fp);
@@ -249,7 +249,7 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
 
 void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 {
-   fputs("function onLoadUsagePage()\n", out_fp); 
+   fputs("function setupUsagePageCharts()\n", out_fp); 
    fputs("{\n", out_fp);
 
    write_js_charts_head_js_config(out_fp);
@@ -413,13 +413,13 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
          switch (page_type) {
             case page_index:
                if(config.use_js_charts())
-                  fputs("<body onload=\"onload_index_page(onLoadIndexPage)\">\n", out_fp);
+                  fputs("<body onload=\"onload_index_page(setupIndexPageCharts)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_index_page()\">\n", out_fp);
                break;
             case page_usage:
                if(config.use_js_charts())
-                  fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
+                  fputs("<body onload=\"onload_usage_page(setupUsagePageCharts)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
                break;
