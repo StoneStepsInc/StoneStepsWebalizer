@@ -395,6 +395,8 @@ class config_t {
       bool is_maintenance(void) const;
 
       bool is_dns_enabled(void) const;
+
+      bool use_js_charts(void) const {return !js_charts.isempty() || !js_charts_paths.empty();}
       
       const char *get_log_type_desc(void) const;
 

@@ -398,7 +398,7 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
       fprintf(out_fp,"<script type=\"text/javascript\" src=\"%swebalizer.js\"></script>\n", config.html_js_path.c_str());
 
    // do not generate JavaScript charts links for an all-items page
-   if(page_type != page_all_items && !config.js_charts.isempty())
+   if(page_type != page_all_items && config.use_js_charts())
       write_js_charts_head(out_fp, page_type);
 
    iter = config.html_head.begin();
@@ -412,13 +412,13 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
       if(config.enable_js) {
          switch (page_type) {
             case page_index:
-               if(!config.js_charts.isempty())
+               if(config.use_js_charts())
                   fputs("<body onload=\"onload_index_page(onLoadIndexPage)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_index_page()\">\n", out_fp);
                break;
             case page_usage:
-               if(!config.js_charts.isempty())
+               if(config.use_js_charts())
                   fputs("<body onload=\"onload_usage_page(onLoadUsagePage)\">\n", out_fp);
                else
                   fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
@@ -609,7 +609,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"daily_stats_report\">\n", out_fp);
       fputs("\n<a name=\"daily\"></a>\n", out_fp);
       if (config.daily_graph) {
-         if(!config.js_charts.isempty())
+         if(config.use_js_charts())
             fputs("<div id=\"daily_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
          else {
             // create daily stats PNG image
@@ -645,7 +645,7 @@ int html_output_t::write_monthly_report()
       fputs("\n<div id=\"hourly_stats_report\">\n", out_fp);
       fputs("<a name=\"hourly\"></a>\n", out_fp);
       if (config.hourly_graph) { 
-         if(!config.js_charts.isempty())
+         if(config.use_js_charts())
             fputs("<div id=\"hourly_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
          else {
             // create hourly stats PNG image
@@ -3057,7 +3057,7 @@ void html_output_t::top_ctry_table()
    /* generate pie chart if needed */
    if (config.ctry_graph)
    {
-      if(!config.js_charts.isempty())
+      if(config.use_js_charts())
          fputs("<div id=\"country_usage_chart\" class=\"chart_holder\"></div>\n", out_fp);
       else {
          string_t pie_title;
@@ -3181,7 +3181,7 @@ int html_output_t::write_main_index()
    write_html_head(title, out_fp, page_index);
 
    /* year graph */
-   if(!config.js_charts.isempty())
+   if(config.use_js_charts())
       fputs("<div id=\"monthly_summary_chart\" class=\"chart_holder\"></div>\n", out_fp);
    else {
       string_t png_fname_lang;
