@@ -117,7 +117,7 @@ class graph_t {
       bool is_default_legend_color(void) const {return config.graph_legend_color.isempty() ? true : false;}
       bool is_default_weekend_color(void) const {return config.graph_weekend_color.isempty() ? true : false;}
             
-      void init_graph_engine(void);
+      void init_graph_engine(bool makeimgs);
       void cleanup_graph_engine(void);
 
       int year_graph6x(const history_t& history, const char *fname, const char *title, u_int& graph_width, u_int& graph_height);

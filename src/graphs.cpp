@@ -979,26 +979,28 @@ void graph_t::draw_graph_bar(gdImagePtr im, u_int x1, u_int y1, u_int x2, u_int 
    gdImageRectangle(im, x1, y1, x2, y2, c_outline);
 }
 
-void graph_t::init_graph_engine(void)
+void graph_t::init_graph_engine(bool makeimgs)
 {
-   int brect[8];
-   gdFontPtr fontptr;
+   if(makeimgs) {
+      int brect[8];
+      gdFontPtr fontptr;
 
-   // determine the size of X for each font 
-   if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_small, 0., 0, 0, uppercase_x))
-      font_size_small_px = brect[1] - brect[7];
-   else
-      font_size_small_px = ((fontptr = gdFontGetSmall()) != NULL) ? fontptr->h-2 : 11;
+      // determine the size of X for each font 
+      if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_small, 0., 0, 0, uppercase_x))
+         font_size_small_px = brect[1] - brect[7];
+      else
+         font_size_small_px = ((fontptr = gdFontGetSmall()) != NULL) ? fontptr->h-2 : 11;
 
-   if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
-      font_size_medium_px = brect[1] - brect[7];
-   else
-      font_size_medium_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
+      if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
+         font_size_medium_px = brect[1] - brect[7];
+      else
+         font_size_medium_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
 
-   if(!config.font_file_bold.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_bold.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
-      font_size_medium_bold_px = brect[1] - brect[7];
-   else
-      font_size_medium_bold_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
+      if(!config.font_file_bold.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_bold.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
+         font_size_medium_bold_px = brect[1] - brect[7];
+      else
+         font_size_medium_bold_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
+   }
 
    // assign configured colors
    if(!config.graph_background.isempty()) graph_background = make_color(config.graph_background);

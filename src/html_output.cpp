@@ -61,8 +61,7 @@ html_output_t::~html_output_t(void)
 
 bool html_output_t::init_output_engine(void)
 {
-   // initialize the graph engine even if we don't need to make images (e.g. read configuration)
-   graph.init_graph_engine();
+   graph.init_graph_engine(makeimgs);
    
    return true;
 }
