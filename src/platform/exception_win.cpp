@@ -24,14 +24,14 @@ static string_t get_ex_desc(unsigned int excode, _EXCEPTION_POINTERS *exinfo)
       return extext;
    }
          
-   extext = "Windows exception: ";
-         
    // walk the exception chain, starting from the first exception record
    EXCEPTION_RECORD *exrec = exinfo->ExceptionRecord;
    while(exrec) {
       // add a separator between chained exceptions
       if(!extext.isempty())
          extext += "; ";
+      else
+         extext = "Windows exception: ";
             
       // grab the base exceptino information first
       extext += string_t::_format("code: %x flags: %x address: %p", exrec->ExceptionCode, exrec->ExceptionFlags, exrec->ExceptionAddress);
