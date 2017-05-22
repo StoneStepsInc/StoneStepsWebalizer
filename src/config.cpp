@@ -117,7 +117,7 @@ config_t::config_t(void)
    http_port = DEF_HTTP_PORT;                 // HTTP port number
    https_port = DEF_HTTPS_PORT;               // HTTPS port number
 
-   mangle_agent = 0;                          /* mangle user agents       */
+   mangle_agent = 1;                          /* mangle user agents       */
    group_domains= 0;                          /* Group domains 0=none     */
    group_url_domains = 0;                     /* Group URL domains 0=none */
    graph_lines  = 2;                          /* graph lines (0=none)     */
@@ -637,16 +637,6 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
             excl_agent_args.add_nlist("PPC Mac OS X*");  // Mozilla's PPC OS/CPU identifier
             excl_agent_args.add_nlist("Macintosh");      // Mozilla's Mac platform identifier
          }
-      }
-      else {
-         //
-         // If mangle_agent is zero, set it to one to avoid having to
-         // check all user agent list sizes in the performance-critical
-         // main loop. This mangle level leaves argument version numbers
-         // unmodified.
-         //
-         if(!mangle_agent)
-            mangle_agent = 1;
       }
    }
 
