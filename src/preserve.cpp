@@ -59,6 +59,11 @@ state_t::state_t(const config_t& config) : config(config), history(config), data
 
 state_t::~state_t(void)
 {
+   // these hash tables cannot be deleted in the declaration order (see save_state)
+   dl_htab.clear();
+   hm_htab.clear();
+   um_htab.clear();
+
    cc_htab.clear();
    delete [] buffer;
 }
@@ -230,7 +235,8 @@ int state_t::save_state(void)
    /* now we need to save our hash tables */
 
    //
-   // node references:
+   // Nodes must be deleted in the left-to-right order, so we do not leave any 
+   // dangling references:
    //
    // dlnode_t > hnode_t > vnode_t > unode_t
    //          > danode_t
