@@ -707,17 +707,14 @@ bool dns_resolver_t::dns_init(void)
 void dns_resolver_t::dns_clean_up(void)
 {
    u_int index;
-   u_int waitcnt = 300;
 
    // make sure the DNS resolver is initialized
    if(workers.empty())
       throw std::runtime_error("DNS resolver is not initialized");
 
-   dns_thread_stop = true;
-
-   // wait for 15 seconds for DNS workers to stop
-   while(get_live_workers() && waitcnt--)
-      msleep(50);
+   // make sure there are no worker threads running
+   if(get_live_workers())
+      dns_abort();
 
    if(!wrk_ctxs.empty()) {
       // free all resources (buffers are deleted in the thread)
@@ -749,6 +746,17 @@ void dns_resolver_t::dns_clean_up(void)
    mutex_destroy(dnode_mutex);
    mutex_destroy(hqueue_mutex);
 
+   // if DNS resolution was aborted, there will be unresolved DNS nodes in the list
+   while(dnode_list) {
+      dnode_t *dnode = dnode_list;
+      dnode_list = dnode_list->llist;
+      delete dnode;
+   }
+
+   // if there are any leftover resolved addresses, delete them
+   while(hqueue.top())
+      delete hqueue.remove();
+
 #ifdef _WIN32
       WSACleanup();
 #endif
@@ -776,6 +784,34 @@ void dns_resolver_t::dns_wait(void)
       mutex_unlock(dnode_mutex);
       msleep(500);
    } 
+}
+
+//
+// dns_abort requests all DNS worker threads to stop and waits for a few seconds 
+// for all of them to do so. If any of the threads failed to stop, an exception 
+// is thrown. Otherwise, the DNS-done event is set to allow dns_wait to succeed,
+// so resolved addresses can be processed by the caller. 
+//
+void dns_resolver_t::dns_abort(void)
+{
+   u_int waitcnt = 300;
+
+   // make sure the DNS resolver is initialized
+   if(workers.empty())
+      throw std::runtime_error("DNS resolver is not initialized");
+
+   dns_thread_stop = true;
+
+   // wait for 15 seconds for DNS workers to stop
+   while(get_live_workers() && waitcnt--)
+      msleep(50);
+
+   // cannot clean up if worker threads are still running
+   if(get_live_workers())
+      throw std::runtime_error("Cannot stop DNS worker threads");
+
+   // set the event, so dns_wait can return and nodes in hqueue can be processed
+   event_set(dns_done_event);
 }
 
 //

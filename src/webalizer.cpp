@@ -1788,6 +1788,14 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
       delete *i;
    logrecs.clear();
 
+   //
+   // If Ctrl-C was pressed, stop the DNS resolver without waiting for all 
+   // IP addresses being resolved. Unresolved addresses will be saved in the 
+   // state database without a country code and will not be retried. 
+   //
+   if(abort_signal)
+      dns_resolver.dns_abort();
+
    if(total_good)                                                       /* were any good records?   */
    {
       if (state.totals.ht_hits > state.totals.hm_hit) state.totals.hm_hit = state.totals.ht_hits;
@@ -1825,6 +1833,10 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
                fprintf(stderr,"%s\n",config.lang.msg_data_err);
          }
          ptms.mnt_time += elapsed(stime, msecs());
+
+         // do not generate reports or roll over the state database if Ctrl-C was pressed
+         if(abort_signal)
+            return EXIT_FAILURE;
 
          // generate intermediate reports if not in batch mode
          if(!config.batch) {
