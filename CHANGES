@@ -15,6 +15,7 @@
  * Multiple Highcharts improvements
  * [BUG] Fixed a bug that mangled non-ASCII characters in search strings
  * [BUG] Fixed a concurrency bug in the DNS resolver that could report incorrect host names
+ * [BUG] Fixed a bug preventing Ctrl-C from being able to abort log processing
 
 --------------------------------------------------------------------
 4.2.0.10 [04-Sep-2016] -- Stone Steps Inc. (www.stonesteps.ca)
