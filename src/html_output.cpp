@@ -2559,7 +2559,7 @@ int html_output_t::all_agents_page(void)
       {
          if (anode.flag == OBJ_GRP)
          {
-            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
                 anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
                 anode.xfer, fmt_xfer(anode.xfer, true),
                 (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
@@ -2585,7 +2585,7 @@ int html_output_t::all_agents_page(void)
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
                      
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
              anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
              anode.xfer, fmt_xfer(anode.xfer, true),
              (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
@@ -2952,7 +2952,7 @@ int html_output_t::all_users_page(void)
 
       while(iter.prev(inode)) {
          if (inode.flag == OBJ_GRP) {
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
                inode.count,
                (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
                (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,
@@ -2976,7 +2976,7 @@ int html_output_t::all_users_page(void)
          if(config.hidden_users.isinlist(inode.string))
             continue;
                
-         fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
+         fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
             inode.count,
             (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
             (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,
