@@ -1,5 +1,5 @@
 --------------------------------------------------------------------
-4.2.1.x [xx-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
+4.2.1.18 [28-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Added DNSLookups configuration variable to use the DNS database as a generic host database (e.g. track spammers)
  * Added SiteName as a more descriptive synonym for HostName
