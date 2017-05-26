@@ -1329,7 +1329,7 @@ int html_output_t::all_hosts_page(void)
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
-   fprintf(out_fp, " %12s      %12s      %12s      %12s      %12s      %11s   ", config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration);
+   fprintf(out_fp, " %12s      %12s      %12s      %13s      %12s      %11s   ", config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration);
    if(config.ntop_ctrys) {
       fprintf(out_fp, "   %-22s", config.lang.msg_h_ctry);
       if(config.geoip_city)
@@ -1337,7 +1337,7 @@ int html_output_t::all_hosts_page(void)
    }
    fprintf(out_fp, "   %s\n", config.lang.msg_h_hname);
 
-   fputs("----------------  ----------------  ----------------  ----------------  ----------------  ---------------", out_fp);
+   fputs("----------------  ----------------  ----------------  -----------------  ----------------  ---------------", out_fp);
    if(config.ntop_ctrys) {
       fputs("  ----------------------", out_fp);   // country
       if(config.geoip_city)
@@ -1352,7 +1352,7 @@ int html_output_t::all_hosts_page(void)
       while(iter.prev(hnode)) {
          if (hnode.flag == OBJ_GRP)
          {
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
@@ -1385,7 +1385,7 @@ int html_output_t::all_hosts_page(void)
             if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || config.hidden_hosts.isinlist(hnode.name))
                continue;
 
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
                hnode.count,(state.totals.t_hit==0)?0:((double)hnode.count/state.totals.t_hit)*100.0,
                hnode.files,(state.totals.t_file==0)?0:((double)hnode.files/state.totals.t_file)*100.0,
                hnode.pages,(state.totals.t_page==0)?0:((double)hnode.pages/state.totals.t_page)*100.0,
@@ -1618,9 +1618,9 @@ int html_output_t::all_urls_page(void)
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
-   fprintf(out_fp," %12s      %12s  %12s  %12s        %s\n",
+   fprintf(out_fp," %12s      %13s  %12s  %12s        %s\n",
            config.lang.msg_h_hits,config.lang.msg_h_xfer,config.lang.msg_h_avgtime,config.lang.msg_h_maxtime,config.lang.msg_h_url);
-   fputs("----------------  ----------------  ------------  ------------   --------------------\n\n", out_fp);
+   fputs("----------------  -----------------  ------------  ------------   --------------------\n\n", out_fp);
 
    /* do groups first (if any) */
    if(state.totals.t_grp_urls) {
@@ -1628,7 +1628,7 @@ int html_output_t::all_urls_page(void)
       
       while (iter.prev(unode)) {
          if (unode.flag == OBJ_GRP) {
-            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f   %s\n",
+            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f   %s\n",
                unode.count,
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
                unode.xfer, fmt_xfer(unode.xfer, true),
@@ -1652,7 +1652,7 @@ int html_output_t::all_urls_page(void)
             continue;
 
          buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
             unode.xfer, fmt_xfer(unode.xfer, true),
@@ -2548,8 +2548,8 @@ int html_output_t::all_agents_page(void)
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
-   fprintf(out_fp," %12s      %12s        %12s      %s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_agent);
-   fputs("----------------  ----------------  ----------------  ----------------------\n\n", out_fp);
+   fprintf(out_fp," %12s      %13s        %12s      %s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_agent);
+   fputs("----------------  -----------------  ----------------  ----------------------\n\n", out_fp);
 
    /* do groups first (if any) */
    if(state.totals.t_grp_agents) {
@@ -2559,7 +2559,7 @@ int html_output_t::all_agents_page(void)
       {
          if (anode.flag == OBJ_GRP)
          {
-            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+            fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
                 anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
                 anode.xfer, fmt_xfer(anode.xfer, true),
                 (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
@@ -2585,7 +2585,7 @@ int html_output_t::all_agents_page(void)
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
                      
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  ",
              anode.count, (state.totals.t_hit==0)?0:((double)anode.count/state.totals.t_hit)*100.0,
              anode.xfer, fmt_xfer(anode.xfer, true),
              (state.totals.t_xfer==0) ? .0 : PCENT(anode.xfer, state.totals.t_xfer),
@@ -2942,7 +2942,7 @@ int html_output_t::all_users_page(void)
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
 
-   fprintf(out_fp," %12s      %12s      %12s      %12s  %12s  %12s      %s\n",
+   fprintf(out_fp," %12s      %12s      %13s      %12s  %12s  %12s      %s\n",
            config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_avgtime,config.lang.msg_h_maxtime, config.lang.msg_h_uname);
    fputs("----------------  ----------------  ----------------  ----------------  ------------  ------------  --------------------\n\n", out_fp);
 
@@ -2952,7 +2952,7 @@ int html_output_t::all_users_page(void)
 
       while(iter.prev(inode)) {
          if (inode.flag == OBJ_GRP) {
-            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
+            fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
                inode.count,
                (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
                (state.totals.t_file==0)?0:((double)inode.files/state.totals.t_file)*100.0,
