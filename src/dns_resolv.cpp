@@ -690,7 +690,13 @@ bool dns_resolver_t::dns_init(void)
    // create worker threads to handle DNS and GeoIP requests
    for(size_t index = 0; index < wrk_ctxs.size(); index++) {
       inc_live_workers();
-      workers.push_back(thread_create(dns_worker_thread_proc, &wrk_ctxs[index]));
+
+      //
+      // Pass the worker context as a pointer because VC++ 2015 has a bug that 
+      // fails to compile a non-const reference passed to a thread when language
+      // extensinos are disabled (/Za).
+      //
+      workers.emplace_back(&dns_resolver_t::dns_worker_thread_proc, this, &wrk_ctxs[index]);
    }
 
    if (config.verbose > 1) {
@@ -719,7 +725,7 @@ void dns_resolver_t::dns_clean_up(void)
    if(!wrk_ctxs.empty()) {
       // free all resources (buffers are deleted in the thread)
       for(index = 0; index < wrk_ctxs.size(); index++) { 
-         thread_destroy(workers[index]);
+         workers[index].join();
          dns_db_close(wrk_ctxs[index].dns_db);
       }
    }
@@ -938,19 +944,9 @@ int dns_resolver_t::get_live_workers(void)
 //
 // Domain name resolved worker thread function
 //
-#ifdef _WIN32
-unsigned int __stdcall dns_resolver_t::dns_worker_thread_proc(void *arg)
-#else
-void *dns_resolver_t::dns_worker_thread_proc(void *arg)
-#endif
+void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
 {
-   dns_resolver_t::wrk_ctx_t *wrk_ctx = (dns_resolver_t::wrk_ctx_t*) arg;
-   wrk_ctx->dns_resolver.dns_worker_thread_proc(*wrk_ctx);
-   return 0;
-}
-
-void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t& wrk_ctx)
-{
+   wrk_ctx_t& wrk_ctx = *wrk_ctx_ptr;
    wrk_ctx.buffer = new u_char[DBBUFSIZE];
    wrk_ctx.bufsize = DBBUFSIZE;
 

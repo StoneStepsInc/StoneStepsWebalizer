@@ -22,6 +22,7 @@
 
 #include <db_cxx.h>
 #include <vector>
+#include <thread>
 
 // -----------------------------------------------------------------
 //
@@ -396,12 +397,6 @@ class berkeleydb_t {
 
       void trickle_thread_proc(void);
 
-      #ifdef _WIN32
-      static unsigned int __stdcall trickle_thread_proc(void *arg);
-      #else
-      static void *trickle_thread_proc(void *arg);
-      #endif
-
       //
       // If BDB is linked against another version of CRT, deleting 
       // BDB objects may end up using the wrong memory manager. For
@@ -438,7 +433,7 @@ class berkeleydb_t {
 
       std::vector<table_t*> tables;
 
-      thread_t          trickle_thread;
+      std::thread       trickle_thread;
       event_t           trickle_event;
       string_t          trickle_error;
       bool              trickle_thread_stop;

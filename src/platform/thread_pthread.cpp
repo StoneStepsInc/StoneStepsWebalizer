@@ -13,34 +13,6 @@
 
 #include <pthread.h>
 
-struct thread_handle_t {
-   pthread_t thread_handle;
-   thread_handle_t(pthread_t thread_handle) : thread_handle(thread_handle) {}
-};
-
-thread_t thread_create(start_routine_t start_routine, void *arg)
-{
-	pthread_attr_t attr;
-	pthread_t thread_handle = 0;
-
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-
-	if(pthread_create(&thread_handle, &attr, start_routine, arg)) 
-		thread_handle = 0;
-	 
-	pthread_attr_destroy(&attr);
-
-	return new thread_handle_t(thread_handle);
-}
-
-void thread_destroy(thread_t thread)
-{
-   if(thread)
-      delete thread;
-}
-
 void msleep(unsigned long timeout)
 {
 	timespec req, rem;

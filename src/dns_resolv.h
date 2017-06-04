@@ -35,6 +35,8 @@ extern "C" {
 #include <maxminddb.h>
 }
 
+#include <thread>
+
 class dns_resolver_t;
 struct hnode_t;
 
@@ -78,7 +80,7 @@ class dns_resolver_t {
       mutex_t hqueue_mutex;
       event_t dns_done_event;
 
-      std::vector<thread_t> workers;         // worker threads
+      std::vector<std::thread> workers;      // worker threads
       bool dns_thread_stop;
 
       u_int dns_cache_ttl;
@@ -111,19 +113,13 @@ class dns_resolver_t {
 
       bool process_node(Db *dns_db, void *buffer, size_t bufsize);
 
-      void dns_worker_thread_proc(wrk_ctx_t& wrk_ctx);
+      void dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr);
 
       bool resolve_domain_name(dnode_t *dnode);
 
       void queue_dnode(dnode_t *dnode);
 
       static bool dns_derive_ccode(const string_t& name, string_t& ccode);
-
-      #ifdef _WIN32
-      static unsigned int __stdcall dns_worker_thread_proc(void *arg);
-      #else
-      static void *dns_worker_thread_proc(void *arg);
-      #endif
 
    public:
       dns_resolver_t(const config_t& config);

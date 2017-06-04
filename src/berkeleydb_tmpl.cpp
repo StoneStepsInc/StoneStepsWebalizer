@@ -927,7 +927,6 @@ berkeleydb_t::berkeleydb_t(config_t&& config) :
    if(dbenv.set_alloc(berkeleydb_t::malloc, berkeleydb_t::realloc, berkeleydb_t::free))
       throw exception_t(0, "Cannot set memory management functions for the database environment");
 
-   trickle_thread = 0;                 // $$$
    trickle_event = NULL;
    trickle_thread_stop = false;
    trickle_thread_stopped = true;
@@ -1035,8 +1034,7 @@ bool berkeleydb_t::open(void)
          return false;
    
       // create a trickle thread
-      if((trickle_thread = thread_create(trickle_thread_proc, this)) == 0)
-         return false;
+      trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
 
       // initialize table databases as free-threaded
       for(size_t i = 0; i < tables.size(); i++)
@@ -1097,14 +1095,13 @@ bool berkeleydb_t::open(void)
 
 bool berkeleydb_t::close(void)
 {
-   u_int errcnt = 0, waitcnt = 300;
+   u_int errcnt = 0;
 
    // tell trickle thread to stop
    trickle_thread_stop = true;
 
-   // wait for it for a while
-   while(!trickle_thread_stopped && waitcnt--)
-      msleep(50);
+   // wait for the trickle thread to stop
+   trickle_thread.join();
 
    // close all table databases
    for(size_t i = 0; i < tables.size(); i++) {
@@ -1126,12 +1123,6 @@ bool berkeleydb_t::close(void)
    if(trickle_event) {
       event_destroy(trickle_event);
       trickle_event = NULL;
-   }
-
-   // destroy the trickle thread
-   if(trickle_thread) {
-      thread_destroy(trickle_thread);
-      trickle_thread = 0;
    }
 
    return !errcnt ? true : false;
@@ -1184,16 +1175,6 @@ bool berkeleydb_t::flush(void)
    return !errcnt ? true : false;
 }
 
-#ifdef _WIN32
-unsigned int __stdcall berkeleydb_t::trickle_thread_proc(void *arg)
-#else
-void *berkeleydb_t::trickle_thread_proc(void *arg)
-#endif
-{
-   ((berkeleydb_t*) arg)->trickle_thread_proc();
-   return 0;
-}
-
 void berkeleydb_t::trickle_thread_proc(void)
 {
    int nwrote, error;
@@ -1228,7 +1209,7 @@ void berkeleydb_t::trickle_thread_proc(void)
 
       // check if anything was actually written
       if(!nwrote) {
-         // if there's nothing written, pause trickling
+         // if there's nothing written, slow down trickling
          if(!event_reset(trickle_event)) {
             trickle_error = "Failed to reset the database trickle event";
             break;
