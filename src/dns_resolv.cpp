@@ -53,7 +53,6 @@
 #include "hashtab.h"                           /* hash table functions     */
 #include "dns_resolv.h"                        /* our header               */
 
-#include "mutex.h"
 #include "event.h"
 #include "thread.h"
 #include "util.h"
@@ -336,9 +335,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 {
    dnode_list = dnode_end = NULL;
 
-   dnode_mutex = NULL;
-   hqueue_mutex = NULL;
-
    dns_done_event = NULL;
 
    memset(&mmdb, 0, sizeof(MMDB_s));
@@ -385,8 +381,6 @@ dns_resolver_t::~dns_resolver_t(void)
          MMDB_close(geoip_db);
 
       event_destroy(dns_done_event);
-      mutex_destroy(dnode_mutex);
-      mutex_destroy(hqueue_mutex);
    }
 }
 
@@ -450,7 +444,7 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
 }
 void dns_resolver_t::queue_dnode(dnode_t *dnode)
 {
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
    if(dnode) {
       if(dnode_end == NULL)
          dnode_list = dnode;
@@ -464,7 +458,7 @@ void dns_resolver_t::queue_dnode(dnode_t *dnode)
       // notify resolver threads
       dns_unresolved++;
    }
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
 }
 
 hnode_t *dns_resolver_t::get_hnode(void)
@@ -472,9 +466,9 @@ hnode_t *dns_resolver_t::get_hnode(void)
    hnode_t *hnode;
    dnode_t *dnode;
 
-   mutex_lock(hqueue_mutex);
+   hqueue_mutex.lock();
    dnode = hqueue.remove();
-   mutex_unlock(hqueue_mutex);
+   hqueue_mutex.unlock();
 
    // return if there are no resolved nodes
    if(!dnode)
@@ -588,18 +582,6 @@ bool dns_resolver_t::dns_init(void)
 #endif
 
    // initialize synchronization primitives
-   if((dnode_mutex = mutex_create()) == NULL) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot initialize DNS mutex\n");
-      return false;
-   }
-
-   if((hqueue_mutex = mutex_create()) == NULL) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot initialize the host queue mutex\n");
-      return false;
-   }
-
    if((dns_done_event = event_create(true, true)) == NULL) {
       if(config.verbose)
          fprintf(stderr, "Cannot initialize DNS event\n");
@@ -749,8 +731,6 @@ void dns_resolver_t::dns_clean_up(void)
    }
 
    event_destroy(dns_done_event);
-   mutex_destroy(dnode_mutex);
-   mutex_destroy(hqueue_mutex);
 
    // if DNS resolution was aborted, there will be unresolved DNS nodes in the list
    while(dnode_list) {
@@ -785,9 +765,9 @@ void dns_resolver_t::dns_wait(void)
       fprintf(stderr, "DNS event wait operation has failed - using polling to wait\n");
 
    while(!done) {
-      mutex_lock(dnode_mutex);
+      dnode_mutex.lock();
       done = dns_unresolved == 0 ? true : false;
-      mutex_unlock(dnode_mutex);
+      dnode_mutex.unlock();
       msleep(500);
    } 
 }
@@ -831,7 +811,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
    bool cached = false, lookup = false;
    dnode_t* nptr;
 
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
 
    if(dnode_list == NULL)
       goto funcidle;
@@ -847,7 +827,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
    // reset the pointer to the next node
    nptr->llist = NULL;
 
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
 
    // check if we just need to update a DNS record
    if(!nptr->hnode)
@@ -884,7 +864,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
       }
    }
 
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
 
    // update resolver stats
    if(lookup) {
@@ -896,9 +876,9 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 
    if(nptr->hnode) {
       // add the node to the queue of resolved nodes
-      mutex_lock(hqueue_mutex);
+      hqueue_mutex.lock();
       hqueue.add(nptr);
-      mutex_unlock(hqueue_mutex);
+      hqueue_mutex.unlock();
    }
    else {
       // if we just updated the DNS record, delete dnode_t
@@ -909,35 +889,35 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
    if(--dns_unresolved == 0)
       event_set(dns_done_event);
 
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
 
    return true;
 
 funcidle:
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
    return false;
 }
 
 void dns_resolver_t::inc_live_workers(void)
 {
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
    dns_live_workers++;
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
 }
 
 void dns_resolver_t::dec_live_workers(void)
 {
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
    dns_live_workers--;
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
 }
 
 int dns_resolver_t::get_live_workers(void)
 {
    int retval;
-   mutex_lock(dnode_mutex);
+   dnode_mutex.lock();
    retval = dns_live_workers;
-   mutex_unlock(dnode_mutex);
+   dnode_mutex.unlock();
    return retval;
 }
 

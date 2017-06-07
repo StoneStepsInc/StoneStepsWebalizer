@@ -17,7 +17,6 @@
 #include "config.h"
 
 #include "hashtab.h"
-#include "mutex.h"
 #include "event.h"
 #include "thread.h"
 #include "queue.h"
@@ -36,6 +35,7 @@ extern "C" {
 }
 
 #include <thread>
+#include <mutex>
 
 class dns_resolver_t;
 struct hnode_t;
@@ -76,8 +76,8 @@ class dns_resolver_t {
       
       bool accept_host_names;
 
-      mutex_t dnode_mutex;
-      mutex_t hqueue_mutex;
+      std::mutex dnode_mutex;
+      std::mutex hqueue_mutex;
       event_t dns_done_event;
 
       std::vector<std::thread> workers;      // worker threads

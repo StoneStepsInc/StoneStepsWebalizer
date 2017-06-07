@@ -145,9 +145,6 @@
     <ClCompile Include="vnode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="platform\mutex_win.cpp">
-      <Filter>Source Files\platform</Filter>
-    </ClCompile>
     <ClCompile Include="platform\thread_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
@@ -334,9 +331,6 @@
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="event.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="mutex.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
     <ClInclude Include="html_output.h">
