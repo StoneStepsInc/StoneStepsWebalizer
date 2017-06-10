@@ -66,6 +66,7 @@
 #define DNS_DB_REC_V2      ((u_int) 2)          // dns_db_record
 #define DNS_DB_REC_V3      ((u_int) 3)          // initial version of serialized dnode_t
 #define DNS_DB_REC_V4      ((u_int) 4)          // added GeoIP database build time 
+#define DNS_DB_REC_V5      ((u_int) 5)          // added GeoIP latitude and longitude
 #define DNS_DB_REC_VER_MAX ((u_int) 250)        // maximum valid record version
 
 #define DBBUFSIZE          ((size_t) 8192)      // database buffer size
@@ -96,9 +97,11 @@ struct dns_db_record_t {
    string_t    city;                            // city name
    string_t    hostname;                        // host name
    uint64_t    geoip_tstamp;                    // GeoIP build time
+   double      latitude;                        // IP address latitude
+   double      longitude;                       // IP address longitude
 
    public:
-      dns_db_record_t(void) : version(0), spammer(false), geoip_tstamp(0)
+      dns_db_record_t(void) : version(0), spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.)
       {
          memset(ccode, 0, hnode_t::ccode_size);
       }
@@ -133,6 +136,9 @@ class dns_resolver_t::dnode_t {
 
       uint64_t       geoip_tstamp;
 
+      double         latitude;
+      double         longitude;
+
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
          sockaddr_in    s_addr_ipv4;      // IPv4 socket address
@@ -163,7 +169,9 @@ size_t dns_db_record_t::s_data_size(void) const
             hnode_t::ccode_size + 
             s_size_of(hostname) + 
             s_size_of(spammer) + 
-            s_size_of(geoip_tstamp);
+            s_size_of(geoip_tstamp) + 
+            s_size_of(latitude) + 
+            s_size_of(longitude);
 }
 
 size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -182,6 +190,8 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, hostname);
    ptr = serialize(ptr, spammer);
    ptr = serialize(ptr, geoip_tstamp);
+   ptr = serialize(ptr, latitude);
+   ptr = serialize(ptr, longitude);
 
    // return the size of the serialized data
    return (char*) ptr - (const char*) buffer;
@@ -259,6 +269,11 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
    if(version >= DNS_DB_REC_V4)
       ptr = deserialize(ptr, geoip_tstamp);
 
+   if(version >= DNS_DB_REC_V5) {
+      ptr = deserialize(ptr, latitude);
+      ptr = deserialize(ptr, longitude);
+   }
+
    return (const char*) ptr - (char*) buffer;
 }
 
@@ -271,7 +286,9 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       m_hnode(hnode.resolved ? NULL : &hnode), 
       llist(NULL), 
       spammer(hnode.spammer),
-      geoip_tstamp(0)
+      geoip_tstamp(0),
+      latitude(0.),
+      longitude(0.)
 {
    memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
@@ -848,7 +865,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
          
          // look up country code in the GeoIP database if there is a GeoIP database
          if(geoip_db)
-            goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city);
+            goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city, nptr->latitude, nptr->longitude);
 
          // resolve the IP address if requested and not in the database already
          if(dns_db && !cached && config.dns_lookups) {
@@ -941,20 +958,24 @@ void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
    dec_live_workers();
 }
 
-bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city)
+bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city, double& latitude, double& longitude)
 {
    static const char *ccode_path[] = {"country", "iso_code", NULL};
+   static const char *loc_lat_path[] = {"location", "latitude", NULL};
+   static const char *loc_lon_path[] = {"location", "longitude", NULL};
    const char *city_path[] = {"city", "names", geoip_language.c_str(), NULL};
 
    int mmdb_error;
-   MMDB_lookup_result_s result;
-   MMDB_entry_data_s entry_data;
+   MMDB_lookup_result_s result = {};
+   MMDB_entry_data_s entry_data = {};
 
    if(!geoip_db)
       throw std::runtime_error("GeoIP database is not open");
 
    ccode.reset();
    city.reset();
+
+   latitude = longitude = 0.;
 
    // look up the IP address
    result = MMDB_lookup_sockaddr(geoip_db, &ipaddr, &mmdb_error);
@@ -983,10 +1004,27 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    }
 
    // get the city if requested and is available either in the selected language or English
-   if(config.geoip_city && !geoip_language.isempty()) {
-      if(MMDB_aget_value(&result.entry, &entry_data, city_path) == MMDB_SUCCESS) {
-         if(entry_data.has_data)
-            city.assign(entry_data.utf8_string, entry_data.data_size);
+   if(config.geoip_city) {
+      if(!geoip_language.isempty()) {
+         if(MMDB_aget_value(&result.entry, &entry_data, city_path) == MMDB_SUCCESS) {
+            if(entry_data.has_data)
+               city.assign(entry_data.utf8_string, entry_data.data_size);
+         }
+      }
+
+      // check if we have the coordinates in the entry
+      if(MMDB_aget_value(&result.entry, &entry_data, loc_lat_path) == MMDB_SUCCESS) {
+         if(entry_data.has_data) {
+            // hold onto the latitude until we are sure we have the longitude
+            double lat = entry_data.double_value;
+
+            if(MMDB_aget_value(&result.entry, &entry_data, loc_lon_path) == MMDB_SUCCESS) {
+               if(entry_data.has_data) {
+                  longitude = entry_data.double_value;
+                  latitude = lat;
+               }
+            }
+         }
       }
    }
 
@@ -1066,6 +1104,8 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *
                dnode->city = dnsrec.city;
                dnode->spammer = dnsrec.spammer;
                dnode->geoip_tstamp = dnsrec.geoip_tstamp;
+               dnode->latitude = dnsrec.latitude;
+               dnode->longitude = dnsrec.longitude;
                retval = true;
             }
 
@@ -1098,7 +1138,7 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
    if(!dns_db || !dnode)
       return;
 
-   dnsrec.version = DNS_DB_REC_V4;
+   dnsrec.version = DNS_DB_REC_V5;
    dnsrec.tstamp = runtime;
 
    // record contents must come from dnode_t
@@ -1109,6 +1149,9 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
    // if we have a GeoIP database, hold onto its build time
    if(geoip_db)
       dnsrec.geoip_tstamp = geoip_db->metadata.build_epoch;
+
+   dnsrec.latitude = dnode->latitude;
+   dnsrec.longitude = dnode->longitude;
 
    memcpy(dnsrec.ccode, dnode->ccode.c_str(), hnode_t::ccode_size);
 
