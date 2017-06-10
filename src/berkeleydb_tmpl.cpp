@@ -1100,8 +1100,9 @@ bool berkeleydb_t::close(void)
    // tell trickle thread to stop
    trickle_thread_stop = true;
 
-   // wait for the trickle thread to stop
-   trickle_thread.join();
+   // if the trickle thread was started, wait for it to stop
+   if(trickle_thread.joinable())
+      trickle_thread.join();
 
    // close all table databases
    for(size_t i = 0; i < tables.size(); i++) {
