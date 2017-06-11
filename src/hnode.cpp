@@ -34,6 +34,7 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    visit = NULL;
    dlref = 0;
    grp_visit = NULL;
+   latitude = longitude = 0.;
 }
 
 hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
@@ -69,6 +70,9 @@ hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
 
    grp_visit = NULL;                         // grp_visit is not copied
 
+   latitude = hnode.latitude;
+   longitude = hnode.longitude;
+
    if((visit = hnode.visit) != NULL)
       visit->hostref++;
 }
@@ -89,6 +93,7 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
    visit = NULL;
    dlref = 0;
    grp_visit = NULL;
+   latitude = longitude = 0.;
 }
 
 hnode_t::~hnode_t(void)
@@ -186,7 +191,8 @@ size_t hnode_t::s_data_size(void) const
                sizeof(uint64_t) * 2 +           // xfer, max_v_xfer
                s_size_of(name)    +             // name
                ccode_size         +             // country code
-               s_size_of(city);                 // city
+               s_size_of(city)    +             // city
+               sizeof(double) * 2;              // latitude, longitude
 }
 
 size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -225,7 +231,10 @@ size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, visits_conv);
    ptr = serialize(ptr, tstamp);
 
-         serialize(ptr, city);
+   ptr = serialize(ptr, city);
+
+   ptr = serialize(ptr, latitude);
+   ptr = serialize(ptr, longitude);
 
    return datasize;
 }
@@ -289,9 +298,14 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
       tstamp.reset();
 
    if(version >= 6)
-      deserialize(ptr, city);
+      ptr = deserialize(ptr, city);
    else
       city.clear();
+
+   if(version >= 7) {
+      ptr = deserialize(ptr, latitude);
+      ptr = deserialize(ptr, longitude);
+   }
 
    visit = NULL;
 
@@ -341,6 +355,11 @@ size_t hnode_t::s_data_size(const void *buffer)
       return datasize;
 
    datasize += s_size_of<string_t>((u_char*) buffer + datasize);     // city
+
+   if(version < 7)
+      return datasize;
+
+   datasize += sizeof(double) * 2;        // latitude, longitude
 
    return datasize; 
 }

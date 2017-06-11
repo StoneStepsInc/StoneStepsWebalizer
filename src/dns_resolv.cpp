@@ -500,6 +500,8 @@ hnode_t *dns_resolver_t::get_hnode(void)
    hnode->set_ccode(dnode->ccode.c_str());
    hnode->name = dnode->hostname;
    hnode->city = dnode->city;
+   hnode->latitude = dnode->latitude;
+   hnode->longitude = dnode->longitude;
 
    //
    // If the spammer flag is the same in both nodes, we are done. However, if neither

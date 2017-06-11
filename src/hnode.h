@@ -89,6 +89,9 @@ struct hnode_t : public base_node<hnode_t> {
 
       string_t city;                 // city name reported by GeoIP
 
+      double   latitude;             // latitude reported by GeoIP
+      double   longitude;            // longitude reported by GeoIP
+
       public:
          typedef void (*s_unpack_cb_t)(hnode_t& hnode, bool active, void *arg);
 
