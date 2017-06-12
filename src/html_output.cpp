@@ -1272,8 +1272,9 @@ void html_output_t::top_hosts_table(int flag)
 
       // output the span with the IP address as a title
       fprintf(out_fp, 
-           "<td class=\"stats_data_item_td%s\"><span title=\"%s\">",
-           hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str());
+           "<td class=\"stats_data_item_td%s\"><span title=\"%s\" data-latitude=\"%.6lf\" data-longitude=\"%.6lf\">",
+           hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str(), 
+           hptr->latitude, hptr->longitude);
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
@@ -1400,10 +1401,10 @@ int html_output_t::all_hosts_page(void)
                   fprintf(out_fp, "  %-22s", hnode.city.c_str());
             }
 
-            fprintf(out_fp, " %c <span %stitle=\"%s\">%s</span>\n",
+            fprintf(out_fp, " %c <span %stitle=\"%s\" data-latitude=\"%.6lf\" data-longitude=\"%.6lf\">%s</span>\n",
                hnode.spammer ? '*' : ' ',
                hnode.spammer ? "class=\"spammer\" " : hnode.robot ? "class=\"robot\" " : hnode.visits_conv ? "class=\"converted\" " : "",
-               hnode.string.c_str(), hnode.hostname().c_str());
+               hnode.string.c_str(), hnode.latitude, hnode.longitude, hnode.hostname().c_str());
          }
       }
       iter.close();
@@ -2065,9 +2066,11 @@ void html_output_t::top_dl_table(void)
       }
 
       fprintf(out_fp,
-          "<td class=\"stats_data_item_td\"><span title=\"%s\">%s</span></td>\n" \
+          "<td class=\"stats_data_item_td\"><span title=\"%s\" data-latitude=\"%.6lf\" data-longitude=\"%.6lf\">%s</span></td>\n" \
           "</tr>\n",
-          nptr->hnode->string.c_str(), nptr->hnode->hostname().c_str());
+          nptr->hnode->string.c_str(), 
+          nptr->hnode->latitude, nptr->hnode->longitude, 
+          nptr->hnode->hostname().c_str());
 
       nptr++;
    }
@@ -2165,8 +2168,10 @@ int html_output_t::all_downloads_page(void)
             fprintf(out_fp, "  %-22s", nptr->hnode ? nptr->hnode->city.c_str() : "");
       }
       
-      fprintf(out_fp, "  <span title=\"%s\">%s</span>\n",
-         nptr->hnode->string.c_str(), nptr->hnode->hostname().c_str());
+      fprintf(out_fp, "  <span title=\"%s\" data-latitude=\"%.6lf\" data-longitude=\"%.6lf\">%s</span>\n",
+         nptr->hnode->string.c_str(),
+         nptr->hnode->latitude, nptr->hnode->longitude,
+         nptr->hnode->hostname().c_str());
    }
 
    iter.close();
