@@ -663,6 +663,7 @@ lang_t::lang_t(void)
    msg_h_avgtime = "AvgTime";
    msg_h_maxtime = "MaxTime";
    msg_h_hname = "Hostname";
+   msg_h_ipaddr= "IP Address";
    msg_h_url   = "URL";
    msg_h_urls  = "URLs";
    msg_h_agent = "User Agent";
@@ -969,6 +970,7 @@ void lang_t::init_lang_htab(void)
    put_lang_var("msg_h_avgtime", LANG_VAR_CHAR, &msg_h_avgtime, 1, sizeof(char*));
    put_lang_var("msg_h_maxtime", LANG_VAR_CHAR, &msg_h_maxtime, 1, sizeof(char*));
    put_lang_var("msg_h_hname", LANG_VAR_CHAR, &msg_h_hname, 1, sizeof(char*));
+   put_lang_var("msg_h_ipaddr", LANG_VAR_CHAR, &msg_h_ipaddr, 1, sizeof(char*));
    put_lang_var("msg_h_url", LANG_VAR_CHAR, &msg_h_url, 1, sizeof(char*));
    put_lang_var("msg_h_agent", LANG_VAR_CHAR, &msg_h_agent, 1, sizeof(char*));
    put_lang_var("msg_h_ref", LANG_VAR_CHAR, &msg_h_ref, 1, sizeof(char*));

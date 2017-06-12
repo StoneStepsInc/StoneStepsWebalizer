@@ -260,6 +260,7 @@ msg_h_xfer  = Transfer
 msg_h_avgtime = TpsMoy
 msg_h_maxtime = TpsMax
 msg_h_hname = Nom d'hôte
+msg_h_ipaddr = IP Address
 msg_h_url   = URL
 msg_h_agent = Navigateur
 msg_h_ref   = Référent
