@@ -548,7 +548,7 @@ lang_t::lang_t(void)
    msg_dir_err = "Error: Can't change directory to";
    msg_dir_use = "Creating output in";
    msg_cur_dir = "current directory";
-   msg_hostname= "Hostname for reports is";
+   msg_hostname= "Host name for reports is";
    msg_ign_hist= "Ignoring previous history...";
    msg_no_hist = "History file not found...";
    msg_get_hist= "Reading history file...";
@@ -662,7 +662,7 @@ lang_t::lang_t(void)
    msg_h_xfer  = "Transfer";
    msg_h_avgtime = "AvgTime";
    msg_h_maxtime = "MaxTime";
-   msg_h_hname = "Hostname";
+   msg_h_hname = "Host Name";
    msg_h_ipaddr= "IP Address";
    msg_h_url   = "URL";
    msg_h_urls  = "URLs";
