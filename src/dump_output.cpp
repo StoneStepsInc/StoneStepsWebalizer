@@ -115,7 +115,7 @@ void dump_output_t::dump_all_hosts()
    if (config.dump_header)
    {
       fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-       config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration, config.lang.msg_h_duration, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_type, config.lang.msg_h_hname, config.lang.msg_h_hname);
+       config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration, config.lang.msg_h_duration, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_type, config.lang.msg_h_ipaddr, config.lang.msg_h_hname);
    }
 
    /* dump 'em */
@@ -236,7 +236,7 @@ void dump_output_t::dump_all_downloads(void)
    /* need a header? */
    if (config.dump_header)
    {
-      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_time, config.lang.msg_h_time, config.lang.msg_h_count, config.lang.msg_h_download, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_hname, config.lang.msg_h_hname);
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", config.lang.msg_h_hits, config.lang.msg_h_xfer, config.lang.msg_h_time, config.lang.msg_h_time, config.lang.msg_h_count, config.lang.msg_h_download, config.lang.msg_h_ctry, config.lang.msg_h_city, config.lang.msg_h_ipaddr, config.lang.msg_h_hname);
    }
 
    // create a reverse state.database iterator (xfer-ordered)
