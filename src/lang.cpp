@@ -681,6 +681,8 @@ lang_t::lang_t(void)
    msg_h_count = "Count";
    msg_h_time = "Time";
    msg_h_spammer = "Spammer";
+   msg_h_latitude = "Latitude";
+   msg_h_longitude = "Longitude";
 
    /* links along top of page */
    msg_hlnk_sum= "Summary";
@@ -990,6 +992,8 @@ void lang_t::init_lang_htab(void)
    put_lang_var("msg_h_agents", LANG_VAR_CHAR, &msg_h_agents, 1, sizeof(char*));
    put_lang_var("msg_h_chosts", LANG_VAR_CHAR, &msg_h_chosts, 1, sizeof(char*));
    put_lang_var("msg_h_cvisits", LANG_VAR_CHAR, &msg_h_cvisits, 1, sizeof(char*));
+   put_lang_var("msg_h_latitude", LANG_VAR_CHAR, &msg_h_latitude, 1, sizeof(char*));
+   put_lang_var("msg_h_longitude", LANG_VAR_CHAR, &msg_h_longitude, 1, sizeof(char*));
 
    put_lang_var("msg_hlnk_sum", LANG_VAR_CHAR, &msg_hlnk_sum, 1, sizeof(char*));
    put_lang_var("msg_hlnk_ds", LANG_VAR_CHAR, &msg_hlnk_ds, 1, sizeof(char*));

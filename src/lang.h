@@ -234,6 +234,8 @@ class lang_t {
       const char *msg_h_time  ;
       const char *msg_h_spammer;
       const char *msg_h_errors;
+      const char *msg_h_latitude;
+      const char *msg_h_longitude;
 
       const char *msg_hlnk_sum ;
       const char *msg_hlnk_ds ;
