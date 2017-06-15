@@ -335,14 +335,11 @@ template <typename char_t>
 int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2, size_t count)
 {
    size_t chsz1, chsz2;
-   const char *cp1 = str1, *cp2 = str2;
+   const char_t *cp1, *cp2;
 
    // if either of the strings is NULL, consider it an empty string
-   if(!str1)
-      str1 = empty_string;
-
-   if(!str2)
-      str2 = empty_string;
+   cp1 = str1 ? str1 : empty_string;
+   cp2 = str2 ? str2 : empty_string;
 
    while((*cp1 || *cp2) && count) {
       if(tolower(*cp1) != tolower(*cp2))
@@ -358,14 +355,11 @@ template <>
 int string_base<char>::compare_ci(const char *str1, const char *str2, size_t count)
 {
    size_t chsz1, chsz2;
-   const char *cp1 = str1, *cp2 = str2;
+   const char *cp1, *cp2;
 
    // if either of the strings is NULL, consider it an empty string
-   if(!str1)
-      str1 = empty_string;
-
-   if(!str2)
-      str2 = empty_string;
+   cp1 = str1 ? str1 : empty_string;
+   cp2 = str2 ? str2 : empty_string;
 
    while((*cp1 || *cp2) && count) {
       // TODO: throw instead, once we can guarantee that only UTF-8 strings are in play

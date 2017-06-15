@@ -161,5 +161,25 @@ TEST_CLASS(StringCompare) {
          mstest::Assert::IsTrue(string_t::compare_ci("A", "X") == string_t::compare_ci("A", "x"), L"'A' is as far from 'X' as is 'a' from 'x'");
          mstest::Assert::IsTrue(string_t::compare_ci("X", "A") == string_t::compare_ci("x", "A"), L"'X' is as far from 'A' as is 'x' from 'a'");
       }
+
+      BEGIN_TEST_METHOD_ATTRIBUTE(CompareStringsNullPtr)
+         TEST_DESCRIPTION(L"Compare a NULL pointer to a string or two NULL pointers")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"String Comparison")
+      END_TEST_METHOD_ATTRIBUTE()
+
+      TEST_METHOD(CompareStringsNullPtr)
+      {
+         mstest::Assert::IsTrue(string_t::compare(nullptr, "ABC") < 0, L"A NULL pointer is less than any non-empty string");
+         mstest::Assert::IsTrue(string_t::compare("ABC", nullptr) > 0, L"Any non-empty string is greater than a NULL pointer");
+         mstest::Assert::IsTrue(string_t::compare(nullptr, nullptr) == 0, L"Two NULL pointers are equal");
+         mstest::Assert::IsTrue(string_t::compare("", nullptr) == 0, L"An empty string is equal to a NULL pointer");
+         mstest::Assert::IsTrue(string_t::compare(nullptr, "") == 0, L"A NULL pointer is equal to an empty string");
+
+         mstest::Assert::IsTrue(string_t::compare_ci(nullptr, "ABC") < 0, L"A NULL pointer is less than any non-empty string");
+         mstest::Assert::IsTrue(string_t::compare_ci("ABC", nullptr) > 0, L"Any non-empty string is greater than a NULL pointer");
+         mstest::Assert::IsTrue(string_t::compare_ci(nullptr, nullptr) == 0, L"Two NULL pointers are equal");
+         mstest::Assert::IsTrue(string_t::compare_ci("", nullptr) == 0, L"An empty string is equal to a NULL pointer");
+         mstest::Assert::IsTrue(string_t::compare_ci(nullptr, "") == 0, L"A NULL pointer is equal to an empty string");
+      }
 };
 }
