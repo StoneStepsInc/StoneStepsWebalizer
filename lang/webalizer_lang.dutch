@@ -240,6 +240,7 @@ msg_h_files = Bestanden
 msg_h_hosts = Hosts
 char *msg_h_xfer  = "kB"; /* afgekort i.v.m. onderschrift grafiek */
 msg_h_hname = Host(naam)
+msg_h_host = Host
 msg_h_ipaddr = IP Address
 msg_h_url   = URL
 msg_h_agent = Browser

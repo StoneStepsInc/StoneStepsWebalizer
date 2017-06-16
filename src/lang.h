@@ -215,6 +215,7 @@ class lang_t {
       const char *msg_h_avgtime;
       const char *msg_h_maxtime;
       const char *msg_h_hname ;
+      const char *msg_h_host;
       const char *msg_h_ipaddr;
       const char *msg_h_url   ;
       const char *msg_h_urls  ;

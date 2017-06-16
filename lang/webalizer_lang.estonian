@@ -217,6 +217,7 @@ msg_h_xfer  = Transfer
 msg_h_avgtime = AvgTime
 msg_h_maxtime = MaxTime
 msg_h_hname = Server
+msg_h_host = Host
 msg_h_ipaddr = IP Address
 msg_h_url   = Aadress
 msg_h_agent = Lehitseja
