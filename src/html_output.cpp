@@ -1220,7 +1220,7 @@ void html_output_t::top_hosts_table(int flag)
       if(config.geoip_city)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
-   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_hname);
+   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
@@ -1336,7 +1336,7 @@ int html_output_t::all_hosts_page(void)
       if(config.geoip_city)
          fprintf(out_fp, "   %-22s", config.lang.msg_h_city);
    }
-   fprintf(out_fp, "   %s\n", config.lang.msg_h_hname);
+   fprintf(out_fp, "   %s\n", config.lang.msg_h_host);
 
    fputs("----------------  ----------------  ----------------  -----------------  ----------------  ---------------", out_fp);
    if(config.ntop_ctrys) {
@@ -2022,7 +2022,7 @@ void html_output_t::top_dl_table(void)
       if(config.geoip_city)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
-   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_hname);
+   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
@@ -2130,7 +2130,7 @@ int html_output_t::all_downloads_page(void)
       if(config.geoip_city)
          fprintf(out_fp," %-22s", config.lang.msg_h_city);
    }
-   fprintf(out_fp,"  %s\n", config.lang.msg_h_hname);
+   fprintf(out_fp,"  %s\n", config.lang.msg_h_host);
 
    fputs("-------------  -------------------  --------------  -------  --------------------------------", out_fp);
    if(config.ntop_ctrys) {
