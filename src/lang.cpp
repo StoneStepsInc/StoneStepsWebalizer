@@ -591,14 +591,14 @@ lang_t::lang_t(void)
    msg_nomem_tc= "Can't allocate enough memory, Top Countries disabled!";
    msg_nomem_ta= "Can't allocate enough memory, Top User Agents disabled!";
    msg_nomem_tsr="Can't allocate enough memory, Top Search Strings disabled!";
-   msg_nomem_ti= "Can't allocate enough memory, Top Usernames disabled!";
+   msg_nomem_ti= "Can't allocate enough memory, Top User Names disabled!";
    msg_nomem_dh= "Error adding host node (daily), skipping";
    msg_nomem_mh= "Error adding host node (monthly), skipping";
    msg_nomem_u = "Error adding URL node, skipping";
    msg_nomem_a = "Error adding User Agent node, skipping";
    msg_nomem_r = "Error adding Referrer node, skipping";
    msg_nomem_sc= "Error adding Search String node, skipping";
-   msg_nomem_i = "Error adding Username node, skipping";
+   msg_nomem_i = "Error adding User Name node, skipping";
    msg_nomem_rc = "Error adding HTTP status node, skipping";
    msg_nomem_dl = "Error adding Download Job node, skipping";
 
@@ -712,7 +712,7 @@ lang_t::lang_t(void)
    msg_mtot_ur = "Total Unique Referrers";
    msg_mtot_ua = "Total Unique User Agents";
    msg_mtot_uu = "Total Unique URLs";
-   msg_mtot_ui = "Total Unique Usernames";
+   msg_mtot_ui = "Total Unique User Names";
    msg_mtot_mhd= "Hits per Day";
    msg_mtot_mhh= "Hits per Hour";
    msg_mtot_mfd= "Files per Day";
@@ -762,13 +762,13 @@ lang_t::lang_t(void)
    msg_top_en  = "Total Entry Pages";
    msg_top_ex  = "Total Exit Pages";
    msg_top_sr  = "Total Search Strings";
-   msg_top_i   = "Total Usernames";
+   msg_top_i   = "Total User Names";
    msg_v_hosts = "View All Hosts";
    msg_v_urls  = "View All URLs";
    msg_v_refs  = "View All Referrers";
    msg_v_agents= "View All User Agents";
    msg_v_search= "View All Search Strings";
-   msg_v_users = "View All Usernames";
+   msg_v_users = "View All User Names";
    msg_misc_pages = "Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;";
    msg_misc_visitors = "Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.";
    msg_misc_robots = "Robot activity is excluded from the Country, Entry and Exit URL reports";
