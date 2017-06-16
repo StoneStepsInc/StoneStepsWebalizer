@@ -673,7 +673,7 @@ lang_t::lang_t(void)
    msg_h_refs  = "Referrers";
    msg_h_ctry  = "Country";
    msg_h_search= "Search String";
-   msg_h_uname = "Username";
+   msg_h_uname = "User Name";
    msg_h_type  = "Type";
    msg_h_status= "Status";
    msg_h_duration = "Duration";
