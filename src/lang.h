@@ -149,7 +149,6 @@ class lang_t {
       const char *msg_use_lang;
       const char *msg_use_db;
 
-      const char *msg_nomem_dh;
       const char *msg_nomem_mh;
       const char *msg_nomem_u ;
       const char *msg_nomem_a ;

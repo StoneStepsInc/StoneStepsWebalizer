@@ -114,7 +114,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Fout bij toevoegen van host (dagrapport), overgeslagen!
 msg_nomem_mh= Fout bij toevoegen van host (maandrapport), overgeslagen!
 msg_nomem_u = Fout bij toevoegen van URL, overgeslagen!
 msg_nomem_a = Fout bij toevoegen van browser, overgeslagen!

@@ -104,7 +104,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Terjadi kesalahan saat menambahkan node host (harian), dilewati
 msg_nomem_mh= Terjadi kesalahan saat menambahkan node host (bulanan), dilewati
 msg_nomem_u = Terjadi kesalahan saat menambahkan node URL, dilewati
 msg_nomem_a = Terjadi kesalahan saat menambahkan node User Agent, dilewati

@@ -585,7 +585,6 @@ lang_t::lang_t(void)
    msg_fpos_err= "Cannot retrieve current file position for";
 
    /* memory allocation errors */
-   msg_nomem_dh= "Error adding host node (daily), skipping";
    msg_nomem_mh= "Error adding host node (monthly), skipping";
    msg_nomem_u = "Error adding URL node, skipping";
    msg_nomem_a = "Error adding User Agent node, skipping";
@@ -900,7 +899,6 @@ void lang_t::init_lang_htab(void)
    put_lang_var("msg_dns_geoe", LANG_VAR_CHAR, &msg_dns_geoe, 1, sizeof(char*));
    put_lang_var("msg_dns_useg", LANG_VAR_CHAR, &msg_dns_useg, 1, sizeof(char*));
 
-   put_lang_var("msg_nomem_dh", LANG_VAR_CHAR, &msg_nomem_dh, 1, sizeof(char*));
    put_lang_var("msg_nomem_mh", LANG_VAR_CHAR, &msg_nomem_mh, 1, sizeof(char*));
    put_lang_var("msg_nomem_u", LANG_VAR_CHAR, &msg_nomem_u, 1, sizeof(char*));
    put_lang_var("msg_nomem_a", LANG_VAR_CHAR, &msg_nomem_a, 1, sizeof(char*));

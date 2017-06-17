@@ -107,7 +107,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Ошибка добавления узла хоста (дневной отчёт), пропускается
 msg_nomem_mh= Ошибка добавления узла хоста (месячный отчёт), пропускается
 msg_nomem_u = Ошибка добавления узла URL, пропускается
 msg_nomem_a = Ошибка добавления узла броузера, пропускается

@@ -97,7 +97,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= 不能增加主机节点(每日), 跳过
 msg_nomem_mh= 不能增加主机节点(每月), 跳过
 msg_nomem_u = 不能增加 URL 节点, 跳过
 msg_nomem_a = 不能增加 User Agent 节点, 跳过

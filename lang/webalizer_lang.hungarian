@@ -103,7 +103,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Hiba a hozzáadásnál host node (napi), kihagyom
 msg_nomem_mh= Hiba a hozzáadásnál host node (havi), kihagyom
 msg_nomem_u = Hiba a hozzáadásnál URL node, kihagyom
 msg_nomem_a = Hiba a hozzáadásnál Agent node, kihagyom

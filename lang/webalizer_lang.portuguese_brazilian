@@ -101,7 +101,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Erro ao adicionar host (diario), Ignorando
 msg_nomem_mh= Erro ao adicionar host (mensal), Ignorando
 msg_nomem_u = Erro ao adicionar URL, Ignorando
 msg_nomem_a = Erro ao adicionar browser usado, Ignorando

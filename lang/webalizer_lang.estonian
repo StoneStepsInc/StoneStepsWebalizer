@@ -92,7 +92,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Arvuti lisamisel (päevade kaupa) viga, jätan vahele
 msg_nomem_mh= Arvuti lisamisel (kuude kaupa) viga, jätan vahele
 msg_nomem_u = URLi lisamisel viga, jätan vahele
 msg_nomem_a = Lehitseja lisamisel viga, jätan vahele

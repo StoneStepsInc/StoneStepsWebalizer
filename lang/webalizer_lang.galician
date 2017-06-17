@@ -105,7 +105,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Erro engadindo nodo de servidor (díario), mo salto
 msg_nomem_mh= Erro engadindo nodo de servidor (mensual), mo salto
 msg_nomem_u = Erro engadindo nodo de URL, mo salto
 msg_nomem_a = Erro engadindo nodo de programa visor, mo salto

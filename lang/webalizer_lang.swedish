@@ -112,7 +112,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Fel vid tillägg av dator i lista (daglig), hoppar över
 msg_nomem_mh= Fel vid tillägg av dator i lista (månatlig), hoppar över
 msg_nomem_u = Fel vid tillägg av URL i lista, hoppar över
 msg_nomem_a = Fel vid tillägg av klienttyp i lista, hoppar över

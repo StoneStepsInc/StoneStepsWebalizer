@@ -106,7 +106,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Chyba doplneni bloku pocitace (denni), preskakuji
 msg_nomem_mh= Chyba doplneni bloku pocitace (mesicni), preskakuji
 msg_nomem_u = Chyba doplneni bloku URL, preskakuji
 msg_nomem_a = Chyba doplneni bloku prohlizece, preskakuji

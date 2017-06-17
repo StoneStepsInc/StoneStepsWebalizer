@@ -99,7 +99,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Error adding host node (daily), skipping
 msg_nomem_mh= Error adding host node (monthly), skipping
 msg_nomem_u = Error adding URL node, skipping
 msg_nomem_a = Error adding User Agent node, skipping

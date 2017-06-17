@@ -100,7 +100,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= 호스트 추가 실패 (일별), 무시
 msg_nomem_mh= 호스트 추가 실패 (월별), 무시
 msg_nomem_u = URL 추가 실패, 무시
 msg_nomem_a = 에이전트 추가 실패, 무시

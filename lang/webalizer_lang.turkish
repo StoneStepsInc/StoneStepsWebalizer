@@ -103,7 +103,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Hata makine nodu ekleniyor (gunluk), islenmeden geciliyor
 msg_nomem_mh= Hata makine nodu ekleniyor (aylik), islenmeden geciliyor
 msg_nomem_u = Hata URL nodu ekleniyor, islenmeden geciliyor
 msg_nomem_a = Hata Kullanici Ajani ekleniyor, islenmeden geciliyor

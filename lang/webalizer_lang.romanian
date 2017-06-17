@@ -101,7 +101,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_dh= Eroare adaugare nod host (zilnic), sar
 msg_nomem_mh= Eroare adaugare nod host (lunar), sar
 msg_nomem_u = Eroare adaugare nod URL, sar
 msg_nomem_a = Eroare adaugare nod Navigator client, sar

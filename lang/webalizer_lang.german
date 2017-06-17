@@ -122,7 +122,6 @@ msg_dns_geoe= Kann GeoIP-Datenbank nicht öffnen
 msg_dns_useg= Benutze GeoIP-Datenbank
 
 # /* memory allocation errors */
-msg_nomem_dh= Fehler beim Hinzufügen Rechner-node (täglich), überspringe Eintrag.
 msg_nomem_mh= Fehler beim Hinzufügen Rechner-node (monatlich), überspringe Eintrag.
 msg_nomem_u = Fehler beim Hinzufügen URL-node, überspringe Eintrag.
 msg_nomem_a = Fehler beim Hinzufügen User-Agent-node, überspringe Eintrag.
