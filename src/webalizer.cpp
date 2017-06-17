@@ -2177,34 +2177,33 @@ hnode_t *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
       /* not hashed */
-      if((cptr = new hnode_t(ipaddr)) != NULL) {
-         if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
-            cptr->nodeid = state.database.get_hnode_id();
-            cptr->flag = OBJ_REG;
+      cptr = new hnode_t(ipaddr);
+      if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+         cptr->nodeid = state.database.get_hnode_id();
+         cptr->flag = OBJ_REG;
 
-            cptr->spammer = spammer;
-            cptr->robot = robot;
+         cptr->spammer = spammer;
+         cptr->robot = robot;
 
-            cptr->set_visit(new vnode_t(cptr->nodeid));
-            cptr->visit->hits = 1;
-            cptr->visit->files = fileurl ? 1 : 0;
-            cptr->visit->pages = pageurl ? 1 : 0;
-            cptr->visit->xfer = xfer;
-            cptr->visit->robot = robot;
-            cptr->visit->start = cptr->visit->end = tstamp;
+         cptr->set_visit(new vnode_t(cptr->nodeid));
+         cptr->visit->hits = 1;
+         cptr->visit->files = fileurl ? 1 : 0;
+         cptr->visit->pages = pageurl ? 1 : 0;
+         cptr->visit->xfer = xfer;
+         cptr->visit->robot = robot;
+         cptr->visit->start = cptr->visit->end = tstamp;
             
-            cptr->visits = 1;
+         cptr->visits = 1;
             
-            newvisit = true;
+         newvisit = true;
 
-            newnode = true;
-            newthost = true;
-            newspammer = spammer;
+         newnode = true;
+         newthost = true;
+         newspammer = spammer;
             
-            found = false;
-         }
-         state.hm_htab.put_node(hashval, cptr);
+         found = false;
       }
+      state.hm_htab.put_node(hashval, cptr);
    }
    
    if(found) {
@@ -2287,28 +2286,27 @@ hnode_t *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
       /* not hashed */
-      if((cptr = new hnode_t(grpname)) != NULL) {
-         if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
-            cptr->nodeid = state.database.get_hnode_id();
-            cptr->flag  = OBJ_GRP;
+      cptr = new hnode_t(grpname);
+      if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+         cptr->nodeid = state.database.get_hnode_id();
+         cptr->flag  = OBJ_GRP;
 
-            cptr->spammer = false;     // groups are never spammers
-            cptr->robot = false;       // or robots
+         cptr->spammer = false;     // groups are never spammers
+         cptr->robot = false;       // or robots
 
-            cptr->count = hits;
-            cptr->files = files;
-            cptr->pages = pages;
-            cptr->xfer  = xfer;
+         cptr->count = hits;
+         cptr->files = files;
+         cptr->pages = pages;
+         cptr->xfer  = xfer;
 
-            cptr->visit_avg = (double) visitlen;
-            cptr->visit_max = visitlen;
-            cptr->visits = 1;
+         cptr->visit_avg = (double) visitlen;
+         cptr->visit_max = visitlen;
+         cptr->visits = 1;
 
-            newnode = true;
-            found = false;
-         }
-         state.hm_htab.put_node(hashval, cptr);
+         newnode = true;
+         found = false;
       }
+      state.hm_htab.put_node(hashval, cptr);
    }
    
    if(found) {
@@ -2342,21 +2340,20 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
    /* check if hashed */
    if((nptr = state.rm_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      if((nptr = new rnode_t(str)) != NULL) {
-         if(!state.rm_htab.is_swapped_out() || !state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
-            nptr->nodeid = state.database.get_rnode_id();
-            nptr->flag  = type;
-            nptr->count = count;
+      nptr = new rnode_t(str);
+      if(!state.rm_htab.is_swapped_out() || !state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
+         nptr->nodeid = state.database.get_rnode_id();
+         nptr->flag  = type;
+         nptr->count = count;
             
-            if(newvisit)
-               nptr->visits++;
+         if(newvisit)
+            nptr->visits++;
 
-            newnode = true;
-            found = false;
-         }
-
-         state.rm_htab.put_node(hashval, nptr);
+         newnode = true;
+         found = false;
       }
+
+      state.rm_htab.put_node(hashval, nptr);
    }
 
    if(!nptr->dirty)
@@ -2398,34 +2395,33 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    /* check if hashed */
    if((cptr = state.um_htab.find_node(hashval, &param)) == NULL) {
       /* not hashed */
-      if((cptr = new unode_t(str, srchargs)) != NULL) {
-         // check if in the database
-         if(!state.um_htab.is_swapped_out() || !state.database.get_unode_by_value(*cptr)) {
-            cptr->nodeid = state.database.get_unode_id();
-            cptr->flag = type;
-            cptr->count= 1;
-            cptr->xfer = xfer;
-            cptr->avgtime = cptr->maxtime = proctime;
-            cptr->update_url_type(config.get_url_type(port));
-            cptr->exit = 0;
+      cptr = new unode_t(str, srchargs);
+      // check if in the database
+      if(!state.um_htab.is_swapped_out() || !state.database.get_unode_by_value(*cptr)) {
+         cptr->nodeid = state.database.get_unode_id();
+         cptr->flag = type;
+         cptr->count= 1;
+         cptr->xfer = xfer;
+         cptr->avgtime = cptr->maxtime = proctime;
+         cptr->update_url_type(config.get_url_type(port));
+         cptr->exit = 0;
 
-            if(target && !cptr->target)
-               cptr->target = true;
+         if(target && !cptr->target)
+            cptr->target = true;
 
-            if(type == OBJ_GRP) 
-               cptr->flag=OBJ_GRP;
+         if(type == OBJ_GRP) 
+            cptr->flag=OBJ_GRP;
 
-            if(entryurl) {
-               state.totals.u_entry++;
-               state.totals.t_entry++;
-               cptr->entry = 1;
-            }
-            
-            newnode = true;
-            found = false;
+         if(entryurl) {
+            state.totals.u_entry++;
+            state.totals.t_entry++;
+            cptr->entry = 1;
          }
-         state.um_htab.put_node(hashval, cptr);
+            
+         newnode = true;
+         found = false;
       }
+      state.um_htab.put_node(hashval, cptr);
    }
 
    if(found) {
@@ -2471,8 +2467,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    /* check if hashed */
    if((nptr = state.rc_htab.find_node(hashval, &param)) == NULL) {
       /* not hashed */
-      if((nptr = new rcnode_t(method, url, respcode)) == NULL) 
-         return NULL;
+      nptr = new rcnode_t(method, url, respcode);
 
       if(!state.rc_htab.is_swapped_out() || !state.database.get_rcnode_by_value(*nptr, NULL, NULL)) {
          nptr->nodeid = state.database.get_rcnode_id();
@@ -2512,23 +2507,22 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
    /* check if hashed */
    if((cptr = state.am_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      if((cptr=new anode_t(str, robot)) != NULL) {
-         if(!state.am_htab.is_swapped_out() || !state.database.get_anode_by_value(*cptr)) {
-            cptr->nodeid = state.database.get_anode_id();
-            cptr->flag = type;
-            cptr->count = 1;
-            cptr->visits = 1;
-            cptr->xfer = xfer;
+      cptr = new anode_t(str, robot);
+      if(!state.am_htab.is_swapped_out() || !state.database.get_anode_by_value(*cptr)) {
+         cptr->nodeid = state.database.get_anode_id();
+         cptr->flag = type;
+         cptr->count = 1;
+         cptr->visits = 1;
+         cptr->xfer = xfer;
 
-            if(type==OBJ_GRP) 
-               cptr->flag=OBJ_GRP;
+         if(type==OBJ_GRP) 
+            cptr->flag=OBJ_GRP;
 
-            newnode = true;
-            found = false;
-         }
-
-         state.am_htab.put_node(hashval, cptr);
+         newnode = true;
+         found = false;
       }
+
+      state.am_htab.put_node(hashval, cptr);
    }
 
    if(found) {
@@ -2565,20 +2559,19 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    /* check if hashed */
    if((nptr = state.sr_htab.find_node(hashval, str)) == NULL) {
       /* not hashed */
-      if((nptr = new snode_t(str)) != NULL) {
-         if(!state.sr_htab.is_swapped_out() || !state.database.get_snode_by_value(*nptr)) {
-            nptr->nodeid = state.database.get_snode_id();
-            nptr->count = 1;
-            nptr->termcnt = termcnt;
+      nptr = new snode_t(str);
+      if(!state.sr_htab.is_swapped_out() || !state.database.get_snode_by_value(*nptr)) {
+         nptr->nodeid = state.database.get_snode_id();
+         nptr->count = 1;
+         nptr->termcnt = termcnt;
             
-            if(newvisit)
-               nptr->visits++;
+         if(newvisit)
+            nptr->visits++;
             
-            found = false;
-            newnode = true;
-         }
-         state.sr_htab.put_node(hashval, nptr);
+         found = false;
+         newnode = true;
       }
+      state.sr_htab.put_node(hashval, nptr);
    }
 
    if(found) {
@@ -2622,25 +2615,24 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    /* check if hashed */
    if((nptr = state.im_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      if ( (nptr=new inode_t(str)) != NULL) {
-         if(!state.im_htab.is_swapped_out() || !state.database.get_inode_by_value(*nptr)) {
-            nptr->nodeid = state.database.get_inode_id();
-            nptr->flag  = type;
-            nptr->count = 1;
-            nptr->files = fileurl ? 1 : 0;
-            nptr->xfer  = xfer;
-            nptr->tstamp=tstamp;
-            nptr->avgtime = nptr->maxtime = proctime;
+      nptr = new inode_t(str);
+      if(!state.im_htab.is_swapped_out() || !state.database.get_inode_by_value(*nptr)) {
+         nptr->nodeid = state.database.get_inode_id();
+         nptr->flag  = type;
+         nptr->count = 1;
+         nptr->files = fileurl ? 1 : 0;
+         nptr->xfer  = xfer;
+         nptr->tstamp=tstamp;
+         nptr->avgtime = nptr->maxtime = proctime;
 
-            /* set object type */
-            if (type==OBJ_GRP) 
-               nptr->flag=OBJ_GRP;            /* is it a grouping? */
+         /* set object type */
+         if (type==OBJ_GRP) 
+            nptr->flag=OBJ_GRP;            /* is it a grouping? */
 
-            newnode = true;
-            found = false;
-         }
-         state.im_htab.put_node(hashval, nptr);
+         newnode = true;
+         found = false;
       }
+      state.im_htab.put_node(hashval, nptr);
    }
 
    if(!nptr->dirty)
@@ -2757,8 +2749,8 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
    if((spnode = state.sp_htab.find_node(hashval, host)) != NULL)
       return spnode;
 
-   if((spnode = new spnode_t(host)) != NULL)
-      state.sp_htab.put_node(hashval, spnode);
+   spnode = new spnode_t(host);
+   state.sp_htab.put_node(hashval, spnode);
 
    return spnode;
 }
