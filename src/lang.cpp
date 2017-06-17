@@ -585,13 +585,6 @@ lang_t::lang_t(void)
    msg_fpos_err= "Cannot retrieve current file position for";
 
    /* memory allocation errors */
-   msg_nomem_ts= "Can't allocate enough memory, Top Hosts disabled!";
-   msg_nomem_tr= "Can't allocate enough memory, Top Referrers disabled!";
-   msg_nomem_tu= "Can't allocate enough memory, Top URLs disabled!";
-   msg_nomem_tc= "Can't allocate enough memory, Top Countries disabled!";
-   msg_nomem_ta= "Can't allocate enough memory, Top User Agents disabled!";
-   msg_nomem_tsr="Can't allocate enough memory, Top Search Strings disabled!";
-   msg_nomem_ti= "Can't allocate enough memory, Top User Names disabled!";
    msg_nomem_dh= "Error adding host node (daily), skipping";
    msg_nomem_mh= "Error adding host node (monthly), skipping";
    msg_nomem_u = "Error adding URL node, skipping";
@@ -907,13 +900,6 @@ void lang_t::init_lang_htab(void)
    put_lang_var("msg_dns_geoe", LANG_VAR_CHAR, &msg_dns_geoe, 1, sizeof(char*));
    put_lang_var("msg_dns_useg", LANG_VAR_CHAR, &msg_dns_useg, 1, sizeof(char*));
 
-   put_lang_var("msg_nomem_ts", LANG_VAR_CHAR, &msg_nomem_ts, 1, sizeof(char*));
-   put_lang_var("msg_nomem_tr", LANG_VAR_CHAR, &msg_nomem_tr, 1, sizeof(char*));
-   put_lang_var("msg_nomem_tu", LANG_VAR_CHAR, &msg_nomem_tu, 1, sizeof(char*));
-   put_lang_var("msg_nomem_tc", LANG_VAR_CHAR, &msg_nomem_tc, 1, sizeof(char*));
-   put_lang_var("msg_nomem_ta", LANG_VAR_CHAR, &msg_nomem_ta, 1, sizeof(char*));
-   put_lang_var("msg_nomem_tsr", LANG_VAR_CHAR, &msg_nomem_tsr, 1, sizeof(char*));
-   put_lang_var("msg_nomem_ti", LANG_VAR_CHAR, &msg_nomem_ti, 1, sizeof(char*));
    put_lang_var("msg_nomem_dh", LANG_VAR_CHAR, &msg_nomem_dh, 1, sizeof(char*));
    put_lang_var("msg_nomem_mh", LANG_VAR_CHAR, &msg_nomem_mh, 1, sizeof(char*));
    put_lang_var("msg_nomem_u", LANG_VAR_CHAR, &msg_nomem_u, 1, sizeof(char*));
