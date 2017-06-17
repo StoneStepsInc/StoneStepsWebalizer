@@ -113,13 +113,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= No puedo reservar suficiente memoria, quito los principales sitios
-msg_nomem_tr= No puedo reservar suficiente memoria, quito los principales enlaces
-msg_nomem_tu= No puedo reservar suficiente memoria, quito los principales URLs
-msg_nomem_tc= No puedo reservar suficiente memoria, quito los principales países
-msg_nomem_ta= No puedo reservar suficiente memoria, quito los principales programas cliente
-msg_nomem_tsr=No puedo reservar suficiente memoria, quito las principales cadenas de búsqueda
-msg_nomem_ti= No puedo reservar suficiente memoria, quito los principales usuarios
 msg_nomem_dh= Error agregando nodo de servidor (diario), me lo salto
 msg_nomem_mh= Error agregando nodo de servidor (mensual), me lo salto
 msg_nomem_u = Error agregando nodo de URL, me lo salto

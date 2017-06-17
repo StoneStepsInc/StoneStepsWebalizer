@@ -114,13 +114,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Onvoldoende geheugen beschikbaar, Top hosts overgeslagen!
-msg_nomem_tr= Onvoldoende geheugen beschikbaar, Top verwijzende pagina's overgeslagen!
-msg_nomem_tu= Onvoldoende geheugen beschikbaar, Top URL's overgeslagen!
-msg_nomem_tc= Onvoldoende geheugen beschikbaar, Top landen overgeslagen!
-msg_nomem_ta= Onvoldoende geheugen beschikbaar, Top browsers overgeslagen!
-msg_nomem_tsr=Onvoldoende geheugen beschikbaar, Top zoekopdrachten overgeslagen!
-msg_nomem_ti= Onvoldoende geheugen beschikbaar, Top gebruikersnamen overgeslagen!
 msg_nomem_dh= Fout bij toevoegen van host (dagrapport), overgeslagen!
 msg_nomem_mh= Fout bij toevoegen van host (maandrapport), overgeslagen!
 msg_nomem_u = Fout bij toevoegen van URL, overgeslagen!

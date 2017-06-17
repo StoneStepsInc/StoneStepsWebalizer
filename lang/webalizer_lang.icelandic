@@ -109,13 +109,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Get ekki fundiğ nóg minni, sleppi Top Hosts!
-msg_nomem_tr= Get ekki fundiğ nóg minni, Top Referrers!
-msg_nomem_tu= Get ekki fundiğ nóg minni, Top URLs!
-msg_nomem_tc= Get ekki fundiğ nóg minni, Top Countries!
-msg_nomem_ta= Get ekki fundiğ nóg minni, Top User Agents!
-msg_nomem_tsr=Get ekki fundiğ nóg minni, Top Search Strings!
-msg_nomem_ti= Get ekki fundiğ nóg minni, Top Usernames!
 msg_nomem_dh= Error adding host node (daily), skipping
 msg_nomem_mh= Error adding host node (monthly), skipping
 msg_nomem_u = Error adding URL node, skipping

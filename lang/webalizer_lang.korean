@@ -100,13 +100,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= 메모리 부족, '상위 사이트' 건너뜀!
-msg_nomem_tr= 메모리 부족, '상위 레퍼럴' 건너뜀!
-msg_nomem_tu= 메모리 부족, '상위 URL' 건너뜀!
-msg_nomem_tc= 메모리 부족, '상위 국가' 건너뜀!
-msg_nomem_ta= 메모리 부족, '상위 에이전트' 건너뜀!
-msg_nomem_tsr=Can't allocate enough memory, Top Search Strings disabled!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= 호스트 추가 실패 (일별), 무시
 msg_nomem_mh= 호스트 추가 실패 (월별), 무시
 msg_nomem_u = URL 추가 실패, 무시

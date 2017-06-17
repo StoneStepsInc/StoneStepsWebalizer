@@ -103,13 +103,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Nem tudok elegendő memóriát lefoglalni, Top Oldal tiltva!
-msg_nomem_tr= Nem tudok elegendő memóriát lefoglalni, Top Hivatkozás tiltva!
-msg_nomem_tu= Nem tudok elegendő memóriát lefoglalni, Top URL tiltva!
-msg_nomem_tc= Nem tudok elegendő memóriát lefoglalni, Top Ország tiltva!
-msg_nomem_ta= Nem tudok elegendő memóriát lefoglalni, Top Felhasználó böngészője tiltva!
-msg_nomem_tsr=Nem tudok elegendő memóriát lefoglalni, Top Keresési string tiltva!
-msg_nomem_ti= Nem tudok elegendő memóriát lefoglalni, Top Felhasználónevek tiltva!
 msg_nomem_dh= Hiba a hozzáadásnál host node (napi), kihagyom
 msg_nomem_mh= Hiba a hozzáadásnál host node (havi), kihagyom
 msg_nomem_u = Hiba a hozzáadásnál URL node, kihagyom

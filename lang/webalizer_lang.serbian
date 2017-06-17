@@ -98,13 +98,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Can't allocate enough memory, Top Hosts disabled!
-msg_nomem_tr= Can't allocate enough memory, Top Referrers disabled!
-msg_nomem_tu= Can't allocate enough memory, Top URLs disabled!
-msg_nomem_tc= Can't allocate enough memory, Top Countries disabled!
-msg_nomem_ta= Can't allocate enough memory, Top User Agents disabled!
-msg_nomem_tsr=Can't allocate enough memory, Top Search Strings disabled!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= Error adding host node (daily), skipping
 msg_nomem_mh= Error adding host node (monthly), skipping
 msg_nomem_u = Error adding URL node, skipping

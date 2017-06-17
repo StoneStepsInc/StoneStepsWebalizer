@@ -107,13 +107,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Nie mogę przydzielić pamięci, najczęstsze lokalizacje anulowane!
-msg_nomem_tr= Nie mogę przydzielić pamięci, najczęstsze odnośniki anulowane!
-msg_nomem_tu= Nie mogę przydzielić pamięci, najczęstsze URLe anulowane!
-msg_nomem_tc= Nie mogę przydzielić pamięci, najczęstsze kraje anulowane!
-msg_nomem_ta= Nie mogę przydzielić pamięci, najczęściej używane przeglądarki anulowane!
-msg_nomem_tsr=Nie mogę przydzielić pamięci, najczęściej szukane słowa anulowane!
-msg_nomem_ti= Nie mogę przydzielić pamięci, najczęstsze połączenia użytkowników anulowane!
 msg_nomem_dh= Błąd w trakcie dodawania kolejnego hosta (dzienne), pomijam
 msg_nomem_mh= Błąd w trakcie dodawania kolejnego hosta (miesięczne), pomijam
 msg_nomem_u = Błąd w trakcie dodawania kolejnego URLa, pomijam

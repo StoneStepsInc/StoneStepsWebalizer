@@ -97,13 +97,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= 不能分配足够的内存, 取消 Top Hosts 报告项!
-msg_nomem_tr= 不能分配足够的内存, 取消 Top Referrers 报告项!
-msg_nomem_tu= 不能分配足够的内存, 取消 Top URLs 报告项!
-msg_nomem_tc= 不能分配足够的内存, 取消 Top Countries 报告项!
-msg_nomem_ta= 不能分配足够的内存, 取消 Top User Agents 报告项!
-msg_nomem_tsr=不能分配足够的内存, 取消 Top Search Strings 报告项!
-msg_nomem_ti= 不能分配足够的内存, 取消 Top Usernames 报告项!
 msg_nomem_dh= 不能增加主机节点(每日), 跳过
 msg_nomem_mh= 不能增加主机节点(每月), 跳过
 msg_nomem_u = 不能增加 URL 节点, 跳过

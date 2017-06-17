@@ -107,13 +107,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= No puc reservar prou memoria, desactivada la opció Nodes Principals
-msg_nomem_tr= No puc reservar prou memoria, desactivada la opció Vincles d'Origen
-msg_nomem_tu= No puc reservar prou memoria, desactivada la opció URLs mes visitades
-msg_nomem_tc= No puc reservar prou memoria, desactivada la opció Per País d'Origen
-msg_nomem_ta= No puc reservar prou memoria, desactivada la opció Segons Navegador
-msg_nomem_tsr=No puc reservar prou memoria, desactivada la opció Principals mots de recerca !
-msg_nomem_ti= No puc reservar prou memoria, desactivada la opció Principals noms d'usuari
 msg_nomem_dh= Error afegint el nom del node (diari), no el faig
 msg_nomem_mh= Error afegint el nom del node (mensual), no el faig
 msg_nomem_u = Error afegint la URL del node, no el faig

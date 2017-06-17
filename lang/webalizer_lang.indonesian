@@ -104,13 +104,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Tak dapat mengalokasikan cukup memori, Situs-situs urutan teratas tidak diaktifkan!
-msg_nomem_tr= Tak dapat mengalokasikan cukup memori, Acuan-acuan urutan teratas tidak diaktifkan!
-msg_nomem_tu= Tak dapat mengalokasikan cukup memori, URL-URL urutan teratas tidak diaktifkan!
-msg_nomem_tc= Tak dapat mengalokasikan cukup memori, Negara-negara urutan teratas tidak diaktifkan!
-msg_nomem_ta= Tak dapat mengalokasikan cukup memori, Browser-browser urutan teratas tidak diaktifkan!
-msg_nomem_tsr=Tak dapat mengalokasikan cukup memori, String-string pencarian urutan teratas tidak diaktifkan!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= Terjadi kesalahan saat menambahkan node host (harian), dilewati
 msg_nomem_mh= Terjadi kesalahan saat menambahkan node host (bulanan), dilewati
 msg_nomem_u = Terjadi kesalahan saat menambahkan node URL, dilewati

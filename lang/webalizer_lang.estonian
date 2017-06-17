@@ -92,13 +92,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Ei suuda reserveerida piisavalt mälu, Arvutite edetabelit ei tee!
-msg_nomem_tr= Ei suuda reserveerida piisavalt mälu, Linkijate edetabelit ei tee!
-msg_nomem_tu= Ei suuda reserveerida piisavalt mälu, Aadresside edetabelit ei tee!
-msg_nomem_tc= Ei suuda reserveerida piisavalt mälu, Maade edetabelit ei tee!
-msg_nomem_ta= Ei suuda reserveerida piisavalt mälu, Lehitsejate edetabelit ei tee!
-msg_nomem_tsr=Ei suuda reserveerida piisavalt mälu, Otsistringide edetabelit ei tee!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= Arvuti lisamisel (päevade kaupa) viga, jätan vahele
 msg_nomem_mh= Arvuti lisamisel (kuude kaupa) viga, jätan vahele
 msg_nomem_u = URLi lisamisel viga, jätan vahele

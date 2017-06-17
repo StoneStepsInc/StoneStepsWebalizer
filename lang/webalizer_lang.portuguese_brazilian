@@ -101,13 +101,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Impossível alocar memoria suficiente, Top Hosts desligado!
-msg_nomem_tr= Impossível alocar memoria suficiente, Top Referencias desligado!
-msg_nomem_tu= Impossível alocar memoria suficiente, Top URLs desligado!
-msg_nomem_tc= Impossível alocar memoria suficiente, Top Countries desligado!
-msg_nomem_ta= Impossível alocar memoria suficiente, Top User browsers desligado!
-msg_nomem_tsr= Impossível alocar memoria suficiente, Top Search Strings desligado!
-msg_nomem_ti= Impossível alocar memoria suficiente, Top Usernames desligado!
 msg_nomem_dh= Erro ao adicionar host (diario), Ignorando
 msg_nomem_mh= Erro ao adicionar host (mensal), Ignorando
 msg_nomem_u = Erro ao adicionar URL, Ignorando

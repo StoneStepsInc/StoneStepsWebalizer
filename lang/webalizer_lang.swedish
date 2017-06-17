@@ -112,13 +112,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Kan inte allokera minne, stänger av 'Top hosts'
-msg_nomem_tr= Kan inte allokera minne, stänger av 'Top referrers'
-msg_nomem_tu= Kan inte allokera minne, stänger av 'Top URLs'
-msg_nomem_tc= Kan inte allokera minne, stänger av 'Top Countries'
-msg_nomem_ta= Kan inte allokera minne, stänger av 'Top User Agents'
-msg_nomem_tsr=Kan inte allokera minne, stänger av 'Top Search Strings'
-msg_nomem_ti= Kan inte allokera minne, stänger av 'Top Usernames'
 msg_nomem_dh= Fel vid tillägg av dator i lista (daglig), hoppar över
 msg_nomem_mh= Fel vid tillägg av dator i lista (månatlig), hoppar över
 msg_nomem_u = Fel vid tillägg av URL i lista, hoppar över

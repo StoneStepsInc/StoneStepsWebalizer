@@ -99,13 +99,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Kan ikke allokere nok hukommelse, Top Gæster slås fra!
-msg_nomem_tr= Kan ikke allokere nok hukommelse, Top Referer slås fra!
-msg_nomem_tu= Kan ikke allokere nok hukommelse, Top URL slås fra!
-msg_nomem_tc= Kan ikke allokere nok hukommelse, Top Lande slås fra!
-msg_nomem_ta= Kan ikke allokere nok hukommelse, Top Web browsere slås fra!
-msg_nomem_tsr=Kan ikke allokere nok hukommelse, Top Søgestrenge slåes fra!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= Fejl ved tilføjelse af host-node (daglig), skipping
 msg_nomem_mh= Fejl ved tilføjelse af host-node (månedlig), skipping
 msg_nomem_u = Fejl ved tilføjelse af URL-node, skipping

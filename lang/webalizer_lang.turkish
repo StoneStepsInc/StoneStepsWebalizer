@@ -103,13 +103,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Yeterli hafiza yok, Top Istemciler kapatildi!
-msg_nomem_tr= Yeterli hafiza yok, Top Referanslar kapatildi!
-msg_nomem_tu= Yeterli hafiza yok, Top URL'ler kapatildi!
-msg_nomem_tc= Yeterli hafiza yok, Top Ulkeler kapatildi!
-msg_nomem_ta= Yeterli hafiza yok, Top Kullanici Ajanlari kapatildi!
-msg_nomem_tsr=Yeterli hafiza yok, Top Arama Girdileri kapatildi!
-msg_nomem_ti= Yeterli hafiza yok, Top Kullanici Adlari kapatildi!
 msg_nomem_dh= Hata makine nodu ekleniyor (gunluk), islenmeden geciliyor
 msg_nomem_mh= Hata makine nodu ekleniyor (aylik), islenmeden geciliyor
 msg_nomem_u = Hata URL nodu ekleniyor, islenmeden geciliyor

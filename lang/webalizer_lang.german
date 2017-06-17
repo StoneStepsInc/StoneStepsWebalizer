@@ -122,13 +122,6 @@ msg_dns_geoe= Kann GeoIP-Datenbank nicht öffnen
 msg_dns_useg= Benutze GeoIP-Datenbank
 
 # /* memory allocation errors */
-msg_nomem_ts= Nicht genug Speicher, Top Hosts deaktiviert!
-msg_nomem_tr= Nicht genug Speicher, Top Verweise deaktiviert!
-msg_nomem_tu= Nicht genug Speicher, Top URLs deaktiviert!
-msg_nomem_tc= Nicht genug Speicher, Top Countries deaktiviert!
-msg_nomem_ta= Nicht genug Speicher, Top User Agents deaktiviert!
-msg_nomem_tsr=Nicht genug Speicher, Top Suchausdrücke deaktiviert!
-msg_nomem_ti= Nicht genug Speicher, Top Benutzer deaktiviert!
 msg_nomem_dh= Fehler beim Hinzufügen Rechner-node (täglich), überspringe Eintrag.
 msg_nomem_mh= Fehler beim Hinzufügen Rechner-node (monatlich), überspringe Eintrag.
 msg_nomem_u = Fehler beim Hinzufügen URL-node, überspringe Eintrag.

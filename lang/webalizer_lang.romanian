@@ -101,13 +101,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Nu pot aloca suficienta memorie, dezactivez Top Situri!
-msg_nomem_tr= Nu pot aloca suficienta memorie, dezactivez Top Pagini referente!
-msg_nomem_tu= Nu pot aloca suficienta memorie, dezactivez Top URL-uri!
-msg_nomem_tc= Nu pot aloca suficienta memorie, dezactivez Top Tari!
-msg_nomem_ta= Nu pot aloca suficienta memorie, dezactivez Top Navigatoare vizitatori!
-msg_nomem_tsr=Nu pot aloca suficienta memorie, dezactivez Top Siruri cautate!
-msg_nomem_ti= Nu pot aloca suficienta memorie, dezactivez Top Utilizatori!
 msg_nomem_dh= Eroare adaugare nod host (zilnic), sar
 msg_nomem_mh= Eroare adaugare nod host (lunar), sar
 msg_nomem_u = Eroare adaugare nod URL, sar

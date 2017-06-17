@@ -105,13 +105,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Impossibile allocare abbastanza memoria, classifica degli host disabilitata
-msg_nomem_tr= Impossibile allocare abbastanza memoria, classifica dei referrer disabilitata
-msg_nomem_tu= Impossibile allocare abbastanza memoria, classifica degli URL disabilitata
-msg_nomem_tc= Impossibile allocare abbastanza memoria, classifica dei paesi disabilitata
-msg_nomem_ta= Impossibile allocare abbastanza memoria, classifica dei browser disabilitata
-msg_nomem_tsr=Impossibile allocare abbastanza memoria, classifica dei termini di ricerca disabilitata
-msg_nomem_ti= Impossibile allocare abbastanza memoria, classifica degli username disabilitata
 msg_nomem_dh= Errore nell'aggiungere il nome dell'host (giornaliero), tralasciato
 msg_nomem_mh= Errore nell'aggiungere il nome dell'host (mensile), tralasciato
 msg_nomem_u = Errore nell'aggiungere l'URL, tralasciato

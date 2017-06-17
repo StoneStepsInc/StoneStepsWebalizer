@@ -104,13 +104,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Tidak dapat memperuntukkan ingatan, Halaman Terbaik diabaikan!
-msg_nomem_tr= Tidak dapat memperuntukkan ingatan, Perujuk Terbaik diabaikan!
-msg_nomem_tu= Tidak dapat memperuntukkan ingatan, URL Terbaik diabaikan!
-msg_nomem_tc= Tidak dapat memperuntukkan ingatan, Negara Terbaik diabaikan!
-msg_nomem_ta= Tidak dapat memperuntukkan ingatan, Agen Pengguna Terbaik diabaikan!
-msg_nomem_tsr=Tidak dapat memperuntukkan ingatan, Katakunci Carian Terbaik diabaikan!
-msg_nomem_ti= Tidak dapat memperuntukkan ingatan, Katanama Pengguna Terbaik diabaikan!
 msg_nomem_dh= Ralat untuk menambah nod hos (harian), proses diabaikan
 msg_nomem_mh= Ralat untuk menambah nod hos (bulanan), proses diabaikan
 msg_nomem_u = Ralat untuk menambah nod URL, proses diabaikan

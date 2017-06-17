@@ -106,13 +106,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Nemohu alokovat dost pameti, Nej mista jsou nefunkcni!
-msg_nomem_tr= Nemohu alokovat dost pameti, Nej odkazovace jsou nefunkcni!
-msg_nomem_tu= Nemohu alokovat dost pameti, Nej URL jsou nefunkcni!
-msg_nomem_tc= Nemohu alokovat dost pameti, Nej zeme jsou nefunkcni!
-msg_nomem_ta= Nemohu alokovat dost pameti, Nej prohlizece jsou nefunkcni!
-msg_nomem_tsr=Nemohu alokovat dost pameti, Nej hledane retezce jsou nefunkcni!
-msg_nomem_ti= Nemohu alokovat dost pameti, Nej uzivatele jsou nefunkcni!
 msg_nomem_dh= Chyba doplneni bloku pocitace (denni), preskakuji
 msg_nomem_mh= Chyba doplneni bloku pocitace (mesicni), preskakuji
 msg_nomem_u = Chyba doplneni bloku URL, preskakuji

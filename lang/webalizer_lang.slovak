@@ -105,13 +105,6 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* memory allocation errors */
-msg_nomem_ts= Nemozem alokovat dostatok pamate, Naj Miesta su nefunkcne!
-msg_nomem_tr= Nemozem alokovat dostatok pamate, Naj Odkazovace su nefunkcne!
-msg_nomem_tu= Nemozem alokovat dostatok pamate, Naj URL-ka su nefunkcne!
-msg_nomem_tc= Nemozem alokovat dostatok pamate, Naj Krajiny su nefunkcne!
-msg_nomem_ta= Nemozem alokovat dostatok pamate, Naj Browsre su nefunkcne!
-msg_nomem_tsr=Nemozem alokovat dostatok pamate, Naj Hladane texty su nefunkcne!
-msg_nomem_ti= Can't allocate enough memory, Top Usernames disabled!
 msg_nomem_dh= Chyba doplnenia bloku pocitaca (denne), preskakujem
 msg_nomem_mh= Chyba doplnenia bloku pocitaca (mesacne), preskakujem
 msg_nomem_u = Chyba doplnenia URL bloku, preskakujem
