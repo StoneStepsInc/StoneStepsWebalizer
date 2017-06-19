@@ -356,11 +356,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    if(config.group_hosts.size() && ((hostname && (group = config.group_hosts.isinglist(*hostname)) != NULL) ||
                                                 ((group = config.group_hosts.isinglist(hnode.string)) != NULL))) {
-      if(!put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-         if (config.verbose)
-            /* Error adding Site node, skipping ... */
-            fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, group->c_str());
-      }
+      put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
    }
    else
    {
@@ -368,13 +364,8 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       if (config.group_domains)
       {
          const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
-         if (domain) {
-            if(!put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp)) {
-               if (config.verbose)
-                  /* Error adding Site node, skipping ... */
-                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, domain);
-            }
-         }
+         if (domain)
+            put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
       }
    }
    
@@ -1475,13 +1466,8 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // put_hnode sets newvisit and must be called before any other put_xnode 
          // function.
          //
-         if((hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
-            spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer)) == NULL)
-         {
-            if (config.verbose)
-               /* Error adding host node (monthly), skipping .... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_mh, log_rec.hostname.c_str());
-         }
+         hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
+            spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer);
 
          // send a new host or a host that was just identfied as a spammer to the DNS resolver
          if(config.is_dns_enabled() && (newhost || newspammer))
@@ -1515,26 +1501,15 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(goodurl) {
             /* URL hash table */
-            if((uptr = put_unode(log_rec.url, log_rec.srchargs, OBJ_REG,
-                log_rec.xfer_size, log_rec.proc_time/1000., log_rec.port, entryurl, target, newurl)) == NULL)
-            {
-               if (config.verbose)
-               /* Error adding URL node, skipping ... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, log_rec.url.c_str());
-            }
+            uptr = put_unode(log_rec.url, log_rec.srchargs, OBJ_REG,
+                log_rec.xfer_size, log_rec.proc_time/1000., log_rec.port, entryurl, target, newurl);
             
             // update the last URL for the current visit
             if(hptr && exiturl) hptr->set_last_url(uptr);
 
             /* ident (username) hash table */
-            if(!log_rec.ident.isempty()) {
-               if(!put_inode(log_rec.ident, OBJ_REG, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newuser))
-               {
-                  if (config.verbose)
-                  /* Error adding ident node, skipping .... */
-                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_i, log_rec.ident.c_str());
-               }
-            }
+            if(!log_rec.ident.isempty())
+               put_inode(log_rec.ident, OBJ_REG, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newuser);
          }
 
          //
@@ -1542,26 +1517,16 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(config.ntop_downloads || config.dump_downloads) {
             if((sptr = config.downloads.isinglist(log_rec.url)) != NULL) {
-               if(log_rec.resp_code == RC_OK || log_rec.resp_code == RC_PARTIALCONTENT) {
-                  if(!put_dlnode(*sptr, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl)) {
-                     if (config.verbose)
-                        /* Error adding a download node, skipping .... */
-                        fprintf(stderr,"%s %s\n", config.lang.msg_nomem_dl, log_rec.url.c_str());
-                  }
-               }
+               if(log_rec.resp_code == RC_OK || log_rec.resp_code == RC_PARTIALCONTENT)
+                  put_dlnode(*sptr, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl);
             }
          }
 
          //
          // error HTTP response codes
          //
-         if(httperr && (config.ntop_errors || config.dump_errors)) {
-            if(!put_rcnode(log_rec.method, log_rec.url, log_rec.resp_code, false, 1, &newerr)) {
-               if (config.verbose)
-                  /* Error adding response code node, skipping .... */
-                  fprintf(stderr,"%s %d %s\n", config.lang.msg_nomem_rc, log_rec.resp_code, log_rec.url.c_str());
-            }
-         }
+         if(httperr && (config.ntop_errors || config.dump_errors))
+            put_rcnode(log_rec.method, log_rec.url, log_rec.resp_code, false, 1, &newerr);
 
          //
          // referrer hash table
@@ -1571,12 +1536,8 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             // filter out spammers
             if(!spammer) {
                // check if it's a partial request and ignore the referrer if requested
-               if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT) {
-                  if(!put_rnode(log_rec.refer, OBJ_REG, (uint64_t)1, newvisit, newref)) {
-                     if (config.verbose) 
-                        fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, log_rec.refer.c_str());
-                  }
-               }
+               if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT)
+                  put_rnode(log_rec.refer, OBJ_REG, (uint64_t)1, newvisit, newref);
             }
          }
 
@@ -1592,24 +1553,15 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          /* user agent hash table */
          if (config.ntop_agents)
          {
-            if(!log_rec.agent.isempty()) {
-               if(!put_anode(log_rec.agent, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent)) {
-                  if (config.verbose)
-                     fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, log_rec.agent.c_str());
-               }
-            }
+            if(!log_rec.agent.isempty())
+               put_anode(log_rec.agent, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent);
          }
 
          /* do search string stuff if needed     */
          if(config.ntop_search) {
             newsrch = false;
-            if(termcnt && !srchterms.isempty()) {
-               if(!put_snode(srchterms, termcnt, newvisit, newsrch)) {
-                  if (config.verbose)
-                     // Error adding search string node, skipping .... 
-                     fprintf(stderr, "%s %s\n", config.lang.msg_nomem_sc, srchterms.c_str());
-               }
-            }
+            if(termcnt && !srchterms.isempty())
+               put_snode(srchterms, termcnt, newvisit, newsrch);
          }
 
          //
@@ -1686,66 +1638,31 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          /* URL Grouping */
          if((sptr = config.group_urls.isinglist(log_rec.url))!=NULL)
-         {
-            if(!put_unode(*sptr, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
-               if (config.verbose)
-                  /* Error adding URL node, skipping ... */
-                  fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, sptr->c_str());
-            }
-         }
+            put_unode(*sptr, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
 
          // group URL domains for proxy requests
          if(config.log_type == LOG_SQUID) {
             if(config.group_url_domains && !get_url_host(log_rec.url, urlhost).isempty()) {
                const char *domain = get_domain(urlhost.c_str(), config.group_url_domains);
-               if(!put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp)) {
-                  if (config.verbose)
-                     /* Error adding URL node, skipping ... */
-                     fprintf(stderr,"%s %s\n", config.lang.msg_nomem_u, domain);
-               }
+               put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
             }
          }
 
          /* Referrer Grouping */
          if((sptr = config.group_refs.isinglist(log_rec.refer))!=NULL)
-         {
-            if(!put_rnode(*sptr, OBJ_GRP, 1ul, newvisit, newrgrp)) {
-               if (config.verbose)
-               /* Error adding Referrer node, skipping ... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_r, sptr->c_str());
-            }
-         }
+            put_rnode(*sptr, OBJ_GRP, 1ul, newvisit, newrgrp);
 
          /* User Agent Grouping */
          if((sptr = config.group_agents.isinglist(log_rec.agent))!=NULL)
-         {
-            if(!put_anode(*sptr, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp)) {
-               if (config.verbose)
-               /* Error adding User Agent node, skipping ... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, sptr->c_str());
-            }
-         }
+            put_anode(*sptr, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp);
 
          // group robots
          if(robot && ragent && config.group_robots)
-         {
-            if(!put_anode(*ragent, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp)) {
-               if (config.verbose)
-               /* Error adding User Agent node, skipping ... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_a, ragent->c_str());
-            }
-         }
+            put_anode(*ragent, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp);
 
          /* Ident (username) Grouping */
          if((sptr = config.group_users.isinglist(log_rec.ident))!=NULL)
-         {
-            if(!put_inode(*sptr, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp))
-            {
-               if (config.verbose)
-               /* Error adding Username node, skipping ... */
-               fprintf(stderr,"%s %s\n", config.lang.msg_nomem_i, sptr->c_str());
-            }
-         }
+            put_inode(*sptr, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp);
 
          // update group counts (host counts are updated in process_resolved_hosts)
          if(newugrp) state.totals.t_grp_urls++;
