@@ -105,16 +105,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Chyba doplneni bloku pocitace (mesicni), preskakuji
-msg_nomem_u = Chyba doplneni bloku URL, preskakuji
-msg_nomem_a = Chyba doplneni bloku prohlizece, preskakuji
-msg_nomem_r = Chyba doplneni bloku odkazovace, preskakuji
-msg_nomem_sc= Chyba doplneni hledanych retezcu, preskakuji
-msg_nomem_i = Chyba doplneni uzivatelu, preskakuji
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Chyba: Preskakuji prilis dlouhy zaznam v logu
 msg_big_host= Pozor: Orezavam prilis dlouhe jmeno pocitace

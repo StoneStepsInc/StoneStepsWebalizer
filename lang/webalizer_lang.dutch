@@ -113,16 +113,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Fout bij toevoegen van host (maandrapport), overgeslagen!
-msg_nomem_u = Fout bij toevoegen van URL, overgeslagen!
-msg_nomem_a = Fout bij toevoegen van browser, overgeslagen!
-msg_nomem_r = Fout bij toevoegen van verwijzende pagina, overgeslagen!
-msg_nomem_sc= Fout bij toevoegen van tekst-node, overgeslagen!
-msg_nomem_i = Fout bij toevoegen van Gebruikersnaam, overgeslagen!
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Fout: te groot log-record (overgeslagen)
 msg_big_host= Waarschuwing: te lange hostnaam: ingekort

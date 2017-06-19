@@ -99,16 +99,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= 호스트 추가 실패 (월별), 무시
-msg_nomem_u = URL 추가 실패, 무시
-msg_nomem_a = 에이전트 추가 실패, 무시
-msg_nomem_r = 레퍼럴 추가 실패, 무시
-msg_nomem_sc= Error adding Search String node, skipping
-msg_nomem_i = Error adding Username node, skipping
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = 오류: 초과 로그 레코드 무시
 msg_big_host= 주의: 긴 호스트네임 짜름

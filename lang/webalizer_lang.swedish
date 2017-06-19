@@ -111,16 +111,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Fel vid tillägg av dator i lista (månatlig), hoppar över
-msg_nomem_u = Fel vid tillägg av URL i lista, hoppar över
-msg_nomem_a = Fel vid tillägg av klienttyp i lista, hoppar över
-msg_nomem_r = Fel vid tillägg av hänvisning i lista, hoppar över
-msg_nomem_sc= Fel vid tillägg av söksträng, hoppar över
-msg_nomem_i = Fel vid tillägg av användarnamn, hoppar över
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Fel: hoppar över för stor post i loggfil
 msg_big_host= Varning: Anpassar (kapar) för långt datornamn

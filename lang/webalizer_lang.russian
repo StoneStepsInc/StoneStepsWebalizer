@@ -106,16 +106,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Ошибка добавления узла хоста (месячный отчёт), пропускается
-msg_nomem_u = Ошибка добавления узла URL, пропускается
-msg_nomem_a = Ошибка добавления узла броузера, пропускается
-msg_nomem_r = Ошибка добавления узла ссылки, пропускается
-msg_nomem_sc= Ошибка добавления узла строки поиска, пропускается
-msg_nomem_i = Ошибка добавления узла имени пользователя, пропускается
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Ошибка: пропускается слишком длинная учётная запись
 msg_big_host= Предупреждение: пропускается слишком длинное имя хоста

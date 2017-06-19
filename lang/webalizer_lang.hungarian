@@ -102,16 +102,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Hiba a hozzáadásnál host node (havi), kihagyom
-msg_nomem_u = Hiba a hozzáadásnál URL node, kihagyom
-msg_nomem_a = Hiba a hozzáadásnál Agent node, kihagyom
-msg_nomem_r = Hiba a hozzáadásnál Hivatkozás node, kihagyom
-msg_nomem_sc= Hiba a hozzáadásnál Keresési string Node, kihagyom
-msg_nomem_i = Hiba a felhasználónév node hozzáadásánál, kihagyom
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Hiba: Kihagyom a túl nagy log rekordot
 msg_big_host= Figyelmeztetés: Lerövidítem a túl hosszú hostnevet

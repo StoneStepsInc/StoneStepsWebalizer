@@ -100,16 +100,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Erro ao adicionar host (mensal), Ignorando
-msg_nomem_u = Erro ao adicionar URL, Ignorando
-msg_nomem_a = Erro ao adicionar browser usado, Ignorando
-msg_nomem_r = Erro ao adicionar Referencia, Ignorando
-msg_nomem_sc= Erro ao adicionar Search String node, Ignorando
-msg_nomem_i = Erro ao adicionar Username node, Ignorando
-msg_nomem_rc = Erro ao adicionar HTTP status node, Ignorando
-msg_nomem_dl = Erro ao adicionar Download Job node, Ignorando
-
 #/* log record errors */
 msg_big_rec = Erro: Ignorando registro grande de mais
 msg_big_host= Aviso: Truncando hostname grande de mais

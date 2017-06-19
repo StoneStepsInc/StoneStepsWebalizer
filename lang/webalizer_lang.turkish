@@ -102,16 +102,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Hata makine nodu ekleniyor (aylik), islenmeden geciliyor
-msg_nomem_u = Hata URL nodu ekleniyor, islenmeden geciliyor
-msg_nomem_a = Hata Kullanici Ajani ekleniyor, islenmeden geciliyor
-msg_nomem_r = Hata Referans nodu ekleniyor, islenmeden geciliyor
-msg_nomem_sc= Hata Arama Girdileri nodu ekleniyor, islenmeden geciliyor
-msg_nomem_i = Hata Kullanici Adi nodu ekleniyor, islenmeden geciliyor
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Hata: Normalden buyuk kutuk kaydi islenmeden geciliyor
 msg_big_host= Dikkat: Normalden buyuk makine ismi kucultuluyor

@@ -104,16 +104,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Erro engadindo nodo de servidor (mensual), mo salto
-msg_nomem_u = Erro engadindo nodo de URL, mo salto
-msg_nomem_a = Erro engadindo nodo de programa visor, mo salto
-msg_nomem_r = Erro engadindo nodo de ligazón orixe, mo salto
-msg_nomem_sc= Erro engadindo nodo de caenas de busca, mo salto
-msg_nomem_i = Erro adding Username node, skipping
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Erro: Saltando rexistro de histórico grande de abondoh
 msg_big_host= Aviso: Cortando nome de máquina grande de abondo

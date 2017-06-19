@@ -98,16 +98,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Fejl ved tilføjelse af host-node (månedlig), skipping
-msg_nomem_u = Fejl ved tilføjelse af URL-node, skipping
-msg_nomem_a = Fejl ved tilføjelse af Web browsere node, skipping
-msg_nomem_r = Fejl ved tilføjelse af Referer node, skipping
-msg_nomem_sc= Fejl ved tilføjelse af Søgestrenge Node, skipping
-msg_nomem_i = Error adding Username node, skipping
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Fejl: Springer over streng (for stor log-post)
 msg_big_host= Advarsel: Afkorter strengen (for stort værtsnavn)

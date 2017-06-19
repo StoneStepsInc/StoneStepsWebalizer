@@ -103,16 +103,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Ralat untuk menambah nod hos (bulanan), proses diabaikan
-msg_nomem_u = Ralat untuk menambah nod URL, proses diabaikan
-msg_nomem_a = Ralat untuk menambah nod Agen Pengguna, proses diabaikan
-msg_nomem_r = Ralat untuk menambah nod Perujuk, proses diabaikan
-msg_nomem_sc= Ralat untuk menambah nod Katakunci Carian, proses diabaikan
-msg_nomem_i = Ralat untuk menambah nod Katanama Pengguna, proses diabaikan
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Ralat: Rekod log anda terlalu besar, proses diabaikan
 msg_big_host= Amaran: Nama hos yang terlalu panjang telah dipotong

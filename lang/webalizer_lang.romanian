@@ -100,16 +100,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Eroare adaugare nod host (lunar), sar
-msg_nomem_u = Eroare adaugare nod URL, sar
-msg_nomem_a = Eroare adaugare nod Navigator client, sar
-msg_nomem_r = Eroare adaugare nod de Pagina referenta, sar
-msg_nomem_sc= Eroare adaugare nod Sir de cautare, sar
-msg_nomem_i = Eroare adaugare nod Utilizatori, sar
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Eroare: Sar o inregistrare de jurnal supradimensionata
 msg_big_host= Avertisment: Trunchiez hostname supradimensionat

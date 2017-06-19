@@ -91,16 +91,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Arvuti lisamisel (kuude kaupa) viga, jätan vahele
-msg_nomem_u = URLi lisamisel viga, jätan vahele
-msg_nomem_a = Lehitseja lisamisel viga, jätan vahele
-msg_nomem_r = Linkija lisamisel viga, jätan vahele
-msg_nomem_sc= Otsistringi lisamisel viga, jätan vahele
-msg_nomem_i = Error adding Username node, skipping
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Viga: jätan vahele liigpika logikirje
 msg_big_host= Hoiatus: Teen lühemaks liigpika arvutinime

@@ -103,16 +103,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Terjadi kesalahan saat menambahkan node host (bulanan), dilewati
-msg_nomem_u = Terjadi kesalahan saat menambahkan node URL, dilewati
-msg_nomem_a = Terjadi kesalahan saat menambahkan node User Agent, dilewati
-msg_nomem_r = Terjadi kesalahan saat menambahkan node acuan, dilewati
-msg_nomem_sc= Terjadi kesalahan saat menambahkan node string pencarian, dilewati
-msg_nomem_i = Error adding Username node, skipping
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = Salah: Melompati rekaman log yang oversize
 msg_big_host= Peringatan: Memotong nama host yang oversize

@@ -96,16 +96,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= 不能增加主机节点(每月), 跳过
-msg_nomem_u = 不能增加 URL 节点, 跳过
-msg_nomem_a = 不能增加 User Agent 节点, 跳过
-msg_nomem_r = 不能增加 Referrer 节点, 跳过
-msg_nomem_sc= 不能增加 Search String 节点, 跳过
-msg_nomem_i = 不能增加 Username 节点, 跳过
-msg_nomem_rc = Error adding HTTP status node, skipping
-msg_nomem_dl = Error adding Download Job node, skipping
-
 #/* log record errors */
 msg_big_rec = 错误: 跳过太长的日志记录
 msg_big_host= 警告: 截断太长的 hostname 域

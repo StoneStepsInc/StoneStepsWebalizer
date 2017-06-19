@@ -106,16 +106,6 @@ msg_dns_htrt= DNS cache hit ratio
 msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
-#/* memory allocation errors */
-msg_nomem_mh= Error afegint el nom del node (mensual), no el faig
-msg_nomem_u = Error afegint la URL del node, no el faig
-msg_nomem_a = Error afegint el nom del navegador, no el faig
-msg_nomem_r = Error afegint el vincle d'origen, no el faig
-msg_nomem_sc= Error afegint el node de recerca per mots, me'l salto
-msg_nomem_i = Error afegint el node de nom d'usuari, me'l salto
-msg_nomem_rc = Error afegint el node de status de HTTP, me'l salto
-msg_nomem_dl = Error afegint el node de Treball de Descàrrega, me'l salto
-
 #/* registre record errors */
 msg_big_rec = Error: Em salto un fitxer de registre. Massa gros
 msg_big_host= Avís: El nom del servidor és massa llarg. El tallo.

@@ -121,16 +121,6 @@ msg_dns_htrt= DNS-Cache erreicht die Anzahl
 msg_dns_geoe= Kann GeoIP-Datenbank nicht öffnen
 msg_dns_useg= Benutze GeoIP-Datenbank
 
-# /* memory allocation errors */
-msg_nomem_mh= Fehler beim Hinzufügen Rechner-node (monatlich), überspringe Eintrag.
-msg_nomem_u = Fehler beim Hinzufügen URL-node, überspringe Eintrag.
-msg_nomem_a = Fehler beim Hinzufügen User-Agent-node, überspringe Eintrag.
-msg_nomem_r = Fehler beim Hinzufügen Verweis-node, überspringe Eintrag.
-msg_nomem_sc= Fehler beim Hinzufügen Suchausdrucks-node, überspringe Eintrag.
-msg_nomem_i = Fehler beim Hinzufügen Benutzer-node, überspringe Eintrag.
-msg_nomem_rc = Fehler beim Hinzufügen HTTP-Status-node, überspringe Eintrag.
-msg_nomem_dl = Fehler beim Hinzufügen Download-Job-node, überspringe Eintrag.
-
 # /* log record errors */
 msg_big_rec = Fehler: Überspringe überlangen Eintrag
 msg_big_host= Warnung: Überlanges Rechner-Feld abgeschnitten
