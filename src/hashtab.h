@@ -223,7 +223,7 @@ class hash_table {
       //
       void clear(void);
 
-      bool find_key(const key_t& key) const {return (const_cast<hash_table<node_t, key_t>*>(this))->find_node(key) ? true : false;}
+      bool find_key(const key_t& key) const {return find_node(key) != NULL;}
 
       const node_t *find_node(const key_t& key) const {return find_node(hash_ex(0, key), key);}
 
@@ -231,7 +231,7 @@ class hash_table {
 
       const node_t *find_node(uint64_t hashval, const key_t& key) const;
 
-      node_t *find_node(uint64_t hashval, const key_t& key) {return const_cast<node_t*>(const_cast<const hash_table<node_t, key_t>*>(this)->find_node(hashval, key));}
+      node_t *find_node(uint64_t hashval, const key_t& key);
 
       node_t *find_node(uint64_t hashval, const key_t& str, nodetype_t type);
 

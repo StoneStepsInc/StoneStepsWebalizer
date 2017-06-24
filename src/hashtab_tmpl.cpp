@@ -143,6 +143,25 @@ const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
+      if(nptr->key() == key)
+         return nptr;
+
+      prev = nptr;
+      nptr = nptr->next;
+   }
+
+   return NULL;
+}
+
+template <typename node_t, typename key_t>
+node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key)
+{
+   node_t **pptr, *nptr, *prev = NULL;
+
+   pptr = &htab[hashval % maxhash].head;
+   nptr = *pptr;
+
+   for(u_int index = 0; nptr != NULL; index++) {
       if(nptr->key() == key) {
          if(index > NO_SWAP_COUNT)
             move_node(nptr, prev, pptr);
