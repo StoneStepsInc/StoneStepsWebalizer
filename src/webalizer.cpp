@@ -2298,7 +2298,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    bool found = true;
    uint64_t hashval;
    unode_t *cptr;
-   u_hash_table::param_block param;
+   unode_t::param_block param;
 
    newnode = false;
 
@@ -2366,7 +2366,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    bool found = true;
    rcnode_t *nptr;
    uint64_t hashval;
-   rc_hash_table::param_block param;
+   rcnode_t::param_block param;
 
    if(newnode)
       *newnode = false;
@@ -2581,7 +2581,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    uint64_t hashval;
    danode_t *download;
    dlnode_t *nptr;
-   dl_hash_table::param_block params;
+   dlnode_t::param_block params;
 
    newnode = false;
 

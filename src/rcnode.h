@@ -19,6 +19,12 @@
 // 1. rcnode_t tracks URLs that resulted in an HTTP error
 //
 struct rcnode_t : public base_node<rcnode_t> { 
+      struct param_block : base_node<rcnode_t>::param_block {
+         u_int       respcode;
+         const char  *url;
+         const char  *method;
+      };
+
       u_short        respcode;         // HTTP status code
       uint64_t       count;            // request count
       string_t       method;           // HTTP method
@@ -58,15 +64,8 @@ struct rcnode_t : public base_node<rcnode_t> {
 // HTTP status codes
 //
 class rc_hash_table : public hash_table<rcnode_t> {
-   public:
-      struct param_block {
-         u_int       respcode;
-         const char  *url;
-         const char  *method;
-      };
-
    private:
-      virtual bool compare(const rcnode_t *nptr, const void *param) const;
+      virtual bool compare(const rcnode_t *nptr, const rcnode_t::param_block *pb) const override;
 
    public:
       rc_hash_table(void) : hash_table<rcnode_t>(SMAXHASH) {}

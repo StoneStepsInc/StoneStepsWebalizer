@@ -270,10 +270,9 @@ int64_t unode_t::s_compare_exit(const void *buf1, const void *buf2)
 //
 //
 
-bool u_hash_table::compare(const unode_t *nptr, const void *param)  const
+bool u_hash_table::compare(const unode_t *nptr, const unode_t::param_block *pb) const
 {
    const char *eopath;
-   param_block *pb = (param_block*) param;
 
    if(pb->type != nptr->flag && (pb->type == OBJ_GRP || nptr->flag == OBJ_GRP))
       return false;

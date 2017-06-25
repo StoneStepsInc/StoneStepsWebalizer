@@ -14,6 +14,8 @@
 #include "tstring.h"
 #include "types.h"
 
+#include <stdexcept>
+
 #define LMAXHASH     1048576ul
 #define MAXHASH      16384ul
 #define SMAXHASH     1024ul
@@ -55,6 +57,13 @@ inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, 
 // -----------------------------------------------------------------------
 template <typename node_t, typename key_t = string_t> 
 struct htab_node_t {
+      //
+      // param_block provides a way to search the hash table using compound keys. 
+      // The base class has no data members and is defined to allow hash table 
+      // instantiation for classes that do not make use of compound keys.
+      //
+      struct param_block {};
+
       node_t   *next;                // pointer to next node
 
       public:
@@ -177,7 +186,10 @@ class hash_table {
 
       bool swap_out_bucket(bucket_t& bucket);
 
-      virtual bool compare(const node_t *nptr, const void *params) const {return false;}
+      virtual bool compare(const node_t *nptr, typename const node_t::param_block *params) const 
+      {
+         throw std::logic_error("This node type does not support searches with compound keys");
+      }
 
    protected:
       virtual bool load_array_check(const node_t *) const {return true;}
@@ -235,7 +247,7 @@ class hash_table {
 
       node_t *find_node(uint64_t hashval, const key_t& str, nodetype_t type);
 
-      node_t *find_node(uint64_t hashval, const void *params);
+      node_t *find_node(uint64_t hashval, typename const node_t::param_block *params);
 
       node_t *put_node(const key_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
 

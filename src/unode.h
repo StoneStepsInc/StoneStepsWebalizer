@@ -25,6 +25,12 @@
 // out of memory at any time). 
 //
 struct unode_t : public base_node<unode_t> {
+      struct param_block : base_node<unode_t>::param_block {
+         nodetype_t type;
+         const string_t *url;
+         const string_t *srchargs;
+      };
+
       bool     target : 1;          // Target URL?
       u_char   urltype;             // URL type (e.g. URL_TYPE_HTTP)
       u_short  pathlen;             // URL path length
@@ -76,15 +82,8 @@ struct unode_t : public base_node<unode_t> {
 // URLs
 //
 class u_hash_table : public hash_table<unode_t> {
-   public:
-      struct param_block {
-         nodetype_t type;
-         const string_t *url;
-         const string_t *srchargs;
-      };
-
    private:
-      virtual bool compare(const unode_t *nptr, const void *param) const;
+      virtual bool compare(const unode_t *nptr, const unode_t::param_block *pb) const override;
 
    public:
       u_hash_table(void) : hash_table<unode_t>(LMAXHASH) {}

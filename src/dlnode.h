@@ -24,6 +24,11 @@ struct hnode_t;
 //
 // -----------------------------------------------------------------------
 struct dlnode_t : public base_node<dlnode_t> {
+      struct param_block : base_node<dlnode_t>::param_block {
+         const char  *name;
+         const char  *ipaddr;
+      };
+
       // combined download job data
       uint64_t    count;            // download job count
       uint64_t    sumhits;          // total hits
@@ -77,14 +82,8 @@ struct dlnode_t : public base_node<dlnode_t> {
 // Download Jobs
 //
 class dl_hash_table : public hash_table<dlnode_t> {
-   public:
-      struct param_block {
-         const char  *name;
-         const char  *ipaddr;
-      };
-
    private:
-      virtual bool compare(const dlnode_t *nptr, const void *param) const;
+      virtual bool compare(const dlnode_t *nptr, const dlnode_t::param_block *pb) const override;
 
       virtual bool load_array_check(const dlnode_t *nptr) const {return (nptr && !nptr->download) ? true : false;}
 

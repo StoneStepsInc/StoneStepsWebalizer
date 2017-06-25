@@ -256,10 +256,8 @@ int64_t dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
 //
 // dl_hash_table
 //
-bool dl_hash_table::compare(const dlnode_t *nptr, const void *param)  const
+bool dl_hash_table::compare(const dlnode_t *nptr, const dlnode_t::param_block *pb)  const
 {
-   param_block *pb = (param_block*) param;
-
    if(!nptr->hnode)
       return false;
 

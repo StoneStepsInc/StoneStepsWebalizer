@@ -34,10 +34,8 @@ rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respco
    respcode = _respcode;
 }
 
-bool rc_hash_table::compare(const rcnode_t *nptr, const void *param) const
+bool rc_hash_table::compare(const rcnode_t *nptr, const rcnode_t::param_block *pb) const
 {
-   param_block *pb = (param_block*) param;
-
    if(nptr->respcode != pb->respcode)
       return false;
 
