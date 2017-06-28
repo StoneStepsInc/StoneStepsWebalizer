@@ -2089,7 +2089,7 @@ hnode_t *webalizer_t::put_hnode(
 
    newnode = newvisit = newthost = newspammer = false;
 
-   hashval = hash_ex(0, ipaddr);
+   hashval = hnode_t::hash(ipaddr);
 
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
@@ -2198,7 +2198,7 @@ hnode_t *webalizer_t::put_hnode(
 
    newnode = false;
 
-   hashval = hash_ex(0, grpname);
+   hashval = hnode_t::hash(grpname);
 
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
@@ -2252,7 +2252,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
 
    newnode = false;
 
-   hashval = hash_ex(0, str);
+   hashval = rnode_t::hash(str);
 
    /* check if hashed */
    if((nptr = state.rm_htab.find_node(hashval, str, type)) == NULL) {
@@ -2306,8 +2306,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    param.url = &str;
    param.srchargs = !srchargs.isempty() ? &srchargs : NULL;
 
-   // hash pieces as if the entire URL was hashed
-   hashval = (srchargs.isempty()) ? hash_ex(0, str) : hash_ex(hash_byte(hash_ex(0, str), '?'), srchargs);
+   hashval = unode_t::hash(str, srchargs);
 
    /* check if hashed */
    if((cptr = state.um_htab.find_node(hashval, &param)) == NULL) {
@@ -2379,7 +2378,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    param.method = method;
 
    // respcode, method, url
-   hashval = hash_ex(hash_ex(hash_num(0, respcode), method), url);
+   hashval = rcnode_t::hash(respcode, method, url);
 
    /* check if hashed */
    if((nptr = state.rc_htab.find_node(hashval, &param)) == NULL) {
@@ -2419,7 +2418,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
 
    newnode = false;
       
-   hashval = hash_ex(0, str);
+   hashval = anode_t::hash(str);
 
    /* check if hashed */
    if((cptr = state.am_htab.find_node(hashval, str, type)) == NULL) {
@@ -2471,7 +2470,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    if(str.isempty())     /* skip bad search strs */
       return NULL;
 
-   hashval = hash_ex(0, str);
+   hashval = snode_t::hash(str);
 
    /* check if hashed */
    if((nptr = state.sr_htab.find_node(hashval, str)) == NULL) {
@@ -2527,7 +2526,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    
    if(str.isempty()) return NULL;  /* skip if no username */
 
-   hashval = hash_ex(0, str);
+   hashval = inode_t::hash(str);
 
    /* check if hashed */
    if((nptr = state.im_htab.find_node(hashval, str, type)) == NULL) {
@@ -2594,7 +2593,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    params.name = name;
    params.ipaddr = hnode.string;
 
-   hashval = hash_ex(hash_ex(0, hnode.string), name);
+   hashval = dlnode_t::hash(hnode.string, name);
 
    //
    // Sometimes download requests may come in severely shuffled. For example, 
@@ -2660,7 +2659,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
    spnode_t *spnode;
    uint64_t hashval;
 
-   hashval = hash_ex(0, host);
+   hashval = spnode_t::hash(host);
 
    /* check if hashed */
    if((spnode = state.sp_htab.find_node(hashval, host)) != NULL)

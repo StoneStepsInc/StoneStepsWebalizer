@@ -813,47 +813,47 @@ void state_t::init_counters(void)
 
 hnode_t *state_t::put_hnode(const hnode_t& tmp)
 {
-   return hm_htab.put_node(hash_ex(0, tmp.string), new hnode_t(tmp));
+   return hm_htab.put_node(tmp.get_hash(), new hnode_t(tmp));
 }
 
 rnode_t *state_t::put_rnode(const rnode_t& rnode)
 {
-   return rm_htab.put_node(hash_ex(0, rnode.string), new rnode_t(rnode));
+   return rm_htab.put_node(rnode.get_hash(), new rnode_t(rnode));
 }
 
 unode_t *state_t::put_unode(const unode_t& tmp)
 {
-   return um_htab.put_node(hash_ex(0, tmp.string), new unode_t(tmp));
+   return um_htab.put_node(tmp.get_hash(), new unode_t(tmp));
 }
 
 rcnode_t *state_t::put_rcnode(const rcnode_t& rcnode)
 {
-   return rc_htab.put_node(hash_ex(hash_ex(hash_num(0, rcnode.respcode), rcnode.method), rcnode.string), new rcnode_t(rcnode));
+   return rc_htab.put_node(rcnode.get_hash(), new rcnode_t(rcnode));
 }
 
 anode_t *state_t::put_anode(const anode_t& anode)
 {
-   return am_htab.put_node(hash_ex(0, anode.string), new anode_t(anode));
+   return am_htab.put_node(anode.get_hash(), new anode_t(anode));
 }
 
 snode_t *state_t::put_snode(const snode_t& snode)
 {
-   return sr_htab.put_node(hash_ex(0, snode.string), new snode_t(snode));
+   return sr_htab.put_node(snode.get_hash(), new snode_t(snode));
 }
 
 inode_t *state_t::put_inode(const inode_t& inode)
 {
-   return im_htab.put_node(hash_ex(0, inode.string), new inode_t(inode));
+   return im_htab.put_node(inode.get_hash(), new inode_t(inode));
 }
 
 dlnode_t *state_t::put_dlnode(const dlnode_t& dlnode)
 {
-   return dl_htab.put_node(hash_ex(hash_ex(0, dlnode.hnode ? dlnode.hnode->string.c_str() : ""), dlnode.string), new dlnode_t(dlnode));
+   return dl_htab.put_node(dlnode.get_hash(), new dlnode_t(dlnode));
 }
 
 spnode_t *state_t::put_spnode(const string_t& host) 
 {
-   return sp_htab.put_node(hash_ex(0, host), new spnode_t(host));
+   return sp_htab.put_node(spnode_t::hash(host), new spnode_t(host));
 }
 
 /*********************************************/

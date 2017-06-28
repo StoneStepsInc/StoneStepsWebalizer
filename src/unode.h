@@ -57,6 +57,12 @@ struct unode_t : public base_node<unode_t> {
 
          u_char update_url_type(u_char type);
 
+         static uint64_t hash(const string_t& url, const string_t& srchargs) 
+         {
+            // hash pieces as if the entire URL was hashed
+            return (srchargs.isempty()) ? hash_ex(0, url) : hash_ex(hash_byte(hash_ex(0, url), '?'), srchargs);
+         }
+
          //
          // serialization
          //

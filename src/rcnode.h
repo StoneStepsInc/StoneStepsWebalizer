@@ -37,6 +37,16 @@ struct rcnode_t : public base_node<rcnode_t> {
          rcnode_t(const rcnode_t& rcnode);
          rcnode_t(const string_t& method, const string_t& url, u_short respcode);
 
+         static uint64_t hash(u_short respcode, const string_t& method, const string_t& url) 
+         {
+            return hash_ex(hash_ex(hash_num(0, respcode), method), url);
+         }
+
+         virtual uint64_t get_hash(void) const override 
+         {
+            return hash_ex(hash_ex(hash_num(0, respcode), method), string);
+         }
+
          //
          // serialization
          //
