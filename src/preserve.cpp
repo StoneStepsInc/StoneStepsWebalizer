@@ -655,7 +655,7 @@ int state_t::restore_state(void)
          hnode.nodeid = vnode.nodeid;
          if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
             return 20;
-         put_hnode(hnode);
+         hm_htab.put_node(new hnode_t(hnode));
          hnode.reset();
       }}
 
@@ -665,7 +665,7 @@ int state_t::restore_state(void)
          dlnode.nodeid = danode.nodeid;
          if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
             return 21;
-         put_dlnode(dlnode);
+         dl_htab.put_node(new dlnode_t(dlnode));
          dlnode.reset();
       }}
 
@@ -689,7 +689,7 @@ int state_t::restore_state(void)
    {// start with URLs, as they may be referenced by visit nodes (see unpack_vnode_cb)
    database_t::iterator<unode_t> iter = database.begin_urls(NULL);
    while(iter.next(unode)) {
-      if(!put_unode(unode))
+      if(!um_htab.put_node(new unode_t(unode)))
          return 10;
       unode.reset();
    }
@@ -699,7 +699,7 @@ int state_t::restore_state(void)
    {// monthly hosts (unpack_hnode_cb ignores groups)
    database_t::iterator<hnode_t> iter = database.begin_hosts(NULL);
    while(iter.next(hnode, unpack_hnode_cb, this)) {
-      if(!put_hnode(hnode))
+      if(!hm_htab.put_node(new hnode_t(hnode)))
          return 8;
       hnode.reset();
    }
@@ -709,7 +709,7 @@ int state_t::restore_state(void)
    {// referrers table
    database_t::iterator<rnode_t> iter = database.begin_referrers(NULL);
    while(iter.next(rnode)) {
-      if(!put_rnode(rnode))
+      if(!rm_htab.put_node(new rnode_t(rnode)))
          return 11;
    }
    iter.close();
@@ -718,7 +718,7 @@ int state_t::restore_state(void)
    {// User agent list
    database_t::iterator<anode_t> iter = database.begin_agents(NULL);
    while(iter.next(anode)) {
-      if(!put_anode(anode))
+      if(!am_htab.put_node(new anode_t(anode)))
          return 12;
    }
    iter.close();
@@ -727,7 +727,7 @@ int state_t::restore_state(void)
    {// Search String list
    database_t::iterator<snode_t> iter = database.begin_search(NULL);
    while(iter.next(snode)) {
-      if(!put_snode(snode))
+      if(!sr_htab.put_node(new snode_t(snode)))
          return 13;
    }
    iter.close();
@@ -736,7 +736,7 @@ int state_t::restore_state(void)
    {// username list
    database_t::iterator<inode_t> iter = database.begin_users(NULL);
    while(iter.next(inode)) {
-      if(!put_inode(inode))
+      if(!im_htab.put_node(new inode_t(inode)))
          return 14;
    }
    iter.close();
@@ -745,7 +745,7 @@ int state_t::restore_state(void)
    {// error list
    database_t::iterator<rcnode_t> iter = database.begin_errors(NULL);
    while(iter.next(rcnode)) {
-      if(!put_rcnode(rcnode))
+      if(!rc_htab.put_node(new rcnode_t(rcnode)))
          return 15;
    }
    iter.close();
@@ -754,7 +754,7 @@ int state_t::restore_state(void)
    {// downloads
    database_t::iterator<dlnode_t> iter = database.begin_downloads(NULL);
    while(iter.next(dlnode, unpack_dlnode_cb, this)) {
-      if(!put_dlnode(dlnode))
+      if(!dl_htab.put_node(new dlnode_t(dlnode)))
          return 16;
       dlnode.reset();
    }
@@ -809,51 +809,6 @@ void state_t::init_counters(void)
 
    // country codes
    cc_htab.reset();
-}
-
-hnode_t *state_t::put_hnode(const hnode_t& tmp)
-{
-   return hm_htab.put_node(tmp.get_hash(), new hnode_t(tmp));
-}
-
-rnode_t *state_t::put_rnode(const rnode_t& rnode)
-{
-   return rm_htab.put_node(rnode.get_hash(), new rnode_t(rnode));
-}
-
-unode_t *state_t::put_unode(const unode_t& tmp)
-{
-   return um_htab.put_node(tmp.get_hash(), new unode_t(tmp));
-}
-
-rcnode_t *state_t::put_rcnode(const rcnode_t& rcnode)
-{
-   return rc_htab.put_node(rcnode.get_hash(), new rcnode_t(rcnode));
-}
-
-anode_t *state_t::put_anode(const anode_t& anode)
-{
-   return am_htab.put_node(anode.get_hash(), new anode_t(anode));
-}
-
-snode_t *state_t::put_snode(const snode_t& snode)
-{
-   return sr_htab.put_node(snode.get_hash(), new snode_t(snode));
-}
-
-inode_t *state_t::put_inode(const inode_t& inode)
-{
-   return im_htab.put_node(inode.get_hash(), new inode_t(inode));
-}
-
-dlnode_t *state_t::put_dlnode(const dlnode_t& dlnode)
-{
-   return dl_htab.put_node(dlnode.get_hash(), new dlnode_t(dlnode));
-}
-
-spnode_t *state_t::put_spnode(const string_t& host) 
-{
-   return sp_htab.put_node(spnode_t::hash(host), new spnode_t(host));
 }
 
 /*********************************************/
@@ -1009,7 +964,7 @@ void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, v
       if((hptr = _this->hm_htab.find_node(hnode.string)) != NULL)
          dlnode.set_host(hptr);
       else
-         dlnode.set_host(_this->put_hnode(hnode));
+         dlnode.set_host(_this->hm_htab.put_node(new hnode_t(hnode)));
    }
 }
 
@@ -1063,7 +1018,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
       if((uptr = _this->find_url(unode.string)) != NULL)
          vnode.set_lasturl(uptr);
       else
-         vnode.set_lasturl(_this->put_unode(unode));
+         vnode.set_lasturl(_this->um_htab.put_node(new unode_t(unode)));
    }
 }
 
@@ -1106,7 +1061,7 @@ void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
 
    // remember spammers
    if(hnode.spammer)
-      _this->put_spnode(hnode.string);
+      _this->sp_htab.put_node(new spnode_t(hnode.string));
 }
 
 string_t state_t::get_app_version(void)

@@ -103,6 +103,11 @@ void dlnode_t::set_host(hnode_t *nptr)
       hnode->dlref++;
 }
 
+uint64_t dlnode_t::get_hash(void) const
+{
+   return hash_ex(hash_ex(0, hnode ? hnode->string : string_t()), string);
+}
+
 //
 // serialization
 //

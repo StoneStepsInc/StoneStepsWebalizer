@@ -61,10 +61,7 @@ struct dlnode_t : public base_node<dlnode_t> {
             return hash_ex(hash_ex(0, ipaddr), dlname);
          }
 
-         virtual uint64_t get_hash(void) const override 
-         {
-            return hash_ex(hash_ex(0, hnode ? hnode->string : string_t()), string);
-         }
+         virtual uint64_t get_hash(void) const override;
 
          //
          // serialization

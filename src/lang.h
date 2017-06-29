@@ -45,13 +45,17 @@ class lang_t {
             size_t               elemsize;         // size of a single element
 
             public:
-               lang_node_t(void);
+               lang_node_t(const char *varname);
 
                ~lang_node_t(void);
 
                const string_t& key(void) const {return varname;}
 
                nodetype_t get_type(void) const {return OBJ_REG;}
+
+               static uint64_t hash(const char *varname) {return hash_ex(0, varname);}
+
+               virtual uint64_t get_hash(void) const override {return hash_ex(0, varname);}
       };
 
       // -----------------------------------------------------------------------

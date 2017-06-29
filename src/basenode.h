@@ -41,7 +41,7 @@ struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, publi
 
          static uint64_t hash(const string_t& key) {return hash_ex(0, key);}
 
-         virtual uint64_t get_hash(void) const {return hash_ex(0, string);}
+         virtual uint64_t get_hash(void) const override {return hash_ex(0, string);}
 
          //
          // serialization

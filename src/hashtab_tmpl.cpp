@@ -109,6 +109,15 @@ bool hash_table<node_t, key_t>::swap_out_bucket(bucket_t& bucket)
 }
 
 template <typename node_t, typename key_t>
+node_t *hash_table<node_t, key_t>::put_node(node_t *nptr)
+{
+   if(!nptr)
+      return NULL;
+
+   return put_node(nptr->get_hash(), nptr);
+}
+
+template <typename node_t, typename key_t>
 node_t *hash_table<node_t, key_t>::put_node(uint64_t hashval, node_t *nptr)
 {
    uint64_t hashidx;

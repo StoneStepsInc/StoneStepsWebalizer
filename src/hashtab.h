@@ -74,6 +74,8 @@ struct htab_node_t {
          virtual const key_t& key(void) const = 0;
 
          virtual nodetype_t get_type(void) const = 0;
+
+         virtual uint64_t get_hash(void) const = 0;
 };
 
 // -----------------------------------------------------------------------
@@ -250,6 +252,8 @@ class hash_table {
       node_t *find_node(uint64_t hashval, typename const node_t::param_block *params);
 
       node_t *put_node(const key_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
+
+      node_t *put_node(node_t *nptr);
 
       node_t *put_node(uint64_t hashval, node_t *nptr);
 

@@ -75,19 +75,6 @@ class state_t {
       sysnode_t         sysnode;
 
    private:
-      //
-      // 
-      //
-      hnode_t *put_hnode(const hnode_t& hnode);
-      rnode_t *put_rnode(const rnode_t& rnode);
-      unode_t *put_unode(const unode_t& unode);
-      anode_t *put_anode(const anode_t& anode);
-      snode_t *put_snode(const snode_t& snode);
-      inode_t *put_inode(const inode_t& inode);
-      rcnode_t *put_rcnode(const rcnode_t& rcnode);
-      dlnode_t *put_dlnode(const dlnode_t& dlnode);
-      spnode_t *put_spnode(const string_t& host);
-      
       template <typename type_t>
       void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
 

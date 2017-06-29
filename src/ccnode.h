@@ -49,6 +49,10 @@ struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, publ
       
       void update(const ccnode_t& ccnode);
 
+      static uint64_t hash(const char *ccode) {return hash_ex(0, ccode);}
+
+      virtual uint64_t get_hash(void) const override {return hash_ex(0, ccode);}
+
       //
       // serialization
       //
@@ -69,7 +73,7 @@ class cc_hash_table : public hash_table<ccnode_t> {
       
       void update_ccnode(const ccnode_t& ccnode) {get_ccnode(ccnode.ccode).update(ccnode);}
 
-      void put_ccnode(const char *ccode, const char *cdesc) {put_node(hash_ex(0, ccode), new ccnode_t(ccode, cdesc));}
+      void put_ccnode(const char *ccode, const char *cdesc) {put_node(new ccnode_t(ccode, cdesc));}
 
       const ccnode_t& get_ccnode(const string_t& ccode) const;
 

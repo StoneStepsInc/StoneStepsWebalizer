@@ -465,7 +465,7 @@ inline bool iseolchar(char ch) {return (ch == '\n' || ch == '\r') ? true : false
 //
 //
 
-lang_t::lang_node_t::lang_node_t(void) 
+lang_t::lang_node_t::lang_node_t(const char *varname) : varname(varname) 
 {
    vartype = LANG_VAR_CHAR; 
    varptr = NULL; 
@@ -486,15 +486,14 @@ void lang_t::lang_hash_table::put_lang_var(const char *varname, int vartype, voi
    if(varname == NULL || *varname == 0)
       return;
 
-   lnode = new lang_node_t;
+   lnode = new lang_node_t(varname);
 
    lnode->vartype = vartype;
-   lnode->varname = varname;
    lnode->varptr = (u_char*) varptr;
    lnode->maxcount = maxcount;
    lnode->elemsize = elemsize;
 
-   put_node(hash_ex(0, varname), lnode);
+   put_node(lnode);
 }
 
 const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t& varname)
