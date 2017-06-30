@@ -36,6 +36,10 @@ struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, publ
    public:
       typedef void (*s_unpack_cb_t)(ccnode_t& vnode, void *arg);
 
+   private:
+      static uint64_t ctry_idx(const char *ccode);
+      static string_t idx_ctry(uint64_t idx);
+
    public:
       ccnode_t(void);
 

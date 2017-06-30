@@ -706,54 +706,6 @@ string_t cur_time(bool local_time)
 }
 
 /*********************************************/
-/* CTRY_IDX - create unique # from domain    */
-/*********************************************/
-
-uint64_t ctry_idx(const char *str)
-{
-   uint64_t idx=0;
-   const char *cp1=str;
-
-   if(str) {
-      if(*str == '*')
-         return 0;
-      while(*cp1) {
-         idx = (idx <<= 5) | (*cp1 - 'a' + 1);
-         cp1++;
-      }
-   }
-
-   return idx;
-}
-
-string_t idx_ctry(uint64_t idx)
-{
-   char ch, buf[7], *cp;
-   string_t ccode;
-   
-   // if index is zero, return the unknown country code
-   if(idx == 0) {
-      ccode = "*";
-      return ccode;
-   }
-   
-   // set the pointer to one character past the buffer
-   cp = buf+sizeof(buf);
-   
-   // loop through 5-bit integers and fill the buffer
-   while(idx) {
-      ch = (char) (idx & 0x1F);
-      *--cp = (ch + 'a' - 1);
-      idx >>= 5;
-   }
-   
-   // assign and return
-   ccode.assign(cp, buf+sizeof(buf)-cp);
-   
-   return ccode;
-}
-
-/*********************************************/
 /* GET_DOMAIN - Get domain portion of host   */
 /*********************************************/
 

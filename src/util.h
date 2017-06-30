@@ -168,9 +168,6 @@ int64_t str2l(const char *str, const char **eptr = NULL, size_t len = ~0);
 
 string_t cur_time(bool local_time);
 
-uint64_t ctry_idx(const char *);
-string_t idx_ctry(uint64_t idx);
-
 const char *get_domain(const char *, size_t);       /* return domain name  */
 string_t& get_url_host(const char *url, string_t& domain);
 string_t::const_char_buffer_t get_url_host(const char *url, size_t slen);
