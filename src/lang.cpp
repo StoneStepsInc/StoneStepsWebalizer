@@ -41,18 +41,6 @@
 //
 // Global strings
 //
-const char *lang_t::msg_ctrl_c  = "Ctrl-C detected. Aborting...";
-
-/* DNS Stuff */
-const char *lang_t::msg_dns_nocf= "No cache file specified, aborting...";
-const char *lang_t::msg_dns_nodb= "Error: Unable to open DNS cache file";
-const char *lang_t::msg_dns_nolk= "Error: Unable to lock DNS cache file";
-const char *lang_t::msg_dns_usec= "Using DNS cache file";
-const char *lang_t::msg_dns_rslv= "DNS workers";
-const char *lang_t::msg_dns_init= "Error: Cannot initialize DNS resolver";
-const char *lang_t::msg_dns_htrt= "DNS cache hit ratio";
-const char *lang_t::msg_dns_geoe= "Cannot open GeoIP database";
-const char *lang_t::msg_dns_useg= "Using GeoIP database";
 
 /* Help display... */
 const char *lang_t::h_usage1 = "Usage";
@@ -766,6 +754,19 @@ lang_t::lang_t(void)
    msg_h_other = "Other";
 
    msg_h_city = "City";
+
+   msg_ctrl_c  = "Ctrl-C detected. Aborting...";
+
+   /* DNS Stuff */
+   msg_dns_nocf= "No cache file specified, aborting...";
+   msg_dns_nodb= "Error: Unable to open DNS cache file";
+   msg_dns_nolk= "Error: Unable to lock DNS cache file";
+   msg_dns_usec= "Using DNS cache file";
+   msg_dns_rslv= "DNS workers";
+   msg_dns_init= "Error: Cannot initialize DNS resolver";
+   msg_dns_htrt= "DNS cache hit ratio";
+   msg_dns_geoe= "Cannot open GeoIP database";
+   msg_dns_useg= "Using GeoIP database";
 }
 
 lang_t::~lang_t(void)

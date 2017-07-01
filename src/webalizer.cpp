@@ -112,7 +112,7 @@ void webalizer_t::initialize(int argc, const char * const argv[])
       // initialize DNS resolver if the number of workers is set to a non-zero value
       if(config.is_dns_enabled()) {
          if(!dns_resolver.dns_init())
-            throw exception_t(0, lang_t::msg_dns_init);
+            throw exception_t(0, config.lang.msg_dns_init);
       }
 
       // initialize the log file parser
@@ -908,7 +908,7 @@ int webalizer_t::run(void)
 
          if(config.verbose && config.is_dns_enabled()) {
             if(dns_resolver.dns_cached || dns_resolver.dns_resolved)
-               printf("%s: %" PRIu64 "%% (%" PRIu64 ":%" PRIu64 ")\n", lang_t::msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
+               printf("%s: %" PRIu64 "%% (%" PRIu64 ":%" PRIu64 ")\n", config.lang.msg_dns_htrt, (uint64_t) (dns_resolver.dns_cached * 100. / (dns_resolver.dns_cached + dns_resolver.dns_resolved)), dns_resolver.dns_cached, dns_resolver.dns_resolved);
          }
 
          // report total DNS time
@@ -1189,7 +1189,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
       
       // if we detected a Ctrl-C, break out right away 
       if(abort_signal) {
-         fprintf(stderr, "%s\n", lang_t::msg_ctrl_c);
+         fprintf(stderr, "%s\n", config.lang.msg_ctrl_c);
          break;
       }
    

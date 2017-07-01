@@ -74,17 +74,17 @@ class lang_t {
       friend class lang_hash_table;
 
    public:
-      static const char *msg_ctrl_c;
+      const char *msg_ctrl_c;
 
-      static const char *msg_dns_nocf;
-      static const char *msg_dns_nodb;
-      static const char *msg_dns_nolk;
-      static const char *msg_dns_usec;
-      static const char *msg_dns_rslv;
-      static const char *msg_dns_init;
-      static const char *msg_dns_htrt;
-      static const char *msg_dns_geoe;
-      static const char *msg_dns_useg;
+      const char *msg_dns_nocf;
+      const char *msg_dns_nodb;
+      const char *msg_dns_nolk;
+      const char *msg_dns_usec;
+      const char *msg_dns_rslv;
+      const char *msg_dns_init;
+      const char *msg_dns_htrt;
+      const char *msg_dns_geoe;
+      const char *msg_dns_useg;
 
       static const char *h_usage1;
       static const char *h_usage2;

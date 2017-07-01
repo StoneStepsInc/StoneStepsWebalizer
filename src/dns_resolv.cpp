@@ -627,7 +627,7 @@ bool dns_resolver_t::dns_init(void)
 
       if(dns_db_env->open(config.dns_db_path, dbenv_flags, 0664)) {
          if (config.verbose) 
-            fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, config.dns_cache.c_str());
+            fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, config.dns_cache.c_str());
       }
       
       //
@@ -653,7 +653,7 @@ bool dns_resolver_t::dns_init(void)
 
       if (config.verbose > 1) {
          /* Using DNS cache file <filaneme> */
-         printf("%s %s\n", lang_t::msg_dns_usec, config.dns_cache.c_str());
+         printf("%s %s\n", config.lang.msg_dns_usec, config.dns_cache.c_str());
       }
    }
 
@@ -661,12 +661,12 @@ bool dns_resolver_t::dns_init(void)
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
       if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS) {
-         fprintf(stderr, "%s %s (%d - %s)\n", lang_t::msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
+         fprintf(stderr, "%s %s (%d - %s)\n", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
          return false;
       }
 
       if (config.verbose > 1) 
-         printf("%s %s\n", lang_t::msg_dns_useg, config.geoip_db_path.c_str());
+         printf("%s %s\n", config.lang.msg_dns_useg, config.geoip_db_path.c_str());
 
       geoip_db = &mmdb;
 
@@ -702,7 +702,7 @@ bool dns_resolver_t::dns_init(void)
 
    if (config.verbose > 1) {
       /* DNS Lookup (#children): */
-      printf("%s (%d)\n",lang_t::msg_dns_rslv, config.dns_children);
+      printf("%s (%d)\n",config.lang.msg_dns_rslv, config.dns_children);
    }
 
    return true;
@@ -1210,7 +1210,7 @@ Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
    if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))
    {
       /* Error: Unable to open DNS cache file <filename> */
-      if (config.verbose) fprintf(stderr,"%s %s\n",lang_t::msg_dns_nodb, dns_cache.c_str());
+      if (config.verbose) fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, dns_cache.c_str());
 
       delete dns_db;
       dns_db = NULL;
