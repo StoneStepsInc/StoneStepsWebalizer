@@ -217,16 +217,16 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
 
    fputs("      shortMonths: [", out_fp);
-   for(u_int i = 0; i < sizeof(lang_t::s_month)/sizeof(lang_t::s_month[0]); i++) {
+   for(u_int i = 0; i < sizeof(config.lang.s_month)/sizeof(config.lang.s_month[0]); i++) {
       if(i) fputs(", ", out_fp);
-      fprintf(out_fp, "\"%s\"", js_encode(lang_t::s_month[i]));
+      fprintf(out_fp, "\"%s\"", js_encode(config.lang.s_month[i]));
    }
    fputs("],\n", out_fp);
 
    fputs("      longMonths: [", out_fp);
-   for(u_int i = 0; i < sizeof(lang_t::l_month)/sizeof(lang_t::l_month[0]); i++) {
+   for(u_int i = 0; i < sizeof(config.lang.l_month)/sizeof(config.lang.l_month[0]); i++) {
       if(i) fputs(", ", out_fp);
-      fprintf(out_fp, "\"%s\"", js_encode(lang_t::l_month[i]));
+      fprintf(out_fp, "\"%s\"", js_encode(config.lang.l_month[i]));
    }
    fputs("],\n", out_fp);
 
@@ -266,7 +266,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("   var daily_usage_chart = new DailyUsageChart(2, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "      maxDay: %d,\n", last_day);
 
@@ -316,7 +316,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("   var hourly_usage_chart = new HourlyUsageChart(2, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+   fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fputs("      seriesNames: {\n", out_fp);
    fprintf(out_fp, "         hits: \"%s\",\n", js_encode(config.lang.msg_h_hits)); 
@@ -338,7 +338,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("   var country_usage_chart = new CountryUsageChart(3, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-   fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(lang_t::l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
+   fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
 
    fprintf(out_fp, "     totalVisits: %" PRIu64 ",\n", state.totals.t_hvisits_end);
    fprintf(out_fp, "     otherLabel : \"%s\",\n", config.lang.msg_h_other);
@@ -596,7 +596,7 @@ int html_output_t::write_monthly_report()
    /* first, open the file */
    if ( (out_fp=open_out_file(html_fname_lang))==NULL ) return 1;
 
-   const char *report_title = fmt_printf("%s %d", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+   const char *report_title = fmt_printf("%s %d", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
    write_html_head(report_title, out_fp, page_usage);
 
    month_links();
@@ -622,7 +622,7 @@ int html_output_t::write_monthly_report()
             else
                png1_fname_lang = png1_fname;
 
-            dtitle.format("%s %s %d",config.lang.msg_hmth_du, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+            dtitle.format("%s %s %d",config.lang.msg_hmth_du, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
             if(makeimgs)
                graph.month_graph6(png1_fname_lang, dtitle, state.totals.cur_tstamp.month, state.totals.cur_tstamp.year, state.t_daily);
@@ -658,7 +658,7 @@ int html_output_t::write_monthly_report()
             else
                png2_fname_lang = png2_fname;
 
-            htitle.format("%s %s %d", config.lang.msg_hmth_hu, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+            htitle.format("%s %s %d", config.lang.msg_hmth_hu, config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
 
             if(makeimgs)
                graph.day_graph3(png2_fname_lang, htitle, state.t_hourly);
@@ -763,7 +763,7 @@ void html_output_t::month_total_table()
    fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
 
    fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"3\">%s %s %d</th></tr>\n", config.lang.msg_mtot_ms, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"3\">%s %s %d</th></tr>\n", config.lang.msg_mtot_ms, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
    fputs("</thead>\n", out_fp);
 
    fputs("<tbody class=\"totals_data_tbody\">\n", out_fp);
@@ -997,7 +997,7 @@ void html_output_t::daily_total_table()
    fputs("<table id=\"daily_usage_table\" class=\"report_table totals_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    /* Daily statistics for ... */
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
    fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"                        \
                   "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"                  \
@@ -1078,7 +1078,7 @@ void html_output_t::hourly_total_table()
    fputs("<table id=\"hourly_usage_table\" class=\"report_table totals_table\">\n", out_fp);
 
    fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
    fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"   \
                   "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"            \
@@ -1325,7 +1325,7 @@ int html_output_t::all_hosts_page(void)
    /* open file */
    if ( (out_fp=open_out_file(site_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -1614,7 +1614,7 @@ int html_output_t::all_urls_page(void)
    /* open file */
    if ( (out_fp=open_out_file(url_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2119,7 +2119,7 @@ int html_output_t::all_downloads_page(void)
    /* open file */
    if ( (out_fp=open_out_file(dl_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2275,7 +2275,7 @@ int html_output_t::all_errors_page(void)
    /* open file */
    if ( (out_fp=open_out_file(err_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2326,7 +2326,7 @@ int html_output_t::all_refs_page(void)
    /* open file */
    if ( (out_fp=open_out_file(ref_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2548,7 +2548,7 @@ int html_output_t::all_agents_page(void)
    /* open file */
    if ( (out_fp=open_out_file(agent_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -2735,7 +2735,7 @@ int html_output_t::all_search_page(void)
    /* open file */
    if ( (out_fp=open_out_file(search_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
    write_html_head(report_title, out_fp, page_all_items);
 
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
@@ -2942,7 +2942,7 @@ int html_output_t::all_users_page(void)
    /* open file */
    if ( (out_fp=open_out_file(user_fname))==NULL ) return 0;
 
-   const char *report_title = fmt_printf("%s %d - %s", lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
+   const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
    write_html_head(report_title, out_fp, page_all_items);
 
    fputs("<pre class=\"details_pre\">\n", out_fp);
@@ -3079,7 +3079,7 @@ void html_output_t::top_ctry_table()
             pie_legend[i]=ccarray[i]->cdesc;
          }
 
-         pie_title.format("%s %s %d",config.lang.msg_ctry_use, lang_t::l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
+         pie_title.format("%s %s %d",config.lang.msg_ctry_use, config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
          pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
          if(config.html_ext_lang)
@@ -3242,7 +3242,7 @@ int html_output_t::write_main_index()
       hptr = &*iter++;
       if(hptr->hits==0) continue;
       days_in_month=(hptr->lday-hptr->fday)+1;
-      fprintf(out_fp,"<tr><th data-year=\"%u\" data-month=\"%u\"><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, hptr->year, hptr->month, config.html_ext.c_str(), lang_t::s_month[hptr->month-1], hptr->year);
+      fprintf(out_fp,"<tr><th data-year=\"%u\" data-month=\"%u\"><a href=\"usage_%04d%02d.%s\">%s %d</a></th>\n", hptr->year, hptr->month, hptr->year, hptr->month, config.html_ext.c_str(), config.lang.s_month[hptr->month-1], hptr->year);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->hits/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n",hptr->files/days_in_month);
       fprintf(out_fp,"<td>%" PRIu64 "</td>\n", hptr->pages/days_in_month);

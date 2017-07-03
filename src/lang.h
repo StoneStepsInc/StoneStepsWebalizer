@@ -5,13 +5,11 @@
 #include "tstring.h"
 #include "types.h"
 
-extern struct country_code ctry[];
-
 //
 //
 //
 class lang_t {
-   private:
+   public:
       // -----------------------------------------------------------------------
       //
       // resp_code_t
@@ -32,6 +30,7 @@ class lang_t {
          const char    *desc;
       };
 
+   private:
       // -----------------------------------------------------------------------
       //
       // lang_node_t
@@ -86,19 +85,19 @@ class lang_t {
       const char *msg_dns_geoe;
       const char *msg_dns_useg;
 
-      static const char *h_usage1;
-      static const char *h_usage2;
-      static const char *h_msg[];
+      const char *h_usage1;
+      const char *h_usage2;
+      const char *h_msg[51];
 
-      static const char *s_month[12];
-      static const char *l_month[12];
+      const char *s_month[12];
+      const char *l_month[12];
 
-      static const char *msg_unit_pfx[7];
+      const char *msg_unit_pfx[7];
       const char *msg_xfer_unit;
 
-      static resp_code_t response[];
+      resp_code_t response[41];
 
-      static country_t ctry[];
+      country_t ctry[271];
 
       const char *language;
       const char *language_code;

@@ -183,7 +183,7 @@ bool is_ip_address(const char *str);
 uint64_t elapsed(uint64_t stime, uint64_t etime);
 
 size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list args);
-size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal);
+size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char * const msg_unit_pfx[], const char *unit, bool decimal);
 
 bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool substr, const bmh_delta_table *deltas, bool nocase = false);
 

@@ -302,7 +302,7 @@ int graph_t::year_graph6x(const history_t& history,
    s_mth = history.first_month();
    for(i = 0; i < history.disp_length(); i++) {
       /* use language-specific array */
-      _gdImageString(im, GD_FONT_SMALL, ML+GBW+YSPL+(i*YSSW), 238, lang_t::s_month[s_mth-1], c_legend, true, NULL);
+      _gdImageString(im, GD_FONT_SMALL, ML+GBW+YSPL+(i*YSSW), 238, config.lang.s_month[s_mth-1], c_legend, true, NULL);
       s_mth++;
       if (s_mth > 12) s_mth = 1;
    }

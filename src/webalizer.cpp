@@ -251,7 +251,7 @@ void webalizer_t::write_monthly_report(void)
       optr = *iter++;
       
       if(config.verbose > 1)
-         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, lang_t::l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year, optr->get_output_type());
+         printf("%s %s %d (%s)\n", config.lang.msg_gen_rpt, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year, optr->get_output_type());
       
       optr->write_monthly_report();
    }
@@ -265,8 +265,8 @@ void webalizer_t::print_options(const char *pname)
 {
    int i;
 
-   printf("%s: %s %s\n", lang_t::h_usage1, pname, lang_t::h_usage2);
-   for (i=0; lang_t::h_msg[i]; i++) printf("%s\n", lang_t::h_msg[i]);
+   printf("%s: %s %s\n", config.lang.h_usage1, pname, config.lang.h_usage2);
+   for (i=0; config.lang.h_msg[i]; i++) printf("%s\n", config.lang.h_msg[i]);
 }
 
 /*********************************************/

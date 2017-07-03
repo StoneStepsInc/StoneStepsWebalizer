@@ -1049,7 +1049,7 @@ size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list arg
 // 999.9 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
 // prefix and the unit strings.
 //
-size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char *msg_unit_pfx[], const char *unit, bool decimal)
+size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char * const msg_unit_pfx[], const char *unit, bool decimal)
 {
    double kbyte = decimal ? 1000. : 1024.;
    unsigned int prefix = 0;

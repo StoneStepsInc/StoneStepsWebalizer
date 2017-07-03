@@ -39,408 +39,408 @@
 #define LANG_VAR_CCARR   3               /* country_code[]                     */
 
 //
-// Global strings
+// Language array literals are defined here to make lang_t constructor more readable 
+// because language arrays have to be initialized using member initialization syntax. 
 //
 
 /* Help display... */
-const char *lang_t::h_usage1 = "Usage";
-const char *lang_t::h_usage2 = "[options] [log file [[ log file] ...] | report database]";
-const char *lang_t::h_msg[]= {
-         "-h -?     = print this help message"             ,
-         "-v -V     = print version information"           ,
-         "-w -W     = print warranty information"          ,
-         "-d        = print additional debug info"         ,
-         "-F type   = Log type.  type= (clf | squid | iis | apache | w3c)",
-         "-i        = ignore history file"                 ,
-         "-p        = preserve state (incremental)"        ,
-         "-q        = suppress informational messages"      ,
-         "-Q        = suppress _ALL_ messages"              ,
-         "-Y        = suppress country graph"               ,
-         "-G        = suppress hourly graph"                ,
-         "-H        = suppress hourly stats"                ,
-         "-L        = suppress color coded graph legends"   ,
-         "-l num    = use num background lines on graph"   ,
-         "-m num    = Visit timout value (seconds)"        ,
-         "-T        = print timing information"            ,
-         "-c file   = use configuration file 'file'"       ,
-         "-n name   = hostname to use"                     ,
-         "-o dir    = output directory to use"             ,
-         "-t name   = report title 'name'"                 ,
-         "-a name   = hide user agent 'name'"              ,
-         "-r name   = hide referrer 'name'"                ,
-         "-s name   = hide site 'name'"                    ,
-         "-u name   = hide URL 'name'"                     ,
-         "-x name   = Use filename extension 'name'"       ,
-         "-P name   = Page type extension 'name'"          ,
-         "-I name   = Index alias 'name'"                  ,
-         "-A num    = Display num top agents"              ,
-         "-C num    = Display num top countries"           ,
-         "-R num    = Display num top referrers"           ,
-         "-S num    = Display num top hosts"               ,
-         "-U num    = Display num top URLs"                ,
-         "-e num    = Display num top Entry Pages"         ,
-         "-E num    = Display num top Exit Pages"          ,
-         "-g num    = Group Domains to 'num' levels"       ,
-         "-X        = Hide individual hosts"               ,
-         "-D name   = Use DNS Cache file 'name'"           ,
-         "-N num    = Number of DNS processes (0=disable)" ,
-         "\n"                                              ,
-         "Long options:"                                   ,
-         "--help              print this help message"     ,
-         "--last-log          last log file for the current month",
-         "--prepare-report    prepare a report using a state database",
-         "--warranty          print warranty information"  ,
-         "--version           print version information"   ,
-         "--batch             just update the database (no report)"   ,
-         "--end-month         end active visits and close the database",
-         "--compact-db        compact the database",
-         "--db-info           print database information",
-         "--pipe-log-names    read log file names from standard input",
-         NULL};
+#define H_MSG_INIT \
+         "-h -?     = print this help message"             , \
+         "-v -V     = print version information"           , \
+         "-w -W     = print warranty information"          , \
+         "-d        = print additional debug info"         , \
+         "-F type   = Log type.  type= (clf | squid | iis | apache | w3c)", \
+         "-i        = ignore history file"                 , \
+         "-p        = preserve state (incremental)"        , \
+         "-q        = suppress informational messages"     , \
+         "-Q        = suppress _ALL_ messages"             , \
+         "-Y        = suppress country graph"              , \
+         "-G        = suppress hourly graph"               , \
+         "-H        = suppress hourly stats"               , \
+         "-L        = suppress color coded graph legends"  , \
+         "-l num    = use num background lines on graph"   , \
+         "-m num    = Visit timout value (seconds)"        , \
+         "-T        = print timing information"            , \
+         "-c file   = use configuration file 'file'"       , \
+         "-n name   = hostname to use"                     , \
+         "-o dir    = output directory to use"             , \
+         "-t name   = report title 'name'"                 , \
+         "-a name   = hide user agent 'name'"              , \
+         "-r name   = hide referrer 'name'"                , \
+         "-s name   = hide site 'name'"                    , \
+         "-u name   = hide URL 'name'"                     , \
+         "-x name   = Use filename extension 'name'"       , \
+         "-P name   = Page type extension 'name'"          , \
+         "-I name   = Index alias 'name'"                  , \
+         "-A num    = Display num top agents"              , \
+         "-C num    = Display num top countries"           , \
+         "-R num    = Display num top referrers"           , \
+         "-S num    = Display num top hosts"               , \
+         "-U num    = Display num top URLs"                , \
+         "-e num    = Display num top Entry Pages"         , \
+         "-E num    = Display num top Exit Pages"          , \
+         "-g num    = Group Domains to 'num' levels"       , \
+         "-X        = Hide individual hosts"               , \
+         "-D name   = Use DNS Cache file 'name'"           , \
+         "-N num    = Number of DNS processes (0=disable)" , \
+         "\n"                                              , \
+         "Long options:"                                   , \
+         "--help              print this help message"     , \
+         "--last-log          last log file for the current month", \
+         "--prepare-report    prepare a report using a state database", \
+         "--warranty          print warranty information"  , \
+         "--version           print version information"   , \
+         "--batch             just update the database (no report)"   , \
+         "--end-month         end active visits and close the database", \
+         "--compact-db        compact the database", \
+         "--db-info           print database information", \
+         "--pipe-log-names    read log file names from standard input", \
+         NULL
 
 #define HELPMSG_ARRAY_SIZE (sizeof(h_msg)/sizeof(h_msg[0])-1)
 
 /* short month names MUST BE 3 CHARS in size... pad if needed*/
-const char *lang_t::s_month[12]={ "Jan", "Feb", "Mar",
-                                  "Apr", "May", "Jun",
-                                  "Jul", "Aug", "Sep",
-                                  "Oct", "Nov", "Dec"};
+#define S_MONTH_INIT \
+   "Jan", "Feb", "Mar", \
+   "Apr", "May", "Jun", \
+   "Jul", "Aug", "Sep", \
+   "Oct", "Nov", "Dec"
 
 #define SMONTH_ARRAY_SIZE sizeof(s_month)/sizeof(s_month[0])
 
 /* long month names - can be any length */
-const char *lang_t::l_month[12]={ "January",  "February", "March",   "April",
-                                  "May",      "June",     "July",    "August",
-                                  "September","October",  "November","December"};
+#define L_MONTH_INIT \
+   "January",  "February", "March",   "April",    \
+   "May",      "June",     "July",    "August",   \
+   "September","October",  "November","December"
 
 #define LMONTH_ARRAY_SIZE sizeof(l_month)/sizeof(l_month[0])
 
-const char *lang_t::msg_unit_pfx[] = {"K", "M", "G", "T", "P", "E", "Z"};
+// unit prefix characters (i.e. kilo, mega, etc)
+#define UNIT_PFX_INIT "K", "M", "G", "T", "P", "E", "Z"
 
 #define UNIT_PREFIX_ARRAY_SIZE sizeof(msg_unit_pfx)/sizeof(msg_unit_pfx[0])
 
 /* response code descriptions... order IS important!      */
-lang_t::resp_code_t lang_t::response[] =
-       { {  0, "Undefined response code"                    },
-         {100, "Code 100 - Continue"                        },
-         {101, "Code 101 - Switching Protocols"             },
-         {200, "Code 200 - OK"                              },
-         {201, "Code 201 - Created"                         },
-         {202, "Code 202 - Accepted"                        },
-         {203, "Code 203 - Non-Authoritative Information"   },
-         {204, "Code 204 - No Content"                      },
-         {205, "Code 205 - Reset Content"                   },
-         {206, "Code 206 - Partial Content"                 },
-         {300, "Code 300 - Multiple Choices"                },
-         {301, "Code 301 - Moved Permanently"               },
-         {302, "Code 302 - Found"                           },
-         {303, "Code 303 - See Other"                       },
-         {304, "Code 304 - Not Modified"                    },
-         {305, "Code 305 - Use Proxy"                       },
-         {307, "Code 307 - Moved Temporarily"               },
-         {400, "Code 400 - Bad Request"                     },
-         {401, "Code 401 - Unauthorized"                    },
-         {402, "Code 402 - Payment Required"                },
-         {403, "Code 403 - Forbidden"                       },
-         {404, "Code 404 - Not Found"                       },
-         {405, "Code 405 - Method Not Allowed"              },
-         {406, "Code 406 - Not Acceptable"                  },
-         {407, "Code 407 - Proxy Authentication Required"   },
-         {408, "Code 408 - Request Timeout"                 },
-         {409, "Code 409 - Conflict"                        },
-         {410, "Code 410 - Gone"                            },
-         {411, "Code 411 - Length Required"                 },
-         {412, "Code 412 - Precondition Failed"             },
-         {413, "Code 413 - Request Entity Too Large"        },
-         {414, "Code 414 - Request-URI Too Long"            },
-         {415, "Code 415 - Unsupported Media Type"          },
-         {416, "Code 416 - Requested Range Not Satisfiable" },
-         {417, "Code 417 - Expectation Failed"              },
-         {500, "Code 500 - Internal Server Error"           },
-         {501, "Code 501 - Not Implemented"                 },
-         {502, "Code 502 - Bad Gateway"                     },
-         {503, "Code 503 - Service Unavailable"             },
-         {504, "Code 504 - Gateway Timeout"                 },
+#define HTTP_RESP_INIT \
+         {  0, "Undefined response code"                    }, \
+         {100, "Code 100 - Continue"                        }, \
+         {101, "Code 101 - Switching Protocols"             }, \
+         {200, "Code 200 - OK"                              }, \
+         {201, "Code 201 - Created"                         }, \
+         {202, "Code 202 - Accepted"                        }, \
+         {203, "Code 203 - Non-Authoritative Information"   }, \
+         {204, "Code 204 - No Content"                      }, \
+         {205, "Code 205 - Reset Content"                   }, \
+         {206, "Code 206 - Partial Content"                 }, \
+         {300, "Code 300 - Multiple Choices"                }, \
+         {301, "Code 301 - Moved Permanently"               }, \
+         {302, "Code 302 - Found"                           }, \
+         {303, "Code 303 - See Other"                       }, \
+         {304, "Code 304 - Not Modified"                    }, \
+         {305, "Code 305 - Use Proxy"                       }, \
+         {307, "Code 307 - Moved Temporarily"               }, \
+         {400, "Code 400 - Bad Request"                     }, \
+         {401, "Code 401 - Unauthorized"                    }, \
+         {402, "Code 402 - Payment Required"                }, \
+         {403, "Code 403 - Forbidden"                       }, \
+         {404, "Code 404 - Not Found"                       }, \
+         {405, "Code 405 - Method Not Allowed"              }, \
+         {406, "Code 406 - Not Acceptable"                  }, \
+         {407, "Code 407 - Proxy Authentication Required"   }, \
+         {408, "Code 408 - Request Timeout"                 }, \
+         {409, "Code 409 - Conflict"                        }, \
+         {410, "Code 410 - Gone"                            }, \
+         {411, "Code 411 - Length Required"                 }, \
+         {412, "Code 412 - Precondition Failed"             }, \
+         {413, "Code 413 - Request Entity Too Large"        }, \
+         {414, "Code 414 - Request-URI Too Long"            }, \
+         {415, "Code 415 - Unsupported Media Type"          }, \
+         {416, "Code 416 - Requested Range Not Satisfiable" }, \
+         {417, "Code 417 - Expectation Failed"              }, \
+         {500, "Code 500 - Internal Server Error"           }, \
+         {501, "Code 501 - Not Implemented"                 }, \
+         {502, "Code 502 - Bad Gateway"                     }, \
+         {503, "Code 503 - Service Unavailable"             }, \
+         {504, "Code 504 - Gateway Timeout"                 }, \
          {505, "Code 505 - HTTP Version Not Supported"      } 
-};
 
 #define RESPCODE_ARRAY_SIZE sizeof(response)/sizeof(response[0])
 
-/* Country codes (previously in ctry.h header file) */
+/* Country codes */
 
-lang_t::country_t lang_t::ctry[] = {
-         {"*",         "Unresolved/Unknown"                },
-         {"com",       "US Commercial"                     },
-         {"edu",       "US Educational"                    },
-         {"gov",       "US Government"                     },
-         {"int",       "International"                     },
-         {"mil",       "US Military"                       },
-         {"net",       "Network"                           },
-         {"org",       "Non-Profit Organization"           },
-         {"arpa",      "Old style Arpanet (arpa)"          },
-         {"nato",      "Nato field (nato)"                 },
-         {"aero",      "Air Transport Industry"            },
-         {"coop",      "Cooperative Associations"          },
-         {"info",      "Generic Top-Level Domain"          },
-         {"museum",    "Museums"                           },
-         {"name",      "Personal"                          },
-         {"biz",       "Generic Businesses"                },
-         {"pro",       "Credentialed Professionals"        },
-         {"ac",        "Ascension Island"                  },
-         {"ad",        "Andorra"                           },
-         {"ae",        "United Arab Emirates"              },
-         {"af",        "Afghanistan"                       },
-         {"ag",        "Antigua and Barbuda"               },
-         {"ai",        "Anguilla"                          },
-         {"al",        "Albania"                           },
-         {"am",        "Armenia"                           },
-         {"an",        "Netherlands Antilles"              },
-         {"ao",        "Angola"                            },
-         {"aq",        "Antarctica"                        },
-         {"ar",        "Argentina"                         },
-         {"as",        "American Samoa"                    },
-         {"at",        "Austria"                           },
-         {"au",        "Australia"                         },
-         {"aw",        "Aruba"                             },
-         {"az",        "Azerbaijan"                        },
-         {"ax",        "Aland Islands"                     },
-         {"bl",        "Saint Barthelemy"                  },
-         {"ba",        "Bosnia and Herzegovina"            },
-         {"bb",        "Barbados"                          },
-         {"bd",        "Bangladesh"                        },
-         {"be",        "Belgium"                           },
-         {"bf",        "Burkina Faso"                      },
-         {"bg",        "Bulgaria"                          },
-         {"bh",        "Bahrain"                           },
-         {"bi",        "Burundi"                           },
-         {"bj",        "Benin"                             },
-         {"bm",        "Bermuda"                           },
-         {"bn",        "Brunei Darussalam"                 },
-         {"bo",        "Bolivia"                           },
-         {"br",        "Brazil"                            },
-         {"bs",        "Bahamas"                           },
-         {"bt",        "Bhutan"                            },
-         {"bv",        "Bouvet Island"                     },
-         {"bw",        "Botswana"                          },
-         {"by",        "Belarus"                           },
-         {"bz",        "Belize"                            },
-         {"ca",        "Canada"                            },
-         {"cc",        "Cocos (Keeling) Islands"           },
-         {"cd",        "Congo"                             },
-         {"cf",        "Central African Republic"          },
-         {"cg",        "Congo"                             },
-         {"ch",        "Switzerland"                       },
-         {"ci",        "Cote D'Ivoire (Ivory Coast)"       },
-         {"ck",        "Cook Islands"                      },
-         {"cl",        "Chile"                             },
-         {"cm",        "Cameroon"                          },
-         {"cn",        "China"                             },
-         {"co",        "Colombia"                          },
-         {"cr",        "Costa Rica"                        },
-         {"cs",        "Serbia and Montenegro"             },
-         {"cu",        "Cuba"                              },
-         {"cv",        "Cape Verde"                        },
-         {"cx",        "Christmas Island"                  },
-         {"cy",        "Cyprus"                            },
-         {"cz",        "Czech Republic"                    },
-         {"de",        "Germany"                           },
-         {"dj",        "Djibouti"                          },
-         {"dk",        "Denmark"                           },
-         {"dm",        "Dominica"                          },
-         {"do",        "Dominican Republic"                },
-         {"dz",        "Algeria"                           },
-         {"ec",        "Ecuador"                           },
-         {"ee",        "Estonia"                           },
-         {"eg",        "Egypt"                             },
-         {"eh",        "Western Sahara"                    },
-         {"er",        "Eritrea"                           },
-         {"es",        "Spain"                             },
-         {"et",        "Ethiopia"                          },
-         {"eu",        "European Union"                    },
-         {"fi",        "Finland"                           },
-         {"fj",        "Fiji"                              },
-         {"fk",        "Falkland Islands (Malvinas)"       },
-         {"fm",        "Micronesia"                        },
-         {"fo",        "Faroe Islands"                     },
-         {"fr",        "France"                            },
-         {"ga",        "Gabon"                             },
-         {"gb",        "United Kingdom"                    },
-         {"gd",        "Grenada"                           },
-         {"ge",        "Georgia"                           },
-         {"gf",        "French Guiana"                     },
-         {"gg",        "Guernsey"                          },
-         {"gh",        "Ghana"                             },
-         {"gi",        "Gibraltar"                         },
-         {"gl",        "Greenland"                         },
-         {"gm",        "Gambia"                            },
-         {"gn",        "Guinea"                            },
-         {"gp",        "Guadeloupe"                        },
-         {"gq",        "Equatorial Guinea"                 },
-         {"gr",        "Greece"                            },
-         {"gs",        "S. Georgia and S. Sandwich Isls."  },
-         {"gt",        "Guatemala"                         },
-         {"gu",        "Guam"                              },
-         {"gw",        "Guinea-Bissau"                     },
-         {"gy",        "Guyana"                            },
-         {"hk",        "Hong Kong"                         },
-         {"hm",        "Heard and McDonald Islands"        },
-         {"hn",        "Honduras"                          },
-         {"hr",        "Croatia"                           },
-         {"ht",        "Haiti"                             },
-         {"hu",        "Hungary"                           },
-         {"id",        "Indonesia"                         },
-         {"ie",        "Ireland"                           },
-         {"il",        "Israel"                            },
-         {"im",        "Isle of Man"                       },
-         {"in",        "India"                             },
-         {"io",        "British Indian Ocean Territory"    },
-         {"iq",        "Iraq"                              },
-         {"ir",        "Iran"                              },
-         {"is",        "Iceland"                           },
-         {"it",        "Italy"                             },
-         {"je",        "Jersey"                            },
-         {"jm",        "Jamaica"                           },
-         {"jo",        "Jordan"                            },
-         {"jp",        "Japan"                             },
-         {"ke",        "Kenya"                             },
-         {"kg",        "Kyrgyzstan"                        },
-         {"kh",        "Cambodia"                          },
-         {"ki",        "Kiribati"                          },
-         {"km",        "Comoros"                           },
-         {"kn",        "Saint Kitts and Nevis"             },
-         {"kp",        "Korea (North)"                     },
-         {"kr",        "Korea (South)"                     },
-         {"kw",        "Kuwait"                            },
-         {"ky",        "Cayman Islands"                    },
-         {"kz",        "Kazakhstan"                        },
-         {"la",        "Laos"                              },
-         {"lb",        "Lebanon"                           },
-         {"lc",        "Saint Lucia"                       },
-         {"li",        "Liechtenstein"                     },
-         {"lk",        "Sri Lanka"                         },
-         {"lr",        "Liberia"                           },
-         {"ls",        "Lesotho"                           },
-         {"lt",        "Lithuania"                         },
-         {"lu",        "Luxembourg"                        },
-         {"lv",        "Latvia"                            },
-         {"ly",        "Libya"                             },
-         {"ma",        "Morocco"                           },
-         {"mc",        "Monaco"                            },
-         {"md",        "Moldova"                           },
-         {"me",        "Montenegro"                        },
-         {"mf",        "Saint Martin"                      },
-         {"mg",        "Madagascar"                        },
-         {"mh",        "Marshall Islands"                  },
-         {"mk",        "Macedonia"                         },
-         {"ml",        "Mali"                              },
-         {"mm",        "Myanmar"                           },
-         {"mn",        "Mongolia"                          },
-         {"mo",        "Macao"                             },
-         {"mp",        "Northern Mariana Islands"          },
-         {"mq",        "Martinique"                        },
-         {"mr",        "Mauritania"                        },
-         {"ms",        "Montserrat"                        },
-         {"mt",        "Malta"                             },
-         {"mu",        "Mauritius"                         },
-         {"mv",        "Maldives"                          },
-         {"mw",        "Malawi"                            },
-         {"mx",        "Mexico"                            },
-         {"my",        "Malaysia"                          },
-         {"mz",        "Mozambique"                        },
-         {"na",        "Namibia"                           },
-         {"nc",        "New Caledonia"                     },
-         {"ne",        "Niger"                             },
-         {"nf",        "Norfolk Island"                    },
-         {"ng",        "Nigeria"                           },
-         {"ni",        "Nicaragua"                         },
-         {"nl",        "Netherlands"                       },
-         {"no",        "Norway"                            },
-         {"np",        "Nepal"                             },
-         {"nr",        "Nauru"                             },
-         {"nu",        "Niue"                              },
-         {"nz",        "New Zealand"                       },
-         {"om",        "Oman"                              },
-         {"pa",        "Panama"                            },
-         {"pe",        "Peru"                              },
-         {"pf",        "French Polynesia"                  },
-         {"pg",        "Papua New Guinea"                  },
-         {"ph",        "Philippines"                       },
-         {"pk",        "Pakistan"                          },
-         {"pl",        "Poland"                            },
-         {"pm",        "St. Pierre and Miquelon"           },
-         {"pn",        "Pitcairn"                          },
-         {"pr",        "Puerto Rico"                       },
-         {"ps",        "Palestinian Territories"           },
-         {"pt",        "Portugal"                          },
-         {"pw",        "Palau"                             },
-         {"py",        "Paraguay"                          },
-         {"qa",        "Qatar"                             },
-         {"re",        "Reunion"                           },
-         {"ro",        "Romania"                           },
-         {"rs",        "Serbia"                            },
-         {"ru",        "Russian Federation"                },
-         {"rw",        "Rwanda"                            },
-         {"sa",        "Saudi Arabia"                      },
-         {"sb",        "Solomon Islands"                   },
-         {"sc",        "Seychelles"                        },
-         {"sd",        "Sudan"                             },
-         {"se",        "Sweden"                            },
-         {"sg",        "Singapore"                         },
-         {"sh",        "St. Helena"                        },
-         {"si",        "Slovenia"                          },
-         {"sj",        "Svalbard and Jan Mayen Islands"    },
-         {"sk",        "Slovak Republic"                   },
-         {"sl",        "Sierra Leone"                      },
-         {"sm",        "San Marino"                        },
-         {"sn",        "Senegal"                           },
-         {"so",        "Somalia"                           },
-         {"sr",        "Suriname"                          },
-         {"st",        "Sao Tome and Principe"             },
-         {"su",        "USSR (former)"                     },
-         {"sv",        "El Salvador"                       },
-         {"sy",        "Syria"                             },
-         {"sz",        "Swaziland"                         },
-         {"tc",        "Turks and Caicos Islands"          },
-         {"td",        "Chad"                              },
-         {"tf",        "French Southern Territories"       },
-         {"tg",        "Togo"                              },
-         {"th",        "Thailand"                          },
-         {"tj",        "Tajikistan"                        },
-         {"tk",        "Tokelau"                           },
-         {"tl",        "Timor-Leste"                       },
-         {"tm",        "Turkmenistan"                      },
-         {"tn",        "Tunisia"                           },
-         {"to",        "Tonga"                             },
-         {"tp",        "East Timor"                        },
-         {"tr",        "Turkey"                            },
-         {"tt",        "Trinidad and Tobago"               },
-         {"tv",        "Tuvalu"                            },
-         {"tw",        "Taiwan"                            },
-         {"tz",        "Tanzania"                          },
-         {"ua",        "Ukraine"                           },
-         {"ug",        "Uganda"                            },
-         {"uk",        "United Kingdom"                    },
-         {"um",        "US Minor Outlying Islands"         },
-         {"us",        "United States"                     },
-         {"uy",        "Uruguay"                           },
-         {"uz",        "Uzbekistan"                        },
-         {"va",        "Vatican City State (Holy See)"     },
-         {"vc",        "Saint Vincent and the Grenadines"  },
-         {"ve",        "Venezuela"                         },
-         {"vg",        "Virgin Islands (British)"          },
-         {"vi",        "Virgin Islands (U.S.)"             },
-         {"vn",        "Viet Nam"                          },
-         {"vu",        "Vanuatu"                           },
-         {"wf",        "Wallis and Futuna Islands"         },
-         {"ws",        "Samoa"                             },
-         {"ye",        "Yemen"                             },
-         {"yt",        "Mayotte"                           },
-         {"yu",        "Yugoslavia"                        },
-         {"za",        "South Africa"                      },
-         {"zm",        "Zambia"                            },
-         {"zw",        "Zimbabwe"                          },
+#define COUNTRY_INIT \
+         {"*",         "Unresolved/Unknown"                }, \
+         {"com",       "US Commercial"                     }, \
+         {"edu",       "US Educational"                    }, \
+         {"gov",       "US Government"                     }, \
+         {"int",       "International"                     }, \
+         {"mil",       "US Military"                       }, \
+         {"net",       "Network"                           }, \
+         {"org",       "Non-Profit Organization"           }, \
+         {"arpa",      "Old style Arpanet (arpa)"          }, \
+         {"nato",      "Nato field (nato)"                 }, \
+         {"aero",      "Air Transport Industry"            }, \
+         {"coop",      "Cooperative Associations"          }, \
+         {"info",      "Generic Top-Level Domain"          }, \
+         {"museum",    "Museums"                           }, \
+         {"name",      "Personal"                          }, \
+         {"biz",       "Generic Businesses"                }, \
+         {"pro",       "Credentialed Professionals"        }, \
+         {"ac",        "Ascension Island"                  }, \
+         {"ad",        "Andorra"                           }, \
+         {"ae",        "United Arab Emirates"              }, \
+         {"af",        "Afghanistan"                       }, \
+         {"ag",        "Antigua and Barbuda"               }, \
+         {"ai",        "Anguilla"                          }, \
+         {"al",        "Albania"                           }, \
+         {"am",        "Armenia"                           }, \
+         {"an",        "Netherlands Antilles"              }, \
+         {"ao",        "Angola"                            }, \
+         {"aq",        "Antarctica"                        }, \
+         {"ar",        "Argentina"                         }, \
+         {"as",        "American Samoa"                    }, \
+         {"at",        "Austria"                           }, \
+         {"au",        "Australia"                         }, \
+         {"aw",        "Aruba"                             }, \
+         {"az",        "Azerbaijan"                        }, \
+         {"ax",        "Aland Islands"                     }, \
+         {"bl",        "Saint Barthelemy"                  }, \
+         {"ba",        "Bosnia and Herzegovina"            }, \
+         {"bb",        "Barbados"                          }, \
+         {"bd",        "Bangladesh"                        }, \
+         {"be",        "Belgium"                           }, \
+         {"bf",        "Burkina Faso"                      }, \
+         {"bg",        "Bulgaria"                          }, \
+         {"bh",        "Bahrain"                           }, \
+         {"bi",        "Burundi"                           }, \
+         {"bj",        "Benin"                             }, \
+         {"bm",        "Bermuda"                           }, \
+         {"bn",        "Brunei Darussalam"                 }, \
+         {"bo",        "Bolivia"                           }, \
+         {"br",        "Brazil"                            }, \
+         {"bs",        "Bahamas"                           }, \
+         {"bt",        "Bhutan"                            }, \
+         {"bv",        "Bouvet Island"                     }, \
+         {"bw",        "Botswana"                          }, \
+         {"by",        "Belarus"                           }, \
+         {"bz",        "Belize"                            }, \
+         {"ca",        "Canada"                            }, \
+         {"cc",        "Cocos (Keeling) Islands"           }, \
+         {"cd",        "Congo"                             }, \
+         {"cf",        "Central African Republic"          }, \
+         {"cg",        "Congo"                             }, \
+         {"ch",        "Switzerland"                       }, \
+         {"ci",        "Cote D'Ivoire (Ivory Coast)"       }, \
+         {"ck",        "Cook Islands"                      }, \
+         {"cl",        "Chile"                             }, \
+         {"cm",        "Cameroon"                          }, \
+         {"cn",        "China"                             }, \
+         {"co",        "Colombia"                          }, \
+         {"cr",        "Costa Rica"                        }, \
+         {"cs",        "Serbia and Montenegro"             }, \
+         {"cu",        "Cuba"                              }, \
+         {"cv",        "Cape Verde"                        }, \
+         {"cx",        "Christmas Island"                  }, \
+         {"cy",        "Cyprus"                            }, \
+         {"cz",        "Czech Republic"                    }, \
+         {"de",        "Germany"                           }, \
+         {"dj",        "Djibouti"                          }, \
+         {"dk",        "Denmark"                           }, \
+         {"dm",        "Dominica"                          }, \
+         {"do",        "Dominican Republic"                }, \
+         {"dz",        "Algeria"                           }, \
+         {"ec",        "Ecuador"                           }, \
+         {"ee",        "Estonia"                           }, \
+         {"eg",        "Egypt"                             }, \
+         {"eh",        "Western Sahara"                    }, \
+         {"er",        "Eritrea"                           }, \
+         {"es",        "Spain"                             }, \
+         {"et",        "Ethiopia"                          }, \
+         {"eu",        "European Union"                    }, \
+         {"fi",        "Finland"                           }, \
+         {"fj",        "Fiji"                              }, \
+         {"fk",        "Falkland Islands (Malvinas)"       }, \
+         {"fm",        "Micronesia"                        }, \
+         {"fo",        "Faroe Islands"                     }, \
+         {"fr",        "France"                            }, \
+         {"ga",        "Gabon"                             }, \
+         {"gb",        "United Kingdom"                    }, \
+         {"gd",        "Grenada"                           }, \
+         {"ge",        "Georgia"                           }, \
+         {"gf",        "French Guiana"                     }, \
+         {"gg",        "Guernsey"                          }, \
+         {"gh",        "Ghana"                             }, \
+         {"gi",        "Gibraltar"                         }, \
+         {"gl",        "Greenland"                         }, \
+         {"gm",        "Gambia"                            }, \
+         {"gn",        "Guinea"                            }, \
+         {"gp",        "Guadeloupe"                        }, \
+         {"gq",        "Equatorial Guinea"                 }, \
+         {"gr",        "Greece"                            }, \
+         {"gs",        "S. Georgia and S. Sandwich Isls."  }, \
+         {"gt",        "Guatemala"                         }, \
+         {"gu",        "Guam"                              }, \
+         {"gw",        "Guinea-Bissau"                     }, \
+         {"gy",        "Guyana"                            }, \
+         {"hk",        "Hong Kong"                         }, \
+         {"hm",        "Heard and McDonald Islands"        }, \
+         {"hn",        "Honduras"                          }, \
+         {"hr",        "Croatia"                           }, \
+         {"ht",        "Haiti"                             }, \
+         {"hu",        "Hungary"                           }, \
+         {"id",        "Indonesia"                         }, \
+         {"ie",        "Ireland"                           }, \
+         {"il",        "Israel"                            }, \
+         {"im",        "Isle of Man"                       }, \
+         {"in",        "India"                             }, \
+         {"io",        "British Indian Ocean Territory"    }, \
+         {"iq",        "Iraq"                              }, \
+         {"ir",        "Iran"                              }, \
+         {"is",        "Iceland"                           }, \
+         {"it",        "Italy"                             }, \
+         {"je",        "Jersey"                            }, \
+         {"jm",        "Jamaica"                           }, \
+         {"jo",        "Jordan"                            }, \
+         {"jp",        "Japan"                             }, \
+         {"ke",        "Kenya"                             }, \
+         {"kg",        "Kyrgyzstan"                        }, \
+         {"kh",        "Cambodia"                          }, \
+         {"ki",        "Kiribati"                          }, \
+         {"km",        "Comoros"                           }, \
+         {"kn",        "Saint Kitts and Nevis"             }, \
+         {"kp",        "Korea (North)"                     }, \
+         {"kr",        "Korea (South)"                     }, \
+         {"kw",        "Kuwait"                            }, \
+         {"ky",        "Cayman Islands"                    }, \
+         {"kz",        "Kazakhstan"                        }, \
+         {"la",        "Laos"                              }, \
+         {"lb",        "Lebanon"                           }, \
+         {"lc",        "Saint Lucia"                       }, \
+         {"li",        "Liechtenstein"                     }, \
+         {"lk",        "Sri Lanka"                         }, \
+         {"lr",        "Liberia"                           }, \
+         {"ls",        "Lesotho"                           }, \
+         {"lt",        "Lithuania"                         }, \
+         {"lu",        "Luxembourg"                        }, \
+         {"lv",        "Latvia"                            }, \
+         {"ly",        "Libya"                             }, \
+         {"ma",        "Morocco"                           }, \
+         {"mc",        "Monaco"                            }, \
+         {"md",        "Moldova"                           }, \
+         {"me",        "Montenegro"                        }, \
+         {"mf",        "Saint Martin"                      }, \
+         {"mg",        "Madagascar"                        }, \
+         {"mh",        "Marshall Islands"                  }, \
+         {"mk",        "Macedonia"                         }, \
+         {"ml",        "Mali"                              }, \
+         {"mm",        "Myanmar"                           }, \
+         {"mn",        "Mongolia"                          }, \
+         {"mo",        "Macao"                             }, \
+         {"mp",        "Northern Mariana Islands"          }, \
+         {"mq",        "Martinique"                        }, \
+         {"mr",        "Mauritania"                        }, \
+         {"ms",        "Montserrat"                        }, \
+         {"mt",        "Malta"                             }, \
+         {"mu",        "Mauritius"                         }, \
+         {"mv",        "Maldives"                          }, \
+         {"mw",        "Malawi"                            }, \
+         {"mx",        "Mexico"                            }, \
+         {"my",        "Malaysia"                          }, \
+         {"mz",        "Mozambique"                        }, \
+         {"na",        "Namibia"                           }, \
+         {"nc",        "New Caledonia"                     }, \
+         {"ne",        "Niger"                             }, \
+         {"nf",        "Norfolk Island"                    }, \
+         {"ng",        "Nigeria"                           }, \
+         {"ni",        "Nicaragua"                         }, \
+         {"nl",        "Netherlands"                       }, \
+         {"no",        "Norway"                            }, \
+         {"np",        "Nepal"                             }, \
+         {"nr",        "Nauru"                             }, \
+         {"nu",        "Niue"                              }, \
+         {"nz",        "New Zealand"                       }, \
+         {"om",        "Oman"                              }, \
+         {"pa",        "Panama"                            }, \
+         {"pe",        "Peru"                              }, \
+         {"pf",        "French Polynesia"                  }, \
+         {"pg",        "Papua New Guinea"                  }, \
+         {"ph",        "Philippines"                       }, \
+         {"pk",        "Pakistan"                          }, \
+         {"pl",        "Poland"                            }, \
+         {"pm",        "St. Pierre and Miquelon"           }, \
+         {"pn",        "Pitcairn"                          }, \
+         {"pr",        "Puerto Rico"                       }, \
+         {"ps",        "Palestinian Territories"           }, \
+         {"pt",        "Portugal"                          }, \
+         {"pw",        "Palau"                             }, \
+         {"py",        "Paraguay"                          }, \
+         {"qa",        "Qatar"                             }, \
+         {"re",        "Reunion"                           }, \
+         {"ro",        "Romania"                           }, \
+         {"rs",        "Serbia"                            }, \
+         {"ru",        "Russian Federation"                }, \
+         {"rw",        "Rwanda"                            }, \
+         {"sa",        "Saudi Arabia"                      }, \
+         {"sb",        "Solomon Islands"                   }, \
+         {"sc",        "Seychelles"                        }, \
+         {"sd",        "Sudan"                             }, \
+         {"se",        "Sweden"                            }, \
+         {"sg",        "Singapore"                         }, \
+         {"sh",        "St. Helena"                        }, \
+         {"si",        "Slovenia"                          }, \
+         {"sj",        "Svalbard and Jan Mayen Islands"    }, \
+         {"sk",        "Slovak Republic"                   }, \
+         {"sl",        "Sierra Leone"                      }, \
+         {"sm",        "San Marino"                        }, \
+         {"sn",        "Senegal"                           }, \
+         {"so",        "Somalia"                           }, \
+         {"sr",        "Suriname"                          }, \
+         {"st",        "Sao Tome and Principe"             }, \
+         {"su",        "USSR (former)"                     }, \
+         {"sv",        "El Salvador"                       }, \
+         {"sy",        "Syria"                             }, \
+         {"sz",        "Swaziland"                         }, \
+         {"tc",        "Turks and Caicos Islands"          }, \
+         {"td",        "Chad"                              }, \
+         {"tf",        "French Southern Territories"       }, \
+         {"tg",        "Togo"                              }, \
+         {"th",        "Thailand"                          }, \
+         {"tj",        "Tajikistan"                        }, \
+         {"tk",        "Tokelau"                           }, \
+         {"tl",        "Timor-Leste"                       }, \
+         {"tm",        "Turkmenistan"                      }, \
+         {"tn",        "Tunisia"                           }, \
+         {"to",        "Tonga"                             }, \
+         {"tp",        "East Timor"                        }, \
+         {"tr",        "Turkey"                            }, \
+         {"tt",        "Trinidad and Tobago"               }, \
+         {"tv",        "Tuvalu"                            }, \
+         {"tw",        "Taiwan"                            }, \
+         {"tz",        "Tanzania"                          }, \
+         {"ua",        "Ukraine"                           }, \
+         {"ug",        "Uganda"                            }, \
+         {"uk",        "United Kingdom"                    }, \
+         {"um",        "US Minor Outlying Islands"         }, \
+         {"us",        "United States"                     }, \
+         {"uy",        "Uruguay"                           }, \
+         {"uz",        "Uzbekistan"                        }, \
+         {"va",        "Vatican City State (Holy See)"     }, \
+         {"vc",        "Saint Vincent and the Grenadines"  }, \
+         {"ve",        "Venezuela"                         }, \
+         {"vg",        "Virgin Islands (British)"          }, \
+         {"vi",        "Virgin Islands (U.S.)"             }, \
+         {"vn",        "Viet Nam"                          }, \
+         {"vu",        "Vanuatu"                           }, \
+         {"wf",        "Wallis and Futuna Islands"         }, \
+         {"ws",        "Samoa"                             }, \
+         {"ye",        "Yemen"                             }, \
+         {"yt",        "Mayotte"                           }, \
+         {"yu",        "Yugoslavia"                        }, \
+         {"za",        "South Africa"                      }, \
+         {"zm",        "Zambia"                            }, \
+         {"zw",        "Zimbabwe"                          }, \
          {NULL,        NULL                                }
-};
 
 #define CCODE_ARRAY_SIZE (sizeof(ctry)/sizeof(ctry[0])-1)
 
@@ -498,7 +498,13 @@ const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t
 //
 // -----------------------------------------------------------------------
 
-lang_t::lang_t(void)
+lang_t::lang_t(void) :
+   h_msg {H_MSG_INIT},
+   s_month {S_MONTH_INIT},
+   l_month {L_MONTH_INIT},
+   msg_unit_pfx {UNIT_PFX_INIT},
+   response {HTTP_RESP_INIT},
+   ctry {COUNTRY_INIT}
 {
    lang_buffer = NULL;
 
@@ -767,6 +773,9 @@ lang_t::lang_t(void)
    msg_dns_htrt= "DNS cache hit ratio";
    msg_dns_geoe= "Cannot open GeoIP database";
    msg_dns_useg= "Using GeoIP database";
+
+   h_usage1 = "Usage";
+   h_usage2 = "[options] [log file [[ log file] ...] | report database]";
 }
 
 lang_t::~lang_t(void)
