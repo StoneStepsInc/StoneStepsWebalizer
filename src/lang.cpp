@@ -1317,6 +1317,31 @@ void lang_t::report_lang_fname(void) const
       printf("%s %s\n", msg_use_lang, lang_fname.c_str());
 }
 
+bool lang_t::check_language(const char *lc1, const char *lc2)
+{
+   while(*lc1 && *lc2 && 
+         ((*lc1 == '-' || *lc1 == '_') && (*lc2 == '-' || *lc2 == '_') ||
+            string_t::tolower(*lc1) == string_t::tolower(*lc2))) {
+      lc1++;
+      lc2++;
+   }
+
+   return *lc1 == *lc2;
+}
+
+bool lang_t::check_language(const char *lc1, const char *lc2, size_t slen)
+{
+   while(*lc1 && *lc2 && slen &&
+         ((*lc1 == '-' || *lc1 == '_') && (*lc2 == '-' || *lc2 == '_') ||
+            string_t::tolower(*lc1) == string_t::tolower(*lc2))) {
+      slen--;
+      lc1++;
+      lc2++;
+   }
+
+   return !slen || *lc1 == *lc2;
+}
+
 //
 // instantiate language node and hash table
 //

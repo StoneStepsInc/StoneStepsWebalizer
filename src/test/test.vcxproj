@@ -144,6 +144,7 @@
     <ClCompile Include="ut_formatter.cpp" />
     <ClCompile Include="ut_hostname.cpp" />
     <ClCompile Include="ut_ipaddr.cpp" />
+    <ClCompile Include="ut_lang.cpp" />
     <ClCompile Include="ut_normurl.cpp" />
     <ClCompile Include="ut_strcmp.cpp" />
     <ClCompile Include="ut_strfmt.cpp" />
@@ -170,6 +171,14 @@
     </Object>
     <Object Include="..\..\build\Win32\Debug\obj\formatter.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\hashtab.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\lang.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\..\build\Win32\Debug\obj\p2_buffer_allocator.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -212,6 +221,14 @@
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\formatter.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\hashtab.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\lang.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\pch.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

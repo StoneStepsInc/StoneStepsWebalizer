@@ -47,6 +47,9 @@
     <ClCompile Include="ut_normurl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_lang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -134,6 +137,18 @@
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\cp1252.obj">
       <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\lang.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\lang.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\hashtab.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\hashtab.obj">
+      <Filter>obj\Debug</Filter>
     </Object>
   </ItemGroup>
 </Project>
