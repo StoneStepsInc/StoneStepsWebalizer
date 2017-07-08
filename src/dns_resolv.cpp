@@ -671,19 +671,23 @@ bool dns_resolver_t::dns_init(void)
       geoip_db = &mmdb;
 
       //
-      // Find out if there is a suitable language in the list of languages provided in 
-      // the GeoIP database. Stop looking if we found an exact match (e.g. pt-br or en).
-      // If we only found a partial match (e.g. zh in zh-cn), hold onto the language 
-      // code and keep looking. If we didn't find a matching language, but there is 
-      // English available, use it.
+      // Find out if there is a suitable language in the list of languages provided in the 
+      // GeoIP database. Stop looking if we found an exact match (e.g. pt-br or en). If a 
+      // partial match is found (e.g. zh in zh-cn), hold onto the GeoIP language code and 
+      // keep looking. Every subsequent partial match is taken only if it's shorter than 
+      // the previous match. In other words, the first of equal-length matches (e.g. en-us 
+      // out of en-us, en-uk) or the first shorter partial match (e.g. en out of en-us, en, 
+      // en-uk) wins. If we didn't find a matching language, but there is English available, 
+      // use it.
       //
       for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
          if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code)) {
             geoip_language.assign(mmdb.metadata.languages.names[i]);
             break;
          }
-         else if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code, 2))
-            geoip_language.assign(config.lang.language_code, 2);
+         else if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code, 2) &&
+                  (!lang_t::check_language(geoip_language, config.lang.language_code, 2) || strlen(mmdb.metadata.languages.names[i]) < geoip_language.length()))
+            geoip_language.assign(mmdb.metadata.languages.names[i]);
          else if(geoip_language.isempty() && lang_t::check_language(mmdb.metadata.languages.names[i], "en"))
             geoip_language.assign("en", 2);
       }
