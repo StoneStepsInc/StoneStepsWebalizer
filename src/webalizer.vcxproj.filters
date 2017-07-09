@@ -44,6 +44,12 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{611c384c-bedb-4ce2-9901-8aa6384a8861}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\util\3rd-party">
+      <UniqueIdentifier>{3cec164b-e3eb-40cd-b2db-fa270b8b2d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util\3rd-party">
+      <UniqueIdentifier>{ad756fb4-db36-441e-9e99-32ea1fa376cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp">
@@ -229,6 +235,9 @@
     <ClCompile Include="cp1252.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="hckdel.cpp">
+      <Filter>Source Files\util\3rd-party</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -395,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="p2_buffer_allocator.h">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="hckdel.h">
+      <Filter>Header Files\util\3rd-party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

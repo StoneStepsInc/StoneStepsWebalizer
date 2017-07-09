@@ -150,5 +150,11 @@
     <Object Include="..\..\build\Win32\Debug\obj\hashtab.obj">
       <Filter>obj\Debug</Filter>
     </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\hckdel.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\hckdel.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
   </ItemGroup>
 </Project>

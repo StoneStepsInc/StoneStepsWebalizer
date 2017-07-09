@@ -138,9 +138,6 @@ inline double AVG2(double a1, uint64_t n1, double a2, uint64_t n2) {return a1+(a
 inline double PCENT(double val, double max) {return max ? (val/max)*100.0 : 0.0;}
 inline double PCENT(uint64_t val, uint64_t max) {return PCENT((double) val, (double) max);}
 
-uint32_t ceilp2(uint32_t x);
-uint32_t tzbits(uint32_t x);
-
 uint64_t usec2msec(uint64_t usec);
 
 bool is_http_redirect(size_t respcode);
