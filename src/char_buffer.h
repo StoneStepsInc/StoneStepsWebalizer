@@ -172,7 +172,9 @@ class char_buffer_allocator_tmpl {
 //
 // Note that the life of a temporary object bound to a reference to a return value
 // of a method is not extended beyond the end of the expression, which means that 
-// the buffer data member must be accessed directly for this to work.
+// the buffer data member must be accessed directly for this to work. This is also
+// the reason convenience member functions, such as a buffer reference operator, 
+// should not be defined for the buffer holder class.
 //
 // VC++ 2013 fails to recognize that the reference is bound to a subobject of a 
 // temporary and destroys the buffer holder and the buffer at the end of the line. 
@@ -199,7 +201,7 @@ class char_buffer_holder_tmpl {
 
       char_buffer_holder_tmpl& operator = (char_buffer_holder_tmpl&&) = delete;
 
-      // see notes in the class definition
+      // deleted for visibility (see notes above the class definition)
       operator char_buffer_base<char_t>&& (void) = delete;
 };
 
