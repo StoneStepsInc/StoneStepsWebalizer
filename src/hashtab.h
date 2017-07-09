@@ -188,7 +188,7 @@ class hash_table {
 
       bool swap_out_bucket(bucket_t& bucket);
 
-      virtual bool compare(const node_t *nptr, typename const node_t::param_block *params) const 
+      virtual bool compare(const node_t *nptr, const typename node_t::param_block *params) const 
       {
          throw std::logic_error("This node type does not support searches with compound keys");
       }
@@ -249,7 +249,7 @@ class hash_table {
 
       node_t *find_node(uint64_t hashval, const key_t& str, nodetype_t type);
 
-      node_t *find_node(uint64_t hashval, typename const node_t::param_block *params);
+      node_t *find_node(uint64_t hashval, const typename node_t::param_block *params);
 
       node_t *put_node(const key_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
 

@@ -207,7 +207,7 @@ node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key,
 }
 
 template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, typename const node_t::param_block *params)
+node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const typename node_t::param_block *params)
 {
    node_t **pptr, *nptr, *prev = NULL;
 
