@@ -1264,7 +1264,7 @@ void html_output_t::top_hosts_table(int flag)
            hptr->visit_avg/60., hptr->visit_max/60.);
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", cdesc);
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>\n", hptr->ccode, cdesc);
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", hptr->city.c_str());
       }
@@ -2059,7 +2059,7 @@ void html_output_t::top_dl_table(void)
           nptr->string.c_str());
 
       if(config.ntop_ctrys) { 
-         fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", cdesc);
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>", nptr->hnode ? nptr->hnode->ccode : "", cdesc);
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? nptr->hnode->city.c_str() : "");
       }
@@ -3122,7 +3122,7 @@ void html_output_t::top_ctry_table()
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
               "<td>%" PRIu64 "</td>\n" \
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td class=\"stats_data_item_td\">%s</td></tr>\n",
+              "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td></tr>\n",
               i+1, ccarray[i]->count,
               (t_hit==0)?0:((double)ccarray[i]->count/t_hit)*100.0,
               ccarray[i]->files,
@@ -3133,6 +3133,7 @@ void html_output_t::top_ctry_table()
               (t_xfer==0)?0:(ccarray[i]->xfer/t_xfer)*100.0,
               ccarray[i]->visits,
               (t_visits==0)?0:((double)ccarray[i]->visits/t_visits)*100.0,
+              ccarray[i]->ccode.c_str(),
               ccarray[i]->cdesc.c_str());
       }
    }
