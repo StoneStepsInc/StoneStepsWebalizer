@@ -120,9 +120,6 @@ const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
 
 void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
 {
-   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-   fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_%s.js\"></script>\n", html_encode(config.html_js_path.c_str()), html_encode(config.js_charts.c_str()));
-
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
          // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
@@ -134,6 +131,9 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
       for(std::vector<string_t>::const_iterator i = config.js_charts_paths.begin(); i != config.js_charts_paths.end(); i++)
          fprintf(out_fp, "<script type=\"text/javascript\" src=\"%s\"></script>\n", html_encode(i->c_str()));
    }
+
+   buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+   fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_%s.js\"></script>\n", html_encode(config.html_js_path.c_str()), html_encode(config.js_charts.c_str()));
 
    // output the script block for JavaScripts charts
    fputs("<script type=\"text/javascript\">\n", out_fp);
