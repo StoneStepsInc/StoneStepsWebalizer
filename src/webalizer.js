@@ -770,10 +770,16 @@ function getCountryUsageData(version, total_visits)
    if(version < 1)
       return usage;
 
-   if(version < layouts.length)
-      layout = layouts[version-1];
-   else
-      layout = layouts[layouts.length-1];
+   // pick the column layout for the given version of the report
+   switch(version) {
+      case 1:
+         layout = layouts[0];
+         break;
+      case 2:
+      case 3:
+         layout = layouts[1];
+         break;
+   }
 
    rows = getTableDataRows("country_usage_table");
 
