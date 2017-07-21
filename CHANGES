@@ -1,4 +1,10 @@
 --------------------------------------------------------------------
+4.3.0.x [xx-xxx-2017] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * Implemented JavaScript country chart rendered as a world map using Highmaps (JavaScriptChartsMap)
+ * Added latitude and longitude to IP addresses in the hosts report
+
+--------------------------------------------------------------------
 4.2.1.18 [28-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Added DNSLookups configuration variable to use the DNS database as a generic host database (e.g. track spammers)
