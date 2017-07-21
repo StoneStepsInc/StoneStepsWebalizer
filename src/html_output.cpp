@@ -124,6 +124,11 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
       if(config.js_charts == "highcharts") {
          // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
          fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/stock/4.2/highstock.js\"></script>\n", out_fp);
+
+         if(config.js_charts_map) {
+            fputs("<script src=\"https://code.highcharts.com/maps/4.2/modules/map.js\"></script>\n", out_fp);
+            fputs("<script src=\"https://code.highcharts.com/mapdata/1.1/custom/world.js\"></script>\n", out_fp);
+         }
       }
    }
    else {
@@ -333,8 +338,9 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    // Versions:
    //    v2    - added a column for page counts
    //    v3    - added the data-xfer attribute
+   //    v4    - added the data-ccode attribute
    //
-   fputs("   var country_usage_chart = new CountryUsageChart(3, config, {\n", out_fp);
+   fputs("   var country_usage_chart = new CountryUsageChart(4, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -346,7 +352,11 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    fputs("      }\n", out_fp);
    fputs("   });\n\n", out_fp);
 
-   fputs("   renderCountryUsageChart(country_usage_chart);\n", out_fp);
+   if(config.js_charts_map)
+      fputs("   renderCountryUsageChartMap(country_usage_chart);\n", out_fp);
+   else
+      fputs("   renderCountryUsageChart(country_usage_chart);\n", out_fp);
+
    fputs("}\n", out_fp);
 }
 

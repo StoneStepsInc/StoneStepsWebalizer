@@ -193,6 +193,7 @@ config_t::config_t(void)
    verbose = 2;
    debug_mode = 0;
 
+   js_charts_map = false;
 }
 
 config_t::~config_t(void)
@@ -669,7 +670,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 190; empty slots: 38 
+                     // max key: 190; empty slots:  
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -812,6 +813,7 @@ void config_t::get_config(const char *fname)
                      {"Incremental",         37},           // Incremental runs
                      {"IndexAlias",          20},           // Aliases for index.html
                      {"JavaScriptCharts",    99},           // JavaScript charts package name
+                     {"JavaScriptChartsMap", 38},           // Render country chart as a world map?
                      {"JavaScriptChartsPath",189},          // Alternative JavaScript charts path
                      {"LanguageFile",        90},           // Language file
                      {"LocalUTCOffset",      188},          // Do not use local UTC offset?
@@ -971,6 +973,7 @@ void config_t::get_config(const char *fname)
          case 35: shade_groups=(string_t::tolower(value[0])=='y'); break;   // GroupShading
          case 36: hlite_groups=(string_t::tolower(value[0])=='y'); break;   // GroupHighlight
          case 37: incremental=(value[0]=='y')?true:false; break;  // Incremental
+         case 38: js_charts_map = string_t::tolower(*value) == 'y'; break;
          case 39: hist_fname=value; break;                        // History FName
          case 40: html_ext=value; break;                          // HTML extension
          case 41: html_pre.add_nlist(value); break;               // HTML Pre code

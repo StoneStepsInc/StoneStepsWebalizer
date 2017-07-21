@@ -251,6 +251,7 @@ class config_t {
       string_t help_xml;                         // content of the XML help file
       
       string_t graph_type;                       // graph type (PNG, Flash-OFC, etc)
+      bool js_charts_map;                        // render country chart as a world map?
       string_t js_charts;                        // empty, Highcharts
       std::vector<string_t> js_charts_paths;     // alternative JavaScript charts framework paths
       

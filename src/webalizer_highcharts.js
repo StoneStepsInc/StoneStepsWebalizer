@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information     
    
-	webalizer_highcharts.js
+   webalizer_highcharts.js
 */
 
 //
@@ -33,6 +33,22 @@ function getCountryUsageData_Highcharts(country_usage)
 
    for(var i = 0; i < country_usage.getValueCount(); i++) {
       series.push({name: country_usage.getLabel(i), y: country_usage.getVisits(i)});
+   }
+
+   return series;
+}
+
+function getCountryUsageData_HighchartsMap(country_usage)
+{
+   var series = [];
+
+   for(var i = 0; i < country_usage.getValueCount(); i++) {
+      // do not push the roll-up slice into the map data array
+      if(country_usage.getCCode(i).length)
+         // Highmaps expects countr codes in upper case
+         series.push({ccode: country_usage.getCCode(i).toUpperCase(), 
+                      value: country_usage.getVisits(i), 
+                      color: country_usage.getColor(i)});
    }
 
    return series;
@@ -150,7 +166,7 @@ function setupCharts(config)
 {
    Highcharts.setOptions({
       lang: {
-         thousandsSep: "",             // disable the default separtor (a space)
+         thousandsSep: "",             // disable the default separator (a space)
          numericSymbols: null          // disable numeric suffixes (kilo, mega, etc)
       }
    });
@@ -529,7 +545,7 @@ function renderHourlyUsageChart(hourly_usage)
 function renderCountryUsageChart(country_usage)
 {
    var country_usage_chart_options = {
-      chart: {
+         chart: {
          animation: false,
          backgroundColor: country_usage.config.background_color,
          shadow: false
@@ -594,6 +610,76 @@ function renderCountryUsageChart(country_usage)
 
 
    Highcharts.chart("country_usage_chart", country_usage_chart_options);
+}
+
+function renderCountryUsageChartMap(country_usage)
+{
+   var country_usage_chart_options = {
+      chart: {
+         animation: false,
+         backgroundColor: country_usage.config.background_color,
+         shadow: false
+      },
+      title: {
+         align: "center",
+         text: country_usage.chart.title,
+         style: {
+            color: country_usage.config.title_color,
+            fontSize: "16px"
+         }
+      },
+      legend: {
+         enabled: false
+      },
+      mapNavigation: {
+         enabled: true,
+         buttonOptions: {
+            verticalAlign: "bottom"
+         }
+      },
+      plotOptions: {
+         map: {
+            allAreas: true,
+            shadow: false
+         }
+      },
+      tooltip: {
+         useHTML: true,                         // cannot be set in the series tooltip
+      },
+      series: [{
+         type: "map",
+         mapData: Highcharts.maps["custom/world"],
+         joinBy: ["iso-a2", "ccode"],
+         showInLegend: false,                   // use tooltips instead
+         borderColor: "black",
+         name: country_usage.chart.seriesNames.visits,
+         data: getCountryUsageData_HighchartsMap(country_usage),
+         dataLabels: {
+            enabled: true,
+            reserveSpace: true,
+         },
+         tooltip: {
+            animation: false,
+            borderWidth: 1,
+            followPointer: true,                // if not set, tooltip may be not visible on a zoomed in map
+            shadow: false,
+            padding: 0,
+            headerFormat: "",                   // cannot use {point.key} because we need our country names
+            pointFormatter: function() 
+            {
+               // use the country name from country_usage for consistency
+               return "<span style=\"font-weight: normal; font-size: 14px\">" +
+                  htmlEncode(country_usage.getLabel(this.x)) + " " + "</span><br/>" + 
+                  "<span style=\"color: " + this.color + "\">&#x25CF;</span> " + 
+                  "<span style=\"font-size: 14px\">" + this.series.name + 
+                  " <b>" + this.value + "</b> (" + country_usage.getPercent(this.x) + ")</span>";
+            }
+         }
+      }]
+   };
+
+
+   Highcharts.mapChart("country_usage_chart", country_usage_chart_options);
 }
 
 //

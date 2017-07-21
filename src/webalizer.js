@@ -737,8 +737,12 @@ CountryUsageChart.prototype = {
    getColor : function (index)
    {
       return index < this.data.countries.length ? this.config.pie_colors[index] : this.config.pie_other_color;
-   }
+   },
 
+   getCCode : function (index)
+   {
+      return index < this.data.ccodes.length ? this.data.ccodes[index] : "";
+   }
 };
 
 //
@@ -755,11 +759,12 @@ CountryUsageChart.prototype = {
 // Versions:
 //    v2    - added a column for page counts
 //    v3    - added the data-xfer attribute
+//    v4    - added the data-ccode attribute
 //
 function getCountryUsageData(version, total_visits)
 {
    var rows;
-   var usage = {countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0};
+   var usage = {ccodes: [], countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0};
    var visits = 0, disp_visits = 0;
    var percent;
    var layout;
@@ -777,6 +782,7 @@ function getCountryUsageData(version, total_visits)
          break;
       case 2:
       case 3:
+      case 4:
          layout = layouts[1];
          break;
    }
@@ -808,8 +814,14 @@ function getCountryUsageData(version, total_visits)
       // save percentages as strings to avoid any precision issues if converted within charts
       percent = ((visits * 100) / total_visits).toFixed(1) + "%";
 
+      var cell = cells.item(layout.i_country);
+
+      // get the two-character country code, if there is one
+      if(version >= 4 && cell.dataset)
+         usage.ccodes.push(cell.dataset.ccode);
+
       usage.visits.push(visits);
-      usage.countries.push(cells.item(layout.i_country).firstChild.data);
+      usage.countries.push(cell.firstChild.data);
       usage.percent.push(percent);
    }
 
