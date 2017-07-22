@@ -217,6 +217,7 @@ msg_h_url   = URL
 msg_h_agent = Browser/User Agent
 msg_h_ref   = Acuan
 msg_h_ctry  = Negara
+msg_h_ccode = Country Code
 msg_h_search= String pencarian
 msg_h_uname = Username
 msg_h_type  = Type

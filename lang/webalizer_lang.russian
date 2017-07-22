@@ -220,6 +220,7 @@ msg_h_url   = URL
 msg_h_agent = Броузер
 msg_h_ref   = Ссылающаяся страница
 msg_h_ctry  = Страна
+msg_h_ccode = Country Code
 msg_h_search= Строка поиска
 msg_h_uname = Имя пользователя
 msg_h_type  = Type

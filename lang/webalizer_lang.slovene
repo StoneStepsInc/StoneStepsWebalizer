@@ -210,6 +210,7 @@ msg_h_url   = URL
 msg_h_agent = Brskalnik
 msg_h_ref   = Napotitelj
 msg_h_ctry  = Država
+msg_h_ccode = Country Code
 msg_h_search= Iskani niz
 msg_h_uname = Uporabnik
 msg_h_type  = Type

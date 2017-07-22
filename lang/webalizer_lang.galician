@@ -218,6 +218,7 @@ msg_h_url   = URL
 msg_h_agent = Programa cliente
 msg_h_ref   = Ligazón orixe
 msg_h_ctry  = Países
+msg_h_ccode = Country Code
 msg_h_search= Cadea de Búsca
 msg_h_uname = Username
 msg_h_type  = Type

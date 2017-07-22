@@ -225,6 +225,7 @@ msg_h_url   = URL
 msg_h_agent = Klienttyp
 msg_h_ref   = Refererare
 msg_h_ctry  = Land
+msg_h_ccode = Country Code
 msg_h_search= Söksträng
 msg_h_uname = Username
 msg_h_type  = Type

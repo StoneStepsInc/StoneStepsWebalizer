@@ -214,6 +214,7 @@ msg_h_url   = URL
 msg_h_agent = Browser Utilizado
 msg_h_ref   = Referencia
 msg_h_ctry  = Pais
+msg_h_ccode = Country Code
 msg_h_search= String de Pesquisa
 msg_h_uname = Username
 msg_h_type  = Type

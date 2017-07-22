@@ -248,6 +248,7 @@ msg_h_url   = URL
 msg_h_agent = Navigateur
 msg_h_ref   = Référent
 msg_h_ctry  = Pays
+msg_h_ccode = Country Code
 msg_h_search= Mots-clés
 msg_h_uname = Utilisateur
 msg_h_type  = Type

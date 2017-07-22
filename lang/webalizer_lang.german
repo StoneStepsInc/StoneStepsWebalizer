@@ -235,6 +235,7 @@ msg_h_url   = URL
 msg_h_agent = Anwenderprogramm
 msg_h_ref   = Verweise
 msg_h_ctry  = Land
+msg_h_ccode = Country Code
 msg_h_search= Suche
 msg_h_uname = Benutzer
 msg_h_type  = Typ

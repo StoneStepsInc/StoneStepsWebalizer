@@ -221,6 +221,7 @@ msg_h_url   = Slóğ
 msg_h_agent = User Agent
 msg_h_ref   = Referrer
 msg_h_ctry  = Land
+msg_h_ccode = Country Code
 msg_h_search= Leitarstrengur
 msg_h_uname = Notandanafn
 msg_h_type  = Type

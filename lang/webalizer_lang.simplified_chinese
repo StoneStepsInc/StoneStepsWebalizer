@@ -209,6 +209,7 @@ msg_h_url   = URL
 msg_h_agent = 用户代理
 msg_h_ref   = 引用
 msg_h_ctry  = 国家
+msg_h_ccode = Country Code
 msg_h_search= 搜索字符串
 msg_h_uname = 用户名
 msg_h_type  = Type
