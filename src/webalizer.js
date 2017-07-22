@@ -814,14 +814,16 @@ function getCountryUsageData(version, total_visits)
       // save percentages as strings to avoid any precision issues if converted within charts
       percent = ((visits * 100) / total_visits).toFixed(1) + "%";
 
-      var cell = cells.item(layout.i_country);
+      var ctry_cell = cells.item(layout.i_country);
 
-      // get the two-character country code, if there is one
-      if(version >= 4 && cell.dataset)
-         usage.ccodes.push(cell.dataset.ccode);
+      // get the country code, if one exists, or push an empty string to keep arrays in sync
+      if(version >= 4 && ctry_cell.dataset)
+         usage.ccodes.push(ctry_cell.dataset.ccode);
+      else
+         usage.ccodes.push("");
 
       usage.visits.push(visits);
-      usage.countries.push(cell.firstChild.data);
+      usage.countries.push(ctry_cell.firstChild.data);
       usage.percent.push(percent);
    }
 
