@@ -210,6 +210,7 @@ class lang_t {
       const char *msg_h_ref   ;
       const char *msg_h_refs  ;
       const char *msg_h_ctry  ;
+      const char *msg_h_ccode ;
       const char *msg_h_search;
       const char *msg_h_uname ;
       const char *msg_h_type  ;
