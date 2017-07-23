@@ -239,6 +239,7 @@
          {"cr",        "Costa Rica"                        }, \
          {"cu",        "Cuba"                              }, \
          {"cv",        "Cape Verde"                        }, \
+         {"cw",      u8"Cura\u00E7ao"                      }, \
          {"cx",        "Christmas Island"                  }, \
          {"cy",        "Cyprus"                            }, \
          {"cz",        "Czech Republic"                    }, \
@@ -276,7 +277,7 @@
          {"gp",        "Guadeloupe"                        }, \
          {"gq",        "Equatorial Guinea"                 }, \
          {"gr",        "Greece"                            }, \
-         {"gs",        "S. Georgia and S. Sandwich Isls."  }, \
+         {"gs",        "S. Georgia and S. Sandwich Islands"}, \
          {"gt",        "Guatemala"                         }, \
          {"gu",        "Guam"                              }, \
          {"gw",        "Guinea-Bissau"                     }, \
@@ -312,7 +313,7 @@
          {"kw",        "Kuwait"                            }, \
          {"ky",        "Cayman Islands"                    }, \
          {"kz",        "Kazakhstan"                        }, \
-         {"la",        "Laos"                              }, \
+         {"la",        "Lao"                               }, \
          {"lb",        "Lebanon"                           }, \
          {"lc",        "Saint Lucia"                       }, \
          {"li",        "Liechtenstein"                     }, \
@@ -387,8 +388,8 @@
          {"sg",        "Singapore"                         }, \
          {"sh",        "St. Helena"                        }, \
          {"si",        "Slovenia"                          }, \
-         {"sj",        "Svalbard and Jan Mayen Islands"    }, \
-         {"sk",        "Slovak Republic"                   }, \
+         {"sj",        "Svalbard and Jan Mayen"            }, \
+         {"sk",        "Slovakia"                          }, \
          {"sl",        "Sierra Leone"                      }, \
          {"sm",        "San Marino"                        }, \
          {"sn",        "Senegal"                           }, \
@@ -428,11 +429,10 @@
          {"vi",        "Virgin Islands (U.S.)"             }, \
          {"vn",        "Viet Nam"                          }, \
          {"vu",        "Vanuatu"                           }, \
-         {"wf",        "Wallis and Futuna Islands"         }, \
+         {"wf",        "Wallis and Futuna"                 }, \
          {"ws",        "Samoa"                             }, \
          {"ye",        "Yemen"                             }, \
          {"yt",        "Mayotte"                           }, \
-         {"yu",        "Yugoslavia"                        }, \
          {"za",        "South Africa"                      }, \
          {"zm",        "Zambia"                            }, \
          {"zw",        "Zimbabwe"                          }, \
