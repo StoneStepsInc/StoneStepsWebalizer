@@ -195,7 +195,6 @@
          {"ai",        "Anguilla"                          }, \
          {"al",        "Albania"                           }, \
          {"am",        "Armenia"                           }, \
-         {"an",        "Netherlands Antilles"              }, \
          {"ao",        "Angola"                            }, \
          {"aq",        "Antarctica"                        }, \
          {"ar",        "Argentina"                         }, \
@@ -238,7 +237,6 @@
          {"cn",        "China"                             }, \
          {"co",        "Colombia"                          }, \
          {"cr",        "Costa Rica"                        }, \
-         {"cs",        "Serbia and Montenegro"             }, \
          {"cu",        "Cuba"                              }, \
          {"cv",        "Cape Verde"                        }, \
          {"cx",        "Christmas Island"                  }, \
@@ -397,7 +395,6 @@
          {"so",        "Somalia"                           }, \
          {"sr",        "Suriname"                          }, \
          {"st",        "Sao Tome and Principe"             }, \
-         {"su",        "USSR (former)"                     }, \
          {"sv",        "El Salvador"                       }, \
          {"sy",        "Syria"                             }, \
          {"sz",        "Swaziland"                         }, \
@@ -412,7 +409,6 @@
          {"tm",        "Turkmenistan"                      }, \
          {"tn",        "Tunisia"                           }, \
          {"to",        "Tonga"                             }, \
-         {"tp",        "East Timor"                        }, \
          {"tr",        "Turkey"                            }, \
          {"tt",        "Trinidad and Tobago"               }, \
          {"tv",        "Tuvalu"                            }, \
