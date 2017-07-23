@@ -172,19 +172,19 @@ h_msg=   -h        = print this help message,
 #/***********************************************************************/
 
 #/* header strings */
-msg_hhdr_sp = PoroËilo za mesec
+msg_hhdr_sp = Poro√®ilo za mesec
 msg_hhdr_gt = Izdelano
 
 #/* main index strings */
 msg_main_us = Povzetek dostopov za
 msg_main_per= Zadnjih 12 mesecev
 msg_main_sum= Povzetek po mesecih
-msg_main_da = Dnevno povpreËje
-msg_main_mt = MeseËni seötevki
+msg_main_da = Dnevno povpre√®je
+msg_main_mt = Mese√®ni se≈°tevki
 
 #/* month HTML page strings */
-msg_hmth_du = PoroËilo po dnevih za
-msg_hmth_hu = PoroËilo po urah za
+msg_hmth_du = Poro√®ilo po dnevih za
+msg_hmth_hu = Poro√®ilo po urah za
 
 #/* table header strings */
 msg_h_by    = po
@@ -199,7 +199,7 @@ msg_h_hits  = Zahtevkov
 msg_h_pages = Strani
 msg_h_visits= Obiskov
 msg_h_files = Datotek
-msg_h_hosts = Po podroËjih
+msg_h_hosts = Po podro√®jih
 msg_h_xfer  = Transfer
 msg_h_avgtime = AvgTime
 msg_h_maxtime = MaxTime
@@ -209,7 +209,7 @@ msg_h_ipaddr = IP Address
 msg_h_url   = URL
 msg_h_agent = Brskalnik
 msg_h_ref   = Napotitelj
-msg_h_ctry  = Drûava
+msg_h_ctry  = Dr≈æava
 msg_h_ccode = Country Code
 msg_h_search= Iskani niz
 msg_h_uname = Uporabnik
@@ -234,9 +234,9 @@ msg_hlnk_sum= Summary
 msg_hlnk_ds = Dnevna statistika
 msg_hlnk_hs = Statistika po urah
 msg_hlnk_u  = URLs
-msg_hlnk_s  = PodroËja
+msg_hlnk_s  = Podro√®ja
 msg_hlnk_a  = Agents
-msg_hlnk_c  = Drûave
+msg_hlnk_c  = Dr≈æave
 msg_hlnk_r  = Preusmeritev z
 msg_hlnk_en = Vstop
 msg_hlnk_ex = Izhod
@@ -245,13 +245,13 @@ msg_hlnk_i  = Uporabnikov
 msg_hlnk_err= Errors
 
 #/* monthly Skupaj table */
-msg_mtot_ms = MeseËno poroËilo za
+msg_mtot_ms = Mese√®no poro√®ilo za
 msg_mtot_th = Skupaj zahtevkov
 msg_mtot_tf = Skupaj datotek
 msg_mtot_tp = Total Pages
 msg_mtot_tv = Total Visits
 msg_mtot_tx = Total Transfer
-msg_mtot_us = Skupaj enkr. podroËij
+msg_mtot_us = Skupaj enkr. podro√®ij
 msg_mtot_ur = Skupaj enkr. napotiteljev
 msg_mtot_ua = Skupaj enkr. brskalnikov
 msg_mtot_uu = Skupaj enkr. URL-jev
@@ -290,22 +290,22 @@ msg_dtot_ds = Dnevna statistika za
 msg_htot_hs = Statistika po urah za
 
 #/* country pie chart */
-msg_ctry_use= Dostopi po drûavah za
+msg_ctry_use= Dostopi po dr≈æavah za
 
 #/* top tables */
 #/* Formatted as "Top xxx of xxx Skupaj something" */
 msg_top_top = Prvih
 msg_top_of  = od
-msg_top_s   = (vseh) podroËij
+msg_top_s   = (vseh) podro√®ij
 msg_top_u   = (vseh) URL naslovov
 msg_top_r   = (vseh) napotiteljev
 msg_top_a   = (vseh) brskalnikov
-msg_top_c   = (vseh) drûav
+msg_top_c   = (vseh) dr≈æav
 msg_top_en  = (vseh) vstopnih strani
 msg_top_ex  = (vseh) izhodnih strani
 msg_top_sr  = (vseh) iskani nizi
 msg_top_i   = (vseh) uporab.imen
-msg_v_hosts = Pregled vseh podroËij
+msg_v_hosts = Pregled vseh podro√®ij
 msg_v_urls  = Pregled vseh URL-jev
 msg_v_refs  = Pregled vseh napotiteljev
 msg_v_agents= Pregled vseh UA
@@ -378,12 +378,12 @@ response = Undefined response code,
            Code 504 - Gateway Timeout,
            Code 505 - HTTP Version Not Supported,
 
-msg_title   = Statistika dostopov za spletni streûnik
+msg_title   = Statistika dostopov za spletni stre≈ænik
 msg_h_other = Ostalo
 
 #/* Country codes (previously in ctry.h header file) */
 
-ctry = *,	Nereöeni/Neznani,
+ctry = *,	Nere≈°eni/Neznani,
 	com,	US Commercial,
 	edu,	US Educational,
 	gov,	US Government,
@@ -452,7 +452,7 @@ ctry = *,	Nereöeni/Neznani,
 	cr,	Costa Rica,
 	cu,	Cuba,
 	cv,	Cape Verde,
-	cw,	CuraÁao,
+	cw,	Cura√ßao,
 	cx,	Christmas Island,
 	cy,	Cyprus,
 	cz,	Czech Republic,

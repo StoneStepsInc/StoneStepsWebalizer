@@ -45,37 +45,37 @@ language_code = gl
 msg_records = rexistros
 msg_addresses=addresses
 msg_ignored = ignorados
-msg_bad     = errÛneos
+msg_bad     = err√≥neos
 msg_in      = en
 msg_seconds = segundos
 
 #/* progress and setup erro messages */
-msg_log_err = Erro: Non podo abrir histÛrico
-msg_log_use = Utilizando histÛrico
-msg_dir_err = Erro: non se pode cambiar Û directorio
+msg_log_err = Erro: Non podo abrir hist√≥rico
+msg_log_use = Utilizando hist√≥rico
+msg_dir_err = Erro: non se pode cambiar √≥ directorio
 msg_dir_use = Creando informe en
 msg_cur_dir = directorio actual
-msg_hostname= O nome da m·quina no informe È
+msg_hostname= O nome da m√°quina no informe √©
 msg_ign_hist= Ignorando rexistro anterior...
-msg_no_hist = Non atopo o arquivo histÛrico...
+msg_no_hist = Non atopo o arquivo hist√≥rico...
 msg_get_hist= Lendo arquivo...
 msg_put_hist= Gardando informacion de arquivo...
 msg_hist_err= Erro: Non podo abri-lo arquivo de arquivo
-msg_bad_hist= Erro: Ignorando un rexistro non v·lido no arquivo
-msg_bad_conf= Erro: non podo abri-lo arquivo de configuraciÛn
-msg_bad_key = Aviso: palabra chave errÛnea
-msg_bad_date= Erro: ignorando rexistro (data errÛnea)
+msg_bad_hist= Erro: Ignorando un rexistro non v√°lido no arquivo
+msg_bad_conf= Erro: non podo abri-lo arquivo de configuraci√≥n
+msg_bad_key = Aviso: palabra chave err√≥nea
+msg_bad_date= Erro: ignorando rexistro (data err√≥nea)
 msg_ign_nscp= Saltando rexistro de cabeceira Netscape
-msg_bad_rec = Saltando rexistro errÛneo
-msg_no_vrec = Non atopo ningun rexistro v·lido
+msg_bad_rec = Saltando rexistro err√≥neo
+msg_no_vrec = Non atopo ningun rexistro v√°lido
 msg_gen_rpt = Xerando informe de
 msg_gen_sum = Xerando informe resumido
-msg_get_data= Lendo datos dunha execuciÛn previa...
-msg_put_data= Grabando datos da execuciÛn actual...
-msg_no_data = Datos de execuciÛn previa non atopados...
-#/*char *msg_bad_data= "Rexistro de datos inv·lidos";*/
-msg_bad_data= Erro: Non podo carga-os datos da execuciÛn
-msg_data_err= Erro: Non podo graba-os datos da execuciÛn actual
+msg_get_data= Lendo datos dunha execuci√≥n previa...
+msg_put_data= Grabando datos da execuci√≥n actual...
+msg_no_data = Datos de execuci√≥n previa non atopados...
+#/*char *msg_bad_data= "Rexistro de datos inv√°lidos";*/
+msg_bad_data= Erro: Non podo carga-os datos da execuci√≥n
+msg_data_err= Erro: Non podo graba-os datos da execuci√≥n actual
 msg_dup_data= Aviso: Posibles datos duplicados atopados
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
@@ -105,11 +105,11 @@ msg_dns_geoe= Cannot open GeoIP database
 msg_dns_useg= Using GeoIP database
 
 #/* log record errors */
-msg_big_rec = Erro: Saltando rexistro de histÛrico grande de abondoh
-msg_big_host= Aviso: Cortando nome de m·quina grande de abondo
+msg_big_rec = Erro: Saltando rexistro de hist√≥rico grande de abondoh
+msg_big_host= Aviso: Cortando nome de m√°quina grande de abondo
 msg_big_date= Aviso: Cortando campo de data grande de abondo
 msg_big_req = Aviso: Cortando campo de peticion grande de abondo
-msg_big_ref = Aviso: Cortando campo de ligazÛn orixe grande de abondo
+msg_big_ref = Aviso: Cortando campo de ligaz√≥n orixe grande de abondo
 msg_big_user= Warning: Truncating oversized username
 msg_big_one = Aviso: Una cadena sobrepasa o almacenamento disponible
 
@@ -118,40 +118,40 @@ msg_no_open = Erro: Non podo abrir un arquivo
 
 #/* Help display... */
 h_usage1 = Forma de uso
-h_usage2 = [opciÛns] [arquivo histÛrico]
+h_usage2 = [opci√≥ns] [arquivo hist√≥rico]
 h_msg=   -h        = sacar esta mensaxe,
-         -v -V     = ver informacion de versiÛn,
-         -d        = sacar informaciÛn adicional para depuraciÛn,
+         -v -V     = ver informacion de versi√≥n,
+         -d        = sacar informaci√≥n adicional para depuraci√≥n,
          -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
          -i        = ignorar arquivo,
          -p        = lembrar estado (incremental),
          -q        = suprimir mensaxes de informacion,
-         -Q        = suprimir T”DALAS mensaxes,
-         -Y        = suprimir grafico de paÌses,
-         -G        = suprimir gr·fico horario,
-         -H        = suprimir estatÌsticas horarias,
-         -L        = suprimir lendas coloreadas dos gr·ficos,
-         -l num    = usar num lÌÒas de fondo nos gr·ficos,
+         -Q        = suprimir T√ìDALAS mensaxes,
+         -Y        = suprimir grafico de pa√≠ses,
+         -G        = suprimir gr√°fico horario,
+         -H        = suprimir estat√≠sticas horarias,
+         -L        = suprimir lendas coloreadas dos gr√°ficos,
+         -l num    = usar num l√≠√±as de fondo nos gr√°ficos,
          -m num    = especificar temporizador de visitas (seconds),
          -T        = sacar informacion de horario,
          -c arquivo= usar arquivo de configuracion 'arquivo',
-         -n nome = nome de m·quina,
-         -o dir    = directorio de saÌda,
+         -n nome = nome de m√°quina,
+         -o dir    = directorio de sa√≠da,
          -t nome = titula-lo informe 'nome',
          -a nome = acocha-lo programa cliente 'nome',
-         -r nome = acocha-la ligazÛn orixe 'nome',
+         -r nome = acocha-la ligaz√≥n orixe 'nome',
          -s nome = acocha-lo servidor 'nome',
          -u nome = acocha-lo URL 'nome',
-         -x nome = usa extensiÛn de arquivos 'nome',
-         -P nome = usa extensiÛn de p·xinas 'nome',
-         -I nome = Alias do Ìndice 'nome',
+         -x nome = usa extensi√≥n de arquivos 'nome',
+         -P nome = usa extensi√≥n de p√°xinas 'nome',
+         -I nome = Alias do √≠ndice 'nome',
          -A n      = Mostra-los n primeiros programas visores,
-         -C n      = Mostra-los n primeiros paÌses,
-         -R n      = Mostra-las n primeiras ligazÛns orixe,
+         -C n      = Mostra-los n primeiros pa√≠ses,
+         -R n      = Mostra-las n primeiras ligaz√≥ns orixe,
          -S n      = Mostra-los n primeiros clientes,
          -U n      = Mostra-los n primeiros URLs,
-         -e n      = Mostra-las n primeiras p·xinas de entrada,
-         -E n      = Mostra-las n primeiras p·xinas de saÌda,
+         -e n      = Mostra-las n primeiras p√°xinas de entrada,
+         -E n      = Mostra-las n primeiras p√°xinas de sa√≠da,
          -g n      = Group Domains to n levels,
          -X        = Hide individual hosts,
          -D name   = Use DNS Cache file 'name',
@@ -180,46 +180,46 @@ h_msg=   -h        = sacar esta mensaxe,
 #/***********************************************************************/
 
 #/* header strings */
-msg_hhdr_sp = PerÌodo resumido
+msg_hhdr_sp = Per√≠odo resumido
 msg_hhdr_gt = Xerado o
 
 #/* main index strings */
 msg_main_us = Resumo de uso de
-msg_main_per= ⁄ltimos 12 meses
+msg_main_per= √öltimos 12 meses
 msg_main_sum= Resumo por meses
-msg_main_da = MedÌa dÌaria
+msg_main_da = Med√≠a d√≠aria
 msg_main_mt = Totais mensuais
 
 #/* month HTML page strings */
-msg_hmth_du = Uso dÌario en
+msg_hmth_du = Uso d√≠ario en
 msg_hmth_hu = Uso por horas en
 
 #/* table header strings */
 msg_h_by    = Por
-msg_h_avg   = MedÌa
-msg_h_max   = M·x.
+msg_h_avg   = Med√≠a
+msg_h_max   = M√°x.
 msg_h_total = Total
 msg_h_totals= Totais
-msg_h_day   = DÌa
+msg_h_day   = D√≠a
 msg_h_mth   = Mes
 msg_h_hour  = Hora
 msg_h_hits  = Accesos
-msg_h_pages = P·xinas
+msg_h_pages = P√°xinas
 msg_h_visits= Visitas
 msg_h_files = Arquivos
 msg_h_hosts = Clientes
 msg_h_xfer  = Transfer
 msg_h_avgtime = AvgTime
 msg_h_maxtime = MaxTime
-msg_h_hname = M·quina
+msg_h_hname = M√°quina
 msg_h_host = Host
 msg_h_ipaddr = IP Address
 msg_h_url   = URL
 msg_h_agent = Programa cliente
-msg_h_ref   = LigazÛn orixe
-msg_h_ctry  = PaÌses
+msg_h_ref   = Ligaz√≥n orixe
+msg_h_ctry  = Pa√≠ses
 msg_h_ccode = Country Code
-msg_h_search= Cadea de B˙sca
+msg_h_search= Cadea de B√∫sca
 msg_h_uname = Username
 msg_h_type  = Type
 msg_h_status= Status
@@ -239,38 +239,38 @@ msg_h_cvisits = Converted Visits
 
 #/* links along top of page */
 msg_hlnk_sum= Summary
-msg_hlnk_ds = EstatÌsiticas dÌarias
-msg_hlnk_hs = EstatÌsticas por horas
+msg_hlnk_ds = Estat√≠siticas d√≠arias
+msg_hlnk_hs = Estat√≠sticas por horas
 msg_hlnk_u  = URLs
 msg_hlnk_s  = Clientes
 msg_hlnk_a  = Programas visores
-msg_hlnk_c  = PaÌses
-msg_hlnk_r  = LigazÛns orixe
+msg_hlnk_c  = Pa√≠ses
+msg_hlnk_r  = Ligaz√≥ns orixe
 msg_hlnk_en = Entrada
-msg_hlnk_ex = SaÌda
+msg_hlnk_ex = Sa√≠da
 msg_hlnk_sr = Busca
 msg_hlnk_i  = Users
 msg_hlnk_err= Errors
 
 #/* monthly total table */
-msg_mtot_ms = EstatÌsticas mensuais de
+msg_mtot_ms = Estat√≠sticas mensuais de
 msg_mtot_th = Total Accesos
 msg_mtot_tf = Total Arquivos
 msg_mtot_tp = Total Pages
 msg_mtot_tv = Total Visits
 msg_mtot_tx = Total Transfer
 msg_mtot_us = Total Clientes
-msg_mtot_ur = Total LigazÛns orixe
+msg_mtot_ur = Total Ligaz√≥ns orixe
 msg_mtot_ua = Total Programas visores
 msg_mtot_uu = Total URLs
 msg_mtot_ui = Total Unique Usernames
-msg_mtot_mhd= Accesos por DÌa
+msg_mtot_mhd= Accesos por D√≠a
 msg_mtot_mhh= Accesos por Hora
-msg_mtot_mfd= Arquivos por DÌa
-msg_mtot_mpd=  P·xinas por DÌa
-msg_mtot_mvd= Visitas por DÌa
+msg_mtot_mfd= Arquivos por D√≠a
+msg_mtot_mpd=  P√°xinas por D√≠a
+msg_mtot_mvd= Visitas por D√≠a
 msg_mtot_mkd= Transfer per Day
-msg_mtot_rc = Accesos por cÛdigo de resposta
+msg_mtot_rc = Accesos por c√≥digo de resposta
 msg_mtot_sph = Seconds per Hit
 msg_mtot_spf = Seconds per File
 msg_mtot_spp = Seconds per Page
@@ -292,13 +292,13 @@ msg_mtot_hdt = Hourly/Daily Totals
 msg_mtot_htot = Human Totals
 
 #/* daily total table */
-msg_dtot_ds = EstatÌsticas diarias de
+msg_dtot_ds = Estat√≠sticas diarias de
 
 #/* hourly total table */
-msg_htot_hs = EstatÌsticas horarias de
+msg_htot_hs = Estat√≠sticas horarias de
 
 #/* country pie chart */
-msg_ctry_use= Accesos por paÌses en
+msg_ctry_use= Accesos por pa√≠ses en
 
 #/* top tables */
 #/* Formatted as "Top xxx of xxx Total something" */
@@ -306,11 +306,11 @@ msg_top_top = Os
 msg_top_of  = primeiros dun total de
 msg_top_s   = clientes
 msg_top_u   = URLs
-msg_top_r   = ligazÛns orixe
+msg_top_r   = ligaz√≥ns orixe
 msg_top_a   = programas de cliente
-msg_top_c   = paÌses
-msg_top_en  = Total P·xinas de Entrada
-msg_top_ex  = Total P·xinas de SaÌda
+msg_top_c   = pa√≠ses
+msg_top_en  = Total P√°xinas de Entrada
+msg_top_ex  = Total P√°xinas de Sa√≠da
 msg_top_sr  = Total Cadeas de Busca
 msg_top_i   = Total Usernames
 msg_v_hosts = View All Hosts
@@ -335,71 +335,71 @@ msg_xfer_unit = B
 #/* short month names MUST BE 3 CHARS in size...*/
 
 s_month=  Xan, Feb, Mar,
-                    Abr, Mai, XuÒ,
+                    Abr, Mai, Xu√±,
                     Xul, Ago, Set,
                     Out, Nov, Dec
 
 #/* long month names - can be any length */
 l_month=  Xaneiro,  Febreiro, Marzo,   Abril,
-                    Maio,      XuÒo,     Xullo,    Agosto,
+                    Maio,      Xu√±o,     Xullo,    Agosto,
                     Setembro,Outubro,  Novembro,Decembro
 
 #/* response code descriptions... order IS important!      */
-response = CÛdigo de resposta indefinido,
-           100 - ContÌnua,
+response = C√≥digo de resposta indefinido,
+           100 - Cont√≠nua,
            101 - Cambiando de protocolo,
            200 - OK,
            201 - Creado,
            202 - Aceptado,
-           203 - InformaciÛn non autorizada,
+           203 - Informaci√≥n non autorizada,
            204 - Non hai contido,
            205 - Contido renovado,
            206 - Contido parcial,
-           300 - Varias opciÛns,
+           300 - Varias opci√≥ns,
            301 - Movido permanentemente,
            302 - Atopado,
            303 - Ver outros,
            304 - Non modificado,
            305 - Utilizar proxy,
            307 - Movido temporalmente,
-           400 - PeticiÛn errÛnea,
+           400 - Petici√≥n err√≥nea,
            401 - Non autorizado,
-           402 - … precisoun pago,
+           402 - √â precisoun pago,
            403 - Prohibido,
            404 - Non se atopa,
-           405 - MÈtodo non permitido,
+           405 - M√©todo non permitido,
            406 - Non aceptable,
-           407 - … precisa a autentificaciÛn de proxy,
-           408 - FÌn de tempo de espera,
+           407 - √â precisa a autentificaci√≥n de proxy,
+           408 - F√≠n de tempo de espera,
            409 - Conflicto,
            410 - Abandoado,
-           411 - … precisa a lonxitude,
-           412 - Falla a condiciÛn previa,
-           413 - Entidad de peticiÛn grande de abondo,
-           414 - URL de peticiÛn demasiado longa,
+           411 - √â precisa a lonxitude,
+           412 - Falla a condici√≥n previa,
+           413 - Entidad de petici√≥n grande de abondo,
+           414 - URL de petici√≥n demasiado longa,
            415 - Medio non soportado,
            416 - Non se pode satisface-lo rango pedido,
-           417 - Falla o que agard·base,
+           417 - Falla o que agard√°base,
            500 - Erro interno do servidor,
            501 - Non implementado,
-           502 - Porta de ligazÛn incorrecta,
+           502 - Porta de ligaz√≥n incorrecta,
            503 - Servicio non disponible,
-           504 - FÌn de tempo de espera para a porta de ligazÛn,
-           505 - VersiÛn de HTTP non soportada,
+           504 - F√≠n de tempo de espera para a porta de ligaz√≥n,
+           505 - Versi√≥n de HTTP non soportada,
 
-msg_title   = EstatÌsticas de uso para
+msg_title   = Estat√≠sticas de uso para
 msg_h_other = Outro
 
 #/* Country codes (previously in ctry.h header file) */
 
-ctry = *,	Non resolve/descoÒecido,
+ctry = *,	Non resolve/desco√±ecido,
 	com,	Comercial,
-	edu,	EducaciÛn EUA,
+	edu,	Educaci√≥n EUA,
 	gov,	Goberno EUA,
 	int,	Internacional (int),
-	mil,	ExÈrcito EUA,
+	mil,	Ex√©rcito EUA,
 	net,	Redo,
-	org,	OrganizaciÛns sen fins de lucro,
+	org,	Organizaci√≥ns sen fins de lucro,
  	arpa,	Arpanet,
  	nato,	OTAN,
         aero,   Air Transport Industry,
@@ -411,26 +411,26 @@ ctry = *,	Non resolve/descoÒecido,
         pro,    Credentialed Professionals,
         ac,       Ascension Island,
 	ad,	Andorra,
-	ae,	Emiratos ¡rabes Unidos,
-	af,	Afganist·n,
+	ae,	Emiratos √Årabes Unidos,
+	af,	Afganist√°n,
 	ag,	Antigua e Barbuda,
 	ai,	Anguilla,
 	al,	Albania,
 	am,	Armenia,
 	ao,	Angola,
-	aq,	Ant·rtida,
+	aq,	Ant√°rtida,
 	ar,	Arxentina,
 	as,	Samoa Americana,
 	at,	Austria,
 	au,	Australia,
 	aw,	Aruba,
-	az,	Azerbaix·n,
+	az,	Azerbaix√°n,
         ax,       Aland Islands,
 	bl,     Saint Barthelemy,
 	ba,	Bosnia e Herzegovina,
 	bb,	Barbados,
 	bd,	Bangladesh,
-	be,	BÈlxica,
+	be,	B√©lxica,
 	bf,	Burkina Faso,
 	bg,	Bulgaria,
 	bh,	Bahrain,
@@ -441,51 +441,51 @@ ctry = *,	Non resolve/descoÒecido,
 	bo,	Bolivia,
 	br,	Brasil,
 	bs,	Bahamas,
-	bt,	Bhut·n,
+	bt,	Bhut√°n,
 	bv,	Illa Bouvet,
 	bw,	Botswana,
 	by,	Bielorusia,
 	bz,	Belize,
-	ca,	Canad·,
+	ca,	Canad√°,
 	cc,	Illas Cocos (Keeling),
         cd,       Congo,
-	cf,	Rep˙blica Centroafricana,
+	cf,	Rep√∫blica Centroafricana,
 	cg,	Congo,
-	ch,	SuÌza,
+	ch,	Su√≠za,
 	ci,	Costa de Marfil,
 	ck,	Illas Cook,
 	cl,	Chile,
-	cm,	Camer˙n,
+	cm,	Camer√∫n,
 	cn,	China,
 	co,	Colombia,
 	cr,	Costa Rica,
 	cu,	Cuba,
 	cv,	Cabo Verde,
-	cw,	CuraÁao,
+	cw,	Cura√ßao,
 	cx,	Illa de Pascua,
 	cy,	Chipre,
-	cz,	Rep˙blica Checa,
-	de,	AlemaÒa,
+	cz,	Rep√∫blica Checa,
+	de,	Alema√±a,
 	dj,	Djibouti,
 	dk,	Dinamarca,
 	dm,	Dominica,
-	do,	Rep˙blica Dominicana,
+	do,	Rep√∫blica Dominicana,
 	dz,	Arxelia,
 	ec,	Ecuador,
 	ee,	Estonia,
 	eg,	Exipto,
-	eh,	S·hara Occidental,
+	eh,	S√°hara Occidental,
 	er,	Eritrea,
-	es,	EspaÒa,
+	es,	Espa√±a,
 	et,	Etiopia,
         eu,       European Union,
-	fi,	FinlandÌa,
+	fi,	Finland√≠a,
 	fj,	Fiji,
 	fk,	Malvinas,
 	fm,	Micronesia,
 	fo,	Illas Faroe,
 	fr,	Francia,
-	ga,	GabÛn,
+	ga,	Gab√≥n,
         gb,       United Kingdom,
 	gd,	Granada,
 	ge,	Xeorxia,
@@ -508,24 +508,24 @@ ctry = *,	Non resolve/descoÒecido,
 	hm,	Illas Heard e McDonald,
 	hn,	Honduras,
 	hr,     Croatia,
-	ht,	HaitÌ,
+	ht,	Hait√≠,
 	hu,	Hungria,
 	id,	Indonesia,
 	ie,	Irlanda,
 	il,	Israel,
         im,       Isle of Man,
-	in,	Õndia,
-	io,	Territorios Britanicos do OcÈano Ìndico,
+	in,	√çndia,
+	io,	Territorios Britanicos do Oc√©ano √≠ndico,
 	iq,	Iraq,
-	ir,	Ir·n,
-	is,	IslandÌa,
+	ir,	Ir√°n,
+	is,	Island√≠a,
 	it,	Italia,
         je,       Jersey,
 	jm,	Xamaica,
 	jo,	Xordania,
-	jp,	XapÛn,
+	jp,	Xap√≥n,
 	ke,	Quenia,
-	kg,	Quirxizst·n,
+	kg,	Quirxizst√°n,
 	kh,	Cambodia,
 	ki,	Kiribati,
 	km,	Comoros,
@@ -533,11 +533,11 @@ ctry = *,	Non resolve/descoÒecido,
 	kp,	Corea (Norte),
 	kr,	Corea (Sur),
 	kw,	Kuwait,
-	ky,	Illas Caim·n,
-	kz,	Cazacst·n,
+	ky,	Illas Caim√°n,
+	kz,	Cazacst√°n,
 	la,	Lao,
 	lb,	Libano,
-	lc,	Santa LucÌa,
+	lc,	Santa Luc√≠a,
 	li,	Liechtenstein,
 	lk,	Sri Lanka,
 	lr,	Liberia,
@@ -547,7 +547,7 @@ ctry = *,	Non resolve/descoÒecido,
 	lv,	Latvia,
 	ly,	Libia,
 	ma,	Marrocos,
-	mc,	MÛnaco,
+	mc,	M√≥naco,
 	md,	Moldavia,
 	me,    Montenegro,
 	mf,    Saint Martin,
@@ -566,7 +566,7 @@ ctry = *,	Non resolve/descoÒecido,
 	mu,	Mauricio,
 	mv,	Maldivas,
 	mw,	Malawi,
-	mx,	MÈxico,
+	mx,	M√©xico,
 	my,	Malaisia,
 	mz,	Mozambique,
 	na,	Namibia,
@@ -581,13 +581,13 @@ ctry = *,	Non resolve/descoÒecido,
 	nr,	Nauru,
 	nu,	Niue,
         nz,       New Zealand,
-	om,	Om·n,
-	pa,	Panam·,
-	pe,	Per˙,
+	om,	Om√°n,
+	pa,	Panam√°,
+	pe,	Per√∫,
 	pf,	Polinesia francesa,
 	pg,	Papua Nova Guinea,
 	ph,	Filipinas,
-	pk,	Paquist·n,
+	pk,	Paquist√°n,
 	pl,	Polonia,
 	pm,	Santos Pierre e Miquelon,
 	pn,	Pitcairn,
@@ -597,42 +597,42 @@ ctry = *,	Non resolve/descoÒecido,
 	pw,	Palau,
 	py,	Paraguai,
 	qa,	Qatar,
-	re,	ReuniÛn,
+	re,	Reuni√≥n,
 	ro,	Rumania,
 	rs,	Serbia,
-	ru,	FederaciÛn rusa,
+	ru,	Federaci√≥n rusa,
 	rw,	Ruanda,
-	sa,	Arabia SaudÌ,
+	sa,	Arabia Saud√≠,
         sb,       Solomon Islands,
 	sc,	Seychelles,
-	sd,	Sud·n,
+	sd,	Sud√°n,
 	se,	Suecia,
 	sg,	Singapur,
 	sh,	Sta. Elena,
 	si,	Eslovenia,
 	sj,	Illas Svalbard e Jan Mayen,
-	sk,	Rep˙blica Eslovaca,
+	sk,	Rep√∫blica Eslovaca,
 	sl,	Serra Leona,
 	sm,	San Marino,
 	sn,	Senegal,
 	so,	Somalia,
 	sr,	Surinam,
-	st,	San TomÈ e Principe,
+	st,	San Tom√© e Principe,
 	sv,	O Salvador,
 	sy,	Siria,
-	sz,	SwazilandÌa,
+	sz,	Swaziland√≠a,
 	tc,	Illas Turcos e Caicos,
 	td,	Chad,
 	tf,	Territorios Franceses do Sur,
 	tg,	Togo,
-	th,	TailandÌa,
-	tj,	Taxiquist·n,
+	th,	Tailand√≠a,
+	tj,	Taxiquist√°n,
 	tk,	Tokelau,
         tl,       Timor-Leste,
-	tm,	Turcmenist·n,
+	tm,	Turcmenist√°n,
 	tn,	Tunez,
 	to,	Tonga,
-	tr,	TurquÌa,
+	tr,	Turqu√≠a,
 	tt,	Trinidade e Tobago,
 	tv,	Tuvalu,
 	tw,	Taiwan,
@@ -643,18 +643,18 @@ ctry = *,	Non resolve/descoÒecido,
 	um,	Illas Menores Exteriores Norteamericanas,
 	us,	Estados Unidos,
 	uy,	Uruguai,
-	uz,	Uzbequist·n,
+	uz,	Uzbequist√°n,
 	va,	Cidade Estado Vaticano (Sta. Se),
 	vc,	San Vincente e as Granadinas,
 	ve,	Venezuela,
-	vg,	Illas VÌrxenes (Brit·nicas),
-	vi,	Illas VÌrxenes (U.S.A),
+	vg,	Illas V√≠rxenes (Brit√°nicas),
+	vi,	Illas V√≠rxenes (U.S.A),
 	vn,	Viet Nam,
 	vu,	Vanuatu,
 	wf,	Illas Wallis e Futuna,
 	ws,	Samoa,
 	ye,	Iemen,
 	yt,	Maiotte,
-	za,	Sud·frica,
+	za,	Sud√°frica,
 	zm,	Zambia,
 	zw,	Zimbabwe
