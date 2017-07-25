@@ -171,22 +171,6 @@
 
 #define COUNTRY_INIT \
          {"*",         "Unresolved/Unknown"                }, \
-         {"com",       "US Commercial"                     }, \
-         {"edu",       "US Educational"                    }, \
-         {"gov",       "US Government"                     }, \
-         {"int",       "International"                     }, \
-         {"mil",       "US Military"                       }, \
-         {"net",       "Network"                           }, \
-         {"org",       "Non-Profit Organization"           }, \
-         {"arpa",      "Old style Arpanet (arpa)"          }, \
-         {"nato",      "Nato field (nato)"                 }, \
-         {"aero",      "Air Transport Industry"            }, \
-         {"coop",      "Cooperative Associations"          }, \
-         {"info",      "Generic Top-Level Domain"          }, \
-         {"museum",    "Museums"                           }, \
-         {"name",      "Personal"                          }, \
-         {"biz",       "Generic Businesses"                }, \
-         {"pro",       "Credentialed Professionals"        }, \
          {"ac",        "Ascension Island"                  }, \
          {"ad",        "Andorra"                           }, \
          {"ae",        "United Arab Emirates"              }, \
