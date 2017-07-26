@@ -1281,15 +1281,15 @@ void html_output_t::top_hosts_table(int flag)
 
       // output the span with the IP address as a title
       fprintf(out_fp, 
-           "<td class=\"stats_data_item_td%s\"><span title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">",
+           "<td class=\"stats_data_item_td%s\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">",
            hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str(), 
            hptr->latitude, hptr->longitude);
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
-         fprintf(out_fp,"<strong>%s</strong></span></td></tr>\n", hptr->string.c_str());
+         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", hptr->string.c_str());
       else 
-         fprintf(out_fp,"%s</span></td></tr>\n", hptr->hostname().c_str());
+         fprintf(out_fp,"%s</td></tr>\n", hptr->hostname().c_str());
 
       hptr++;
    }
@@ -2075,7 +2075,7 @@ void html_output_t::top_dl_table(void)
       }
 
       fprintf(out_fp,
-          "<td class=\"stats_data_item_td\"><span title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</span></td>\n" \
+          "<td class=\"stats_data_item_td\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n" \
           "</tr>\n",
           nptr->hnode->string.c_str(), 
           nptr->hnode->latitude, nptr->hnode->longitude, 
