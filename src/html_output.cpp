@@ -1008,12 +1008,12 @@ void html_output_t::daily_total_table()
    /* Daily statistics for ... */
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
-   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"                        \
-                  "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"                  \
-                  "<th class=\"files_th\" colspan=\"4\">%s</th>\n"                \
-                  "<th class=\"pages_th\" colspan=\"4\">%s</th>\n"                \
-                  "<th class=\"visits_th\" colspan=\"4\">%s</th>\n"               \
-                  "<th class=\"hosts_th\" colspan=\"4\">%s</th>\n"                \
+   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"
+                  "<th class=\"hits_th\" colspan=\"4\">%s</th>\n"
+                  "<th class=\"files_th\" colspan=\"4\">%s</th>\n"
+                  "<th class=\"pages_th\" colspan=\"4\">%s</th>\n"
+                  "<th class=\"visits_th\" colspan=\"4\">%s</th>\n"
+                  "<th class=\"hosts_th\" colspan=\"4\">%s</th>\n"
                   "<th class=\"kbytes_th\" colspan=\"4\">%s</th></tr>\n",
                   config.lang.msg_h_day,
                   config.lang.msg_h_hits,
@@ -1089,10 +1089,10 @@ void html_output_t::hourly_total_table()
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
 
-   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"   \
-                  "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"            \
-                  "<th colspan=\"3\" class=\"files_th\">%s</th>\n"         \
-                  "<th colspan=\"3\" class=\"pages_th\">%s</th>\n"         \
+   fprintf(out_fp,"<tr><th rowspan=\"2\" class=\"counter_th\">%s</th>\n"
+                  "<th colspan=\"3\" class=\"hits_th\">%s</th>\n"
+                  "<th colspan=\"3\" class=\"files_th\">%s</th>\n"
+                  "<th colspan=\"3\" class=\"pages_th\">%s</th>\n"
                   "<th colspan=\"3\" class=\"kbytes_th\">%s</th></tr>\n",
                   config.lang.msg_h_hour,
                   config.lang.msg_h_hits,
@@ -1767,11 +1767,11 @@ void html_output_t::top_entry_table(int flag)
 
       fputs("<tr>\n", out_fp);
       fprintf(out_fp,
-          "<th>%d</th>\n" \
-          "<td>%" PRIu64 "</td>\n" \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-          "<td>%" PRIu64 "</td>\n" \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
+          "<th>%d</th>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
           "<td class=\"stats_data_item_td\">",
           i+1,uptr->count,
           (state.totals.t_hit==0)?0:((double)uptr->count/state.totals.t_hit)*100.0,
@@ -1912,11 +1912,11 @@ void html_output_t::top_refs_table()
          fputs("<tr>\n", out_fp);
 
       fprintf(out_fp,
-          "<th>%d</th>\n"            \
-          "<td>%" PRIu64 "</td>\n"            \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
-          "<td>%" PRIu64 "</td>\n"            \
-          "<td class=\"data_percent_td\">%3.02f%%</td>\n"      \
+          "<th>%d</th>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+          "<td>%" PRIu64 "</td>\n"
+          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
           "<td class=\"stats_data_item_td\">",
           i+1,
           rptr->count, (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
@@ -2079,7 +2079,7 @@ void html_output_t::top_dl_table(void)
 
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,
-          "<td class=\"stats_data_item_td\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n" \
+          "<td class=\"stats_data_item_td\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n"
           "</tr>\n",
           html_encode(nptr->hnode->string.c_str()), 
           nptr->hnode->latitude, nptr->hnode->longitude, 
@@ -3126,18 +3126,18 @@ void html_output_t::top_ctry_table()
    for(i = 0; i < tot_num; i++) {
       if(ccarray[i]->count != 0) {
          buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-         fprintf(out_fp,"<tr>"                                                \
-              "<th>%" PRIu64 "</th>\n" \
-              "<td>%" PRIu64 "</td>\n" \
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%" PRIu64 "</td>\n" \
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%" PRIu64 "</td>\n" \
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n" \
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
-              "<td>%" PRIu64 "</td>\n" \
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"   \
+         fprintf(out_fp,"<tr>"
+              "<th>%" PRIu64 "</th>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
               "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td></tr>\n",
               i+1, ccarray[i]->count,
               (t_hit==0)?0:((double)ccarray[i]->count/t_hit)*100.0,
