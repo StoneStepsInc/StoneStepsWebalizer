@@ -1274,22 +1274,23 @@ void html_output_t::top_hosts_table(int flag)
            hptr->visit_avg/60., hptr->visit_max/60.);
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>\n", hptr->ccode, cdesc);
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>\n", hptr->ccode, html_encode(cdesc));
          if(config.geoip_city)
-            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", hptr->city.c_str());
+            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", html_encode(hptr->city.c_str()));
       }
 
-      // output the span with the IP address as a title
+      // output a table cell with the IP address as a title
       fprintf(out_fp, 
            "<td class=\"stats_data_item_td%s\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">",
-           hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", hptr->string.c_str(), 
+           hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", 
+           html_encode(hptr->string.c_str()), 
            hptr->latitude, hptr->longitude);
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
-         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", hptr->string.c_str());
+         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(hptr->string.c_str()));
       else 
-         fprintf(out_fp,"%s</td></tr>\n", hptr->hostname().c_str());
+         fprintf(out_fp,"%s</td></tr>\n", html_encode(hptr->hostname().c_str()));
 
       hptr++;
    }
@@ -1405,15 +1406,15 @@ int html_output_t::all_hosts_page(void)
                hnode.visit_avg/60., hnode.visit_max/60.);
 
             if(config.ntop_ctrys) {
-               fprintf(out_fp, "  %-22s", state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str());
+               fprintf(out_fp, "  %-22s", html_encode(state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str()));
                if(config.geoip_city)
-                  fprintf(out_fp, "  %-22s", hnode.city.c_str());
+                  fprintf(out_fp, "  %-22s", html_encode(hnode.city.c_str()));
             }
 
             fprintf(out_fp, " %c <span %stitle=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</span>\n",
                hnode.spammer ? '*' : ' ',
                hnode.spammer ? "class=\"spammer\" " : hnode.robot ? "class=\"robot\" " : hnode.visits_conv ? "class=\"converted\" " : "",
-               hnode.string.c_str(), hnode.latitude, hnode.longitude, hnode.hostname().c_str());
+               hnode.string.c_str(), hnode.latitude, hnode.longitude, html_encode(hnode.hostname().c_str()));
          }
       }
       iter.close();
@@ -1547,15 +1548,15 @@ void html_output_t::top_urls_table(int flag)
       if (uptr->flag==OBJ_GRP)
       {
          if (config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong></td></tr>\n", uptr->string.c_str());
+            fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(uptr->string.c_str()));
          else 
-            fprintf(out_fp,"%s</td></tr>\n", uptr->string.c_str());
+            fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
       }
       else {
          const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
 
          if(!is_safe_url(uptr->string)) {
-            // output unsafe URLs without a link and leave multibyte characters unencoded
+            // output unsafe URLs without a link and leave multibyte characters URL-unencoded
             fprintf(out_fp, "%s\n", html_encode(uptr->string));
          }
          else {
@@ -1638,13 +1639,14 @@ int html_output_t::all_urls_page(void)
       
       while (iter.prev(unode)) {
          if (unode.flag == OBJ_GRP) {
+            buffer_formatter.set_scope_mode(buffer_formatter_t::append),
             fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f   %s\n",
                unode.count,
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
                unode.xfer, fmt_xfer(unode.xfer, true),
                (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
                unode.avgtime, unode.maxtime,
-               unode.string.c_str());
+               html_encode(unode.string.c_str()));
          }
       }
 
@@ -1778,7 +1780,7 @@ void html_output_t::top_entry_table(int flag)
                 :((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0));
 
       if(!is_safe_url(uptr->string)) {
-         // output unsafe URLs without a link and leave multibyte characters unencoded
+         // output unsafe URLs without a link and leave multibyte characters URL-unencoded
          fprintf(out_fp, "%s\n", html_encode(uptr->string));
       }
       else {      
@@ -1923,9 +1925,9 @@ void html_output_t::top_refs_table()
       if (rptr->flag==OBJ_GRP)
       {
          if (config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong>", rptr->string.c_str());
+            fprintf(out_fp,"<strong>%s</strong>", html_encode(rptr->string.c_str()));
          else 
-            fprintf(out_fp,"%s", rptr->string.c_str());
+            fprintf(out_fp,"%s", html_encode(rptr->string.c_str()));
       }
       else
       {
@@ -1935,7 +1937,7 @@ void html_output_t::top_refs_table()
             fprintf(out_fp,"%s", config.lang.msg_ref_dreq);
          else {
             if(!is_safe_url(rptr->string)) {
-               // output unsafe URLs without a link and leave multibyte characters unencoded
+               // output unsafe URLs without a link and leave multibyte characters URL-unencoded
                fprintf(out_fp, "%s\n", html_encode(rptr->string));
             }
             else {
@@ -2049,6 +2051,7 @@ void html_output_t::top_dl_table(void)
             cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
       }
 
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,
           "<tr>\n"
           "<th>%d</th>\n"
@@ -2066,20 +2069,21 @@ void html_output_t::top_dl_table(void)
           (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
           nptr->avgtime, nptr->sumtime, 
           nptr->count,
-          nptr->string.c_str());
+          html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) { 
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>", nptr->hnode ? nptr->hnode->ccode : "", cdesc);
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>", nptr->hnode ? nptr->hnode->ccode : "", html_encode(cdesc));
          if(config.geoip_city)
-            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? nptr->hnode->city.c_str() : "");
+            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
       }
 
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,
           "<td class=\"stats_data_item_td\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n" \
           "</tr>\n",
-          nptr->hnode->string.c_str(), 
+          html_encode(nptr->hnode->string.c_str()), 
           nptr->hnode->latitude, nptr->hnode->longitude, 
-          nptr->hnode->hostname().c_str());
+          html_encode(nptr->hnode->hostname().c_str()));
 
       nptr++;
    }
@@ -2163,24 +2167,26 @@ int html_output_t::all_downloads_page(void)
             cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
       }
 
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,"%5" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%11s</span> %6.02f%%  %6.02f  %6.02f   %6" PRIu64 "  %-32s",
          nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
          nptr->sumxfer, fmt_xfer(nptr->sumxfer, true),
          (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
-         nptr->string.c_str());
+         html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "  %-22s", cdesc);
+         fprintf(out_fp, "  %-22s", html_encode(cdesc));
          if(config.geoip_city)
-            fprintf(out_fp, "  %-22s", nptr->hnode ? nptr->hnode->city.c_str() : "");
+            fprintf(out_fp, "  %-22s", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
       }
       
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp, "  <span title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</span>\n",
-         nptr->hnode->string.c_str(),
+         html_encode(nptr->hnode->string.c_str()),
          nptr->hnode->latitude, nptr->hnode->longitude,
-         nptr->hnode->hostname().c_str());
+         html_encode(nptr->hnode->hostname().c_str()));
    }
 
    iter.close();
@@ -2354,7 +2360,7 @@ int html_output_t::all_refs_page(void)
                (state.totals.t_hit==0)?0:((double)rnode.count/state.totals.t_hit)*100.0,
                rnode.visits, 
                (state.totals.t_visits==0) ? 0 : ((double)rnode.visits/state.totals.t_visits)*100.0,
-               rnode.string.c_str());
+               html_encode(rnode.string.c_str()));
          }
       }
 
@@ -2505,13 +2511,13 @@ void html_output_t::top_agents_table()
 
       if(aptr->robot) {
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
-            fprintf(out_fp,"<strong><span class=\"robot\">%s</span></strong>\n", aptr->string.c_str()); 
+            fprintf(out_fp,"<strong><span class=\"robot\">%s</span></strong>\n", html_encode(aptr->string.c_str())); 
          else 
             fprintf(out_fp,"<span class=\"robot\">%s</span>", html_encode(aptr->string.c_str()));
       }
       else {
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong>", aptr->string.c_str()); 
+            fprintf(out_fp,"<strong>%s</strong>", html_encode(aptr->string.c_str())); 
          else 
             fprintf(out_fp,"%s", html_encode(aptr->string.c_str()));
       }
@@ -2580,9 +2586,9 @@ int html_output_t::all_agents_page(void)
                 anode.visits, (state.totals.t_visits==0)?0:((double)anode.visits/state.totals.t_visits)*100.0);
 
             if(anode.robot)
-               fprintf(out_fp, "<span class=\"robot\">%s</span>", anode.string.c_str());
+               fprintf(out_fp, "<span class=\"robot\">%s</span>", html_encode(anode.string.c_str()));
             else
-               fprintf(out_fp, "%s", anode.string.c_str());
+               fprintf(out_fp, "%s", html_encode(anode.string.c_str()));
 
             fputs("\n", out_fp);
          }
@@ -2798,7 +2804,6 @@ void html_output_t::top_users_table()
    uint32_t tot_num;
    u_int i;
    const inode_t *iptr;
-   const char *dispuser;
    inode_t *i_array;
    string_t str;
 
@@ -2905,12 +2910,10 @@ void html_output_t::top_users_table()
            (state.totals.t_visits==0)?0:((double)iptr->visit/state.totals.t_visits)*100.0,
            iptr->avgtime, iptr->maxtime);
 
-      dispuser = iptr->string;
-      dispuser = html_encode(dispuser);
       if(iptr->flag == OBJ_GRP && config.hlite_groups)
-         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", dispuser); 
+         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(iptr->string)); 
       else 
-         fprintf(out_fp,"%s</td></tr>\n", dispuser);
+         fprintf(out_fp,"%s</td></tr>\n", html_encode(iptr->string));
       iptr++;
    }
    fputs("</tbody>\n", out_fp);
@@ -2966,6 +2969,7 @@ int html_output_t::all_users_page(void)
 
       while(iter.prev(inode)) {
          if (inode.flag == OBJ_GRP) {
+            buffer_formatter.set_scope_mode(buffer_formatter_t::append),
             fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
                inode.count,
                (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
@@ -2974,7 +2978,7 @@ int html_output_t::all_users_page(void)
                (state.totals.t_xfer==0)?0:((double)inode.xfer/state.totals.t_xfer)*100.0,inode.visit,
                (state.totals.t_visits==0)?0:((double)inode.visit/state.totals.t_visits)*100.0,
                inode.avgtime, inode.maxtime,
-               inode.string.c_str());
+               html_encode(inode.string.c_str()));
          }
       }
       iter.close();
@@ -2989,7 +2993,8 @@ int html_output_t::all_users_page(void)
       if(inode.flag == OBJ_REG) {
          if(config.hidden_users.isinlist(inode.string))
             continue;
-               
+         
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),      
          fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%8s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
             inode.count,
             (state.totals.t_hit==0)?0:((double)inode.count/state.totals.t_hit)*100.0,inode.files,
@@ -2998,7 +3003,7 @@ int html_output_t::all_users_page(void)
             (state.totals.t_xfer==0)?0:((double)inode.xfer/state.totals.t_xfer)*100.0,inode.visit,
             (state.totals.t_visits==0)?0:((double)inode.visit/state.totals.t_visits)*100.0,
             inode.avgtime, inode.maxtime,
-            inode.string.c_str());
+            html_encode(inode.string.c_str()));
       }
    }
    iter.close();
@@ -3120,6 +3125,7 @@ void html_output_t::top_ctry_table()
 
    for(i = 0; i < tot_num; i++) {
       if(ccarray[i]->count != 0) {
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"<tr>"                                                \
               "<th>%" PRIu64 "</th>\n" \
               "<td>%" PRIu64 "</td>\n" \
@@ -3144,7 +3150,7 @@ void html_output_t::top_ctry_table()
               ccarray[i]->visits,
               (t_visits==0)?0:((double)ccarray[i]->visits/t_visits)*100.0,
               ccarray[i]->ccode.c_str(),
-              ccarray[i]->cdesc.c_str());
+              html_encode(ccarray[i]->cdesc.c_str()));
       }
    }
    fputs("</tbody>\n", out_fp);
