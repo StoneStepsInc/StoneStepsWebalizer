@@ -1288,7 +1288,7 @@ void html_output_t::top_hosts_table(int flag)
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
-         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(hptr->string.c_str()));
+         fprintf(out_fp,"%s</td></tr>\n", html_encode(hptr->string.c_str()));
       else 
          fprintf(out_fp,"%s</td></tr>\n", html_encode(hptr->hostname().c_str()));
 
@@ -1548,7 +1548,7 @@ void html_output_t::top_urls_table(int flag)
       if (uptr->flag==OBJ_GRP)
       {
          if (config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(uptr->string.c_str()));
+            fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
          else 
             fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
       }
@@ -1925,7 +1925,7 @@ void html_output_t::top_refs_table()
       if (rptr->flag==OBJ_GRP)
       {
          if (config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong>", html_encode(rptr->string.c_str()));
+            fprintf(out_fp,"%s", html_encode(rptr->string.c_str()));
          else 
             fprintf(out_fp,"%s", html_encode(rptr->string.c_str()));
       }
@@ -2511,13 +2511,13 @@ void html_output_t::top_agents_table()
 
       if(aptr->robot) {
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
-            fprintf(out_fp,"<strong><span class=\"robot\">%s</span></strong>\n", html_encode(aptr->string.c_str())); 
+            fprintf(out_fp,"<span class=\"robot\">%s</span>\n", html_encode(aptr->string.c_str())); 
          else 
             fprintf(out_fp,"<span class=\"robot\">%s</span>", html_encode(aptr->string.c_str()));
       }
       else {
          if (aptr->flag == OBJ_GRP && config.hlite_groups)
-            fprintf(out_fp,"<strong>%s</strong>", html_encode(aptr->string.c_str())); 
+            fprintf(out_fp,"%s", html_encode(aptr->string.c_str())); 
          else 
             fprintf(out_fp,"%s", html_encode(aptr->string.c_str()));
       }
@@ -2911,7 +2911,7 @@ void html_output_t::top_users_table()
            iptr->avgtime, iptr->maxtime);
 
       if(iptr->flag == OBJ_GRP && config.hlite_groups)
-         fprintf(out_fp,"<strong>%s</strong></td></tr>\n", html_encode(iptr->string)); 
+         fprintf(out_fp,"%s</td></tr>\n", html_encode(iptr->string)); 
       else 
          fprintf(out_fp,"%s</td></tr>\n", html_encode(iptr->string));
       iptr++;
