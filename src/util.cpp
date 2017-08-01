@@ -443,8 +443,9 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
 }
 
 //
-// URL-encodes multi-byte UTF-8 sequences. No other character transformations 
-// are done. It is expected that the input string was normalized by norm_url_str.
+// URL-encodes multi-byte UTF-8 sequences, space and control characters. No 
+// other character transformations are done. It is expected that the input 
+// string is normalized by norm_url_str.
 //
 string_t& url_encode(const string_t& str, string_t& out)
 {
@@ -463,28 +464,34 @@ string_t& url_encode(const string_t& str, string_t& out)
    // the encoded string will be at least as long as the original
    out.reserve(str.length());
       
-   // and detach the memory
+   // detach the buffer
    buf = out.detach();
    bcp = buf;
 
-   // URL-encode all 2+ byte characters
+   // URL-encode all 2+ byte characters, space and control characters
    while(*cp) {
       // url_encode may only be called after norm_url_str
       if((chsz = utf8size(cp)) == 0)
          throw std::invalid_argument("Bad UTF-8 character in the URL");
 
+      // the size includes the null character
+      size_t reqsz = chsz > 1 || *cp <= '\x20' ? chsz * 3 + 1 : 2;
+
       // check if the buffer has enough room for the next sequence
-      if(buf.capacity() - (bcp - buf) < (chsz == 1 ? 2 : (chsz * 3) + 1)) {
+      if(buf.capacity() - (bcp - buf) < reqsz) {
+         // hold onto the current buffer offset in case the buffer is moved
          of = bcp - buf;
+
          // half of the minimum (32) should be enough to accommodate 4 * 3 + 1 bytes
          buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2));
          bcp = buf + of;
       }
 
-      // copy one-byte characters and URL-encode multi-byte sequences
-      if(chsz == 1)
+      // copy one-byte characters that are not control characters or space
+      if(chsz == 1 && *cp > '\x20')
          *bcp++ = *cp++;
       else {
+         // and URL-encode everything else
          while(chsz) {
             *bcp++ = '%';
             bcp = to_hex(*cp++, bcp);

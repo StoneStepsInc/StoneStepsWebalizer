@@ -189,6 +189,14 @@ TEST_CLASS(URLNormalizer) {
          str = "x\xE8\xA8\x98y";
          url_encode(str, out);
          mstest::Assert::AreEqual("x%E8%A8%98y", out, L"Multi-byte Kanji characters are URL-encoded");
+
+         str = "x y";
+         url_encode(str, out);
+         mstest::Assert::AreEqual("x%20y", out, L"Space is URL-encoded");
+
+         str = "x\t\r\n\v\fy";
+         url_encode(str, out);
+         mstest::Assert::AreEqual("x%09%0D%0A%0B%0Cy", out, L"Control characters are URL-encoded");
       }
 };
 }
