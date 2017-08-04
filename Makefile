@@ -77,7 +77,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	database.cpp logfile.cpp cp1252_ucs2.cpp \
 	char_buffer.cpp unicode.cpp formatter.cpp \
 	platform/exception_linux.cpp platform/event_pthread.cpp \
-	platform/thread_pthread.cpp \
+	platform/thread_pthread.cpp platform/console_linux.cpp \
 	encoder.cpp p2_buffer_allocator.cpp char_buffer_stack.cpp \
 	cp1252.cpp hckdel.cpp
 

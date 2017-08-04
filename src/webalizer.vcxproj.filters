@@ -238,6 +238,9 @@
     <ClCompile Include="hckdel.cpp">
       <Filter>Source Files\util\3rd-party</Filter>
     </ClCompile>
+    <ClCompile Include="platform\console_win.cpp">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

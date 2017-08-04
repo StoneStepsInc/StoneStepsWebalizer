@@ -25,7 +25,6 @@
 #include <direct.h>
 #include "platform/sys/utsname.h"
 #else
-#include <signal.h>
 #include <unistd.h>                           /* normal stuff             */
 #include <sys/utsname.h>
 #endif
@@ -59,15 +58,12 @@
 #include "exception.h"
 #include "dump_output.h"
 #include "html_output.h"
+#include "console.h"
 
 #include <list>
 #include <memory>
 #include <exception>
-
-/* internal function prototypes */
-
-static void set_ctrl_c_handler(void);
-static void reset_ctrl_c_handler(void);
+#include <algorithm>
 
 /*********************************************/
 /* GLOBAL VARIABLES                          */
@@ -2945,7 +2941,7 @@ int main(int argc, char *argv[])
 
       try {
          // set the Ctrl-C handler
-         set_ctrl_c_handler();
+         set_ctrl_c_handler(webalizer_t::ctrl_c_handler);
 
          // initialize the log processor
          logproc.initialize(argc, argv);
@@ -3009,58 +3005,6 @@ void webalizer_t::ctrl_c_handler(void)
 {
    abort_signal = true;
 }
-
-//
-// If Ctrl-C is not handled properly, both Berkeley databases may get damaged 
-//
-#ifdef _WIN32
-static BOOL WINAPI console_ctrl_c_handler(DWORD type)
-{
-   switch(type) {
-      case CTRL_C_EVENT:
-      case CTRL_BREAK_EVENT:
-      case CTRL_CLOSE_EVENT:
-      case CTRL_LOGOFF_EVENT:
-      case CTRL_SHUTDOWN_EVENT:
-         webalizer_t::ctrl_c_handler();
-         return TRUE;
-   }
-
-   return FALSE;
-}
-
-void set_ctrl_c_handler(void)
-{
-   SetConsoleCtrlHandler(console_ctrl_c_handler, TRUE);
-}
-
-void reset_ctrl_c_handler(void)
-{
-   SetConsoleCtrlHandler(NULL, FALSE);
-}
-#else
-static void console_ctrl_c_handler(int sig)
-{
-   if(sig == SIGINT)
-      webalizer_t::ctrl_c_handler();
-}
-
-void set_ctrl_c_handler(void)
-{
-   struct sigaction sa = {};
-   sa.sa_handler = console_ctrl_c_handler;
-
-   sigaction(SIGINT, &sa, NULL);
-}
-
-void reset_ctrl_c_handler(void)
-{
-   struct sigaction sa = {};
-   sa.sa_handler = SIG_DFL;
-
-   sigaction(SIGINT, &sa, NULL);
-}
-#endif
 
 int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfile, logrec_counts_t& lrcnt)
 {

@@ -189,6 +189,9 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/wd4146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="p2_buffer_allocator.cpp" />
+    <ClCompile Include="platform\console_win.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="platform\exception_win.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\pch.h</PrecompiledHeaderFile>
