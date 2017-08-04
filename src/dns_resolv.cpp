@@ -47,6 +47,8 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#else
+#include <winsock2.h>
 #endif
 
 #include "lang.h"                              /* language declares        */
@@ -58,6 +60,10 @@
 #include "util.h"
 #include "serialize.h"
 #include "tstamp.h"
+
+extern "C" {
+#include <maxminddb.h>
+}
 
 //
 //
@@ -354,8 +360,8 @@ dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
 
    dns_done_event = NULL;
 
-   memset(&mmdb, 0, sizeof(MMDB_s));
-   geoip_db = NULL;
+   geoip_db = new MMDB_s();
+
    dns_db_env = NULL;
 
    dns_thread_stop = false;
@@ -394,8 +400,10 @@ dns_resolver_t::~dns_resolver_t(void)
          delete dns_db_env;
       }
 
-      if(geoip_db)
+      if(geoip_db) {
          MMDB_close(geoip_db);
+         delete geoip_db;
+      }
 
       event_destroy(dns_done_event);
    }
@@ -660,15 +668,13 @@ bool dns_resolver_t::dns_init(void)
    // open the GeoIP database
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
-      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS) {
+      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, geoip_db)) != MMDB_SUCCESS) {
          fprintf(stderr, "%s %s (%d - %s)\n", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
          return false;
       }
 
       if (config.verbose > 1) 
          printf("%s %s\n", config.lang.msg_dns_useg, config.geoip_db_path.c_str());
-
-      geoip_db = &mmdb;
 
       //
       // Find out if there is a suitable language in the list of languages provided in the 
@@ -680,15 +686,15 @@ bool dns_resolver_t::dns_init(void)
       // en-uk) wins. If we didn't find a matching language, but there is English available, 
       // use it.
       //
-      for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
-         if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code)) {
-            geoip_language.assign(mmdb.metadata.languages.names[i]);
+      for(size_t i = 0; i < geoip_db->metadata.languages.count; i++) {
+         if(lang_t::check_language(geoip_db->metadata.languages.names[i], config.lang.language_code)) {
+            geoip_language.assign(geoip_db->metadata.languages.names[i]);
             break;
          }
-         else if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code, 2) &&
-                  (!lang_t::check_language(geoip_language, config.lang.language_code, 2) || strlen(mmdb.metadata.languages.names[i]) < geoip_language.length()))
-            geoip_language.assign(mmdb.metadata.languages.names[i]);
-         else if(geoip_language.isempty() && lang_t::check_language(mmdb.metadata.languages.names[i], "en"))
+         else if(lang_t::check_language(geoip_db->metadata.languages.names[i], config.lang.language_code, 2) &&
+                  (!lang_t::check_language(geoip_language, config.lang.language_code, 2) || strlen(geoip_db->metadata.languages.names[i]) < geoip_language.length()))
+            geoip_language.assign(geoip_db->metadata.languages.names[i]);
+         else if(geoip_language.isempty() && lang_t::check_language(geoip_db->metadata.languages.names[i], "en"))
             geoip_language.assign("en", 2);
       }
    }
@@ -753,8 +759,8 @@ void dns_resolver_t::dns_clean_up(void)
    // close the GeoIP database and clean-up its structures
    if(geoip_db) {
       MMDB_close(geoip_db);
+      delete geoip_db;
       geoip_db = NULL;
-      memset(&mmdb, 0, sizeof(MMDB_s));
    }
 
    event_destroy(dns_done_event);

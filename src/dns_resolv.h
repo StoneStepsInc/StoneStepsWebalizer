@@ -26,19 +26,13 @@
 
 #include <db_cxx.h>
 
-#ifdef _WIN32
-#include <winsock2.h>
-#endif
-
-extern "C" {
-#include <maxminddb.h>
-}
-
 #include <thread>
 #include <mutex>
 
 class dns_resolver_t;
 struct hnode_t;
+struct MMDB_s;
+struct sockaddr;
 
 //
 // DNS resolver
@@ -66,7 +60,6 @@ class dns_resolver_t {
    private:
       const config_t& config;
 
-      MMDB_s mmdb;
       MMDB_s *geoip_db;                      // GeoIP database
 
       DbEnv *dns_db_env;
