@@ -43,6 +43,7 @@ extern "C" {
 #include <cctype>
 #include <cerrno>
 #include <algorithm>
+#include <sys/stat.h>
 
 //
 //
