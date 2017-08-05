@@ -27,17 +27,6 @@
 #include <unistd.h>
 #endif
 
-//
-//
-//
-#ifndef MAX
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#endif
-
-#ifndef MIN
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#endif
-
 #ifdef _WIN32
 #define PATH_MAX _MAX_PATH
 #else

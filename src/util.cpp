@@ -101,7 +101,7 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen)
       return 0;
 
    if(srclen) {
-      destlen = MIN(srclen, maxlen);
+      destlen = std::min(srclen, maxlen);
       memcpy(dest, src, destlen);
    }
    else {
@@ -271,7 +271,7 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
       return *str1;
 
    // compare the minimum of the two lengths characters
-   if((rc = strncmp(str1, str2, MIN(slen1, slen2))) != 0)
+   if((rc = strncmp(str1, str2, std::min(slen1, slen2))) != 0)
       return rc;
 
    // return the first character following the base of the longer string

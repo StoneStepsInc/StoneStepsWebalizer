@@ -22,6 +22,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#include <algorithm>
+
 /* Need socket header? */
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -37,7 +39,9 @@
 #include <math.h>
 #endif
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <netinet/in.h>          /* include stuff we need for dns lookups, */
 #include <arpa/inet.h>           /* DB access, file control, etc...        */
 #include <fcntl.h>
@@ -47,8 +51,6 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#else
-#include <winsock2.h>
 #endif
 
 #include "lang.h"                              /* language declares        */
@@ -64,6 +66,9 @@
 extern "C" {
 #include <maxminddb.h>
 }
+
+// winsock2.h and maxminddb.h define max as a macro, which conflicts with std::max
+#undef max
 
 //
 //
@@ -296,7 +301,7 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       latitude(0.),
       longitude(0.)
 {
-   memset(&s_addr_ip, 0, MAX(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
+   memset(&s_addr_ip, 0, std::max(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
    s_addr_ip.sa_family = sa_family;
 

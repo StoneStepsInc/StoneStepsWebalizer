@@ -14,6 +14,8 @@
 #include "util.h"
 #include "exception.h"
 
+#include <algorithm>
+
 char *encode_char_html(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
@@ -141,7 +143,7 @@ size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
       cbc = utf8size(cptr);
 
       // always require that any encoded sequence or any UTF-8 character fits in the buffer
-      if(buffer == NULL || (slen + MAX(cbc, mebc)) >= buffer.capacity())
+      if(buffer == NULL || (slen + std::max(cbc, mebc)) >= buffer.capacity())
          throw exception_t(0, "Insufficient buffer capacity");
       
       // check for invalid UTF-8 sequences and control characters, except \t, \r and \n

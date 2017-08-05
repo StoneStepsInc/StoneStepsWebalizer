@@ -1601,7 +1601,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // Monthly average and maximum hit/file/page processing time 
          */
          state.totals.a_hitptime = AVG(state.totals.a_hitptime, ((double) log_rec.proc_time / 1000.), state.totals.t_hit);
-         state.totals.m_hitptime = MAX(state.totals.m_hitptime, ((double) log_rec.proc_time / 1000.));
+         state.totals.m_hitptime = std::max(state.totals.m_hitptime, ((double) log_rec.proc_time / 1000.));
 
          /* if RC_OK, increase file counters */
          if (fileurl)
@@ -1611,7 +1611,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             state.t_hourly[log_rec.tstamp.hour].th_files++;
 
             state.totals.a_fileptime = AVG(state.totals.a_fileptime, ((double) log_rec.proc_time / 1000.), state.totals.t_file);
-            state.totals.m_fileptime = MAX(state.totals.m_fileptime, ((double) log_rec.proc_time / 1000.));
+            state.totals.m_fileptime = std::max(state.totals.m_fileptime, ((double) log_rec.proc_time / 1000.));
 
             if(robot) state.totals.t_rfiles++;
          }
@@ -1623,7 +1623,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             state.t_hourly[log_rec.tstamp.hour].th_pages++;
 
             state.totals.a_pageptime = AVG(state.totals.a_pageptime, ((double) log_rec.proc_time / 1000.), state.totals.t_page);
-            state.totals.m_pageptime = MAX(state.totals.m_pageptime, ((double) log_rec.proc_time / 1000.));
+            state.totals.m_pageptime = std::max(state.totals.m_pageptime, ((double) log_rec.proc_time / 1000.));
 
             if(robot) state.totals.t_rpages++;
          }
@@ -1800,7 +1800,7 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    if(!e1->name || !e2->name)
       return e1->name ? 1 : -1;
 
-   return strncmp(e1->name, e2->name, MIN(e1->namelen, e2->namelen));
+   return strncmp(e1->name, e2->name, std::min(e1->namelen, e2->namelen));
 }
 
 void webalizer_t::filter_srchargs(string_t& srchargs)
@@ -2231,7 +2231,7 @@ hnode_t *webalizer_t::put_hnode(
 
       cptr->visits++;
       cptr->visit_avg = AVG(cptr->visit_avg, visitlen, cptr->visits);
-      cptr->visit_max = MAX(cptr->visit_max, visitlen);
+      cptr->visit_max = std::max(cptr->visit_max, visitlen);
    }
 
    if(!cptr->dirty)
@@ -2347,7 +2347,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
       cptr->xfer += xfer;
       cptr->update_url_type(config.get_url_type(port));
       cptr->avgtime = AVG(cptr->avgtime, proctime, cptr->count);
-      cptr->maxtime = MAX(cptr->maxtime, proctime);
+      cptr->maxtime = std::max(cptr->maxtime, proctime);
    }
 
    if(!cptr->dirty)
@@ -2557,7 +2557,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
       if(fileurl) nptr->files++;
       nptr->xfer +=xfer;
       nptr->avgtime = AVG(nptr->avgtime, proctime, nptr->count);
-      nptr->maxtime = MAX(nptr->maxtime, proctime);
+      nptr->maxtime = std::max(nptr->maxtime, proctime);
 
       if(tstamp.elapsed(nptr->tstamp) >= config.visit_timeout)
          nptr->visit++;
@@ -2710,19 +2710,19 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 
    // update maximum and average visit duration for this host
    hptr->visit_avg = AVG(hptr->visit_avg, vlen, hptr->visits);
-   hptr->visit_max = MAX(hptr->visit_max, vlen);
+   hptr->visit_max = std::max(hptr->visit_max, vlen);
 
    // update maximum hits, pages, files and transfer
-   hptr->max_v_hits = MAX(visit->hits, hptr->max_v_hits);
-   hptr->max_v_files = MAX(visit->files, hptr->max_v_files);
-   hptr->max_v_pages = MAX(visit->pages, hptr->max_v_pages);
-   hptr->max_v_xfer = MAX(visit->xfer, hptr->max_v_xfer);
+   hptr->max_v_hits = std::max(visit->hits, hptr->max_v_hits);
+   hptr->max_v_files = std::max(visit->files, hptr->max_v_files);
+   hptr->max_v_pages = std::max(visit->pages, hptr->max_v_pages);
+   hptr->max_v_xfer = std::max(visit->xfer, hptr->max_v_xfer);
 
    // update total maximum hits, pages, files and transfer
-   state.totals.max_v_hits = MAX(hptr->max_v_hits, state.totals.max_v_hits);
-   state.totals.max_v_files = MAX(hptr->max_v_files, state.totals.max_v_files);
-   state.totals.max_v_pages = MAX(hptr->max_v_pages, state.totals.max_v_pages);
-   state.totals.max_v_xfer = MAX(hptr->max_v_xfer, state.totals.max_v_xfer);
+   state.totals.max_v_hits = std::max(hptr->max_v_hits, state.totals.max_v_hits);
+   state.totals.max_v_files = std::max(hptr->max_v_files, state.totals.max_v_files);
+   state.totals.max_v_pages = std::max(hptr->max_v_pages, state.totals.max_v_pages);
+   state.totals.max_v_xfer = std::max(hptr->max_v_xfer, state.totals.max_v_xfer);
 
    // update ended visits counters
    state.totals.t_visits_end++;
@@ -2757,14 +2757,14 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
       state.totals.t_hvisits_end++;
 
       // update total maximum hits, pages, files and transfer
-      state.totals.max_hv_hits = MAX(hptr->max_v_hits, state.totals.max_hv_hits);
-      state.totals.max_hv_files = MAX(hptr->max_v_files, state.totals.max_hv_files);
-      state.totals.max_hv_pages = MAX(hptr->max_v_pages, state.totals.max_hv_pages);
-      state.totals.max_hv_xfer = MAX(hptr->max_v_xfer, state.totals.max_hv_xfer);
+      state.totals.max_hv_hits = std::max(hptr->max_v_hits, state.totals.max_hv_hits);
+      state.totals.max_hv_files = std::max(hptr->max_v_files, state.totals.max_hv_files);
+      state.totals.max_hv_pages = std::max(hptr->max_v_pages, state.totals.max_hv_pages);
+      state.totals.max_hv_xfer = std::max(hptr->max_v_xfer, state.totals.max_hv_xfer);
    
       // update total maximum and average visit durations
       state.totals.t_visit_avg = AVG(state.totals.t_visit_avg, vlen, state.totals.t_hvisits_end);
-      state.totals.t_visit_max = MAX(hptr->visit_max, state.totals.t_visit_max);
+      state.totals.t_visit_max = std::max(hptr->visit_max, state.totals.t_visit_max);
 
       // update counters for converted visits
       if(visit->converted) {
@@ -2776,7 +2776,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
          hptr->visits_conv++;                // and for this host
 
          state.totals.t_vconv_avg = AVG(state.totals.t_vconv_avg, vlen, state.totals.t_visits_conv);
-         state.totals.t_vconv_max = MAX(hptr->visit_max, state.totals.t_vconv_max);
+         state.totals.t_vconv_max = std::max(hptr->visit_max, state.totals.t_vconv_max);
       }
    }
 

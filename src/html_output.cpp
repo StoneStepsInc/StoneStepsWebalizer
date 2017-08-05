@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <algorithm>
 
 #ifndef _WIN32
 #include <unistd.h>                           /* normal stuff             */
@@ -3086,7 +3087,7 @@ void html_output_t::top_ctry_table()
             pie_data[i] = 0;                           /* init data array      */
             pie_legend[i] = NULL;
          }
-         j = MIN(tot_num, 10);                         /* ensure data size     */
+         j = std::min(tot_num, 10u);                   /* ensure data size     */
 
          for(i = 0; i < j; i++) {
             pie_data[i]=ccarray[i]->visits;            /* load the array       */
