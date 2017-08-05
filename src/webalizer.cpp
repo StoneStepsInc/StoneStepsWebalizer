@@ -10,16 +10,6 @@
 */
 #include "pch.h"
 
-/*********************************************/
-/* STANDARD INCLUDES                         */
-/*********************************************/
-
-#include <ctime>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cctype>
-
 #ifdef _WIN32
 #include <io.h>
 #include <direct.h>
@@ -28,21 +18,6 @@
 #include <unistd.h>                           /* normal stuff             */
 #include <sys/utsname.h>
 #endif
-
-/* ensure sys/types */
-#ifndef _SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-/* some systems need this */
-#ifdef HAVE_MATH_H
-#include <math.h>
-#endif
-
-#ifndef _WIN32
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif 
 
 #include "webalizer.h"                         /* main header              */
 #include "output.h"
@@ -54,11 +29,16 @@
 #include "dns_resolv.h"
 #include "util.h"
 #include "tstring.h"
-#include "thread.h"
 #include "exception.h"
 #include "dump_output.h"
 #include "html_output.h"
 #include "console.h"
+
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 
 #include <list>
 #include <memory>

@@ -10,16 +10,12 @@
 */
 #include "pch.h"
 
-/*********************************************/
-/* STANDARD INCLUDES                         */
-/*********************************************/
+#include "util.h"
+#include "hashtab.h"
 
 #include <cstdlib>
 #include <cstring>
 #include <climits>
-
-#include "util.h"
-#include "hashtab.h"
 
 /*********************************************/
 /* HASH - return hash value for string       */

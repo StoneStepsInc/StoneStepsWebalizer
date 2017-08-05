@@ -10,46 +10,12 @@
 */
 #include "pch.h"
 
-/*********************************************/
-/* STANDARD INCLUDES                         */
-/*********************************************/
-
-#include <ctime>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cctype>
-#include <sys/stat.h>
-#include <errno.h>
-
-#include <algorithm>
-
-/* Need socket header? */
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-
-/* ensure sys/types */
-#ifndef _SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-/* some systems need this */
-#ifdef HAVE_MATH_H
-#include <math.h>
-#endif
-
 #ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>          /* include stuff we need for dns lookups, */
 #include <arpa/inet.h>           /* DB access, file control, etc...        */
 #include <fcntl.h>
-#include <netdb.h>
-#include <signal.h>
-#include <sys/signal.h>
-#include <sys/time.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #endif
 
@@ -69,6 +35,14 @@ extern "C" {
 
 // winsock2.h and maxminddb.h define max as a macro, which conflicts with std::max
 #undef max
+
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <cerrno>
+#include <algorithm>
 
 //
 //

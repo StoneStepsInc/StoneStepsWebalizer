@@ -9,28 +9,8 @@
 */
 #include "pch.h"
 
-/*********************************************/
-/* STANDARD INCLUDES                         */
-/*********************************************/
-
-#include <ctime>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cctype>
-
 #ifndef _WIN32
 #include <unistd.h>                           /* normal stuff             */
-#endif
-
-/* ensure sys/types */
-#ifndef _SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-/* some systems need this */
-#ifdef HAVE_MATH_H
-#include <math.h>
 #endif
 
 #include "lang.h"
@@ -41,6 +21,12 @@
 #include "util.h"
 #include "history.h"
 #include "exception.h"
+
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 
 output_t::output_t(const config_t& config, const state_t& state) : state(state), config(config)
 {
