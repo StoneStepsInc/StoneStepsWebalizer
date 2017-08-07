@@ -15,7 +15,6 @@
 
 #include "lang.h"
 #include "linklist.h"
-#include "util.h"
 
 /* internal function prototypes */
 

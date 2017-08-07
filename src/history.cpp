@@ -12,6 +12,7 @@
 
 #include "history.h"
 #include "lang.h"
+#include "util_path.h"
 
 #include <cstdio>
 

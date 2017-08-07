@@ -10,7 +10,7 @@
 #ifndef SERIALIZE_H
 #define SERIALIZE_H
 
-#include "util.h"
+#include "util_string.h"
 #include "tstring.h"
 #include "tstamp.h"
 #include "types.h"

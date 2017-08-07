@@ -11,7 +11,6 @@
 
 #include "encoder.h"
 #include "tstring.h"
-#include "util.h"
 #include "exception.h"
 
 #include <algorithm>

@@ -13,6 +13,7 @@
 #include "serialize.h"
 #include "config.h"
 #include "exception.h"
+#include "util_url.h"
 
 // -----------------------------------------------------------------------
 //

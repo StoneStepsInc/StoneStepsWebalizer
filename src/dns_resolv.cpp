@@ -25,7 +25,7 @@
 
 #include "event.h"
 #include "thread.h"
-#include "util.h"
+#include "util_ipaddr.h"
 #include "serialize.h"
 #include "tstamp.h"
 

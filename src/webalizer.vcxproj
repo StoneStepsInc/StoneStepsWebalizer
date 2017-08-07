@@ -241,6 +241,13 @@
     </ClCompile>
     <ClCompile Include="serialize.cpp" />
     <ClCompile Include="unicode.cpp" />
+    <ClCompile Include="fmt_impl.cpp" />
+    <ClCompile Include="util_http.cpp" />
+    <ClCompile Include="util_ipaddr.cpp" />
+    <ClCompile Include="util_path.cpp" />
+    <ClCompile Include="util_string.cpp" />
+    <ClCompile Include="util_time.cpp" />
+    <ClCompile Include="util_url.cpp" />
     <ClCompile Include="webalizer.cpp" />
     <ClCompile Include="anode.cpp" />
     <ClCompile Include="ccnode.cpp" />
@@ -284,7 +291,6 @@
     <ClCompile Include="tmranges.cpp" />
     <ClCompile Include="tstamp.cpp" />
     <ClCompile Include="tstring.cpp" />
-    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="berkeleydb.h" />
@@ -323,7 +329,13 @@
     <ClInclude Include="tstring.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="unicode.h" />
-    <ClInclude Include="util.h" />
+    <ClInclude Include="fmt_impl.h" />
+    <ClInclude Include="util_http.h" />
+    <ClInclude Include="util_math.h" />
+    <ClInclude Include="util_path.h" />
+    <ClInclude Include="util_string.h" />
+    <ClInclude Include="util_time.h" />
+    <ClInclude Include="util_url.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="webalizer.h" />
     <ClInclude Include="anode.h" />

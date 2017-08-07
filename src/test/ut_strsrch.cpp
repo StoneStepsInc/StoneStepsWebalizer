@@ -9,7 +9,7 @@
 */
 #include "pchtest.h"
 
-#include "../util.h"
+#include "../util_string.h"
 #include "../tstring.h"
 
 namespace mstest = Microsoft::VisualStudio::CppUnitTestFramework;

@@ -28,7 +28,6 @@
 
 #include "hashtab.h"
 #include "lang.h"
-#include "util.h"
 
 //
 //

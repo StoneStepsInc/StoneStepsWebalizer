@@ -44,11 +44,20 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{611c384c-bedb-4ce2-9901-8aa6384a8861}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\util\3rd-party">
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{4afed78a-66ca-43ee-a742-b1c24784cb71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\3rd-party">
+      <UniqueIdentifier>{ad756fb4-db36-441e-9e99-32ea1fa376cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lib">
+      <UniqueIdentifier>{79a07431-9509-497f-9344-5ea2ece9e4a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lib\3rd-party">
       <UniqueIdentifier>{3cec164b-e3eb-40cd-b2db-fa270b8b2d31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\util\3rd-party">
-      <UniqueIdentifier>{ad756fb4-db36-441e-9e99-32ea1fa376cc}</UniqueIdentifier>
+    <Filter Include="Source Files\lib\templates">
+      <UniqueIdentifier>{ba8eb2e4-d1e3-4541-b029-d10f034b35e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,15 +169,6 @@
     <ClCompile Include="tmranges.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="tstamp.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="tstring.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="basenode_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
@@ -202,44 +202,71 @@
     <ClCompile Include="hashtab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cp1252_ucs2.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="char_buffer.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="berkeleydb_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
-    </ClCompile>
     <ClCompile Include="platform\exception_win.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
-    <ClCompile Include="unicode.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="formatter.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="encoder.cpp">
-      <Filter>Header Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="formatter_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
-    </ClCompile>
-    <ClCompile Include="char_buffer_stack.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="p2_buffer_allocator.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="cp1252.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="hckdel.cpp">
-      <Filter>Source Files\util\3rd-party</Filter>
+      <Filter>Source Files\lib\3rd-party</Filter>
     </ClCompile>
     <ClCompile Include="platform\console_win.cpp">
       <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="util_http.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util_url.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util_time.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util_ipaddr.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util_path.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="util_string.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="char_buffer.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="char_buffer_stack.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="cp1252.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="cp1252_ucs2.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="formatter.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="p2_buffer_allocator.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="tstring.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="unicode.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="fmt_impl.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="encoder.cpp">
+      <Filter>Header Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="formatter_tmpl.cpp">
+      <Filter>Source Files\lib\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="berkeleydb_tmpl.cpp">
+      <Filter>Source Files\lib\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="tstamp.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,15 +384,6 @@
     <ClInclude Include="queue.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="tstring.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="tstamp.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="tmranges.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -375,17 +393,8 @@
     <ClInclude Include="thread.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
-    <ClInclude Include="encoder.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="char_buffer.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="exception.h">
       <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="berkeleydb.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
@@ -393,23 +402,59 @@
     <ClInclude Include="platform\sys\utsname.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
-    <ClInclude Include="pool_allocator.h">
+    <ClInclude Include="hckdel.h">
+      <Filter>Header Files\lib\3rd-party</Filter>
+    </ClInclude>
+    <ClInclude Include="util_http.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="unicode.h">
+    <ClInclude Include="util_math.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="formatter.h">
+    <ClInclude Include="util_path.h">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_string.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_time.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_url.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="char_buffer.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="char_buffer_stack.h">
-      <Filter>Header Files\util</Filter>
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="encoder.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="formatter.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="p2_buffer_allocator.h">
-      <Filter>Header Files\util</Filter>
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
-    <ClInclude Include="hckdel.h">
-      <Filter>Header Files\util\3rd-party</Filter>
+    <ClInclude Include="pool_allocator.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="tstring.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="unicode.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt_impl.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="berkeleydb.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="tstamp.h">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

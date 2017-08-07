@@ -9,7 +9,6 @@
 */
 #include "basenode.h"
 #include "serialize.h"
-#include "util.h"
 #include "exception.h"
 
 #include <typeinfo>

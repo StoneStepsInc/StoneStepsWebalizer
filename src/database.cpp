@@ -20,7 +20,7 @@
 #include <new>
 
 #include "database.h"
-#include "util.h"
+#include "util_path.h"
 #include "serialize.h"
 #include "exception.h"
 

@@ -25,6 +25,10 @@
 #include "linklist.h"
 #include "lang.h"
 #include "exception.h"
+#include "util_http.h"
+#include "util_url.h"
+#include "util_ipaddr.h"
+#include "util_path.h"
 
 struct kwinfo {
    const char *keyword;

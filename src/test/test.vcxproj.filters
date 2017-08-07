@@ -87,9 +87,6 @@
     <Object Include="..\..\build\Win32\Debug\obj\unicode.obj">
       <Filter>obj\Debug</Filter>
     </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
     <Object Include="..\..\build\Win32\Debug\obj\tstamp.obj">
       <Filter>obj\Debug</Filter>
     </Object>
@@ -126,9 +123,6 @@
     <Object Include="..\..\build\Win32\Release\obj\unicode.obj">
       <Filter>obj\Release</Filter>
     </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
     <Object Include="..\..\build\Win32\Release\obj\char_buffer_stack.obj">
       <Filter>obj\Release</Filter>
     </Object>
@@ -155,6 +149,48 @@
     </Object>
     <Object Include="..\..\build\Win32\Release\obj\hckdel.obj">
       <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_http.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_url.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_http.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_url.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_ipaddr.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_path.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_string.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\util_time.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_ipaddr.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_path.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_string.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\util_time.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\fmt_impl.obj">
+      <Filter>obj\Release</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\fmt_impl.obj">
+      <Filter>obj\Debug</Filter>
     </Object>
   </ItemGroup>
 </Project>

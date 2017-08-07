@@ -12,7 +12,7 @@
 #ifndef _LINKLIST_H
 #define _LINKLIST_H
 
-#include "util.h"
+#include "util_string.h"
 #include "tstring.h"
 #include "types.h"
 

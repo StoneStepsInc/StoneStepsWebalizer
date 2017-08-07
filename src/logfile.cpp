@@ -9,7 +9,7 @@
 */
 #include "pch.h"
 #include "logfile.h"
-#include "util.h"
+#include "util_path.h"
 #include <errno.h>
 
 #ifdef _WIN32

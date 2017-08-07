@@ -18,7 +18,7 @@
 #include "linklist.h"
 #include "graphs.h"
 #include "output.h"
-#include "util.h"
+#include "util_path.h"
 #include "history.h"
 #include "exception.h"
 

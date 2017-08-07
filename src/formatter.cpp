@@ -11,7 +11,6 @@ formatter.cpp
 
 #include "formatter.h"
 #include "tstring.h"
-#include "util.h"
 
 #include <cstddef>
 #include <utility>

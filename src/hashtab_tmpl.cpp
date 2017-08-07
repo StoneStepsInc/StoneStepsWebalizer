@@ -11,7 +11,6 @@
 #include <cstring>
 #include <climits>
 
-#include "util.h"
 #include "hashtab.h"
 
 //

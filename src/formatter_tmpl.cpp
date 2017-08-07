@@ -11,7 +11,6 @@ formatter_tmpl.cpp
 
 #include "formatter.h"
 #include "tstring.h"
-#include "util.h"
 #include "exception.h"
 
 #include <cstddef>

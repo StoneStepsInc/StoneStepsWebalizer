@@ -28,9 +28,10 @@
 
 #include "lang.h"
 #include "graphs.h"
-#include "util.h"
+#include "util_path.h"
 #include "tstamp.h"
 #include "history.h"
+#include "fmt_impl.h"
 
 /* Some systems don't define this */
 #ifndef PI

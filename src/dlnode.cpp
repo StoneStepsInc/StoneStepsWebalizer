@@ -11,7 +11,6 @@
 
 #include "dlnode.h"
 #include "hnode.h"
-#include "util.h"
 #include "serialize.h"
 #include "exception.h"
 

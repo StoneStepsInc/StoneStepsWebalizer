@@ -65,7 +65,7 @@ LIBDIRS  := $(BLDDIR)
 # list of source files (precompiled header file must be first in the list)
 SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	output.cpp graphs.cpp preserve.cpp lang.cpp \
-	parser.cpp	util.cpp logrec.cpp tstamp.cpp \
+	parser.cpp logrec.cpp tstamp.cpp \
 	webalizer.cpp dns_resolv.cpp history.cpp tmranges.cpp \
 	anode.cpp ccnode.cpp dlnode.cpp hnode.cpp \
 	inode.cpp rcnode.cpp rnode.cpp snode.cpp \
@@ -79,7 +79,9 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	platform/exception_linux.cpp platform/event_pthread.cpp \
 	platform/thread_pthread.cpp platform/console_linux.cpp \
 	encoder.cpp p2_buffer_allocator.cpp char_buffer_stack.cpp \
-	cp1252.cpp hckdel.cpp
+	cp1252.cpp hckdel.cpp fmt_impl.cpp \
+	util_http.cpp util_ipaddr.cpp util_path.cpp util_string.cpp \
+	util_time.cpp util_url.cpp
 
 # list all libraries we use
 LIBS     := stdc++ dl pthread db_cxx gd z maxminddb

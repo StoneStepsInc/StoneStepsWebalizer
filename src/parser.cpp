@@ -16,9 +16,10 @@
 
 #include "lang.h"
 #include "parser.h"
-#include "util.h"
 #include "cp1252.h"
 #include "unicode.h"
+#include "util_url.h"
+#include "util_time.h"
 
 #include <vector>
 

@@ -19,7 +19,6 @@
 #include <errno.h>
 #include <new>
 
-#include "util.h"
 #include "serialize.h"
 #include "exception.h"
 

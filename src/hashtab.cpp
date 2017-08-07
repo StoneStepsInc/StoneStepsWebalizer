@@ -10,7 +10,6 @@
 */
 #include "pch.h"
 
-#include "util.h"
 #include "hashtab.h"
 
 #include <cstdlib>

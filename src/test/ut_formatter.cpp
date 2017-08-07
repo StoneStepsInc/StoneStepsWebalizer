@@ -9,7 +9,7 @@
 */
 #include "pchtest.h"
 
-#include "../util.h"
+#include "../fmt_impl.h"
 #include "../formatter.h"
 
 namespace mstest = Microsoft::VisualStudio::CppUnitTestFramework;

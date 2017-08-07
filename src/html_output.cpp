@@ -17,11 +17,16 @@
 #include "lang.h"
 #include "hashtab.h"
 #include "linklist.h"
-#include "util.h"
+#include "util_http.h"
+#include "util_url.h"
+#include "util_time.h"
+#include "util_math.h"
+#include "util_path.h"
 #include "history.h"
 #include "exception.h"
 #include "html_output.h"
 #include "preserve.h"
+#include "fmt_impl.h"
 
 #include <ctime>
 #include <cstdio>
