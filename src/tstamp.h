@@ -16,9 +16,51 @@
 #include "types.h"
 #include "tstring.h"
 
-//
-// time stamp structure
-//
+/// @struct tstamp_t
+///
+/// @brief  A time stamp structure that maintains and manipulates either local or UTC time
+///
+/// Date and time components may be stored in local time or UTC and are converted to the internal 
+/// serial time for all date/time math operations.
+///
+/// The internal serial time (intime_t) is represented in seconds since midnight January 1st, 1970 
+/// and may have the time zone offset included in the value. This data type allows us to operate on 
+/// local time and UTC values uniformly. The former, effectively, is treated as a UTC value shifted 
+/// by the time zone offset, which also makes calculating Julian day numbers for the internal serial 
+/// time more straightforward because a Julian day number is placed at noon UTC for the resulting 
+/// day.
+///
+/// The internal serial time cannot be used outside of tstamp_t because it is impossible to figure 
+/// out the value of the time zone offset included in the internal serial time value. Caller of any 
+/// function that makes use of the internal serial time must track whether it's local time or UTC, 
+/// as well as the time zone offset value.
+///
+/// In order to convert a local time stamp X to time_t via the internal serial time:
+///
+///   * Time components of X are converted to seconds since midnight (B)
+///   * A Julian day number is computed for date components of X as if it is in UTC
+///   * The Julian day for January 1st, 1970 (2440588) is subtracted from the Julian day number 
+///     for X, which yields the number of days between X and noon January 1st, 1970 UTC (C), 
+///     which is the same as the number of days since midnight of January 1st 1970 UTC (D)
+///   * The value of D is multiplied by the number of seconds in a day (86400) and yields the 
+///     number of seconds to the midnight of the day of X, local time. Leap seconds are ignored.
+///   * D and B are added, which yields an internal serial time of X
+///   * The time zone offset (A) is subtracted from the previous result, which yields a UTC 
+///     value corresponding to X and its time zone offset. 
+///
+///          2440588
+///     ...------------->|<--------------------------C---------------------------->|
+///         UTC          |                                             |<-B->|     |
+///        00:00         |                   00:00                     |     |     |            time
+///    ...---+===========+===========+---...---+===========+=======U===+-----X-----N----------+---->
+///     1970-01-01     12:00              2017-08-10     12:00     | 00:00   |   12:00
+///          |                                                     |<---A--->|
+///          |<----------------------------D-------------------------->|
+///
+/// The math for UTC time stamps is even simpler because the internal seria time in this case
+/// is in UTC and contains no time zone offset. 
+///
+
 struct tstamp_t {
    u_int    year  : 12;                // 4-digit year
    u_int    month : 4;                 // 1-12
@@ -52,12 +94,20 @@ struct tstamp_t {
          uninitialized
       };
 
+      // the internal serial time in seconds (see class description)
+      typedef int64_t intime_t;
+
+      // A Julian day number is a number of days since noon January 1st, 4713 BC, UTC
+      typedef u_int jdn_t;
+
    private:
       tstamp_t(uninitialized_t) {}
 
-      u_int reset_time(int64_t time);
-      void reset_date(u_int jdn);
+      u_int reset_time(intime_t time);
+      void reset_date(jdn_t jdn);
       bool parse_tstamp(const char *str);
+
+      static intime_t mkintime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec);
 
    public:
       tstamp_t(void) {reset();}
@@ -97,7 +147,7 @@ struct tstamp_t {
 
       u_int last_month_day(void) const {return last_month_day(year, month);}
 
-      u_int jday(void) const {return jday(year, month, day);}
+      jdn_t jday(void) const {return jday(year, month, day);}
 
       u_int wday(void) const {return wday(year, month, day);}
 

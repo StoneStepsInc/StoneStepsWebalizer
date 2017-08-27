@@ -55,9 +55,9 @@ void tstamp_t::reset(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s)
 // value, converts this number to the time components and uses the remaining whole number 
 // of days expressed in seconds to compute the Julian day number of that day, regardless 
 // of the time zone offset. Consequently, the returned value is a Julian day number either 
-// in UTC or local time. 
+// in UTC or local time.
 //
-u_int tstamp_t::reset_time(int64_t time)
+u_int tstamp_t::reset_time(intime_t time)
 {
    int64_t t;
 
@@ -78,7 +78,7 @@ u_int tstamp_t::reset_time(int64_t time)
    return (u_int) (time / 86400ll + 2440588ll);
 }
 
-void tstamp_t::reset_date(u_int jdn)
+void tstamp_t::reset_date(jdn_t jdn)
 {
    uint64_t a, b, c, d, e, m;
 
@@ -301,32 +301,38 @@ time_t tstamp_t::mktime(void) const
       mktime(year, month, day, hour, min, sec, offset);
 }
 
+time_t tstamp_t::mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec)
+{
+   return (time_t) mkintime(year, month, day, hour, min, sec);
+}
+
 time_t tstamp_t::mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset)
 {
    //
-   // Convert local time as if it's UTC and then subtract the offset (i.e. negative offsets 
-   // will be added) to produce actual UTC time.
+   // Convert local time to the internal serial time and then subtract the 
+   // offset (i.e. negative offsets will be added) to produce actual UTC time.
    //
-   return mktime(year, month, day, hour, min, sec) - (offset * 60ll);
+   return (time_t) (mkintime(year, month, day, hour, min, sec) - (offset * 60ll));
 }
 
 //
-// Returns the number of seconds since midnight 1/1/1970, UTC
+// Returns the number of seconds since midnight 1/1/1970, internal serial time
 //
-time_t tstamp_t::mktime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec)
+tstamp_t::intime_t tstamp_t::mkintime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec)
 {
    //
    // Julian day number for noon 1970-01-01 (UTC) is 2440588. Subtracting this value
    // from the value returned from jday produces midnight UTC time for the specified 
-   // date.
+   // date, which is treated as an internal serial time because at this point it is 
+   // not known whether these time components are in local time or UTC.
    //
-   return ((time_t) (jday(year, month, day) - 2440588) * 86400ll) + hour*3600ll + min*60ll + sec;
+   return ((intime_t) (jday(year, month, day) - 2440588) * 86400ll) + hour*3600ll + min*60ll + sec;
 }
 
 //
 // Returns a Julian day number - number of days from noon January 1st, 4713 BC (UTC)
 //
-u_int tstamp_t::jday(u_int year, u_int month, u_int day)
+tstamp_t::jdn_t tstamp_t::jday(u_int year, u_int month, u_int day)
 {
    u_int a, y, m;
    a = (14 - month)/12;
