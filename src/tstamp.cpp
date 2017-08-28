@@ -351,3 +351,23 @@ u_int tstamp_t::last_month_day(u_int year, u_int month)
    //
    return 27 + ((month < 12) ? jday(year, month+1, 1) : jday(year+1, 1, 1)) - jday(year, month, 28);
 }
+
+tstamp_t tstamp_t::first_month_day(void) const
+{
+   tstamp_t tstamp(*this);
+
+   // changing a day in the time stamp does not affect any other components
+   tstamp.day = 1;
+
+   return tstamp;
+}
+
+tstamp_t tstamp_t::last_month_day(void) const
+{
+   tstamp_t tstamp(*this);
+
+   // changing a day in the time stamp does not affect any other components
+   tstamp.day = last_month_day(year, month);
+
+   return tstamp;
+}

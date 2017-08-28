@@ -145,7 +145,9 @@ struct tstamp_t {
 
       time_t mktime(void) const;
 
-      u_int last_month_day(void) const {return last_month_day(year, month);}
+      tstamp_t first_month_day(void) const;
+
+      tstamp_t last_month_day(void) const;
 
       jdn_t jday(void) const {return jday(year, month, day);}
 

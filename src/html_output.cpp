@@ -258,7 +258,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    // Versions:
    //    v2    - added the data-xfer attribute
    //
-   u_int last_day = state.totals.cur_tstamp.last_month_day();
+   u_int last_day = state.totals.cur_tstamp.last_month_day().day;
    fputs("   var daily_usage_chart = new DailyUsageChart(2, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
