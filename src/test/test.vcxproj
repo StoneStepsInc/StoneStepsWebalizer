@@ -149,6 +149,7 @@
     <ClCompile Include="ut_strcmp.cpp" />
     <ClCompile Include="ut_strfmt.cpp" />
     <ClCompile Include="ut_strsrch.cpp" />
+    <ClCompile Include="ut_tstamp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\..\build\Win32\Debug\obj\char_buffer.obj">
