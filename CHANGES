@@ -1,8 +1,15 @@
 --------------------------------------------------------------------
 4.3.0.x [xx-xxx-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Implemented JavaScript country chart rendered as a world map using Highmaps (JavaScriptChartsMap)
+ * [JS Charts] Implemented a country chart rendered as a world map using Highmaps (JavaScriptChartsMap)
+ * [JS Charts] Removed unnecessary Highcharts framework script link in reports
  * Added latitude and longitude to IP addresses in the hosts report
+ * Fixed a couple column names in reports (e.g. Hostname changed to Host or IP Address or Host Name)
+ * Tweaked language selection for GeoIP to work with partial matches (e.g. pt vs. pt-br)
+ * Added a country code attribute to the country, host and download reports
+ * Removed non-country top level domain name suffixes from the country list (e.g. .com, .net, .edu, etc)
+ * HTML-encoded all text output in reports that may contain special characters (use CSS instead)
+ * [BUG] Fixed URL encoding to encode spaces and control characters to form proper URLs
 
 --------------------------------------------------------------------
 4.2.1.18 [28-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
