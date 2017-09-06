@@ -246,7 +246,7 @@ void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr
    slen = (str && *str) ? strlen(str) : 0;
 
    while((nptr = iter.next()) != NULL) {
-      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, &nptr->delta_table, nocase)))
+      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, NULL, nocase)))
          cb(nptr->string, ptr);
    }
 }
