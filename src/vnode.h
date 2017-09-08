@@ -48,7 +48,9 @@ struct unode_t;
 // visitors can share the same IP address, but are tracked independent of
 // their IP address alone.
 //
-struct vnode_t : public list_node_t<vnode_t>, public keynode_t<uint64_t>, public datanode_t<vnode_t> {
+struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
+      vnode_t *next;
+
       bool     entry_url: 1;        // entry URL set?
       bool     robot    : 1;        // robot?
       bool     converted: 1;        // requested target URL?

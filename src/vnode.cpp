@@ -13,7 +13,8 @@
 #include "unode.h"
 #include "serialize.h"
 
-vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid)
+vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid),
+   next(NULL)
 {
    entry_url = false;
    robot = false;
@@ -26,7 +27,8 @@ vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid)
    dirty = true;
 }
 
-vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode)
+vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
+   next(NULL)
 {
    entry_url = vnode.entry_url;
    robot = vnode.robot;

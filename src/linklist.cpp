@@ -16,10 +16,6 @@
 #include "lang.h"
 #include "linklist.h"
 
-/* internal function prototypes */
-
-static gnode_t *new_gnode(const char *, size_t, const char *, size_t);  /* new group list node */
-
 //
 // base_list
 //
@@ -41,52 +37,31 @@ const string_t *base_list<node_t>::isinlistex(const char *str, size_t slen, bool
 template <typename node_t>
 const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool substr, bool nocase) const
 {
-   const node_t *lptr;
-
-   if(str == NULL || *str == 0 || slen == 0 || list_t<node_t>::isempty())
+   if(str == NULL || *str == 0 || slen == 0 || list.empty())
       return NULL;
 
-   for(lptr = list_t<node_t>::head; lptr != NULL; lptr=lptr->next) {
-      if(!lptr->string)
+   for(std::list<node_t>::const_iterator lptr = list.begin(); lptr != list.end(); lptr++) {
+      if(lptr->string.isempty())
          continue; 
 
       if(isinstrex(str, lptr->string, slen, lptr->string.length(), substr, &lptr->delta_table, nocase)) 
-         return lptr;
+         return &(*lptr);
    }
 
    return NULL;
 }
 
 template <typename node_t>
-node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next, bool nocase)
+const node_t *base_list<node_t>::find_node(const string_t& str, typename std::list<node_t>::const_iterator& lptr, bool next, bool nocase) const
 {
-   node_t *lptr;
-
    if(str.isempty())
       return NULL;
 
-   while((lptr = iter.next()) != NULL) {
-      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase)) 
-         return lptr;
+   while(lptr != list.end()) {
+      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase))
+         return &*lptr++;
 
-      if(next)
-         break;
-   }
-
-   return NULL;
-}
-
-template <typename node_t>
-const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next, bool nocase)
-{
-   const node_t *lptr;
-
-   if(str.isempty())
-      return NULL;
-
-   while((lptr = iter.next()) != NULL) {
-      if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase)) 
-         return lptr;
+      lptr++;
 
       if(next)
          break;
@@ -101,42 +76,27 @@ const node_t *base_list<node_t>::find_node(const string_t& str, typename list_t<
 
 bool nlist::add_nlist(const char *str)
 {
-   nnode_t *nptr;
-
    if(!str || !*str)
-      return false;
-
-   if((nptr = new nnode_t(str)) == NULL)
       return false;
 
    // insert a single asterisk at the head (wildcard)
    if(str[0] == '*' && str[1] == 0) 
-      add_head(nptr);
+      list.emplace_front(str);
    else 
-      add_tail(nptr);
+      list.emplace_back(str);
 
    return true;
 }
 
-/*********************************************/
-/* ISINLIST - Test if string is in list      */
-/*********************************************/
-
 bool nlist::iswildcard(void) const
 {
-   return (head && head->string[0] == '*' && head->string[1] == 0) ? true : false;
+   return (!list.empty() && list.front().string[0] == '*' && list.front().string[1] == 0);
 }
 
-/*********************************************/
-/* NEW_GLIST - create new linked list node   */ 
-/*********************************************/
-
-static gnode_t *new_gnode(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen)
+gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen)
 {
-   gnode_t *newptr;
-
    if(value == NULL)
-      return NULL;
+      throw std::invalid_argument("Group key value cannot be NULL");
 
    if(vlen == 0)
       vlen = strlen(value);
@@ -153,31 +113,23 @@ static gnode_t *new_gnode(const char *name, size_t nlen, const char *value, size
    if(qualifier && qlen == 0)
       qlen = strlen(qualifier);
 
-   if((newptr = new gnode_t(value, vlen)) != NULL) {
-       newptr->name.assign(name, nlen);
+   set_key(value, vlen);
 
-       if(qlen)
-         newptr->qualifier.assign(qualifier, qlen);
+   this->name.assign(name, nlen);
 
-       newptr->noname = (name == value) ? true : false;
-       newptr->next=NULL;
-   }
+   if(qlen)
+      this->qualifier.assign(qualifier, qlen);
 
-   return newptr;
+   this->noname = name == value;
 }
-
-/*********************************************/
-/* ADD_GLIST - add item to FIFO linked list  */
-/*********************************************/
 
 bool glist::add_glist(const char *str, bool srcheng)
 {
-   gnode_t *newptr;
    const char *cp1, *cp2, *cp3 = NULL;
    size_t nlen, vlen, qlen;
 
    if(str == NULL)
-      return 0;
+      return false;
 
    //
    // keyword     value    [<tab>  name[=search quaifier]]
@@ -209,10 +161,9 @@ bool glist::add_glist(const char *str, bool srcheng)
       qlen = 0;
    }
 
-   if((newptr = new_gnode(cp2, nlen, cp1, vlen, cp3, qlen)) != NULL) 
-      add_tail(newptr);
+   list.emplace_back(cp2, nlen, cp1, vlen, cp3, qlen);
 
-   return newptr == NULL;
+   return true;
 }
 
 /*********************************************/
@@ -221,14 +172,9 @@ bool glist::add_glist(const char *str, bool srcheng)
 
 const string_t *glist::isinglist(const string_t& str) const
 {
-   glist::const_iterator iter = begin();
-   return isinglist(str, iter, false);
-}
-
-const string_t *glist::isinglist(const string_t& str, glist::const_iterator& iter, bool next) const
-{
    const gnode_t *lptr;
-   return ((lptr = find_node(str, iter, next)) != NULL) ? &lptr->name : NULL;
+   glist::const_iterator iter = list.begin();
+   return ((lptr = find_node(str, iter, false)) != NULL) ? &lptr->name : NULL;
 }
 
 const string_t *glist::isinglist(const char *str, size_t slen, bool substr) const
@@ -240,30 +186,18 @@ const string_t *glist::isinglist(const char *str, size_t slen, bool substr) cons
 void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr, bool nocase)
 {
    size_t slen;
-   iterator iter = begin();
-   gnode_t *nptr;
 
    slen = (str && *str) ? strlen(str) : 0;
 
-   while((nptr = iter.next()) != NULL) {
+   for(std::list<gnode_t>::iterator nptr = list.begin(); nptr != list.end(); nptr++) {
       if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, NULL, nocase)))
          cb(nptr->string, ptr);
    }
 }
 
-#include "linklist_tmpl.cpp"
-
 //
 // Instantiate linked list templates (see comments at the end of hashtab.cpp)
 //
-template struct list_node_t<nnode_t>;
-template struct list_node_t<gnode_t>;
-template struct base_list_node_t<nnode_t>;
-template struct base_list_node_t<gnode_t>;
-
-template class list_t<nnode_t>;
-template class list_t<gnode_t>;
-
 template class base_list<nnode_t>;
 template class base_list<gnode_t>;
 

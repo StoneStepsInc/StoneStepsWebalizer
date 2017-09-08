@@ -178,9 +178,6 @@
     <ClCompile Include="hashtab_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>
-    <ClCompile Include="linklist_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
-    </ClCompile>
     <ClCompile Include="queue_tmpl.cpp">
       <Filter>Source Files\templates</Filter>
     </ClCompile>

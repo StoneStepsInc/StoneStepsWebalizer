@@ -358,7 +358,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 
 void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page_type_t page_type)
 {
-   list_t<nnode_t>::iterator iter;                 /* used for HTMLhead processing */
+   nlist::const_iterator iter;                 /* used for HTMLhead processing */
 
    /* HTMLPre code goes before all else    */
    if (config.html_pre.isempty())
@@ -368,10 +368,9 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    }
    else
    {
-      iter = config.html_pre.begin(); 
-      while(iter.next())
+      for(iter = config.html_pre.begin(); iter != config.html_pre.end(); iter++)
       {
-         fprintf(out_fp,"%s\n", iter.item()->string.c_str());
+         fprintf(out_fp,"%s\n", iter->string.c_str());
       }
    }
 
@@ -402,10 +401,9 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    if(page_type != page_all_items && config.use_js_charts())
       write_js_charts_head(out_fp, page_type);
 
-   iter = config.html_head.begin();
-   while(iter.next())
+   for(iter = config.html_head.begin(); iter != config.html_head.end(); iter++)
    {
-      fprintf(out_fp,"%s\n", iter.item()->string.c_str());
+      fprintf(out_fp,"%s\n", iter->string.c_str());
    }
    fputs("</head>\n\n", out_fp);
 
@@ -434,10 +432,9 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    }
    else
    {
-      iter = config.html_body.begin();
-      while(iter.next())
+      for(iter = config.html_body.begin(); iter != config.html_body.end(); iter++)
       {
-         fprintf(out_fp,"%s\n", iter.item()->string.c_str());
+         fprintf(out_fp,"%s\n", iter->string.c_str());
       }
    }
    
@@ -450,10 +447,9 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    fprintf(out_fp,"%s %s\n</div>\n",config.lang.msg_hhdr_gt,cur_time(config.local_time).c_str());
    fputs("</div>\n\n", out_fp);
 
-   iter = config.html_post.begin();
-   while(iter.next())
+   for(iter = config.html_post.begin(); iter != config.html_post.end(); iter++)
    {
-      fprintf(out_fp,"%s\n", iter.item()->string.c_str());
+      fprintf(out_fp,"%s\n", iter->string.c_str());
    }
 }
 
@@ -463,7 +459,7 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
 
 void html_output_t::write_html_tail(FILE *out_fp)
 {
-   list_t<nnode_t>::iterator iter;
+   nlist::const_iterator iter;
 
    fputs("\n<!-- Page Footer -->\n", out_fp);
    fputs("<div class=\"page_footer_div\">\n", out_fp);
@@ -471,10 +467,9 @@ void html_output_t::write_html_tail(FILE *out_fp)
    if (!config.html_tail.isempty())
    {
       fputs("<div>", out_fp);
-      iter = config.html_tail.begin();
-      while(iter.next())
+      for(iter = config.html_tail.begin(); iter != config.html_tail.end(); iter++)
       {
-         fprintf(out_fp,"%s",iter.item()->string.c_str());
+         fprintf(out_fp,"%s", iter->string.c_str());
       }
       fputs("</div>\n", out_fp);
    }
@@ -486,10 +481,9 @@ void html_output_t::write_html_tail(FILE *out_fp)
    fprintf(out_fp,"\n<!-- Stone Steps Webalizer Version %s -->\n", state_t::get_app_version().c_str());
    if (!config.html_end.isempty())
    {
-      iter = config.html_end.begin();
-      while(iter.next())
+      for(iter = config.html_end.begin(); iter != config.html_end.end(); iter++)
       {
-         fprintf(out_fp,"%s\n", iter.item()->string.c_str());
+         fprintf(out_fp,"%s\n", iter->string.c_str());
       }
    }
    else 

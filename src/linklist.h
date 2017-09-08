@@ -16,126 +16,10 @@
 #include "tstring.h"
 #include "types.h"
 
-//
-// link list node base
-//
-template <typename node_t>
-struct list_node_t {
-   node_t *next; 
-
-   public:
-      list_node_t(void) : next(NULL) {}
-      list_node_t(node_t *next) : next(next) {}
-      
-      static void delete_node(node_t *node) {delete node;}      
-};
-
-//
-// generic linked list object
-//
-template <typename node_t, void (*dispose)(node_t*) = &list_node_t<node_t>::delete_node>
-class list_t {
-   protected:
-      node_t *head;
-      node_t *tail;
-
-      u_int  count;
-
-   public:
-      class iterator {
-         friend class list_t<node_t>;
-
-         private:
-            node_t   *head;
-            node_t   *nptr;
-
-         protected:
-            iterator(node_t *hptr) {head = hptr; nptr = NULL;}
-
-         public:
-            iterator(void) {head = NULL; nptr = NULL;}
-
-            iterator(const iterator& iter) {head = iter.head; nptr = iter.nptr;}
-            
-            iterator& operator = (const iterator& iter) {head = iter.head; nptr = iter.nptr; return *this;}
-
-            node_t *operator * (void) {return item();}
-
-            node_t *operator ++ (void) {return next();}
-
-            node_t *item(void) {return nptr;}
-
-            node_t *next(void)
-            {
-               if(head) {
-                  nptr = head; head = NULL;
-                  return nptr;
-               }
-
-               if(nptr)
-                  nptr = nptr->next;
-
-               return nptr;
-            }
-      };
-
-      class const_iterator : public iterator {
-         friend class list_t<node_t>;
-
-         private:
-            const_iterator(node_t *hptr) : iterator(hptr) {}
-
-         public:
-            const_iterator(void) : iterator() {}
-
-            const_iterator(const const_iterator& iter) : iterator(iter) {}
-
-            const_iterator(const iterator& iter) : iterator(iter) {}
-
-            const_iterator& operator = (const const_iterator& iter) {iterator::operator = (iter); return *this;}
-
-            const node_t *operator * (void) {return iterator::item();}
-
-            const node_t *operator ++ (void) {return iterator::next();}
-
-            const node_t *item(void) {return iterator::item();}
-
-            const node_t *next(void) {return iterator::next();}
-      };
-      
-   public:
-      list_t(void) {head = tail = NULL; count = 0;}
-
-      ~list_t(void) {clear();}
-
-      iterator begin(void) {return iterator(head);}
-
-      const_iterator begin(void) const {return const_iterator(head);}
-
-      void clear(void);
-
-      void add_head(node_t *newptr);
-
-      void add_tail(node_t *newptr);
-
-      node_t *remove_head(void);
-
-      const node_t *get_head(void) const {return head;}
-
-      node_t *get_head(void) {return head;}
-
-      const node_t *get_tail(void) const {return tail;}
-
-      node_t *get_tail(void) {return tail;}
-
-      bool isempty(void) const {return (!head) ? true : false;}
-
-      u_int size(void) const {return count;}
-};
+#include <list>
 
 // base string list node
-template <typename node_t>
-struct base_list_node_t : public list_node_t<node_t> {
+struct base_list_node_t {
    string_t          string;
    bmh_delta_table   delta_table;
 
@@ -155,17 +39,36 @@ struct base_list_node_t : public list_node_t<node_t> {
       virtual ~base_list_node_t(void) {}
 
       const string_t& key(void) const {return string;}
+
+      void set_key(const char *str, size_t slen) {string.assign(str, slen); init_delta_table();}
 };
 
 //
 // base_list
 //
 template <typename node_t>
-class base_list : public list_t<node_t> {
+class base_list {
+   public: 
+      typedef typename std::list<node_t>::iterator iterator;
+      typedef typename std::list<node_t>::const_iterator const_iterator;
+
+   protected:
+      std::list<node_t> list;
+
    public:
-      base_list(void) : list_t<node_t>() {}
+      base_list(void) {}
       
       ~base_list(void) {}
+
+      typename std::list<node_t>::iterator begin(void) {return list.begin();}
+      typename std::list<node_t>::const_iterator begin(void) const {return list.begin();}
+
+      typename std::list<node_t>::iterator end(void) {return list.end();}
+      typename std::list<node_t>::const_iterator end(void) const {return list.end();}
+
+      size_t size(void) const {return list.size();}
+
+      bool isempty(void) const {return list.empty();}
 
       const string_t *isinlist(const string_t& str, bool nocase = false) const;
 
@@ -173,19 +76,17 @@ class base_list : public list_t<node_t> {
 
       const node_t *find_node_ex(const char *str, size_t slen, bool substr, bool nocase = false) const;
 
-      static node_t *find_node(const string_t& str, typename list_t<node_t>::iterator& iter, bool next = false, bool nocase = false);
-
-      static const node_t *find_node(const string_t& str, typename list_t<node_t>::const_iterator& iter, bool next = false, bool nocase = false);
+      const node_t *find_node(const string_t& str, typename std::list<node_t>::const_iterator& iter, bool next = false, bool nocase = false) const;
 };
 
 // list struct for IGNORE and HIDE items
-struct nnode_t : public base_list_node_t<nnode_t> {
+struct nnode_t : public base_list_node_t {
    private:
-      nnode_t(void) : base_list_node_t<nnode_t>() {}
+      nnode_t(void) : base_list_node_t() {}
 
    public:
-      nnode_t(const char *str) : base_list_node_t<nnode_t>(str) {}
-      nnode_t(const string_t& str) : base_list_node_t<nnode_t>(str) {}
+      nnode_t(const char *str) : base_list_node_t(str) {}
+      nnode_t(const string_t& str) : base_list_node_t(str) {}
 };
 
 //
@@ -203,7 +104,7 @@ class nlist : public base_list<nnode_t> {
 };
 
 // list struct for GROUP items
-struct gnode_t : public base_list_node_t<gnode_t> {
+struct gnode_t : public base_list_node_t {
    string_t name;                            // name
    string_t qualifier;                       // search engine string qualifier
    bool     noname;
@@ -212,8 +113,9 @@ struct gnode_t : public base_list_node_t<gnode_t> {
       gnode_t(void) {noname = true;}
 
    public:
-      gnode_t(const char *str, size_t slen) : base_list_node_t<gnode_t>(str, slen) {noname = true;}
-      gnode_t(const string_t& str) : base_list_node_t<gnode_t>(str) {noname = true;}
+      gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen);
+      gnode_t(const char *str, size_t slen) : base_list_node_t(str, slen) {noname = true;}
+      gnode_t(const string_t& str) : base_list_node_t(str) {noname = true;}
 };
 
 //
@@ -232,10 +134,9 @@ class glist : public base_list<gnode_t> {
 
       const string_t *isinglist(const string_t& str) const;    // scan glist for str
 
-      const string_t *isinglist(const string_t& str, const_iterator& iter, bool next = false) const;
-
       const string_t *isinglist(const char *str, size_t slen, bool substr) const;
 
+      /// calls the callback function for each node with no name or a name (not value) matching str
       void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL, bool nocase = false);
 
       void set_enable_phrase_values(bool enable) {enable_phrase_values = enable;}

@@ -153,7 +153,7 @@ TEST_CLASS(LinkedList) {
       {
          const char *names[] = {"name-3", "name-4", "name-5", nullptr};
          int nameidx = 0;
-         gnode_t *node = nullptr;
+         const gnode_t *node = nullptr;
          glist list;
 
          list.set_enable_phrase_values(true);
@@ -192,7 +192,7 @@ TEST_CLASS(LinkedList) {
          const char *names[] = {"name-3=", "name-4=", "name-5=", nullptr};
          const char *qualifiers[] = {"three", "four", "five", nullptr};
          int nameidx = 0;
-         gnode_t *node = nullptr;
+         const gnode_t *node = nullptr;
          glist list;
 
          list.set_enable_phrase_values(true);

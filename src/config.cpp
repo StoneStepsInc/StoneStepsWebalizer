@@ -325,12 +325,10 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    //
    // GroupHost   127.0.0.1   localhost
    //
-   glist::iterator grph_iter = group_hosts.begin();
-
-   while(grph_iter.next()) {
-      if(is_ip_address(grph_iter.item()->name)) {
-         grph_iter.item()->name = string_t::_format("group_%s", grph_iter.item()->name.c_str());
-         messages.push_back(string_t::_format("WARNING: A bare IP address in GroupHost is changed to %s\n", grph_iter.item()->name.c_str()));
+   for(glist::iterator grph_iter = group_hosts.begin(); grph_iter != group_hosts.end(); grph_iter++) {
+      if(is_ip_address(grph_iter->name)) {
+         grph_iter->name = string_t::_format("group_%s", grph_iter->name.c_str());
+         messages.push_back(string_t::_format("WARNING: A bare IP address in GroupHost is changed to %s\n", grph_iter->name.c_str()));
       }
    }
    
@@ -646,9 +644,8 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    }
 
    // convert all site aliases to lower case
-   nlist::iterator site_alias_it = site_aliases.begin();
-   while(site_alias_it.next())
-      site_alias_it.item()->string.tolower();
+   for(nlist::iterator site_alias_it = site_aliases.begin(); site_alias_it != site_aliases.end(); site_alias_it++)
+      site_alias_it->string.tolower();
 
    // if no site name was supplied, use the reporting server host name
    if (hname.isempty()) {

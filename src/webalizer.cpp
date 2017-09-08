@@ -156,14 +156,14 @@ bool webalizer_t::init_output_engines(void)
    output_t *optr;
    nlist::const_iterator iter = config.output_formats.begin();
    
-   while(iter.next()) {
+   for(nlist::const_iterator iter = config.output_formats.begin(); iter != config.output_formats.end(); iter++) {
       // allocate an output engine of the requested type
-      if(iter.item()->string == "html") 
+      if(iter->string == "html") 
          optr = new html_output_t(config, state);
-      else if(iter.item()->string == "tsv") 
+      else if(iter->string == "tsv") 
          optr = new dump_output_t(config, state);
       else {
-         fprintf(stderr, "Unrecognized output format (%s)\n", iter.item()->string.c_str());
+         fprintf(stderr, "Unrecognized output format (%s)\n", iter->string.c_str());
          continue;
       }
       
@@ -179,7 +179,7 @@ bool webalizer_t::init_output_engines(void)
       if(!optr->init_output_engine()) {
          delete optr;
          if(config.verbose)
-            fprintf(stderr, "Cannot initialize output engine (%s)\n", iter.item()->string.c_str());
+            fprintf(stderr, "Cannot initialize output engine (%s)\n", iter->string.c_str());
          continue;
       }
       
@@ -391,10 +391,8 @@ void webalizer_t::process_resolved_hosts(void)
 void webalizer_t::proc_index_alias(string_t& url)
 {
    const char *cp1;
-   const nnode_t *lptr;
-   list_t<nnode_t>::iterator iter = config.index_alias.begin();
 
-   while((lptr = iter.next()) != NULL) {
+   for(nlist::const_iterator lptr = config.index_alias.begin(); lptr != config.index_alias.end(); lptr++) {
       if ((cp1 = strstr(url, lptr->string)) != NULL) {
          if(cp1 == url.c_str() || *(cp1-1) == '/') {
             url.truncate(cp1-url.c_str());
@@ -403,7 +401,6 @@ void webalizer_t::proc_index_alias(string_t& url)
             break;
          }
       }
-      lptr=lptr->next;
    }
 }
 

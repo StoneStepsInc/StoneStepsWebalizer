@@ -212,12 +212,6 @@
     <ClCompile Include="html_output.cpp" />
     <ClCompile Include="lang.cpp" />
     <ClCompile Include="linklist.cpp" />
-    <ClCompile Include="linklist_tmpl.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="logfile.cpp" />
     <ClCompile Include="logrec.cpp" />
     <ClCompile Include="output.cpp" />
