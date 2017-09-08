@@ -53,6 +53,9 @@
     <ClCompile Include="ut_tstamp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_linklist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -194,6 +197,12 @@
     </Object>
     <Object Include="..\..\build\Win32\Debug\obj\fmt_impl.obj">
       <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Debug\obj\linklist.obj">
+      <Filter>obj\Debug</Filter>
+    </Object>
+    <Object Include="..\..\build\Win32\Release\obj\linklist.obj">
+      <Filter>obj\Release</Filter>
     </Object>
   </ItemGroup>
 </Project>
