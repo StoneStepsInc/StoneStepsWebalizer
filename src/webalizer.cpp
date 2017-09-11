@@ -1813,12 +1813,12 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    cptr = sa.get_buffer();
 
    // walk search arguments and create descriptors for those that aren't filtered out
-   while (*cptr) {
+   while (*cptr && *cptr != '#') {
       while(*cptr == '&') cptr++;
       arginfo.name = cptr;
-      while(*cptr && *cptr != '=') cptr++;
+      while(*cptr && *cptr != '=' && *cptr != '&' && *cptr != '#') cptr++;
       arginfo.namelen = cptr - arginfo.name;
-      while(*cptr && *cptr != '&') cptr++;
+      while(*cptr && *cptr != '&' && *cptr != '#') cptr++;
       arginfo.arglen = cptr - arginfo.name;
 
       // 
