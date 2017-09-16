@@ -1,6 +1,9 @@
 --------------------------------------------------------------------
 4.3.0.x [xx-xxx-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
+ * Reworked the URL ignore filter to accept query string names
+ * [BUG] Fixed a bug in the URL query parser that misinterpreted fragment identifiers (text after #)
+ * [BUG] Fixed a bug causing bad query string sorting if a nameless query string was present
  * [JS Charts] Implemented a country chart rendered as a world map using Highmaps (JavaScriptChartsMap)
  * [JS Charts] Removed unnecessary Highcharts framework script link in reports
  * Added latitude and longitude to IP addresses in the hosts report
