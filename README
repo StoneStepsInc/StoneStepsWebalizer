@@ -2092,6 +2092,36 @@ IgnoreURL     This allows specified URL's to be completely ignored from
               development work is being done, but is not accessible to
               the outside world.
 
+              Unlike other ihnore keywords, IgnoreURL can take optional 
+              search argument names. Multiple IgnoreURL entries can be 
+              used to specify different searchh arguments for the same URL. 
+              If multiple IgnoreURL values are used, they must follow one
+              another or those that are out of order will be ignored. 
+              The entire search argument name is matched, not a part of
+              it, so abc will only match abc and not abcd.
+              
+              For example, if you would like to ignore index.html with
+              search arguments abc and xyz, you would use these configuration
+              variables:
+
+              IgnoreURL    /index.html*   abc
+              IgnoreURL    /index.html*   xyz
+
+              This will ignore following log records:
+
+              /index.html?abc=123&x=1&y=2
+              /index.html?x=1&y=2&xyz=123
+
+              , but will process and report these URLs:
+
+              /index.html?abcd=123&x=1&y=2
+              /index.html?x=1&y=2
+
+              Note that search argument filtering is done before the ignore
+              logic is applied, so if you filtered out the argument that is
+              used in one of the IgnoreURL entries, log records containing
+              excluded search arguments will not be ignored. 
+
 IgnoreReferrer This allows records to be ignored based on the referrer
                field.
 
