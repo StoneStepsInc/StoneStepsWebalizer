@@ -291,7 +291,7 @@ class config_t {
       // "Ignored" lists
       //
       nlist ignored_hosts;
-      nlist ignored_urls;
+      glist ignored_urls;
       nlist ignored_refs;
       nlist ignored_agents;
       nlist ignored_users;

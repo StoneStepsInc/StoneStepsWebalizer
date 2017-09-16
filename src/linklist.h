@@ -186,9 +186,10 @@ struct gnode_t : public base_list_node_t {
 class glist : public base_list<gnode_t> {
    private:
       bool enable_phrase_values;
+      bool has_names;
 
    public:
-      glist(void) : base_list<gnode_t>() {enable_phrase_values = false;}
+      glist(void) : base_list<gnode_t>(), has_names(false), enable_phrase_values(false) {}
 
       ~glist(void) {}
 
@@ -206,6 +207,9 @@ class glist : public base_list<gnode_t> {
 
       /// enable or disable the phrase values mode, which allows values with spaces
       void set_enable_phrase_values(bool enable) {enable_phrase_values = enable;}
+
+      /// returns true if at least one entry has a name associated with the value, false otherwise
+      bool get_has_names(void) const {return has_names;}
 };
 
 #endif  // _LINKLIST_H 

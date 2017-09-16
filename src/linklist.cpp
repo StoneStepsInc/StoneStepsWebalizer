@@ -161,6 +161,9 @@ bool glist::add_glist(const char *str, bool srcheng)
       qlen = 0;
    }
 
+   if(!has_names && nlen)
+      has_names = true;
+
    list.emplace_back(cp2, nlen, cp1, vlen, cp3, qlen);
 
    return true;

@@ -48,6 +48,7 @@
 #include <memory>
 #include <exception>
 #include <algorithm>
+#include <stdexcept>
 
 /*********************************************/
 /* GLOBAL VARIABLES                          */
@@ -1336,8 +1337,15 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(spammer)
             put_spnode(log_rec.hostname);
 
-         // run search arguments through the filters
-         filter_srchargs(log_rec.srchargs);
+         //
+         // Filter and, optionally, sort search arguments. Afer filter_srchargs returns,
+         // the search argument string in tthe log record will be rearranged according to
+         // the filters and sorting settings. Individual search arguments may be accessed
+         // via pointers in sr_args, which point to the search argument string in the the 
+         // log record and must be maintained together to avoid dangling pointers.
+         //
+         std::vector<arginfo_t, srch_arg_alloc_t> sr_args(srch_arg_alloc);
+         filter_srchargs(log_rec.srchargs, sr_args);
 
          /* strip off index.html (or any aliases) */
          if(config.index_alias.size())
@@ -1389,15 +1397,39 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
               { lrcnt.total_ignore++; continue; }
             if (config.ignored_hosts.isinlist(log_rec.hostname) != NULL)
               { lrcnt.total_ignore++; continue; }
-            if (config.ignored_urls.isinlist(log_rec.url)!=NULL)
-              { lrcnt.total_ignore++; continue; }
             if (config.ignored_agents.isinlist(log_rec.agent)!=NULL)
               { lrcnt.total_ignore++; continue; }
             if (config.ignored_refs.isinlist(log_rec.refer)!=NULL)
               { lrcnt.total_ignore++; continue; }
             if (config.ignored_users.isinlist(log_rec.ident)!=NULL)
               { lrcnt.total_ignore++; continue; }
+
+            // check the ignore URL filter, which may contain optional search argument names
+            const gnode_t *upat = NULL;
+            glist::const_iterator upat_it = config.ignored_urls.begin();
+            while((upat = config.ignored_urls.find_node(log_rec.url, upat_it, !upat)) != NULL) {
+               // if there is no search argument name in this URL pattern, then we found a match
+               if(upat->name.isempty()) 
+                  break;
+               else {
+                  // otherwise do a binary search of the name in the sorted search argument vector
+                  if(!sr_args.empty()) {
+                     arginfo_t sa_key(upat->name.c_str(), upat->name.length(), upat->name.length());
+                     if(bsearch(&sa_key, &*sr_args.begin(), sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp))
+                        break;
+                  }
+               }
+            }
+
+            // check if there is a match and update the ignored record counter if we found one
+            if(upat) {
+               lrcnt.total_ignore++; 
+               continue;
+            }
          }
+
+         // done with individual search arguments and can dispose of them
+         sr_args.clear();
 
          // do not look up robot agent for proxy requests
          if(config.log_type != LOG_SQUID) {
@@ -1787,10 +1819,8 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    return strncmp_ex(e1->name, e1->namelen, e2->name, e2->namelen);
 }
 
-void webalizer_t::filter_srchargs(string_t& srchargs)
+void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args)
 {
-   std::vector<arginfo_t, srch_arg_alloc_t> sr_args(srch_arg_alloc);
-   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    arginfo_t arginfo;
    char *cptr;
    string_t::char_buffer_t sa;
@@ -1851,22 +1881,43 @@ void webalizer_t::filter_srchargs(string_t& srchargs)
    if(config.sort_srch_args && sr_args.size() > 1)
       qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp);
 
-   // copy remaining search arguments to the buffer
+   // get a buffer to copy filtered and possibly sorted search arguments
+   string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
+
+   // form a new search argument string in the buffer
    cptr = buffer;
    for(size_t index = 0; index < sr_args.size(); index++) {
       if(index > 0)
          *cptr++ = '&';
+
+      // hold onto the new name position in the buffer
+      const char *argname = cptr;
+
       cptr += strncpy_ex(cptr, BUFSIZE - (cptr-buffer), sr_args[index].name, sr_args[index].arglen);
+
+      // make sure we copied the entire argument
+      if(cptr - argname != sr_args[index].arglen)
+         throw std::runtime_error("Cannot filter search arguments because the buffer is too small");
+
+      // re-point the argument name within the original character buffer (will contain garbage until memcpy below)
+      sr_args[index].name = sa.get_buffer() + (argname - buffer);
    }
 
-   // copy to the original memory block
+   // copy to the original character buffer (sr_args can be used again after this)
    memcpy(sa, buffer, cptr-buffer);
    sa[cptr-buffer] = 0;
 
    // attach the memory block to the string
    srchargs.attach(std::move(sa), cptr-buffer);
 
-   sr_args.clear();
+   // clear the vector if the ignore URL list doesn't have search argument names and make sure it's sorted otherwise
+   if(!config.ignored_urls.get_has_names())
+      sr_args.clear();
+   else {
+      // if the vector was not sorted for output, sort it for the ignore filter
+      if(!config.sort_srch_args && sr_args.size() > 1)
+         qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp);
+   }
 }
 
 bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const

@@ -91,6 +91,7 @@ class webalizer_t {
          size_t      arglen;
          
          arginfo_t(void) {name = NULL; namelen = arglen = 0;}
+         arginfo_t(const char*name, size_t namelen, size_t arglen) : name(name), namelen(namelen), arglen(arglen) {}
       };
 
       // search argument vector allocator
@@ -180,7 +181,7 @@ class webalizer_t {
       bool srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck);
       void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
       void process_resolved_hosts(void);
-      void filter_srchargs(string_t& srchargs);
+      void filter_srchargs(string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args);
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);
       void filter_user_agent(string_t& agent);
