@@ -1772,6 +1772,9 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
 int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 {
+   if(!e1 && !e2)
+      return 0;
+
    if(!e1 || !e2)
       return e1 ? 1 : -1;
 
@@ -1781,7 +1784,7 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    if(!e1->name || !e2->name)
       return e1->name ? 1 : -1;
 
-   return strncmp(e1->name, e2->name, std::min(e1->namelen, e2->namelen));
+   return strncmp_ex(e1->name, e1->namelen, e2->name, e2->namelen);
 }
 
 void webalizer_t::filter_srchargs(string_t& srchargs)
