@@ -1405,24 +1405,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
               { lrcnt.total_ignore++; continue; }
 
             // check the ignore URL filter, which may contain optional search argument names
-            const gnode_t *upat = NULL;
-            glist::const_iterator upat_it = config.ignored_urls.begin();
-            while((upat = config.ignored_urls.find_node(log_rec.url, upat_it, !upat)) != NULL) {
-               // if there is no search argument name in this URL pattern, then we found a match
-               if(upat->name.isempty()) 
-                  break;
-               else {
-                  // otherwise do a binary search of the name in the sorted search argument vector
-                  if(!sr_args.empty()) {
-                     arginfo_t sa_key(upat->name.c_str(), upat->name.length(), upat->name.length());
-                     if(bsearch(&sa_key, &*sr_args.begin(), sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp))
-                        break;
-                  }
-               }
-            }
-
-            // check if there is a match and update the ignored record counter if we found one
-            if(upat) {
+            if(check_ignore_url_list(log_rec.url, log_rec.srchargs, sr_args)) {
                lrcnt.total_ignore++; 
                continue;
             }
@@ -1817,6 +1800,29 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
       return e1->name ? 1 : -1;
 
    return strncmp_ex(e1->name, e1->namelen, e2->name, e2->namelen);
+}
+
+bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const
+{
+   // check the ignore URL filter, which may contain optional search argument names
+   const gnode_t *upat = NULL;
+   glist::const_iterator upat_it = config.ignored_urls.begin();
+
+   // find the first URL pattern and then loop through duplicates to see if we have a matching search argument name
+   while((upat = config.ignored_urls.find_node(url, upat_it, !upat)) != NULL) {
+      // if there is no search argument name in this URL pattern, then we found a match
+      if(upat->name.isempty()) 
+         return true;
+
+      // otherwise do a binary search of the name in the sorted search argument vector
+      if(!sr_args.empty()) {
+         arginfo_t sa_key(upat->name.c_str(), upat->name.length(), upat->name.length());
+         if(bsearch(&sa_key, &*sr_args.begin(), sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp))
+            return true;
+      }
+   }
+
+   return false;
 }
 
 void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args)

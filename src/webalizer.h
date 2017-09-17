@@ -181,6 +181,7 @@ class webalizer_t {
       bool srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck);
       void group_host_by_name(const hnode_t& hnode, const vnode_t& vnode);
       void process_resolved_hosts(void);
+      bool check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const;
       void filter_srchargs(string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args);
       void proc_index_alias(string_t& url);
       void mangle_user_agent(string_t& agent);
