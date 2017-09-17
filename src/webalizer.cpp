@@ -1784,8 +1784,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 //
 //
 //
-
-int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
+int webalizer_t::qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2)
 {
    if(!e1 && !e2)
       return 0;
@@ -1802,6 +1801,23 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    return strncmp_ex(e1->name, e1->namelen, e2->name, e2->namelen);
 }
 
+int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
+{
+   if(!e1 && !e2)
+      return 0;
+
+   if(!e1 || !e2)
+      return e1 ? 1 : -1;
+
+   if(!e1->name && !e2->name)
+      return 0;
+
+   if(!e1->name || !e2->name)
+      return e1->name ? 1 : -1;
+
+   return strncmp_ex(e1->name, e1->arglen, e2->name, e2->arglen);
+}
+
 bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const
 {
    // check the ignore URL filter, which may contain optional search argument names
@@ -1814,11 +1830,38 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
       if(upat->name.isempty()) 
          return true;
 
-      // otherwise do a binary search of the name in the sorted search argument vector
+      // otherwise search for the pattern name in the sorted search argument vector
       if(!sr_args.empty()) {
-         arginfo_t sa_key(upat->name.c_str(), upat->name.length(), upat->name.length());
-         if(bsearch(&sa_key, &*sr_args.begin(), sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp))
-            return true;
+         // if the pattern doesn't have a name qualifier, just do a binary search
+         if(upat->qualifier.isempty()) {
+            // if there's no name qualifier, make a search argument descriptor for a bare name (i.e as if without an equal sign)
+            arginfo_t sa_key(upat->name.c_str(), upat->name.length(), upat->name.length());
+
+            // use binary search to check if any of the actual argument names matches
+            if(bsearch(&sa_key, &*sr_args.begin(), sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_name_cmp))
+               return true;
+         }
+         else {
+            // otherwise make a search argument descriptor for a name that excludes the equal sign in the pattern name
+            arginfo_t sa_key(upat->name.c_str(), upat->name.length() - 1, upat->name.length());
+
+            std::vector<arginfo_t, srch_arg_alloc_t>::const_iterator sr_it;
+            
+            // cannot use bsearch because we need to traverse all search argument names in sequence
+            sr_it = std::lower_bound(sr_args.begin(), sr_args.end(), sa_key, [] (const arginfo_t& e1, const arginfo_t& e2) {return qs_srcharg_cmp(&e1, &e2) < 0;});
+
+            // iterate through all search arguments with the same name and compare values
+            if(sr_it != sr_args.end() && sr_it->namelen) {
+               // make sure the name matches the name qualifier
+               while(!strncmp_ex(sr_it->name, sr_it->namelen, upat->name, upat->name.length() - 1)) {
+                  // compare the argument value and the patter name qualifier
+                  if(!strncmp_ex(sr_it->value(), sr_it->value_length(), upat->qualifier, upat->qualifier.length()))
+                     return true;
+
+                  sr_it++;
+               }
+            }
+         }
       }
    }
 
@@ -1885,7 +1928,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
 
    // sort the resulting vector, if requested
    if(config.sort_srch_args && sr_args.size() > 1)
-      qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp);
+      qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_name_cmp);
 
    // get a buffer to copy filtered and possibly sorted search arguments
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
@@ -1922,7 +1965,7 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
    else {
       // if the vector was not sorted for output, sort it for the ignore filter
       if(!config.sort_srch_args && sr_args.size() > 1)
-         qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_cmp);
+         qsort(&sr_args[0], sr_args.size(), sizeof(arginfo_t), (int (*)(const void*, const void*)) qs_srcharg_name_cmp);
    }
 }
 

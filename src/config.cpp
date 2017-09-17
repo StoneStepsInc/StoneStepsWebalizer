@@ -962,7 +962,7 @@ void config_t::get_config(const char *fname)
          case 23: html_tail.add_nlist(value); break;              // HTMLTail
          case 24: mangle_agent=atoi(value); break;                // MangleAgents
          case 25: add_ignored_host(value); break;                 // IgnoreSite, IgnoreHost
-         case 26: ignored_urls.add_glist(value); break;           // IgnoreURL
+         case 26: ignored_urls.add_glist(value, true); break;     // IgnoreURL
          case 27: ignored_refs.add_nlist(value); break;           // IgnoreReferrer
          case 28: ignored_agents.add_nlist(value); break;         // IgnoreAgent
          case 29: if (value[0]=='y') verbose=0; break;            // ReallyQuiet

@@ -92,6 +92,19 @@ class webalizer_t {
          
          arginfo_t(void) {name = NULL; namelen = arglen = 0;}
          arginfo_t(const char*name, size_t namelen, size_t arglen) : name(name), namelen(namelen), arglen(arglen) {}
+
+         /// returns the length of the search argument value (zero if there is no value)
+         size_t value_length(void) const 
+         {
+            // value is present only there there is an equal sign, even if name has zero length
+            return namelen == arglen ? 0 : arglen - namelen - 1;
+         }
+
+         /// return a pointer to the search argument value or an empty string if there is none
+         const char *value(void) const
+         {
+            return namelen == arglen ? "" : name + namelen + 1;
+         }
       };
 
       // search argument vector allocator
@@ -223,6 +236,7 @@ class webalizer_t {
       //
       //
       //
+      static int qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2);
       static int qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2);
 
    public:
