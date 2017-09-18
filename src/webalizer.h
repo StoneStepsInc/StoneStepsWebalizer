@@ -84,26 +84,44 @@ class webalizer_t {
       typedef p2_buffer_allocator_tmpl<string_t::char_type> buffer_allocator_t;
       typedef char_buffer_holder_tmpl<string_t::char_type, size_t> buffer_holder_t;
       
-      // search argument descriptor
+      ///
+      /// @struct arginfo_t
+      ///
+      /// @brief  A URL search argument descriptor
+      ///
+      /// A search argument descriptor that points to the beginning of a search argument 
+      /// within a query string. The descriptor does not own memory contaiing the search 
+      /// argument and must have shorter life span than the underlying query string.
+      ///
+      /// Pointers returned from `name` and `value` methods should not be used in pointer
+      /// arithmetic because they may return pointer values outside of the query string 
+      /// range. Neither method ever returns a NULL pointer.
+      ///
       struct arginfo_t {
-         const char  *name;
-         size_t      namelen; 
+         const char  *arg;
+         size_t      namelen;
          size_t      arglen;
          
-         arginfo_t(void) {name = NULL; namelen = arglen = 0;}
-         arginfo_t(const char*name, size_t namelen, size_t arglen) : name(name), namelen(namelen), arglen(arglen) {}
+         arginfo_t(void) : arg(NULL), namelen(0), arglen(0) {}
+         arginfo_t(const char *arg, size_t namelen, size_t arglen) : arg(arg), namelen(namelen), arglen(arglen) {}
+
+         /// return a pointer to the search argument name or an empty string if there is none
+         const char *name(void) const
+         {
+            return namelen ? arg : "";
+         }
 
          /// returns the length of the search argument value (zero if there is no value)
          size_t value_length(void) const 
          {
-            // value is present only there there is an equal sign, even if name has zero length
+            // value is present only if there is an equal sign, even if namelen is zero
             return namelen == arglen ? 0 : arglen - namelen - 1;
          }
 
          /// return a pointer to the search argument value or an empty string if there is none
          const char *value(void) const
          {
-            return namelen == arglen ? "" : name + namelen + 1;
+            return namelen == arglen ? "" : arg + namelen + 1;
          }
       };
 

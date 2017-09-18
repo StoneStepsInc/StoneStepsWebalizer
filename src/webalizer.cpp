@@ -1792,13 +1792,7 @@ int webalizer_t::qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2)
    if(!e1 || !e2)
       return e1 ? 1 : -1;
 
-   if(!e1->name && !e2->name)
-      return 0;
-
-   if(!e1->name || !e2->name)
-      return e1->name ? 1 : -1;
-
-   return strncmp_ex(e1->name, e1->namelen, e2->name, e2->namelen);
+   return strncmp_ex(e1->name(), e1->namelen, e2->name(), e2->namelen);
 }
 
 int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
@@ -1809,13 +1803,13 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    if(!e1 || !e2)
       return e1 ? 1 : -1;
 
-   if(!e1->name && !e2->name)
+   if(!e1->arg && !e2->arg)
       return 0;
 
-   if(!e1->name || !e2->name)
-      return e1->name ? 1 : -1;
+   if(!e1->arg || !e2->arg)
+      return e1->arg ? 1 : -1;
 
-   return strncmp_ex(e1->name, e1->arglen, e2->name, e2->arglen);
+   return strncmp_ex(e1->arg, e1->arglen, e2->arg, e2->arglen);
 }
 
 bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const
@@ -1853,7 +1847,7 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
             // iterate through all search arguments with the same name and compare values
             if(sr_it != sr_args.end() && sr_it->namelen) {
                // make sure the name matches the name qualifier
-               while(!strncmp_ex(sr_it->name, sr_it->namelen, upat->name, upat->name.length() - 1)) {
+               while(!strncmp_ex(sr_it->name(), sr_it->namelen, upat->name, upat->name.length() - 1)) {
                   // compare the argument value and the patter name qualifier
                   if(!strncmp_ex(sr_it->value(), sr_it->value_length(), upat->qualifier, upat->qualifier.length()))
                      return true;
@@ -1897,11 +1891,11 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
    // walk search arguments and create descriptors for those that aren't filtered out
    while (*cptr && *cptr != '#') {
       while(*cptr == '&') cptr++;
-      arginfo.name = cptr;
+      arginfo.arg = cptr;
       while(*cptr && *cptr != '=' && *cptr != '&' && *cptr != '#') cptr++;
-      arginfo.namelen = cptr - arginfo.name;
+      arginfo.namelen = cptr - arginfo.arg;
       while(*cptr && *cptr != '&' && *cptr != '#') cptr++;
-      arginfo.arglen = cptr - arginfo.name;
+      arginfo.arglen = cptr - arginfo.arg;
 
       // 
       // [1] everything is included
@@ -1911,8 +1905,8 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
       if(config.incl_srch_args.iswildcard() ||
          !arginfo.namelen && !config.excl_srch_args.iswildcard() ||
          (arginfo.namelen && 
-            (config.incl_srch_args.isinlistex(arginfo.name, arginfo.namelen, false) || 
-            !config.excl_srch_args.isinlistex(arginfo.name, arginfo.namelen, false)))) {
+            (config.incl_srch_args.isinlistex(arginfo.name(), arginfo.namelen, false) || 
+            !config.excl_srch_args.isinlistex(arginfo.name(), arginfo.namelen, false)))) {
 
          if(sr_args.size() >= sr_args.capacity())
             sr_args.reserve(sr_args.capacity() << 1);
@@ -1942,14 +1936,14 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
       // hold onto the new name position in the buffer
       const char *argname = cptr;
 
-      cptr += strncpy_ex(cptr, BUFSIZE - (cptr-buffer), sr_args[index].name, sr_args[index].arglen);
+      cptr += strncpy_ex(cptr, BUFSIZE - (cptr-buffer), sr_args[index].arg, sr_args[index].arglen);
 
       // make sure we copied the entire argument
       if(cptr - argname != sr_args[index].arglen)
          throw std::runtime_error("Cannot filter search arguments because the buffer is too small");
 
       // re-point the argument name within the original character buffer (will contain garbage until memcpy below)
-      sr_args[index].name = sa.get_buffer() + (argname - buffer);
+      sr_args[index].arg = sa.get_buffer() + (argname - buffer);
    }
 
    // copy to the original character buffer (sr_args can be used again after this)
