@@ -40,7 +40,7 @@ const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool
    if(str == NULL || *str == 0 || slen == 0 || list.empty())
       return NULL;
 
-   for(std::list<node_t>::const_iterator lptr = list.begin(); lptr != list.end(); lptr++) {
+   for(typename std::list<node_t>::const_iterator lptr = list.begin(); lptr != list.end(); lptr++) {
       if(lptr->string.isempty())
          continue; 
 
