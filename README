@@ -2093,21 +2093,22 @@ IgnoreURL     This allows specified URL's to be completely ignored from
               the outside world.
 
               Unlike other ihnore keywords, IgnoreURL can take optional 
-              search argument names. Multiple IgnoreURL entries can be 
-              used to specify different searchh arguments for the same URL. 
-              If multiple IgnoreURL values are used, they must follow one
-              another or those that are out of order will be ignored. 
-              The entire search argument name is matched, not a part of
-              it, so abc will only match abc and not abcd.
+              search argument names and values. Multiple IgnoreURL entries 
+              can be used to specify different searchh arguments for the 
+              same URL. If multiple IgnoreURL values are used, they must 
+              follow one another in the configuration file or those that 
+              are out of order will be ignored. 
               
-              For example, if you would like to ignore index.html with
-              search arguments abc and xyz, you would use these configuration
-              variables:
+              The entire search argument name is matched, not a part of it, 
+              so abc will only match abc and not abcd.
+              
+              For example, if you would like to ignore index.html with search 
+              arguments abc and xyz, you would use these configuration variables:
 
               IgnoreURL    /index.html*   abc
               IgnoreURL    /index.html*   xyz
 
-              This will ignore following log records:
+              This will ignore log records containing these URLs:
 
               /index.html?abc=123&x=1&y=2
               /index.html?x=1&y=2&xyz=123
@@ -2116,6 +2117,23 @@ IgnoreURL     This allows specified URL's to be completely ignored from
 
               /index.html?abcd=123&x=1&y=2
               /index.html?x=1&y=2
+
+              IgnoreURL may also include search argument values, in which case 
+              both, name and value must match for a log line to be ignored. 
+              
+              For example, if the following IgnoreURL entry is used in the 
+              configuration file:
+
+              IgnoreURL    /index.html*   page=/test
+
+              , then a log line containing this URL will be egnored:
+
+              index.html?abc=123&page=/test&xyz=456
+
+              , but a log record containing this URL will be processed and
+              will appear in the report:
+
+              index.html?abc=123&page=/catalog&xyz=456
 
               Note that search argument filtering is done before the ignore
               logic is applied, so if you filtered out the argument that is
