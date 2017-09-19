@@ -16,32 +16,39 @@
 #include <map>
 #include <climits>
 
-// -----------------------------------------------------------------------
-// memory_pool_t
-//
-// A memory pool is a non-typed memory allocator that keeps a few stacks of 
-// memory blocks in an associative container indexed by the block size. Up 
-// to POOLSIZE buckets containing stacks of memory blocks of the same size 
-// will be created. 
-// 
-// When the pool size limit is reached, the least used bucket will be removed 
-// from the pool and a bucket for the new block size will be created.
-//
-// Each bucket in the pool maintains a stack of memory blocks of the same size,
-// up to BUCKETSIZE entries. Once the BUCKETSIZE limit is reached, all memory 
-// blocks returned to the pool will be freed.
-//
+///
+/// @class  memory_pool_t
+///
+/// @brief  A memory block pool that caches memory blocks of frequently used 
+///         sizes
+///
+/// @tparam BUCKETSIZE  Maximum number of same-size blocks in a pool bucket
+///
+/// @tparam POOLSIZE    Maximum number of buckets in the pool
+///
+/// A memory pool is a non-typed memory allocator that keeps a few stacks of 
+/// memory blocks in an associative container indexed by the block size.
+/// 
+/// When the POOLSIZE limit is reached, the least used bucket will be removed 
+/// from the pool and a bucket for the new block size will be created.
+///
+/// Each bucket in the pool maintains a stack of memory blocks of the same size,
+/// up to BUCKETSIZE entries. Once the BUCKETSIZE limit is reached, all memory 
+/// blocks returned to the pool will be freed.
+///
 template <size_t BUCKETSIZE, size_t POOLSIZE = SIZE_MAX>
 class memory_pool_t {
    typedef std::stack<void*, std::vector<void*>> block_stack_t;
 
    private:
-      //
-      // A bucket maintains a stack of memory blocks up to BUCKETSIZE and a 
-      // point in a life time counter that is updated every time a block of 
-      // memory is allocated or deallocated to track the age of each bucket,
-      // which shows how long ago the bucket was last used within the pool.
-      //
+      ///
+      /// @class  bucket_t
+      ///
+      /// A bucket maintains a stack of memory blocks up to BUCKETSIZE and a 
+      /// point in a life time counter that is updated every time a block of 
+      /// memory is allocated or deallocated to track the age of each bucket,
+      /// which shows how long ago the bucket was last used within the pool.
+      ///
       class bucket_t {
          uint64_t       lifept;  // point in a pool life time
          block_stack_t  blocks;  // stack of memory blocks
@@ -115,7 +122,7 @@ class memory_pool_t {
          if(i == mempool.end())
             return;
 
-         // find the bucket with the greatest age (skip the first one)
+         // find the bucket with the greatest age (skip the first one assigned above)
          while(++i != mempool.end()) {
             if(i->second.age(life) > mi->second.age(life))
                mi = i;
@@ -166,31 +173,38 @@ class memory_pool_t {
       }
 };
 
-// -----------------------------------------------------------------------
-// pool_allocator_t
-//
-// A pool allocator may be used with any STL container to minimize dynamic 
-// memory allocations.
-//
-// The effectiveness of the pool allocator depends on the STL container type,
-// container usage pattern and the pool limits in each template instantiation. 
-// 
-// For  example, std::list only allocates list nodes and configuring bucket 
-// size to some sensible limit is all that is required. However, std::vector 
-// may allocate unlimited number of memory blocks in multiples of sizeof(T) 
-// and may be not very effective if pool limits are too low or may consume 
-// too  much memory if limits are too high. Reserving some minimum capacity 
-// will work well in many cases, especially for containers that go though 
-// natural repetitive usage patterns (e.g. iteratively parsing query strings
-// in URLs). 
-//
-// Some STL containers (e.g. VC++ list) require their allocator to be default
-// constructable, which makes it impossible to construct a pool allocator with
-// the same instance of a memory pool passed into a constructor, which would be 
-// a more straightforward approach. As a work-around, a pool allocator maintains 
-// a shared pointer to a memory pool created by the first default-constructed 
-// allocator.
-//
+///
+/// @class  pool_allocator_t
+///
+/// @brief  A memory allocator that caches memory blocks of frequently used 
+///         sizes
+///
+/// @tparam BUCKETSIZE  Maximum number of same-size blocks in a pool bucket
+///
+/// @tparam POOLSIZE    Maximum number of buckets in the pool
+///
+/// A pool allocator may be used with any STL container to minimize dynamic 
+/// memory allocations.
+///
+/// The effectiveness of the pool allocator depends on the STL container type,
+/// container usage pattern and the pool limits in each template instantiation. 
+/// 
+/// For  example, std::list only allocates list nodes and configuring bucket 
+/// size to some sensible limit is all that is required. However, std::vector 
+/// may allocate unlimited number of memory blocks in multiples of sizeof(T) 
+/// and may be not very effective if pool limits are too low or may consume 
+/// too  much memory if limits are too high. Reserving some minimum capacity 
+/// will work well in many cases, especially for containers that go through
+/// natural repetitive usage patterns (e.g. iteratively parsing query strings
+/// in URLs). 
+///
+/// Some STL containers (e.g. VC++ list) require their allocator to be default
+/// constructable, which makes it impossible to construct a pool allocator with
+/// the same instance of a memory pool passed into a constructor, which would be 
+/// a more straightforward approach. As a work-around, a pool allocator maintains 
+/// a shared pointer to a memory pool created by the first default-constructed 
+/// allocator.
+///
 template <typename T, size_t BUCKETSIZE, size_t POOLSIZE = SIZE_MAX>
 class pool_allocator_t {
    // make sure we can access rebound instances of pool_allocator_t
