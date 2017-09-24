@@ -721,7 +721,7 @@ void webalizer_t::filter_user_agent(string_t& agent)
       if(cpinplace && t_arglen <= ualen)
          ua2 = std::move(ua);
       else
-         ua2.resize(t_arglen+1);
+         ua2.resize(t_arglen+1, 0);
       
       // form a new user agent string
       cp1 = ua2;

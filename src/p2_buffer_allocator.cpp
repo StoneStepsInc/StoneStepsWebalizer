@@ -31,7 +31,7 @@ char_buffer_base<char_t> p2_buffer_allocator_tmpl<char_t>::get_buffer(size_t buf
 
    // and either return a buffer from the top of the stack or allocate a new one
    if(buffer_stack.empty())
-      buffer.resize(bufsize);
+      buffer.resize(bufsize, 0);
    else {
       buffer = std::move(buffer_stack.top());
       buffer_stack.pop();
@@ -49,7 +49,7 @@ void p2_buffer_allocator_tmpl<char_t>::release_buffer(char_buffer_base<char_t>&&
 
    // if buffer size isn't a power of two, resize it to match one of the buckets
    if(bufsize != buffer.capacity())
-      buffer.resize(bufsize);
+      buffer.resize(bufsize, 0);
 
    // get the bucket for the requested buffer size
    buffer_stack_t& buffer_stack = buffers[tzbits((uint32_t) bufsize) - 8];

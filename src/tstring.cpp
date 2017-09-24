@@ -241,7 +241,7 @@ void string_base<char_t>::realloc_buffer(size_t len)
       bufsize = (((len >> 2) + 1) << 2) + 1;
 
       if(string != empty_string)
-         string = char_buffer_t::alloc(string, bufsize);
+         string = char_buffer_t::alloc(string, bufsize, slen + 1);
       else {
          string = char_buffer_t::alloc(bufsize);
          *string = 0;

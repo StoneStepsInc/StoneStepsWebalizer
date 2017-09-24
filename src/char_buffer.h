@@ -76,8 +76,6 @@ class char_buffer_base {
 
       char_t *detach(size_t *bsize = NULL, bool *hold = NULL);
 
-      char_buffer_base& resize(size_t size);
-
       char_buffer_base& resize(size_t size, size_t datasize);
 
       size_t capacity(void) const {return bufsize;}
@@ -109,7 +107,7 @@ class char_buffer_base {
       //
       // Buffer memory management functions
       //
-      static char_t *alloc(char_t *buffer, size_t bufsize);
+      static char_t *alloc(char_t *buffer, size_t bufsize, size_t datasize);
 
       static char_t *alloc(size_t bufsize);
 

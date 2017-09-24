@@ -33,7 +33,7 @@ char_buffer_base<char_t>::char_buffer_base(char_t *buffer, size_t bufsize, bool 
 template <typename char_t>
 char_buffer_base<char_t>::char_buffer_base(size_t bufsize) : bufsize(bufsize), holder(false)
 {
-   buffer = (char_t*) malloc(bufsize * sizeof(char_t));
+   buffer = new char_t[bufsize];
 }
 
 template <typename char_t>
@@ -95,13 +95,6 @@ char_t *char_buffer_base<char_t>::detach(size_t *bsize, bool *hold)
 }
 
 template <typename char_t>
-char_buffer_base<char_t>& char_buffer_base<char_t>::resize(size_t size)
-{
-   // copy as much data as fits in the new buffer if we don't know how much we have
-   return resize(size, bufsize);
-}
-
-template <typename char_t>
 char_buffer_base<char_t>& char_buffer_base<char_t>::resize(size_t size, size_t datasize)
 {
    // make sure the size of the data within the buffer doesn't exceed buffer size
@@ -137,57 +130,42 @@ char_buffer_base<const char>& char_buffer_base<const char>::resize(size_t size, 
 }
 
 template <typename char_t>
-char_t *char_buffer_base<char_t>::alloc(char_t *buffer, size_t bufsize)
+char_t *char_buffer_base<char_t>::alloc(char_t *buffer, size_t bufsize, size_t datasize)
 {
-   char_t *newbuf = (char_t*) ::realloc(buffer, bufsize * sizeof(char_t));
+   // allocate a new buffer, so we can copy data if needed
+   char_t *newbuf = alloc(bufsize);
 
-   // if we failed to allocate memory, the old buffer should be freed by its owner
-   if(!newbuf)
-      throw std::bad_alloc();
+   if(buffer) {
+      // copy as much data from the current buffer as the new one can take
+      if(bufsize && datasize)
+         memcpy(newbuf, buffer, std::min(bufsize, datasize) * sizeof(char_t));
+
+      // release the current buffer
+      free(buffer);
+   }
 
    return newbuf;
 }
 
 template <>
-const char *char_buffer_base<const char>::alloc(const char *buffer, size_t bufsize)
+const char *char_buffer_base<const char>::alloc(const char *buffer, size_t bufsize, size_t datasize)
 {
    //
    // We cannot use realloc with a const character buffer because it, effectively, 
    // copies chracters into a block of memory that is supposed to contain const
-   // characters. It is possible to allocate a new block of memory, but in a static
-   // member function, the size of the the underlying memory block is unknown, and
-   // having the caller to maintain buffer size outside of this implementation would
-   // be quite error prone.
+   // characters.
    //
-   throw exception_t(0, "Cannot resize a const character buffer");
+   throw exception_t(0, "Cannot reallocate a const character buffer");
 }
 
 template <typename char_t>
 char_t *char_buffer_base<char_t>::alloc(size_t bufsize)
 {
-   char_t *newbuf = (char_t*) malloc(bufsize * sizeof(char_t));
-
-   if(!newbuf)
-      throw std::bad_alloc();
-
-   return newbuf;
-}
-
-template <>
-const char *char_buffer_base<const char>::alloc(size_t bufsize)
-{
-   // use operator new, so we can delete a const buffer later
-   return new char[bufsize];
+   return new char_t[bufsize];
 }
 
 template <typename char_t>
 void char_buffer_base<char_t>::free(char_t *buffer)
-{
-   ::free(buffer);
-}
-
-template <>
-void char_buffer_base<const char>::free(const char *buffer)
 {
    delete [] buffer;
 }

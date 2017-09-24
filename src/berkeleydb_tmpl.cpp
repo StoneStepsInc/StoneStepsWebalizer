@@ -666,7 +666,7 @@ bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpac
    buffer_t& buffer = buffer_holder.buffer; 
 
    // for a secondary database we retrieve two keys
-   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3));
+   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
 
    set_dbt_buffer(key, buffer, DBBUFSIZE);
    set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
@@ -714,7 +714,7 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t:
    buffer_t& buffer = buffer_holder.buffer; 
 
    // for a secondary database we retrieve two keys
-   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3));
+   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
 
    set_dbt_buffer(key, buffer, DBBUFSIZE);
    set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
@@ -754,7 +754,7 @@ bool berkeleydb_t::table_t::put_node(const node_t& node)
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+datasize);
+   buffer.resize(keysize+datasize, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
@@ -786,7 +786,7 @@ bool berkeleydb_t::table_t::get_node_by_id(node_t& node, typename node_t::s_unpa
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+DBBUFSIZE);
+   buffer.resize(keysize+DBBUFSIZE, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
@@ -821,7 +821,7 @@ bool berkeleydb_t::table_t::get_node_by_value(node_t& node, typename node_t::s_u
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+DBBUFSIZE);
+   buffer.resize(keysize+DBBUFSIZE, 0);
 
    if(values == NULL)
       return false;
@@ -886,7 +886,7 @@ bool berkeleydb_t::table_t::delete_node(const keynode_t<uint64_t>& node)
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize);
+   buffer.resize(keysize, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;

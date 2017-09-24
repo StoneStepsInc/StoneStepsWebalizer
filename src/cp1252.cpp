@@ -71,7 +71,7 @@ const string_t& cp1252utf8(const string_t& str, string_t& out)
 
    // check if we can fit the new string in the old block, including the null character
    if(omem.capacity() <= osize)
-      omem.resize(osize + 1);
+      omem.resize(osize + 1, 0);
 
    // convert the input string to UTF-8
    if(!cp1252utf8(str, omem, omem.capacity()))

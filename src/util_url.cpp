@@ -102,11 +102,11 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
    // keep buffer reallocation in this function, so there's no extra parameter validation required
    auto realloc_buffer = [] (string_t::char_buffer_t& buf, char *bcp) -> char*
    {
-      // hold onto the current buffer offset
+      // hold onto the current buffer offset (bcp points to the first unused byte, possibly past current buffer size)
       size_t of = bcp - buf;
 
-      // grab half the current buffer size more to minimize copying of the existing data
-      buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2));
+      // grab half the current buffer size more
+      buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2), of);
 
       // set the output pointer to the same position within the new buffer
       bcp = buf + of;
@@ -260,7 +260,7 @@ string_t& url_encode(const string_t& str, string_t& out)
          of = bcp - buf;
 
          // half of the minimum (32) should be enough to accommodate 4 * 3 + 1 bytes
-         buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2));
+         buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2), of);
          bcp = buf + of;
       }
 
