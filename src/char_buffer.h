@@ -13,32 +13,37 @@
 
 #include <cstddef>
 
-//
-// 1. char_buffer_base is a transient object that maintains a block of memory, large 
-// enough to accommodate bufsize narrow or wide characters, depending on the template 
-// argument.
-//
-// 2. char_buffer_base makes no assumption about the content of the buffer and does not
-// ever interpret the content as a zero-terminated string.
-//
-// 3. Character buffers cannot be copied because there is no indication how much data is
-// in the buffer and copying the entire buffer would be inefficient. Character buffers
-// are intended to facilitate detaching/attaching memory from/to strings and should use
-// move semantics.
-//
-// 4. A const character buffer is a distinct type and const and non-const character 
-// buffers cannot be constructed from one another. 
-//
-// 5. A non-const character buffer uses malloc/realloc/free to manage buffer memory,
-// which makes it possible to reallocate buffer memory, while preserving data within
-// the buffer. The side effect of using realloc is that unused buffer bytes are also 
-// being copied when a buffer is being reallocated.
-//
-// A const character buffer uses new and delete operators to manage buffer memory, 
-// which make it possible to delete memory containing const characters, but prevents
-// us from copying existing data into a new buffer, which means that const character 
-// buffers cannot be resized.
-//
+///
+/// @class  class char_buffer_base
+///
+/// @brief  A generic character buffer object
+///
+/// @tparam chart_t  Character type (char or wchar_t)
+///
+/// 1. char_buffer_base is a transient object that maintains a block of memory, large 
+/// enough to accommodate bufsize narrow or wide characters, depending on the template 
+/// argument.
+///
+/// 2. char_buffer_base makes no assumption about the content of the buffer and does not
+/// ever interpret the content as a zero-terminated string.
+///
+/// 3. Character buffers cannot be copied because there is no indication how much data is
+/// in the buffer and copying the entire buffer would be inefficient. Character buffers
+/// are intended to facilitate detaching/attaching memory from/to strings and should use
+/// move semantics.
+///
+/// 4. A const character buffer is a distinct type and const and non-const character 
+/// buffers cannot be constructed from one another. 
+///
+/// 5. [removed]
+///
+/// 6. A holder buffer does not own the buffer memory and can be used with character 
+/// arrays that are not allocated dynamically. If a holder buffer is resized, it will
+/// allocate a new memory block and will become a non-holder buffer.
+///
+/// 7. A buffer is always resized, even if the new requested memory size is smaller
+/// than the current buffer size.
+///
 template <typename char_t>
 class char_buffer_base {
    private:
@@ -118,16 +123,26 @@ class char_buffer_base {
 //
 typedef char_buffer_base<unsigned char> buffer_t;
 
-//
-// A fixed-size character buffer that can be used as a temporary storage in a local 
-// scope. For example, this code creates a temporary string without having to allocate
-// memory:
-//
-//    string_t::fixed_char_buffer_t<hnode_t::ccode_size+1> ccode_buffer;
-//    string_t ccode(ccode_buffer, 0, false);
-//    ccnode_t *ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode(ccode));
-//
-//
+///
+/// @class  fixed_char_buffer_t
+///
+/// @brief  A fixed-size character buffer
+///
+/// @tparam char_t   Character type (char or wchar_t)
+/// @tparam BUFSIZE  Fixed buffer size, in char_t characters
+///
+/// A fixed-size character buffer that can be used as a temporary storage in a local 
+/// scope. For example, this code creates a temporary string without having to allocate
+/// memory:
+///
+///    string_t::fixed_char_buffer_t<hnode_t::ccode_size+1> ccode_buffer;
+///    string_t ccode(ccode_buffer, 0, false);
+///    ccnode_t *ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode(ccode));
+///
+/// A fixed-size character buffer does not prevent resizing and, just like any other
+/// holder buffers, will allocate a new memory block when resized. Do not use this
+/// class if you plan to resize the buffer.
+///
 template <typename char_t, size_t BUFSIZE>
 class fixed_char_buffer_t : public char_buffer_base<char_t> {
    private:
@@ -139,23 +154,18 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
       }
 };
 
-//
-// char_buffer_allocator_tmpl
-//
-// Objects derived from char_buffer_allocator_tmpl may be used to maintain reusable
-// buffers in an optimal way defined by the allocator implementation in order to 
-// minimize buffer memory allocations, without having to use a single large buffer.
-//
-// Use get_buffer() if all cached buffers have the same size or if it makes sense
-// to allocate and reuse a small number of buffers that are large enough for all
-// intended uses. The caller is expected to ensure that returned buffers are resized 
-// as needed and the number of cached buffers doesn't exceed some reasonable limit.
-//
-// Use get_buffer(size_t) if it's not known how many buffers will be needed and if 
-// the size of each buffer varies greatly. The allocator in this case will return a 
-// buffer that is equal or greater than the requested size, minimizing the total 
-// amount of memory used by all buffers.
-//
+///
+/// @class  char_buffer_allocator_tmpl
+///
+/// @brief  A base class for a generic character buffer allocator
+///
+/// @tparam char_t            Character type (char or wchar_t)
+/// @tparam alloc_params_t    A template parameter pack passed to the allocator implementation
+///
+/// Objects derived from char_buffer_allocator_tmpl may be used to maintain reusable
+/// buffers in an optimal way defined by the allocator implementation in order to 
+/// minimize buffer memory allocations, without having to use a single large buffer.
+///
 template <typename char_t, typename ... alloc_params_t>
 class char_buffer_allocator_tmpl {
    public:
@@ -164,22 +174,29 @@ class char_buffer_allocator_tmpl {
       virtual void release_buffer(char_buffer_base<char_t>&& buffer) = 0;
 };
 
-//
-// char_buffer_holder_tmpl is a convenience class to help manage temporary buffers 
-// within a local scope. For example:
-//
-//  char_buffer_base<char_t>&& buffer = buffer_holder_t(*buffer_allocator).buffer;
-//
-// Note that the life of a temporary object bound to a reference to a return value
-// of a method is not extended beyond the end of the expression, which means that 
-// the buffer data member must be accessed directly for this to work. This is also
-// the reason convenience member functions, such as a buffer reference operator, 
-// should not be defined for the buffer holder class.
-//
-// VC++ 2013 fails to recognize that the reference is bound to a subobject of a 
-// temporary and destroys the buffer holder and the buffer at the end of the line. 
-// VC 2015 fixes this problem.
-//
+///
+/// @class  char_buffer_holder_tmpl
+///
+/// @brief  A buffer holder maintains a buffer within some scope
+///
+/// @tparam char_t            Character type (char or wchar_t)
+/// @tparam alloc_params_t    A template parameter pack passed to the allocator implementation
+///
+/// char_buffer_holder_tmpl is a convenience class to help manage temporary buffers 
+/// within a local scope. For example:
+///
+///  char_buffer_base<char_t>&& buffer = buffer_holder_t(*buffer_allocator).buffer;
+///
+/// Note that the life of a temporary object bound to a reference to a return value
+/// of a method is not extended beyond the end of the expression, which means that 
+/// the buffer data member must be accessed directly for this to work. This is also
+/// the reason convenience member functions, such as a buffer reference operator, 
+/// should not be defined for the buffer holder class.
+///
+/// VC++ 2013 fails to recognize that the reference is bound to a subobject of a 
+/// temporary and destroys the buffer holder and the buffer at the end of the line. 
+/// VC 2015 fixes this problem.
+///
 template <typename char_t, typename ... alloc_params_t>
 class char_buffer_holder_tmpl {
    private:
