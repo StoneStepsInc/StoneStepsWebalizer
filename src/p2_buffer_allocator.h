@@ -15,6 +15,16 @@
 #include <vector>
 #include <stack>
 
+///
+/// @class  p2_buffer_allocator_tmpl
+///
+/// @brief  A character buffer allocator that maintains a few power-of-two sized 
+///         char_buffer_base objects
+///
+/// The size of returned char_buffer_base objects is always rounded up to the nearest power
+/// of two, compared to the requested size. The minimum size of the returned buffer is 256
+/// characters.
+///
 template <typename char_t>
 class p2_buffer_allocator_tmpl : public char_buffer_allocator_tmpl<char_t, size_t> {
    private:

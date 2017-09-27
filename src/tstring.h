@@ -26,45 +26,48 @@
 //
 #define CHLT(c) select_char_literal<char_t>(c, L ## c)
 
-//
-// string_base
-//
-// 1. string_base may be used to manage three kinds of strings:
-//
-//    * dynamically allocated modifiable strings (holder == false)
-//    * modifiable strings within a fixed-size buffer (holder == true && bufsize > 0)
-//    * read-only strings (holder == true && bufsize == 0)
-//
-// 2. A read-only string cannot be modified in any way and cannot be repurposed as a
-// modifiable string. Use string_t::hold to wrap string literals in a string_t class:
-//
-//    const string_t& str = string_t::hold("ABC", 3);
-//
-// Note that if a non-const instance of string_t is constructed instead in the example
-// above, calling non-const methods of this instance will throw an exception.
-//
-// Read-only strings may be moved between string_t instances via the move constructor 
-// or the move assignment operator.
-//
-// 3. [removed]
-//
-// 4. Unlike with const_char_buffer_t, which can be used independently from char_buffer_t,
-// having a distinct string_base class defined with a const character type would make it 
-// imposible to pass such string instances into functions that take string_t arguments. 
-// Read-only string_t instances are used instead to wrap string literals or other data that 
-// cannot be modified.
-//
-// 5. When string_base is instantiated for char, the intended character set is UTF-8 and
-// any other character encoding, such as various Windows code pages, will not work. The 
-// side effect of having a single char value passed into member functions such as tolower
-// is that they can only operate on ASCII characters. Implementing support for arbitrary 
-// UTF-8 characters would require a character abstraction that could take the form of a 
-// char sequence (UTF-8) or a single wchar_t character or a sequence of char16_t or a single 
-// char32_t character. Given how this class is used within this project, where case-dependent 
-// comparisons and conversions are done only against ASCII characters, only ASCII characters
-// are recognized in functions that deal with character case.
-//
- 
+///
+/// @class  string_base
+///
+/// @brief  A genric character string object
+///
+/// @tparam chart_t  Character type (char or wchar_t)
+///
+/// 1. string_base may be used to manage three kinds of strings:
+///
+///    * dynamically allocated modifiable strings (holder == false)
+///    * modifiable strings within a fixed-size buffer (holder == true && bufsize > 0)
+///    * read-only strings (holder == true && bufsize == 0)
+///
+/// 2. A read-only string cannot be modified in any way and cannot be repurposed as a
+/// modifiable string. Use string_t::hold to wrap string literals in a string_t class:
+///
+///    const string_t& str = string_t::hold("ABC", 3);
+///
+/// Note that if a non-const instance of string_t is constructed instead in the example
+/// above, calling non-const methods of this instance will throw an exception.
+///
+/// Read-only strings may be moved between string_t instances via the move constructor 
+/// or the move assignment operator.
+///
+/// 3. [removed]
+///
+/// 4. Unlike with const_char_buffer_t, which can be used independently from char_buffer_t,
+/// having a distinct string_base class defined with a const character type would make it 
+/// imposible to pass such string instances into functions that take string_t arguments. 
+/// Read-only string_t instances are used instead to wrap string literals or other data that 
+/// cannot be modified.
+///
+/// 5. When string_base is instantiated for char, the intended character set is UTF-8 and
+/// any other character encoding, such as various Windows code pages, will not work. The 
+/// side effect of having a single char value passed into member functions such as tolower
+/// is that they can only operate on ASCII characters. Implementing support for arbitrary 
+/// UTF-8 characters would require a character abstraction that could take the form of a 
+/// char sequence (UTF-8) or a single wchar_t character or a sequence of char16_t or a single 
+/// char32_t character. Given how this class is used within this project, where case-dependent 
+/// comparisons and conversions are done only against ASCII characters, only ASCII characters
+/// are recognized in functions that deal with character case.
+///
 template <typename char_t>
 class string_base {
    public:

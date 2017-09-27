@@ -24,11 +24,16 @@
 #include <vector>
 #include <thread>
 
-// -----------------------------------------------------------------
-//
-// berkeleydb_t
-//
-// -----------------------------------------------------------------
+///
+/// @class  berkeleydb_t
+///
+/// @brief  A base class of a Berkeley DB interface wrapper
+///
+/// The berkeleydb_t class wraps various Berkeley DB interfaces, such as primary and 
+/// secondary databases storing blobs, and exposes them in somewhat more traditional 
+/// form of database tables storing record-like node objects that are indexed with 
+/// customizable keys.
+/// 
 class berkeleydb_t {
    protected:
       //
@@ -77,22 +82,25 @@ class berkeleydb_t {
       template <typename node_t> class iterator; 
       template <typename node_t> class reverse_iterator;
 
-      // -----------------------------------------------------------------
-      // config_t
-      //
-      // 1. config_t provides all configuration data needed to construct a berkeleydb_t
-      // instance. Configuration cannot be changed after an instance of berkeleydb_t has
-      // been constructed.
-      //
-      // 2. berkeleydb_t will use the config_t::clone and config_t::release methods to 
-      // maintain a copy of the configuration object throughout the lifespan of each
-      // berkeleydb_t instance. This allows berkeleydb_t instances constructed using 
-      // temporary config_t objects.
-      //
-      // 3. The reference to a config_t instance returned by config_t::clone must point
-      // to a valid object until config_t::release is called. Otherwise config_t makes
-      // no assumption of how the underlying object memory is maintained.
-      //
+      ///
+      /// @class  config_t
+      ///
+      /// @brief  Defines an interface for a configuration necessary to construct a
+      ///         berkeley_db instance.
+      ///
+      /// 1. config_t provides all configuration data needed to construct a berkeleydb_t
+      /// instance. Configuration cannot be changed after an instance of berkeleydb_t has
+      /// been constructed.
+      ///
+      /// 2. berkeleydb_t will use the config_t::clone and config_t::release methods to 
+      /// maintain a copy of the configuration object throughout the lifespan of each
+      /// berkeleydb_t instance. This allows berkeleydb_t instances constructed using 
+      /// temporary config_t objects.
+      ///
+      /// 3. The reference to a config_t instance returned by config_t::clone must point
+      /// to a valid object until config_t::release is called. Otherwise config_t makes
+      /// no assumption of how the underlying object memory is maintained.
+      ///
       class config_t {
          public:
             virtual const config_t& clone(void) const = 0;
@@ -119,11 +127,12 @@ class berkeleydb_t {
       };
 
    private:
-      // -----------------------------------------------------------------
-      //
-      // cursor iterators
-      //
-      // -----------------------------------------------------------------
+      ///
+      /// @class  cursor_iterator_base
+      ///
+      /// @brief  A base class that wraps Berkeley DB cursors to traverse primary abd
+      ///         secondary databases
+      ///
       class cursor_iterator_base {
          protected:
             Dbc         *cursor;
@@ -146,6 +155,11 @@ class berkeleydb_t {
             void close(void);
       };
 
+      ///
+      /// @class  cursor_iterator
+      ///
+      /// @brief  A forward Berkeley DB cursor iterator
+      ///
       class cursor_iterator : public cursor_iterator_base {
          private:
             db_recno_t   count;     // remaining duplicate count (zero if unique)
@@ -160,6 +174,11 @@ class berkeleydb_t {
             bool next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey = false);
       };
 
+      ///
+      /// @class  cursor_reverse_iterator
+      ///
+      /// @brief  A reverse Berkeley DB cursor iterator
+      ///
       class cursor_reverse_iterator : public cursor_iterator_base {
          public:
             cursor_reverse_iterator(Db *db) : cursor_iterator_base(db) {}
@@ -168,54 +187,62 @@ class berkeleydb_t {
       };
 
    protected:
-      // -----------------------------------------------------------------
-      //
-      // a table (primary database) with indexes (secondary databases)
-      //
-      // -----------------------------------------------------------------
-      //
-      // 1. Each table contains the primary database, indexed by a numeric 
-      // sequence ID (key), and a set of secondary databases, containing one 
-      // field from the primary database (serving as an index). One of the 
-      // index databases contains hashes of actual item values, such as IP 
-      // addresses, and is cached in "values" to avoid an extra look-up of 
-      // the database by name. Hashes are used instead of actual values to
-      // minimize database size - storing actual values would create copies
-      // of URLs, referrers, etc.
-      //
-      // New and updated records are put into the primary database. Records
-      // may be looked up by the node ID (primary database) or by the value
-      // string (values database). Secondary databases, even the values 
-      // database, will contain duplicates, each pointing back to the primary 
-      // database using the primary key. Secondary tables are updated 
-      // automatically by Berkeley DB. 
-      //
-      //   hosts (primary database)       values (secondary database)
-      //   +----------------------+       +---------------------+
-      //   | key  : 123           |       | hash: hash(value)   |
-      //   | value: 127.0.0.1     |       | key : 123           |
-      //   | hash : hash(value)   |       +---------------------+
-      //   | hits : 1234          |       
-      //   | pages: 567           |       hits (secondary database) 
-      //   +----------------------+       +---------------------+
-      //                                  | hits: 1234          |
-      //   +----------------------+       | key : 123, 456, ... |
-      //   | key  : 456           |       +---------------------+
-      //   | value: 127.0.0.2     |
-      //   | ...                  |
-      //
-      // 2. Berkeley databases cannot be copied, so table_t instances only use
-      // move semantics, which requires all non-copyable data members maintained 
-      // as pointers. These pointers can only be NULL for objects that are near
-      // their lifetime. Calling any methods for these objects will result in
-      // undefined behavior.
-      //
-      // 3. Buffer allocator is also maintained as a pointer to allow creating
-      // buffers in const table_t methods. The assumption is that buffer allocators 
-      // are safe for the current threading model.
-      //
+      ///
+      /// @class  table_t
+      ///
+      /// @brief  A table object stores data along with accompanying indexes
+      ///
+      /// 1. Each table contains a primary database with a numeric sequence key, 
+      /// and a set of secondary databases, each containing values from one field 
+      /// of the primary database, such as transfer amounts or number of visits, 
+      /// and linked to the primary database via the sequence key of the primary 
+      /// database. 
+      ///
+      /// One of the secondary databases stores hashes of text values stored in 
+      /// the primary database, such as IP addresses or URLs, and allows us to 
+      /// look-up these text values without storing copies of the text in the 
+      /// secondary database. This secondary database is maintained in the `values` 
+      /// data member to avoid extra look-ups of the database descriptor by name.
+      ///
+      /// New and updated records are put into the primary database. Records
+      /// may be looked up by the node ID (primary database) or by the value
+      /// string (values database). Secondary databases, even the values 
+      /// database, will contain duplicates, each pointing back to the primary 
+      /// database using the primary key. Secondary databases are associated
+      /// with the primary database when table_t is constructed and are updated 
+      /// automatically by Berkeley DB.
+      ///
+      ///   hosts (primary database)       values (secondary database)
+      ///   +----------------------+       +---------------------+
+      ///   | key  : 123           |       | hash: hash(value)   |
+      ///   | value: 127.0.0.1     |       | key : 123           |
+      ///   | hash : hash(value)   |       | ...                 |
+      ///   | hits : 1234          |       
+      ///   | pages: 567           |       hits (secondary database) 
+      ///   +----------------------+       +---------------------+
+      ///                                  | hits: 1234          |
+      ///   +----------------------+       | key : 123           |
+      ///   | key  : 456           |       | hits: 1234          |
+      ///   | value: 127.0.0.2     |       | key : 456           |
+      ///   | ...                  |       | ...                 |
+      ///
+      /// 2. Berkeley databases cannot be copied, so table_t instances only use
+      /// move semantics, which requires all non-copyable data members maintained 
+      /// as pointers. These pointers can only be NULL for objects that are near
+      /// their lifetime. Calling any methods for these objects will result in
+      /// undefined behavior.
+      ///
+      /// 3. Buffer allocator is also maintained as a pointer to allow creating
+      /// buffers in const table_t methods. The assumption is that buffer allocators 
+      /// are safe for the current threading model.
+      ///
       class table_t {
          private:
+            ///
+            /// @struct db_desc_t
+            ///
+            /// @brief  A secondary database descriptor
+            ///
             struct db_desc_t {
                Db                *scdb;      // secondary database
                string_t          dbname;     // database name
@@ -324,11 +351,17 @@ class berkeleydb_t {
       };
 
    public:
-      // -----------------------------------------------------------------
-      //
-      // public iterator to traverse a primary or secondary database
-      //
-      // -----------------------------------------------------------------
+      ///
+      /// @class  iterator_base
+      ///
+      /// @brief  A public cursor iterator base class to traverse primary and secondary 
+      ///         databases
+      ///
+      /// @tparam node_t   The node class to retrieve in each iteration
+      ///
+      /// This public database iterator hides the Berkeley DB cursor implementation in 
+      /// cursor_iterator_base.
+      ///
       template <typename node_t>
       class iterator_base {
          protected:
@@ -352,6 +385,14 @@ class berkeleydb_t {
 
       };
 
+      ///
+      /// @class  iterator
+      ///
+      /// @brief  A forward cursor iterator base class to traverse primary and secondary 
+      ///         databases
+      ///
+      /// @tparam node_t   The node class to retrieve in each iteration
+      ///
       template <typename node_t>
       class iterator : public iterator_base<node_t> {
          private:
@@ -372,6 +413,14 @@ class berkeleydb_t {
             bool next(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL);
       };
 
+      ///
+      /// @class  iterator
+      ///
+      /// @brief  A reverse cursor iterator base class to traverse primary and secondary 
+      ///         databases
+      ///
+      /// @tparam node_t   The node class to retrieve in each iteration
+      ///
       template <typename node_t>
       class reverse_iterator : public iterator_base<node_t> {
          private:
