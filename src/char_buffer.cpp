@@ -10,7 +10,7 @@
 #include "pch.h"
 
 #include "char_buffer.h"
-#include "exception.h"
+#include <stdexcept>
 #include <cstdlib>
 #include <algorithm>
 
@@ -39,7 +39,7 @@ char_buffer_base<char_t>::char_buffer_base(size_t bufsize) : bufsize(bufsize), h
 template <>
 char_buffer_base<const char>::char_buffer_base(size_t bufsize)
 {
-   throw exception_t(0, "Cannot allocate an uninitialized const character buffer");
+   throw std::runtime_error("Cannot allocate an uninitialized const character buffer");
 }
 
 template <typename char_t>
@@ -105,7 +105,7 @@ char_buffer_base<char_t>& char_buffer_base<char_t>::resize(size_t size, size_t d
 {
    // make sure the size of the data within the buffer doesn't exceed buffer size
    if(datasize > bufsize)
-      throw exception_t(0, "Cannot copy more data than there is in the buffer");
+      throw std::invalid_argument("Cannot copy more data than there is in the buffer");
 
    // allocate a new buffer, so we can copy data if needed
    char_t *newbuf = alloc(size);
@@ -132,7 +132,7 @@ template <>
 char_buffer_base<const char>& char_buffer_base<const char>::resize(size_t size, size_t datasize)
 {
    // see char_buffer_base<const char>::alloc
-   throw exception_t(0, "Cannot resize a const character buffer");
+   throw std::runtime_error("Cannot resize a const character buffer");
 }
 
 template <typename char_t>
@@ -161,7 +161,7 @@ const char *char_buffer_base<const char>::alloc(const char *buffer, size_t bufsi
    // copies chracters into a block of memory that is supposed to contain const
    // characters.
    //
-   throw exception_t(0, "Cannot reallocate a const character buffer");
+   throw std::runtime_error("Cannot reallocate a const character buffer");
 }
 
 template <typename char_t>
@@ -173,7 +173,7 @@ char_t *char_buffer_base<char_t>::alloc(size_t bufsize)
 template <>
 const char *char_buffer_base<const char>::alloc(size_t bufsize)
 {
-   throw exception_t(0, "Cannot allocate an uninitialized const character buffer");
+   throw std::runtime_error("Cannot allocate an uninitialized const character buffer");
 }
 
 template <typename char_t>
