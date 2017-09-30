@@ -36,6 +36,12 @@ char_buffer_base<char_t>::char_buffer_base(size_t bufsize) : bufsize(bufsize), h
    buffer = new char_t[bufsize];
 }
 
+template <>
+char_buffer_base<const char>::char_buffer_base(size_t bufsize)
+{
+   throw exception_t(0, "Cannot allocate an uninitialized const character buffer");
+}
+
 template <typename char_t>
 char_buffer_base<char_t>::~char_buffer_base(void) 
 {
@@ -162,6 +168,12 @@ template <typename char_t>
 char_t *char_buffer_base<char_t>::alloc(size_t bufsize)
 {
    return new char_t[bufsize];
+}
+
+template <>
+const char *char_buffer_base<const char>::alloc(size_t bufsize)
+{
+   throw exception_t(0, "Cannot allocate an uninitialized const character buffer");
 }
 
 template <typename char_t>
