@@ -543,11 +543,5 @@ int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 template <s_field_cb_t extract>
 int sc_extract_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
-//
-// B-Tree group field extraction function template
-//
-template <typename node_t, s_field_cb_t extract>
-int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
-
 #endif // BERKELEYDB_H
 

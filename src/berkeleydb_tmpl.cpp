@@ -84,18 +84,6 @@ int sc_extract_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result)
    return 0;
 }
 
-//
-// B-Tree group field extraction function template
-//
-template <typename node_t, s_field_cb_t extract>
-int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result)
-{
-   if(!node_t::s_is_group(data->get_data(), data->get_size()))
-      return DB_DONOTINDEX;
-
-   return sc_extract_cb<extract>(secondary, key, data, result);
-}
-
 // -----------------------------------------------------------------------
 //
 // berkeleydb_t::cursor_iterator_base
