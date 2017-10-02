@@ -226,6 +226,14 @@ class berkeleydb_t {
       ///   | value: 127.0.0.2     |       | key : 456           |
       ///   | ...                  |       | ...                 |
       ///
+      /// Secondary databases (indexes) may be optionally associated with the
+      /// primary database via two `associate` calls. The first one registers
+      /// comparison callbacks within the table and the second one completes
+      /// the association by registering all callbacks with Berkeley DB.
+      ///
+      /// It is not necessary to associate a secondary database for a table
+      /// that is not intended to be queried by its associated field.
+      ///
       /// 2. Berkeley databases cannot be copied, so table_t instances only use
       /// move semantics, which requires all non-copyable data members maintained 
       /// as pointers. These pointers can only be NULL for objects that are near
@@ -290,32 +298,44 @@ class berkeleydb_t {
 
             table_t& operator = (table_t&& other);
 
+            /// initializes Berkeley DB for multi-thread calls
             void set_threaded(bool value) {threaded = value;}
 
+            /// returns whether Berkeley DB was initialized for multi-thread calls
             bool get_threaded(void) const {return threaded;}
 
+            /// a read-only table can be queried, but cannot be modified
             void set_readonly(bool value) {readonly = value;}
 
+            /// returns whether the table is opened as read-only
             bool get_readonly(void) const {return readonly;}
 
             void init_db_handles(void);
 
             void destroy_db_handles(void);
 
+            /// opes a table and all of its associated indexes located in the specified database file
             int open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb);
 
+            /// closes the table and all of its associated indexes
             int close(void);
 
+            /// erases all data in the table
             int truncate(u_int32_t *count = NULL);
 
+            /// rearranges data pages on disk to minimize unused space
             int compact(u_int& bytes);
 
+            /// flushes dirty data pages to disk
             int sync(void);
 
+            /// designates the specified secondary database name as the value database
             void set_values_db(const char *dbname) {values = secondary_db(dbname);}
 
+            /// initiates secondary database associations with the primary database
             int associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb = NULL);
 
+            /// completes secondary database associations started by the `associate` overload
             int associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild);
 
             Db *primary_db(void) const {return table;}
@@ -324,28 +344,37 @@ class berkeleydb_t {
 
             Db *values_db(void) const {return values;}
 
+            /// opens a sequence within a sequence database
             int open_sequence(const char *colname, int32_t cachesize);
 
+            /// gets the next ID from the sequence for this table
             db_seq_t get_seq_id(int32_t delta = 1);
             
             db_seq_t query_seq_id(void);
 
+            /// returns the number of unique keys in the primary of secondary databases
             uint64_t count(const char *dbname = NULL) const;
 
+            /// inserts a new node or updates the existing node in the primary database
             template <typename node_t>
             bool put_node(const node_t& unode);
 
+            /// retrieves a node by its unique ID
             template <typename node_t>
             bool get_node_by_id(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
+            /// deletes a node by its key
             bool delete_node(const keynode_t<uint64_t>& node);
 
+            /// retrieves a node by its value
             template <typename node_t>
             bool get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
+            /// returns a forward table iterator
             template <typename node_t>
             iterator<node_t> begin(const char *dbname) const; 
 
+            /// returns a reverse table iterator
             template <typename node_t>
             reverse_iterator<node_t> rbegin(const char *dbname) const;
       };
@@ -501,45 +530,59 @@ class berkeleydb_t {
 
       ~berkeleydb_t(void);
 
+      /// if trickle is enabled, dirty pages will be trickled to disk by a background thread
       void set_trickle(bool value) {trickle = value;}
 
+      /// a read-only database can be queried, but cannot be modified
       void set_readonly(bool value) {readonly = value;}
 
+      /// returns whether the database is opened as read-only
       bool get_readonly(void) const {return readonly;}
 
+      /// sets up the Berkeley DB environment and opens the sequence database, but not table databases
       bool open(void);
 
+      /// closes all table databases and the Berkeley DB environment
       bool close(void);
 
+      /// erases data from all tables in the database
       bool truncate(void);
 
+      /// writes modified data pages to disk
       bool flush(void);
 
+      /// rearranges data pages on disk to minimize unused space
       int compact(u_int& bytes);
 };
 
-//
-// B-Tree comparison function template for BDB v6 and up (top) and for prior versions 
-// (bottom).
-//
+///
+/// @brief  Compares two Dbt values by calling `compare`
+///
+/// The top B-Tree comparison function template is for BDB v6 and up and the bottom
+/// one is for prior versions.
+///
 template <s_compare_cb_t compare>
 int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 
 template <s_compare_cb_t compare>
 int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
-//
-// B-Tree comparison function template (reverse order)
-//
+///
+/// @brief  Compares two Dbt values by calling `compare` and reversing the result
+///
+/// The top B-Tree comparison function template is for BDB v6 and up and the bottom
+/// one is for prior versions.
+///
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp);
 
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2);
 
-//
-// B-Tree field extraction function template
-//
+///
+/// @brief  Translates field value returned by the `extract` function into a Dbt 
+///         value used by Berkeley DB as a secondary datavase value
+///
 template <s_field_cb_t extract>
 int sc_extract_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *result);
 
