@@ -34,6 +34,21 @@ TEST_CLASS(URLNormalizer) {
          mstest::Assert::AreEqual("abc", str, L"Normalize an ASCII string without URL-encoded characters");
       }
 
+      BEGIN_TEST_METHOD_ATTRIBUTE(NormalizeReserved)
+         TEST_DESCRIPTION(L"Normalize strings with reserved URL characters")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"URL")
+      END_TEST_METHOD_ATTRIBUTE()
+
+      TEST_METHOD(NormalizeReserved)
+      {
+         string_t str;
+         string_t::char_buffer_t strbuf;
+
+         str = "abc:/?#[]@!$&'()*+,;=xyz";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("abc:/?#[]@!$&'()*+,;=xyz", str, L"Normalize a URL string with reserved characters");
+      }
+
       BEGIN_TEST_METHOD_ATTRIBUTE(NormalizeMalformed)
          TEST_DESCRIPTION(L"Normalize malformed strings")
          TEST_METHOD_ATTRIBUTE(L"Category", L"URL")
@@ -47,6 +62,10 @@ TEST_CLASS(URLNormalizer) {
          str = "abc%xyz";
          norm_url_str(str, strbuf);
          mstest::Assert::AreEqual("abc%25xyz", str, L"Normalize an ASCII string with an out-of-place % character");
+
+         str = "abc%";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("abc%25", str, L"Normalize an ASCII string with an out-of-place % character at the end of the string");
       }
 
       BEGIN_TEST_METHOD_ATTRIBUTE(NormalizeCP1252)
