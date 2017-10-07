@@ -8,8 +8,8 @@
 
    hashtab.h
 */
-#ifndef _HASHTAB_H
-#define _HASHTAB_H
+#ifndef HASHTAB_H
+#define HASHTAB_H
 
 #include "tstring.h"
 #include "types.h"
@@ -265,4 +265,4 @@ class hash_table {
       uint64_t load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const;
 };
 
-#endif  /* _HASHTAB_H */
+#endif  // HASHTAB_H

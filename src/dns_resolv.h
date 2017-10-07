@@ -9,8 +9,8 @@
    dns_resolv.h
 */
 
-#ifndef _DNS_RESOLV_H
-#define _DNS_RESOLV_H
+#ifndef DNS_RESOLV_H
+#define DNS_RESOLV_H
 
 #include "tstring.h"
 #include "hashtab.h"
@@ -130,4 +130,4 @@ class dns_resolver_t {
       hnode_t *get_hnode(void);
 };
 
-#endif  /* _DNS_RESOLV_H */
+#endif  // DNS_RESOLV_H

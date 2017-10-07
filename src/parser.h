@@ -9,8 +9,8 @@
    parser.h
 */
 
-#ifndef _PARSER_H
-#define _PARSER_H
+#ifndef PARSER_H
+#define PARSER_H
 
 #include <cstdlib>
 
@@ -103,4 +103,4 @@ class parser_t {
       int parse_record(char *buffer, size_t reclen, log_struct& log_rec);
 };
 
-#endif  /* _PARSER_H */
+#endif  // PARSER_H

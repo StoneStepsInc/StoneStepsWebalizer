@@ -1,5 +1,5 @@
-#ifndef _LANG_H
-#define _LANG_H
+#ifndef LANG_H
+#define LANG_H
 
 #include "hashtab.h"
 #include "tstring.h"
@@ -348,4 +348,4 @@ class lang_t {
       static bool check_language(const char *lc1, const char *lc2, size_t slen);
 };
 
-#endif  /* _LANG_H */
+#endif  // _LANG_H

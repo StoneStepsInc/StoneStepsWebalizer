@@ -9,8 +9,8 @@
    preserve.h
 */
 
-#ifndef _PRESERVE_H
-#define _PRESERVE_H
+#ifndef PRESERVE_H
+#define PRESERVE_H
 
 #include "types.h"
 #include "scnode.h"
@@ -132,4 +132,4 @@ class state_t {
       static string_t get_version(u_int version);
 };
 
-#endif  /* _PRESERVE_H */
+#endif  // _PRESERVE_H

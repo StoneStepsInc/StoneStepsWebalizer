@@ -14,8 +14,8 @@
 
    graphs.h
 */
-#ifndef _GRAPHS_H
-#define _GRAPHS_H
+#ifndef GRAPHS_H
+#define GRAPHS_H
 
 #include <gd.h>
 #include <gdfonts.h>
@@ -126,4 +126,4 @@ class graph_t {
       int day_graph3(const char *fname, const char *title, const hourly_t hourly[24]);
 };
 
-#endif  /* _GRAPHS_H */
+#endif  // GRAPHS_H

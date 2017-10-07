@@ -9,8 +9,8 @@
    linklist.h
 */
 
-#ifndef _LINKLIST_H
-#define _LINKLIST_H
+#ifndef LINKLIST_H
+#define LINKLIST_H
 
 #include "util_string.h"
 #include "tstring.h"
@@ -212,4 +212,4 @@ class glist : public base_list<gnode_t> {
       bool get_has_names(void) const {return has_names;}
 };
 
-#endif  // _LINKLIST_H 
+#endif  // LINKLIST_H 

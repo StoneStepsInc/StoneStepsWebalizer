@@ -8,8 +8,8 @@
    
    webalizer.h
 */
-#ifndef _WEBALIZER_H
-#define _WEBALIZER_H
+#ifndef WEBALIZER_H
+#define WEBALIZER_H
 
 #include "version.h"
 #include "logrec.h"
@@ -290,4 +290,4 @@ class webalizer_t {
       spnode_t *put_spnode(const string_t& host);
 };
 
-#endif  /* _WEBALIZER_H */
+#endif  // WEBALIZER_H

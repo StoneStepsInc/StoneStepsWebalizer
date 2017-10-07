@@ -7,8 +7,8 @@
    
    logfile.h
 */
-#ifndef _LOGFILE_H
-#define _LOGFILE_H
+#ifndef LOGFILE_H
+#define LOGFILE_H
 
 #include <zlib.h>
 #include <cstdio>
@@ -53,4 +53,4 @@ class logfile_t {
       bool is_open(void) const {return gz_log && gzlog_fp || log_fp;}
 };
 
-#endif // _LOGFILE_H
+#endif // LOGFILE_H
