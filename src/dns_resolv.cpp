@@ -848,7 +848,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
    else {
       // if we have a host node, look it up in the database and if not found, resolve it
       lookup = true;
-      if(dns_db && dns_db_get(nptr, dns_db, false, buffer, bufsize)) 
+      if(dns_db && dns_db_get(nptr, dns_db, buffer, bufsize)) 
          cached = true;
 
       //
@@ -1062,7 +1062,7 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
 // function will not check whether the entry is stale or not (may be 
 // used for subsequent searches to avoid unnecessary DNS lookups).
 //
-bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *buffer, size_t bufsize)
+bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    bool retval = false;
    int dberror;
@@ -1094,7 +1094,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, bool nocheck, void *
          break;
       case  0:
          if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
-            if(nocheck || runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
+            if(runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
                dnode->hostname = dnsrec.hostname;
                dnode->ccode.assign(dnsrec.ccode, hnode_t::ccode_size);
                dnode->city = dnsrec.city;
