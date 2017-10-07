@@ -29,7 +29,6 @@
 #include <thread>
 #include <mutex>
 
-class dns_resolver_t;
 struct hnode_t;
 struct MMDB_s;
 struct sockaddr;
