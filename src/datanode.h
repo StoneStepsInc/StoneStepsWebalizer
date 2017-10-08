@@ -7,8 +7,8 @@
 
    datanode.h
 */
-#ifndef __DATANODE_H
-#define __DATANODE_H
+#ifndef DATANODE_H
+#define DATANODE_H
 
 #include "types.h"
 
@@ -69,4 +69,4 @@ class datanode_t {
       static u_short s_node_ver(const void *buffer);
 };
 
-#endif // __DATANODE_H
+#endif // DATANODE_H
