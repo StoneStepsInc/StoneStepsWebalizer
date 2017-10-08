@@ -14,11 +14,12 @@
 #include "keynode.h"
 #include "datanode.h"
 
-// -----------------------------------------------------------------------
-//
-// Daily counters
-//
-// -----------------------------------------------------------------------
+///
+/// @struct daily_t
+///
+/// @brief  Daily counters node 
+///
+///
 struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
       uint64_t tm_hits;          // daily requests total
       uint64_t tm_files;         // daily files total

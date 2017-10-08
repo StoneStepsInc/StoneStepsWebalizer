@@ -15,18 +15,18 @@
 #include "tstring.h"
 #include "config.h"
 
-// -----------------------------------------------------------------------
-//
-// sysnode_t
-//
-// -----------------------------------------------------------------------
-// 1. System node contains application-specific data to be stored in the
-// database, such as the application version.
-//
-// 2. Application version is immutable and once stored, never changes. 
-// In other words, appver indicates the version of the application that  
-// created the database.
-//
+///
+/// @struct sysnode_t
+///
+/// @brief  Application node
+///
+/// 1. System node contains application-specific data to be stored in the
+/// database, such as the application version.
+///
+/// 2. Application version is immutable and once stored, never changes. 
+/// In other words, appver indicates the version of the application that  
+/// created the database.
+///
 struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
    u_int       appver;              // application version
    u_int       appver_last;         // last application version

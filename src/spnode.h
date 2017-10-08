@@ -14,9 +14,11 @@
 #include "basenode.h"
 #include "types.h"
 
-//
-// Spammer
-//
+///
+/// @struct spnode_t
+///
+/// @brief  Spammer node
+///
 struct spnode_t : public base_node<spnode_t> {
       public:
          spnode_t(void) : base_node<spnode_t>() {}

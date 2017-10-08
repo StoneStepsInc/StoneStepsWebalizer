@@ -13,12 +13,12 @@
 #include "types.h"
 #include "tstring.h"
 
-// -----------------------------------------------------------------------
-// exception_t
-//
-// Generic exception class that is good for most simple cases where only
-// a code and some text is required.
-// -----------------------------------------------------------------------
+///
+/// @class  exception_t
+///
+/// @brief  Generic exception class that is good for most simple cases where only
+///         a code and some text is required.
+///
 class exception_t {
    private:
       u_int      errcode;
@@ -34,6 +34,11 @@ class exception_t {
       const string_t& desc(void) const {return errdesc;}
 };
 
+///
+/// @class  os_ex_t
+///
+/// @brief  OS-specific exception class (e.g. Win32 structured exception)
+///
 class os_ex_t : public exception_t {
    public:
       os_ex_t(u_int code, const char *desc) : exception_t(code, desc) {}

@@ -14,9 +14,11 @@
 #include "types.h"
 #include "basenode.h"
 
-//
-// Referrer
-//
+///
+/// @struct rnode_t
+///
+/// @brief  Referrer node
+///
 struct rnode_t : public base_node<rnode_t> {   
       uint64_t count;               // request count
       uint64_t visits;              // visits started

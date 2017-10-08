@@ -21,9 +21,11 @@ class state_t;
 class history_t;
 class database_t;
 
-//
-//
-//
+///
+/// @class  output_t
+///
+/// @brief  A base class for a report generator class hierarchy
+///
 class output_t {
    public:
       struct graphinfo_t {

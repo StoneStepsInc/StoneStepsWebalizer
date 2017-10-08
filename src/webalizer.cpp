@@ -1461,7 +1461,13 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
             spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer);
 
-         // send a new host or a host that was just identfied as a spammer to the DNS resolver
+         // 
+         // Host nodes need to be resolved before their visits can be attributed to various 
+         // groups (i.e. IP address, domain name and country groups) and marked as spammers 
+         // or not spammers, based on historical host address data from the DNS resolver 
+         // database. Queue a new host or a host that was just identfied as a spammer to the 
+         // DNS resolver.
+         //
          if(config.is_dns_enabled() && (newhost || newspammer))
             dns_resolver.put_hnode(hptr);
 

@@ -18,11 +18,11 @@
 
 struct hnode_t;
 
-// -----------------------------------------------------------------------
-//
-// Download job
-//
-// -----------------------------------------------------------------------
+///
+/// @struct dlnode_t
+///
+/// @brief  Download job node
+///
 struct dlnode_t : public base_node<dlnode_t> {
       struct param_block : base_node<dlnode_t>::param_block {
          const char  *name;

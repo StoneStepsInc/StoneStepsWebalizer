@@ -48,19 +48,19 @@
 
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
       
-// -----------------------------------------------------------------
-//
-// config_t
-//
-// -----------------------------------------------------------------
-// 1. Configuration files are processed first and should not output
-// anything. Instead, messages are collected in a vector, and will
-// be output after the copyright message has been printed.
-//
-// 2. dns_lookups is intended to disable resolving host addresses via
-// DNS look-ups, while using the DNS database to maintain host address 
-// information that persists outside monthly state databases.
-//
+///
+/// @class  config_t
+///
+/// @brief  A configuratin object that reads and interprets application configuration files
+///
+/// 1. Configuration files are processed first and should not output
+/// anything. Instead, messages are collected in a vector, and will
+/// be output after the copyright message has been printed.
+///
+/// 2. dns_lookups is intended to disable resolving host addresses via
+/// DNS look-ups, while using the DNS database to maintain host address 
+/// information that persists outside monthly state databases.
+///
 class config_t {
    private:
       struct dst_pair_t {

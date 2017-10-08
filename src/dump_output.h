@@ -21,11 +21,11 @@ class state_t;
 class history_t;
 class database_t;
 
-// -----------------------------------------------------------------------
-// dump_output_t
-//
-//
-// -----------------------------------------------------------------------
+///
+/// @class  dump_output_t
+///
+/// @brief  A tab-separated report generated class
+///
 class dump_output_t : public output_t {
    private:
       FILE *out_fp;

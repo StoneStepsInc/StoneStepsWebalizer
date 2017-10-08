@@ -132,11 +132,11 @@ typedef char_buffer_base<unsigned char> buffer_t;
 /// A fixed-size character buffer that can be used as a temporary storage in a local 
 /// scope. For example, this code creates a temporary string without having to allocate
 /// memory:
-///
+/// ```
 ///    string_t::fixed_char_buffer_t<hnode_t::ccode_size+1> ccode_buffer;
 ///    string_t ccode(ccode_buffer, 0, false);
 ///    ccnode_t *ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode(ccode));
-///
+/// ```
 /// A fixed-size character buffer does not prevent resizing and, just like any other
 /// holder buffers, will allocate a new memory block when resized. Do not use this
 /// class if you plan to resize the buffer.

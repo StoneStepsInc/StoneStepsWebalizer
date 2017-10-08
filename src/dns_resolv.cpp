@@ -57,14 +57,18 @@ extern "C" {
 
 #define DBBUFSIZE          ((size_t) 8192)      // database buffer size
 
-//
-// The compatibility DNS DB record structure is saved to the database as a block of 
-// underlying memory of sizeof(dns_db_record) size. Consequently, the structure may 
-// contain only fundamental data types, cannot contain pointers, must use same data
-// representation (e.g. size of time_t) and have the same alignment requirements from 
-// a build to a build. It is currently used only to read old DNS records from the 
-// database.
-//
+///
+/// @struct dns_db_record
+///
+/// @brief  A compatibility DNS DB record
+///
+/// The compatibility DNS DB record structure is saved to the database as a block of 
+/// underlying memory of sizeof(dns_db_record) size. Consequently, the structure may 
+/// contain only fundamental data types, cannot contain pointers, must use same data
+/// representation (e.g. size of time_t) and have the same alignment requirements from 
+/// a build to a build. It is currently used only to read old DNS records from the 
+/// database.
+///
 struct dns_db_record {
    u_int    version;                            // structure version (v1 or v2)
    time_t   tstamp;                             // time when the address was resolved
@@ -72,9 +76,11 @@ struct dns_db_record {
    char     hostname[1];                        // host name (variable length)
 };
 
-//
-// DNS DB record
-//
+///
+/// @struct dns_db_record_t
+///
+/// @brief  A new serializable DNS DB record
+///
 struct dns_db_record_t {
    u_int       version;                         // structure version
    char        ccode[hnode_t::ccode_size];      // two-character country code
@@ -99,10 +105,18 @@ struct dns_db_record_t {
       size_t s_unpack_data(const void *buffer, size_t bufsize);
 };
 
-//
-// DNS resolver node
-//
+///
+/// @class  dns_resolver_t::dnode_t
+///
+/// @brief  An internal DNS resolver node associated with each host node being processed
+///
+/// DNS resolver cannot modify const host nodes in the context of its own threads and 
+/// uses dnode_t instances to carry new and updated information until get_hnode is called, 
+/// at which point hnode_t may be modified in the context of the application thread that 
+/// queued the host node for resolution.
+///
 class dns_resolver_t::dnode_t {
+   // allow get_hnode to get a modifiable pointer to hnode_t
    friend hnode_t *dns_resolver_t::get_hnode(void);
 
    private:
@@ -389,9 +403,9 @@ dns_resolver_t::~dns_resolver_t(void)
    }
 }
 
-/*********************************************/
-/* PUT_HNODE - insert/update dns host node   */
-/*********************************************/
+///
+/// @brief   Queues the host node for a DNS database look-up
+///
 bool dns_resolver_t::put_hnode(hnode_t *hnode)
 {
    unsigned short sa_family;
@@ -466,6 +480,9 @@ void dns_resolver_t::queue_dnode(dnode_t *dnode)
    dnode_mutex.unlock();
 }
 
+///
+/// @brief   Retrieves a resolved host node after a DNS database look-up
+///
 hnode_t *dns_resolver_t::get_hnode(void)
 {
    hnode_t *hnode;
@@ -520,11 +537,11 @@ hnode_t *dns_resolver_t::get_hnode(void)
    return hnode;
 }
 
-//
-// resolve_domain_name
-//
-// Resolves the IP address in dnode to a domain name for this address.
-//
+///
+/// @brief  resolve_domain_name
+///
+/// Resolves the IP address in dnode to a domain name for this address.
+///
 bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 {
    time_t stime;
@@ -565,9 +582,9 @@ funcexit:
    return !dnode->hostname.isempty();
 }
 
-//
-//   dns_init
-//
+///
+/// @brief   Initializes the DNS resolver
+///
 bool dns_resolver_t::dns_init(void)
 {
    // dns_init shouldn't be called if there are no workers configured
@@ -702,9 +719,9 @@ bool dns_resolver_t::dns_init(void)
    return true;
 }
 
-//
-//   dns_clean_up
-//
+///
+/// @brief  Cleans up the DNS resolver instance when it's no longer needed
+///
 void dns_resolver_t::dns_clean_up(void)
 {
    u_int index;
@@ -785,12 +802,14 @@ void dns_resolver_t::dns_wait(void)
    } 
 }
 
-//
-// dns_abort requests all DNS worker threads to stop and waits for a few seconds 
-// for all of them to do so. If any of the threads failed to stop, an exception 
-// is thrown. Otherwise, the DNS-done event is set to allow dns_wait to succeed,
-// so resolved addresses can be processed by the caller. 
-//
+///
+/// @brief  Interrupts all DNS resolver activities
+///
+/// Requests all DNS worker threads to stop and waits for a few seconds for all of them 
+/// to do so. If any of the threads failed to stop, an exception is thrown. Otherwise, 
+/// the DNS-done event is set to allow dns_wait to succeed, so resolved addresses can be 
+/// processed by the caller. 
+///
 void dns_resolver_t::dns_abort(void)
 {
    u_int waitcnt = 300;
@@ -813,12 +832,15 @@ void dns_resolver_t::dns_abort(void)
    event_set(dns_done_event);
 }
 
-//
-// process_node
-//
-// Picks the next available IP address to resolve and calls resolve_domain_name.
-// Returns true if any work was done (even unsuccessful), false otherwise.
-//
+///
+/// @brief   Uses enabled DNS resolver components to process a dnode_t instance 
+///
+/// @return `true` if any work was done, even unsuccessful, `false` otherwise
+///
+/// Picks up the next dnode_t instance from the ueue, looks it up in the DNS resolver
+/// database and, if not found, looks up its GeoIP informatin and attempts to resolve
+/// the IP address via DNS, if either of activities is enabled. 
+///
 bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 {
    bool cached = false, lookup = false;
@@ -934,9 +956,9 @@ int dns_resolver_t::get_live_workers(void)
    return retval;
 }
 
-//
-// Domain name resolved worker thread function
-//
+///
+/// @brief  Domain name resolved worker thread function
+///
 void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
 {
    wrk_ctx_t& wrk_ctx = *wrk_ctx_ptr;
@@ -1033,9 +1055,9 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    return !ccode.isempty();
 }
 
-//
-// derives country code from the domain name
-//
+///
+/// @brief  Derives country code from the domain name
+///
 bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
 {
    const char *label;
@@ -1055,13 +1077,9 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
    return true;
 }
 
-//
-// dns_db_get
-//
-// Looks up the dnode->ipaddr in the database. If nocheck is true, the 
-// function will not check whether the entry is stale or not (may be 
-// used for subsequent searches to avoid unnecessary DNS lookups).
-//
+///
+/// @brief  Looks up the IP address in the DNS resolver database
+///
 bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    bool retval = false;
@@ -1120,10 +1138,9 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
    return retval;
 }
 
-/*********************************************/
-/* DB_PUT - put key/val in the cache db      */
-/*********************************************/
-
+///
+/// @brief  Stores a dnode_t instance in the DNS resolver database
+///
 void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    Dbt k, v;

@@ -15,15 +15,17 @@
 #include "keynode.h"
 #include "datanode.h"
 
-// -----------------------------------------------------------------------
-// Country
-//
-// 1. Country code nodes are identified by an index value returned by
-// ctry_idx. 
-//
-// 2. Country code and description strings are not stored in the database,
-// but instead are set up from the language file on start-up.
-// -----------------------------------------------------------------------
+///
+/// @struct ccnode_t
+///
+/// @brief  Country node
+///
+/// 1. Country code nodes are identified by an index value returned by
+/// ctry_idx. 
+///
+/// 2. Country code and description strings are not stored in the database,
+/// but instead are set up from the language file on start-up.
+///
 struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
    string_t    ccode;                  // country code
    string_t    cdesc;                  // country name

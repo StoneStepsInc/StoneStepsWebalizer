@@ -16,11 +16,11 @@
 
 #include <vector>
 
-// -----------------------------------------------------------------------
-//
-// HTTP status code node
-//
-// -----------------------------------------------------------------------
+///
+/// @struct scnode_t
+///
+/// @brief  HTTP status code node
+///
 struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
    uint64_t       count;         // number of hits
 

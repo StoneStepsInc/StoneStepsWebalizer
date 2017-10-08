@@ -47,7 +47,7 @@
 ///   * D and B are added, which yields an internal serial time of X
 ///   * The time zone offset (A) is subtracted from the previous result, which yields a UTC 
 ///     value corresponding to X and its time zone offset. 
-///
+/// ```
 ///          2440588
 ///     ...------------->|<--------------------------C---------------------------->|
 ///         UTC          |                                             |<-B->|     |
@@ -56,7 +56,7 @@
 ///     1970-01-01     12:00              2017-08-10     12:00     | 00:00   |   12:00
 ///          |                                                     |<---A--->|
 ///          |<----------------------------D-------------------------->|
-///
+/// ```
 /// The math for UTC time stamps is even simpler because the internal seria time in this case
 /// is in UTC and contains no time zone offset. 
 ///

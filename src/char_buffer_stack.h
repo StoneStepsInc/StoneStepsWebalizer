@@ -15,14 +15,20 @@
 #include <stack>
 #include <vector>
 
-//
-// char_buffer_stack_tmpl maintains all cached buffers in a single vector and is 
-// intended to reuse buffers of the same size or buffers that are repeatedly 
-// allocated and released in the same LIFO sequence. 
-//
-// The caller must ensure that the returned buffer has sufficient capcity. The 
-// buffer stack does not alter the capacity of any buffers it receives or returns.
-//
+///
+/// @class  class char_buffer_stack_tmpl
+///
+/// @brief  A class that maintains a stack of cached character buffers
+///
+/// @tparam chart_t  Character type (char or wchar_t)
+///
+/// char_buffer_stack_tmpl maintains all cached buffers in a single vector and is 
+/// intended to reuse buffers of the same size or buffers that are repeatedly 
+/// allocated and released in the same LIFO sequence. 
+///
+/// The caller must ensure that the returned buffer has sufficient capcity. The 
+/// buffer stack does not alter the capacity of any buffers it receives or returns.
+///
 template <typename char_t>
 class char_buffer_stack_tmpl : public char_buffer_allocator_tmpl<char_t> {
    private:

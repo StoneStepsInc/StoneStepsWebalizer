@@ -16,11 +16,13 @@
 #include "keynode.h"
 #include "datanode.h"
 
-// -----------------------------------------------------------------------
-//
-// base_node
-//
-// -----------------------------------------------------------------------
+///
+/// @struct base_node
+///
+/// @tparam node_t   Hash table node type
+///
+/// @brief  A base node class for all hash table node classes
+///
 template <typename node_t> 
 struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, public datanode_t<node_t> {
       string_t string;              // node value (URL, user agent, etc)

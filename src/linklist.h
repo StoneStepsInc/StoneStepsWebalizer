@@ -173,11 +173,11 @@ struct gnode_t : public base_list_node_t {
 /// In addition or the list order guidelines for `nlist`, items of a `glist` instance that
 /// contain different variations of the same pattern must be ordered manually. For example,
 /// multiple search engine search qualifirs must follow one another like this:
-///
+/// ```
 ///    www.google. <tab>   q=
 ///    www.google. <tab>   as_q=All Words
 ///    www.bing.   <tab>   q=
-///
+/// ```
 /// This order greatly improves performance of search in large lists and cannot be enforced 
 /// automatically because of a few reasons, such as that some generic sort would break the 
 /// order of other items in the list and that patterns may have different characters and still 

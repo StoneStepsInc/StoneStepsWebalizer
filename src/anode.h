@@ -14,9 +14,11 @@
 #include "basenode.h"
 #include "types.h"
 
-//
-// User agent
-//
+///
+/// @struct anode_t
+///
+/// @brief  User agent node
+///
 struct anode_t : public base_node<anode_t> {
       uint64_t count;                  // request count
       uint64_t visits;                 // visits started

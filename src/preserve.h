@@ -27,15 +27,15 @@ class config_t;
 class lang_t;
 class webalizer_t;
 
-// -----------------------------------------------------------------------
-// state_t
-//
-// 1. Represents the entire processing state for the current month. The state
-// consists of all time totals (total hits, files, etc), daily and hourly totals 
-// in the current month and lookup hash tables contaning totals for individual 
-// items, such as URLs or hosts. The state is stored in the database between 
-// runs.
-//
+///
+/// @class  state_t
+///
+/// @brief  Keeps the entire processing state for the current month
+///
+/// The state consists of all time totals (total hits, files, etc), daily and hourly 
+/// totals in the current month and lookup hash tables contaning totals for individual 
+/// items, such as URLs or hosts. The state is stored in the database between runs.
+///
 class state_t {
    friend class webalizer_t;
 

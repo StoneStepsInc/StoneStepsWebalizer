@@ -24,9 +24,11 @@ class state_t;
 class history_t;
 class database_t;
 
-//
-//
-//
+///
+/// @class  html_output_t
+///
+/// @brief  An HTML report generator class
+///
 class html_output_t : public output_t {
    public:
       enum page_type_t {page_index, page_usage, page_all_items};

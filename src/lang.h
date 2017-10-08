@@ -5,37 +5,40 @@
 #include "tstring.h"
 #include "types.h"
 
-//
-//
-//
+///
+/// @class  lang_t
+///
+/// @brief  A class that reads a specific language file and makes all language strings 
+///         available to the application
+///
 class lang_t {
    public:
-      // -----------------------------------------------------------------------
-      //
-      // resp_code_t
-      //
-      // -----------------------------------------------------------------------
+      ///
+      /// @struct resp_code_t
+      ///
+      /// #brief  A localized HTTP response code and its description
+      ///
       struct resp_code_t {
          u_int         code;
          const char    *desc;
       };
 
-      // -----------------------------------------------------------------------
-      //
-      // country_t
-      //
-      // -----------------------------------------------------------------------
+      ///
+      /// @struct country_t
+      ///
+      /// @brief  A localized country code and name
+      ///
       struct country_t {
          const char    *ccode;
          const char    *desc;
       };
 
    private:
-      // -----------------------------------------------------------------------
-      //
-      // lang_node_t
-      //
-      // -----------------------------------------------------------------------
+      ///
+      /// @struct lang_node_t
+      ///
+      /// @brief  A localized language entry node
+      ///
       struct lang_node_t : public htab_node_t<lang_node_t> {
             int                  vartype;
             string_t             varname;
@@ -57,11 +60,11 @@ class lang_t {
                virtual uint64_t get_hash(void) const override {return hash_ex(0, varname);}
       };
 
-      // -----------------------------------------------------------------------
-      //
-      // lang_hash_table
-      //
-      // -----------------------------------------------------------------------
+      ///
+      /// @class  lang_hash_table
+      ///
+      /// @brief  A hash table to keep all language variables
+      ///
       class lang_hash_table : public hash_table<lang_node_t> {
          public:
             void put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize);

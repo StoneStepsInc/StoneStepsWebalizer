@@ -26,26 +26,28 @@ enum log_type_t {
    LOG_W3C     = 5                  // W3C
 };
 
-//
-// log record
-//
-// 1. URL strings can only contain ASCII characters. Non-ASCII characters must be 
-// converted to UTF-8 before they are percent-encoded. However, some applications
-// in the past used arbitrary character encodings before percent-encoding characters,
-// which may lead to bad characters. For example, the JavaScript escape() function
-// encodes the copyright symbol as %A9 (Latin1) instead of %C2%A9 (UTF-8). If a URL 
-// containing such Latin1 character is found in the log, it cannot be interpreted 
-// as a UTF-8 character sequence.
-//
-// 2. User agent string consists of product name and version characters, which are
-// expected to contai only ASCII characters. Product comments in parentheses, on the 
-// other hand, may contain practically any characters. However, RFC-2616 specifies 
-// that if any of these characters are not Latin1 characers, they are expected to be 
-// encoded as specified in RFC-2047 (i.e. =?charset?encoding?text?=). The latter is 
-// not interpreted in any way in this code.
-//
-// 3. It is not clear what character set is used for user identification.
-//
+///
+/// @struct log_struct
+///
+/// @brief  A collection of fields extracted from a single log file line
+///
+/// 1. URL strings can only contain ASCII characters. Non-ASCII characters must be 
+/// converted to UTF-8 before they are percent-encoded. However, some applications
+/// in the past used arbitrary character encodings before percent-encoding characters,
+/// which may lead to bad characters. For example, the JavaScript escape() function
+/// encodes the copyright symbol as %A9 (Latin1) instead of %C2%A9 (UTF-8). If a URL 
+/// containing such Latin1 character is found in the log, it cannot be interpreted 
+/// as a UTF-8 character sequence.
+///
+/// 2. User agent string consists of product name and version characters, which are
+/// expected to contai only ASCII characters. Product comments in parentheses, on the 
+/// other hand, may contain practically any characters. However, RFC-2616 specifies 
+/// that if any of these characters are not Latin1 characers, they are expected to be 
+/// encoded as specified in RFC-2047 (i.e. =?charset?encoding?text?=). The latter is 
+/// not interpreted in any way in this code.
+///
+/// 3. It is not clear what character set is used for user identification.
+///
 struct  log_struct  {
       string_t   hostname;             // client IP address (may be host name)
       string_t   method;               // HTTP method

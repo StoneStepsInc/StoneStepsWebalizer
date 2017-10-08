@@ -19,11 +19,11 @@
 #include "event.h"
 #include "berkeleydb.h"
 
-// -----------------------------------------------------------------
-//
-// database_t
-//
-// -----------------------------------------------------------------
+///
+/// @class  database_t
+///
+/// @brief  Application-specific database management class
+///
 class database_t : public berkeleydb_t {
    private:
       class db_config_t : public berkeleydb_t::config_t {

@@ -18,40 +18,40 @@
 #include "tstamp.h"
 #include "types.h"
 
-// -----------------------------------------------------------------------
-//
-// Host
-//
-// -----------------------------------------------------------------------
-// 1. Host node cannot delete active visit until visit data is factored 
-// into the host data, which requires the current log timestamp and cannot 
-// be done at the hnode_t level.
-//
-// 2. The resolved flag indicates that the host node has gone through the
-// DNS resolver in the current run. This flag is not saved in the state
-// database and instead host nodes that come from the state database are 
-// assemed to be resolved and the resolved flag is set when nodes are read
-// from the database.
-//
-// 4. grp_visit is a linked list of ended visits that have not been grouped
-// because the host name has not been resolved. Visit nodes in this list 
-// are owned by the host node and do not maintain reference counts for the
-// referring host node.
-//
-// 5. The robot flag indicates that this IP address was the source address
-// of a request with a user agent matching the robot criteria. Although it 
-// is possible that a human visitor will share the IP address with a robot,
-// it is not very likely to justify having to maintain separate counts 
-// (hits, xfer, etc) for robot and non-robot users using a particular IP 
-// address.
-//
-// 6. It is possible for hnode_t::robot and vnode_t::robot to have different 
-// values. For example, different robots may operate from the same IP address
-// and some of these robots may not be listed in the configuration. Robot flag
-// in the visit node should always be ignored to make sure all counters are in
-// sync regardless whether there is a visit active or not. See vnode_t for
-// details.
-//
+///
+/// @struct hnode_t
+///
+/// @brief  Host node
+///
+/// 1. Host node cannot delete active visit until visit data is factored 
+/// into the host data, which requires the current log timestamp and cannot 
+/// be done at the hnode_t level.
+///
+/// 2. The resolved flag indicates that the host node has gone through the
+/// DNS resolver in the current run. This flag is not saved in the state
+/// database and instead host nodes that come from the state database are 
+/// assemed to be resolved and the resolved flag is set when nodes are read
+/// from the database.
+///
+/// 4. grp_visit is a linked list of ended visits that have not been grouped
+/// because the host name has not been resolved. Visit nodes in this list 
+/// are owned by the host node and do not maintain reference counts for the
+/// referring host node.
+///
+/// 5. The robot flag indicates that this IP address was the source address
+/// of a request with a user agent matching the robot criteria. Although it 
+/// is possible that a human visitor will share the IP address with a robot,
+/// it is not very likely to justify having to maintain separate counts 
+/// (hits, xfer, etc) for robot and non-robot users using a particular IP 
+/// address.
+///
+/// 6. It is possible for hnode_t::robot and vnode_t::robot to have different 
+/// values. For example, different robots may operate from the same IP address
+/// and some of these robots may not be listed in the configuration. Robot flag
+/// in the visit node should always be ignored to make sure all counters are in
+/// sync regardless whether there is a visit active or not. See vnode_t for
+/// details.
+///
 struct hnode_t : public base_node<hnode_t> {
       static const size_t ccode_size = 2;   // in characters, not counting the zero terminator
 

@@ -50,11 +50,14 @@ inline uint64_t hash_ex(uint64_t hashval, const char *str) {return (str && *str)
 inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
 inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, data);}
 
-// -----------------------------------------------------------------------
-//
-// generic hash table node
-//
-// -----------------------------------------------------------------------
+///
+/// @struct struct htab_node_t
+///
+/// @tparam node_t   Hash table node type
+/// @tparam key_t    Node key type
+///
+/// @brief  A generic hash table node
+///
 template <typename node_t, typename key_t = string_t> 
 struct htab_node_t {
       //
@@ -78,11 +81,14 @@ struct htab_node_t {
          virtual uint64_t get_hash(void) const = 0;
 };
 
-// -----------------------------------------------------------------------
-//
-// hash table object
-//
-// -----------------------------------------------------------------------
+///
+/// @class  hash_table
+///
+/// @tparam node_t   Hash table node type
+/// @tparam key_t    Node key type
+///
+/// @brief  A generic hash table class
+///
 template <typename node_t, typename key_t = string_t>
 class hash_table {
    private:

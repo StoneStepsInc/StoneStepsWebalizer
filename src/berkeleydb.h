@@ -211,21 +211,21 @@ class berkeleydb_t {
       /// database using the primary key. Secondary databases are associated
       /// with the primary database when table_t is constructed and are updated 
       /// automatically by Berkeley DB.
-      ///
-      ///   hosts (primary database)       values (secondary database)
-      ///   +----------------------+       +---------------------+
-      ///   | key  : 123           |       | hash: hash(value)   |
-      ///   | value: 127.0.0.1     |       | key : 123           |
-      ///   | hash : hash(value)   |       | ...                 |
-      ///   | hits : 1234          |       
-      ///   | pages: 567           |       hits (secondary database) 
-      ///   +----------------------+       +---------------------+
-      ///                                  | hits: 1234          |
-      ///   +----------------------+       | key : 123           |
-      ///   | key  : 456           |       | hits: 1234          |
-      ///   | value: 127.0.0.2     |       | key : 456           |
-      ///   | ...                  |       | ...                 |
-      ///
+      /// ```
+      ///    hosts (primary database)       values (secondary database)
+      ///    +----------------------+       +---------------------+
+      ///    | key  : 123           |       | hash: hash(value)   |
+      ///    | value: 127.0.0.1     |       | key : 123           |
+      ///    | hash : hash(value)   |       | ...                 |
+      ///    | hits : 1234          |       
+      ///    | pages: 567           |       hits (secondary database) 
+      ///    +----------------------+       +---------------------+
+      ///                                   | hits: 1234          |
+      ///    +----------------------+       | key : 123           |
+      ///    | key  : 456           |       | hits: 1234          |
+      ///    | value: 127.0.0.2     |       | key : 456           |
+      ///    | ...                  |       | ...                 |
+      /// ```
       /// Secondary databases (indexes) may be optionally associated with the
       /// primary database via two `associate` calls. The first one registers
       /// comparison callbacks within the table and the second one completes

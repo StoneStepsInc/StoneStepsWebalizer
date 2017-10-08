@@ -16,16 +16,15 @@
 #include "types.h"
 #include "version.h"
 
-// -----------------------------------------------------------------------
-//
-// Totals
-//
-// -----------------------------------------------------------------------
-//
-// 1. Only robot visits may be identified reliably from the start of the 
-// visit. Other types of visits may only be identified during the visit, 
-// given the types of URLs requested and browsing patterns.
-//
+///
+/// @class  totals_t
+///
+/// @brief  Monthly totals node
+///
+/// 1. Only robot visits may be identified reliably from the start of the 
+/// visit. Other types of visits may only be identified during the visit, 
+/// given the types of URLs requested and browsing patterns.
+///
 class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
    public:
       tstamp_t cur_tstamp;                         // current timestamp

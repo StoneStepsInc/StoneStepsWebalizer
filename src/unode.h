@@ -14,16 +14,16 @@
 #include "basenode.h"
 #include "types.h"
 
-// -----------------------------------------------------------------------
-//
-// URL
-//
-// -----------------------------------------------------------------------
-// 1. vstref is not a generic reference count, but rather an app-level
-// indicator of how many visit nodes refer to this URL. That is, if 
-// vstref is zero, unode_t may still be valid (although may be swapped
-// out of memory at any time). 
-//
+///
+/// @struct unode_t
+///
+/// @brief  URL node
+///
+/// 1. vstref is not a generic reference count, but rather an app-level
+/// indicator of how many visit nodes refer to this URL. That is, if 
+/// vstref is zero, unode_t may still be valid (although may be swapped
+/// out of memory at any time). 
+///
 struct unode_t : public base_node<unode_t> {
       struct param_block : base_node<unode_t>::param_block {
          nodetype_t type;

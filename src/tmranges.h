@@ -18,11 +18,21 @@
 
 #include <vector>
 
+///
+/// @class  tm_ranges_t
+///
+/// @brief  An ordered collection of time ranges
+///
 class tm_ranges_t {
    public:
       typedef u_int iterator;
       
    private:
+      ///
+      /// @struct tm_range_t
+      ///
+      /// @brief  A time range descriptor
+      ///
       struct tm_range_t {
          tstamp_t    start;      // inclusive
          tstamp_t    end;        // exclusive

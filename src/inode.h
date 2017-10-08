@@ -15,9 +15,11 @@
 #include "tstamp.h"
 #include "types.h"
 
-//
-// User
-//
+///
+/// @struct inode_t
+///
+/// @brief  User node
+///
 struct inode_t : public base_node<inode_t> {
       uint64_t count;               // request count
       uint64_t files;               // files requested

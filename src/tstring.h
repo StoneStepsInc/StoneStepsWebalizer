@@ -41,9 +41,9 @@
 ///
 /// 2. A read-only string cannot be modified in any way and cannot be repurposed as a
 /// modifiable string. Use string_t::hold to wrap string literals in a string_t class:
-///
+/// ```
 ///    const string_t& str = string_t::hold("ABC", 3);
-///
+/// ```
 /// Note that if a non-const instance of string_t is constructed instead in the example
 /// above, calling non-const methods of this instance will throw an exception.
 ///

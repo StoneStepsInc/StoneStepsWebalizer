@@ -16,9 +16,11 @@
 
 #include <vector>
 
-//
-// hist_month_t
-//
+///
+/// @struct hist_month_t
+///
+/// @brief  A class that keeps historical data for one month
+///
 struct hist_month_t {
    u_int   year;           // year (4 digits)
    u_int   month;          // month number (one-based)
@@ -39,9 +41,11 @@ struct hist_month_t {
       hist_month_t(u_int year, u_int month, uint64_t hits, uint64_t files, uint64_t pages, uint64_t visits, uint64_t hosts, uint64_t xfer, u_int fday, u_int lday);
 };
 
-//
-// history_t
-//
+///
+/// @class  history_t
+///
+/// @brief  A class that maintains monthly history data
+///
 class history_t {
    public:
       typedef std::vector<hist_month_t>::const_iterator const_iterator;

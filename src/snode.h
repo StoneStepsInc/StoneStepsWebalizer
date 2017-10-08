@@ -14,18 +14,20 @@
 #include "basenode.h"
 #include "types.h"
 
-//
-// Search strings
-//
-// 1. Search strings are length-encoded and include the type of the search and 
-// search terms. For example, a search for phrase "webalizer css" and any type
-// of file (e.g. HTML, PDF, etc) would look like this:
-//
-//    [6]Phrase[13]webalizer css[9]File Type[3]any
-//
-// Type length is always present and may be zero to indicate that the type of
-// the search term is either missing or unknown.
-//
+///
+/// @struct snode_t
+///
+/// @brief  Search engine search terms node
+///
+/// 1. Search strings are length-encoded and include the type of the search and 
+/// search terms. For example, a search for phrase "webalizer css" and any type
+/// of file (e.g. HTML, PDF, etc) would look like this:
+/// ```
+///    [6]Phrase[13]webalizer css[9]File Type[3]any
+/// ```
+/// Type length is always present and may be zero to indicate that the type of
+/// the search term is either missing or unknown.
+///
 struct snode_t : public base_node<snode_t> {     
       u_short        termcnt;          // search term count
       uint64_t       count;            // request count

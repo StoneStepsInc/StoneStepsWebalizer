@@ -14,11 +14,11 @@
 #include "keynode.h"
 #include "datanode.h"
 
-// -----------------------------------------------------------------------
-//
-// Hourly counters
-//
-// -----------------------------------------------------------------------
+///
+/// @struct hourly_t
+///
+/// @brief  Hourly counters node
+///
 struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
       uint64_t th_hits;             // hourly requests total
       uint64_t th_files;            // hourly files total 

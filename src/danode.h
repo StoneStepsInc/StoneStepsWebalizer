@@ -15,14 +15,14 @@
 #include "tstamp.h"
 #include "types.h"
 
-// -----------------------------------------------------------------------
-//
-// Active download job
-//
-// -----------------------------------------------------------------------
-// 1. An active download node shares the node ID with the download job
-// node.
-//
+///
+/// @struct danode_t
+///
+/// @brief  Active download job node
+///
+/// 1. An active download node shares the node ID with the download job
+/// node.
+///
 struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
       uint64_t    hits;              // request count (if zero, no active job)
       tstamp_t    tstamp;            // last request timestamp

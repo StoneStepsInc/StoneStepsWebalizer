@@ -33,9 +33,19 @@ struct hnode_t;
 struct MMDB_s;
 struct sockaddr;
 
-//
-// DNS resolver
-//
+///
+/// @class  dns_resolver_t
+///
+/// @brief  Provides GeoIP and DNS database services
+///
+/// DNS resolver accepts IP addresses via put_hnode and queues them for GeoIP and/or DNS 
+/// resolution. Resolved IP addresses are retrieved via get_hnode.
+///
+/// DNS resolver will not modify the host node in the resolver thread, but will read the
+/// IP address data member of the host node, which is considered immutable throughout the 
+/// lifespan of hnode_t. All resolved and updated hnode_t data members are populated in 
+/// get_hnode.
+///
 class dns_resolver_t {
    private:
       class dnode_t;

@@ -42,42 +42,12 @@
 #define R_OK 04
 #endif
 
-// -----------------------------------------------------------------------
-//
-// webalizer_t
-//
-// -----------------------------------------------------------------------
-//
-// 1. Host nodes need to be resolved before their visits can be attributed 
-// to various groups (i.e. address, domain name and country groups) and marked 
-// as safe (or not) based on historical host address data from the DNS database.
-//
-// New host nodes go through the following stages before they end up in the 
-// monthly state database:
-//
-//                         dns.put_hnode              dns.get_hnode
-//  log processor -----+========+==========+================+========+-------
-//                new hnode_t   |     access hnode          ^   group hnode
-//                              v                   done    |
-//  DNS resolver  --------------+===+==+==+==+==+=====+-----+-----------------
-//                                GeoIP, DNS, spammer
-//
-// A host node that has been retrieved from the DNS resolver will have its
-// resolved member set to true. While a host node is moving through the DNS
-// resolver, some of its members, such as the IP address, will be accessed
-// concurrently (the equal sign on the diagram) and cannot be modified by
-// either of the threads above. 
-//
-// Note that dns.put_node/get_node run in the context of the log processor 
-// thread and may modify the host node either before the DNS resolver thread 
-// starts resolving the host node in question or after it finished processing 
-// this host node.
-//
-// There's a short period of time between dns.put_hnode and dns.get_hnode 
-// when non-spam requests for historic spammer hosts may be not counted as 
-// as spam. Addressing this deficiency requires significant redesign around
-// visit processing and will be done at some later time.
-//
+/// 
+/// @class   webalizer_t
+///
+/// @brief  Main application class that processes logs, generates reports and 
+///         performs maintenance tasks.
+///
 class webalizer_t {
    private:
       // character buffer allocator and holder types
@@ -128,7 +98,16 @@ class webalizer_t {
       // search argument vector allocator
       typedef pool_allocator_t<arginfo_t, 8> srch_arg_alloc_t;
       
-      // log file parser state (does not own either of the objects)
+      ///
+      /// @struct lfp_state_t
+      ///
+      /// @brief  Log file parser state descriptor
+      ///
+      /// A log file parser state descriptor maintains a log file object and a current log 
+      /// record object populated from the log record that was just read from the log file.
+      ///
+      /// The descriptor does not own either of the objects.
+      ///
       struct lfp_state_t {
          logfile_t   *logfile;
          log_struct  *logrec;
@@ -152,7 +131,17 @@ class webalizer_t {
       // user agent token types
       enum toktype_t {vertok, urltok, strtok};
 
-      // user agent string descriptor
+      ///
+      /// @struct ua_token_t
+      ///
+      /// @brief  A user agent token descriptor
+      ///
+      /// A user agent string contains multiple tokens that describe various aspects of 
+      /// the user agent. Each instance of `ua_token_t` corresponds to one of the tokens.
+      ///
+      /// The `start` pointer points to the location of the token within the original 
+      /// user agent string.
+      ///
       struct ua_token_t {
          const char  *start;     // argument start in the user agent string
          size_t      namelen;    // name length (e.g. 7 for Mozilla/5.0)
@@ -169,14 +158,22 @@ class webalizer_t {
       typedef pool_allocator_t<ua_token_t, 8> ua_token_alloc_t;
       typedef pool_allocator_t<size_t, 8> ua_grp_idx_alloc_t;
 
-      // various processing times collected across multiple calls
+      ///
+      /// @struct proc_times_t
+      ///
+      /// @brief  Various processing times collected across multiple application calls
+      ///
       struct proc_times_t {
          uint64_t dns_time = 0;                    // DNS wait time
          uint64_t mnt_time = 0;                    // maintenance time (saving state, etc)
          uint64_t rpt_time = 0;                    // report time
       };
 
-      // run time log record counts
+      ///
+      /// @struct logrec_counts_t
+      ///
+      /// @brief  Run time log record counts
+      ///
       struct logrec_counts_t {
          uint64_t total_rec = 0;                   // total records processed
          uint64_t total_ignore = 0;                // total records ignored
