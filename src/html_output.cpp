@@ -1260,17 +1260,17 @@ void html_output_t::top_hosts_table(int flag)
            hptr->visit_avg/60., hptr->visit_max/60.);
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>\n", hptr->ccode, html_encode(cdesc));
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n", 
+               hptr->ccode, hptr->latitude, hptr->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", html_encode(hptr->city.c_str()));
       }
 
       // output a table cell with the IP address as a title
       fprintf(out_fp, 
-           "<td class=\"stats_data_item_td%s\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">",
+           "<td class=\"stats_data_item_td%s\" title=\"%s\">",
            hptr->spammer ? " spammer" : hptr->robot ? " robot" : hptr->visits_conv ? " converted" : "", 
-           html_encode(hptr->string.c_str()), 
-           hptr->latitude, hptr->longitude);
+           html_encode(hptr->string.c_str()));
 
       // output the data item
       if ((hptr->flag==OBJ_GRP) && config.hlite_groups)
@@ -1392,15 +1392,17 @@ int html_output_t::all_hosts_page(void)
                hnode.visit_avg/60., hnode.visit_max/60.);
 
             if(config.ntop_ctrys) {
-               fprintf(out_fp, "  %-22s", html_encode(state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str()));
+               fprintf(out_fp, "  <span data-lat=\"%.6lf\" data-lon=\"%.6lf\">%-22s</span>", 
+                     hnode.latitude, hnode.longitude,
+                     html_encode(state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str()));
                if(config.geoip_city)
                   fprintf(out_fp, "  %-22s", html_encode(hnode.city.c_str()));
             }
 
-            fprintf(out_fp, " %c <span %stitle=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</span>\n",
+            fprintf(out_fp, " %c <span %stitle=\"%s\">%s</span>\n",
                hnode.spammer ? '*' : ' ',
                hnode.spammer ? "class=\"spammer\" " : hnode.robot ? "class=\"robot\" " : hnode.visits_conv ? "class=\"converted\" " : "",
-               hnode.string.c_str(), hnode.latitude, hnode.longitude, html_encode(hnode.hostname().c_str()));
+               hnode.string.c_str(), html_encode(hnode.hostname().c_str()));
          }
       }
       iter.close();
@@ -2058,17 +2060,17 @@ void html_output_t::top_dl_table(void)
           html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) { 
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>", nptr->hnode ? nptr->hnode->ccode : "", html_encode(cdesc));
+         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>", 
+               nptr->hnode ? nptr->hnode->ccode : "", nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
       }
 
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,
-          "<td class=\"stats_data_item_td\" title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n"
+          "<td class=\"stats_data_item_td\" title=\"%s\">%s</td>\n"
           "</tr>\n",
           html_encode(nptr->hnode->string.c_str()), 
-          nptr->hnode->latitude, nptr->hnode->longitude, 
           html_encode(nptr->hnode->hostname().c_str()));
 
       nptr++;
@@ -2163,15 +2165,15 @@ int html_output_t::all_downloads_page(void)
          html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "  %-22s", html_encode(cdesc));
+         fprintf(out_fp, "  <span data-lat=\"%.6lf\" data-lon=\"%.6lf\">%-22s</span>", 
+               nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "  %-22s", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
       }
       
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-      fprintf(out_fp, "  <span title=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</span>\n",
+      fprintf(out_fp, "  <span title=\"%s\">%s</span>\n",
          html_encode(nptr->hnode->string.c_str()),
-         nptr->hnode->latitude, nptr->hnode->longitude,
          html_encode(nptr->hnode->hostname().c_str()));
    }
 
