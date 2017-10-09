@@ -68,27 +68,30 @@ class webalizer_t {
       /// range. Neither method ever returns a NULL pointer.
       ///
       struct arginfo_t {
-         const char  *arg;
-         size_t      namelen;
-         size_t      arglen;
+         const char  *arg;             ///< Points to a search argument within the query string
+         size_t      namelen;          ///< Search argument name length
+         size_t      arglen;           ///< Entire search argument length, including name and value
          
+         /// Constructs an empty search argument descriptor.
          arginfo_t(void) : arg(NULL), namelen(0), arglen(0) {}
+
+         /// Constructs a complete search argument descriptor
          arginfo_t(const char *arg, size_t namelen, size_t arglen) : arg(arg), namelen(namelen), arglen(arglen) {}
 
-         /// return a pointer to the search argument name or an empty string if there is none
+         /// Returns a pointer to the search argument name or an empty string if there is none.
          const char *name(void) const
          {
             return namelen ? arg : "";
          }
 
-         /// returns the length of the search argument value (zero if there is no value)
+         /// Returns the length of the search argument value (zero if there is no value).
          size_t value_length(void) const 
          {
             // value is present only if there is an equal sign, even if namelen is zero
             return namelen == arglen ? 0 : arglen - namelen - 1;
          }
 
-         /// return a pointer to the search argument value or an empty string if there is none
+         /// Return a pointer to the search argument value or an empty string, if there is none.
          const char *value(void) const
          {
             return namelen == arglen ? "" : arg + namelen + 1;
