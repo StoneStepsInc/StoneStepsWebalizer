@@ -248,6 +248,8 @@ class config_t {
       string_t db_fname_ext;
       string_t report_db_name;                   // path of a DB file for a report
       string_t log_dir;                          // optional log file directory
+
+      string_t ext_map_url;
       
       string_t graph_type;                       // graph type (PNG, Flash-OFC, etc)
       bool js_charts_map;                        // render country chart as a world map?

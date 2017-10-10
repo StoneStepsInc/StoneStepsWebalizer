@@ -671,7 +671,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 190; empty slots:  
+                     // max key: 191; empty slots:  
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -726,6 +726,7 @@ void config_t::get_config(const char *fname)
                      {"EnablePhraseValues",  117},          // Enable phrases in configuration values
                      {"ExcludeAgentArgs",    164},          // Exclude user agent arguments
                      {"ExcludeSearchArg",    109},          // Exclude a search argument
+                     {"ExternalMapURL",      191},          // An external map URL to show IP address locations
                      {"GeoIPCity",           53},           // Output city name in reports?
                      {"GeoIPDBPath",         141},          // Path to the GeoIP database file
                      {"GMTTime",             30},           // Local or UTC time?
@@ -1131,6 +1132,7 @@ void config_t::get_config(const char *fname)
          case 188: local_utc_offset =  (string_t::tolower(value[0]) == 'y'); break;
          case 189: js_charts_paths.push_back(value); break;
          case 190: dns_lookups =  (string_t::tolower(value[0]) == 'y'); break;
+         case 191: ext_map_url = value; break;
       }
    }
    fclose(fp);
