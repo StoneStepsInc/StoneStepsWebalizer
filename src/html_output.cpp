@@ -753,8 +753,7 @@ void html_output_t::month_total_table()
 
    fputs("\n<!-- Monthly Totals Table -->\n", out_fp);
    fputs("\n<a name=\"totals\"></a>\n", out_fp);
-   fputs("\n<div id=\"monthly_totals_report\">\n", out_fp);
-   fputs("<table class=\"report_table monthly_totals_table\">\n", out_fp);
+   fputs("<table id=\"monthly_totals_report\" class=\"report_table monthly_totals_table\">\n", out_fp);
    fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
 
    fputs("<thead>\n", out_fp);
@@ -969,7 +968,6 @@ void html_output_t::month_total_table()
    fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
    fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_visitors);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
@@ -1188,15 +1186,10 @@ void html_output_t::top_hosts_table(int flag)
 
    fputs("\n<!-- Top Hosts Table -->\n", out_fp);
 
-   if(!flag)
-      fputs("<div id=\"top_hosts_report\">\n", out_fp);
-   else
-      fputs("<div id=\"top_hosts_kbytes_report\">\n", out_fp);
-
    if(!flag || (flag && !config.ntop_hosts))                  /* now do <a> tag   */
       fputs("<a name=\"hosts\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fprintf(out_fp, "<table id=\"%s\" class=\"report_table stats_table\">\n", flag ? "top_hosts_kbytes_report" : "top_hosts_report");
    fputs("<thead>\n", out_fp);
    if (flag) 
       fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
@@ -1299,7 +1292,6 @@ void html_output_t::top_hosts_table(int flag)
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
@@ -1486,15 +1478,11 @@ void html_output_t::top_urls_table(int flag)
       tot_num = (uint32_t) i;
 
    fputs("\n<!-- Top URLs Table -->\n", out_fp);
-   if(flag)
-      fputs("<div id=\"top_urls_kbytes_report\">\n", out_fp);
-   else
-      fputs("<div id=\"top_urls_report\">\n", out_fp);
 
    if(!flag || flag && !config.ntop_urls)                      /* now do <a> tag   */
       fputs("<a name=\"urls\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fprintf(out_fp, "<table id=\"%s\" class=\"report_table stats_table\">\n", flag ? "top_urls_kbytes_report" : "top_urls_report");
    fputs("<thead>\n", out_fp);
    if (flag) 
       fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_url,config.lang.msg_top_u, config.lang.msg_h_by, config.lang.msg_h_xfer);
@@ -1590,7 +1578,6 @@ void html_output_t::top_urls_table(int flag)
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
@@ -1728,16 +1715,12 @@ void html_output_t::top_entry_table(int flag)
 
    fputs("\n<!-- Top Entry/Exit Table -->\n", out_fp);
 
-   if (flag) {
-      fputs("<div id=\"top_exit_urls_report\">\n", out_fp);
+   if (flag)
       fputs("<a name=\"exit\"></a>\n", out_fp); /* do anchor tag */
-   }
-   else {
-      fputs("<div id=\"top_entry_urls_report\">\n", out_fp);
+   else
       fputs("<a name=\"entry\"></a>\n", out_fp);
-   }
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fprintf(out_fp, "<table id=\"%s\" class=\"report_table stats_table\">\n", flag ? "top_exit_urls_report" : "top_entry_urls_report");
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of,
            (flag) ? state.totals.u_exit : state.totals.u_entry, (flag) ? config.lang.msg_top_ex : config.lang.msg_top_en);
@@ -1799,8 +1782,6 @@ void html_output_t::top_entry_table(int flag)
    // output a note that robot activity are not included in this report 
    if(state.totals.t_rhits)
       fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_robots);
-
-   fputs("</div>\n", out_fp);
 
    delete [] u_array;
 }
@@ -1877,10 +1858,9 @@ void html_output_t::top_refs_table()
       tot_num = i;
 
    fputs("\n<!-- Top Referrers Table -->\n", out_fp);
-   fputs("<div id=\"top_referrers_report\">\n", out_fp);
    fputs("<a name=\"referrers\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_referrers_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_ref, config.lang.msg_top_r);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -1968,7 +1948,6 @@ void html_output_t::top_refs_table()
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 void html_output_t::top_dl_table(void)
@@ -2004,10 +1983,9 @@ void html_output_t::top_dl_table(void)
 
    // generate the report
    fputs("\n<!-- Top Downloads Table -->\n", out_fp);
-   fputs("<div id=\"top_downloads_report\">\n", out_fp);
    fputs("<a name=\"downloads\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_downloads_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2094,7 +2072,6 @@ void html_output_t::top_dl_table(void)
    }
    
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 int html_output_t::all_downloads_page(void)
@@ -2207,10 +2184,9 @@ void html_output_t::top_err_table(void)
    database_t::reverse_iterator<rcnode_t> iter = state.database.rbegin_errors("errors.hits");
 
    fputs("\n<!-- Top HTTP Errors Table -->\n", out_fp);
-   fputs("<div id=\"top_errors_report\">\n", out_fp);
    fputs("<a name=\"errors\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_errors_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_err, config.lang.msg_h_errors);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2259,7 +2235,6 @@ void html_output_t::top_err_table(void)
    }
    
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 int html_output_t::all_errors_page(void)
@@ -2459,10 +2434,9 @@ void html_output_t::top_agents_table()
       tot_num = i;
 
    fputs("\n<!-- Top User Agents Table -->\n", out_fp);
-   fputs("<div id=\"top_user_agents_report\">\n", out_fp);
    fputs("<a name=\"useragents\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_user_agents_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"8\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_agent, config.lang.msg_top_a);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2529,7 +2503,6 @@ void html_output_t::top_agents_table()
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
@@ -2638,10 +2611,9 @@ void html_output_t::top_search_table(void)
    tot_num = (a_ctr > config.ntop_search) ? config.ntop_search : (uint32_t) a_ctr;
 
    fputs("\n<!-- Top Search Strings Table -->\n", out_fp);
-   fputs("<div id=\"top_search_report\">\n", out_fp);
    fputs("<a name=\"search\"></a>\n", out_fp);
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_search_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"6\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, a_ctr, config.lang.msg_top_sr);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2709,7 +2681,6 @@ void html_output_t::top_search_table(void)
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
@@ -2853,10 +2824,9 @@ void html_output_t::top_users_table()
       tot_num = i;
 
    fputs("\n<!-- Top Users Table -->\n", out_fp);
-   fputs("<div id=\"top_users_report\">\n", out_fp);
    fputs("<a name=\"users\"></a>\n", out_fp);       /* now do <a> tag   */
 
-   fputs("<table class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_users_report\" class=\"report_table stats_table\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_user, config.lang.msg_top_i);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2920,7 +2890,6 @@ void html_output_t::top_users_table()
       }
    }
    fputs("</table>\n", out_fp);
-   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/
