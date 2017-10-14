@@ -753,7 +753,13 @@ void html_output_t::month_total_table()
 
    fputs("\n<!-- Monthly Totals Table -->\n", out_fp);
    fputs("\n<a name=\"totals\"></a>\n", out_fp);
-   fputs("<table id=\"monthly_totals_report\" class=\"report_table monthly_totals_table\">\n", out_fp);
+
+   //
+   // Report versions
+   //
+   // v2    - added the data-xfer attribute
+   //
+   fputs("<table id=\"monthly_totals_report\" class=\"report_table monthly_totals_table\" data-version=\"2\">\n", out_fp);
    fputs("<colgroup><col><col span=\"2\" class=\"totals_data_col\"></colgroup>\n", out_fp);
 
    fputs("<thead>\n", out_fp);
@@ -987,7 +993,13 @@ void html_output_t::daily_total_table()
 
    /* Daily stats */
    fputs("\n<!-- Daily Totals Table -->\n", out_fp);
-   fputs("<table id=\"daily_usage_table\" class=\"report_table totals_table\">\n", out_fp);
+
+   //
+   // Report versions
+   //
+   // v2    - added the data-xfer attribute
+   //
+   fputs("<table id=\"daily_usage_table\" class=\"report_table totals_table\" data-version=\"2\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    /* Daily statistics for ... */
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"25\">%s %s %d</th></tr>\n", config.lang.msg_dtot_ds, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
@@ -1068,7 +1080,13 @@ void html_output_t::hourly_total_table()
 
    /* Hourly stats */
    fputs("\n<!-- Hourly Totals Table -->\n", out_fp);
-   fputs("<table id=\"hourly_usage_table\" class=\"report_table totals_table\">\n", out_fp);
+
+   //
+   // Report versions:
+   //
+   // v2    - added the data-xfer attribute
+   //
+   fputs("<table id=\"hourly_usage_table\" class=\"report_table totals_table\" data-version=\"2\">\n", out_fp);
 
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %s %d</th></tr>\n", config.lang.msg_htot_hs, config.lang.l_month[state.totals.cur_tstamp.month-1], state.totals.cur_tstamp.year);
@@ -3066,8 +3084,14 @@ void html_output_t::top_ctry_table()
       }
    }
 
-   /* Now do the table */
-   fputs("<table id=\"country_usage_table\" class=\"report_table stats_table\">\n", out_fp);
+   //
+   // Report versions
+   //
+   // v2    - added a column for page counts
+   // v3    - added the data-xfer attribute
+   // v4    - added the data-ccode attribute
+   //
+   fputs("<table id=\"country_usage_table\" class=\"report_table stats_table\" data-version=\"4\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %d %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, tot_ctry, config.lang.msg_top_c);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
