@@ -204,9 +204,6 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
    //
    // Monthly Summary Chart
    //
-   // Versions:
-   //    v2    - added the data-xfer attribute
-   //
    fputs("   var monthly_summary_chart = new MonthlySummaryChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
@@ -254,9 +251,6 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 
    //
    // Daily usage chart
-   //
-   // Versions:
-   //    v2    - added the data-xfer attribute
    //
    u_int last_day = state.totals.cur_tstamp.last_month_day().day;
    fputs("   var daily_usage_chart = new DailyUsageChart(0, config, {\n", out_fp);
@@ -306,9 +300,6 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //
    // Hourly usage chart
    //
-   // Versions:
-   //    v2    - added the data-xfer attribute
-   //
    fputs("   var hourly_usage_chart = new HourlyUsageChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
@@ -326,11 +317,6 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
 
    //
    // Country usage chart
-   //
-   // Versions:
-   //    v2    - added a column for page counts
-   //    v3    - added the data-xfer attribute
-   //    v4    - added the data-ccode attribute
    //
    fputs("   var country_usage_chart = new CountryUsageChart(0, config, {\n", out_fp);
 
