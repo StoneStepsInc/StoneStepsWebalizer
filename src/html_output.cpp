@@ -3207,7 +3207,13 @@ int html_output_t::write_main_index()
 
    /* month table */
    fputs("\n<!-- Monthly Summary Table -->\n", out_fp);
-   fputs("<table id=\"monthly_summary_table\" class=\"report_table monthly_summary_table\">\n", out_fp);
+
+   //
+   // Report versions:
+   //
+   //    v2    - added the data-xfer attribute
+   //
+   fputs("<table id=\"monthly_summary_table\" class=\"report_table monthly_summary_table\" data-version=\"2\">\n", out_fp);
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"11\">%s</th></tr>\n", config.lang.msg_main_sum);
 
