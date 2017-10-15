@@ -207,7 +207,7 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
    // Versions:
    //    v2    - added the data-xfer attribute
    //
-   fputs("   var monthly_summary_chart = new MonthlySummaryChart(2, config, {\n", out_fp);
+   fputs("   var monthly_summary_chart = new MonthlySummaryChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
@@ -259,7 +259,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //    v2    - added the data-xfer attribute
    //
    u_int last_day = state.totals.cur_tstamp.last_month_day().day;
-   fputs("   var daily_usage_chart = new DailyUsageChart(2, config, {\n", out_fp);
+   fputs("   var daily_usage_chart = new DailyUsageChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_du), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -309,7 +309,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    // Versions:
    //    v2    - added the data-xfer attribute
    //
-   fputs("   var hourly_usage_chart = new HourlyUsageChart(2, config, {\n", out_fp);
+   fputs("   var hourly_usage_chart = new HourlyUsageChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "      title: \"%s %s %d\",\n", js_encode(config.lang.msg_hmth_hu), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);
@@ -332,7 +332,7 @@ void html_output_t::write_js_charts_head_usage(FILE *out_fp)
    //    v3    - added the data-xfer attribute
    //    v4    - added the data-ccode attribute
    //
-   fputs("   var country_usage_chart = new CountryUsageChart(4, config, {\n", out_fp);
+   fputs("   var country_usage_chart = new CountryUsageChart(0, config, {\n", out_fp);
 
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "     title: \"%s %s %d\",\n", js_encode(config.lang.msg_ctry_use), js_encode(config.lang.l_month[state.totals.cur_tstamp.month-1]), state.totals.cur_tstamp.year);

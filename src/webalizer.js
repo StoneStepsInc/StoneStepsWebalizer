@@ -137,6 +137,31 @@ function findPrevSibling(node, tagname)
 
 // ----------------------------------------------------------------------------
 //
+// Report functions
+//
+// ----------------------------------------------------------------------------
+
+//
+// Returns the version of the report from the data-version attribute in reportTable. 
+// If none is found, version 1 is assumed and if the reportTable is null, a zero
+// is returned. 
+//
+function reportVersion(reportTable)
+{
+   // check if the report table exists
+   if(!reportTable)
+      return 0;
+   
+   // unversioned reports are considered version one
+   if(!reportTable.dataset || !reportTable.dataset.version)
+      return 1;
+
+   // return the version as a number
+   return Number(reportTable.dataset.version);
+}
+
+// ----------------------------------------------------------------------------
+//
 // Fragment navigation
 //
 // ----------------------------------------------------------------------------
@@ -492,12 +517,16 @@ function htmlEncode(value)
 
 //
 // getTableDataRows returns an array containing all TR elements from
-// all tbody elements of the table identified by table_id.
+// all tbody elements of the specified report table.
 //
-function getTableDataRows(table_id)
+function getTableDataRows(reportTable)
 {
    var rows = [];
-   var tbodies = document.getElementById(table_id).tBodies;
+
+   if(!reportTable)
+      return rows;
+
+   var tbodies = reportTable.tBodies;
 
    if(!tbodies || !tbodies.length)
       return rows;
@@ -527,12 +556,11 @@ function getTableDataRows(table_id)
 // DailyUsageChart
 //
 
-function DailyUsageChart(version, config, chart)
+function DailyUsageChart(unused_version, config, chart)
 {
-   this.version = version;                      // daily usage table layout version
    this.chart = chart;                          // chart information (no series data)
    this.config = config;                        // chart config object
-   this.data = getDailyUsageData(this.version); // extract report data from HTML tables
+   this.data = getDailyUsageData();             // extract report data from HTML tables
 }
 
 DailyUsageChart.prototype = {
@@ -581,15 +609,22 @@ DailyUsageChart.prototype = {
 // Versions:
 //    v2    - added the data-xfer attribute
 //
-function getDailyUsageData(version)
+function getDailyUsageData()
 {
    var rows;
    var usage = {days: [], hits: [], files: [], pages: [], xfer: [], xfer_hr: [], visits: [], hosts: []};
 
+   var reportTable = document.getElementById("daily_usage_table");
+
+   if(!reportTable)
+      return usage;
+
+   var version = reportVersion(reportTable);
+
    if(version < 1 || version > 2)
       return usage;
 
-   rows = getTableDataRows("daily_usage_table");
+   rows = getTableDataRows(reportTable);
 
    if(!rows || !rows.length)
       return usage;
@@ -597,7 +632,6 @@ function getDailyUsageData(version)
    //
    // Given that we generated report tables, we can do minimum validation of
    // the table structure. The version parameter identifies the table layout.
-   // There's only one version at this point.
    //
    for(var i = 0; i < rows.length; i++) {
       var cells = rows[i].cells;
@@ -630,12 +664,11 @@ function getDailyUsageData(version)
 // HourlyUsageChart
 //
 
-function HourlyUsageChart(version, config, chart)
+function HourlyUsageChart(unused_version, config, chart)
 {
-   this.version = version;                      // hourly usage table layout version
    this.chart = chart;
    this.config = config;
-   this.data = getHourlyUsageData(this.version);
+   this.data = getHourlyUsageData();
 }
 
 HourlyUsageChart.prototype = {
@@ -662,15 +695,22 @@ HourlyUsageChart.prototype = {
 // Versions:
 //    v2    - added the data-xfer attribute
 //
-function getHourlyUsageData(version)
+function getHourlyUsageData()
 {
    var rows;
    var usage = {hours: [], hits: [], files: [], pages: [], xfer: [], xfer_hr: []};
 
+   var reportTable = document.getElementById("hourly_usage_table");
+
+   if(!reportTable)
+      return usage;
+
+   var version = reportVersion(reportTable);
+
    if(version < 1 || version > 2)
       return usage;
 
-   rows = getTableDataRows("hourly_usage_table");
+   rows = getTableDataRows(reportTable);
 
    if(!rows || !rows.length)
       return usage;
@@ -705,12 +745,11 @@ function getHourlyUsageData(version)
 // CountryUsageChart
 //
 
-function CountryUsageChart(version, config, chart)
+function CountryUsageChart(unused_version, config, chart)
 {
-   this.version = version;                   // country table layout version
    this.chart = chart;
    this.config = config;
-   this.data = getCountryUsageData(this.version, this.chart.totalVisits);
+   this.data = getCountryUsageData(this.chart.totalVisits);
 }
 
 CountryUsageChart.prototype = {
@@ -761,7 +800,7 @@ CountryUsageChart.prototype = {
 //    v3    - added the data-xfer attribute
 //    v4    - added the data-ccode attribute
 //
-function getCountryUsageData(version, total_visits)
+function getCountryUsageData(total_visits)
 {
    var rows;
    var usage = {ccodes: [], countries: [], visits: [], percent: [], visits_other: 0, percent_other: 0};
@@ -770,6 +809,13 @@ function getCountryUsageData(version, total_visits)
    var layout;
    var layouts = [{columns: 10, i_visits: 7, i_country: 9},
                   {columns: 12, i_visits: 9, i_country: 11}];
+
+   var reportTable = document.getElementById("country_usage_table");
+
+   if(!reportTable)
+      return usage;
+
+   var version = reportVersion(reportTable);
 
    // make sure we have a table layout for this version
    if(version < 1)
@@ -787,7 +833,7 @@ function getCountryUsageData(version, total_visits)
          break;
    }
 
-   rows = getTableDataRows("country_usage_table");
+   rows = getTableDataRows(reportTable);
 
    if(!rows || !rows.length)
       return usage;
@@ -840,12 +886,11 @@ function getCountryUsageData(version, total_visits)
 // MonthlySummaryChart
 //
 
-function MonthlySummaryChart(version, config, chart)
+function MonthlySummaryChart(unused_version, config, chart)
 {
-   this.version = version;                   // monthly usage table layout version
    this.chart = chart;
    this.config = config;
-   this.data = getMonthlySummaryData(version);
+   this.data = getMonthlySummaryData();
 }
 
 MonthlySummaryChart.prototype = {
@@ -879,15 +924,22 @@ MonthlySummaryChart.prototype = {
 // Versions:
 //    v2    - added the data-xfer attribute
 //
-function getMonthlySummaryData(version)
+function getMonthlySummaryData()
 {
    var rows;
    var usage = {months: [], hits: [], files: [], pages: [], visits: [], hosts: [], xfer: [], xfer_hr: []};
 
+   var reportTable = document.getElementById("monthly_summary_table");
+
+   if(!reportTable)
+      return usage;
+
+   var version = reportVersion(reportTable);
+
    if(version < 1 || version > 2)
       return usage;
 
-   rows = getTableDataRows("monthly_summary_table");
+   rows = getTableDataRows(reportTable);
 
    if(!rows || !rows.length)
       return usage;
