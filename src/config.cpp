@@ -502,8 +502,14 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
          page_type.add_nlist(html_ext);
    }
 
-   for (max_ctry=0; lang.ctry[max_ctry].desc; max_ctry++);
-   if (ntop_ctrys > max_ctry) ntop_ctrys = max_ctry;   /* force upper limit */
+   // if there is no GeoIP database configured, don't output country information
+   if(geoip_db_path.isempty()) 
+      ntop_ctrys = 0;
+   else {
+      for (max_ctry=0; lang.ctry[max_ctry].desc; max_ctry++);
+      if (ntop_ctrys > max_ctry) ntop_ctrys = max_ctry;   /* force upper limit */
+   }
+
    if (graph_lines> 20)       graph_lines= 20;         /* keep graphs sane! */
 
    /* ensure entry/exits don't exceed urls */
