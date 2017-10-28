@@ -1276,7 +1276,7 @@ void html_output_t::top_hosts_table(int flag)
            hptr->visit_avg/60., hptr->visit_max/60.);
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n", 
+         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lg\" data-lon=\"%.6lg\">%s</td>\n", 
                !config.ext_map_url.isempty() && *hptr->ccode ? " ext_map_url" : "", 
                hptr->ccode, hptr->latitude, hptr->longitude, html_encode(cdesc));
          if(config.geoip_city)
@@ -1408,7 +1408,7 @@ int html_output_t::all_hosts_page(void)
                hnode.visit_avg/60., hnode.visit_max/60.);
 
             if(config.ntop_ctrys) {
-               fprintf(out_fp, "  <span data-lat=\"%.6lf\" data-lon=\"%.6lf\">%-22s</span>", 
+               fprintf(out_fp, "  <span data-lat=\"%.6lg\" data-lon=\"%.6lg\">%-22s</span>", 
                      hnode.latitude, hnode.longitude,
                      html_encode(state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str()));
                if(config.geoip_city)
@@ -2071,7 +2071,7 @@ void html_output_t::top_dl_table(void)
           html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) { 
-         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>", 
+         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lg\" data-lon=\"%.6lg\">%s</td>", 
                !config.ext_map_url.isempty() && *nptr->hnode->ccode ? " ext_map_url" : "", 
                nptr->hnode ? nptr->hnode->ccode : "", nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
          if(config.geoip_city)
@@ -2176,7 +2176,7 @@ int html_output_t::all_downloads_page(void)
          html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "  <span data-lat=\"%.6lf\" data-lon=\"%.6lf\">%-22s</span>", 
+         fprintf(out_fp, "  <span data-lat=\"%.6lg\" data-lon=\"%.6lg\">%-22s</span>", 
                nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "  %-22s", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
