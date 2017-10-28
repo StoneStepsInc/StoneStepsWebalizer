@@ -160,6 +160,23 @@ function reportVersion(reportTable)
    return Number(reportTable.dataset.version);
 }
 
+//
+// Checks if the on-click even target contains a country code and a latitude/longitude 
+// and if it does, opens a window using the external map URL passed as an argument, with 
+// {{lat}} and {{lon}} patterns replaced with actual latitude/longitude values. 
+//
+function openExtMapURL(event, ext_map_url)
+{
+   if(event && event.target && event.target.dataset && event.target.dataset.ccode) {
+      if(event.target.dataset.lat & event.target.dataset.lon) {
+         ext_map_url = ext_map_url.replace(/{{lat}}/g, event.target.dataset.lat);
+         ext_map_url = ext_map_url.replace(/{{lon}}/g, event.target.dataset.lon);
+
+         window.open(ext_map_url, "SSW_ext_map_url");
+      }
+   }
+}
+
 // ----------------------------------------------------------------------------
 //
 // Fragment navigation

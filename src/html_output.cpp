@@ -1203,7 +1203,16 @@ void html_output_t::top_hosts_table(int flag)
    if(!flag || (flag && !config.ntop_hosts))                  /* now do <a> tag   */
       fputs("<a name=\"hosts\"></a>\n", out_fp);
 
-   fprintf(out_fp, "<table id=\"%s\" class=\"report_table stats_table\">\n", flag ? "top_hosts_kbytes_report" : "top_hosts_report");
+   fprintf(out_fp, "<table id=\"%s\" class=\"report_table stats_table\"", flag ? "top_hosts_kbytes_report" : "top_hosts_report");
+
+   // if we have a URL for an external map, set up an onclick handler for this report table
+   if(config.ntop_ctrys && !config.ext_map_url.isempty()) {
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp, " onclick=\"openExtMapURL(event, &quot;%s&quot;)\"", html_encode(js_encode(config.ext_map_url)));
+   }
+
+   fputs(">\n", out_fp);
+
    fputs("<thead>\n", out_fp);
    if (flag) 
       fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s %s %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?16:15:14, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_hosts, config.lang.msg_top_s, config.lang.msg_h_by, config.lang.msg_h_xfer);
@@ -1267,7 +1276,8 @@ void html_output_t::top_hosts_table(int flag)
            hptr->visit_avg/60., hptr->visit_max/60.);
 
       if(config.ntop_ctrys) {
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n", 
+         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>\n", 
+               !config.ext_map_url.isempty() && *hptr->ccode ? " ext_map_url" : "", 
                hptr->ccode, hptr->latitude, hptr->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", html_encode(hptr->city.c_str()));
@@ -1999,7 +2009,16 @@ void html_output_t::top_dl_table(void)
    fputs("\n<!-- Top Downloads Table -->\n", out_fp);
    fputs("<a name=\"downloads\"></a>\n", out_fp);
 
-   fputs("<table id=\"top_downloads_report\" class=\"report_table stats_table\">\n", out_fp);
+   fputs("<table id=\"top_downloads_report\" class=\"report_table stats_table\"", out_fp);
+
+   // if we have a URL for an external map, set up an onclick handler for this report table
+   if(config.ntop_ctrys) {
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp, " onclick=\"openExtMapURL(event, &quot;%s&quot;)\"", html_encode(js_encode(config.ext_map_url)));
+   }
+
+   fputs(">\n", out_fp);
+
    fputs("<thead>\n", out_fp);
    fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"%d\">%s %u %s %" PRIu64 " %s</th></tr>\n", config.ntop_ctrys?config.geoip_city?12:11:10, config.lang.msg_top_top, tot_num, config.lang.msg_top_of, state.totals.t_downloads, config.lang.msg_h_downloads);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
@@ -2052,7 +2071,8 @@ void html_output_t::top_dl_table(void)
           html_encode(nptr->string.c_str()));
 
       if(config.ntop_ctrys) { 
-         fprintf(out_fp, "<td class=\"stats_data_item_td\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>", 
+         fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lf\" data-lon=\"%.6lf\">%s</td>", 
+               !config.ext_map_url.isempty() && *nptr->hnode->ccode ? " ext_map_url" : "", 
                nptr->hnode ? nptr->hnode->ccode : "", nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
          if(config.geoip_city)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");

@@ -173,6 +173,7 @@ table.stats_table tbody.stats_data_tbody td.stats_data_item_td {font-weight: nor
 table.stats_table tbody.stats_footer_tbody td {text-align: center;}
 table.stats_table tbody.all_items_tbody {display: none;}
 table.stats_table tbody.stats_data_tbody tr.group_shade_tr td.stats_data_item_td {font-weight: bold;}
+table.stats_table tbody.stats_data_tbody td.ext_map_url {cursor: pointer}
 
 
 
