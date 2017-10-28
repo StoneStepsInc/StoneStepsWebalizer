@@ -51,7 +51,7 @@ class html_output_t : public output_t {
       void write_html_head(const char *period, FILE *out_fp, page_type_t page_type);
       void write_html_tail(FILE *out_fp);
 
-      void write_js_charts_head(FILE *out_fp, page_type_t page_type);
+      void write_js_charts_head_links(FILE *out_fp);
       void write_js_charts_head_index(FILE *out_fp);
       void write_js_charts_head_usage(FILE *out_fp);
       void write_js_charts_head_js_config(FILE *out_fp);

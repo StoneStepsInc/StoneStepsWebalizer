@@ -110,7 +110,7 @@ const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
    return buffer_formatter.format(fmt_hr_num, xfer, pre ? " " : "&nbsp;", config.lang.msg_unit_pfx, config.lang.msg_xfer_unit, config.decimal_kbytes);
 }
 
-void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
+void html_output_t::write_js_charts_head_links(FILE *out_fp)
 {
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
@@ -129,18 +129,9 @@ void html_output_t::write_js_charts_head(FILE *out_fp, page_type_t page_type)
          fprintf(out_fp, "<script type=\"text/javascript\" src=\"%s\"></script>\n", html_encode(i->c_str()));
    }
 
+   // output JavaScript charts integration script links
    buffer_formatter.set_scope_mode(buffer_formatter_t::append),
    fprintf(out_fp, "<script type=\"text/javascript\" src=\"%swebalizer_%s.js\"></script>\n", html_encode(config.html_js_path.c_str()), html_encode(config.js_charts.c_str()));
-
-   // output the script block for JavaScripts charts
-   fputs("<script type=\"text/javascript\">\n", out_fp);
-
-   if(page_type == page_index)
-      write_js_charts_head_index(out_fp);
-   else
-      write_js_charts_head_usage(out_fp);
-
-   fputs("</script>\n", out_fp);      
 }
 
 void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
@@ -385,7 +376,20 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
 
    // do not generate JavaScript charts links for an all-items page
    if(page_type != page_all_items && config.use_js_charts())
-      write_js_charts_head(out_fp, page_type);
+      write_js_charts_head_links(out_fp);
+
+   // output a script block for this report
+   fputs("<script type=\"text/javascript\">\n", out_fp);
+
+   // output JavaScript charts initilization code, if enabled
+   if(config.use_js_charts()) {
+      if(page_type == page_index)
+         write_js_charts_head_index(out_fp);
+      else
+         write_js_charts_head_usage(out_fp);
+   }
+
+   fputs("</script>\n", out_fp);      
 
    for(iter = config.html_head.begin(); iter != config.html_head.end(); iter++)
    {
