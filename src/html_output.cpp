@@ -401,16 +401,22 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
       if(config.enable_js) {
          switch (page_type) {
             case page_index:
+               fputs("<body onload=\"onload_index_page(", out_fp);
+
+               // set up JS charts, if enabled 
                if(config.use_js_charts())
-                  fputs("<body onload=\"onload_index_page(setupIndexPageCharts)\">\n", out_fp);
-               else
-                  fputs("<body onload=\"onload_index_page()\">\n", out_fp);
+                  fputs("setupIndexPageCharts", out_fp);
+
+               fputs(")\">\n", out_fp);
                break;
             case page_usage:
+               fputs("<body onload=\"onload_usage_page(", out_fp);
+
+               // set up JS charts, if enabled 
                if(config.use_js_charts())
-                  fputs("<body onload=\"onload_usage_page(setupUsagePageCharts)\">\n", out_fp);
-               else
-                  fputs("<body onload=\"onload_usage_page()\">\n", out_fp);
+                  fputs("setupUsagePageCharts", out_fp);
+
+               fputs(")\">\n", out_fp);
                break;
             case page_all_items:
                fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);
