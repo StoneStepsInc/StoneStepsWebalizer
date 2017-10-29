@@ -2615,94 +2615,23 @@ the file, tab separated.
 Log files and The Webalizer
 ---------------------------
 
-Most sites will choose to have The Webalizer run from cron at specified
-intervals.  Care should be taken to ensure that data is not lost as a
-result of log file rotations.  A suggested practice is to rotate your
-web server logs at the end of each month as close to midnight as possible,
-then have The Webalizer process the 'end of month' log file before running
-statistics on the new, current log.  On our systems, a shell script called
-'rotate_logs' is run at midnight, the end of each month.  This script file
-looks like:
+Avoid processing the same log files more than once because in every subsequent 
+run Stone Steps Webalizer will use the latest processed log time stamp to skip
+log lines that have already been processed in previous runs and, considering 
+that modern log files will most likely contain multiple log lines with the same 
+time stamp value, some of those log lines had been processed before and some have 
+not yet been processed, but will be discarded because of the matching time stamp 
+values anyway.
 
-------------------------- file: rotate_logs ------------------------------
-#!/bin/sh
-
-# halt the server
-kill `cat /var/lib/httpd/logs/httpd.pid`
-
-# define backup names
-OLD_ACCESS_LOG=/var/lib/httpd/logs/old/access_log.`date +%y%m%d-%H%M%S`
-OLD_ERROR_LOG=/var/lib/httpd/logs/old/error_log.`date +%y%m%d-%H%M%S`
-
-# make end of month copy for analyzer
-cp /var/lib/httpd/logs/access_log /var/lib/httpd/logs/access_log.backup
-
-# move files to archive directory
-mv /var/lib/httpd/logs/access_log `echo $OLD_ACCESS_LOG`
-mv /var/lib/httpd/logs/error_log  `echo $OLD_ERROR_LOG`
-
-# restart web server
-/usr/sbin/httpd
-
-# compress the archived files
-/bin/gzip $OLD_ACCESS_LOG
-/bin/gzip $OLD_ERROR_LOG
-------------------------- end of file ------------------------------------
- 
-This script first stops the web server using a 'kill' command.  Apache
-keeps the PID of the server in the file httpd.pid, so we use it as the
-argument for the kill.  Next, it defines some names for the backup files,
-which are basically the name of the files with the date and time appended
-to the end of them.  It then makes a copy of the log file, appended with
-'.backup' in the log directory, moves the current log files to an archive
-directory (/var/lib/httpd/logs/old) and restarts the server.  This setup 
-allows the web server to be down for the minimum amount of time needed,
-which is important for busy sites.  If you don't want to stop the server,
-you can remove the initial 'kill' command, and replace the '/usr/sbin/httpd'
-line with "kill -1 `cat /var/lib/httpd/logs/httpd.pid`" command instead,
-On most web servers, this will cause a restart of the server and create
-the new log files in the process...
-
-At this point, we have made copies of the previous months logs,  the web
-server is going about it's business as usual, and we have all the time in
-the world to do any other additional processing we want.  The last two
-lines of the script compress the archived logs using the GNU zip program
-(gzip).  Remember, we still have a copy of the log which we can now run
-The Webalizer on without having to do any further processing.
-
-Next, we define two crontab entries.  The first runs the above 'rotate_logs'
-script at midnight at the end of the month.  The second runs The Webalizer
-on the '.backup' log file created above at 5 minutes after midnight.  This
-gives other end of month processing jobs a chance to run so we don't bog
-the system down too much.  If you have lots of end of month stuff going on,
-you can change the timing to suit your needs.  The crontab entries look
-something like:
-
-------------------------- crontab entries --------------------------------
-# Rotate web server logs and run monthly analysis
-0 0 1 * *       /usr/local/adm/rotate_logs
-5 0 1 * *       /usr/bin/webalizer -Q /var/lib/httpd/logs/access_log.backup
-------------------------- end of crontab ---------------------------------
-
-As you can see, the log rotations occur at midnight, and the analysis
-is done at 5 minutes after.  Once you verify that The Webalizer ran
-successfully, the access_log.backup file can be deleted as it isn't
-needed any more.  If you need to re-run the analysis, you still have
-the compressed archive copy that the shell script created.  In order
-for the above analysis to work properly, you should have already
-created an /etc/webalizer.conf configuration file suitable for your
-site, or otherwise specify configuration options or a configuration
-file on the crontab command line above.
-
-If you want The Webalizer to be run more often than once a month, you
-can specify additional crontab entries to do this as well.  Care should
-be taken however to ensure that The Webalizer is not running when the
-end of month processing above occurs, or unpredictable results may
-happen (such as an inability to rotate the logs due to a file lock). 
-The easiest way is to run it on the half hour with a crontab entry like:
-
-30 * * * *      /usr/bin/webalizer
-
+When configuring your web server to rotate log files, keep in mind that as soon
+as a log line with the time stamp from the next month is processed, the current
+month will be ended and reports will be generated. If you would like to end the
+current month after processing the log file you know to be the last one, use
+--end-month switch to do so and then --prepare-report to generate the monthly 
+report from the rolled over state database. If you choose to use this workflow
+and intend to process multiple log files one after another, you will achieve better
+performance using the --batch switch, which prevents Stone Steps Webalizer from
+generating intermediate monthly reports after each log file. 
 
 Language Support
 ----------------
