@@ -1592,6 +1592,15 @@ AcceptHostNames
               country identification.
               Default value: no
 
+ExternalMapURL
+              Specifies a fully-qualified URL of any map service that can
+              interpret latitude and longitude expressed as signed decimal 
+              degrees. Use {{lat} and {{lon}} to pass coordinates to the
+              map service. For example, use this URL to show a map centered 
+              on the location of the IP address in Google Maps:
+
+              https://www.google.ca/maps/@{{lat}},{{lon}},12z
+
 Graph Configuration
 -------------------
 
