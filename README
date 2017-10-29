@@ -321,7 +321,7 @@ entry for this request, which will be counted as one hit.
 Files
 
   Successful requests served by the server are counted as files. A 
-file can be an html page or a dynamicly processed page, such as a PHP 
+file can be an html page or a dynamically processed page, such as a PHP 
 or ASP page or an image. File total in the reports is a subset of of 
 hits total.
 
@@ -446,7 +446,7 @@ General Options
 -V
 --version
 
--w        Displays the GNU warranty discalimer.
+-w        Displays the GNU warranty disclaimer.
 -W
 --warranty
 
@@ -611,7 +611,7 @@ General Options
           
           Instructs Stone Steps Webalizer to interpret the last 
           argument as a name of the database file rather than a log 
-          file name and generate monhly report using the data from 
+          file name and generate monthly report using the data from 
           the database.
           
 --last-log
@@ -1606,7 +1606,7 @@ Graph Configuration
 
 GraphBackgroundAlpha
               Sets the transparency of the background of graph images, in 
-              percents. The value of 100 makes background completely 
+              percent. The value of 100 makes background completely 
               transparent, while the value of 0 makes it completely 
               opaque. Making graph backgrounds transparent makes it 
               possible to use another image, such as a logo, a gradient or 
@@ -1803,7 +1803,7 @@ DbSeqCacheSize
 DbCacheSize 
               Instructs Berkeley DB to limit its internal cache size 
               to the specified amount. The number may be suffixed with 
-              M or K to indicate megabytes and kylobytes. For example, 
+              M or K to indicate megabytes and kilobytes. For example, 
               128M will configure the cache at 128 megabytes. There is 
               no default value for this parameter. If omitted, 
               Berkeley DB will maintain cache as it sees fit.
@@ -1863,7 +1863,7 @@ TopKHosts     Identical to TopSites, except for the 'by KByte' table.
               Default is 10.  No command line switch for this one.
 
 AllHosts      Will cause a separate HTML page to be generated for all
-              normally visable Sites.  A link will be added to the
+              normally visible Sites.  A link will be added to the
               bottom of the "Top Sites" table if enabled.  Value can
               be either 'yes' or 'no', with 'no' being the default.
 
@@ -1877,7 +1877,7 @@ TopKURLs      Identical to TopURLs, except for the 'by KByte' table.
               Default is 10.  No command line switch for this one.
 
 AllURLs       Will cause a separate HTML page to be generated for all
-              normally visable URLs.  A link will be added to the
+              normally visible URLs.  A link will be added to the
               bottom of the "Top URLs" table if enabled.  Value can
               be either 'yes' or 'no', with 'no' being the default.
 
@@ -1904,7 +1904,7 @@ TopUsers      This allows you to specify how many "Top" usernames are
               disable the Username table, specify a value of zero (0).
 
 AllUsers      Will cause a separate HTML page to be generated for all
-              normally visable usernames.  A link will be added to the
+              normally visible user names.  A link will be added to the
               bottom of the "Top Usernames" table if enabled.  Value
               can be either 'yes' or 'no', with 'no' being the default.
 
@@ -1980,7 +1980,7 @@ HideHost      This allows you to hide specified hosts from the "Top
               if you have their browsers home page pointing to it.
               Command line argument: -s 
 
-HideAllHosts  This allows hiding all indvidual hosts from the display,
+HideAllHosts  This allows hiding all individual hosts from the display,
               which can be useful when a lot of groupings are being
               used (since grouped records cannot be hidden).  It is
               particularly useful in conjunction with the GroupDomain
@@ -2101,9 +2101,9 @@ IgnoreURL     This allows specified URL's to be completely ignored from
               development work is being done, but is not accessible to
               the outside world.
 
-              Unlike other ihnore keywords, IgnoreURL can take optional 
+              Unlike other ignore keywords, IgnoreURL can take optional 
               search argument names and values. Multiple IgnoreURL entries 
-              can be used to specify different searchh arguments for the 
+              can be used to specify different search arguments for the 
               same URL. If multiple IgnoreURL values are used, they must 
               follow one another in the configuration file or those that 
               are out of order will be ignored. 
@@ -2362,7 +2362,7 @@ ApacheLogFormat
       %a %l \"%u\" %t %m "%U" \"%q\" %p %>s %b %D 
       \"%{Referer}i\" \"%{User-Agent}i\"
       
-In the preceeding example the user name field (%u) is enclosed in 
+In the preceding example the user name field (%u) is enclosed in 
 quotes because user names may contain spaces. The URL stem field (%U) 
 is quoted as well because Apache logs URL file paths decoded and URLs 
 may contain spaces. The query string field (%q) is quoted because 
@@ -2595,14 +2595,14 @@ Exporting Webalizer Data
 ------------------------
 
 The Webalizer now has the ability to dump all object tables to tab
-delimited ascii text files, which can then be imported into most
+delimited ASCII text files, which can then be imported into most
 popular database and spreadsheet programs. The files are not normally
 produced, as on some sites they could become quite large, and are only
 enabled by the use of the Dump* configuration keywords.  The filename
 extensions default to '.tab' however may be changed using the
 'DumpExtension' keyword.  Since this data contains all items, even
 those normally hidden, it may not be desirable to have them located
-in the output directory where they may be visable to normal web users..
+in the output directory where they may be visible to normal web users..
 For this reason, the 'DumpPath' configuration keyword is available,
 and allows the placement of these files somewhere outside the normal
 web server document tree.  An optional 'header' record may be written
@@ -2742,7 +2742,7 @@ fr,       France,
 fx,       "France, Metropolitan",
 ga,       Gabon,
 
-The file webalizer_lang.english constains additional information
+The file webalizer_lang.english contains additional information
 about the structure of a language file.
 
 Language files must be saved in the UTF-8 character encoding.
@@ -2806,7 +2806,7 @@ IP address, this address will be marked as robot or non-robot depending
 on which user agent was active when the first hit was logged by the
 web server.
 
-Active visits are marked as robot visits when user agents matche one 
+Active visits are marked as robot visits when user agents matches one 
 of the Robot entries, regardless whether the corresponding hosts are 
 marked as robots or not. Visit robot flag is used when user agents 
 are classified as robots or not and when website and country totals 
@@ -2848,7 +2848,7 @@ Final Notes
 
 A lot of time and effort went into making The Webalizer, and to ensure that
 the results are as accurate as possible.  If you find any abnormalities or
-inconsistent results, bugs, errors, ommisions or anything else that doesn't
+inconsistent results, bugs, errors, omissions or anything else that doesn't
 look right, please let me know so I can investigate the problem or correct
 the error.  This goes for the minimal documentation as well.  Suggestions
 for future versions are also welcome and appreciated.
