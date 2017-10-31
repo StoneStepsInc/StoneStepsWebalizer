@@ -47,7 +47,7 @@ function onload_index_page(initCB)
 
 function onload_usage_page(initCB)
 {
-   // innitialize fragment navigation
+   // initialize fragment navigation
    initPageFragments();
 
    initHelp();
@@ -1008,4 +1008,33 @@ function getMonthlySummaryData()
    }
 
    return usage;
+}
+
+//
+// Compatibility functions (v3.10.3 to v4.0.4)
+//
+// Keep these functions in the script file to avoid JavaScript errors when older 
+// reports are viewed.
+//
+
+function onloadpage(pagetype)
+{
+   var PAGE_INDEX = 0
+   var PAGE_USAGE = 1;
+
+   // initialize fragment navigation (also was called without pagetype)
+   if(pagetype == undefined || pagetype == PAGE_USAGE)
+      initPageFragments();
+
+   initHelp();
+}
+
+function onpagekeyup(event)
+{
+   onPageKeyUpDispatcher(event);
+}
+
+function onclickmenu(a)
+{
+	return true;
 }
