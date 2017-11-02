@@ -168,7 +168,7 @@ function reportVersion(reportTable)
 function openExtMapURL(event, ext_map_url)
 {
    if(event && event.target && event.target.dataset && event.target.dataset.ccode) {
-      if(event.target.dataset.lat & event.target.dataset.lon) {
+      if(event.target.dataset.lat && event.target.dataset.lon) {
          ext_map_url = ext_map_url.replace(/{{lat}}/g, event.target.dataset.lat);
          ext_map_url = ext_map_url.replace(/{{lon}}/g, event.target.dataset.lon);
 
