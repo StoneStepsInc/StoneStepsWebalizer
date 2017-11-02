@@ -1,5 +1,5 @@
 --------------------------------------------------------------------
-4.3.0.8 [05-Nov-2017] -- Stone Steps Inc. (www.stonesteps.ca)
+4.3.0.9 [05-Nov-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Added ExternalMapURL to open a separate browser window and show a map centered on IP address coordinates
  * Reworked the URL ignore filter to accept query string names
