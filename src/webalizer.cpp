@@ -1142,7 +1142,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
    int retcode = 0;
 
-   bool check_dup = config.incremental;   // enable duplicate time stamp checking in the incremental mode
+   bool check_dup = false;             // check for duplicate time stamps for initial log records?
 
    lfp_state_t wlfs;                   // working log file state
    lfp_state_list_t lfp_states;        // log file states ordered by log time
@@ -1150,7 +1150,10 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    logrec_list_t logrecs;              // contains one log record per log file; owns log records
    
    tm_ranges_t::iterator dst_iter = config.dst_ranges.begin();
-   
+
+   // check for duplicates only if we processed any log records in the past
+   check_dup = config.incremental && !state.totals.cur_tstamp.null;
+
    // reserve enough memory for most URL hosts
    urlhost.reserve(128);
 
@@ -1188,8 +1191,13 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          /* get current records timestamp (seconds since epoch) */
          tstamp_t& rec_tstamp = log_rec.tstamp;
 
-         /* Do we need to check for duplicate records? (incremental mode)   */
-         if (check_dup && !state.totals.cur_tstamp.null)
+         //
+         // Skip log records that we processed in the past, but not the first few that have 
+         // the same time stamp (i.e. the first good log record sets cur_tstamp in the state 
+         // and the following few with the same time stamp are skipped while check_dup is 
+         // true).
+         //
+         if (check_dup && !total_good)
          {
             /* check if less than/equal to last record processed            */
             if ( rec_tstamp <= state.totals.cur_tstamp )
