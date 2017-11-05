@@ -899,8 +899,8 @@ void graph_t::init_graph(const char *title, int xsize, int ysize)
    else
       im = gdImageCreate(xsize,ysize);
 
-   /* allocate color maps, background color first */
-   c_background = gdImageColorAllocateAlpha(im, RED(graph_background), GREEN(graph_background), BLUE(graph_background), ALPHA(graph_background));
+   // allocate GD colors and for background convert the percentage transparency to 0..127
+   c_background = gdImageColorAllocateAlpha(im, RED(graph_background), GREEN(graph_background), BLUE(graph_background), (127*config.graph_background_alpha)/100);
    c_shadow  = gdImageColorAllocate(im, RED(graph_shadow), GREEN(graph_shadow), BLUE(graph_shadow));
    c_gridline = gdImageColorAllocate(im, RED(graph_gridline), GREEN(graph_gridline), BLUE(graph_gridline));
    c_title = gdImageColorAllocate(im, RED(graph_title_color), GREEN(graph_title_color), BLUE(graph_title_color));
@@ -1017,10 +1017,6 @@ void graph_t::init_graph_engine(bool makeimgs)
    if(!config.graph_outline_color.isempty()) graph_outline_color = make_color(config.graph_outline_color);
    if(!config.graph_legend_color.isempty()) graph_legend_color = make_color(config.graph_legend_color);
    if(!config.graph_weekend_color.isempty()) graph_weekend_color = make_color(config.graph_weekend_color);
-
-   // convert the percentage transparency to 0..127 and shift it into place
-   if(config.graph_true_color)
-      graph_background |= (127*config.graph_background_alpha)/100 << 24;
 }
 
 void graph_t::cleanup_graph_engine(void)
