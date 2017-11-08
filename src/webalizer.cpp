@@ -1835,7 +1835,7 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
    // find the first URL pattern and then loop through duplicates to see if we have a matching search argument name
    while((upat = config.ignored_urls.find_node(url, upat_it, !upat)) != NULL) {
       // if there is no search argument name in this URL pattern, then we found a match
-      if(upat->name.isempty()) 
+      if(upat->noname || upat->name.isempty()) 
          return true;
 
       // otherwise search for the pattern name in the sorted search argument vector
@@ -1859,15 +1859,12 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
             sr_it = std::lower_bound(sr_args.begin(), sr_args.end(), sa_key, [] (const arginfo_t& e1, const arginfo_t& e2) {return qs_srcharg_cmp(&e1, &e2) < 0;});
 
             // iterate through all search arguments with the same name and compare values
-            if(sr_it != sr_args.end() && sr_it->namelen) {
-               // make sure the name matches the name qualifier
-               while(!strncmp_ex(sr_it->name(), sr_it->namelen, upat->name, upat->name.length() - 1)) {
-                  // compare the argument value and the patter name qualifier
-                  if(!strncmp_ex(sr_it->value(), sr_it->value_length(), upat->qualifier, upat->qualifier.length()))
-                     return true;
+            while(sr_it != sr_args.end() && !strncmp_ex(sr_it->name(), sr_it->namelen, upat->name, upat->name.length() - 1)) {
+               // compare the argument value and the pattern qualifier
+               if(!strncmp_ex(sr_it->value(), sr_it->value_length(), upat->qualifier, upat->qualifier.length()))
+                  return true;
 
-                  sr_it++;
-               }
+               sr_it++;
             }
          }
       }
