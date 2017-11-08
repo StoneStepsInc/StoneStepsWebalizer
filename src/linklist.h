@@ -148,7 +148,7 @@ class nlist : public base_list<nnode_t> {
 /// may have the same name, such as `*.jpg` and `*.png` may map to the same name `Images`.
 ///
 /// A name may optionally be followed by a qualifier separated from the name by the equal sign
-/// character, such as `as_q=All Words`, in which case `as_q` will be stored in `name` and `All
+/// character, such as `as_q=All Words`, in which case `as_q=` will be stored in `name` and `All
 /// Words` in `qualifier`.
 ///
 struct gnode_t : public base_list_node_t {
