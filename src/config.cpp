@@ -1411,6 +1411,7 @@ void config_t::set_enable_phrase_values(bool enable)
    includes.set_enable_phrase_values(enable);
    robots.set_enable_phrase_values(enable);
    group_agent_args.set_enable_phrase_values(enable);
+   ignored_urls.set_enable_phrase_values(enable);
 }
 
 uint32_t config_t::get_db_cache_size(const char *value) const
