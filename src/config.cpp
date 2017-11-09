@@ -890,7 +890,7 @@ void config_t::get_config(const char *fname)
    const char *cp1, *cp2;
    u_int num_kwords = sizeof(kwords)/sizeof(kwords[0]);
    kwinfo *kptr, key = {NULL, 0};
-   char *buffer;
+   string_t::char_buffer_t buffer;
 
    config_fnames.push_back(string_t(fname));
 
@@ -901,7 +901,7 @@ void config_t::get_config(const char *fname)
       return;
    }
 
-   buffer = new char[BUFSIZE];
+   buffer.resize(BUFSIZE, 0);
 
    while ( (fgets(buffer,BUFSIZE,fp)) != NULL)
    {
@@ -1142,7 +1142,6 @@ void config_t::get_config(const char *fname)
       }
    }
    fclose(fp);
-   delete [] buffer;
 }
 
 void config_t::add_output_format(const string_t& format)
