@@ -905,11 +905,17 @@ void config_t::get_config(const char *fname)
 
    while ( (fgets(buffer,BUFSIZE,fp)) != NULL)
    {
+      cp1 = buffer;
+
+      // check for the UTF-8 BOM sequence
+      if(*cp1 == '\xEF' && *(cp1+1) == '\xBB' && *(cp1+2) == '\xBF')
+         cp1 += 3;
+
       /* skip comments and blank lines */
-      if(*buffer =='#' || string_t::iswspace(*buffer) ) continue;
+      if(*cp1 =='#' || string_t::iswspace(*cp1) ) continue;
 
       // skip to the first non-alphanum character
-      cp1 = cp2 = buffer;
+      cp2 = cp1;
       while(string_t::isalnum(*cp2)) cp2++;
       
       // hold onto the keyword
@@ -1141,6 +1147,7 @@ void config_t::get_config(const char *fname)
          case 191: ext_map_url = value; break;
       }
    }
+
    fclose(fp);
 }
 
