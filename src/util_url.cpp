@@ -77,6 +77,7 @@ char from_hex(char c)
 //
 //  x%25y      -> x%25y        : reserved URL characters are not URL-decoded
 //  x+y        -> x+y          : the plus character is not converted to a space (see above)
+//  x%20y      -> x y          : the space character is URL-decoded 
 //  x%41y      -> xAy          : ASCII alpha-numeric characters are URL-decoded
 //  x%y        -> x%25y        : a misplaced percent character is URL-encoded
 //  xAy        -> xAy          : plain ASCII alpha-numeric characters are not changed
