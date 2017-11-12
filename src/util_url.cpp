@@ -124,7 +124,7 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
    // All characters up to such character do not need to be examined again.
    //
    for(cp1 = str.c_str(); *cp1; cp1 += chsz) {
-      if((unsigned char) *cp1 < '\x20')
+      if((unsigned char) *cp1 < '\x20' || (unsigned char) *cp1 == '\x7F')
          break;
 
       if(*cp1 == '%')
@@ -158,7 +158,7 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
 
       if(*cp2 != '%')
          // URL-encode control charactrs and copy anything else
-         if((unsigned char) *cp2 < '\x20')
+         if((unsigned char) *cp2 < '\x20' || (unsigned char) *cp2 == '\x7F')
             *bcp++ = '%', bcp = to_hex(*cp2++, bcp);
          else 
             *bcp++ = *cp2++;
@@ -168,7 +168,7 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
             from_hex(cp2, chr);
 
             // do not decode URL component separators because it is irreversible or control characters
-            if((unsigned char) *chr < '\x20' || strchr(":/?#[]@!$&'()*+,;=%", *chr))
+            if((unsigned char) *chr < '\x20' || (unsigned char) *chr == '\x7F' || strchr(":/?#[]@!$&'()*+,;=%", (unsigned char) *chr))
                *bcp++ = '%', *bcp++ = string_t::toupper(*cp2++), *bcp++ = string_t::toupper(*cp2++);
             else
                *bcp++ = *chr, cp2 += 2;
@@ -254,7 +254,7 @@ string_t& url_encode(const string_t& str, string_t& out)
          throw std::invalid_argument("Bad UTF-8 character in the URL");
 
       // the size includes the null character
-      size_t reqsz = chsz > 1 || *cp <= '\x20' ? chsz * 3 + 1 : 2;
+      size_t reqsz = chsz > 1 || (unsigned char) *cp <= '\x20' || (unsigned char) *cp == '\x7F' ? chsz * 3 + 1 : 2;
 
       // check if the buffer has enough room for the next sequence
       if(buf.capacity() - (bcp - buf) < reqsz) {
@@ -266,8 +266,8 @@ string_t& url_encode(const string_t& str, string_t& out)
          bcp = buf + of;
       }
 
-      // copy one-byte characters that are not control characters or space
-      if(chsz == 1 && *cp > '\x20')
+      // copy one-byte characters that are not control characters or space or '"', '<', '>'
+      if(chsz == 1 && (unsigned char) *cp > '\x20' && (unsigned char) *cp != '\x7F' && !strchr("\"<>", (unsigned char) *cp))
          *bcp++ = *cp++;
       else {
          // and URL-encode everything else

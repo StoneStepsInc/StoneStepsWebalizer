@@ -178,14 +178,41 @@ TEST_CLASS(URLNormalizer) {
          string_t::char_buffer_t strbuf;
 
          // control characters are URL-encoded to make them visible
-         str = "x\x01.\x05.\x10.\x19.\x20y";
+         str = "x\x01.\x05.\x10.\x19.\x20\x7Fy";
          norm_url_str(str, strbuf);
-         mstest::Assert::AreEqual("x%01.%05.%10.%19. y", str, L"Normalize a string with control characters");
+         mstest::Assert::AreEqual("x%01.%05.%10.%19. %7Fy", str, L"Normalize a string with control characters");
 
          // URL-encoded control characters are left unchanged
-         str = "x%01.%05.%10.%19.%20y";
+         str = "x%01.%05.%10.%19.%20%7Fy";
          norm_url_str(str, strbuf);
-         mstest::Assert::AreEqual("x%01.%05.%10.%19. y", str, L"Normalize a string with URL-encoded control characters");
+         mstest::Assert::AreEqual("x%01.%05.%10.%19. %7Fy", str, L"Normalize a string with URL-encoded control characters");
+      }
+
+      BEGIN_TEST_METHOD_ATTRIBUTE(NormalizeCharacterOrder)
+         TEST_DESCRIPTION(L"Normalize strings containing characters to encode in different order")
+         TEST_METHOD_ATTRIBUTE(L"Category", L"URL")
+      END_TEST_METHOD_ATTRIBUTE()
+
+      TEST_METHOD(NormalizeCharacterOrder)
+      {
+         string_t str;
+         string_t::char_buffer_t strbuf;
+
+         str = "x\x01%25\xA3y";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("x%01%25\xC2\xA3y", str, L"Normalize a string with control, encoded, Latin");
+
+         str = "x\x7F%25\xA3y";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("x%7F%25\xC2\xA3y", str, L"Normalize a string with control (2), encoded, Latin");
+
+         str = "x%25\x01\xA3y";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("x%25%01\xC2\xA3y", str, L"Normalize a string with encoded, control, Latin");
+
+         str = "x\xA3%25\x01y";
+         norm_url_str(str, strbuf);
+         mstest::Assert::AreEqual("x\xC2\xA3%25%01y", str, L"Normalize a string with Latin, encoded, control");
       }
 
       BEGIN_TEST_METHOD_ATTRIBUTE(URLEncodeNormString)
@@ -216,6 +243,10 @@ TEST_CLASS(URLNormalizer) {
          str = "x\t\r\n\v\fy";
          url_encode(str, out);
          mstest::Assert::AreEqual("x%09%0D%0A%0B%0Cy", out, L"Control characters are URL-encoded");
+
+         str = "x\"<>y";
+         url_encode(str, out);
+         mstest::Assert::AreEqual("x%22%3C%3Ey", out, L"Characters that are not explicitly listed in reserved and unreserved sets URL-encoded");
       }
 };
 }
