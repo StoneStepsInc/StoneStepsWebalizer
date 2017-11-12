@@ -387,7 +387,9 @@ bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool 
                return false;
          }
       }
-      return (cp1 == cp) ? true : false;
+
+      // return true if we reached '*' or ran out of string right before '*'
+      return cp1 == cp || cp1 == cp+1 && cp2 == str;
    }
 
    if(substr && *cp1 != '*') {

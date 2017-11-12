@@ -82,15 +82,24 @@ TEST_CLASS(LinkedList) {
 
       TEST_METHOD(NListPrefixSearch)
       {
+         const string_t *result = nullptr;
          nlist list;
 
          FillNList(list);
 
          // case-sensitive prefix search
-         mstest::Assert::AreEqual("start*", list.isinlist(string_t("start your engines"), false)->c_str(), L"A string should match one of the prefix list entries case-sensitively");
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("start your engines"), false));
+         mstest::Assert::AreEqual("start*", result->c_str(), L"A string should match one of the prefix list entries case-sensitively");
+
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("start"), false));
+         mstest::Assert::AreEqual("start*", result->c_str(), L"A string that is equal the prefix should match one of the prefix list entries case-sensitively");
 
          // case-insensitive prefix search
-         mstest::Assert::AreEqual("start*", list.isinlist(string_t("START YOUR ENGINES"), true)->c_str(), L"A string should match one of the prefix list entries case-insensitively");
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("START YOUR ENGINES"), true));
+         mstest::Assert::AreEqual("start*", result->c_str(), L"A string should match one of the prefix list entries case-insensitively");
+
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("START"), true));
+         mstest::Assert::AreEqual("start*", result->c_str(), L"A string that is equal the prefix should match one of the prefix list entries case-insensitively");
 
          // non-existing strings should't match any prefix entries
          mstest::Assert::IsNull(list.isinlist(string_t("begin your search"), false), L"A non-existing string shouldn't match one of the list entries case-sensitively");
@@ -104,17 +113,26 @@ TEST_CLASS(LinkedList) {
 
       TEST_METHOD(NListSuffixSearch)
       {
+         const string_t *result = nullptr;
          nlist list;
 
          FillNList(list);
 
-         // case-sensitive prefix search
-         mstest::Assert::AreEqual("*end", list.isinlist(string_t("the end"), false)->c_str(), L"A string should match one of the suffix list entries case-sensitively");
+         // case-sensitive suffix search
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("the end"), false));
+         mstest::Assert::AreEqual("*end", result->c_str(), L"A string should match one of the suffix list entries case-sensitively");
 
-         // case-insensitive prefix search
-         mstest::Assert::AreEqual("*end", list.isinlist(string_t("THE END"), true)->c_str(), L"A string should match one of the suffix list entries case-insensitively");
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("end"), false));
+         mstest::Assert::AreEqual("*end", result->c_str(), L"A string that is equal the suffix should match one of the suffix list entries case-sensitively");
 
-         // non-existing strings should't match any prefix entries
+         // case-insensitive suffix search
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("THE END"), true));
+         mstest::Assert::AreEqual("*end", result->c_str(), L"A string should match one of the suffix list entries case-insensitively");
+
+         mstest::Assert::IsNotNull(result = list.isinlist(string_t("END"), true));
+         mstest::Assert::AreEqual("*end", result->c_str(), L"A string that is equal the suffix should match one of the suffix list entries case-insensitively");
+
+         // non-existing strings should't match any suffix entries
          mstest::Assert::IsNull(list.isinlist(string_t("begin your search"), false), L"A non-existing string shouldn't match one of the list entries case-sensitively");
          mstest::Assert::IsNull(list.isinlist(string_t("we end our journey"), false), L"A non-existing string shouldn't match one of the list entries case-sensitively");
       }
