@@ -17,7 +17,7 @@
 #define VERSION_MAJOR           4
 #define VERSION_MINOR           3
 #define EDITION_LEVEL           0
-#define BUILD_NUMBER            14
+#define BUILD_NUMBER            16
 
 //
 // Current numeric application version
