@@ -2147,7 +2147,10 @@ IgnoreURL     This allows specified URL's to be completely ignored from
               Note that search argument filtering is done before the ignore
               logic is applied, so if you filtered out the argument that is
               used in one of the IgnoreURL entries, log records containing
-              excluded search arguments will not be ignored. 
+              excluded search arguments will not be ignored.
+              
+              See URL Normalization for additional details on what URL characters
+              should be used in ignore patterns.
 
 IgnoreReferrer This allows records to be ignored based on the referrer
                field.
@@ -2497,24 +2500,71 @@ td.spammer, span.spammer {color: red;}
 In addition to highlighting, the all-hosts and the tab-separated host 
 reports will have an asterisk output next to the spammer's host. 
 
-Notes on Character Escaping
----------------------------
+URL Normalization
+-----------------
 
-The HTTP protocol defines certain ways that URL's can look and behave.  To
-some extent, referrer fields follow most of the same conventions.  Character
-escaping is a technique by which non-printable or other non-ASCII (and even
-some ASCII) characters can be used in a URL.  This is done by placing the
-Hexadecimal value of the character in the URL, preceeded by a percent sign '%'.
-Since Hex values are made up of ASCII characters, any character can be
-escaped to ensure only printable ASCII characters are present in the URL.
-Some systems take this concept to the extreme and escape all sorts of stuff,
-even characters that don't need to be escaped.  To deal with this, The
-Webalizer will un-escape URL's and referrers before being processed. For
-Example, the URL "/www.mrunix.net/%7Ebrad/resume.html" is the same URL as
-"/www.mrunix.net/~brad/resume.html", a very common form of a URL to access
-users web pages.  If the URL's were not un-escaped, they would be treated as
-two separate documents, even though they are really one and the same.
+In general, URLs are supposed to be uniformly encoded in such a way that keeps them 
+simple, but still usable even if they are printed on paper, pronounced on the radio, 
+or appear in other contexts where it may be impossible to distinguish characters 
+from different languages. This encoding is described by the internet standard 
+RFC-3986 and defines which characters may appear in their natural representation 
+and which should be percent-encoded as one or more sequences of a percent character 
+followed by two hexadecimal digits that represent that character (e.g. '&' is encoded 
+as %26).
 
+Sometimes URL characters may be encoded incorrectly, which may be because of various
+historical reasons, or because of bugs in user agents, or in an attempt to avoid simple 
+spam filters that do not percent-decode URL sequences before looking for spam keywords. 
+In either case, having the same URL encoded differently fragments reports by creating 
+aliases (e.g. /xAy/ and /x%41y/ are counted as two URLs) and makes spam detection more 
+difficult because all possible aliases must be filtered individually. In order to deal 
+with these issues, Stone Steps Webalizer normalizes all URLs extracted from log files 
+to reduce aliasing and improve report readability. 
+
+IMPORTANT: A normalized URL is not a well-formed URL in the sense that it should not
+be used verbatim in HTML as a copy-and-paste href link, but it could be used in the
+URL field in a web browser because URL normalization does not change the meaning of
+existing URL components, but merely makes them more readable. For example, a normalized 
+URL /?q="abc" is more readable than the equivalent well-formed URL /?q=%22abc%22, but
+if it is copy-pasted into an href attribute in HTML without proper HTML encoding, it 
+will break that HTML because the double quotes in the URL will interfere with double 
+quotes in the HTML attribute. 
+
+URL normalization is performed before any other work is done against all URLs, which 
+follows the rules described below, so all configuration filters should use normalized 
+characters in all ignore, hide and group URL patterns.
+
+  * Following characters are not encoded and if they are found in the encoded form,
+    such as %41 instead of the character 'A', they will be decoded to their original
+    form shown below. If any of these characters is percent-encoded, it will be
+    decoded.
+
+      A-Z, a-z, 0-9, '-' '.' '_' '~' '"' '%' '<' '>' space
+
+  * Following characters have special meaning within URLs and will not be encoded
+    or decoded and will remain in their current form, whatever it is (i.e. a&b and
+    a%26b will remain exactly as they were before normalization).
+
+     ':' '/' '?' '#' '[' ']' '@' '!' '$' '&' "'" '(' ')' '*' '+' ',' ';' '=' '%'
+
+  * Percent-encoded control characters will not be decoded and unencoded control
+    characters will be percent-encoded.
+
+  * Percent-encoded multibyte UTF-8 characters will be decoded to their UTF-8 form.
+
+  * Percent-encoded non-UTF-8 characters are not allowed in URLs and will be decoded 
+    as if they were characters from the Latin-1 (Western) alphabet and converted to 
+    UTF-8.
+
+  * A percent character that is not a part of a percent-encoding sequence in a URL 
+    will be percent-encoded (e.g. /a%b/ will become /a%25b/).
+
+If you intend to filter URLs with spaces, make sure to use EnablePhraseValues, so the
+space in the pattern wouldn't be misinterpreted as a pattern/value separator. In other
+words, if EnablePhraseValues is not enabled, the following pattern with a space will 
+be interpreted as as a URL "*/ab" with a search argument "cd/", as in "/ab/?cd/".
+
+  IgnoreURL  */ab cd/
 
 Search String Analysis
 ----------------------
