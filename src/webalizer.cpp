@@ -1833,7 +1833,7 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
    glist::const_iterator upat_it = config.ignored_urls.begin();
 
    // find the first URL pattern and then loop through duplicates to see if we have a matching search argument name
-   while((upat = config.ignored_urls.find_node(url, upat_it, !upat)) != NULL) {
+   while((upat = config.ignored_urls.find_node(url, upat_it, upat != NULL)) != NULL) {
       // if there is no search argument name in this URL pattern, then we found a match
       if(upat->noname || upat->name.isempty()) 
          return true;
