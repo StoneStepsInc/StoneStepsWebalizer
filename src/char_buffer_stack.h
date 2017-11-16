@@ -16,13 +16,13 @@
 #include <vector>
 
 ///
-/// @class  class char_buffer_stack_tmpl
+/// @class  char_buffer_stack_tmpl
 ///
 /// @brief  A class that maintains a stack of cached character buffers
 ///
 /// @tparam chart_t  Character type (char or wchar_t)
 ///
-/// char_buffer_stack_tmpl maintains all cached buffers in a single vector and is 
+/// `char_buffer_stack_tmpl` maintains all cached buffers in a single vector and is 
 /// intended to reuse buffers of the same size or buffers that are repeatedly 
 /// allocated and released in the same LIFO sequence. 
 ///

@@ -14,18 +14,18 @@
 #include <cstddef>
 
 ///
-/// @class  class char_buffer_base
+/// @class  char_buffer_base
 ///
 /// @brief  A generic character buffer object
 ///
 /// @tparam chart_t  Character type (char or wchar_t)
 ///
-/// 1. char_buffer_base is a transient object that maintains a block of memory, large 
+/// 1. `char_buffer_base` is a transient object that maintains a block of memory, large 
 /// enough to accommodate bufsize narrow or wide characters, depending on the template 
 /// argument.
 ///
-/// 2. char_buffer_base makes no assumption about the content of the buffer and does not
-/// ever interpret the content as a zero-terminated string.
+/// 2. `char_buffer_base` makes no assumption about the content of the buffer and does not
+/// ever interpret the content as a null-terminated string.
 ///
 /// 3. Character buffers cannot be copied because there is no indication how much data is
 /// in the buffer and copying the entire buffer would be inefficient. Character buffers
@@ -47,9 +47,9 @@
 template <typename char_t>
 class char_buffer_base {
    private:
-      char_t   *buffer;          // character buffer
-      size_t   bufsize;          // buffer size, in characters
-      bool     holder;           // if true, does not own buffer memory
+      char_t   *buffer;          ///< character buffer
+      size_t   bufsize;          ///< buffer size, in characters
+      bool     holder;           ///< if true, does not own buffer memory
 
    public:
       char_buffer_base(void);
@@ -160,7 +160,7 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
 /// @tparam char_t            Character type (char or wchar_t)
 /// @tparam alloc_params_t    A template parameter pack passed to the allocator implementation
 ///
-/// Objects derived from char_buffer_allocator_tmpl may be used to maintain reusable
+/// Objects derived from `char_buffer_allocator_tmpl` may be used to maintain reusable
 /// buffers in an optimal way defined by the allocator implementation in order to 
 /// minimize buffer memory allocations, without having to use a single large buffer.
 ///
@@ -180,11 +180,11 @@ class char_buffer_allocator_tmpl {
 /// @tparam char_t            Character type (char or wchar_t)
 /// @tparam alloc_params_t    A template parameter pack passed to the allocator implementation
 ///
-/// char_buffer_holder_tmpl is a convenience class to help manage temporary buffers 
+/// `char_buffer_holder_tmpl` is a convenience class to help manage temporary buffers 
 /// within a local scope. For example:
-///
+/// ```
 ///  char_buffer_base<char_t>&& buffer = buffer_holder_t(*buffer_allocator).buffer;
-///
+/// ```
 /// Note that the life of a temporary object bound to a reference to a return value
 /// of a method is not extended beyond the end of the expression, which means that 
 /// the buffer data member must be accessed directly for this to work. This is also

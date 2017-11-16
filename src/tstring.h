@@ -47,24 +47,24 @@
 /// Note that if a non-const instance of string_t is constructed instead in the example
 /// above, calling non-const methods of this instance will throw an exception.
 ///
-/// Read-only strings may be moved between string_t instances via the move constructor 
+/// Read-only strings may be moved between `string_t` instances via the move constructor 
 /// or the move assignment operator.
 ///
 /// 3. [removed]
 ///
-/// 4. Unlike with const_char_buffer_t, which can be used independently from char_buffer_t,
-/// having a distinct string_base class defined with a const character type would make it 
-/// imposible to pass such string instances into functions that take string_t arguments. 
+/// 4. Unlike with `const_char_buffer_t`, which can be used independently from `char_buffer_t`,
+/// having a distinct `string_base` class defined with a `const` character type would make it 
+/// imposible to pass such string instances into functions that take `string_t` arguments. 
 /// Read-only string_t instances are used instead to wrap string literals or other data that 
 /// cannot be modified.
 ///
-/// 5. When string_base is instantiated for char, the intended character set is UTF-8 and
+/// 5. When `string_base` is instantiated for `char`, the intended character set is UTF-8 and
 /// any other character encoding, such as various Windows code pages, will not work. The 
-/// side effect of having a single char value passed into member functions such as tolower
+/// side effect of having a single char value passed into member functions such as `tolower`
 /// is that they can only operate on ASCII characters. Implementing support for arbitrary 
 /// UTF-8 characters would require a character abstraction that could take the form of a 
-/// char sequence (UTF-8) or a single wchar_t character or a sequence of char16_t or a single 
-/// char32_t character. Given how this class is used within this project, where case-dependent 
+/// char sequence (UTF-8) or a single `wchar_t` character or a sequence of `char16_t` or a single 
+/// `char32_t` character. Given how this class is used within this project, where case-dependent 
 /// comparisons and conversions are done only against ASCII characters, only ASCII characters
 /// are recognized in functions that deal with character case.
 ///
@@ -93,14 +93,14 @@ class string_base {
       // a string pointer from a const member function).
       //
       union {
-         char_t         *string;    // modifiable string
-         const char_t   *c_string;  // const string
+         char_t         *string;    ///< modifiable string
+         const char_t   *c_string;  ///< const string
       };
 
-      size_t   slen     : 31;       // length
+      size_t   slen     : 31;       ///< string length, in characters
       size_t            :  1;
-      size_t   bufsize  : 31;       // buffer size, in characters, including the null character
-      bool     holder   :  1;       // if true, does not own string memory
+      size_t   bufsize  : 31;       ///< buffer size, in characters, including the null character
+      bool     holder   :  1;       ///< if true, does not own string memory
 
       static char_t empty_string[];
 
