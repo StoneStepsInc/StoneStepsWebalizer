@@ -201,7 +201,7 @@ TEST_CLASS(LinkedList) {
       }
 
       BEGIN_TEST_METHOD_ATTRIBUTE(GListDuplicateSearchValues)
-         TEST_DESCRIPTION(L"glist Duplicate Search Enngine Values")
+         TEST_DESCRIPTION(L"glist Duplicate Search Engine Values")
          TEST_METHOD_ATTRIBUTE(L"Category", L"Linked List")
       END_TEST_METHOD_ATTRIBUTE()
 
