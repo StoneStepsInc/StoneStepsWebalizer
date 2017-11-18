@@ -205,6 +205,38 @@ config_t::~config_t(void)
    lang.cleanup_lang_data();
 }
 
+///
+/// @brief  Checks custom HTML inserted via HTMLHead and other configuration variables
+///         for disallowed HTML constructs.
+///
+void config_t::validate_custom_html(void)
+{
+   nlist::const_iterator iter;
+
+   // HTMLPre should be used for custom scripts and not to misidentify the type of HTML used in reports
+   for(iter = html_pre.begin(); iter != html_pre.end(); iter++) {
+      if(strstr_ex(iter->string, "<!DOCTYPE", NULL, true)) {
+         errors.emplace_back("The <!DOCTYPE> tag is not allowed in HTMLPre");
+         break;
+      }
+   }
+
+   // disallow a custom <body> tag because we need our JavaScript initialization to run
+   for(iter = html_body.begin(); iter != html_body.end(); iter++) {
+      if(strstr_ex(iter->string, "<body", NULL, true)) {
+         errors.emplace_back("The start <body> tag is not allowed in HTMLBody");
+         break;
+      }
+   }
+
+   for(iter = html_end.begin(); iter != html_end.end(); iter++) {
+      if(strstr_ex(iter->string, "</body", NULL, true)) {
+         errors.emplace_back("The end </body> tag is not allowed in HTMLEnd");
+         break;
+      }
+   }
+}
+
 //
 // Reads command line options and then reads configuration files. Configuration
 // issues are classified as warning messages, errors and unrecoverable errors.
@@ -291,6 +323,9 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    // version text. Instead, add them to the messages vector, which is
    // dumped to the standard output at a later time.
    //
+
+   // check if custom HTML contains any disallowed tags
+   validate_custom_html();
 
    // turn off batch mode if incremental is not specified
    if(batch && (!incremental || prep_report)) {

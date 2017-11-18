@@ -338,18 +338,13 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    nlist::const_iterator iter;                 /* used for HTMLhead processing */
 
    /* HTMLPre code goes before all else    */
-   if (config.html_pre.isempty())
+   for(iter = config.html_pre.begin(); iter != config.html_pre.end(); iter++)
    {
-      /* Default 'DOCTYPE' header record if none specified */
-      fputs("<!DOCTYPE HTML>\n", out_fp);
+      fprintf(out_fp,"%s\n", iter->string.c_str());
    }
-   else
-   {
-      for(iter = config.html_pre.begin(); iter != config.html_pre.end(); iter++)
-      {
-         fprintf(out_fp,"%s\n", iter->string.c_str());
-      }
-   }
+
+   // output HTML5 DOCTYPE
+   fputs("<!DOCTYPE HTML>\n", out_fp);
 
    /* Standard header comments */
    fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s\n\n", state_t::get_app_version().c_str());
@@ -397,41 +392,38 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
    }
    fputs("</head>\n\n", out_fp);
 
-   if(config.html_body.isempty()) {
-      if(config.enable_js) {
-         switch (page_type) {
-            case page_index:
-               fputs("<body onload=\"onload_index_page(", out_fp);
+   if(config.enable_js) {
+      switch (page_type) {
+         case page_index:
+            fputs("<body onload=\"onload_index_page(", out_fp);
 
-               // set up JS charts, if enabled 
-               if(config.use_js_charts())
-                  fputs("setupIndexPageCharts", out_fp);
+            // set up JS charts, if enabled 
+            if(config.use_js_charts())
+               fputs("setupIndexPageCharts", out_fp);
 
-               fputs(")\">\n", out_fp);
-               break;
-            case page_usage:
-               fputs("<body onload=\"onload_usage_page(", out_fp);
+            fputs(")\">\n", out_fp);
+            break;
+         case page_usage:
+            fputs("<body onload=\"onload_usage_page(", out_fp);
 
-               // set up JS charts, if enabled 
-               if(config.use_js_charts())
-                  fputs("setupUsagePageCharts", out_fp);
+            // set up JS charts, if enabled 
+            if(config.use_js_charts())
+               fputs("setupUsagePageCharts", out_fp);
 
-               fputs(")\">\n", out_fp);
-               break;
-            case page_all_items:
-               fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);
-               break;
-         }
+            fputs(")\">\n", out_fp);
+            break;
+         case page_all_items:
+            fputs("<body onload=\"onload_page_all_items()\">\n", out_fp);
+            break;
       }
-      else
-         fputs("<body>\n", out_fp);
    }
    else
+      fputs("<body>\n", out_fp);
+
+   // output custom body elements immediately after the body was started
+   for(iter = config.html_body.begin(); iter != config.html_body.end(); iter++)
    {
-      for(iter = config.html_body.begin(); iter != config.html_body.end(); iter++)
-      {
-         fprintf(out_fp,"%s\n", iter->string.c_str());
-      }
+      fprintf(out_fp,"%s\n", iter->string.c_str());
    }
    
    fputs("\n<a name=\"top\"></a>", out_fp);

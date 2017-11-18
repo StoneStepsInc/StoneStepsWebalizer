@@ -370,6 +370,8 @@ class config_t {
       void set_dns_db_path(const char *path);
 
       void deprecated_p_option(void);
+
+      void validate_custom_html(void);
       
    public:
       config_t(void);

@@ -2275,8 +2275,7 @@ HTMLExtension  Allows generated pages to use something other than the
                Command line argument: -x
 
 HTMLPre        Allows code to be inserted at the very beginning of the
-               HTML files.  Defaults to the standard HTML 3.2 DOCTYPE
-               record.  Be careful not to include any HTML here, as it
+               HTML files. Be careful not to include any HTML here, as it
                is inserted _before_ the <HTML> tag in the file.  Use it
                for server-side scripting capabilities, such as php3, to
                insert scripting files and other directives.
@@ -2287,16 +2286,11 @@ HTMLHead       Allows you to insert HTML code between the <HEAD></HEAD>
                just for adding a few META tags to the document.
 
 HTMLBody       This keyword defines HTML code to be placed immediately
-               after the <HEAD> section of the report, just before the
-               title and "summary period/generated on" lines.  If used,
-               the first HTMLHead line MUST include a <BODY> tag.  Put
-               whatever else you want in subsequent lines, but keep in
+               after the start <body> tag of the report, just before the
+               title and "summary period/generated on" lines. Keep in
                mind the placement of this code in relation to the title
-               and other aspects of the web page.  Some typical uses
-               are to change the page colors and possibly add a corporate
-               logo (graphic) in the top right.  If not specified, a
-               default <BODY> tag is used that defines page color, text
-               color and link colors (see "sample.conf" file for example).
+               and other aspects of the web page.  A typical use is to
+               add a corporate logo (graphic) in the top right.
 
 HTMLPost       This keyword defines HTML code that is placed after the
                title and "summary period/generated on" lines, just before
@@ -2313,10 +2307,8 @@ HTMLTail       This keyword defines HTML code that is placed at the bottom
                provide a link back to your home page or insert a small
                graphic at the bottom right of the page.
 
-HTMLEnd        This allows insertion of closing code, at the very end of
-               the page.  The default is to put the closing </BODY> and
-               </HTML> tags.  If specified, you _must_ specify these tags
-               yourself.
+HTMLEnd        This allows insertion of closing code for HTMLBody tags, at 
+               the very end of the page.
 
 HTMLCssPath
               Specifies a URL path to the webalizer.css file, not 
