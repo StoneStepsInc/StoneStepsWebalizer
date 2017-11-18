@@ -2301,11 +2301,9 @@ HTMLPost       This keyword defines HTML code that is placed after the
                main report section.
 
 HTMLTail       This keyword defines HTML code that is placed at the bottom
-               right side of the report.  It is inserted in a <TABLE> section
-               between table data <TD>..</TD> tags, and is top and right
-               aligned within the table.  Normally this keyword is used to
-               provide a link back to your home page or insert a small
-               graphic at the bottom right of the page.
+               of the report. Normally this keyword is used to provide a link 
+               back to your home page or insert a small graphic at the bottom 
+               right of the page.
 
 HTMLEnd        This allows insertion of closing code for HTMLBody tags, at 
                the very end of the page.
