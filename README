@@ -463,12 +463,6 @@ General Options
           process other formats: w3c, iis, apache, clf, squid. 
           Config file keyword: LogType
 
--f        Fold out of sequence log records back into analysis, by
-          treating them as if they were the same date/time as the
-          last good record.  Normally, out of sequence log records
-          are ignored.  If you run apache, don't worry about this.
-          Config file keyword: FoldSeqErr
-
 -i        Ignore history file.  USE WITH CAUTION.  This causes The
           Webalizer to ignore any existing history file produced from
           previous runs and generate it's output from scratch.  The
@@ -1053,12 +1047,6 @@ IgnoreHist    This suppresses the reading of a history file.  USE WITH
               time, and any previous data is discarded.  Values may be
               either 'yes' or 'no', with the default being 'no'.
               Command line argument: -i
-
-FoldSeqErr    Allows log records that are out of sequence to be folded
-              back into the analysis, by treating them as if they had
-              the same date/time as the last good record.  Normally,
-              out of sequence log records are simply ignored.  If you
-              run apache, don't worry about this.
 
 VisitTimeout  Set the 'visit timeout' value.  Visits are determined by
               looking at the time difference between the current and last
