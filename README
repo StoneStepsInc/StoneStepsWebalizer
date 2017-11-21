@@ -2546,7 +2546,7 @@ be interpreted as as a URL "*/ab" with a search argument "cd/", as in "/ab/?cd/"
 
 Note that once some URL path pattern is found, only search arguments of the matching 
 path pattern will be checked, but no further. This may produce unexpected results if
-broader URL path patterns (e.g. *) are placed first in the list of IgnoreURL filters. 
+broader URL path patterns (e.g. `*`) are placed first in the list of IgnoreURL filters. 
 Consider these filters:
 
    IgnoreURL   /abc/*
@@ -2555,13 +2555,13 @@ Consider these filters:
    IgnoreURL   /xyz/*   pageid=3
    IgnoreURL   /def/*
 
-Let's say that the current URL is /xyz/?x=1&pageid=2&y=2. First, the URL path, which 
-is /xyz/, is checked against /abc/*, which will not match. Then /xyz/ is checked 
-against the first occurrence of /xyz/*, which will match and will trigger a special 
-search mode that will stop searching URL path patterns after either all /xyz/* 
+Let's say that the current URL is `/xyz/?x=1&pageid=2&y=2`. First, the URL path, which 
+is `/xyz/`, is checked against `/abc/*`, which will not match. Then `/xyz/` is checked 
+against the first occurrence of `/xyz/*`, which will match and will trigger a special 
+search mode that will stop searching URL path patterns after either all `/xyz/*` 
 patterns are checked or a matching search argument is found. In this example, it will 
-be the filter with pageid=2. Because the URL path matched, the next URL path pattern, 
-def/*, will not even be checked. This is done for performance reasons, so a long list 
+be the filter with `pageid=2`. Because the URL path matched, the next URL path pattern, 
+`def/*`, will not even be checked. This is done for performance reasons, so a long list 
 of ignore filters wouldn't slow down log processing too much.
 
 Now, consider a slightly different list of filters:
@@ -2572,10 +2572,10 @@ Now, consider a slightly different list of filters:
    IgnoreURL   /*   pageid=3
    IgnoreURL   /def/*
 
-The pattern /* will match any URL, so if a URL in the log line is /def/p.html, the 
-pattern /* will match this URL path, but the actual URL doesn't have any search 
-arguments, so none of the three filters with pageid= will match. However, because /* 
-matches any URL, the /def/* pattern will not ever be checked.
+The pattern `/*` will match any URL, so if a URL in the log line is `/def/p.html`, the 
+pattern `/*` will match this URL path, but the actual URL doesn't have any search 
+arguments, so none of the three filters with pageid= will match. However, because `/*` 
+matches any URL, the `/def/*` pattern will not ever be checked.
 
 One way to work this around is to have those broader filters at the very end, so all 
 other patterns are matched first, but this would be an error-prone approach if more
