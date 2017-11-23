@@ -237,22 +237,190 @@ void config_t::validate_custom_html(void)
    }
 }
 
-//
-// Reads command line options and then reads configuration files. Configuration
-// issues are classified as warning messages, errors and unrecoverable errors.
-//
-// Warnings are collected in the `messages` vector and will be reported when 
-// report_config is called. The configuration object can be used without any 
-// restrictions in this case. 
-//
-// Errors are collected in the `errors` vector and if this vector is not empty, 
-// config_t::is_bad will return true and the configuration object can be used
-// only to report the configuration and not for log processing. Errors can be
-// reported via report_errors.
-//
-// Unrecoverable errors are thrown as exceptions and the configuration object
-// should not be used in this case. 
-//
+///
+/// @brief  Converts all DST start/end time pairs collected from configuration 
+///         files into time stamps and populates the DST time range vector.
+///
+void config_t::proc_dst_ranges(void)
+{
+   // process all DST ranges we collected
+   std::vector<dst_pair_t>::iterator dst_iter = dst_pairs.begin();
+   
+   while(dst_iter != dst_pairs.end()) {
+      const dst_pair_t& dst_pair = *dst_iter++;
+      
+      // ignore the range if both timestamps are empty (the top one)
+      if(dst_pair.dst_start.isempty() && dst_pair.dst_end.isempty())
+         continue;
+      
+      // report if either start or end timestamp is missing
+      if(dst_pair.dst_start.isempty())
+         errors.push_back(string_t::_format("Missing DST start time this end time: %s", dst_pair.dst_end.c_str()));
+
+      if(dst_pair.dst_end.isempty())
+         errors.push_back(string_t::_format("Missing DST end time for this start time: %s", dst_pair.dst_start.c_str()));
+      
+      // create actual timestamps (always in local time)
+      tstamp_t dst_start, dst_end;
+
+      if(!dst_start.parse(dst_pair.dst_start, utc_offset))
+         errors.push_back(string_t::_format("Ivalid DST start timestamp: %s", dst_pair.dst_start.c_str()));
+
+      if(!dst_end.parse(dst_pair.dst_end, utc_offset))
+         errors.push_back(string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
+
+      // and make sure the end time stamp has the DST offset from UTC
+      if(local_time && dst_offset)
+         dst_end.tolocal(utc_offset+dst_offset);
+
+      // add the range if there's nothing wrong with it
+      if(!dst_ranges.add_range(dst_start, dst_end))
+         errors.push_back(string_t::_format("Cannot add a DST range from %s to %s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
+   }
+   
+   // clean up a bit and clear the text timestamps
+   dst_pairs.clear();
+}
+
+///
+/// @brief  Adds default user agent filters based on the current mangle level.
+///
+void config_t::add_def_ua_filters(void)
+{
+   //
+   // At the lowest level, remove cryptic or strings that have been
+   // overused to the point they lost their meaning.
+   //
+   // Version numbers are not truncated at this level.
+   //
+   if(mangle_agent > 0) {
+      excl_agent_args.add_nlist(".NET CLR*");      // .NET Common Language Runtime version
+      excl_agent_args.add_nlist("compatible");     // IE's silly platform string
+      excl_agent_args.add_nlist("T312461");        // IE's security patch (KB312461)
+      excl_agent_args.add_nlist("Mozilla/*");      // overused Mozilla product version
+      excl_agent_args.add_nlist("rv:*");           // Mozilla's source control revision number
+   }
+
+   //
+   // Then remove various service pack versions, less-known component
+   // names, HTML layout engines and Mozilla's security level
+   // identifiers.
+   //
+   // Version numbers are truncated at this level to include the
+   // minor version number.
+   //
+   if(mangle_agent > 1) {
+      excl_agent_args.add_nlist("U");              // strong security (Mozilla)
+      excl_agent_args.add_nlist("I");              // weak security (Mozilla)
+      excl_agent_args.add_nlist("N");              // no security (Mozilla)
+
+      excl_agent_args.add_nlist("Gecko/*");        // Mozilla's layout engine
+      excl_agent_args.add_nlist("like Gecko");     // KHTML (like Gecko)
+      excl_agent_args.add_nlist("KHTML/*");        // KHTML version
+      excl_agent_args.add_nlist("KHTML, like Gecko");// KDE's layout engine
+
+      // AppleWebKit/523.10.6 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6
+      excl_agent_args.add_nlist("AppleWebKit*");   // AppleWebKit version
+      excl_agent_args.add_nlist("Version/*");      //
+
+      excl_agent_args.add_nlist("InfoPath*");      // MS Office InfoPath
+      excl_agent_args.add_nlist("SLCC1");          // Vista SP?
+      excl_agent_args.add_nlist("SV1");            // WinXP SP1
+   }
+
+   //
+   // Rename Windows NT x.y sequences to the corresponding Windows
+   // version names and remove the word Windows, which is reported
+   // by FireFox as a platform identifier, along with the actual
+   // Windows version.
+   //
+   // Versions are truncated at this level to include only the major
+   // version number.
+   //
+   if(mangle_agent > 2) {
+      excl_agent_args.add_nlist("Windows");        // Mozilla's Windows platform identifier
+
+      // if phrase values are not enabled, enable them temporarily
+      if(!enable_phrase_values)
+         group_agent_args.set_enable_phrase_values(true);
+
+      group_agent_args.add_glist("Windows NT 10.0\t Windows 10");
+      group_agent_args.add_glist("Windows NT 6.2\t Windows 8");
+      group_agent_args.add_glist("Windows NT 6.1\t Windows 7");
+      group_agent_args.add_glist("Windows NT 6.0\t Windows Vista");
+      group_agent_args.add_glist("Windows NT 5.1\t Windows XP");
+      group_agent_args.add_glist("Windows NT 5.2\t Windows Server 2003");
+      group_agent_args.add_glist("Windows NT 5.0\t Windows 2000");
+
+      // restore the global setting
+      group_agent_args.set_enable_phrase_values(enable_phrase_values);
+   }
+
+   //
+   // Remove all platform and CPU identifiers. Versions at this level
+   // are truncated to include only the product name.
+   //
+   if(mangle_agent > 3) {
+      excl_agent_args.add_nlist("Windows*");       // Windows flavors
+      excl_agent_args.add_nlist("WOW64");          // 32-bit IE running on a 64-bit Windows
+      excl_agent_args.add_nlist("Media Center PC*");//
+      excl_agent_args.add_nlist("Zune*");          //
+      excl_agent_args.add_nlist("Tablet PC*");     //
+
+
+      excl_agent_args.add_nlist("X11");            // Mozilla's Unix platform identifier
+      excl_agent_args.add_nlist("Debian*");        // Debian flavors
+      excl_agent_args.add_nlist("Fedora*");        // Fedora flavors
+      excl_agent_args.add_nlist("Red Hat*");       // Red Hat flavors
+      excl_agent_args.add_nlist("SUSE*");          // SUSE flavors
+      excl_agent_args.add_nlist("Linux*");         // Mozilla's Linux OS/CPU identifier
+      excl_agent_args.add_nlist("x86_64");         // Linux i686 (x86_64)
+      excl_agent_args.add_nlist("Ubuntu*");        // Ubuntu flavors
+      excl_agent_args.add_nlist("gutsy");          // Ubuntu/7.10 (gutsy)
+
+      excl_agent_args.add_nlist("Intel Mac OS X*");// Mozilla's Mac OS X OS/CPU identifier
+      excl_agent_args.add_nlist("PPC Mac OS X*");  // Mozilla's PPC OS/CPU identifier
+      excl_agent_args.add_nlist("Macintosh");      // Mozilla's Mac platform identifier
+   }
+}
+
+///
+/// @brief  Populate the search engine list with a few most commonly used search 
+///         engine domain patterns and their search arguments.
+///
+void config_t::add_def_srch_list(void)
+{
+   search_list.add_glist("www.google.\t   q=");
+   search_list.add_glist("www.google.\t   as_q=All Words",        true);
+   search_list.add_glist("www.google.\t   as_epq=Exact Phrase",   true);
+   search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
+   search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
+   search_list.add_glist("www.google.\t   as_filetype=File Type", true);
+   search_list.add_glist("search.yahoo.\t p=");
+   search_list.add_glist("search.yahoo.\t vf=File Type",          true);
+   search_list.add_glist("www.bing.\t     q=");
+   search_list.add_glist("ask.com\t       q=");
+   search_list.add_glist("about.com\t     terms=");
+}
+
+///
+/// @brief  Reads command line options and then reads configuration files. 
+///
+/// Configuration issues are classified as warning messages, errors and 
+/// unrecoverable errors.
+///
+/// Warnings are collected in the `messages` vector and will be reported when 
+/// report_config is called. The configuration object can be used without any 
+/// restrictions in this case. 
+///
+/// Errors are collected in the `errors` vector and if this vector is not empty, 
+/// config_t::is_bad will return true and the configuration object can be used
+/// only to report the configuration and not for log processing. Errors can be
+/// reported via report_errors.
+///
+/// Unrecoverable errors are thrown as exceptions and the configuration object
+/// should not be used in this case. 
+///
 void config_t::initialize(const string_t& basepath, int argc, const char * const argv[])
 {
    const char *cp1;
@@ -447,43 +615,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    // enable JavaScript in reports if we have the source file
    enable_js = !html_js_path.isempty();
 
-   // process all DST ranges we collected
-   std::vector<dst_pair_t>::iterator dst_iter = dst_pairs.begin();
-   
-   while(dst_iter != dst_pairs.end()) {
-      const dst_pair_t& dst_pair = *dst_iter++;
-      
-      // ignore the range if both timestamps are empty (the top one)
-      if(dst_pair.dst_start.isempty() && dst_pair.dst_end.isempty())
-         continue;
-      
-      // report if either start or end timestamp is missing
-      if(dst_pair.dst_start.isempty())
-         errors.push_back(string_t::_format("Missing DST start time this end time: %s", dst_pair.dst_end.c_str()));
-
-      if(dst_pair.dst_end.isempty())
-         errors.push_back(string_t::_format("Missing DST end time for this start time: %s", dst_pair.dst_start.c_str()));
-      
-      // create actual timestamps (always in local time)
-      tstamp_t dst_start, dst_end;
-
-      if(!dst_start.parse(dst_pair.dst_start, utc_offset))
-         errors.push_back(string_t::_format("Ivalid DST start timestamp: %s", dst_pair.dst_start.c_str()));
-
-      if(!dst_end.parse(dst_pair.dst_end, utc_offset))
-         errors.push_back(string_t::_format("Ivalid DST end timestamp: %s", dst_pair.dst_end.c_str()));
-
-      // and make sure the end time stamp has the DST offset from UTC
-      if(local_time && dst_offset)
-         dst_end.tolocal(utc_offset+dst_offset);
-
-      // add the range if there's nothing wrong with it
-      if(!dst_ranges.add_range(dst_start, dst_end))
-         errors.push_back(string_t::_format("Cannot add a DST range from %s to %s", dst_pair.dst_start.c_str(), dst_pair.dst_end.c_str()));
-   }
-   
-   // clean up a bit and clear the text timestamps
-   dst_pairs.clear();
+   proc_dst_ranges();
 
    // if no output format was specified, add HTML
    if(!output_formats.size())
@@ -564,124 +696,16 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(max_errors < ntop_errors) max_errors = ntop_errors;
    if(max_downloads < ntop_downloads) max_downloads = ntop_downloads;
 
-   if(search_list.isempty()) {
-      /* If no search engines defined, define some :) */
-      search_list.add_glist("www.google.\t   q=");
-      search_list.add_glist("www.google.\t   as_q=All Words",        true);
-      search_list.add_glist("www.google.\t   as_epq=Exact Phrase",   true);
-      search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
-      search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
-      search_list.add_glist("www.google.\t   as_filetype=File Type", true);
-      search_list.add_glist("search.yahoo.\t p=");
-      search_list.add_glist("search.yahoo.\t vf=File Type",          true);
-      search_list.add_glist("www.bing.\t     q=");
-      search_list.add_glist("ask.com\t       q=");
-      search_list.add_glist("about.com\t     terms=");
-   }
+   if(search_list.isempty())
+      add_def_srch_list();
 
    if(!use_classic_mangler) {
-
       //
       // If the user agent argument exclusion and group lists are empty
       // and mangle_agent is a non-zero value, add some filters.
       //
-      if(excl_agent_args.isempty() && group_agent_args.isempty()) {
-         //
-         // At the lowest level, remove cryptic or strings that have been
-         // overused to the point they lost their meaning.
-         //
-         // Version numbers are not truncated at this level.
-         //
-         if(mangle_agent > 0) {
-            excl_agent_args.add_nlist(".NET CLR*");      // .NET Common Language Runtime version
-            excl_agent_args.add_nlist("compatible");     // IE's silly platform string
-            excl_agent_args.add_nlist("T312461");        // IE's security patch (KB312461)
-            excl_agent_args.add_nlist("Mozilla/*");      // overused Mozilla product version
-            excl_agent_args.add_nlist("rv:*");           // Mozilla's source control revision number
-         }
-
-         //
-         // Then remove various service pack versions, less-known component
-         // names, HTML layout engines and Mozilla's security level
-         // identifiers.
-         //
-         // Version numbers are truncated at this level to include the
-         // minor version number.
-         //
-         if(mangle_agent > 1) {
-            excl_agent_args.add_nlist("U");              // strong security (Mozilla)
-            excl_agent_args.add_nlist("I");              // weak security (Mozilla)
-            excl_agent_args.add_nlist("N");              // no security (Mozilla)
-
-            excl_agent_args.add_nlist("Gecko/*");        // Mozilla's layout engine
-            excl_agent_args.add_nlist("like Gecko");     // KHTML (like Gecko)
-            excl_agent_args.add_nlist("KHTML/*");        // KHTML version
-            excl_agent_args.add_nlist("KHTML, like Gecko");// KDE's layout engine
-
-            // AppleWebKit/523.10.6 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6
-            excl_agent_args.add_nlist("AppleWebKit*");   // AppleWebKit version
-            excl_agent_args.add_nlist("Version/*");      //
-
-            excl_agent_args.add_nlist("InfoPath*");      // MS Office InfoPath
-            excl_agent_args.add_nlist("SLCC1");          // Vista SP?
-            excl_agent_args.add_nlist("SV1");            // WinXP SP1
-         }
-
-         //
-         // Rename Windows NT x.y sequences to the corresponding Windows
-         // version names and remove the word Windows, which is reported
-         // by FireFox as a platform identifier, along with the actual
-         // Windows version.
-         //
-         // Versions are truncated at this level to include only the major
-         // version number.
-         //
-         if(mangle_agent > 2) {
-            excl_agent_args.add_nlist("Windows");        // Mozilla's Windows platform identifier
-
-            // if phrase values are not enabled, enable them temporarily
-            if(!enable_phrase_values)
-               group_agent_args.set_enable_phrase_values(true);
-
-            group_agent_args.add_glist("Windows NT 10.0\t Windows 10");
-            group_agent_args.add_glist("Windows NT 6.2\t Windows 8");
-            group_agent_args.add_glist("Windows NT 6.1\t Windows 7");
-            group_agent_args.add_glist("Windows NT 6.0\t Windows Vista");
-            group_agent_args.add_glist("Windows NT 5.1\t Windows XP");
-            group_agent_args.add_glist("Windows NT 5.2\t Windows Server 2003");
-            group_agent_args.add_glist("Windows NT 5.0\t Windows 2000");
-
-            // restore the global setting
-            group_agent_args.set_enable_phrase_values(enable_phrase_values);
-         }
-
-         //
-         // Remove all platform and CPU identifiers. Versions at this level
-         // are truncated to include only the product name.
-         //
-         if(mangle_agent > 3) {
-            excl_agent_args.add_nlist("Windows*");       // Windows flavors
-            excl_agent_args.add_nlist("WOW64");          // 32-bit IE running on a 64-bit Windows
-            excl_agent_args.add_nlist("Media Center PC*");//
-            excl_agent_args.add_nlist("Zune*");          //
-            excl_agent_args.add_nlist("Tablet PC*");     //
-
-
-            excl_agent_args.add_nlist("X11");            // Mozilla's Unix platform identifier
-            excl_agent_args.add_nlist("Debian*");        // Debian flavors
-            excl_agent_args.add_nlist("Fedora*");        // Fedora flavors
-            excl_agent_args.add_nlist("Red Hat*");       // Red Hat flavors
-            excl_agent_args.add_nlist("SUSE*");          // SUSE flavors
-            excl_agent_args.add_nlist("Linux*");         // Mozilla's Linux OS/CPU identifier
-            excl_agent_args.add_nlist("x86_64");         // Linux i686 (x86_64)
-            excl_agent_args.add_nlist("Ubuntu*");        // Ubuntu flavors
-            excl_agent_args.add_nlist("gutsy");          // Ubuntu/7.10 (gutsy)
-
-            excl_agent_args.add_nlist("Intel Mac OS X*");// Mozilla's Mac OS X OS/CPU identifier
-            excl_agent_args.add_nlist("PPC Mac OS X*");  // Mozilla's PPC OS/CPU identifier
-            excl_agent_args.add_nlist("Macintosh");      // Mozilla's Mac platform identifier
-         }
-      }
+      if(excl_agent_args.isempty() && group_agent_args.isempty())
+         add_def_ua_filters();
    }
 
    // convert all site aliases to lower case

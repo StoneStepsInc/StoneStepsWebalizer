@@ -372,6 +372,12 @@ class config_t {
       void deprecated_p_option(void);
 
       void validate_custom_html(void);
+
+      void proc_dst_ranges(void);
+
+      void add_def_ua_filters(void);
+
+      void add_def_srch_list(void);
       
    public:
       config_t(void);
