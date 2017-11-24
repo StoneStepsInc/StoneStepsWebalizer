@@ -1573,7 +1573,7 @@ DNSLookups    Specifies whether to resolve host IP addresses to domain
               Default: yes
               
 AcceptHostNames
-              Specifies whether accept host names instead of IP addresses 
+              Specifies whether to accept host names instead of IP addresses 
               in log files or not. Configuring your web server to resolve 
               IP addresses to host names will slow down the server. Lack 
               of IP addresses also will disable address-based visitor 
