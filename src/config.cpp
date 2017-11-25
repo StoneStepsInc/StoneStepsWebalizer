@@ -1111,7 +1111,7 @@ void config_t::get_config(const char *fname)
          case 95: apache_log_format = value; break;
          case 96: http_port = (u_short) atoi(value); break;
          case 97: https_port = (u_short) atoi(value); break;
-         case 98: save_path_opt(value, html_css_path); break;
+         case 98: set_url_path(value, html_css_path); break;
          case 99: js_charts = value.tolower(); break;
          case 100: font_file_normal = value; break;
          case 101: font_file_bold = value; break;
@@ -1140,7 +1140,7 @@ void config_t::get_config(const char *fname)
          case 125: ignore_referrer_partial = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 126: group_url_domains=atoi(value); break;
          case 127: monthly_totals_stats=(string_t::tolower(value[0]) == 'y') ? true : false; break;
-         case 128: save_path_opt(value, html_js_path); break;
+         case 128: set_url_path(value, html_js_path); break;
          case 129: graph_border_width = atoi(value); if(graph_border_width > 7) graph_border_width = 7; break;
          case 130: graph_background_alpha = atoi(value); if(graph_background_alpha > 100) graph_background_alpha = 100; break;
          case 131: graph_title_color = value; break;
@@ -1248,7 +1248,11 @@ void config_t::report_errors(void) const
       fprintf(stderr, "%s\n", errors[i].c_str());
 }
 
-string_t& config_t::save_path_opt(const char *str, string_t& path) const
+///
+/// @brief  Assigns `str` to `path` and ensures that a non-empty path ends with 
+///         a forward slash.
+///
+string_t& config_t::set_url_path(const char *str, string_t& path) const
 {
    path.reset();
 

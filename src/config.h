@@ -359,7 +359,7 @@ class config_t {
 
       void process_includes(void);
 
-      string_t& save_path_opt(const char *str, string_t& path) const;
+      string_t& set_url_path(const char *str, string_t& path) const;
       
       void add_output_format(const string_t& format);
       
