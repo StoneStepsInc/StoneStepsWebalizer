@@ -1033,7 +1033,7 @@ void config_t::get_config(const char *fname)
          case 22: html_post.add_nlist(value); break;              // HTMLPost
          case 23: html_tail.add_nlist(value); break;              // HTMLTail
          case 24: mangle_agent=atoi(value); break;                // MangleAgents
-         case 25: add_ignored_host(value); break;                 // IgnoreSite, IgnoreHost
+         case 25: ignored_hosts.add_nlist(value); break;          // IgnoreSite, IgnoreHost
          case 26: ignored_urls.add_glist(value, true); break;     // IgnoreURL
          case 27: ignored_refs.add_nlist(value); break;           // IgnoreReferrer
          case 28: ignored_agents.add_nlist(value); break;         // IgnoreAgent
@@ -1246,26 +1246,6 @@ void config_t::report_errors(void) const
 {
    for(size_t i = 0; i < errors.size(); i++)
       fprintf(stderr, "%s\n", errors[i].c_str());
-}
-
-void config_t::add_ignored_host(const char *value)
-{
-   const char *cptr;
-
-   if(!value || !*value)
-      return;
-
-   //
-   // Ignore and report patterns that don't look like IP addresses
-   //
-   for(cptr = value; *cptr != 0; cptr++) {
-      if(strchr("0123456789.*:ABCDEFabcdef", *cptr) == NULL) {
-         messages.push_back(string_t::_format("IgnoreHost patterns cannot contain domain names: %s\n", value));
-         return;
-      }
-   }
-
-   ignored_hosts.add_nlist(value);
 }
 
 string_t& config_t::save_path_opt(const char *str, string_t& path) const
