@@ -49,22 +49,22 @@ enum log_type_t {
 /// 3. It is not clear what character set is used for user identification.
 ///
 struct  log_struct  {
-      string_t   hostname;             // client IP address (may be host name)
-      string_t   method;               // HTTP method
-      string_t   url;                  // requested URL path, without the query
-      string_t   refer;                // referrer URL, without the query
-      string_t   agent;                // user agent
-      string_t   srchargs;             // request query
-      string_t   ident;                // user identification
-      string_t   xsrchstr;             // referrer query
+      string_t   hostname;             ///< client IP address (may be host name)
+      string_t   method;               ///< HTTP method
+      string_t   url;                  ///< requested URL path, without the query
+      string_t   refer;                ///< referrer URL, without the query
+      string_t   agent;                ///< user agent
+      string_t   srchargs;             ///< request query
+      string_t   ident;                ///< user identification
+      string_t   xsrchstr;             ///< referrer query
 
-      uint64_t   xfer_size;            // transfer size, in bytes
-      uint64_t   proc_time;            // request processing time (ms)
+      uint64_t   xfer_size;            ///< transfer size, in bytes
+      uint64_t   proc_time;            ///< request processing time (ms)
 
-      tstamp_t   tstamp;               // request time stamp
+      tstamp_t   tstamp;               ///< request time stamp
 
-      u_short    port;                 // HTTP port
-      u_short    resp_code;            // HTTP response code
+      u_short    port;                 ///< HTTP port
+      u_short    resp_code;            ///< HTTP response code
 
    public:
       log_struct(void);

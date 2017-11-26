@@ -30,6 +30,11 @@
 #include "util_ipaddr.h"
 #include "util_path.h"
 
+///
+/// @struct kwinfo
+///
+/// @brief  Maps a configuration variable name to a numeric key
+///
 struct kwinfo {
    const char *keyword;
    u_int key;
@@ -191,7 +196,7 @@ config_t::config_t(void)
 
    geoip_city = true;
 
-   // push the initial DST pair into the vector
+   // push the initial empty DST pair into the vector
    dst_pairs.push_back(dst_pair_t());
 
    verbose = 2;
@@ -725,11 +730,21 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    site_aliases.add_nlist(hname.c_str());
 }
 
+///
+/// @brief  Compares two configuration variable names
+///
+/// @returns   A value less than zero if the keyword in `e1` is less than the one in `e2`, 
+///            a zero if the keywords in `e1` and `e2` are equal and a value greater than 
+///            zero if the keyword in `e1` is greater than the one in `e2`.
+///
 static int cmp_conf_kw(const void *e1, const void *e2)
 {
    return string_t::compare_ci(((kwinfo*)e1)->keyword, ((kwinfo*)e2)->keyword);
 }
 
+///
+/// @brief  Reads the specified configuration file.
+///
 void config_t::get_config(const char *fname)
 {
    static kwinfo kwords[] = {
@@ -1210,23 +1225,39 @@ void config_t::get_config(const char *fname)
    fclose(fp);
 }
 
+///
+/// @brief  Adds the output format type to the list.
+///
+/// No output format type validation is done at this point because the configuration 
+/// object doesn't have information about which output genrators are available.
+///
 void config_t::add_output_format(const string_t& format)
 {
    if(!output_formats.isinlist(format))
       output_formats.add_nlist(format);
 }
 
+///
+/// @brief  A callback function to read the specified configuration file.
+///
 void config_t::get_config_cb(const char *fname, void *_this)
 {
    if(_this != NULL)
       ((config_t*)_this)->get_config(fname);
 }
 
+///
+/// @brief  Reads configuration files matching any of the host name patterns.
+///
 void config_t::process_includes(void)
 {
    includes.for_each(hname, get_config_cb, this);
 }
 
+///
+/// @brief  Reports configuration messages collected while processing configuration
+///         files and all configuration files used for this run.
+///
 void config_t::report_config(void) const
 {
    unsigned int i;
@@ -1242,6 +1273,10 @@ void config_t::report_config(void) const
    }
 }
 
+///
+/// @brief  Reports configuration errors collected while processing configuration
+///         files.
+///
 void config_t::report_errors(void) const
 {
    for(size_t i = 0; i < errors.size(); i++)
@@ -1267,39 +1302,48 @@ string_t& config_t::set_url_path(const char *str, string_t& path) const
    return path;
 }
 
-/*********************************************/
-/* ISPAGE - determine if an HTML page or not */
-/*********************************************/
-
+///
+/// @brief  Returns `true` if the specified URL ends with one of the page extensions
+///         or with a forward slash, `false` otherwise.
+///
 bool config_t::ispage(const string_t& url) const
 {
    const char *cp1, *cp2, *cp3;
 
+   // consider empty URL same as `/`
    if(url.isempty())
       return true;
 
    cp3 = &url[url.length()];
    cp2 = cp3-1;
 
+   // consider a directory as a page (i.e. an index or default page)
    if(*cp2 == '/')
       return true;
 
    cp1 = url;
 
+   // find the last period or a forward slash
    while(cp2 != cp1) {
       if(*cp2 == '.' || *cp2 == '/')
          break;
       cp2--;
    }
 
+   // if we didn't find a dot, it's the same as directory (e.g. `/abc`)
    if(*cp2 == '/' || cp2 == cp1)
       return true;
 
    cp2++;
 
+   // look up the file extension in the page extension list
    return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != NULL;
 }
 
+///
+/// @brief  Compares the specified port to those from the configuration and returns
+///         the port type (HTTP, HTTPS or other).
+///
 u_char config_t::get_url_type(u_short port) const
 {
    if(port == http_port)
@@ -1311,11 +1355,22 @@ u_char config_t::get_url_type(u_short port) const
    return (u_char) URL_TYPE_OTHER;
 }
 
+///
+/// @brief  Returns `true` if URL type has the HTTPS flag set or if UseHTTPS is 
+///         set and the URL type is unknown, `false` otherwise.
+///
 bool config_t::is_secure_url(u_char urltype) const
 {
    return urltype == URL_TYPE_HTTPS || (use_https && (urltype & URL_TYPE_HTTPS || urltype == URL_TYPE_UNKNOWN));
 }
 
+///
+/// @brief  Evaluates command line arguments and sets corresponding configuration 
+///         vaues.
+///
+/// Command line arguments are processed before configuration files and can be 
+/// overwritten by configuration file values.
+///
 void config_t::proc_cmd_line(int argc, const char * const argv[])
 {
    size_t nlen;
@@ -1446,6 +1501,12 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
    }
 }
 
+///
+/// @brief  Sets a flag in the configuration to indicate whether a space in an
+///         ignore/hide/etc pattern ends the pattern and starts a name or is
+///         considered a part of the pattern and a tab serves as a pattern/name
+///         separator.
+///
 void config_t::set_enable_phrase_values(bool enable)
 {
    enable_phrase_values = enable;
@@ -1463,6 +1524,11 @@ void config_t::set_enable_phrase_values(bool enable)
    ignored_urls.set_enable_phrase_values(enable);
 }
 
+///
+/// @brief  Converts text representation of the state database cache size value 
+///         into a number. Suffixes `K` and `M` are interpreted as kilo and mega 
+///         multipliers.
+///
 uint32_t config_t::get_db_cache_size(const char *value) const
 {
    uint32_t cachesize;
@@ -1495,11 +1561,19 @@ uint32_t config_t::get_db_cache_size(const char *value) const
    return cachesize < DB_MIN_CACHE_SIZE ? DB_MIN_CACHE_SIZE : cachesize;
 }
 
+///
+/// @brief  Concatenates all path components to the state database and returns the
+///         combined state database path.
+///
 string_t config_t::get_db_path(void) const
 {
    return make_path(db_path, (is_default_db()) ? db_fname : report_db_name) + '.' + db_fname_ext;
 }
 
+///
+/// @brief  Splits the path to the DNS database onto the file name and the directory
+///         path and stores them in the configuration.
+///
 void config_t::set_dns_db_path(const char *path)
 {
    // ignore if empty path
@@ -1548,25 +1622,30 @@ void config_t::set_dns_db_path(const char *path)
    dns_cache = make_path(dns_db_path, dns_db_fname);
 }
 
+///
+/// @brief  Returns `true` if the default state database should be used or `false 
+///         if a user-supplied database can be used instead.
+///
 bool config_t::is_default_db(void) const
 {
    return !prep_report && !compact_db && !db_info;
 }
 
-//
-// Converts a string representation of a time iterval to the number of seconds.
-// 
-// Optional suffixes `h`, `m` and `s` are recognized and interpreted as hours, 
-// minutes and seconds. In the latter case no numeric conversion is done, but 
-// the suffix may still be useful to make it clear what units are used. Only 
-// the first character of the suffix is evaluated, so hour, hours, hrs, etc, 
-// are all the same. Intervals may be negative (e.g. -5h) or positive (e.g. 5h 
-// or +5h). 
-//
-// There is not special return value for an error, but if a malformed interval 
-// string is passed in, the method returns a zero and the error will be pushed 
-// into the errors vector. 
-//
+///
+/// @brief  Converts a string representation of a time iterval to the number of 
+///         seconds.
+/// 
+/// Optional suffixes `h`, `m` and `s` are recognized and interpreted as hours, 
+/// minutes and seconds. In the latter case no numeric conversion is done, but 
+/// the suffix may still be useful to make it clear what units are used. Only 
+/// the first character of the suffix is evaluated, so hour, hours, hrs, etc, 
+/// are all the same. Intervals may be negative (e.g. -5h) or positive (e.g. 5h 
+/// or +5h). 
+///
+/// There is not special return value for an error, but if a malformed interval 
+/// string is passed in, the method returns a zero and the error will be pushed 
+/// into the errors vector. 
+///
 int config_t::get_interval(const char *value, std::vector<string_t>& errors) const
 {
    int time;
@@ -1603,16 +1682,32 @@ int config_t::get_interval(const char *value, std::vector<string_t>& errors) con
    return time;
 }
 
+///
+/// @brief  Returns `true` if running in a maintenance mode (e.g. compacting the 
+///         state database or generating a report from a historical database) and
+///         `false` otherwise.
+///
 bool config_t::is_maintenance(void) const
 {
    return compact_db || end_month || prep_report || db_info;   // is it a maintenance run?
 }
 
+///
+/// @brief  Returns `true` if DNS resolver can look up IP addresses in either the
+///         GeoIP or DNS databases and `false` otherwise.
+///
 bool config_t::is_dns_enabled(void) const
 {
    return dns_children != 0;
 }
 
+///
+/// @brief  Saves textual representation of the start and end time stamps of 
+///         a daylight saving time (DST) range into the DST range vector.
+///
+/// Time stamps are just saved in the DST range vector in this method and not 
+/// validated in any way. 
+///
 void config_t::set_dst_range(const string_t *start, const string_t *end)
 {
    // get the last element (guaranteed to be there)
@@ -1633,6 +1728,10 @@ void config_t::set_dst_range(const string_t *start, const string_t *end)
    dst_pairs.push_back(dst_pair_t());
 }
 
+///
+/// @brief  Reads log file names from the standard input, one per line, and stores
+///         them in the file name vector.
+///
 void config_t::proc_stdin_log_files(void)
 {
    char *buffer = new char[BUFSIZE];
@@ -1653,6 +1752,9 @@ void config_t::proc_stdin_log_files(void)
    delete [] buffer;
 }
 
+///
+/// @brief  Returns a textual representation of the selected log file type.
+///
 const char *config_t::get_log_type_desc(void) const
 {
    switch (log_type) {
@@ -1671,6 +1773,16 @@ const char *config_t::get_log_type_desc(void) const
    }
 }
 
+///
+/// @brief  Returns a UTC offset for the specieied time stamp.
+///
+/// If the DST range vector is populated and the time stamp is within a DST range, 
+/// DST offset will be added to the retured value. 
+///
+/// The DST iterator is used as an optimization to avoid repeated traversing of the
+/// DST range vector looking for the matching DST range. This optimization assumes 
+/// that time stamps passed into this method are in increasing time stamp order.
+///
 int config_t::get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_iter) const
 {
    if(dst_offset && dst_ranges.is_in_range(tstamp, dst_iter))
@@ -1679,6 +1791,10 @@ int config_t::get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_
    return utc_offset;
 }
 
+///
+/// @brief  Adds a warning message that the -p option is no longer required because
+///         the incremental processing mode is enabled by default.
+///
 void config_t::deprecated_p_option(void)
 {
    messages.emplace_back("Option -p is deprecated. Incremental processing is the default mode now.");
