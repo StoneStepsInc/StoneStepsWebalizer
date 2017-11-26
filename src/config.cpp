@@ -1734,7 +1734,7 @@ void config_t::set_dst_range(const string_t *start, const string_t *end)
 ///
 void config_t::proc_stdin_log_files(void)
 {
-   char *buffer = new char[BUFSIZE];
+   string_t::char_buffer_t buffer(BUFSIZE);
    char *cp1 = buffer, *cp2;
 
    // A single line must contain one file name
@@ -1748,8 +1748,6 @@ void config_t::proc_stdin_log_files(void)
       if(cp2-cp1)
          log_fnames.push_back(string_t(cp1, cp2-cp1));
    }
-   
-   delete [] buffer;
 }
 
 ///
