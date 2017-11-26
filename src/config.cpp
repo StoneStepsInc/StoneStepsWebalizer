@@ -1705,8 +1705,18 @@ bool config_t::is_dns_enabled(void) const
 /// @brief  Saves textual representation of the start and end time stamps of 
 ///         a daylight saving time (DST) range into the DST range vector.
 ///
+/// Start and end time stamps may be passed individually, leaving the other
+/// parameter `NULL`. When both are set in the last DST range, a new range
+/// is inserted into the DST range vector. 
+///
+/// Passing the same parameter multiple times just overwrites the one that was 
+/// there before. This means that DST start and ed time stamps from the same 
+/// range must follow one another in the configuration file. However, DST ranges
+/// don't need to be sorted between themselves (i.e. start/end time stamps for 
+/// 2017 may be before start/end time stamps for 2016).
+///
 /// Time stamps are just saved in the DST range vector in this method and not 
-/// validated in any way. 
+/// validated in any way.
 ///
 void config_t::set_dst_range(const string_t *start, const string_t *end)
 {

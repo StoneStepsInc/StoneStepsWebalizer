@@ -63,9 +63,14 @@
 ///
 class config_t {
    private:
+      ///
+      /// @struct dst_pair_t
+      ///
+      /// @brief  Textual unvalidated representation of a DST start and end time stamps.
+      ///
       struct dst_pair_t {
-         string_t   dst_start;
-         string_t     dst_end;
+         string_t   dst_start;                  ///< DST range start time stamp
+         string_t     dst_end;                  ///< DST range end time stamp
       };
       
    private:
