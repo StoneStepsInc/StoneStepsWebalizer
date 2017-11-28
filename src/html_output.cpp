@@ -473,8 +473,8 @@ void html_output_t::write_html_tail(FILE *out_fp)
          fprintf(out_fp,"%s\n", iter->string.c_str());
       }
    }
-   else 
-      fputs("</body>\n</html>\n", out_fp);
+
+   fputs("</body>\n</html>\n", out_fp);
 }
 
 void html_output_t::write_url_report(void)
