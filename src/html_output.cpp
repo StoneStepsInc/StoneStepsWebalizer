@@ -449,18 +449,17 @@ void html_output_t::write_html_tail(FILE *out_fp)
 {
    nlist::const_iterator iter;
 
-   fputs("\n<!-- Page Footer -->\n", out_fp);
-   fputs("<div class=\"page_footer_div\">\n", out_fp);
-
+   // write bracketing markup for html_post
    if (!config.html_tail.isempty())
    {
-      fputs("<div>", out_fp);
       for(iter = config.html_tail.begin(); iter != config.html_tail.end(); iter++)
       {
          fprintf(out_fp,"%s", iter->string.c_str());
       }
-      fputs("</div>\n", out_fp);
    }
+
+   fputs("\n<!-- Page Footer -->\n", out_fp);
+   fputs("<div class=\"page_footer_div\">\n", out_fp);
 
    fprintf(out_fp,"<a href=\"http://www.stonesteps.ca/webalizer\">Stone Steps Webalizer</a> (v%s)\n", state_t::get_app_version().c_str());
    fputs("</div>\n", out_fp);
