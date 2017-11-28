@@ -350,8 +350,6 @@ class config_t {
    private:
       static void get_config_cb(const char *fname, void *_this);
 
-      void add_ignored_host(const char *value);
-
       void get_config(const char *fname);
 
       void proc_cmd_line(int argc, const char * const argv[]);
