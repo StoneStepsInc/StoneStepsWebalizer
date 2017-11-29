@@ -1341,7 +1341,7 @@ bool config_t::ispage(const string_t& url) const
 }
 
 ///
-/// @brief  Compares the specified port to those from the configuration and returns
+/// @brief  Compares the specified port to those in the configuration and returns
 ///         the port type (HTTP, HTTPS or other).
 ///
 u_char config_t::get_url_type(u_short port) const
