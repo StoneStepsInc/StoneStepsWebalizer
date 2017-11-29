@@ -262,7 +262,7 @@ class webalizer_t {
 
       ~webalizer_t(void);
 
-      void initialize(int argc, const char * const argv[]);
+      void initialize(void);
 
       void cleanup(void);
 

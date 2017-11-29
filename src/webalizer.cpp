@@ -72,7 +72,7 @@ webalizer_t::~webalizer_t(void)
 {
 }
 
-void webalizer_t::initialize(int argc, const char * const argv[])
+void webalizer_t::initialize(void)
 {
    u_int i;
 
@@ -3033,7 +3033,7 @@ int main(int argc, char *argv[])
          set_ctrl_c_handler(webalizer_t::ctrl_c_handler);
 
          // initialize the log processor
-         logproc.initialize(argc, argv);
+         logproc.initialize();
 
          // run the log processor 
          retcode = logproc.run();
