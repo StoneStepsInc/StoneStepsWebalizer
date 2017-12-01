@@ -141,12 +141,15 @@ void webalizer_t::initialize(void)
 
 void webalizer_t::cleanup(void)
 {
-   if(config.is_dns_enabled())
-      dns_resolver.dns_clean_up();
+   if(!config.is_maintenance()) {
+      if(config.is_dns_enabled())
+         dns_resolver.dns_clean_up();
 
-   parser.cleanup_parser();
+      parser.cleanup_parser();
+   }
    
-   cleanup_output_engines();
+   if(!config.compact_db && !config.end_month && !config.db_info)
+      cleanup_output_engines();
 
    state.cleanup();
 }
