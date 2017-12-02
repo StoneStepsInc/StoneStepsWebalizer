@@ -143,14 +143,15 @@ class webalizer_t {
       /// the user agent. Each instance of `ua_token_t` corresponds to one of the tokens.
       ///
       /// The `start` pointer points to the location of the token within the original 
-      /// user agent string.
+      /// user agent string or to the name of the matching pattern in the `GroupAgentArgs`
+      /// list.
       ///
       struct ua_token_t {
-         const char  *start;     // argument start in the user agent string
-         size_t      namelen;    // name length (e.g. 7 for Mozilla/5.0)
-         size_t      mjverlen;   // major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
-         size_t      mnverlen;   // minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
-         size_t      arglen;     // entire argument length (e.g. 10 for Opera/9.25)
+         const char  *start;     ///< Argument start in the user agent string or a matching pattern name
+         size_t      namelen;    ///< Name length (e.g. 7 for Mozilla/5.0)
+         size_t      mjverlen;   ///< Major version length (e.g. Firefox/2   in Firefox/2.0.1.10)
+         size_t      mnverlen;   ///< Minor version length (e.g. Firefox/2.0 in Firefox/2.0.1.10)
+         size_t      arglen;     ///< Entire argument length (e.g. 10 for Opera/9.25)
          toktype_t   argtype;
          
          ua_token_t(void) {start = NULL; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
@@ -167,9 +168,9 @@ class webalizer_t {
       /// @brief  Various processing times collected across multiple application calls
       ///
       struct proc_times_t {
-         uint64_t dns_time = 0;                    // DNS wait time
-         uint64_t mnt_time = 0;                    // maintenance time (saving state, etc)
-         uint64_t rpt_time = 0;                    // report time
+         uint64_t dns_time = 0;                    ///< DNS wait time
+         uint64_t mnt_time = 0;                    ///< maintenance time (saving state, etc)
+         uint64_t rpt_time = 0;                    ///< report time
       };
 
       ///
@@ -178,28 +179,28 @@ class webalizer_t {
       /// @brief  Run time log record counts
       ///
       struct logrec_counts_t {
-         uint64_t total_rec = 0;                   // total records processed
-         uint64_t total_ignore = 0;                // total records ignored
-         uint64_t total_bad = 0;                   // total bad records
+         uint64_t total_rec = 0;                   ///< Total records processed
+         uint64_t total_ignore = 0;                ///< Total records ignored
+         uint64_t total_bad = 0;                   ///< Total bad records
       };
 
    private:
-      static bool abort_signal;
+      static bool abort_signal;                    ///< Was Ctrl-C pressed?
       
-      const config_t& config;
+      const config_t& config;                      ///< Read-only application configuration object
       
-      parser_t    parser;
-      state_t     state;
-      dns_resolver_t dns_resolver;
+      parser_t    parser;                          ///< Log record parser
+      state_t     state;                           ///< Monthly state database
+      dns_resolver_t dns_resolver;                 ///< DNS and GeoIP resolver database
 
-      std::vector<output_t*> output;
+      std::vector<output_t*> output;               ///< Report generators
 
-      buffer_allocator_t buffer_allocator;
+      buffer_allocator_t buffer_allocator;         ///< Pooled buffer allocator
 
-      ua_token_alloc_t ua_token_alloc;          // pooled user agent token allocator
-      ua_grp_idx_alloc_t ua_grp_idx_alloc;
+      ua_token_alloc_t ua_token_alloc;             ///< Pooled user agent token allocator
+      ua_grp_idx_alloc_t ua_grp_idx_alloc;         ///< Pooled group index user agent token allocator
 
-      srch_arg_alloc_t srch_arg_alloc;          // pooled search argument allocator 
+      srch_arg_alloc_t srch_arg_alloc;             ///< Pooled search argument allocator 
 
    private:
       bool init_output_engines(void);

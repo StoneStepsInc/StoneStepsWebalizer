@@ -58,9 +58,9 @@ static const char *copyright   = "Copyright (c) 2004-2017, Stone Steps Inc. (www
 
 bool webalizer_t::abort_signal = false;   // true if Ctrl-C was pressed
 
-//
-//
-//
+///
+/// @brief  Constructs an instance of a log processor.
+///
 webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
 {
    // preallocate all character buffers we need for log processing
@@ -68,10 +68,17 @@ webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config
    buffer_allocator.release_buffer(string_t::char_buffer_t(BUFSIZE));
 }
 
+///
+/// @brief  Destroys an instance of a log processor.
+///
 webalizer_t::~webalizer_t(void)
 {
 }
 
+///
+/// @brief  Initializes a log processor instance using a fully initialized 
+///         configuration object.
+///
 void webalizer_t::initialize(void)
 {
    u_int i;
@@ -139,6 +146,9 @@ void webalizer_t::initialize(void)
    }
 }
 
+///
+/// @brief  Cleans up an instance of a log processor.
+///
 void webalizer_t::cleanup(void)
 {
    if(!config.is_maintenance()) {
@@ -154,6 +164,9 @@ void webalizer_t::cleanup(void)
    state.cleanup();
 }
 
+///
+/// @brief  Initializes all output engines for each selected report type.
+///
 bool webalizer_t::init_output_engines(void)
 {
    output_t::graphinfo_t *graphinfo = NULL;
@@ -196,6 +209,9 @@ bool webalizer_t::init_output_engines(void)
    return output.size() != 0;
 }
 
+///
+/// @brief  Cleans up all selected output engines.
+///
 void webalizer_t::cleanup_output_engines(void)
 {
    output_t *optr;
@@ -209,6 +225,10 @@ void webalizer_t::cleanup_output_engines(void)
    output.clear();
 }
 
+///
+/// @brief  Updates an index document for each report type with the usage data for 
+///         the current month in the state database.
+///
 void webalizer_t::write_main_index(void)
 {
    output_t *optr;
@@ -226,6 +246,10 @@ void webalizer_t::write_main_index(void)
    }
 }
 
+///
+/// @brief  Creates a monthly usage report document for each report type for the 
+///         current month in the state database.
+///
 void webalizer_t::write_monthly_report(void)
 {
    output_t *optr;
@@ -241,10 +265,9 @@ void webalizer_t::write_monthly_report(void)
    }
 }
 
-/*********************************************/
-/* PRINT_OPTS - print command line options   */
-/*********************************************/
-
+///
+/// @brief  Prints application command line options in the selected language.
+///
 void webalizer_t::print_options(const char *pname)
 {
    int i;
@@ -253,10 +276,9 @@ void webalizer_t::print_options(const char *pname)
    for (i=0; config.lang.h_msg[i]; i++) printf("%s\n", config.lang.h_msg[i]);
 }
 
-/*********************************************/
-/* PRINT_WARRANTY                            */
-/*********************************************/
-
+///
+/// @brief  Prints warranty information.
+///
 void webalizer_t::print_warranty(void)
 {
    printf("THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL,\n"
@@ -265,6 +287,10 @@ void webalizer_t::print_warranty(void)
           "GNU GENERAL PUBLIC LICENSE V2 FOR MORE DETAILS.\n");
 }
 
+///
+/// @brief  Prints application name, version and some basic system information
+///         if the verbosity level is greater than Quiet.
+///
 void webalizer_t::print_intro(void)
 {
    utsname system_info;
@@ -279,10 +305,12 @@ void webalizer_t::print_intro(void)
    }
 }
 
-/*********************************************/
-/* PRINT_VERSION                             */
-/*********************************************/
-
+///
+/// @brief  Prints application name, version and some basic system information.
+///
+/// The amount of printed information depends on the verbosity level. In Really Quiet 
+/// mode, only the version is printed.
+///
 void webalizer_t::print_version()
 {
    utsname system_info;
@@ -307,6 +335,9 @@ void webalizer_t::print_version()
    }
 }
 
+///
+/// @brief  Prints the selected language file and all configuration file names.
+///
 void webalizer_t::print_config(void)
 {
    if(config.verbose > 1) {
@@ -318,10 +349,13 @@ void webalizer_t::print_config(void)
    }
 }
 
-//
-// group_host_by_name
-//
-//
+///
+/// @brief  Adds provided visit data to the relevant host groups and countries.
+///
+/// This method is called when the specified host node has gone through the DNS 
+/// resolver, so host properties provided by the DNS resolver, such as country
+/// information or whether it's a spamer or not, are available in the host node. 
+///
 void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
 {
    ccnode_t *ccptr;
@@ -371,11 +405,11 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    }
 }
 
-//
-// process_resolved_hosts retrieves resolved host nodes from the DNS resolver
-// and aggregates visits collected for each host while host name and country 
-// information was not available.
-//
+///
+/// @brief  Retrieves host nodes from the DNS resolver and aggregates visits 
+///         collected for each host while host name and country information 
+///         were not available.
+///
 void webalizer_t::process_resolved_hosts(void)
 {
    vnode_t *vptr;
@@ -392,11 +426,15 @@ void webalizer_t::process_resolved_hosts(void)
    }
 }
 
+///
+/// @brief  Removes index alias file names, such as `index.html`, from the URL.
+///
 void webalizer_t::proc_index_alias(string_t& url)
 {
    const char *cp1;
 
    for(nlist::const_iterator lptr = config.index_alias.begin(); lptr != config.index_alias.end(); lptr++) {
+      // use strstr becase index files can have search arguments (e.g. /index.html?n=v)
       if ((cp1 = strstr(url, lptr->string)) != NULL) {
          if(cp1 == url.c_str() || *(cp1-1) == '/') {
             url.truncate(cp1-url.c_str());
@@ -408,6 +446,13 @@ void webalizer_t::proc_index_alias(string_t& url)
    }
 }
 
+///
+/// @brief  Removes various parts of the user agent string based on configured
+///         level of mangling. 
+///
+/// This is the original implementation. It is no longer maintained and will
+/// eventually be removed. 
+///
 void webalizer_t::mangle_user_agent(string_t& agent)
 {
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
@@ -527,6 +572,10 @@ void webalizer_t::mangle_user_agent(string_t& agent)
    agent = buffer;
 }
 
+///
+/// @brief  Removes various parts of the user agent string based on the configured
+///         level of mangling.
+///
 void webalizer_t::filter_user_agent(string_t& agent)
 {
    //
@@ -766,12 +815,10 @@ void webalizer_t::filter_user_agent(string_t& agent)
       agent.reset();                            // reset to an empty agent string
 }
 
-//
-// --end-month option handler
-//
-// When called, no record processing is being done - just end active visits and 
-// downloads and then save the state.
-//
+///
+/// @brief  Ends all active visits and downloads, saves the state and rolls over
+///         the database.
+///
 int webalizer_t::end_month(void)
 {
    update_visits(tstamp_t());
@@ -791,6 +838,9 @@ int webalizer_t::end_month(void)
    return 0;
 }
 
+///
+/// @brief  Prints summary information about the selected database.
+///
 int webalizer_t::database_info(void)
 {
    state.database_info();
@@ -798,6 +848,9 @@ int webalizer_t::database_info(void)
    return 0;
 }
 
+///
+/// @brief  Generates a report using data from the selected database.
+///
 int webalizer_t::prep_report(void)
 {
    write_monthly_report();
@@ -806,6 +859,10 @@ int webalizer_t::prep_report(void)
    return 0;
 }
 
+///
+/// @brief  Reclaims some of the unused space within the selected state database 
+///         and reduces the overall database size. 
+///
 int webalizer_t::compact_database(void)
 {
    u_int bytes;
@@ -821,6 +878,9 @@ int webalizer_t::compact_database(void)
    return 0;
 }
 
+///
+/// @brief  Runs the appropriate handler for the active command.
+///
 int webalizer_t::run(void)
 {
    uint64_t start_ts;                        // start of the run
@@ -908,6 +968,10 @@ int webalizer_t::run(void)
    return retcode;
 }
 
+///
+/// @brief  Checks that each log file specified in the configuration is readable 
+///         and populates the log file list parameter with instances of `logfile_t`.
+///
 void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
 {
    //
@@ -938,14 +1002,19 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
    }
 }
 
-//
-// prep_lfstates looks for the first valid record in each log file and creates
-// a log file state out of a populated log record and the corresponding log file
-// and inserts the new state into the log file state list in the ascending order
-// of log record time stamps. Those log files that do not have valid log records
-// are removed from the log file list, so when the function returns, the number
-// of log file states matches the number of log files. 
-//
+///
+/// @brief  Prepares a log file processing state for each of the log files in the 
+///         log file list. 
+///
+/// This method reads the first valid log record from each log file and creates a 
+/// log file state instance containing a populated log record and the corresponding 
+/// log file. Each log file state instance is inserted into the state list in the 
+/// ascending order of log record time stamps. 
+///
+/// Those log files that do not have valid log records are removed from the log file 
+/// list, so when the function returns, the number of log file states matches the 
+/// number of log files. 
+///
 void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
@@ -1033,25 +1102,29 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
    }
 }
 
-//
-// If get_logrec is called when the number of log file states is the same as 
-// the number of files, the first state is moved to wlfs and the function 
-// returns true, so the log record inside wlfs may be processed by the caller. 
-//
-// Otherwise, if the number of log file states is less than the number of log 
-// files and the log file in wlfs has at least one valid log record, then a 
-// new log record is read and the new log file state is inserted into the state
-// list according to the log record time stamp. The first state from the list 
-// is then returned to the caller in wlfs, as described in the first paragraph.
-//
-// Otherwise, if there are no more valid records in the log file in wlfs, the
-// matching log file is removed from the log file list and the first state is
-// returned to the caller, as described in the first paragraph.
-//
-// Each file is opened only once, so the total number of open files will be 
-// determied by how many of them have log records in approximately same range
-// and how close log records are to each other. 
-//
+///
+/// @brief  Returns a working log file state with a log record with the oldest
+///         time stamp across all log file states. 
+///
+/// If `get_logrec` is called when the number of log file states is the same as 
+/// the number of files, the first state is moved to `wlfs` and the function 
+/// returns `true`, so the log record inside `wlfs` may be processed by the 
+/// caller. 
+///
+/// Otherwise, if the number of log file states is less than the number of log 
+/// files and the log file in `wlfs` has at least one valid log record, then a 
+/// new log record is read and the new log file state is inserted into the state
+/// list according to the log record time stamp. The first state from the list 
+/// is then returned to the caller in `wlfs`, as described in the first paragraph.
+///
+/// If there are no more valid records in the log file in `wlfs`, the matching 
+/// log file is removed from the log file list and the first state is returned 
+/// to the caller, as described in the first paragraph.
+///
+/// Each file is opened only once, so the total number of open files will be 
+/// determied by how many of them have log records in approximately same range
+/// and how close log records are to each other. 
+///
 bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt)
 {
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
@@ -1121,12 +1194,11 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
    return true;
 }
 
-// -----------------------------------------------------------------------
-//
-// webalizer_t::proc_logfile
-//
-// -----------------------------------------------------------------------
-
+///
+/// @brief  Reads log records from specified log files and aggregates counts
+///         for each log record entity, such as an IP address or a URL, in 
+///         the state database.
+///
 int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
    hnode_t *hptr;
@@ -1798,9 +1870,11 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    return retcode;
 }
 
-//
-//
-//
+///
+/// @brief  Compares names of the two search arguments and returns a zero if they 
+///         are equal, a negative value if the `e1` name is less than the `e2` name
+///         or a positive value if the `e1` name is greater than the `e2` name.
+///
 int webalizer_t::qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2)
 {
    if(!e1 && !e2)
@@ -1812,6 +1886,11 @@ int webalizer_t::qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2)
    return strncmp_ex(e1->name(), e1->namelen, e2->name(), e2->namelen);
 }
 
+///
+/// @brief  Compares the two search arguments and returns a zero if they are equal, 
+///         a negative value if `e1` is less than `e2` or a positive value if `e1` 
+///         is greater than `e2`.
+///
 int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 {
    if(!e1 && !e2)
@@ -1829,6 +1908,10 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
    return strncmp_ex(e1->arg, e1->arglen, e2->arg, e2->arglen);
 }
 
+///
+/// @brief  Checks if the specified URL, including its search argments, matches 
+///         any pattern in the IgnoreURL list.
+///
 bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const
 {
    // check the ignore URL filter, which may contain optional search argument names
@@ -1876,6 +1959,10 @@ bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& src
    return false;
 }
 
+///
+/// @brief  Removes excluded search arguments from the URL and optionally sorts
+///         them by name.
+///
 void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args)
 {
    arginfo_t arginfo;
@@ -1977,6 +2064,11 @@ void webalizer_t::filter_srchargs(string_t& srchargs, std::vector<arginfo_t, src
    }
 }
 
+///
+/// @brief  Checks if the specified search engine search string contains a domain 
+///         name that is not listed in website aliaces and if it does, identifies
+///         this string as a spam attempt.
+///
 bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
 {
    //
@@ -2006,10 +2098,9 @@ bool webalizer_t::check_for_spam_urls(const char *str, size_t slen) const
    return false;
 }
 
-/*********************************************/
-/* SRCH_STRING - get search strings from ref */
-/*********************************************/
-
+///
+/// @brief  Extracts and decodes search engine search terms from the referrer URL.
+///
 bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u_short& termcnt, string_t& srchterms, bool spamcheck)
 {
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
@@ -2149,12 +2240,9 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    return false;
 }
 
-// -----------------------------------------------------------------------
-//
-// hosts
-//
-// -----------------------------------------------------------------------
-
+///
+/// @brief  Adds or updates a host node in the state database.
+///
 hnode_t *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
                const tstamp_t& tstamp,          // timestamp 
@@ -2271,6 +2359,9 @@ hnode_t *webalizer_t::put_hnode(
    return cptr;
 }               
 
+///
+/// @brief  Adds or updates a host group node in the state database.
+///
 hnode_t *webalizer_t::put_hnode(
                const string_t& grpname,         // Hostname  
                uint64_t    hits,                  // hit count 
@@ -2332,6 +2423,9 @@ hnode_t *webalizer_t::put_hnode(
    return cptr;
 }
 
+///
+/// @brief  Adds or updates a referrer node in the state database.
+///
 rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t count, bool newvisit, bool& newnode)
 {
    bool found = true;
@@ -2377,10 +2471,9 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
    return nptr;
 }
 
-/*********************************************/
-/* PUT_UNODE - insert/update URL node        */
-/*********************************************/
-
+///
+/// @brief  Adds or updates a URL node in the state database.
+///
 unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
 {
    bool found = true;
@@ -2448,6 +2541,9 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    return cptr;
 }
 
+///
+/// @brief  Adds or updates an HTTP response code node in the state database.
+///
 rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode)
 {
    bool found = true;
@@ -2494,10 +2590,9 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    return nptr;
 }
 
-/*********************************************/
-/* PUT_ANODE - insert/update user agent node */
-/*********************************************/
-
+///
+/// @brief  Adds or updates a user agent node in the state database.
+///
 anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode)
 {
    bool found = true;
@@ -2543,10 +2638,9 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
    return cptr;
 }
 
-/*********************************************/
-/* PUT_SNODE - insert/update search str node */
-/*********************************************/
-
+///
+/// @brief  Adds or updates a search engine search ters node in the state database.
+///
 snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvisit, bool& newnode)
 {
    bool found = true;
@@ -2594,10 +2688,9 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    return nptr;
 }
 
-/*********************************************/
-/* PUT_INODE - insert/update ident node      */
-/*********************************************/
-
+///
+/// @brief  Adds or updates a user node in the state database.
+///
 inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
                nodetype_t    type,       /* obj type  */
                bool     fileurl,    /* File flag */
@@ -2659,9 +2752,9 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    return nptr;
 }
 
-//
-//
-//
+///
+/// @brief  Adds or updates a download node in the state database.
+///
 dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, hnode_t& hnode, bool& newnode)
 {
    bool found = true;
@@ -2739,9 +2832,9 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    return nptr;
 }
 
-//
-//
-//
+///
+/// @brief  Adds or updates a spammer node in the state database.
+///
 spnode_t *webalizer_t::put_spnode(const string_t& host) 
 {
    spnode_t *spnode;
@@ -2759,13 +2852,15 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
    return spnode;
 }
 
-//
-// update_visit
-//
-// If the active visit has ended, update the state and detach the
-// visit from the host node. Return the detached and reset visit 
-// to the caller, which is expected to dispose of the visit node.
-//
+///
+/// @brief  Checks if the specified visit has ended and if it has, detaches it 
+///         from the host and factors visit data into host and total counters.
+///
+/// The time stamp is either the current log time or a null time stamp if the
+/// current month is being ended. 
+///
+/// The caller is expected to dispose of the returned visit node.
+///
 vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 {
    vnode_t *visit;
@@ -2903,13 +2998,12 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
    return visit;
 }
 
-//
-// update_visits
-//
-// Scan all host nodes and check each whether it has an active visit that can
-// be ended. Delete returned ended visits, as we have no use for them at
-// this point. 
-//
+///
+/// @brief  Checks all hosts for active visits and ends those that exceed the
+///         maximum visit time or all if we are ending a month.
+///
+/// Deletes all returned ended visits, as we have no use for them at this point. 
+///
 void webalizer_t::update_visits(const tstamp_t& tstamp)
 {
    vnode_t *visit;
@@ -2921,6 +3015,11 @@ void webalizer_t::update_visits(const tstamp_t& tstamp)
    }
 }
 
+///
+/// @brief  Checks if the specified active download has ended and if it has, detaches 
+///         it from the download node and factors download data into download and total 
+///         counters.
+///
 danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
 {
    danode_t *download;
@@ -2960,13 +3059,12 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
    return download;
 }
 
-//
-// update_downloads
-//
-// Scan all download nodes and check each whether it has an active job that can
-// be ended. Delete returned ended download jobs, as we have no use for them at
-// this point. 
-//
+///
+/// @brief  Checks all download nodes and ends all active downloads that exceed the 
+///         maximum download time.
+///
+/// Deletes all returned ended downloads, as we have no use for them at this point. 
+///
 void webalizer_t::update_downloads(const tstamp_t& tstamp)
 {
    danode_t *download;
@@ -2979,9 +3077,9 @@ void webalizer_t::update_downloads(const tstamp_t& tstamp)
    }
 }
 
-/*********************************************/
-/* MAIN - start here                         */
-/*********************************************/
+///
+/// @brief  Application entry point.
+///
 int main(int argc, char *argv[])
 {
    config_t config;
@@ -3093,11 +3191,18 @@ int main(int argc, char *argv[])
    return EXIT_FAILURE;
 }
 
+///
+/// @brief  Ctrl-C handler callback function.
+///
 void webalizer_t::ctrl_c_handler(void)
 {
    abort_signal = true;
 }
 
+///
+/// @brief  Reads the next log record into the supplied buffer and updates log 
+///         record counts.
+///
 int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfile, logrec_counts_t& lrcnt)
 {
    int reclen = 0, errnum = 0;
@@ -3156,6 +3261,10 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
    return reclen;
 }
 
+///
+/// @brief  Parses the log record text in the buffer and, if it's valid, populates
+///         the log record structure.
+///
 int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, uint64_t recnum)
 {
    int parse_code;

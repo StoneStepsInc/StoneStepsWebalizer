@@ -40,6 +40,9 @@ struct kwinfo {
    u_int key;
 };
 
+///
+/// @brief  Constructs an instance of the application configuration object.
+///
 config_t::config_t(void)
 {
    print_options = false;
@@ -205,6 +208,9 @@ config_t::config_t(void)
    js_charts_map = false;
 }
 
+///
+/// @brief  Destroys an instance of the application configuration object.
+///
 config_t::~config_t(void)
 {
    lang.cleanup_lang_data();
