@@ -64,6 +64,14 @@ scnode_t& sc_hash_table::get_status_code(u_int code)
    return stcodes[0];
 }
 
+scnode_t& sc_hash_table::operator [] (size_t index)
+{
+   if(index >= stcodes.size())
+      return stcodes[0];
+
+   return stcodes[index];
+}
+
 const scnode_t& sc_hash_table::operator [] (size_t index) const
 {
    if(index >= stcodes.size())

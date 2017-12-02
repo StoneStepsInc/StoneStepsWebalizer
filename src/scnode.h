@@ -77,7 +77,7 @@ class sc_hash_table {
 
       size_t size(void) const {return stcodes.size();}
 
-      scnode_t& operator [] (size_t index) {return const_cast<scnode_t&>(const_cast<const sc_hash_table*>(this)->operator[](index));}
+      scnode_t& operator [] (size_t index);
 
       const scnode_t& operator [] (size_t index) const;
 };
