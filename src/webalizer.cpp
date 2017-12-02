@@ -2884,13 +2884,15 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 
    // detach the visit from the host
    hptr->set_visit(NULL);
+
+   // indicate that the host node has been updated
    hptr->dirty = true;
 
    // update host counters
-   hptr->count+=visit->hits;
-   hptr->files+=visit->files;
-   hptr->pages+=visit->pages;
-   hptr->xfer +=visit->xfer;
+   hptr->count += visit->hits;
+   hptr->files += visit->files;
+   hptr->pages += visit->pages;
+   hptr->xfer += visit->xfer;
 
    // get visit length
    vlen = (uint64_t) visit->end.elapsed(visit->start);
