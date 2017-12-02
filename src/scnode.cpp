@@ -12,17 +12,17 @@
 #include "scnode.h"
 #include "serialize.h"
 
-sc_hash_table::sc_hash_table(u_int maxcodes) : stcodes(maxcodes)
+sc_table_t::sc_table_t(u_int maxcodes) : stcodes(maxcodes)
 {
    memset(clsindex, 0, sizeof(clsindex));
    stcodes.push_back(scnode_t(0));           // unknown status code node
 }
 
-sc_hash_table::~sc_hash_table(void)
+sc_table_t::~sc_table_t(void)
 {
 }
 
-void sc_hash_table::add_status_code(u_int code)
+void sc_table_t::add_status_code(u_int code)
 {
    u_int cls = code / 100;
 
@@ -41,7 +41,7 @@ void sc_hash_table::add_status_code(u_int code)
    stcodes.push_back(scnode_t(code));
 }
 
-scnode_t& sc_hash_table::get_status_code(u_int code)
+scnode_t& sc_table_t::get_status_code(u_int code)
 {
    size_t index;
    u_int cls = code / 100;
@@ -64,7 +64,7 @@ scnode_t& sc_hash_table::get_status_code(u_int code)
    return stcodes[0];
 }
 
-scnode_t& sc_hash_table::operator [] (size_t index)
+scnode_t& sc_table_t::operator [] (size_t index)
 {
    if(index >= stcodes.size())
       return stcodes[0];
@@ -72,7 +72,7 @@ scnode_t& sc_hash_table::operator [] (size_t index)
    return stcodes[index];
 }
 
-const scnode_t& sc_hash_table::operator [] (size_t index) const
+const scnode_t& sc_table_t::operator [] (size_t index) const
 {
    if(index >= stcodes.size())
       return stcodes[0];

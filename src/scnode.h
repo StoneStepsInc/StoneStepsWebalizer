@@ -48,28 +48,28 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
       static size_t s_data_size(const void *buffer);
 };
 
-// -----------------------------------------------------------------------
-//
-// sc_hash_table
-//
-// -----------------------------------------------------------------------
-// 1. The first element is reserved for the unknown code, which is 
-// returned when the requested code is not found or if the index is 
-// out of range.
-//
-// 2. HTTP status codes are expected to be inserted in the ascending 
-// order. Codes inserted out of order will be discarded and the first, 
-// unknown code, will be returned when such code is requested.
-//
-class sc_hash_table {
-   std::vector<scnode_t> stcodes;      // HTTP status codes
+///
+/// @class   sc_table
+///
+/// @brief  Maintains a table of HTTP status code nodes.
+///
+/// The first element is reserved for the unknown code, which is 
+/// returned when the requested code is not found or if the index is 
+/// out of range.
+///
+/// HTTP status codes are expected to be inserted in the ascending 
+/// order. Codes inserted out of order will be discarded and the first, 
+/// unknown code, will be returned when such code is requested.
+///
+class sc_table_t {
+   std::vector<scnode_t> stcodes;      ///< HTTP status code nodes
 
-   size_t               clsindex[6];   // HTTP class group offsets (0th is not used)
+   size_t               clsindex[6];   ///< HTTP status class group offsets (0th is not used)
 
    public:
-      sc_hash_table(u_int maxcodes);
+      sc_table_t(u_int maxcodes);
 
-      ~sc_hash_table(void);
+      ~sc_table_t(void);
 
       void add_status_code(u_int code);
 
