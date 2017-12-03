@@ -46,7 +46,7 @@ class state_t {
 
       hourly_t t_hourly[24];                     // hourly totals
 
-      sc_hash_table response;                    // HTTP status codes
+      sc_table_t response;                      // HTTP status codes
 
       // hash tables
       h_hash_table hm_htab;                      // hosts (monthly)
