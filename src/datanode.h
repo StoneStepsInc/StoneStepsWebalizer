@@ -20,10 +20,9 @@
 /// `datanode_t` is a template class so its version can be explicitly specialized for 
 /// each specific node type in hashtab_nodes.cpp.
 ///
-/// The version is stored in the database, but not in a node instance. 
-/// Instead, the value is returned by reference when unpacking data, so 
-/// that the node could read the buffer according to the stored version 
-/// of the data.
+/// The version is stored in the database, but not in a node instance in memory. 
+/// Instead, the version is made available when unpacking data, so the node could 
+/// read the buffer according to the stored version of serialized data.
 ///
 /// New data is always written according to the latest version.
 ///
@@ -39,7 +38,7 @@
 /// without having to save them (i.e. when factoring in their data into
 /// visits and downloads). 
 /// 
-/// If the storage flag is true, the node was read from the database.
+/// If the storage flag is `true`, the node was read from the database.
 ///
 template <typename node_t>
 class datanode_t {
