@@ -25,8 +25,8 @@
 ///
 template <typename node_t> 
 struct base_node : public htab_node_t<node_t>, public keynode_t<uint64_t>, public datanode_t<node_t> {
-      string_t string;              // node value (URL, user agent, etc)
-      nodetype_t flag;              // object type (REG, GRP)
+      string_t string;              ///< Node value (URL, user agent, etc)
+      nodetype_t flag;              ///< Object type (REG, GRP)
 
       public:
          base_node(uint64_t nodeid = 0);

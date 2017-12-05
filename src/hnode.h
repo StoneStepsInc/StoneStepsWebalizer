@@ -53,44 +53,44 @@
 /// details.
 ///
 struct hnode_t : public base_node<hnode_t> {
-      static const size_t ccode_size = 2;   // in characters, not counting the zero terminator
+      static const size_t ccode_size = 2;   ///< In characters, not counting the zero terminator
 
-      uint64_t count;                // request count
-      uint64_t files;                // files requested
-      uint64_t pages;                // pages requested
+      uint64_t count;                ///< Request count
+      uint64_t files;                ///< Files requested
+      uint64_t pages;                ///< Pages requested
 
-      uint64_t visits;               // visits started
-      uint64_t visits_conv;          // visits converted
+      uint64_t visits;               ///< Visits started
+      uint64_t visits_conv;          ///< Visits converted
 
-      uint64_t visit_max;            // maximum visit length (in seconds)
+      uint64_t visit_max;            ///< Maximum visit length (in seconds)
 
-      uint64_t max_v_hits;           // maximum number of hits
-      uint64_t max_v_files;          // maximum number of files
-      uint64_t max_v_pages;          // maximum number of pages per visit
+      uint64_t max_v_hits;           ///< Maximum number of hits
+      uint64_t max_v_files;          ///< Maximum number of files
+      uint64_t max_v_pages;          ///< Maximum number of pages per visit
 
-      uint64_t dlref;                // download node reference count
+      uint64_t dlref;                ///< Download node reference count
       
-      tstamp_t tstamp;               // last request timestamp
+      tstamp_t tstamp;               ///< Last request timestamp
 
-      vnode_t  *visit;               // current visit (NULL if none)
-      vnode_t  *grp_visit;           // visits queued for name grouping
+      vnode_t  *visit;               ///< Current visit (NULL if none)
+      vnode_t  *grp_visit;           ///< Visits queued for name grouping
 
-      string_t name;                 // host name
+      string_t name;                 ///< Host name
 
-      uint64_t max_v_xfer;           // maximum transfer amount per visit
-      uint64_t xfer;                 // transfer amount in bytes
-      double   visit_avg;            // average visit length (in seconds)
+      uint64_t max_v_xfer;           ///< Maximum transfer amount per visit
+      uint64_t xfer;                 ///< Transfer amount in bytes
+      double   visit_avg;            ///< Average visit length (in seconds)
 
-      bool     spammer  : 1;         // caught spamming?
-      bool     robot    : 1;         // robot?
-      bool     resolved : 1;         // has been resolved? (not saved in the state database)
+      bool     spammer  : 1;         ///< Caught spamming?
+      bool     robot    : 1;         ///< Robot?
+      bool     resolved : 1;         ///< Has been resolved? (not saved in the state database)
 
-      char     ccode[ccode_size+1];  // country code
+      char     ccode[ccode_size+1];  ///< Country code
 
-      string_t city;                 // city name reported by GeoIP
+      string_t city;                 ///< City name reported by GeoIP
 
-      double   latitude;             // latitude reported by GeoIP
-      double   longitude;            // longitude reported by GeoIP
+      double   latitude;             ///< Latitude reported by GeoIP
+      double   longitude;            ///< Longitude reported by GeoIP
 
       public:
          typedef void (*s_unpack_cb_t)(hnode_t& hnode, bool active, void *arg);
