@@ -51,15 +51,18 @@ inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(
 inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, data);}
 
 ///
-/// @struct struct htab_node_t
+/// @struct struct htab_obj_t
 ///
-/// @tparam node_t   Hash table node type
-/// @tparam key_t    Node key type
+/// @brief  A generic hash table object interface.
 ///
-/// @brief  A generic hash table node
+/// Hash table node and objects historically were combined in a single object in 
+/// this project. Consequently, all objects within a hash table were called nodes 
+/// (e.g. `hnode_t` for a host object or a `unode_t` for a URL object). Later on, 
+/// the hash table node object was split onto the base object for hash table content 
+/// objects (`htab_obj_t`) and the hash table node object that maintains content 
+/// objects within a hash table (`htab_node_t`).
 ///
-template <typename node_t, typename key_t = string_t> 
-struct htab_node_t {
+struct htab_obj_t {
       //
       // param_block provides a way to search the hash table using compound keys. 
       // The base class has no data members and is defined to allow hash table 
@@ -67,18 +70,43 @@ struct htab_node_t {
       //
       struct param_block {};
 
-      node_t   *next;                // pointer to next node
-
       public:
-         htab_node_t(void) {next = NULL;}
+         virtual ~htab_obj_t(void) {}
 
-         virtual ~htab_node_t(void) {next = NULL;}
-
-         virtual const key_t& key(void) const = 0;
+         virtual const string_t& key(void) const = 0;
 
          virtual nodetype_t get_type(void) const = 0;
 
          virtual uint64_t get_hash(void) const = 0;
+};
+
+///
+/// @struct htab_node_t
+///
+/// @brief  A hash table node that contains a single object of `node_t` type and
+///         is linked to other `htab_node_t` nodes with the same key hash value.
+///
+/// Hash table `node_t` ojects must be dynamically allocated and will be deleted
+/// by calling the `delete` operator.
+///
+template <typename node_t> 
+struct htab_node_t {
+      node_t         *node;                ///< Hash table content object
+      htab_node_t    *next;                ///< Next hash table node
+
+      public:
+         htab_node_t(void) : node(NULL), next(NULL) 
+         {
+         }
+
+         htab_node_t(node_t *node) : node(node), next(NULL) 
+         {
+         }
+
+         ~htab_node_t(void) 
+         {
+            delete node;
+         }
 };
 
 ///
@@ -95,8 +123,8 @@ class hash_table {
       enum swap_code {swap_ok, swap_failed, swap_inuse};
 
       struct bucket_t {
-         node_t   *head;
-         u_int    count;
+         htab_node_t<node_t>   *head;
+         u_int                      count;
 
          public:
             bucket_t(void) {head = NULL; count = 0;}
@@ -125,7 +153,7 @@ class hash_table {
             bucket_t *htab;
             uint64_t   index;
             uint64_t   maxhash;
-            node_t   *nptr;
+            htab_node_t<node_t> *nptr;
 
          protected:
             iterator(bucket_t _htab[], uint64_t _maxhash) {htab = _htab; index = 0; maxhash = _maxhash; nptr = NULL;}
@@ -133,7 +161,7 @@ class hash_table {
          public:
             iterator(void) {htab = NULL; nptr = NULL; index = 0; maxhash = 0;}
 
-            node_t *item(void) {return nptr;}
+            node_t *item(void) {return nptr ? nptr->node : NULL;}
 
             node_t *next(void)
             {
@@ -142,12 +170,12 @@ class hash_table {
 
                if(nptr && nptr->next) {
                   nptr = nptr->next;
-                  return nptr;
+                  return nptr->node;
                }
 
                while(index < maxhash) {
                   if((nptr = htab[index++].head) != NULL)
-                     return nptr;
+                     return nptr->node;
                }
 
                return NULL;
@@ -182,7 +210,7 @@ class hash_table {
       void        *cbarg;     // swap out callback argument
 
    private:
-      node_t *move_node(node_t *nptr, node_t *prev, node_t **next) const
+      htab_node_t<node_t> *move_node(htab_node_t<node_t> *nptr, htab_node_t<node_t> *prev, htab_node_t<node_t> **next) const
       {
          prev->next = nptr->next;
          nptr->next = *next;
@@ -190,7 +218,7 @@ class hash_table {
          return nptr;
       }
 
-      swap_code swap_out_node(bucket_t& bucket, node_t **pptr);
+      swap_code swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr);
 
       bool swap_out_bucket(bucket_t& bucket);
 
@@ -261,7 +289,7 @@ class hash_table {
 
       node_t *put_node(node_t *nptr);
 
-      node_t *put_node(uint64_t hashval, node_t *nptr);
+      node_t *put_node(uint64_t hashval, node_t *node);
 
       //
       // miscellaneous

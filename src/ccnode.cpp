@@ -13,13 +13,13 @@
 #include "serialize.h"
 #include "exception.h"
 
-ccnode_t::ccnode_t(void) : htab_node_t<ccnode_t>(), keynode_t<uint64_t>(0)
+ccnode_t::ccnode_t(void) : keynode_t<uint64_t>(0)
 {
    count = files = visits = pages = 0; 
    xfer = 0;
 }
 
-ccnode_t::ccnode_t(const char *cc, const char *desc) : htab_node_t<ccnode_t>(), keynode_t<uint64_t>(ctry_idx(cc))
+ccnode_t::ccnode_t(const char *cc, const char *desc) : keynode_t<uint64_t>(ctry_idx(cc))
 {
    ccode = cc;
    cdesc = desc; 

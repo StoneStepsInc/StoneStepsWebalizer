@@ -39,7 +39,7 @@ class lang_t {
       ///
       /// @brief  A localized language entry node
       ///
-      struct lang_node_t : public htab_node_t<lang_node_t> {
+      struct lang_node_t : public htab_obj_t {
             int                  vartype;
             string_t             varname;
             u_char               *varptr;
@@ -51,9 +51,9 @@ class lang_t {
 
                ~lang_node_t(void);
 
-               const string_t& key(void) const {return varname;}
+               const string_t& key(void) const override {return varname;}
 
-               nodetype_t get_type(void) const {return OBJ_REG;}
+               nodetype_t get_type(void) const override {return OBJ_REG;}
 
                static uint64_t hash(const char *varname) {return hash_ex(0, varname);}
 

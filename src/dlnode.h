@@ -92,7 +92,7 @@ class dl_hash_table : public hash_table<dlnode_t> {
    private:
       virtual bool compare(const dlnode_t *nptr, const dlnode_t::param_block *pb) const override;
 
-      virtual bool load_array_check(const dlnode_t *nptr) const {return (nptr && !nptr->download) ? true : false;}
+      virtual bool load_array_check(const dlnode_t *nptr) const override {return (nptr && !nptr->download) ? true : false;}
 
    public:
       dl_hash_table(void) : hash_table<dlnode_t>() {}

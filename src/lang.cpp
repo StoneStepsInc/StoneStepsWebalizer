@@ -438,7 +438,6 @@ lang_t::lang_node_t::lang_node_t(const char *varname) : varname(varname)
    varptr = NULL; 
    maxcount = 0; 
    elemsize = 0; 
-   next = NULL;
 }
 
 lang_t::lang_node_t::~lang_node_t(void)

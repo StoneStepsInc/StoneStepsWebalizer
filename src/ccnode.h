@@ -26,7 +26,7 @@
 /// 2. Country code and description strings are not stored in the database,
 /// but instead are set up from the language file on start-up.
 ///
-struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
+struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
    string_t    ccode;                  // country code
    string_t    cdesc;                  // country name
    uint64_t    count;                  // request count
@@ -47,9 +47,9 @@ struct ccnode_t : public htab_node_t<ccnode_t>, public keynode_t<uint64_t>, publ
 
       ccnode_t(const char *cc, const char *desc);
 
-      const string_t& key(void) const {return ccode;}
+      const string_t& key(void) const override {return ccode;}
 
-      nodetype_t get_type(void) const {return OBJ_REG;}
+      nodetype_t get_type(void) const override {return OBJ_REG;}
 
       void reset(void) {count = 0; files = 0; xfer = 0; visits = 0;}
       
