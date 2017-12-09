@@ -1328,12 +1328,6 @@ bool lang_t::check_language(const char *lc1, const char *lc2, size_t slen)
 //
 #include "hashtab_tmpl.cpp"
 
-#ifdef _WIN32
-#pragma warning(disable:4660) // template-class specialization 'type' is already instantiated
-#endif
-
-#ifndef _WIN32
-template class htab_node_t<lang_t::lang_node_t>;
-#endif
+template struct htab_node_t<lang_t::lang_node_t>;
 template class hash_table<lang_t::lang_node_t>;
 
