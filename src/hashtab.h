@@ -318,8 +318,6 @@ class hash_table {
       // miscellaneous
       //
       uint64_t load_array(const typename inner_node<node_t>::type *array[]) const;
-
-      uint64_t load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const;
 };
 
 #endif  // HASHTAB_H

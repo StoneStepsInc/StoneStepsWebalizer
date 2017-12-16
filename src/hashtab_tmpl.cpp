@@ -274,42 +274,6 @@ uint64_t hash_table<node_t, key_t>::load_array(const typename inner_node<node_t>
 }
 
 template <typename node_t, typename key_t>
-uint64_t hash_table<node_t, key_t>::load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const
-{
-   const htab_node_t<node_t> *nptr;
-   size_t hashidx, arridx1, arridx2, skipcnt;
-
-   //
-   // load the array, grouping nodes by type
-   //
-   for(hashidx = 0, arridx1 = 0, arridx2 = count; hashidx < maxhash; hashidx++) {
-      nptr = htab[hashidx].head;
-      while(nptr) {
-         if(load_array_check(nptr->node)) {
-            if(nptr->node->get_type() == type)
-               array[arridx1++] = nptr->node;
-            else
-               array[--arridx2] = nptr->node;
-         }
-         nptr = nptr->next;
-      }
-   }
-
-   typecnt = arridx1;
-
-   if((skipcnt = arridx2 - arridx1) == 0)
-      return count;
-
-   //
-   // fill in the empty space with nodes from the end of the array
-   //
-   for(const node_t **pptr = &array[count-1]; arridx1 != arridx2; arridx1++, pptr--)
-      array[arridx1] = *pptr;
-
-   return count - skipcnt;
-}
-
-template <typename node_t, typename key_t>
 bool hash_table<node_t, key_t>::swap_out(void)
 {
    if(swapcb == NULL)
