@@ -18,6 +18,7 @@
 #include "hashtab_nodes.h"
 #include "event.h"
 #include "berkeleydb.h"
+#include "storable.h"
 
 ///
 /// @class  database_t
@@ -95,11 +96,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<unode_t> rbegin_urls(const char *dbname) const {return urls.rbegin<unode_t>(dbname);}
 
-      bool put_unode(const unode_t& unode);
+      bool put_unode(const unode_t& unode, storage_info_t& strg_info);
 
-      bool get_unode_by_id(unode_t& unode, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_unode_by_id(storable_t<unode_t>& unode, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      bool get_unode_by_value(unode_t& unode, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_unode_by_value(storable_t<unode_t>& unode, unode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
       uint64_t get_ucount(const char *dbname = NULL) const {return urls.count(dbname);}
 
@@ -110,20 +111,20 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<hnode_t> rbegin_hosts(const char *dbname) const {return hosts.rbegin<hnode_t>(dbname);}
 
-      bool put_hnode(const hnode_t& hnode);
+      bool put_hnode(const hnode_t& hnode, storage_info_t& strg_info);
 
-      bool get_hnode_by_id(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_hnode_by_id(storable_t<hnode_t>& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      bool get_hnode_by_value(hnode_t& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_hnode_by_value(storable_t<hnode_t>& hnode, hnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       uint64_t get_hcount(const char *dbname = NULL) const {return hosts.count(dbname);}
 
       // visits
-      bool put_vnode(const vnode_t& vnode);
+      bool put_vnode(const vnode_t& vnode, storage_info_t& strg_info);
 
       iterator<vnode_t> begin_visits(void) const {return visits.begin<vnode_t>(NULL);}
 
-      bool get_vnode_by_id(vnode_t& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_vnode_by_id(storable_t<vnode_t>& vnode, vnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       bool delete_visit(const keynode_t<uint64_t>& vnode);
 
@@ -138,11 +139,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<dlnode_t> rbegin_downloads(const char *dbname) const {return downloads.rbegin<dlnode_t>(dbname);}
 
-      bool put_dlnode(const dlnode_t& dlnode);
+      bool put_dlnode(const dlnode_t& dlnode, storage_info_t& strg_info);
 
-      bool get_dlnode_by_id(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_dlnode_by_id(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      bool get_dlnode_by_value(dlnode_t& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_dlnode_by_value(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       uint64_t get_dlcount(const char *dbname = NULL) const {return downloads.count(dbname);}
 
@@ -151,11 +152,11 @@ class database_t : public berkeleydb_t {
       //
       // active downloads
       //
-      bool put_danode(const danode_t& danode);
+      bool put_danode(const danode_t& danode, storage_info_t& strg_info);
 
       iterator<danode_t> begin_active_downloads(void) const {return active_downloads.begin<danode_t>(NULL);}
 
-      bool get_danode_by_id(danode_t& danode, danode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_danode_by_id(storable_t<danode_t>& danode, danode_t::s_unpack_cb_t upcb, void *arg) const;
 
       uint64_t get_dacount(const char *dbname = NULL) const {return active_downloads.count(dbname);}
 
@@ -168,11 +169,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<anode_t> rbegin_agents(const char *dbname) const {return agents.rbegin<anode_t>(dbname);}
 
-      bool put_anode(const anode_t& anode);
+      bool put_anode(const anode_t& anode, storage_info_t& strg_info);
 
-      bool get_anode_by_id(anode_t& anode, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_anode_by_id(storable_t<anode_t>& anode, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      bool get_anode_by_value(anode_t& anode, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_anode_by_value(storable_t<anode_t>& anode, anode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
       uint64_t get_acount(const char *dbname = NULL) const {return agents.count(dbname);}
 
@@ -185,11 +186,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<rnode_t> rbegin_referrers(const char *dbname) const {return referrers.rbegin<rnode_t>(dbname);}
 
-      bool put_rnode(const rnode_t& rnode);
+      bool put_rnode(const rnode_t& rnode, storage_info_t& strg_info);
 
-      bool get_rnode_by_id(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_rnode_by_id(storable_t<rnode_t>& rnode, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      bool get_rnode_by_value(rnode_t& rnode, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_rnode_by_value(storable_t<rnode_t>& rnode, rnode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
       uint64_t get_rcount(const char *dbname = NULL) const {return referrers.count(dbname);}
 
@@ -202,11 +203,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<snode_t> rbegin_search(const char *dbname) const {return search.rbegin<snode_t>(dbname);}
 
-      bool put_snode(const snode_t& snode);
+      bool put_snode(const snode_t& snode, storage_info_t& strg_info);
 
-      bool get_snode_by_id(snode_t& snode, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_snode_by_id(storable_t<snode_t>& snode, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      bool get_snode_by_value(snode_t& snode, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_snode_by_value(storable_t<snode_t>& snode, snode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
       uint64_t get_scount(const char *dbname = NULL) const {return search.count(dbname);}
 
@@ -219,11 +220,11 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<inode_t> rbegin_users(const char *dbname) const {return users.rbegin<inode_t>(dbname);}
 
-      bool put_inode(const inode_t& inode);
+      bool put_inode(const inode_t& inode, storage_info_t& strg_info);
 
-      bool get_inode_by_id(inode_t& inode, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_inode_by_id(storable_t<inode_t>& inode, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
-      bool get_inode_by_value(inode_t& inode, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+      bool get_inode_by_value(storable_t<inode_t>& inode, inode_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
       uint64_t get_icount(const char *dbname = NULL) const {return users.count(dbname);}
 
@@ -236,59 +237,59 @@ class database_t : public berkeleydb_t {
 
       reverse_iterator<rcnode_t> rbegin_errors(const char *dbname) const {return errors.rbegin<rcnode_t>(dbname);}
 
-      bool put_rcnode(const rcnode_t& rcnode);
+      bool put_rcnode(const rcnode_t& rcnode, storage_info_t& strg_info);
 
-      bool get_rcnode_by_id(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_rcnode_by_id(storable_t<rcnode_t>& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
 
-      bool get_rcnode_by_value(rcnode_t& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_rcnode_by_value(storable_t<rcnode_t>& rcnode, rcnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       uint64_t get_errcount(const char *dbname = NULL) const {return errors.count(dbname);}
 
       //
       // status codes
       //
-      bool put_scnode(const scnode_t& scnode);
+      bool put_scnode(const scnode_t& scnode, storage_info_t& strg_info);
 
-      bool get_scnode_by_id(scnode_t& scnode, scnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_scnode_by_id(storable_t<scnode_t>& scnode, scnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       //
       // daily totals
       //
-      bool put_tdnode(const daily_t& tdnode);
+      bool put_tdnode(const daily_t& tdnode, storage_info_t& strg_info);
 
-      bool get_tdnode_by_id(daily_t& tdnode, daily_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_tdnode_by_id(storable_t<daily_t>& tdnode, daily_t::s_unpack_cb_t upcb, void *arg) const;
 
       //
       // hourly totals
       //
-      bool put_thnode(const hourly_t& thnode);
+      bool put_thnode(const hourly_t& thnode, storage_info_t& strg_info);
 
-      bool get_thnode_by_id(hourly_t& thnode, hourly_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_thnode_by_id(storable_t<hourly_t>& thnode, hourly_t::s_unpack_cb_t upcb, void *arg) const;
 
       //
       // totals
       //
-      bool put_tgnode(const totals_t& tgnode);
+      bool put_tgnode(const totals_t& tgnode, storage_info_t& strg_info);
 
-      bool get_tgnode_by_id(totals_t& tgnode, totals_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_tgnode_by_id(storable_t<totals_t>& tgnode, totals_t::s_unpack_cb_t upcb, void *arg) const;
 
       //
       // country codes
       //
       iterator<ccnode_t> begin_countries(void) const {return countries.begin<ccnode_t>(NULL);}
 
-      bool put_ccnode(const ccnode_t& ccnode);
+      bool put_ccnode(const ccnode_t& ccnode, storage_info_t& strg_info);
 
-      bool get_ccnode_by_id(ccnode_t& ccnode, ccnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_ccnode_by_id(storable_t<ccnode_t>& ccnode, ccnode_t::s_unpack_cb_t upcb, void *arg) const;
 
       //
       // system
       //
       bool is_sysnode(void) const;
 
-      bool put_sysnode(const sysnode_t& sysnode);
+      bool put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info);
 
-      bool get_sysnode_by_id(sysnode_t& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t upcb, void *arg) const;
 };
 
 #endif // DATABASE_H

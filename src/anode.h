@@ -13,6 +13,7 @@
 #include "hashtab.h"
 #include "basenode.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct anode_t
@@ -55,7 +56,7 @@ struct anode_t : public base_node<anode_t> {
 //
 // User Agents
 //
-class a_hash_table : public hash_table<anode_t> {
+class a_hash_table : public hash_table<storable_t<anode_t>> {
 };
 
 #endif // ANODE_H

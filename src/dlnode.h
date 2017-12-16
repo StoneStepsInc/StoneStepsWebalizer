@@ -15,6 +15,7 @@
 #include "tstring.h"
 #include "basenode.h"
 #include "danode.h"
+#include "storable.h"
 
 struct hnode_t;
 
@@ -37,7 +38,7 @@ struct dlnode_t : public base_node<dlnode_t> {
       double      avgtime;          // average job processing time (minutes)
       double      sumtime;          // total job processing time (minutes)
 
-      danode_t    *download;        // active download job
+      storable_t<danode_t> *download; // active download job
       hnode_t     *hnode;           // host node
 
       bool        ownhost : 1;      // true, if dlnode_t owns hnode
@@ -88,14 +89,14 @@ struct dlnode_t : public base_node<dlnode_t> {
 //
 // Download Jobs
 //
-class dl_hash_table : public hash_table<dlnode_t> {
+class dl_hash_table : public hash_table<storable_t<dlnode_t>> {
    private:
       virtual bool compare(const dlnode_t *nptr, const dlnode_t::param_block *pb) const override;
 
-      virtual bool load_array_check(const dlnode_t *nptr) const override {return (nptr && !nptr->download) ? true : false;}
+      virtual bool load_array_check(const storable_t<dlnode_t> *nptr) const override {return (nptr && !nptr->download) ? true : false;}
 
    public:
-      dl_hash_table(void) : hash_table<dlnode_t>() {}
+      dl_hash_table(void) : hash_table<storable_t<dlnode_t>>() {}
 };
 
 #endif // DLNODE_H

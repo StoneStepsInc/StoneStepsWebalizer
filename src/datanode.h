@@ -11,6 +11,7 @@
 #define DATANODE_H
 
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @class  datanode_t
@@ -26,28 +27,10 @@
 ///
 /// New data is always written according to the latest version.
 ///
-/// Node state flags are for in-memory maintenance only and are not
-/// saved in the database. Flags can be updated for const nodes (e.g.  
-/// when saving node data to the database).
-///
-/// The node is marked as dirty if its content is new or updated,
-/// compared with some base state. For most nodes, such as host nodes,
-/// such state is represented by the version of the node in the database
-/// (a new node is a special case, when it's missing from the database). 
-/// Visit and download nodes are always dirty, but may be destroyed 
-/// without having to save them (i.e. when factoring in their data into
-/// visits and downloads). 
-/// 
-/// If the storage flag is `true`, the node was read from the database.
-///
 template <typename node_t>
 class datanode_t {
    private:
       static const u_short __version;
-
-   public:
-      bool dirty   : 1;           // is new or updated content?
-      bool storage : 1;           // is stored externally?
 
    public:
       datanode_t(void);

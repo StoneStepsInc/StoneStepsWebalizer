@@ -69,17 +69,17 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       static size_t s_data_size(const void *buffer);
 };
 
-class cc_hash_table : public hash_table<ccnode_t> {
+class cc_hash_table : public hash_table<storable_t<ccnode_t>> {
    ccnode_t empty;
 
    public:
-      cc_hash_table(void) : hash_table<ccnode_t>(SMAXHASH) {}
+      cc_hash_table(void) : hash_table<storable_t<ccnode_t>>(SMAXHASH) {}
 
       void reset(void);
       
       void update_ccnode(const ccnode_t& ccnode) {get_ccnode(ccnode.ccode).update(ccnode);}
 
-      void put_ccnode(const char *ccode, const char *cdesc) {put_node(new ccnode_t(ccode, cdesc));}
+      void put_ccnode(const char *ccode, const char *cdesc) {put_node(new storable_t<ccnode_t>(ccode, cdesc));}
 
       const ccnode_t& get_ccnode(const string_t& ccode) const;
 

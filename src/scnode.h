@@ -13,6 +13,7 @@
 #include "types.h"
 #include "keynode.h"
 #include "datanode.h"
+#include "storable.h"
 
 #include <vector>
 
@@ -62,7 +63,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 /// unknown code, will be returned when such code is requested.
 ///
 class sc_table_t {
-   std::vector<scnode_t> stcodes;      ///< HTTP status code nodes
+   std::vector<storable_t<scnode_t>> stcodes;      ///< HTTP status code nodes
 
    size_t               clsindex[6];   ///< HTTP status class group offsets (0th is not used)
 
@@ -73,13 +74,13 @@ class sc_table_t {
 
       void add_status_code(u_int code);
 
-      scnode_t& get_status_code(u_int code);
+      storable_t<scnode_t>& get_status_code(u_int code);
 
       size_t size(void) const {return stcodes.size();}
 
-      scnode_t& operator [] (size_t index);
+      storable_t<scnode_t>& operator [] (size_t index);
 
-      const scnode_t& operator [] (size_t index) const;
+      const storable_t<scnode_t>& operator [] (size_t index) const;
 };
 
 #endif // SCNODE_H

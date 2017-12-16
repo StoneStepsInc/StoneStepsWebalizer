@@ -41,7 +41,7 @@ void sc_table_t::add_status_code(u_int code)
    stcodes.push_back(scnode_t(code));
 }
 
-scnode_t& sc_table_t::get_status_code(u_int code)
+storable_t<scnode_t>& sc_table_t::get_status_code(u_int code)
 {
    size_t index;
    u_int cls = code / 100;
@@ -64,7 +64,7 @@ scnode_t& sc_table_t::get_status_code(u_int code)
    return stcodes[0];
 }
 
-scnode_t& sc_table_t::operator [] (size_t index)
+storable_t<scnode_t>& sc_table_t::operator [] (size_t index)
 {
    if(index >= stcodes.size())
       return stcodes[0];
@@ -72,7 +72,7 @@ scnode_t& sc_table_t::operator [] (size_t index)
    return stcodes[index];
 }
 
-const scnode_t& sc_table_t::operator [] (size_t index) const
+const storable_t<scnode_t>& sc_table_t::operator [] (size_t index) const
 {
    if(index >= stcodes.size())
       return stcodes[0];

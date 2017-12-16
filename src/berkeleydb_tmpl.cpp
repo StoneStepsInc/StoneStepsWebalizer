@@ -735,7 +735,7 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t:
 // -----------------------------------------------------------------------
 
 template <typename node_t>
-bool berkeleydb_t::table_t::put_node(const node_t& node)
+bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage_info)
 {
    Dbt key, data;
    size_t keysize = node.s_key_size(), datasize = node.s_data_size();
@@ -759,15 +759,14 @@ bool berkeleydb_t::table_t::put_node(const node_t& node)
    if(table->put(NULL, &key, &data, 0)) 
       return false;
 
-   // node flags are mutable
-   const_cast<node_t&>(node).dirty = false;
-   const_cast<node_t&>(node).storage = true;
+   // indicate that the node came from the database
+   storage_info.set_from_storage();
 
    return true;
 }
 
 template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_id(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
    size_t keysize = node.s_key_size();
@@ -794,14 +793,13 @@ bool berkeleydb_t::table_t::get_node_by_id(node_t& node, typename node_t::s_unpa
    if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
       return false;
    
-   node.dirty = false;
-   node.storage = true;
+   node.storage_info.set_from_storage();
 
    return true;
 }
 
 template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
 {
    Dbt key, pkey, data;
    u_int32_t keysize = (u_int32_t) node.s_key_size();
@@ -861,8 +859,7 @@ bool berkeleydb_t::table_t::get_node_by_value(node_t& node, typename node_t::s_u
    if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
       return false;
 
-   node.dirty = false;
-   node.storage = true;
+   node.storage_info.set_from_storage();
 
    return true;
 }

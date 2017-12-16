@@ -13,6 +13,7 @@
 #include "hashtab.h"
 #include "basenode.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct unode_t
@@ -87,12 +88,12 @@ struct unode_t : public base_node<unode_t> {
 //
 // URLs
 //
-class u_hash_table : public hash_table<unode_t> {
+class u_hash_table : public hash_table<storable_t<unode_t>> {
    private:
       virtual bool compare(const unode_t *nptr, const unode_t::param_block *pb) const override;
 
    public:
-      u_hash_table(void) : hash_table<unode_t>(LMAXHASH) {}
+      u_hash_table(void) : hash_table<storable_t<unode_t>>(LMAXHASH) {}
 };
 
 #endif // UNODE_H

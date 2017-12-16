@@ -14,6 +14,7 @@
 #include "basenode.h"
 #include "tstamp.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct inode_t
@@ -55,9 +56,9 @@ struct inode_t : public base_node<inode_t> {
 //
 // Users
 //
-class i_hash_table : public hash_table<inode_t> {
+class i_hash_table : public hash_table<storable_t<inode_t>> {
    public:
-      i_hash_table(void) : hash_table<inode_t>(LMAXHASH) {}
+      i_hash_table(void) : hash_table<storable_t<inode_t>>(LMAXHASH) {}
 };
 
 #endif // INODE_H

@@ -35,7 +35,7 @@ struct spnode_t : public base_node<spnode_t> {
 // Keeping spammers in a separate hash table allows us to look-up spammers before 
 // the host node can be processed.
 //
-class sp_hash_table : public hash_table<spnode_t> {
+class sp_hash_table : public hash_table<storable_t<spnode_t>> {
 };
 
 #endif // SPNODE_H

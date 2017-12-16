@@ -13,6 +13,7 @@
 
 #include "tstring.h"
 #include "types.h"
+#include "storable.h"
 
 #include <stdexcept>
 
@@ -131,12 +132,34 @@ class hash_table {
       };
 
    public:
+      ///
+      /// @struct inner_node
+      ///
+      /// @brief  A primary class template to define a type of hash table nodes 
+      ///         that are not storable objects.
+      ///
+      template <typename T>
+      struct inner_node {
+         typedef T type;
+      };
+
+      ///
+      /// @struct inner_node<storable_t<T>>
+      ///
+      /// @brief  A specialization of the `inner_node` template to define a type
+      ///         of a data node at the base of a storable object.
+      ///
+      template <template <typename> class storable_t, typename T>
+      struct inner_node<storable_t<T>> {
+         typedef T type;
+      };
+
       //
       // Evaluation callback is called first. Returns true if the node
       // can be swapped out, false otherwise. In the latter case the
       // swap-out callback will not be called.
       //
-      typedef bool (*eval_cb_t)(const node_t *node, void *arg);
+      typedef bool (*eval_cb_t)(const typename inner_node<node_t>::type *node, void *arg);
 
       //
       // If evaluation was successful, the swap-out callback is called.
@@ -222,7 +245,7 @@ class hash_table {
 
       bool swap_out_bucket(bucket_t& bucket);
 
-      virtual bool compare(const node_t *nptr, const typename node_t::param_block *params) const 
+      virtual bool compare(const typename inner_node<node_t>::type *nptr, const typename inner_node<node_t>::type::param_block *params) const 
       {
          throw std::logic_error("This node type does not support searches with compound keys");
       }
@@ -294,7 +317,7 @@ class hash_table {
       //
       // miscellaneous
       //
-      uint64_t load_array(const node_t *array[]) const;
+      uint64_t load_array(const typename inner_node<node_t>::type *array[]) const;
 
       uint64_t load_array(const node_t *array[], nodetype_t type, uint64_t& typecnt) const;
 };

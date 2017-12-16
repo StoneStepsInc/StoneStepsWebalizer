@@ -14,15 +14,11 @@
 template <typename node_t>
 datanode_t<node_t>::datanode_t(void) 
 {
-   dirty = false;
-   storage = false;
 }
 
 template <typename node_t>
 void datanode_t<node_t>::reset(void)
 {
-   dirty = false;
-   storage = false;
 }
 
 //

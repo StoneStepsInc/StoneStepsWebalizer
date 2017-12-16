@@ -255,7 +255,7 @@ void hash_table<node_t, key_t>::clear(void)
 }
 
 template <typename node_t, typename key_t>
-uint64_t hash_table<node_t, key_t>::load_array(const node_t *array[]) const
+uint64_t hash_table<node_t, key_t>::load_array(const typename inner_node<node_t>::type *array[]) const
 {
    htab_node_t<node_t> *nptr;
    u_int hashidx, arridx;

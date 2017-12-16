@@ -23,8 +23,6 @@ vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid),
    xfer = 0;
    lasturl = NULL;
    hostref = 0;
-
-   dirty = true;
 }
 
 vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
@@ -43,7 +41,7 @@ vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
    if((lasturl = vnode.lasturl) != NULL)
       lasturl->vstref++;
 
-   dirty = true;
+   //dirty = true;
 
    //
    // vnode.hostref should not be copied, since there are no hosts
@@ -71,11 +69,9 @@ void vnode_t::reset(uint64_t nodeid)
    hits = files = pages = 0; 
    xfer = 0;
    set_lasturl(NULL);
-
-   dirty = true;
 }
 
-void vnode_t::set_lasturl(unode_t *unode)
+void vnode_t::set_lasturl(storable_t<unode_t> *unode)
 {
    if(lasturl == unode)
       return;

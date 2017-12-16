@@ -235,12 +235,12 @@ class webalizer_t {
       //
       // put_xnode methods
       //
-      hnode_t *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost, bool& newspammer);
-      hnode_t *put_hnode(const string_t& grpname, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
+      storable_t<hnode_t> *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost, bool& newspammer);
+      storable_t<hnode_t> *put_hnode(const string_t& grpname, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
 
       rnode_t *put_rnode(const string_t&, nodetype_t type, uint64_t, bool newvisit, bool& newnode);
 
-      unode_t *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
+      storable_t<unode_t> *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
 
       anode_t *put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode);
 
@@ -280,11 +280,11 @@ class webalizer_t {
       //
       //
       //
-      vnode_t *update_visit(hnode_t *hptr, const tstamp_t& tstamp);
+      storable_t<vnode_t> *update_visit(storable_t<hnode_t> *hptr, const tstamp_t& tstamp);
 
       void update_visits(const tstamp_t& tstamp);
 
-      danode_t *update_download(dlnode_t *dlnode, const tstamp_t& tstamp);
+      storable_t<danode_t> *update_download(storable_t<dlnode_t> *dlnode, const tstamp_t& tstamp);
 
       void update_downloads(const tstamp_t& tstamp);
 

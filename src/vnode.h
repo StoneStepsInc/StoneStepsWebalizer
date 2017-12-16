@@ -15,6 +15,7 @@
 #include "linklist.h"
 #include "tstamp.h"
 #include "types.h"
+#include "storable.h"
 
 struct unode_t;
 
@@ -49,7 +50,7 @@ struct unode_t;
 /// their IP address alone.
 ///
 struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
-      vnode_t *next;
+      storable_t<vnode_t> *next;
 
       bool     entry_url: 1;        // entry URL set?
       bool     robot    : 1;        // robot?
@@ -64,7 +65,7 @@ struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
 
       uint64_t hostref;             // host references
 
-      unode_t  *lasturl;            // last requested URL
+      storable_t<unode_t> *lasturl; // last requested URL
 
       uint64_t  xfer;                // visit transfer amount
 
@@ -79,7 +80,7 @@ struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
 
          void reset(uint64_t nodeid = 0);
 
-         void set_lasturl(unode_t *unode);
+         void set_lasturl(storable_t<unode_t> *unode);
 
          //
          // serialization

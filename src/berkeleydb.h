@@ -16,6 +16,7 @@
 #include "serialize.h"
 #include "char_buffer.h"
 #include "char_buffer_stack.h"
+#include "storable.h"
 
 #include "event.h"
 #include "thread.h"
@@ -357,18 +358,18 @@ class berkeleydb_t {
 
             /// inserts a new node or updates the existing node in the primary database
             template <typename node_t>
-            bool put_node(const node_t& unode);
+            bool put_node(const node_t& unode, storage_info_t& storage_info);
 
             /// retrieves a node by its unique ID
             template <typename node_t>
-            bool get_node_by_id(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+            bool get_node_by_id(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
             /// deletes a node by its key
             bool delete_node(const keynode_t<uint64_t>& node);
 
             /// retrieves a node by its value
             template <typename node_t>
-            bool get_node_by_value(node_t& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
+            bool get_node_by_value(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb = NULL, void *arg = NULL) const;
 
             /// returns a forward table iterator
             template <typename node_t>

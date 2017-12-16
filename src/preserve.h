@@ -20,6 +20,7 @@
 #include "history.h"
 #include "database.h"
 #include "hashtab_nodes.h"
+#include "storable.h"
 
 #include <vector>
 
@@ -40,11 +41,11 @@ class state_t {
    friend class webalizer_t;
 
    public:
-      totals_t totals;
+      storable_t<totals_t> totals;
 
-      daily_t t_daily[31];                       // daily totals
+      storable_t<daily_t> t_daily[31];          // daily totals
 
-      hourly_t t_hourly[24];                     // hourly totals
+      storable_t<hourly_t> t_hourly[24];        // hourly totals
 
       sc_table_t response;                      // HTTP status codes
 
@@ -72,13 +73,13 @@ class state_t {
 
       char              *buffer;
 
-      sysnode_t         sysnode;
+      storable_t<sysnode_t> sysnode;
 
    private:
       template <typename type_t>
       void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
 
-      unode_t *find_url(const string_t& url);
+      storable_t<unode_t> *find_url(const string_t& url);
 
       void del_htabs(void);
 
@@ -91,10 +92,10 @@ class state_t {
       static void unpack_hnode_cb(hnode_t& hnode, bool active, void *_this);
 
       static bool eval_hnode_cb(const hnode_t *hnode, void *arg);
-      static bool swap_hnode_cb(hnode_t *hnode, void *arg);
+      static bool swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
 
       static bool eval_unode_cb(const unode_t *unode, void *arg);
-      static bool swap_unode_cb(unode_t *unode, void *arg);
+      static bool swap_unode_cb(storable_t<unode_t> *unode, void *arg);
 
    public:
       state_t(const config_t& config);

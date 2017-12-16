@@ -17,8 +17,6 @@ danode_t::danode_t(uint64_t _nodeid) : keynode_t<uint64_t>(_nodeid)
    hits = 0; 
    xfer = 0; 
    proctime = 0;
-
-   dirty = true;
 }
 
 danode_t::danode_t(const danode_t& danode) : keynode_t<uint64_t>(danode)
@@ -27,20 +25,17 @@ danode_t::danode_t(const danode_t& danode) : keynode_t<uint64_t>(danode)
    tstamp = danode.tstamp; 
    xfer = danode.xfer; 
    proctime = danode.proctime;
-
-   dirty = true;
 }
 
 void danode_t::reset(uint64_t _nodeid)
 {
    keynode_t<uint64_t>::reset(_nodeid);
+   datanode_t<danode_t>::reset();
 
    hits = 0; 
    tstamp.reset(); 
    xfer = 0; 
    proctime = 0;
-
-   dirty = true;
 }
 
 //

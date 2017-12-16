@@ -13,6 +13,7 @@
 #include "hashtab.h"
 #include "basenode.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct snode_t
@@ -59,7 +60,7 @@ struct snode_t : public base_node<snode_t> {
 //
 // Search Strings
 //
-class s_hash_table : public hash_table<snode_t> {
+class s_hash_table : public hash_table<storable_t<snode_t>> {
 };
 
 #endif // SNODE_H

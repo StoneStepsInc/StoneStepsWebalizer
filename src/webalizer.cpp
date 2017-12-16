@@ -1202,7 +1202,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
    hnode_t *hptr;
-   unode_t *uptr;
+   storable_t<unode_t> *uptr;
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl, newspammer;
    bool newrgrp, newugrp, newagrp, newigrp;
    bool pageurl, fileurl, httperr, robot = false, target, spammer = false, goodurl, entryurl, exiturl;
@@ -2243,7 +2243,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 ///
 /// @brief  Adds or updates a host node in the state database.
 ///
-hnode_t *webalizer_t::put_hnode(
+storable_t<hnode_t> *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
                const tstamp_t& tstamp,          // timestamp 
                uint64_t xfer,                   // xfer size 
@@ -2260,8 +2260,8 @@ hnode_t *webalizer_t::put_hnode(
 {
    bool found = true;
    uint64_t hashval;
-   hnode_t *cptr;
-   vnode_t *visit;
+   storable_t<hnode_t> *cptr;
+   storable_t<vnode_t> *visit;
 
    newnode = newvisit = newthost = newspammer = false;
 
@@ -2270,7 +2270,7 @@ hnode_t *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
       /* not hashed */
-      cptr = new hnode_t(ipaddr);
+      cptr = new storable_t<hnode_t>(ipaddr);
       if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
@@ -2278,7 +2278,7 @@ hnode_t *webalizer_t::put_hnode(
          cptr->spammer = spammer;
          cptr->robot = robot;
 
-         cptr->set_visit(new vnode_t(cptr->nodeid));
+         cptr->set_visit(new storable_t<vnode_t>(cptr->nodeid));
          cptr->visit->hits = 1;
          cptr->visit->files = fileurl ? 1 : 0;
          cptr->visit->pages = pageurl ? 1 : 0;
@@ -2314,13 +2314,12 @@ hnode_t *webalizer_t::put_hnode(
             cptr->visits++;
          }
          else {
-            if(!cptr->visit->dirty)
-               cptr->visit->dirty = true;
+            cptr->visit->storage_info.set_modified();
          }
       }
       else {
          // no active visit - create one
-         cptr->set_visit(new vnode_t(cptr->nodeid));
+         cptr->set_visit(new storable_t<vnode_t>(cptr->nodeid));
          cptr->visit->start = tstamp;
          cptr->visit->robot = robot;
          cptr->visits++;
@@ -2353,8 +2352,7 @@ hnode_t *webalizer_t::put_hnode(
    if(target && !robot && !spammer && !cptr->visit->converted)
       cptr->visit->converted = true;
 
-   if(!cptr->dirty)
-      cptr->dirty = true;
+   cptr->storage_info.set_modified();
 
    return cptr;
 }               
@@ -2362,7 +2360,7 @@ hnode_t *webalizer_t::put_hnode(
 ///
 /// @brief  Adds or updates a host group node in the state database.
 ///
-hnode_t *webalizer_t::put_hnode(
+storable_t<hnode_t> *webalizer_t::put_hnode(
                const string_t& grpname,         // Hostname  
                uint64_t    hits,                  // hit count 
                uint64_t    files,                 // file count
@@ -2373,7 +2371,7 @@ hnode_t *webalizer_t::put_hnode(
 {
    bool found = true;
    uint64_t hashval;
-   hnode_t *cptr;
+   storable_t<hnode_t> *cptr;
 
    newnode = false;
 
@@ -2382,7 +2380,7 @@ hnode_t *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
       /* not hashed */
-      cptr = new hnode_t(grpname);
+      cptr = new storable_t<hnode_t>(grpname);
       if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
@@ -2417,8 +2415,7 @@ hnode_t *webalizer_t::put_hnode(
       cptr->visit_max = std::max(cptr->visit_max, visitlen);
    }
 
-   if(!cptr->dirty)
-      cptr->dirty = true;
+   cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2430,7 +2427,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
 {
    bool found = true;
    uint64_t hashval;
-   rnode_t *nptr;
+   storable_t<rnode_t> *nptr;
 
    newnode = false;
 
@@ -2439,7 +2436,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
    /* check if hashed */
    if((nptr = state.rm_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      nptr = new rnode_t(str);
+      nptr = new storable_t<rnode_t>(str);
       if(!state.rm_htab.is_swapped_out() || !state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
          nptr->nodeid = state.database.get_rnode_id();
          nptr->flag  = type;
@@ -2455,8 +2452,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
       state.rm_htab.put_node(hashval, nptr);
    }
 
-   if(!nptr->dirty)
-      nptr->dirty = true;
+   nptr->storage_info.set_modified();
 
    if(found) {
       /* found... bump counter */
@@ -2474,11 +2470,11 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
 ///
 /// @brief  Adds or updates a URL node in the state database.
 ///
-unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
+storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
-   unode_t *cptr;
+   storable_t<unode_t> *cptr;
    unode_t::param_block param;
 
    newnode = false;
@@ -2492,7 +2488,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
    /* check if hashed */
    if((cptr = state.um_htab.find_node(hashval, &param)) == NULL) {
       /* not hashed */
-      cptr = new unode_t(str, srchargs);
+      cptr = new storable_t<unode_t>(str, srchargs);
       // check if in the database
       if(!state.um_htab.is_swapped_out() || !state.database.get_unode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_unode_id();
@@ -2535,8 +2531,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
       cptr->maxtime = std::max(cptr->maxtime, proctime);
    }
 
-   if(!cptr->dirty)
-      cptr->dirty = true;
+   cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2547,7 +2542,7 @@ unode_t *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, n
 rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode)
 {
    bool found = true;
-   rcnode_t *nptr;
+   storable_t<rcnode_t> *nptr;
    uint64_t hashval;
    rcnode_t::param_block param;
 
@@ -2567,7 +2562,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    /* check if hashed */
    if((nptr = state.rc_htab.find_node(hashval, &param)) == NULL) {
       /* not hashed */
-      nptr = new rcnode_t(method, url, respcode);
+      nptr = new storable_t<rcnode_t>(method, url, respcode);
 
       if(!state.rc_htab.is_swapped_out() || !state.database.get_rcnode_by_value(*nptr, NULL, NULL)) {
          nptr->nodeid = state.database.get_rcnode_id();
@@ -2584,8 +2579,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
       nptr->count += count;
    }
 
-   if(!nptr->dirty)
-      nptr->dirty = true;
+   nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2597,7 +2591,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
 {
    bool found = true;
    uint64_t hashval;
-   anode_t *cptr;
+   storable_t<anode_t> *cptr;
 
    newnode = false;
       
@@ -2606,7 +2600,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
    /* check if hashed */
    if((cptr = state.am_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      cptr = new anode_t(str, robot);
+      cptr = new storable_t<anode_t>(str, robot);
       if(!state.am_htab.is_swapped_out() || !state.database.get_anode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_anode_id();
          cptr->flag = type;
@@ -2632,8 +2626,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
          cptr->visits++;
    }
 
-   if(!cptr->dirty)
-      cptr->dirty = true;
+   cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2645,7 +2638,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
 {
    bool found = true;
    uint64_t hashval;
-   snode_t *nptr;
+   storable_t<snode_t> *nptr;
 
    newnode = false;
 
@@ -2657,7 +2650,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    /* check if hashed */
    if((nptr = state.sr_htab.find_node(hashval, str)) == NULL) {
       /* not hashed */
-      nptr = new snode_t(str);
+      nptr = new storable_t<snode_t>(str);
       if(!state.sr_htab.is_swapped_out() || !state.database.get_snode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_snode_id();
          nptr->count = 1;
@@ -2682,8 +2675,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
 
    state.totals.t_srchits++;
 
-   if(!nptr->dirty)
-      nptr->dirty = true;
+   nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2701,7 +2693,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 {
    bool found = true;
    uint64_t hashval;
-   inode_t *nptr;
+   storable_t<inode_t> *nptr;
 
    newnode = false;
    
@@ -2712,7 +2704,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    /* check if hashed */
    if((nptr = state.im_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
-      nptr = new inode_t(str);
+      nptr = new storable_t<inode_t>(str);
       if(!state.im_htab.is_swapped_out() || !state.database.get_inode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_inode_id();
          nptr->flag  = type;
@@ -2732,8 +2724,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
       state.im_htab.put_node(hashval, nptr);
    }
 
-   if(!nptr->dirty)
-      nptr->dirty = true;
+   nptr->storage_info.set_modified();
    
    if(found) {
       /* hashed */
@@ -2759,8 +2750,8 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
 {
    bool found = true;
    uint64_t hashval;
-   danode_t *download;
-   dlnode_t *nptr;
+   storable_t<danode_t> *download;
+   storable_t<dlnode_t> *nptr;
    dlnode_t::param_block params;
 
    newnode = false;
@@ -2789,10 +2780,10 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
    if((nptr = state.dl_htab.find_node(hashval, &params)) == NULL) {
-      nptr = new dlnode_t(name, &hnode);
+      nptr = new storable_t<dlnode_t>(name, &hnode);
       if(!state.dl_htab.is_swapped_out() || !state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cb, &state)) {
          nptr->nodeid = state.database.get_dlnode_id();
-         nptr->download = new danode_t(nptr->nodeid);
+         nptr->download = new storable_t<danode_t>(nptr->nodeid);
 
          nptr->download->hits = 1;
          nptr->download->tstamp = tstamp;
@@ -2813,12 +2804,11 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
             nptr->download = download;
          }
          else {
-            if(!nptr->download->dirty)
-               nptr->download->dirty = true;
+            nptr->download->storage_info.set_modified();
          }
       }
       else
-         nptr->download = new danode_t(nptr->nodeid);
+         nptr->download = new storable_t<danode_t>(nptr->nodeid);
 
       nptr->download->hits++;
       nptr->download->tstamp = tstamp;
@@ -2826,8 +2816,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
       nptr->download->proctime += proctime;
    }
 
-   if(!nptr->dirty)
-      nptr->dirty = true;
+   nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2837,7 +2826,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
 ///
 spnode_t *webalizer_t::put_spnode(const string_t& host) 
 {
-   spnode_t *spnode;
+   storable_t<spnode_t> *spnode;
    uint64_t hashval;
 
    hashval = spnode_t::hash(host);
@@ -2846,7 +2835,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
    if((spnode = state.sp_htab.find_node(hashval, host)) != NULL)
       return spnode;
 
-   spnode = new spnode_t(host);
+   spnode = new storable_t<spnode_t>(host);
    state.sp_htab.put_node(hashval, spnode);
 
    return spnode;
@@ -2861,9 +2850,9 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
 ///
 /// The caller is expected to dispose of the returned visit node.
 ///
-vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
+storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const tstamp_t& tstamp)
 {
-   vnode_t *visit;
+   storable_t<vnode_t> *visit;
    uint64_t vlen;
 
    if(!hptr || hptr->flag == OBJ_GRP || !hptr->visits)
@@ -2886,7 +2875,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
    hptr->set_visit(NULL);
 
    // indicate that the host node has been updated
-   hptr->dirty = true;
+   hptr->storage_info.set_modified();
 
    // update host counters
    hptr->count += visit->hits;
@@ -2978,15 +2967,15 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
          state.totals.t_exit++;                     // total exit URLs
 
          visit->lasturl->exit++;
-         visit->lasturl->dirty = true;
+         visit->lasturl->storage_info.set_modified();
       }
       visit->set_lasturl(NULL);
    }
 
    // if the visit node was read from the database, queue it for deletion
-   if(visit->storage) {
+   if(visit->storage_info.storage) {
       state.v_ended.push_back(visit->nodeid);
-      visit->storage = false;
+      visit->storage_info.set_deleted();
    }
 
    // if DNS resolution is disabled or if the host name has been resolved, update host groups now
@@ -2994,7 +2983,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
       group_host_by_name(*hptr, *visit);
    else {
       // otherwise, queue a copy of the visit for grouping when the host name is available
-      hptr->add_grp_visit(new vnode_t(*visit));
+      hptr->add_grp_visit(new storable_t<vnode_t>(*visit));
    }
 
    return visit;
@@ -3009,7 +2998,7 @@ vnode_t *webalizer_t::update_visit(hnode_t *hptr, const tstamp_t& tstamp)
 void webalizer_t::update_visits(const tstamp_t& tstamp)
 {
    vnode_t *visit;
-   hash_table<hnode_t>::iterator h_iter = state.hm_htab.begin();
+   hash_table<storable_t<hnode_t>>::iterator h_iter = state.hm_htab.begin();
    
    while(h_iter.next()) {
       if((visit = update_visit(h_iter.item(), tstamp)) != NULL)
@@ -3022,9 +3011,9 @@ void webalizer_t::update_visits(const tstamp_t& tstamp)
 ///         it from the download node and factors download data into download and total 
 ///         counters.
 ///
-danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
+storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode, const tstamp_t& tstamp)
 {
-   danode_t *download;
+   storable_t<danode_t> *download;
    double value;
 
    if(!dlnode || dlnode->flag == OBJ_GRP || tstamp.null)
@@ -3038,7 +3027,7 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
       return NULL;
 
    dlnode->download = NULL;
-   dlnode->dirty = true;
+   dlnode->storage_info.set_modified();
 
    dlnode->count++;
    dlnode->sumhits += download->hits;
@@ -3053,9 +3042,9 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
    state.totals.t_dlcount++;
 
    // if the download node was read from the database, queue it for deletion
-   if(download->storage) {
+   if(download->storage_info.storage) {
       state.dl_ended.push_back(download->nodeid);
-      download->storage = false;
+      download->storage_info.set_deleted();
    }
 
    return download;
@@ -3069,8 +3058,8 @@ danode_t *webalizer_t::update_download(dlnode_t *dlnode, const tstamp_t& tstamp)
 ///
 void webalizer_t::update_downloads(const tstamp_t& tstamp)
 {
-   danode_t *download;
-   dlnode_t *nptr;
+   storable_t<danode_t> *download;
+   storable_t<dlnode_t> *nptr;
    dl_hash_table::iterator iter = state.dl_htab.begin();
 
    while((nptr = iter.next()) != NULL) {

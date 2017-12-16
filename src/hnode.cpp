@@ -112,7 +112,7 @@ hnode_t::~hnode_t(void)
    }
 }
 
-void hnode_t::set_visit(vnode_t *vnode)
+void hnode_t::set_visit(storable_t<vnode_t> *vnode)
 {
    if(visit == vnode)
       return;
@@ -124,7 +124,7 @@ void hnode_t::set_visit(vnode_t *vnode)
       visit->hostref++;
 }
 
-void hnode_t::add_grp_visit(vnode_t *vnode)
+void hnode_t::add_grp_visit(storable_t<vnode_t> *vnode)
 {
    if(vnode) {
       vnode->next = grp_visit;

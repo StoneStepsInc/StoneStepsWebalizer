@@ -13,6 +13,7 @@
 #include "hashtab.h"
 #include "types.h"
 #include "basenode.h"
+#include "storable.h"
 
 ///
 /// @struct rnode_t
@@ -49,7 +50,7 @@ struct rnode_t : public base_node<rnode_t> {
 //
 // Referrers
 //
-class r_hash_table : public hash_table<rnode_t> {
+class r_hash_table : public hash_table<storable_t<rnode_t>> {
 };
 
 #endif // RNODE_H

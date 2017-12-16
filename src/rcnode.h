@@ -12,6 +12,7 @@
 
 #include "basenode.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct rcnode_t
@@ -75,12 +76,12 @@ struct rcnode_t : public base_node<rcnode_t> {
 //
 // HTTP status codes
 //
-class rc_hash_table : public hash_table<rcnode_t> {
+class rc_hash_table : public hash_table<storable_t<rcnode_t>> {
    private:
       virtual bool compare(const rcnode_t *nptr, const rcnode_t::param_block *pb) const override;
 
    public:
-      rc_hash_table(void) : hash_table<rcnode_t>(SMAXHASH) {}
+      rc_hash_table(void) : hash_table<storable_t<rcnode_t>>(SMAXHASH) {}
 };
 
 #endif // RCNODE_H

@@ -76,28 +76,28 @@ template class datanode_t<sysnode_t>;
 //
 // hash table nodes
 //
-template struct htab_node_t<hnode_t>;
-template struct htab_node_t<unode_t>;
-template struct htab_node_t<rnode_t>;
-template struct htab_node_t<anode_t>;
-template struct htab_node_t<snode_t>;
-template struct htab_node_t<inode_t>;
-template struct htab_node_t<rcnode_t>;
-template struct htab_node_t<dlnode_t>;
-template struct htab_node_t<spnode_t>;
-template struct htab_node_t<ccnode_t>;
+template struct htab_node_t<storable_t<hnode_t>>;
+template struct htab_node_t<storable_t<unode_t>>;
+template struct htab_node_t<storable_t<rnode_t>>;
+template struct htab_node_t<storable_t<anode_t>>;
+template struct htab_node_t<storable_t<snode_t>>;
+template struct htab_node_t<storable_t<inode_t>>;
+template struct htab_node_t<storable_t<rcnode_t>>;
+template struct htab_node_t<storable_t<dlnode_t>>;
+template struct htab_node_t<storable_t<spnode_t>>;
+template struct htab_node_t<storable_t<ccnode_t>>;
 
 //
 // hash tables
 //
-template class hash_table<hnode_t>;
-template class hash_table<unode_t>;
-template class hash_table<rnode_t>;
-template class hash_table<anode_t>;
-template class hash_table<snode_t>;
-template class hash_table<inode_t>;
-template class hash_table<rcnode_t>;
-template class hash_table<dlnode_t>;
-template class hash_table<spnode_t>;
-template class hash_table<ccnode_t>;
+template class hash_table<storable_t<hnode_t>>;
+template class hash_table<storable_t<unode_t>>;
+template class hash_table<storable_t<rnode_t>>;
+template class hash_table<storable_t<anode_t>>;
+template class hash_table<storable_t<snode_t>>;
+template class hash_table<storable_t<inode_t>>;
+template class hash_table<storable_t<rcnode_t>>;
+template class hash_table<storable_t<dlnode_t>>;
+template class hash_table<storable_t<spnode_t>>;
+template class hash_table<storable_t<ccnode_t>>;
 

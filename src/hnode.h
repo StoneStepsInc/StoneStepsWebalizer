@@ -17,6 +17,7 @@
 #include "vnode.h"
 #include "tstamp.h"
 #include "types.h"
+#include "storable.h"
 
 ///
 /// @struct hnode_t
@@ -72,8 +73,8 @@ struct hnode_t : public base_node<hnode_t> {
       
       tstamp_t tstamp;               ///< Last request timestamp
 
-      vnode_t  *visit;               ///< Current visit (NULL if none)
-      vnode_t  *grp_visit;           ///< Visits queued for name grouping
+      storable_t<vnode_t> *visit;      ///< Current visit (NULL if none)
+      storable_t<vnode_t> *grp_visit;  ///< Visits queued for name grouping
 
       string_t name;                 ///< Host name
 
@@ -102,7 +103,7 @@ struct hnode_t : public base_node<hnode_t> {
 
          ~hnode_t(void);
 
-         void set_visit(vnode_t *vnode);
+         void set_visit(storable_t<vnode_t> *vnode);
 
          void reset(uint64_t nodeid = 0);
 
@@ -110,7 +111,7 @@ struct hnode_t : public base_node<hnode_t> {
 
          void set_entry_url(void) {if(visit) visit->entry_url = true;}
          
-         void set_last_url(unode_t *unode) {if(visit) visit->set_lasturl(unode);}
+         void set_last_url(storable_t<unode_t> *unode) {if(visit) visit->set_lasturl(unode);}
 
          void set_ccode(const char ccode[2]);
 
@@ -120,7 +121,7 @@ struct hnode_t : public base_node<hnode_t> {
 
          const string_t& hostname(void) const {return name.isempty() ? string : name;}
 
-         void add_grp_visit(vnode_t *vnode);
+         void add_grp_visit(storable_t<vnode_t> *vnode);
 
          vnode_t *get_grp_visit(void);
          
@@ -144,9 +145,9 @@ struct hnode_t : public base_node<hnode_t> {
 //
 // Hosts (monthly)
 //
-class h_hash_table : public hash_table<hnode_t> {
+class h_hash_table : public hash_table<storable_t<hnode_t>> {
    public:
-      h_hash_table(void) : hash_table<hnode_t>(LMAXHASH) {}
+      h_hash_table(void) : hash_table<storable_t<hnode_t>>(LMAXHASH) {}
 };
 
 #endif // HNODE_H
