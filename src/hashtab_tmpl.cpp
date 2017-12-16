@@ -22,8 +22,8 @@
 //
 //
 
-template <typename node_t, typename key_t>
-hash_table<node_t, key_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), evalcb(evalcb), swapcb(swapcb), cbarg(cbarg)
+template <typename node_t>
+hash_table<node_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), evalcb(evalcb), swapcb(swapcb), cbarg(cbarg)
 {
    count = 0;
    emptycnt = maxhash;
@@ -32,23 +32,23 @@ hash_table<node_t, key_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_
    htab = new bucket_t[maxhash];
 }
 
-template <typename node_t, typename key_t>
-hash_table<node_t, key_t>::~hash_table(void)
+template <typename node_t>
+hash_table<node_t>::~hash_table(void)
 {
    clear();
    delete [] htab;
 }
 
-template <typename node_t, typename key_t>
-void hash_table<node_t, key_t>::set_swap_out_cb(eval_cb_t eval, swap_cb_t swap, void *arg)
+template <typename node_t>
+void hash_table<node_t>::set_swap_out_cb(eval_cb_t eval, swap_cb_t swap, void *arg)
 {
    evalcb = eval;
    swapcb = swap;
    cbarg = arg;
 }
 
-template <typename node_t, typename key_t>
-typename hash_table<node_t, key_t>::swap_code hash_table<node_t, key_t>::swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr)
+template <typename node_t>
+typename hash_table<node_t>::swap_code hash_table<node_t>::swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr)
 {
    htab_node_t<node_t> *nptr; 
 
@@ -87,8 +87,8 @@ typename hash_table<node_t, key_t>::swap_code hash_table<node_t, key_t>::swap_ou
    return swap_ok;
 }
 
-template <typename node_t, typename key_t>
-bool hash_table<node_t, key_t>::swap_out_bucket(bucket_t& bucket)
+template <typename node_t>
+bool hash_table<node_t>::swap_out_bucket(bucket_t& bucket)
 {
    u_int index;
    swap_code scode;
@@ -107,8 +107,8 @@ bool hash_table<node_t, key_t>::swap_out_bucket(bucket_t& bucket)
    return true;
 }
 
-template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::put_node(node_t *nptr)
+template <typename node_t>
+node_t *hash_table<node_t>::put_node(node_t *nptr)
 {
    if(!nptr)
       return NULL;
@@ -116,8 +116,8 @@ node_t *hash_table<node_t, key_t>::put_node(node_t *nptr)
    return put_node(nptr->get_hash(), nptr);
 }
 
-template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::put_node(uint64_t hashval, node_t *node)
+template <typename node_t>
+node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node)
 {
    uint64_t hashidx;
    htab_node_t<node_t> **hptr, *nptr;
@@ -144,8 +144,8 @@ node_t *hash_table<node_t, key_t>::put_node(uint64_t hashval, node_t *node)
    return nptr->node;
 }
 
-template <typename node_t, typename key_t>
-const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key) const
+template <typename node_t>
+const node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key) const
 {
    htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
 
@@ -163,8 +163,8 @@ const node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t
    return NULL;
 }
 
-template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key)
+template <typename node_t>
+node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key)
 {
    htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
 
@@ -184,8 +184,8 @@ node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key)
    return NULL;
 }
 
-template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key, nodetype_t type)
+template <typename node_t>
+node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key, nodetype_t type)
 {
    htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
 
@@ -207,8 +207,8 @@ node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const key_t& key,
    return NULL;
 }
 
-template <typename node_t, typename key_t>
-node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const typename node_t::param_block *params)
+template <typename node_t>
+node_t *hash_table<node_t>::find_node(uint64_t hashval, const typename node_t::param_block *params)
 {
    htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
 
@@ -228,8 +228,8 @@ node_t *hash_table<node_t, key_t>::find_node(uint64_t hashval, const typename no
    return NULL;
 }
 
-template <typename node_t, typename key_t>
-void hash_table<node_t, key_t>::clear(void)
+template <typename node_t>
+void hash_table<node_t>::clear(void)
 {
    /* free memory used by hash table */
    htab_node_t<node_t> *nptr, *tptr;
@@ -254,8 +254,8 @@ void hash_table<node_t, key_t>::clear(void)
    emptycnt = maxhash;
 }
 
-template <typename node_t, typename key_t>
-uint64_t hash_table<node_t, key_t>::load_array(const typename inner_node<node_t>::type *array[]) const
+template <typename node_t>
+uint64_t hash_table<node_t>::load_array(const typename inner_node<node_t>::type *array[]) const
 {
    htab_node_t<node_t> *nptr;
    u_int hashidx, arridx;
@@ -273,8 +273,8 @@ uint64_t hash_table<node_t, key_t>::load_array(const typename inner_node<node_t>
    return arridx;
 }
 
-template <typename node_t, typename key_t>
-bool hash_table<node_t, key_t>::swap_out(void)
+template <typename node_t>
+bool hash_table<node_t>::swap_out(void)
 {
    if(swapcb == NULL)
       return true;

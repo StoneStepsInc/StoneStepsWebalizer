@@ -119,11 +119,10 @@ struct htab_node_t {
 /// @class  hash_table
 ///
 /// @tparam node_t   Hash table node type
-/// @tparam key_t    Node key type
 ///
 /// @brief  A generic hash table class
 ///
-template <typename node_t, typename key_t = string_t>
+template <typename node_t>
 class hash_table {
    private:
       enum swap_code {swap_ok, swap_failed, swap_inuse};
@@ -185,7 +184,7 @@ class hash_table {
       /// @brief  Hash table iterator
       ///
       class iterator {
-         friend class hash_table<node_t, key_t>;
+         friend class hash_table<node_t>;
 
          private:
             bucket_t    *htab;                  ///< Bucket of nodes with the same key hash
@@ -226,7 +225,7 @@ class hash_table {
       /// @brief  Hash table iterator over const nodes
       ///
       class const_iterator : public iterator {
-         friend class hash_table<node_t, key_t>;
+         friend class hash_table<node_t>;
 
          private:
             const_iterator(bucket_t _htab[], uint64_t _maxhash) : iterator(_htab, _maxhash) {}
@@ -314,21 +313,21 @@ class hash_table {
       //
       void clear(void);
 
-      bool find_key(const key_t& key) const {return find_node(key) != NULL;}
+      bool find_key(const string_t& key) const {return find_node(key) != NULL;}
 
-      const node_t *find_node(const key_t& key) const {return find_node(hash_ex(0, key), key);}
+      const node_t *find_node(const string_t& key) const {return find_node(hash_ex(0, key), key);}
 
-      node_t *find_node(const key_t& key) {return find_node(hash_ex(0, key), key);}
+      node_t *find_node(const string_t& key) {return find_node(hash_ex(0, key), key);}
 
-      const node_t *find_node(uint64_t hashval, const key_t& key) const;
+      const node_t *find_node(uint64_t hashval, const string_t& key) const;
 
-      node_t *find_node(uint64_t hashval, const key_t& key);
+      node_t *find_node(uint64_t hashval, const string_t& key);
 
-      node_t *find_node(uint64_t hashval, const key_t& str, nodetype_t type);
+      node_t *find_node(uint64_t hashval, const string_t& str, nodetype_t type);
 
       node_t *find_node(uint64_t hashval, const typename node_t::param_block *params);
 
-      node_t *put_node(const key_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
+      node_t *put_node(const string_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
 
       node_t *put_node(node_t *nptr);
 
