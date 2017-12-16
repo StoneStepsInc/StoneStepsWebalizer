@@ -64,20 +64,25 @@ inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, 
 /// objects within a hash table (`htab_node_t`).
 ///
 struct htab_obj_t {
-      //
-      // param_block provides a way to search the hash table using compound keys. 
-      // The base class has no data members and is defined to allow hash table 
-      // instantiation for classes that do not make use of compound keys.
-      //
+      ///
+      /// @struct param_block
+      ///
+      /// @brief  `param_block` provides a way to search the hash table using compound 
+      ///         keys. The base class has no data members and is defined to allow hash 
+      ///         table instantiation for classes that do not make use of compound keys.
+      ///
       struct param_block {};
 
       public:
          virtual ~htab_obj_t(void) {}
 
+         /// Returns a key for this node
          virtual const string_t& key(void) const = 0;
 
+         /// Returns a type of this node
          virtual nodetype_t get_type(void) const = 0;
 
+         /// Returns a hash value for this node
          virtual uint64_t get_hash(void) const = 0;
 };
 
@@ -123,9 +128,14 @@ class hash_table {
    private:
       enum swap_code {swap_ok, swap_failed, swap_inuse};
 
+      ///
+      /// @struct bucket_t
+      ///
+      /// @brief  A collection of hash table nodes whose keys yield the same hash value
+      ///
       struct bucket_t {
-         htab_node_t<node_t>   *head;
-         u_int                      count;
+         htab_node_t<node_t>  *head;      ///< Head of the node list in this bucket
+         u_int                count;      ///< Number of nodes in this bucket
 
          public:
             bucket_t(void) {head = NULL; count = 0;}
@@ -154,29 +164,34 @@ class hash_table {
          typedef T type;
       };
 
-      //
-      // Evaluation callback is called first. Returns true if the node
-      // can be swapped out, false otherwise. In the latter case the
-      // swap-out callback will not be called.
-      //
+      ///
+      /// @brief  Evaluation callback is called first. Returns true if the node
+      ///         can be swapped out, false otherwise. In the latter case the
+      ///         swap-out callback will not be called.
+      ///
       typedef bool (*eval_cb_t)(const typename inner_node<node_t>::type *node, void *arg);
 
-      //
-      // If evaluation was successful, the swap-out callback is called.
-      // If swap-out callback returns false, the swap_out method exits 
-      // the loop and returns false.
-      //
+      ///
+      /// @brief  If evaluation was successful, the swap-out callback is called.
+      ///         If swap-out callback returns false, the swap_out method exits 
+      ///         the loop and returns false.
+      ///
       typedef bool (*swap_cb_t)(node_t *node, void *arg);
 
    public:
+      ///
+      /// @class  iterator
+      ///
+      /// @brief  Hash table iterator
+      ///
       class iterator {
          friend class hash_table<node_t, key_t>;
 
          private:
-            bucket_t *htab;
-            uint64_t   index;
-            uint64_t   maxhash;
-            htab_node_t<node_t> *nptr;
+            bucket_t    *htab;                  ///< Bucket of nodes with the same key hash
+            uint64_t    index;                  ///< Current bucket index
+            uint64_t    maxhash;                ///< Maximum number of buckets in the hash table
+            htab_node_t<node_t> *nptr;          ///< Current node pointer
 
          protected:
             iterator(bucket_t _htab[], uint64_t _maxhash) {htab = _htab; index = 0; maxhash = _maxhash; nptr = NULL;}
@@ -205,6 +220,11 @@ class hash_table {
             }
       };
 
+      ///
+      /// @class  const_iterator
+      ///
+      /// @brief  Hash table iterator over const nodes
+      ///
       class const_iterator : public iterator {
          friend class hash_table<node_t, key_t>;
 
@@ -220,17 +240,17 @@ class hash_table {
       };
 
    private:
-      size_t      count;      // number of hash table entries
-      size_t      maxhash;    // number of buckets in the hash table
-      size_t      emptycnt;   // number of empty buckets
-      bucket_t    *htab;      // buckets
+      size_t      count;      ///< Number of hash table entries
+      size_t      maxhash;    ///< Number of buckets in the hash table
+      size_t      emptycnt;   ///< Number of empty buckets
+      bucket_t    *htab;      ///< Buckets
 
-      bool        swap;       // true, if some data is swapped out
-      bool        cleared;    // true when the table has been cleared
+      bool        swap;       ///< `true`, if some data is swapped out
+      bool        cleared;    ///< `true` when the table has been cleared
 
-      eval_cb_t   evalcb;     // swap out evaluation callback
-      swap_cb_t   swapcb;     // swap out callback
-      void        *cbarg;     // swap out callback argument
+      eval_cb_t   evalcb;     ///< Swap out evaluation callback
+      swap_cb_t   swapcb;     ///< Swap out callback
+      void        *cbarg;     ///< Swap out callback argument
 
    private:
       htab_node_t<node_t> *move_node(htab_node_t<node_t> *nptr, htab_node_t<node_t> *prev, htab_node_t<node_t> **next) const
