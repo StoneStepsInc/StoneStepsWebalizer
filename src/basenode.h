@@ -37,7 +37,7 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
 
          void reset(uint64_t nodeid = 0);
 
-         const string_t& key(void) const override {return string;}
+         virtual bool match_key(const string_t& key) const override {return string == key;}
 
          nodetype_t get_type(void) const override {return flag;}
 

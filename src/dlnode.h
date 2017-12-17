@@ -57,6 +57,13 @@ struct dlnode_t : public base_node<dlnode_t> {
 
          void reset(uint64_t nodeid = 0);
 
+         bool match_key_ex(const dlnode_t::param_block *pb) const;
+
+         virtual bool match_key(const string_t& key) const override
+         {
+            throw std::logic_error("This node only supports searches with a compound key");
+         }
+
          static uint64_t hash(const string_t& ipaddr, const string_t& dlname) 
          {
             return hash_ex(hash_ex(0, ipaddr), dlname);
@@ -90,8 +97,6 @@ struct dlnode_t : public base_node<dlnode_t> {
 //
 class dl_hash_table : public hash_table<storable_t<dlnode_t>> {
    private:
-      virtual bool compare(const dlnode_t *nptr, const dlnode_t::param_block *pb) const override;
-
       virtual bool load_array_check(const storable_t<dlnode_t> *nptr) const override {return (nptr && !nptr->download) ? true : false;}
 
    public:

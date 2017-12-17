@@ -33,15 +33,18 @@ rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respco
    respcode = _respcode;
 }
 
-bool rc_hash_table::compare(const rcnode_t *nptr, const rcnode_t::param_block *pb) const
+bool rcnode_t::match_key_ex(const rcnode_t::param_block *pb) const
 {
-   if(nptr->respcode != pb->respcode)
+   // compare HTTP response codes first
+   if(respcode != pb->respcode)
       return false;
 
-   if(strcmp(nptr->method, pb->method))
+   // then HTTP method names
+   if(strcmp(method, pb->method))
       return false;
 
-   return (!strcmp(nptr->string, pb->url)) ? true : false;
+   // finally, compare URLs
+   return !strcmp(string, pb->url);
 }
 
 //

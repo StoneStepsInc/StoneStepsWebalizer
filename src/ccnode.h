@@ -47,7 +47,7 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
 
       ccnode_t(const char *cc, const char *desc);
 
-      const string_t& key(void) const override {return ccode;}
+      bool match_key(const string_t& key) const override {return ccode == key;}
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
 

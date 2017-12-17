@@ -97,6 +97,41 @@ u_char unode_t::update_url_type(u_char type)
    return urltype;
 }
 
+bool unode_t::match_key_ex(const unode_t::param_block *pb) const
+{
+   const char *eopath;
+
+   if(pb->type != flag && (pb->type == OBJ_GRP || flag == OBJ_GRP))
+      return false;
+
+   // compare URL lengths
+   if(pb->url->length() != pathlen)
+      return false;
+
+   eopath = &string[pathlen];
+
+   // check if either one has search arguments and the other one doesn't
+   if(!*eopath && pb->srchargs || *eopath && !pb->srchargs) 
+      return false;
+
+   // if lengths match, compare the URLs
+   if(strncmp(string, pb->url->c_str(), pathlen)) 
+      return false;
+
+   // check if both URLs have search arguments
+   if(*eopath && pb->srchargs) {
+      // compare search argument lengths
+      if(string.length() - pathlen - 1 != pb->srchargs->length())
+         return false;
+
+      // if lengths match, compare search arguments
+      if(strcmp(&eopath[1], pb->srchargs->c_str()))
+         return false;
+   }
+
+   return true;
+}
+
 //
 // serialization
 //
@@ -267,41 +302,3 @@ int64_t unode_t::s_compare_exit(const void *buf1, const void *buf2)
    return s_compare<uint64_t>(buf1, buf2);
 }
 
-//
-//
-//
-
-bool u_hash_table::compare(const unode_t *nptr, const unode_t::param_block *pb) const
-{
-   const char *eopath;
-
-   if(pb->type != nptr->flag && (pb->type == OBJ_GRP || nptr->flag == OBJ_GRP))
-      return false;
-
-   // compare URL lengths
-   if(pb->url->length() != nptr->pathlen)
-      return false;
-
-   eopath = &nptr->string[nptr->pathlen];
-
-   // check if either one has search arguments and the other one doesn't
-   if(!*eopath && pb->srchargs || *eopath && !pb->srchargs) 
-      return false;
-
-   // if lengths match, compare the URLs
-   if(strncmp(nptr->string, pb->url->c_str(), nptr->pathlen)) 
-      return false;
-
-   // check if both URLs have search arguments
-   if(*eopath && pb->srchargs) {
-      // compare search argument lengths
-      if(nptr->string.length() - nptr->pathlen - 1 != pb->srchargs->length())
-         return false;
-
-      // if lengths match, compare search arguments
-      if(strcmp(&eopath[1], pb->srchargs->c_str()))
-         return false;
-   }
-
-   return true;
-}

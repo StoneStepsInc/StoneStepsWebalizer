@@ -102,6 +102,19 @@ void dlnode_t::set_host(hnode_t *nptr)
       hnode->dlref++;
 }
 
+bool dlnode_t::match_key_ex(const dlnode_t::param_block *pb) const
+{
+   if(!hnode)
+      return false;
+
+   // compare IP addresses first
+   if(strcmp(hnode->string, pb->ipaddr)) 
+      return false;
+
+   // and then download names
+   return !strcmp(string, pb->name);
+}
+
 uint64_t dlnode_t::get_hash(void) const
 {
    return hash_ex(hash_ex(0, hnode ? hnode->string : string_t()), string);
@@ -255,18 +268,4 @@ const void *dlnode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& d
 int64_t dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
 {
    return s_compare<uint64_t>(buf1, buf2);
-}
-
-//
-// dl_hash_table
-//
-bool dl_hash_table::compare(const dlnode_t *nptr, const dlnode_t::param_block *pb)  const
-{
-   if(!nptr->hnode)
-      return false;
-
-   if(strcmp(nptr->hnode->string, pb->ipaddr)) 
-      return false;
-
-   return strcmp(nptr->string, pb->name) ? false : true;
 }

@@ -58,6 +58,13 @@ struct unode_t : public base_node<unode_t> {
 
          u_char update_url_type(u_char type);
 
+         bool match_key_ex(const unode_t::param_block *pb) const;
+
+         virtual bool match_key(const string_t& key) const override 
+         {
+            throw std::logic_error("This node only supports searches with a compound key");
+         }
+
          static uint64_t hash(const string_t& url, const string_t& srchargs) 
          {
             // hash pieces as if the entire URL was hashed
@@ -89,9 +96,6 @@ struct unode_t : public base_node<unode_t> {
 // URLs
 //
 class u_hash_table : public hash_table<storable_t<unode_t>> {
-   private:
-      virtual bool compare(const unode_t *nptr, const unode_t::param_block *pb) const override;
-
    public:
       u_hash_table(void) : hash_table<storable_t<unode_t>>(LMAXHASH) {}
 };

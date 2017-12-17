@@ -40,6 +40,13 @@ struct rcnode_t : public base_node<rcnode_t> {
          rcnode_t(const rcnode_t& rcnode);
          rcnode_t(const string_t& method, const string_t& url, u_short respcode);
 
+         bool match_key_ex(const rcnode_t::param_block *pb) const;
+
+         virtual bool match_key(const string_t& key) const override 
+         {
+            throw std::logic_error("This node only supports searches with a compound key");
+         }
+
          static uint64_t hash(u_short respcode, const string_t& method, const string_t& url) 
          {
             return hash_ex(hash_ex(hash_num(0, respcode), method), url);
@@ -76,9 +83,6 @@ struct rcnode_t : public base_node<rcnode_t> {
 // HTTP status codes
 //
 class rc_hash_table : public hash_table<storable_t<rcnode_t>> {
-   private:
-      virtual bool compare(const rcnode_t *nptr, const rcnode_t::param_block *pb) const override;
-
    public:
       rc_hash_table(void) : hash_table<storable_t<rcnode_t>>(SMAXHASH) {}
 };

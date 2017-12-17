@@ -63,21 +63,38 @@ inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, 
 /// objects (`htab_obj_t`) and the hash table node object that maintains content 
 /// objects within a hash table (`htab_node_t`).
 ///
+/// Hash table nodes may be identified by a simple string key or by a compound key 
+/// via node-specific `param_block`. Note that `match_key_ex` is not a virtual method
+/// and is called in template methods that using node types that define `param_block` 
+/// appropriate for each node type.
+///
 struct htab_obj_t {
       ///
       /// @struct param_block
       ///
-      /// @brief  `param_block` provides a way to search the hash table using compound 
-      ///         keys. The base class has no data members and is defined to allow hash 
-      ///         table instantiation for classes that do not make use of compound keys.
+      /// @brief  A special compound key structure containing a simple string key.
       ///
-      struct param_block {};
+      struct param_block {
+         const char *key;           ///< A pointer to a node-specific key string
+      };
 
       public:
          virtual ~htab_obj_t(void) {}
 
-         /// Returns a key for this node
-         virtual const string_t& key(void) const = 0;
+         ///
+         /// @brief  Returns `true` if the key in `param_block` is equal to the node 
+         ///         key, `false` otherwise.
+         ///
+         /// `match_key_ex` is not a virtual method and must be overriden for those 
+         /// node types that make use of compound keys.
+         ///
+         bool match_key_ex(const param_block *pb) const 
+         {
+            return match_key(string_t::hold(pb->key));
+         }
+
+         /// Returns `true` if `key` is equal to the node key.
+         virtual bool match_key(const string_t& key) const = 0;
 
          /// Returns a type of this node
          virtual nodetype_t get_type(void) const = 0;
@@ -263,11 +280,6 @@ class hash_table {
       swap_code swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr);
 
       bool swap_out_bucket(bucket_t& bucket);
-
-      virtual bool compare(const typename inner_node<node_t>::type *nptr, const typename inner_node<node_t>::type::param_block *params) const 
-      {
-         throw std::logic_error("This node type does not support searches with compound keys");
-      }
 
    protected:
       virtual bool load_array_check(const node_t *) const {return true;}

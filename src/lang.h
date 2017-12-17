@@ -51,7 +51,7 @@ class lang_t {
 
                ~lang_node_t(void);
 
-               const string_t& key(void) const override {return varname;}
+               bool match_key(const string_t& key) const override {return varname == key;}
 
                nodetype_t get_type(void) const override {return OBJ_REG;}
 

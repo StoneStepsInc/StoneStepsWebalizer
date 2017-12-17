@@ -153,7 +153,7 @@ const node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& ke
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
-      if(nptr->node->key() == key)
+      if(nptr->node->match_key(key))
          return nptr->node;
 
       prev = nptr;
@@ -172,7 +172,7 @@ node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key)
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
-      if(nptr->node->key() == key) {
+      if(nptr->node->match_key(key)) {
          if(index > NO_SWAP_COUNT)
             move_node(nptr, prev, pptr);
          return nptr->node;
@@ -194,7 +194,7 @@ node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key, nod
 
    for(u_int index = 0; nptr != NULL; index++) {
       if(nptr->node->get_type() == type) {
-         if(nptr->node->key() == key) {
+         if(nptr->node->match_key(key)) {
             if(index > NO_SWAP_COUNT)
                move_node(nptr, prev, pptr);
             return nptr->node;
@@ -216,7 +216,7 @@ node_t *hash_table<node_t>::find_node(uint64_t hashval, const typename node_t::p
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
-      if(compare(nptr->node, params)) {
+      if(nptr->node->match_key_ex(params)) {
          if(index > NO_SWAP_COUNT)
             move_node(nptr, prev, pptr);
          return nptr->node;
