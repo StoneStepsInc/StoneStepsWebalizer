@@ -79,8 +79,6 @@ class state_t {
       template <typename type_t>
       void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
 
-      storable_t<unode_t> *find_url(const string_t& url);
-
       void del_htabs(void);
 
       void init_counters(void);

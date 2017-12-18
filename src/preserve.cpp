@@ -883,15 +883,6 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
    totals.cur_tstamp = tstamp;
 }
 
-/*********************************************/
-/* FIND_URL - Find URL in hash table         */
-/*********************************************/
-
-storable_t<unode_t> *state_t::find_url(const string_t& url)
-{
-   return (url.length()) ? um_htab.find_node(url) : NULL;
-}
-
 // -----------------------------------------------------------------------
 //
 // Serialization callbacks
@@ -981,7 +972,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
          throw exception_t(0, string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %" PRIu64 ")", urlid, vnode.nodeid));
 
       // find the URL node or create a new one
-      if((uptr = _this->find_url(unode.string)) != NULL)
+      if((uptr = _this->um_htab.find_node(unode.string)) != NULL)
          vnode.set_lasturl(uptr);
       else
          vnode.set_lasturl(_this->um_htab.put_node(new storable_t<unode_t>(unode)));

@@ -62,7 +62,8 @@ struct unode_t : public base_node<unode_t> {
 
          virtual bool match_key(const string_t& key) const override 
          {
-            throw std::logic_error("This node only supports searches with a compound key");
+            // `key` must include the query string, if there is one
+            return string == key;
          }
 
          static uint64_t hash(const string_t& url, const string_t& srchargs) 
