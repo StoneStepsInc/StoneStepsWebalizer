@@ -41,8 +41,6 @@ vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
    if((lasturl = vnode.lasturl) != NULL)
       lasturl->vstref++;
 
-   //dirty = true;
-
    //
    // vnode.hostref should not be copied, since there are no hosts
    // referring to the new node. The caller must adjust hostref, if

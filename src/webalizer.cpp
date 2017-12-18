@@ -2314,7 +2314,8 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
             cptr->visits++;
          }
          else {
-            cptr->visit->storage_info.set_modified();
+            if(cptr->visit->storage_info.storage)
+               cptr->visit->storage_info.set_modified();
          }
       }
       else {
@@ -2352,7 +2353,8 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if(target && !robot && !spammer && !cptr->visit->converted)
       cptr->visit->converted = true;
 
-   cptr->storage_info.set_modified();
+   if(cptr->storage_info.storage)
+      cptr->storage_info.set_modified();
 
    return cptr;
 }               
@@ -2415,7 +2417,8 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
       cptr->visit_max = std::max(cptr->visit_max, visitlen);
    }
 
-   cptr->storage_info.set_modified();
+   if(cptr->storage_info.storage)
+      cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2452,7 +2455,8 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
       state.rm_htab.put_node(hashval, nptr);
    }
 
-   nptr->storage_info.set_modified();
+   if(nptr->storage_info.storage)
+      nptr->storage_info.set_modified();
 
    if(found) {
       /* found... bump counter */
@@ -2531,7 +2535,8 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t&
       cptr->maxtime = std::max(cptr->maxtime, proctime);
    }
 
-   cptr->storage_info.set_modified();
+   if(cptr->storage_info.storage)
+      cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2579,7 +2584,8 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
       nptr->count += count;
    }
 
-   nptr->storage_info.set_modified();
+   if(nptr->storage_info.storage)
+      nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2626,7 +2632,8 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
          cptr->visits++;
    }
 
-   cptr->storage_info.set_modified();
+   if(cptr->storage_info.storage)
+      cptr->storage_info.set_modified();
 
    return cptr;
 }
@@ -2675,7 +2682,8 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
 
    state.totals.t_srchits++;
 
-   nptr->storage_info.set_modified();
+   if(nptr->storage_info.storage)
+      nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2724,7 +2732,8 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
       state.im_htab.put_node(hashval, nptr);
    }
 
-   nptr->storage_info.set_modified();
+   if(nptr->storage_info.storage)
+      nptr->storage_info.set_modified();
    
    if(found) {
       /* hashed */
@@ -2804,7 +2813,8 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
             nptr->download = download;
          }
          else {
-            nptr->download->storage_info.set_modified();
+            if(nptr->download->storage_info.storage)
+               nptr->download->storage_info.set_modified();
          }
       }
       else
@@ -2816,7 +2826,8 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
       nptr->download->proctime += proctime;
    }
 
-   nptr->storage_info.set_modified();
+   if(nptr->storage_info.storage)
+      nptr->storage_info.set_modified();
 
    return nptr;
 }
@@ -2875,7 +2886,8 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
    hptr->set_visit(NULL);
 
    // indicate that the host node has been updated
-   hptr->storage_info.set_modified();
+   if(hptr->storage_info.storage)
+      hptr->storage_info.set_modified();
 
    // update host counters
    hptr->count += visit->hits;
@@ -2967,7 +2979,8 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
          state.totals.t_exit++;                     // total exit URLs
 
          visit->lasturl->exit++;
-         visit->lasturl->storage_info.set_modified();
+         if(visit->lasturl->storage_info.storage)
+            visit->lasturl->storage_info.set_modified();
       }
       visit->set_lasturl(NULL);
    }
@@ -3027,7 +3040,8 @@ storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode,
       return NULL;
 
    dlnode->download = NULL;
-   dlnode->storage_info.set_modified();
+   if(dlnode->storage_info.storage)
+      dlnode->storage_info.set_modified();
 
    dlnode->count++;
    dlnode->sumhits += download->hits;
