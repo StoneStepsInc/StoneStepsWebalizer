@@ -20,31 +20,42 @@
 ///
 /// @brief  URL node
 ///
-/// 1. vstref is not a generic reference count, but rather an app-level
-/// indicator of how many visit nodes refer to this URL. That is, if 
-/// vstref is zero, unode_t may still be valid (although may be swapped
-/// out of memory at any time). 
+/// 1. `vstref` is not a generic reference count, but rather an app-level indicator 
+/// of how many visit nodes refer to this URL. That is, if `vstref` is zero, unode_t 
+/// may still be valid (although may be swapped out of memory at any time).
+///
+/// 2. URL path and search arguments are combined in `unode_t` into a single string,
+/// along with the question mark that separates the two. This allows us to generate
+/// the same hash values regardless whether the entire combined URL was hashed or
+/// its individual components. URL path lebgth withiin the combined URL is identified 
+/// by `pathlen`.
 ///
 struct unode_t : public base_node<unode_t> {
+      ///
+      /// @struct param_block
+      ///
+      /// @brief  A compound key for URL hash table searches with URL path and 
+      ///         the search argumets string being two separate key components.
+      ///
       struct param_block : base_node<unode_t>::param_block {
-         nodetype_t type;
-         const string_t *url;
-         const string_t *srchargs;
+         nodetype_t type;           ///< Regular URL or a group?
+         const string_t *url;       ///< URL path
+         const string_t *srchargs;  ///< URL search argments
       };
 
-      bool     target : 1;          // Target URL?
-      u_char   urltype;             // URL type (e.g. URL_TYPE_HTTP)
-      u_short  pathlen;             // URL path length
-      uint64_t count;               // requests counter
-      uint64_t files;               // files counter 
-      uint64_t entry;               // entry page counter
-      uint64_t exit;                // exit page counter
+      bool     target : 1;          ///< Target URL?
+      u_char   urltype;             ///< URL type (e.g. URL_TYPE_HTTP)
+      u_short  pathlen;             ///< URL path length
+      uint64_t count;               ///< Requests counter
+      uint64_t files;               ///< Files counter 
+      uint64_t entry;               ///< Entry page counter
+      uint64_t exit;                ///< Exit page counter
 
-      uint64_t vstref;              // visit references
+      uint64_t vstref;              ///< Visit reference count
 
-      uint64_t xfer;                // xfer size in bytes
-      double   avgtime;             // average processing time (sec)
-      double   maxtime;             // maximum processing time (sec)
+      uint64_t xfer;                ///< Transfer size in bytes
+      double   avgtime;             ///< Average processing time (seconds)
+      double   maxtime;             ///< maximum processing time (seconds)
 
       public:
          typedef void (*s_unpack_cb_t)(unode_t& unode, void *arg);
@@ -93,9 +104,11 @@ struct unode_t : public base_node<unode_t> {
          static int64_t s_compare_exit(const void *buf1, const void *buf2);
 };
 
-//
-// URLs
-//
+///
+/// @class  u_hash_table
+///
+/// @brief  A hash table containing all URLs for the current month.
+///
 class u_hash_table : public hash_table<storable_t<unode_t>> {
    public:
       u_hash_table(void) : hash_table<storable_t<unode_t>>(LMAXHASH) {}

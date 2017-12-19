@@ -142,9 +142,11 @@ struct hnode_t : public base_node<hnode_t> {
          static int64_t s_compare_hits(const void *buf1, const void *buf2);
 };
 
-//
-// Hosts (monthly)
-//
+///
+/// @class  h_hash_table
+///
+/// @brief  A hash table containing all IP addresses for the current month.
+///
 class h_hash_table : public hash_table<storable_t<hnode_t>> {
    public:
       h_hash_table(void) : hash_table<storable_t<hnode_t>>(LMAXHASH) {}
