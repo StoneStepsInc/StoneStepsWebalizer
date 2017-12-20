@@ -333,6 +333,24 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
 
    // if the record is good, convert all domain names to lower case
    if(retval == PARSE_CODE_OK) {
+      //
+      // Normalize all strings that may have URL encoding
+      //
+      string_t::char_buffer_t strbuf;
+
+      norm_url_str(log_rec.url, strbuf);
+      norm_url_str(log_rec.refer, strbuf);
+      norm_url_str(log_rec.agent, strbuf);
+      norm_url_str(log_rec.srchargs, strbuf);
+      norm_url_str(log_rec.ident, strbuf);
+      norm_url_str(log_rec.xsrchstr, strbuf);
+
+      // normalized URLs contain only valid UTF-8 characters and may be converted to lower case
+      if(config.conv_url_lower_case) {
+         log_rec.url.tolower();
+         log_rec.srchargs.tolower();
+      }
+
       if(config.log_type == LOG_SQUID) {
          // convert the scheme and the host name to lower case
          string_t::const_char_buffer_t host = get_url_host(log_rec.url.c_str(), log_rec.url.length());
@@ -347,18 +365,6 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
 
       // convert possible host names and IPv6 addresses to lower case
       log_rec.hostname.tolower();
-
-      //
-      // Normalize all strings that may have URL encoding
-      //
-      string_t::char_buffer_t strbuf;
-
-      norm_url_str(log_rec.url, strbuf);
-      norm_url_str(log_rec.refer, strbuf);
-      norm_url_str(log_rec.agent, strbuf);
-      norm_url_str(log_rec.srchargs, strbuf);
-      norm_url_str(log_rec.ident, strbuf);
-      norm_url_str(log_rec.xsrchstr, strbuf);
    }
 
    return retval;
@@ -702,12 +708,6 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             if((cp1 = parse_http_req_line(cp1, log_rec)) == NULL)
                return PARSE_CODE_ERROR;
 
-            //
-            if(config.conv_url_lower_case) {
-               log_rec.url.tolower();
-               log_rec.srchargs.tolower();
-            }
-
             break;
 
          case eHttpStatus:
@@ -744,20 +744,16 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
          case eUriStem:
             log_rec.url.assign(cp1, slen);
 
-            if(config.conv_url_lower_case)
-               log_rec.url.tolower();
             break;
 
          case eUriQuery:
             if(*cp1 == '?') {
                cp1++; slen--;
             }
-            if(slen && (slen > 1 || *cp1 != '-')) {
+
+            if(slen && (slen > 1 || *cp1 != '-'))
                log_rec.srchargs.assign(cp1, slen);
 
-               if(config.conv_url_lower_case)
-                  log_rec.srchargs.tolower();
-            }
             break;
 
          case eHttpMethod:
@@ -1025,18 +1021,11 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
          case eUriStem:
             log_rec.url.assign(cp1, slen);
 
-            if(config.conv_url_lower_case)
-               log_rec.url.tolower();
-
             break;
 
          case eUriQuery:
-            if(slen && (slen > 1 || *cp1 != '-')) {
+            if(slen && (slen > 1 || *cp1 != '-'))
                log_rec.srchargs.assign(cp1, slen);
-
-               if(config.conv_url_lower_case)
-                  log_rec.srchargs.tolower();
-            }
 
             break;
 
