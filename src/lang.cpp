@@ -932,7 +932,7 @@ void lang_t::init_lang_htab(void)
    put_lang_var("msg_h_agent", LANG_VAR_CHAR, &msg_h_agent, 1, sizeof(char*));
    put_lang_var("msg_h_ref", LANG_VAR_CHAR, &msg_h_ref, 1, sizeof(char*));
    put_lang_var("msg_h_ctry", LANG_VAR_CHAR, &msg_h_ctry, 1, sizeof(char*));
-   put_lang_var("msg_h_ccode", LANG_VAR_CHAR, &msg_h_ctry, 1, sizeof(char*));
+   put_lang_var("msg_h_ccode", LANG_VAR_CHAR, &msg_h_ccode, 1, sizeof(char*));
    put_lang_var("msg_h_search", LANG_VAR_CHAR, &msg_h_search, 1, sizeof(char*));
    put_lang_var("msg_h_uname", LANG_VAR_CHAR, &msg_h_uname, 1, sizeof(char*));
    put_lang_var("msg_h_type", LANG_VAR_CHAR, &msg_h_type, 1, sizeof(char*));
