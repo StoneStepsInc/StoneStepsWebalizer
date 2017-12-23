@@ -1763,6 +1763,14 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(!config.memory_mode && total_good >= config.swap_first_record) {
             if(lrcnt.total_rec && total_good % config.swap_frequency == 0) {
                stime = msecs();
+
+               //
+               // We need to process ended visits and downloads, so they don't prevent
+               // their associated host nodes from being swapped out. 
+               //
+               update_visits(log_rec.tstamp);
+               update_downloads(log_rec.tstamp);
+
                state.swap_out();
                ptms.mnt_time += elapsed(stime, msecs());
             }
