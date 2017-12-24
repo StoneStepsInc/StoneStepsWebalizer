@@ -24,10 +24,10 @@
 /// node.
 ///
 struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
-      uint64_t    hits;              // request count (if zero, no active job)
-      tstamp_t    tstamp;            // last request timestamp
-      uint64_t    proctime;          // download job time (msec)
-      uint64_t    xfer;              // xfer size in bytes
+      uint64_t    hits;              ///< Request count (if zero, no active job)
+      tstamp_t    tstamp;            ///< Last request timestamp
+      uint64_t    proctime;          ///< Download job time (msec)
+      uint64_t    xfer;              ///< xfer size in bytes
 
       public:
          typedef void (*s_unpack_cb_t)(danode_t& vnode, void *arg);

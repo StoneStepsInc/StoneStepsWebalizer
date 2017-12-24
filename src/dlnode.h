@@ -25,23 +25,28 @@ struct hnode_t;
 /// @brief  Download job node
 ///
 struct dlnode_t : public base_node<dlnode_t> {
+      ///
+      /// @struct param_block
+      ///
+      /// @brief  A compound key structure for a download node.
+      ///
       struct param_block : base_node<dlnode_t>::param_block {
-         const char  *name;
-         const char  *ipaddr;
+         const char  *name;            ///< Download name
+         const char  *ipaddr;          ///< IP address
       };
 
       // combined download job data
-      uint64_t    count;            // download job count
-      uint64_t    sumhits;          // total hits
-      uint64_t    sumxfer;          // total transfer size
-      double      avgxfer;          // average transfer size
-      double      avgtime;          // average job processing time (minutes)
-      double      sumtime;          // total job processing time (minutes)
+      uint64_t    count;               ///< Download job count
+      uint64_t    sumhits;             ///< Total hits
+      uint64_t    sumxfer;             ///< Total transfer size
+      double      avgxfer;             ///< Average transfer size
+      double      avgtime;             ///< Average job processing time (minutes)
+      double      sumtime;             ///< Total job processing time (minutes)
 
-      storable_t<danode_t> *download; // active download job
-      hnode_t     *hnode;           // host node
+      storable_t<danode_t> *download;  ///< Active download job
+      hnode_t     *hnode;              ///< Host node
 
-      bool        ownhost : 1;      // true, if dlnode_t owns hnode
+      bool        ownhost : 1;         ///< `true`, if `dlnode_t` owns `hnode`
 
       public:
          typedef void (*s_unpack_cb_t)(dlnode_t& vnode, uint64_t hostid, bool active, void *arg);
