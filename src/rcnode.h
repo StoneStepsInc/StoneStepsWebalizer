@@ -22,7 +22,7 @@
 /// 1. rcnode_t tracks URLs that resulted in an HTTP error
 ///
 struct rcnode_t : public base_node<rcnode_t> { 
-      struct param_block : base_node<rcnode_t>::param_block {
+      struct param_block {
          u_int       respcode;
          const char  *url;
          const char  *method;

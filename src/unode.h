@@ -37,7 +37,7 @@ struct unode_t : public base_node<unode_t> {
       /// @brief  A compound key for URL hash table searches with URL path and 
       ///         the search argumets string being two separate key components.
       ///
-      struct param_block : base_node<unode_t>::param_block {
+      struct param_block {
          nodetype_t type;           ///< Regular URL or a group?
          const string_t *url;       ///< URL path
          const string_t *srchargs;  ///< URL search argments

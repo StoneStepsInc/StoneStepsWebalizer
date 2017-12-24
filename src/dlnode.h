@@ -30,7 +30,7 @@ struct dlnode_t : public base_node<dlnode_t> {
       ///
       /// @brief  A compound key structure for a download node.
       ///
-      struct param_block : base_node<dlnode_t>::param_block {
+      struct param_block {
          const char  *name;            ///< Download name
          const char  *ipaddr;          ///< IP address
       };
