@@ -3014,7 +3014,22 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
 /// @brief  Checks all hosts for active visits and ends those that exceed the
 ///         maximum visit time or all if we are ending a month.
 ///
-/// Deletes all returned ended visits, as we have no use for them at this point. 
+/// Deletes all returned ended visits, as we have no use for them at this point.
+///
+/// @todo   This method walks all host nodes in the montly state, which is very
+///         expensive. A much better solution would be to insert all `vnode_t`
+///         structures that represent active visits from all hosts into a single
+///         list that is naturally ordered by request time stamp and move visit
+///         nodes to the end of the list as more requests for each host are read
+///         from a log file. The visit node will need a host node pointer and as 
+///         a new log line is read, a host node would be looked up, and if it has 
+///         an active visit, it will be located in the visit list, removed from 
+///         its current position and added to the end of the list. `update_visits`
+///         would then walk this list from the start until a time stamp is found 
+///         in the current visit timeout time frame and would end all visits prior 
+///         to that list node. Host pointer in the visit node will be used to 
+///         update visit reference counts and visit pointer in the host node. 
+///         
 ///
 void webalizer_t::update_visits(const tstamp_t& tstamp)
 {
