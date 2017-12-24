@@ -27,89 +27,89 @@
 ///
 class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
    public:
-      tstamp_t cur_tstamp;                         // current timestamp
+      tstamp_t cur_tstamp;                         ///< Current timestamp
 
-      u_int f_day;                                 // first day of the month
-      u_int l_day;                                 // last day of the month
+      u_int f_day;                                 ///< First day of the month
+      u_int l_day;                                 ///< Last day of the month
 
-      uint64_t max_v_hits;                         // maximum number of hits
-      uint64_t max_v_files;                        // files
-      uint64_t max_v_pages;                        // pages
-      uint64_t max_v_xfer;                         // and transfer amount per visit
+      uint64_t max_v_hits;                         ///< Maximum number of requests
+      uint64_t max_v_files;                        ///< Maximum number of file requests
+      uint64_t max_v_pages;                        ///< Maximum number of page requests
+      uint64_t max_v_xfer;                         ///< Transfer amount per visit
       
-      uint64_t t_hit;                              // monthly total vars: hits
-      uint64_t t_file;                             // files
-      uint64_t t_page;                             // pages
-      uint64_t t_hosts;                            // hosts
-      uint64_t t_hosts_conv;                       // converted hosts
-      uint64_t t_url;                              // urls
-      uint64_t t_ref;                              // referrers
-      uint64_t t_agent;                            // user agents
-      uint64_t t_user;                             // users
-      uint64_t t_err;                              // errors
-      uint64_t t_dlcount;                          // download count
-      uint64_t t_downloads;                        // download record count
-      uint64_t t_srchits;                          // search string hits
-      uint64_t t_search;                           // search strings
-      uint64_t t_entry;                            // entry page hits
-      uint64_t t_exit;                             // exit page hits
-      uint64_t u_entry;                            // entry pages
-      uint64_t u_exit;                             // exit pages
-      uint64_t t_xfer;                             // transfer
+      uint64_t t_hit;                              ///< Request count
+      uint64_t t_file;                             ///< File request count
+      uint64_t t_page;                             ///< Page request count
+      uint64_t t_hosts;                            ///< Host count
+      uint64_t t_hosts_conv;                       ///< Converted host  count
+      uint64_t t_url;                              ///< URL count
+      uint64_t t_ref;                              ///< Referrer count
+      uint64_t t_agent;                            ///< User agent count
+      uint64_t t_user;                             ///< User count
+      uint64_t t_err;                              ///< Error count
+      uint64_t t_dlcount;                          ///< Download count
+      uint64_t t_downloads;                        ///< Download record count
+      uint64_t t_srchits;                          ///< Search string request count
+      uint64_t t_search;                           ///< Search string count
+      uint64_t t_entry;                            ///< Entry page request count
+      uint64_t t_exit;                             ///< Exit page request count
+      uint64_t u_entry;                            ///< Entry page count
+      uint64_t u_exit;                             ///< Exit page count
+      uint64_t t_xfer;                             ///< Transfer
 
-      uint64_t t_rhits;                            // robot hits
-      uint64_t t_rfiles;                           // robot files
-      uint64_t t_rpages;                           // robot pages
-      uint64_t t_rerrors;                          // robot errors
-      uint64_t t_rhosts;                           // robot hosts
-      uint64_t t_rxfer;                            // robot transfer
+      uint64_t t_rhits;                            ///< Robot request count
+      uint64_t t_rfiles;                           ///< Robot file request count
+      uint64_t t_rpages;                           ///< Robot page request count
+      uint64_t t_rerrors;                          ///< Robot error request count
+      uint64_t t_rhosts;                           ///< Robot host request count
+      uint64_t t_rxfer;                            ///< Robot transfer
 
-      uint64_t t_visits;                           // visits started
-      uint64_t t_rvisits;                          // robot visits started
-      uint64_t t_visits_end;                       // visits ended
-      uint64_t t_rvisits_end;                      // robot visits ended
-      uint64_t t_svisits_end;                      // spammer visits ended
-      uint64_t t_hvisits_end;                      // human visits ended
-      uint64_t t_visits_conv;                      // converted visits ended (% of t_hvisits_end)
+      uint64_t t_visits;                           ///< Visits started
+      uint64_t t_rvisits;                          ///< Robot visits started
+      uint64_t t_visits_end;                       ///< Visits ended
+      uint64_t t_rvisits_end;                      ///< Robot visits ended
+      uint64_t t_svisits_end;                      ///< Spammer visits ended
+      uint64_t t_hvisits_end;                      ///< Human visits ended
+      uint64_t t_visits_conv;                      ///< Converted visits ended (% of t_hvisits_end)
       
-      uint64_t t_spmhits;                          // spammer hits
-      uint64_t t_sfiles;                           // spammer files
-      uint64_t t_spages;                           // spammer pages
-      uint64_t t_shosts;                           // spammer hosts
-      uint64_t t_sxfer;                            // spammer transfer
+      uint64_t t_spmhits;                          ///< Spammer hits
+      uint64_t t_sfiles;                           ///< Spammer files
+      uint64_t t_spages;                           ///< Spammer pages
+      uint64_t t_shosts;                           ///< Spammer hosts
+      uint64_t t_sxfer;                            ///< Spammer transfer
 
-      double t_visit_avg;                          // average human visit length
-      uint64_t t_visit_max;                        // maximum human visit length
+      double t_visit_avg;                          ///< Average human visit length
+      uint64_t t_visit_max;                        ///< Maximum human visit length
 
-      double t_vconv_avg;                          // average converted visit length
-      uint64_t t_vconv_max;                        // maximum converted visit length
+      double t_vconv_avg;                          ///< Average converted visit length
+      uint64_t t_vconv_max;                        ///< Maximum converted visit length
 
-      uint64_t max_hv_hits;                        // maximum number of hits
-      uint64_t max_hv_files;                       // files
-      uint64_t max_hv_pages;                       // pages
-      uint64_t max_hv_xfer;                        // and transfer amount per human visit
+      uint64_t max_hv_hits;                        ///< Maximum number of requests per human visit
+      uint64_t max_hv_files;                       ///< Maximum number of file requests per human visit
+      uint64_t max_hv_pages;                       ///< Maximum number of page requests per human visit
+      uint64_t max_hv_xfer;                        ///< Maximum transfer amount per human visit
 
-      uint64_t t_grp_hosts;                        // total host groups
-      uint64_t t_grp_urls;                         // total url groups
-      uint64_t t_grp_users;                        // total user groups
-      uint64_t t_grp_refs;                         // total referrer groups
-      uint64_t t_grp_agents;                       // total agent groups
+      uint64_t t_grp_hosts;                        ///< Total number of host groups
+      uint64_t t_grp_urls;                         ///< Total number of URL groups
+      uint64_t t_grp_users;                        ///< Total number of user groups
+      uint64_t t_grp_refs;                         ///< Total number of referrer groups
+      uint64_t t_grp_agents;                       ///< Total number of agent groups
 
-      double a_hitptime;                           // average and maximum
-      double m_hitptime;                           // hit, page and file          
-      double a_fileptime;                          // processing time
-      double m_fileptime;      
-      double a_pageptime;
-      double m_pageptime;      
+      double a_hitptime;                           ///< Average request processing time
+      double m_hitptime;                           ///< Maximim request processing time
+      double a_fileptime;                          ///< Average file request processing time
+      double m_fileptime;                          ///< Maximum file request processing time
+      double a_pageptime;                          ///< Average page request processing time
+      double m_pageptime;                          ///< Maximum page request processing time
 
-      uint64_t hm_hit;                             // current hourly hits maximum
+      uint64_t hm_hit;                             ///< Hourly request count maximum
       
-      uint64_t ht_hits;                            // current hourly counts
-      uint64_t ht_files;
-      uint64_t ht_pages;
-      uint64_t ht_xfer;
-      uint64_t ht_visits;
-      uint64_t ht_hosts;
+      uint64_t ht_hits;                            ///< Hourly request count
+      uint64_t ht_files;                           ///< Hourly file request count
+      uint64_t ht_pages;                           ///< Hourly page request count
+      uint64_t ht_xfer;                            ///< Hourly tranfer
+      uint64_t ht_visits;                          ///< Hourly visit count
+      uint64_t ht_hosts;                           ///< Hourly host count
 
    public:
       typedef void (*s_unpack_cb_t)(totals_t& state, void *arg);

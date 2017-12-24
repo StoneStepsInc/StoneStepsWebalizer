@@ -30,9 +30,9 @@
 /// the search term is either missing or unknown.
 ///
 struct snode_t : public base_node<snode_t> {     
-      u_short        termcnt;          // search term count
-      uint64_t       count;            // request count
-      uint64_t       visits;           // visits started
+      u_short        termcnt;          ///< Search term count
+      uint64_t       count;            ///< Request count
+      uint64_t       visits;           ///< Visits started
 
       public:
          typedef void (*s_unpack_cb_t)(snode_t& snode, void *arg);

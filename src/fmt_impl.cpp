@@ -12,13 +12,13 @@
 #include "fmt_impl.h"
 #include "exception.h"
 
-//
-// Formats text within the output buffer using a printf-style format and returns 
-// the number of characters in the buffer, including the null character. Throws 
-// an exception if the output buffer is too small.
-//
-// fmt_vprintf is intended as a callback formatter function for buffer_formatter_t.
-//
+///
+/// Formats text within the output buffer using a printf-style format and returns 
+/// the number of characters in the buffer, including the null character. Throws 
+/// an exception if the output buffer is too small.
+///
+/// `fmt_vprintf` is intended as a callback formatter function for `buffer_formatter_t`.
+///
 size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list args)
 {
    int res;
@@ -36,24 +36,24 @@ size_t fmt_vprintf(string_t::char_buffer_t& buffer, const char *fmt, va_list arg
    return olen + 1;
 }
 
-//
-// Formats the specified number within the output buffer in a human-readable form, 
-// such as 12.3 MB, and returns the number of characters in the buffer, including 
-// the null character. The function throws an exception if the output buffer is too 
-// small.
-// 
-// fmt_hr_num is intended as a callback formatter function for buffer_formatter_t.
-//
-// The value of decimal indicates whether the number should be formatted in multiples 
-// of 1000 or 1024.
-//
-// The unit prefix array must contain enough elements to format the largest unsigned 
-// 64-bit value, which is 18446744073709551615.
-//
-// The buffer must have sufficient room for the largest formatted number, which is
-// 999.9 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
-// prefix and the unit strings.
-//
+///
+/// Formats the specified number within the output buffer in a human-readable form, 
+/// such as 12.3 MB, and returns the number of characters in the buffer, including 
+/// the null character. The function throws an exception if the output buffer is too 
+/// small.
+/// 
+/// `fmt_hr_num` is intended as a callback formatter function for `buffer_formatter_t`.
+///
+/// The value of decimal indicates whether the number should be formatted in multiples 
+/// of 1000 or 1024.
+///
+/// The unit prefix array must contain enough elements to format the largest unsigned 
+/// 64-bit value, which is 18446744073709551615.
+///
+/// The buffer must have sufficient room for the largest formatted number, which is
+/// 999.9 for the decimal multiplier and 1023.9 otherwise, the separator string, the 
+/// prefix and the unit strings.
+///
 size_t fmt_hr_num(string_t::char_buffer_t& buffer, uint64_t num, const char *sep, const char * const msg_unit_pfx[], const char *unit, bool decimal)
 {
    double kbyte = decimal ? 1000. : 1024.;

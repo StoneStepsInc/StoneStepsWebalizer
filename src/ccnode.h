@@ -27,13 +27,13 @@
 /// but instead are set up from the language file on start-up.
 ///
 struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
-   string_t    ccode;                  // country code
-   string_t    cdesc;                  // country name
-   uint64_t    count;                  // request count
-   uint64_t    files;                  // files requested
-   uint64_t    pages;                  // pages requested
-   uint64_t    visits;                 // visits started
-   uint64_t    xfer;                   // transfer amount in bytes
+   string_t    ccode;                  ///< Country code
+   string_t    cdesc;                  ///< Country name
+   uint64_t    count;                  ///< Request count
+   uint64_t    files;                  ///< Files requested
+   uint64_t    pages;                  ///< Pages requested
+   uint64_t    visits;                 ///< Visits started
+   uint64_t    xfer;                   ///< Transfer amount in bytes
 
    public:
       typedef void (*s_unpack_cb_t)(ccnode_t& vnode, void *arg);

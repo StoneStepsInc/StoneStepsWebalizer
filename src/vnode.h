@@ -52,22 +52,22 @@ struct unode_t;
 struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
       storable_t<vnode_t> *next;
 
-      bool     entry_url: 1;        // entry URL set?
-      bool     robot    : 1;        // robot?
-      bool     converted: 1;        // requested target URL?
+      bool     entry_url: 1;        ///< Entry URL set?
+      bool     robot    : 1;        ///< Robot?
+      bool     converted: 1;        ///< Requested target URL?
 
-      tstamp_t start;               // first hit timestamp
-      tstamp_t end;                 // last hit timestamp
+      tstamp_t start;               ///< First hit time stamp
+      tstamp_t end;                 ///< Last hit time stamp
 
-      uint64_t hits;                // current visit hits,
-      uint64_t files;               // files,
-      uint64_t pages;               // pages
+      uint64_t hits;                ///< Visit request count
+      uint64_t files;               ///< Visit file request count
+      uint64_t pages;               ///< Visit page request count
 
-      uint64_t hostref;             // host references
+      uint64_t hostref;             ///< Host references
 
-      storable_t<unode_t> *lasturl; // last requested URL
+      storable_t<unode_t> *lasturl; ///< Last requested URL
 
-      uint64_t  xfer;                // visit transfer amount
+      uint64_t  xfer;                ///< Visit transfer amount
 
       public:
          typedef void (*s_unpack_cb_t)(vnode_t& vnode, uint64_t urlid, void *arg);

@@ -21,31 +21,31 @@
 ///
 ///
 struct daily_t : public keynode_t<uint32_t>, public datanode_t<daily_t> {
-      uint64_t tm_hits;          // daily requests total
-      uint64_t tm_files;         // daily files total
-      uint64_t tm_pages;         // daily pages total
-      uint64_t tm_hosts;         // daily hosts total
-      uint64_t tm_visits;        // daily visits total
+      uint64_t tm_hits;          ///< Daily requests total
+      uint64_t tm_files;         ///< Daily files total
+      uint64_t tm_pages;         ///< Daily pages total
+      uint64_t tm_hosts;         ///< Daily hosts total
+      uint64_t tm_visits;        ///< Daily visits total
       
-      uint64_t h_hits_max;       // maximum hits per hour
-      uint64_t h_files_max;      // maximum files per hour
-      uint64_t h_pages_max;      // maximum pages per hour
-      uint64_t h_visits_max;     // maximum visits per hour
-      uint64_t h_hosts_max;      // maximum hosts per hour
+      uint64_t h_hits_max;       ///< Maximum hits per hour
+      uint64_t h_files_max;      ///< Maximum files per hour
+      uint64_t h_pages_max;      ///< Maximum pages per hour
+      uint64_t h_visits_max;     ///< Maximum visits per hour
+      uint64_t h_hosts_max;      ///< maximum hosts per hour
 
-      uint64_t h_xfer_max;       // maximum transfer per hour
+      uint64_t h_xfer_max;       ///< Maximum transfer per hour
       
-      double h_hits_avg;         // average hits per hour
-      double h_files_avg;        // average files per hour
-      double h_pages_avg;        // average pages per hour
-      double h_visits_avg;       // average visits per hour
-      double h_hosts_avg;        // average hosts per hour
+      double h_hits_avg;         ///< Average hits per hour
+      double h_files_avg;        ///< Average files per hour
+      double h_pages_avg;        ///< Average pages per hour
+      double h_visits_avg;       ///< Average visits per hour
+      double h_hosts_avg;        ///< Average hosts per hour
       
-      double h_xfer_avg;         // average transfer per hour, in bytes 
+      double h_xfer_avg;         ///< Average transfer per hour, in bytes 
       
-      uint64_t tm_xfer;          // daily transfer total, in bytes
+      uint64_t tm_xfer;          ///< Daily transfer total, in bytes
       
-      u_short td_hours;          // number of hours processed for a given day 
+      u_short td_hours;          ///< Number of hours processed for a given day 
 
       public:
          typedef void (*s_unpack_cb_t)(daily_t& daily, void *arg);

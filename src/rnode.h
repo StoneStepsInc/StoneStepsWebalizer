@@ -21,8 +21,8 @@
 /// @brief  Referrer node
 ///
 struct rnode_t : public base_node<rnode_t> {   
-      uint64_t count;               // request count
-      uint64_t visits;              // visits started
+      uint64_t count;               ///< Request count
+      uint64_t visits;              ///< Visits started
 
       public:
          typedef void (*s_unpack_cb_t)(rnode_t& rnode, void *arg);

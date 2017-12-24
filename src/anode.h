@@ -21,12 +21,12 @@
 /// @brief  User agent node
 ///
 struct anode_t : public base_node<anode_t> {
-      uint64_t count;                  // request count
-      uint64_t visits;                 // visits started
+      uint64_t count;                  ///< Request count
+      uint64_t visits;                 ///< Visits started
       
-      uint64_t xfer;                   // transfer amount in bytes
+      uint64_t xfer;                   ///< Transfer amount in bytes
       
-      bool     robot : 1;              // matches the robot pattern?
+      bool     robot : 1;              ///< Matches the robot pattern?
 
       public:
          typedef void (*s_unpack_cb_t)(anode_t& anode, void *arg);

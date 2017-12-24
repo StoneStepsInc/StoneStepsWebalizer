@@ -13,18 +13,18 @@
 
 #include <cstddef>
 
-//
-// Converts the UCS-2 character to a UTF-8 sequence and returns the number of bytes 
-// in the output.
-//
-// [Unicode v5 ch.3 p.103]
-//
-// Scalar Value                  First Byte  Second Byte Third Byte  Fourth Byte
-// 00000000 0xxxxxxx             0xxxxxxx
-// 00000yyy yyxxxxxx             110yyyyy    10xxxxxx
-// zzzzyyyy yyxxxxxx             1110zzzz    10yyyyyy    10xxxxxx
-// 000uuuuu zzzzyyyy yyxxxxxx    11110uuu    10uuzzzz    10yyyyyy    10xxxxxx
-//
+///
+/// @brief  Converts a UCS-2 character to a UTF-8 sequence and returns the number 
+///         of bytes in the output.
+///
+/// [Unicode v5 ch.3 p.103]
+///
+/// Scalar Value                  First Byte  Second Byte Third Byte  Fourth Byte
+/// 00000000 0xxxxxxx             0xxxxxxx
+/// 00000yyy yyxxxxxx             110yyyyy    10xxxxxx
+/// zzzzyyyy yyxxxxxx             1110zzzz    10yyyyyy    10xxxxxx
+/// 000uuuuu zzzzyyyy yyxxxxxx    11110uuu    10uuzzzz    10yyyyyy    10xxxxxx
+///
 inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
    if(!out)
@@ -73,48 +73,50 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
    return 0;
 }
 
-//
-// Returns the size of a UTF-8 character corresponding to the specified UCS-2
-// character.
-//
+///
+/// @brief  Returns the size of a UTF-8 character corresponding to the specified 
+///         UCS-2 character.
+///
 inline size_t ucs2utf8size(wchar_t wchar)
 {
    return (wchar <= L'\x7F') ? 1 : (wchar <= L'\x7FF') ? 2 : (wchar <= L'\xFFFF') ? 3 : 4;
 }
 
-//
-// Converts char to unsigned char and checks if the argument is within the range
-// defined by the template arguments.
-//
+///
+/// @brief  Converts `char` to `unsigned char` and checks if the argument is 
+///         within the range defined by the template arguments.
+///
 template <unsigned char lo, unsigned char hi>
 inline bool in_range(unsigned char ch) 
 {
    return ch >= lo && ch <= hi;
 }
 
-//
-// Returns the number of bytes in a UTF-8 character or a zero if the sequence has any
-// bytes outside of the ranges defined for UTF-8 characters. If maxcnt is specified,
-// at most maxcnt bytes will be evaluated and a zero will be returned if the sequence 
-// of maxcnt bytes does not represent a complete UTF-8 character.
-//
-// IMPORTANT: this function does not check whether the UTF-8 character is valid and
-// will just count bytes based on the ranges described below. For example, the 0x01
-// is not a valid character.
-//
-// [Unicode v5 ch.3 p.104]
-//
-// Code Points          First Byte  Second Byte Third Byte  Fourth Byte
-// U+0000   .. U+007F   00..7F
-// U+0080   .. U+07FF   C2..DF      80..BF
-// U+0800   .. U+0FFF   E0          A0..BF      80..BF
-// U+1000   .. U+CFFF   E1..EC      80..BF      80..BF
-// U+D000   .. U+D7FF   ED          80..9F      80..BF
-// U+E000   .. U+FFFF   EE..EF      80..BF      80..BF
-// U+10000  .. U+3FFFF  F0          90..BF      80..BF      80..BF
-// U+40000  .. U+FFFFF  F1..F3      80..BF      80..BF      80..BF
-// U+100000 .. U+10FFFF F4          80..8F      80..BF      80..BF
-//
+///
+/// @brief  Returns the number of bytes in a UTF-8 character or a zero if the sequence 
+///         has any bytes outside of the ranges defined for UTF-8 characters. 
+///
+/// If `maxcnt` is specified, at most `maxcnt` bytes will be evaluated and a zero will 
+/// be returned if the sequence of `maxcnt` bytes does not represent a complete UTF-8 
+/// character.
+///
+/// IMPORTANT: this function does not check whether the UTF-8 character is valid and
+/// will just count bytes based on the ranges described below. For example, the 0x01
+/// is not a valid character.
+///
+/// [Unicode v5 ch.3 p.104]
+/// ```
+/// Code Points          First Byte  Second Byte Third Byte  Fourth Byte
+/// U+0000   .. U+007F   00..7F
+/// U+0080   .. U+07FF   C2..DF      80..BF
+/// U+0800   .. U+0FFF   E0          A0..BF      80..BF
+/// U+1000   .. U+CFFF   E1..EC      80..BF      80..BF
+/// U+D000   .. U+D7FF   ED          80..9F      80..BF
+/// U+E000   .. U+FFFF   EE..EF      80..BF      80..BF
+/// U+10000  .. U+3FFFF  F0          90..BF      80..BF      80..BF
+/// U+40000  .. U+FFFFF  F1..F3      80..BF      80..BF      80..BF
+/// U+100000 .. U+10FFFF F4          80..8F      80..BF      80..BF
+/// ```
 inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 {
    if(!cp || !maxcnt || maxcnt > 4)
@@ -163,25 +165,28 @@ inline size_t utf8size(const char *cp, size_t maxcnt = 4)
    return 0;
 }
 
-//
-// Checks if the character is a valid one-byte UTF-8 character (i.e. control and ASCII)
-//
+///
+/// @brief  Checks if the character is a valid one-byte UTF-8 character (i.e. control 
+///         and ASCII)
+///
 inline bool isutf8char(char chr)
 {
    return in_range<'\x00', '\x7F'>(chr);
 }
 
-//
-// Converts a UCS-2 string to a UTF-8 string. Returns the size of the result, in bytes,
-// not including the null character, if one was inserted. If slen was provided, all slen 
-// characters will be converted, whether they contain a null character or not. 
-//
+///
+/// @brief  Converts a UCS-2 string to a UTF-8 string. 
+///
+/// Returns the size of the result, in bytes, not including the null character, if 
+/// one was inserted. If `slen` was provided, all `slen` characters will be converted, 
+/// whether they contain a null character or not. 
+///
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
 size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 
-//
-// Checks if str is a valid UTF-8 string
-//
+///
+/// @brief  Checks if str is a valid UTF-8 string.
+///
 bool isutf8str(const char *str);
 bool isutf8str(const char *str, size_t slen);
 

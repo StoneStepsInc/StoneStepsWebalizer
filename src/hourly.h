@@ -20,10 +20,10 @@
 /// @brief  Hourly counters node
 ///
 struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
-      uint64_t th_hits;             // hourly requests total
-      uint64_t th_files;            // hourly files total 
-      uint64_t th_pages;            // hourly pages total
-      uint64_t th_xfer;             // hourly transfer amount total, in bytes
+      uint64_t th_hits;             ///< Hourly requests total
+      uint64_t th_files;            ///< Hourly files total 
+      uint64_t th_pages;            ///< Hourly pages total
+      uint64_t th_xfer;             ///< Hourly transfer amount total, in bytes
 
       public:
          typedef void (*s_unpack_cb_t)(hourly_t& hourly, void *arg);

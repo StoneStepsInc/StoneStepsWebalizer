@@ -28,13 +28,13 @@
 /// created the database.
 ///
 struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
-   u_int       appver;              // application version
-   u_int       appver_last;         // last application version
-   bool        incremental;         // incremetal database?
-   bool        batch;               // batch processing?
-   bool        fixed_dhv;           // fixed daily/hourly records?
-   uint32_t    filepos;             // log file position (not used)
-   string_t    logformat;           // log format line (not used)
+   u_int       appver;              ///< Application version
+   u_int       appver_last;         ///< Last application version
+   bool        incremental;         ///< Incremetal database?
+   bool        batch;               ///< Batch processing?
+   bool        fixed_dhv;           ///< Fixed daily/hourly records?
+   uint32_t    filepos;             ///< Log file position (not used)
+   string_t    logformat;           ///< Log format line (not used)
    
    u_short     sizeof_char;
    u_short     sizeof_short;
@@ -44,8 +44,8 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
    
    u_int       byte_order;
 
-   bool        utc_time;            // UTC or local time?
-   int         utc_offset;          // UTC offset in minutes if local time
+   bool        utc_time;            ///< UTC or local time?
+   int         utc_offset;          ///< UTC offset in minutes if local time
 
    public:
       typedef void (*s_unpack_cb_t)(sysnode_t& sysnode, void *arg);
