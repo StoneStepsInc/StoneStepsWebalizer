@@ -1971,7 +1971,7 @@ HideHost      This allows you to hide specified hosts from the "Top
 HideAllHosts  This allows hiding all individual hosts from the display,
               which can be useful when a lot of groupings are being
               used (since grouped records cannot be hidden).  It is
-              particularly useful in conjunction with the GroupDomain
+              particularly useful in conjunction with the GroupDomains
               feature, however can be useful in other situations as well.
               Value can be either 'yes' or 'no', with 'no' the default.
               Command line argument: -X
