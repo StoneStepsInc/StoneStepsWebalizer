@@ -10,7 +10,6 @@
 #include "pch.h"
 
 #include "tstring.h"
-#include "exception.h"
 #include "unicode.h"
 
 #include <memory.h>
@@ -20,6 +19,7 @@
 #include <cstdlib>
 #include <cwchar>
 #include <cctype>
+#include <stdexcept>
 
 //
 // Define the same macro as was used in tstring.h, so we don't make this rather
@@ -78,6 +78,7 @@ template<typename char_t> const char string_base<char_t>::ex_bad_hold_string[] =
 template<typename char_t> const char string_base<char_t>::ex_holder_resize[] = "Cannot resize a string holder";
 template<typename char_t> const char string_base<char_t>::ex_not_implemented[] = "Not implemented";
 template<typename char_t> const char string_base<char_t>::ex_fmt_error[] = "Cannot format a string";
+template<typename char_t> const char string_base<char_t>::ex_bad_utf8_char[] = "A bad UTF-8 character is encountered";
 
 //
 //
@@ -102,15 +103,15 @@ string_base<char_t>::string_base(const_char_buffer_t&& char_buffer, size_t len) 
 {
    // cannot hold a NULL pointer
    if(!char_buffer)
-      throw exception_t(0, ex_bad_char_buffer);
+      throw std::runtime_error(ex_bad_char_buffer);
 
    // check if the buffer is large enough to hold len plus the null character
    if(len >= char_buffer.capacity())
-      throw exception_t(0, ex_bad_char_buffer);
+      throw std::runtime_error(ex_bad_char_buffer);
 
    // read-only strings must be null-terminated
    if(char_buffer[len])
-      throw exception_t(0, ex_bad_char_buffer);
+      throw std::runtime_error(ex_bad_char_buffer);
 
    // move the string out of the buffer
    c_string = char_buffer.detach(NULL, NULL);
@@ -130,7 +131,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    // free the existing string if it was allocated
    if(!holder && string != empty_string)
@@ -165,7 +166,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::clear(void)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(string) {
       if(!holder && string != empty_string)
@@ -180,7 +181,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::reset(void)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(string != empty_string) 
       *string = 0;
@@ -192,7 +193,7 @@ template <typename char_t>
 void string_base<char_t>::reserve(size_t len)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(holder)
       clear();
@@ -203,7 +204,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::assign(const char_t *str) 
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    reset();
 
@@ -217,7 +218,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::append(const char_t *str) 
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(str && *str)
       return append(str, strlen_(str));
@@ -229,11 +230,11 @@ template <typename char_t>
 void string_base<char_t>::realloc_buffer(size_t len)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    // fail if we don't own the storage
    if(holder)
-      throw exception_t(0, ex_holder_resize);
+      throw std::runtime_error(ex_holder_resize);
 
    // bufsize includes the null terminator and len does not
    if(len >= bufsize) {
@@ -254,7 +255,7 @@ string_base<char_t>& string_base<char_t>::append(const char_t *str, size_t len)
 {
    // can't append to a read-only string 
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    // check if there's anything to append
    if(!str || !*str || !len)
@@ -362,12 +363,12 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
    cp2 = str2 ? str2 : empty_string;
 
    while((*cp1 || *cp2) && count) {
-      // TODO: throw instead, once we can guarantee that only UTF-8 strings are in play
+      // make sure both characters are valid UTF-8 characters
       if((chsz1 = utf8size(cp1)) == 0)
-         return -1;
+         throw std::runtime_error(ex_bad_utf8_char);
 
       if((chsz2 = utf8size(cp2)) == 0)
-         return -1;
+         throw std::runtime_error(ex_bad_utf8_char);
 
       if(chsz1 == 1 && chsz2 == 1) {
          // compare ASCII characters case-insensitively
@@ -398,7 +399,7 @@ string_base<char_t>& string_base<char_t>::transform(char_t (*convchar)(char_t), 
    char_t *cp1, *cp2;
 
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(start >= slen)
       return *this;
@@ -421,7 +422,7 @@ string_base<char>& string_base<char>::transform(char (*convchar)(char), size_t s
    size_t chsz;
 
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(start >= slen)
       return *this;
@@ -432,9 +433,8 @@ string_base<char>& string_base<char>::transform(char (*convchar)(char), size_t s
 
    // walk through UTF-8 characters from start to end
    for(cp1 = &string[start], cp2 = &string[start+length]; cp1 < cp2; cp1 += chsz) { 
-      // TODO: throw instead, once we can guarantee that only UTF-8 strings are in play
       if((chsz = utf8size(cp1)) == 0)
-         return (*this);
+         throw std::runtime_error(ex_bad_utf8_char);
 
       // only convert one-byte (ASCII) characters
       if(chsz == 1)
@@ -497,7 +497,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::replace(char_t from, char_t to)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    char_t *cptr = string;
    while(*cptr) {
@@ -512,7 +512,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::truncate(size_t at)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(at < slen) {
       slen = at;
@@ -543,7 +543,7 @@ template <typename char_t>
 string_base<char_t>& string_base<char_t>::format(const char_t *fmt, ...)
 {
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    va_list valist;
    va_start(valist, fmt);
@@ -560,7 +560,7 @@ string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list v
 
    // can't format a read-only string
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(!fmt) {
       reset();
@@ -585,7 +585,7 @@ string_base<char_t>& string_base<char_t>::format_va(const char_t *fmt, va_list v
       va_end(ap);
       if(bufsize > 500 * 1024) {
          reset();
-         throw exception_t(0, ex_fmt_error);
+         throw std::runtime_error(ex_fmt_error);
       }
       realloc_buffer(bufsize << 1);
       va_copy(ap, valist);
@@ -606,7 +606,7 @@ string_base<char>& string_base<char>::format_va(const char *fmt, va_list valist)
 
    // can't format a read-only string
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(!fmt) {
       reset();
@@ -639,7 +639,7 @@ string_base<char>& string_base<char>::format_va(const char *fmt, va_list valist)
    // check if there was a formatting error
    if(plen < 0) {
       reset();
-      throw exception_t(0, ex_fmt_error);
+      throw std::runtime_error(ex_fmt_error);
    }
 
    slen = (size_t) plen;
@@ -671,7 +671,7 @@ typename string_base<char_t>::char_buffer_t string_base<char_t>::detach(void)
 
    // cannot detach a read-only string
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    if(string != empty_string)
       string_buffer.attach(string, bufsize, holder);
@@ -686,15 +686,15 @@ string_base<char_t>& string_base<char_t>::attach(char_buffer_t&& char_buffer, si
 {
    // cannot attach to a read-only string
    if(holder && !bufsize)
-      throw exception_t(0, ex_readonly_string);
+      throw std::runtime_error(ex_readonly_string);
 
    // cannot attach a NULL pointer
    if(!char_buffer)
-      throw exception_t(0, ex_bad_char_buffer);
+      throw std::runtime_error(ex_bad_char_buffer);
 
    // check if the buffer is large enough to hold len plus the null character
    if(len >= char_buffer.capacity())
-      throw exception_t(0, ex_bad_char_buffer);
+      throw std::runtime_error(ex_bad_char_buffer);
 
    // release current memory block
    if(!holder && string != empty_string)
@@ -728,11 +728,11 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len)
 {
    // cannot hold a NULL pointer
    if(!str)
-      throw exception_t(0, ex_bad_hold_string);
+      throw std::runtime_error(ex_bad_hold_string);
 
    // str may be in read-only memory, make sure it's terminated
    if(str[len])
-      throw exception_t(0, ex_bad_hold_string);
+      throw std::runtime_error(ex_bad_hold_string);
 
    // create a temporary holder buffer and initialize a read-only string.
    const_char_buffer_t char_buffer(str, len+1, true);

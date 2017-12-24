@@ -110,6 +110,7 @@ class string_base {
       static const char ex_holder_resize[];
       static const char ex_not_implemented[];
       static const char ex_fmt_error[];
+      static const char ex_bad_utf8_char[];
 
    private:
       void init(void);
