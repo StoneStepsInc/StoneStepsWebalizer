@@ -18,13 +18,13 @@
 ///         of bytes in the output.
 ///
 /// [Unicode v5 ch.3 p.103]
-///
+/// ```
 /// Scalar Value                  First Byte  Second Byte Third Byte  Fourth Byte
 /// 00000000 0xxxxxxx             0xxxxxxx
 /// 00000yyy yyxxxxxx             110yyyyy    10xxxxxx
 /// zzzzyyyy yyxxxxxx             1110zzzz    10yyyyyy    10xxxxxx
 /// 000uuuuu zzzzyyyy yyxxxxxx    11110uuu    10uuzzzz    10yyyyyy    10xxxxxx
-///
+/// ```
 inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
    if(!out)
