@@ -61,39 +61,37 @@ char from_hex(char c)
    return 0;                      /* return 0 if bad...      */
 }
 
-//
-// Normalizes a URL-encoded string to minimize aliasing and improve readability. 
-//
-// All non-UTF-8 characters are assumed to be encoded as CP1252 and converted to 
-// UTF-8. This covers most maformed URLs, but will mangle characters from non-Latin1
-// character sets. There is no way around that, as it is impossible to figure out the 
-// actual character set of an arbitrary character.
-//
-// No assumption is made about the format of the string, so it can be a URL, a user
-// agent with URL-encoded characters, etc. One side effect of this is that the '+'
-// character is not converted to a space because such conversion can be done only 
-// for form arguments and without knowing the underlying string format, it could
-// mangle the string.
-//
-//  x%25y      -> x%25y        : reserved URL characters are not URL-decoded
-//  x+y        -> x+y          : the plus character is not converted to a space (see above)
-//  x%20y      -> x y          : the space character is URL-decoded 
-//  x%41y      -> xAy          : ASCII alpha-numeric characters are URL-decoded
-//  x%y        -> x%25y        : a misplaced percent character is URL-encoded
-//  xAy        -> xAy          : plain ASCII alpha-numeric characters are not changed
-//  x\x01y     -> x%01y        : control characters are URL-encoded
-//  x%A3y      -> x\xC2\xA3y   : non-UTF-8 characters are URL-decoded and converted to UTF-8
-//  x\xA3y     -> x\xC2\xA3y   : non-UTF-8 characters are converted to UTF-8
-//  %E8%A8%98  -> \xE8\xA8\x98 : UTF-8 characters are URL-decoded
-//  x\xC2\xA3y -> x\xC2\xA3y   : well-formed UTF-8 characters are not changed
-//
-// Normalized URLs are suitable for display and can be copied into the browser URL
-// box, but they are not valid URLs because non-ASCII characters must be percent-encoded 
-// in URLs.
-//
-// The strbuf parameter is used as an intermediary string buffer to minimize memory
-// allocations when the caller needs to normalize multiple URL strings one after another.
-//
+///
+/// All non-UTF-8 characters are assumed to be encoded as CP1252 and converted to 
+/// UTF-8. This covers most maformed URLs, but will mangle characters from non-Latin1
+/// character sets. There is no way around that, as it is impossible to figure out the 
+/// actual character set of an arbitrary character.
+///
+/// No assumption is made about the format of the string, so it can be a URL, a user
+/// agent with URL-encoded characters, etc. One side effect of this is that the '+'
+/// character is not converted to a space because such conversion can be done only 
+/// for form arguments and without knowing the underlying string format, it could
+/// mangle the string.
+/// ```
+///  x%25y      -> x%25y        : reserved URL characters are not URL-decoded
+///  x+y        -> x+y          : the plus character is not converted to a space (see above)
+///  x%20y      -> x y          : the space character is URL-decoded 
+///  x%41y      -> xAy          : ASCII alpha-numeric characters are URL-decoded
+///  x%y        -> x%25y        : a misplaced percent character is URL-encoded
+///  xAy        -> xAy          : plain ASCII alpha-numeric characters are not changed
+///  x\x01y     -> x%01y        : control characters are URL-encoded
+///  x%A3y      -> x\xC2\xA3y   : non-UTF-8 characters are URL-decoded and converted to UTF-8
+///  x\xA3y     -> x\xC2\xA3y   : non-UTF-8 characters are converted to UTF-8
+///  %E8%A8%98  -> \xE8\xA8\x98 : UTF-8 characters are URL-decoded
+///  x\xC2\xA3y -> x\xC2\xA3y   : well-formed UTF-8 characters are not changed
+/// ```
+/// Normalized URLs are suitable for display and can be copied into the browser URL
+/// box, but they are not valid URLs because non-ASCII characters must be percent-encoded 
+/// in URLs.
+///
+/// The strbuf parameter is used as an intermediary string buffer to minimize memory
+/// allocations when the caller needs to normalize multiple URL strings one after another.
+///
 void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
 {
    size_t chsz, of;
@@ -221,11 +219,9 @@ void norm_url_str(string_t& str, string_t::char_buffer_t& strbuf)
    str.attach(std::move(buf), bcp - buf);
 }
 
-//
-// URL-encodes multi-byte UTF-8 sequences, space and control characters. No 
-// other character transformations are done. It is expected that the input 
-// string is normalized by norm_url_str.
-//
+///
+/// It is expected that the input string is normalized by norm_url_str.
+///
 string_t& url_encode(const string_t& str, string_t& out)
 {
    size_t chsz, of;
@@ -285,6 +281,10 @@ string_t& url_encode(const string_t& str, string_t& out)
    return out;
 }
 
+///
+/// The returned temporary holder buffer points to the domain name within `url` and
+/// its size is set to indicate the length of the domain name.
+///
 string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
 {
    const char *cp1 = url, *cp2, *atp = NULL, *colp = NULL;
@@ -365,10 +365,6 @@ string_t& get_url_host(const char *url, string_t& domain)
 
    return domain;
 }
-
-/*********************************************/
-/* GET_DOMAIN - Get domain portion of host   */
-/*********************************************/
 
 const char *get_domain(const char *str, size_t labelcnt)
 {
