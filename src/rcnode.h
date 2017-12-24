@@ -19,18 +19,23 @@
 ///
 /// @brief  URL request method and status code for HTTP errors node
 /// 
-/// 1. rcnode_t tracks URLs that resulted in an HTTP error
+/// 1. `rcnode_t` tracks URLs that resulted in an HTTP error
 ///
 struct rcnode_t : public base_node<rcnode_t> { 
+      ///
+      /// @struct param_block
+      ///
+      /// @brief  A compound key structure for an HTP response code node.
+      ///
       struct param_block {
-         u_int       respcode;
-         const char  *url;
-         const char  *method;
+         u_int       respcode;         ///< HTTP status code
+         const char  *url;             ///< Request URL
+         const char  *method;          ///< HTTP method
       };
 
-      u_short        respcode;         // HTTP status code
-      uint64_t       count;            // request count
-      string_t       method;           // HTTP method
+      u_short        respcode;         ///< HTTP status code
+      uint64_t       count;            ///< Request count
+      string_t       method;           ///< HTTP method
 
       public:
          typedef void (*s_unpack_cb_t)(rcnode_t& rcnode, void *arg);
