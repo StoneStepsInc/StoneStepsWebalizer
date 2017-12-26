@@ -53,21 +53,35 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       typedef void (*s_unpack_cb_t)(sysnode_t& sysnode, void *arg);
 
    public:
+      /// Constructs a default instance without the configuration object
       sysnode_t(void);
       
+      /// Resets the instance using the configuration object.
       void reset(const config_t& config);
       
+      /// Returns `true` if sizes of all fundamental data in the database matches run time data sizes, `false` otherwise.
       bool check_size_of(void) const;
+
+      /// Returns `true` if the byte order in the database matches run time byte order, `false` otherwise.
       bool check_byte_order(void) const;
+
+      /// Returns `true` if the time setting in the database match run time values, `false` otherwise.
       bool check_time_settings(const config_t& config) const;
 
       //
       // serialization
       //
+
+      /// Returns the size of the current node if it is serialized.
       size_t s_data_size(void) const;
+
+      /// Serializes the current node into the specified buffer. 
       size_t s_pack_data(void *buffer, size_t bufsize) const;
+
+      /// Populates current node with deserialized data from the buffer.
       size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
 
+      /// Returns the size of serialized data in the buffer.
       static size_t s_data_size(const void *buffer);
 };
 
