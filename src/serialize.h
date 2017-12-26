@@ -107,6 +107,26 @@ inline void *serialize(void *ptr, type_t value)
 }
 
 ///
+/// @brief  Serializes a value whose storage type differs from the run 
+///         time type.
+///
+/// @tparam storage_t   Field storage data type
+/// @tparam runtime_t   Field value data type
+///
+/// A compiler may issue a warning when a larger run time type is converted into
+/// a smaller storage type, such as `size_t` value converted into an `unsigned int`
+/// storage field on x64 platforms. This function explicitly casts run time value 
+/// type to the storage type and avoids the warning. The caller must ensure that 
+/// the storage type can accommodate all possible run time values.
+///
+template <typename storage_t, typename runtime_t>
+inline void *serialize(void *ptr, runtime_t value)
+{
+   *((storage_t*) ptr) = (storage_t) value;
+   return (u_char*) ptr + sizeof(storage_t);
+}
+
+///
 /// @brief  Serializes `bool` as a `u_char` value.
 ///
 inline void *serialize(void *ptr, bool value)

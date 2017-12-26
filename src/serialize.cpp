@@ -13,7 +13,7 @@
 
 void *serialize(void *ptr, const string_t& value)
 {
-   void *cp = serialize<u_int>(ptr, (u_int) value.length());
+   void *cp = serialize<u_int, size_t>(ptr, value.length());
    if(value.length())
       memcpy(cp, value.c_str(), value.length());
    return (u_char*) ptr + sizeof(u_int) + value.length();
