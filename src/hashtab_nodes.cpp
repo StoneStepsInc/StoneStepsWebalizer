@@ -37,7 +37,7 @@ template<> const u_short datanode_t<danode_t>::__version = 2;
 template<> const u_short datanode_t<scnode_t>::__version = 1;
 template<> const u_short datanode_t<daily_t> ::__version = 2;
 template<> const u_short datanode_t<hourly_t>::__version = 1;
-template<> const u_short datanode_t<sysnode_t>::__version = 5;
+template<> const u_short datanode_t<sysnode_t>::__version = 6;
 
 //
 // hash table base webalizer nodes

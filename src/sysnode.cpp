@@ -27,8 +27,10 @@ sysnode_t::sysnode_t(void) : keynode_t<uint32_t>(1)
    sizeof_int = sizeof(int);
    sizeof_long = sizeof(long);
    sizeof_double = sizeof(double);
+   sizeof_longlong = sizeof(long long);
    
    byte_order = 0x12345678u;
+   byte_order_x64 = 0x1234567809ABCDEFull;
 
    utc_time = true;
    utc_offset = 0; 
@@ -50,8 +52,10 @@ void sysnode_t::reset(const config_t& config)
    sizeof_int = sizeof(int);
    sizeof_long = sizeof(long);
    sizeof_double = sizeof(double);
+   sizeof_longlong = sizeof(long long);
    
    byte_order = 0x12345678u;
+   byte_order_x64 = 0x1234567809ABCDEFull;
 
    utc_time = !config.local_time;
    utc_offset = config.utc_offset; 
@@ -74,7 +78,15 @@ bool sysnode_t::check_size_of(void) const
    if(sizeof_double != sizeof(double))
       return false;
       
+   if(sizeof_longlong != sizeof(long long))
+      return false;
+
    return true;
+}
+
+bool sysnode_t::check_byte_order(void) const 
+{
+   return byte_order == 0x12345678u && byte_order_x64 == 0x1234567809ABCDEFull;;
 }
 
 bool sysnode_t::check_time_settings(const config_t& config) const
@@ -95,7 +107,9 @@ size_t sysnode_t::s_data_size(void) const
             sizeof(u_int)        +     // byte_order
             sizeof(u_int)        +     // appvar_last
             sizeof(u_char)       +     // utc_time
-            sizeof(short)        ;     // utc_offset
+            sizeof(short)        +     // utc_offset
+            sizeof(u_short)      +     // sizeof_longlong
+            sizeof(uint64_t)     ;     // byte_order_x64
 }
 
 size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -130,7 +144,10 @@ size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, appver_last);
 
    ptr = serialize(ptr, utc_time);
-         serialize<short, int>(ptr, utc_offset);
+   ptr = serialize<short, int>(ptr, utc_offset);
+
+   ptr = serialize(ptr, sizeof_longlong);
+   ptr = serialize(ptr, byte_order_x64);
 
    return datasize;
 }
@@ -199,6 +216,15 @@ size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_
       ptr = deserialize<short>(ptr, utc_offset);
    }
 
+   if(version >= 6) {
+      ptr = deserialize(ptr, sizeof_longlong);
+      ptr = deserialize(ptr, byte_order_x64);
+   }
+   else {
+      sizeof_longlong = sizeof(long long);
+      byte_order_x64 = 0x1234567890ABCDEFull;
+   }
+
    if(upcb)
       upcb(*this, arg);
 
@@ -236,7 +262,14 @@ size_t sysnode_t::s_data_size(const void *buffer)
    if(version < 5)
       return datasize;
 
-   return datasize +
+   datasize +=
             sizeof(u_char)       +        // utc_time
             sizeof(short);                // utc_offset
+
+   if(version < 6)
+      return datasize;
+
+   return datasize +
+            sizeof(u_short)      +        // sizeof_longlong
+            sizeof(uint64_t);             // byte_order_x64
 }

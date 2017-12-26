@@ -36,13 +36,15 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
    uint32_t    filepos;             ///< Log file position (not used)
    string_t    logformat;           ///< Log format line (not used)
    
-   u_short     sizeof_char;
-   u_short     sizeof_short;
-   u_short     sizeof_int;
-   u_short     sizeof_long;
-   u_short     sizeof_double;
+   u_short     sizeof_char;         ///< `sizeof(char)` where `sysnode_t` was created
+   u_short     sizeof_short;        ///< `sizeof(short)` where `sysnode_t` was created
+   u_short     sizeof_int;          ///< `sizeof(int)` where `sysnode_t` was created
+   u_short     sizeof_long;         ///< `sizeof(long)` where `sysnode_t` was created
+   u_short     sizeof_double;       ///< `sizeof(double)` where `sysnode_t` was created
+   u_short     sizeof_longlong;     ///< `sizeof(longlong)` where `sysnode_t` was created
    
-   u_int       byte_order;
+   u_int       byte_order;          ///< Value `0x12345678` where `sysnode_t` was created
+   uint64_t    byte_order_x64;      ///< Value `0x1234567890ABCDEF` where `sysnode_t` was created
 
    bool        utc_time;            ///< UTC or local time?
    int         utc_offset;          ///< UTC offset in minutes if local time
@@ -56,7 +58,7 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       void reset(const config_t& config);
       
       bool check_size_of(void) const;
-      bool check_byte_order(void) const {return byte_order == 0x12345678u;}
+      bool check_byte_order(void) const;
       bool check_time_settings(const config_t& config) const;
 
       //
