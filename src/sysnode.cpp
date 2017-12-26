@@ -77,7 +77,7 @@ bool sysnode_t::check_size_of(void) const
    return true;
 }
 
-bool sysnode_t::check_time_settings(const config_t& config)
+bool sysnode_t::check_time_settings(const config_t& config) const
 {
    return utc_time == !config.local_time && utc_offset == config.utc_offset;
 }

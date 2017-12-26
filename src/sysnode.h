@@ -57,7 +57,7 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       
       bool check_size_of(void) const;
       bool check_byte_order(void) const {return byte_order == 0x12345678u;}
-      bool check_time_settings(const config_t& config);
+      bool check_time_settings(const config_t& config) const;
 
       //
       // serialization
