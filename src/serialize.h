@@ -274,23 +274,6 @@ size_t s_size_of<tstamp_t>(const void *ptr);
 
 // -----------------------------------------------------------------------
 //
-// size-of functions that don't depend on instance or storage data
-//
-// -----------------------------------------------------------------------
-template <typename type_t>
-inline size_t s_size_of(void)
-{
-   return sizeof(type_t);
-}
-
-template <>
-inline size_t s_size_of<bool>(void)
-{
-   return sizeof(u_char);
-}
-
-// -----------------------------------------------------------------------
-//
 // skip functions
 //
 // -----------------------------------------------------------------------
