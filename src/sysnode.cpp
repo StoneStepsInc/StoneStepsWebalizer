@@ -86,7 +86,7 @@ bool sysnode_t::check_size_of(void) const
 
 bool sysnode_t::check_byte_order(void) const 
 {
-   return byte_order == 0x12345678u && byte_order_x64 == 0x1234567809ABCDEFull;;
+   return byte_order == 0x12345678u && byte_order_x64 == 0x1234567890ABCDEFull;
 }
 
 bool sysnode_t::check_time_settings(const config_t& config) const
