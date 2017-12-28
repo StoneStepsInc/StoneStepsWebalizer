@@ -122,11 +122,6 @@ template <typename object_t>
 struct storable_t : public object_t {
    storage_info_t storage_info;        ///< Storage flags and other related information
 
-   /// Constructs a default instance of a storable and underlying objects
-   storable_t(void)
-   {
-   }
-
    /// Constructs a copy of a storable object from a reference to a `const` underlying object.
    storable_t(const storable_t<object_t>& other) : storage_info(other.storage_info), object_t(other) 
    {
