@@ -22,20 +22,24 @@
 ///
 /// @brief  HTTP status code node
 ///
+/// Prior to v2 this node was missing the version value in serialized data and the 
+/// only way to identify that version is by the size of serialized data. Starting 
+/// with v2 serialized node data will be one byte larger than v1 because of `v2pad`,
+/// which allows us to get back to the versioned serialized node layout.
+///
 struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
-   uint64_t       count;         // number of hits
+   uint64_t       count;            ///< Number of requests with this status code
+   u_char         v2pad;            ///< v2 serialized node padding (see class definition)
 
    public:
       typedef void (*s_unpack_cb_t)(scnode_t& scnode, void *arg);
 
    public:
-      scnode_t(void) : keynode_t<u_int>(0) {count = 0;}
+      scnode_t(u_int code) : keynode_t<u_int>(code), v2pad(0) {count = 0;}
 
-      scnode_t(u_int code) : keynode_t<u_int>(code) {count = 0;}
-
-      scnode_t(const scnode_t& node) : keynode_t<u_int>(node) {count = node.count;}
+      scnode_t(const scnode_t& node) : keynode_t<u_int>(node), v2pad(node.v2pad) {count = node.count;}
       
-      scnode_t& operator = (const scnode_t& node) {keynode_t<u_int>::operator = (node); count = node.count; return *this;}
+      scnode_t& operator = (const scnode_t& node) {keynode_t<u_int>::operator = (node); count = node.count; v2pad = node.v2pad; return *this;}
 
       u_int get_scode(void) const {return nodeid;}
 
@@ -68,7 +72,7 @@ class sc_table_t {
    size_t               clsindex[6];   ///< HTTP status class group offsets (0th is not used)
 
    public:
-      sc_table_t(u_int maxcodes);
+      sc_table_t(void);
 
       ~sc_table_t(void);
 

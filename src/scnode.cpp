@@ -12,7 +12,7 @@
 #include "scnode.h"
 #include "serialize.h"
 
-sc_table_t::sc_table_t(u_int maxcodes) : stcodes(maxcodes)
+sc_table_t::sc_table_t(void)
 {
    memset(clsindex, 0, sizeof(clsindex));
    stcodes.push_back(scnode_t(0));           // unknown status code node
@@ -86,19 +86,26 @@ const storable_t<scnode_t>& sc_table_t::operator [] (size_t index) const
 
 size_t scnode_t::s_data_size(void) const
 {
-   return datanode_t<scnode_t>::s_data_size() + sizeof(uint64_t);
+   return datanode_t<scnode_t>::s_data_size() + 
+            sizeof(uint64_t) +         // count
+            sizeof(u_char);            // v2pad
 }
 
 size_t scnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
    size_t datasize;
+   void *ptr;
 
    datasize = s_data_size();
 
-   if(bufsize < s_data_size())
+   if(bufsize < datasize)
       return 0;
 
-   serialize(buffer, count);
+   datanode_t<scnode_t>::s_pack_data(buffer, bufsize);
+   ptr = (u_char*) buffer + datanode_t<scnode_t>::s_data_size();
+
+   ptr = serialize(ptr, count);
+   ptr = serialize(ptr, v2pad);
 
    return datasize;
 }
@@ -106,18 +113,35 @@ size_t scnode_t::s_pack_data(void *buffer, size_t bufsize) const
 size_t scnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
 {
    size_t datasize;
+   u_short version;
+   const void *ptr;
 
-   datasize = s_data_size(buffer);
+   // deal with the missing version in v1 (see class definition)
+   if(bufsize == sizeof(u_short) + sizeof(uint64_t)) {
+      version = 1;
+      ptr = buffer;
+      datasize = bufsize;
+   }
+   else {
+      version = s_node_ver(buffer);
+      ptr = (u_char*) buffer + datanode_t<scnode_t>::s_data_size(buffer);
+      datasize = s_data_size(buffer);
+   }
 
    if(bufsize < datasize)
       return 0;
 
-   deserialize(buffer, count);
+   ptr = deserialize(ptr, count);
+
+   if(version >= 2)
+      ptr = deserialize(ptr, v2pad);
    
    return datasize;
 }
 
 size_t scnode_t::s_data_size(const void *buffer)
 {
-   return datanode_t<scnode_t>::s_data_size(buffer) + sizeof(uint64_t);
+   return datanode_t<scnode_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) +         // count
+            sizeof(u_char);            // v2pad
 }

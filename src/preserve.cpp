@@ -35,7 +35,7 @@
 #include <cctype>
 #include <memory>
 
-state_t::state_t(const config_t& config) : config(config), history(config), database(config), response(config.lang.resp_code_count())
+state_t::state_t(const config_t& config) : config(config), history(config), database(config)
 {
    buffer = new char[BUFSIZE];
 
