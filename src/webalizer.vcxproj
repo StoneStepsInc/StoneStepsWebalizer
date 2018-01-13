@@ -354,12 +354,22 @@
     <ResourceCompile Include="webalizer.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(GDLibDir)$(GDLibName).lib" />
-    <Library Include="$(BDBLibDir)$(BDBLibName).lib" />
-    <Library Include="$(GeoIPLibDir)$(GeoIPLibName).lib" />
-    <Library Include="$(ZLibLibDir)$(ZLibName).lib" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\StoneStepsWebalizer.ZLib.1.2.8\build\native\StoneStepsWebalizer.ZLib.targets" Condition="Exists('packages\StoneStepsWebalizer.ZLib.1.2.8\build\native\StoneStepsWebalizer.ZLib.targets')" />
+    <Import Project="packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets" Condition="Exists('packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets')" />
+    <Import Project="packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets" Condition="Exists('packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets')" />
+    <Import Project="packages\StoneStepsWebalizer.MaxMindDB.1.2.0\build\native\StoneStepsWebalizer.MaxMindDB.targets" Condition="Exists('packages\StoneStepsWebalizer.MaxMindDB.1.2.0\build\native\StoneStepsWebalizer.MaxMindDB.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.ZLib.1.2.8\build\native\StoneStepsWebalizer.ZLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.ZLib.1.2.8\build\native\StoneStepsWebalizer.ZLib.targets'))" />
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets'))" />
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets'))" />
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.MaxMindDB.1.2.0\build\native\StoneStepsWebalizer.MaxMindDB.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.MaxMindDB.1.2.0\build\native\StoneStepsWebalizer.MaxMindDB.targets'))" />
+  </Target>
 </Project>

@@ -2,12 +2,6 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
   </ImportGroup>
-  <PropertyGroup Label="UserMacros">
-    <BDBLibDir>$(BDBDir)build_windows\$(BDBPlatformPathLabel)Release\</BDBLibDir>
-    <GDLibDir>$(GDDir)windows\Release$(GDPlatformPathLabel)\</GDLibDir>
-    <GeoIPLibDir>$(GeoIPDir)projects\VS14\$(GeoIPPlatformPathLabel)Release\</GeoIPLibDir>
-    <ZLibLibDir>$(ZLibDir)contrib\vstudio\vc14\$(ZLibPlatformPathLabel)ZlibReleaseStatic\</ZLibLibDir>
-  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
     <LinkIncremental>false</LinkIncremental>
@@ -37,18 +31,4 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <BuildMacro Include="BDBLibDir">
-      <Value>$(BDBLibDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="GDLibDir">
-      <Value>$(GDLibDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="GeoIPLibDir">
-      <Value>$(GeoIPLibDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="ZLibLibDir">
-      <Value>$(ZLibLibDir)</Value>
-    </BuildMacro>
-  </ItemGroup>
 </Project>
