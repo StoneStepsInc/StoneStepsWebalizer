@@ -2299,7 +2299,16 @@ HTMLEnd        This allows insertion of closing code for HTMLBody tags, at
 HTMLCssPath
               Specifies a URL path to the webalizer.css file, not 
               including the file name. The path must be a URL path, 
-              even if it refers to a local file. Default value: none 
+              even if it refers to a local file. You can reference 
+              one CSS file in many reports to make it easier to 
+              change report layout in one place. Default value: none 
+
+HTMLJsPath
+              Specifies a URL path to the webalizer.js file, not 
+              including the file name. The path must be a URL path, 
+              even if it refers to a local file. You can reference 
+              one JavaScript file in many reports to make it easier 
+              to change report layout in one place. Default value: none 
 
 HTMLMetaNoIndex
               Controls whether Stone Steps Webalizer will generate HTML 
