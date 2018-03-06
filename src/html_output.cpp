@@ -114,11 +114,11 @@ void html_output_t::write_js_charts_head_links(FILE *out_fp)
 {
    if(config.js_charts_paths.empty()) {
       if(config.js_charts == "highcharts") {
-         // link to a Highcharts package within the 4.2 release, so we get bug fixes, but no major changes
-         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/stock/4.2/highstock.js\"></script>\n", out_fp);
+         // link to a Highcharts package within the 6.0 release, so we get bug fixes, but no major changes
+         fputs("<script type=\"text/javascript\" src=\"https://code.highcharts.com/stock/6.0/highstock.js\"></script>\n", out_fp);
 
          if(config.js_charts_map) {
-            fputs("<script src=\"https://code.highcharts.com/maps/4.2/modules/map.js\"></script>\n", out_fp);
+            fputs("<script src=\"https://code.highcharts.com/maps/6.0/modules/map.js\"></script>\n", out_fp);
             fputs("<script src=\"https://code.highcharts.com/mapdata/1.1/custom/world.js\"></script>\n", out_fp);
          }
       }
