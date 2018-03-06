@@ -24,6 +24,26 @@ function getUsageData_Highcharts(xValues, yValues)
 }
 
 //
+// Daily and hourly charts describe data points using [x,y] value arrays, which is 
+// a convenient way to display sparse data points, such as three days out of a month, 
+// because there is no need to create an array containing an element for each day, 
+// possibly containing `null` values for data points that do not exist. However, 
+// this makes it hard to cross-reference input data points because input arrays only 
+// contain existing data points and their index doesn't correspond to the point X 
+// value. This function fills in this gap and returns the index of the value in the
+// data array.
+//
+function getValueIndex_Highcharts(xValues, xValue)
+{
+   for(var i = 0; i < xValues.length; i++) {
+      if(xValues[i] == xValue)
+         return i;
+   }
+
+   return undefined;
+}
+
+//
 // Converts country usage data arrays into a Highcharts pie chart series data 
 // point array.
 //
@@ -250,7 +270,7 @@ function renderDailyUsageChart(daily_usage)
             pointFormatter: function () 
             {
                return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
-               htmlEncode(this.series.name) + ": <b>" + htmlEncode(daily_usage.data.xfer_hr[this.x-1]) + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(daily_usage.data.xfer_hr[getValueIndex_Highcharts(daily_usage.data.days, this.x)]) + "</b><br/>";
             }
          }
       }],
@@ -452,7 +472,7 @@ function renderHourlyUsageChart(hourly_usage)
             pointFormatter: function () 
             {
                return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
-               htmlEncode(this.series.name) + ": <b>" + htmlEncode(hourly_usage.data.xfer_hr[this.x]) + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(hourly_usage.data.xfer_hr[getValueIndex_Highcharts(hourly_usage.data.hours, this.x)]) + "</b><br/>";
             }
          }
       }],
