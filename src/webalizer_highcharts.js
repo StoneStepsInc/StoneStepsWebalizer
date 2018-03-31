@@ -8,39 +8,49 @@
    webalizer_highcharts.js
 */
 
-//
-// Converts usage data arrays xValues and yValues into a Highcharts series
-// array populated with [x,y] data points
-//
-function getUsageData_Highcharts(xValues, yValues)
+///
+/// @brief  Returns an array of X axis references to the position of the series data 
+///         in the original data array.
+///
+/// Input data is received in sparse arrays, with data present only for existing data
+/// points. This function returns an array of as many elements as there are data points 
+/// in the series, each containing either `null` or the index of the element within the 
+/// input data array. For example, if monthly usage series is populated only for 3 days 
+/// in the input array (e.g. 4, 5 and 28), elements `2`, `3` and `27` of the returned 
+/// array will contain values `0`, `1` and `2`, and the rest of the elements will be 
+/// populated with `null` values.
+///
+function getXAxisRefs_Highcharts(minX, maxX, xValues)
+{
+   var xAxisRefs = [];
+
+   for(let i = minX, k = 0; i <= maxX; i++) {
+      if(k < xValues.length && i == xValues[k])
+         xAxisRefs.push(k++);
+      else
+         xAxisRefs.push(null);
+   }
+   
+   return xAxisRefs;   
+}
+
+///
+/// @brief  Returns an array of Y axis values ranging inclusively from `maxX` to `minX`,
+///         with elements that correspond to `xValues` values populated from the matching 
+///         position in `yValues` and other elements set to `null`.
+///
+function getUsageData_Highcharts(minX, maxX, xValues, yValues)
 {
    var series = [];
 
-   for(var i = 0; i < xValues.length; i++) {
-      series.push([xValues[i], yValues[i]]);
+   for(let i = minX, k = 0; i <= maxX; i++) {
+      if(k < xValues.length && i == xValues[k])
+         series.push(yValues[k++]);
+      else
+         series.push(null);
    }
    
    return series;   
-}
-
-//
-// Daily and hourly charts describe data points using [x,y] value arrays, which is 
-// a convenient way to display sparse data points, such as three days out of a month, 
-// because there is no need to create an array containing an element for each day, 
-// possibly containing `null` values for data points that do not exist. However, 
-// this makes it hard to cross-reference input data points because input arrays only 
-// contain existing data points and their index doesn't correspond to the point X 
-// value. This function fills in this gap and returns the index of the value in the
-// data array.
-//
-function getValueIndex_Highcharts(xValues, xValue)
-{
-   for(var i = 0; i < xValues.length; i++) {
-      if(xValues[i] == xValue)
-         return i;
-   }
-
-   return undefined;
 }
 
 //
@@ -130,51 +140,57 @@ function getMonthlySummaryMonths_Highcharts(monthly_summary)
    return months;
 }
 
-//
-// Returns a series array containing Y axis values positionally corresponding
-// to the X axis label array returned from getMonthlySummaryMonths_Highcharts.
-//
-function getMonthlySummaryData_Highcharts(monthly_summary, months, yValues)
+///
+/// @brief  Returns an array of X axis references to the position of the series data 
+///         in the original data array.
+///
+/// This function serves the same purpose as `getXAxisRefs_Highcharts`, but works with
+/// compound X axis values consisting of objects `{year: number, month: number}`. If we
+/// were to use a single function for plain numbers and compound objects, such function
+/// would need to have access to abstract operations to increment, compare and assign
+/// values, which would be unnecessarily complex for the purposes of this implementation.
+///
+function getMonthlyXAxisRefs_Highcharts(firstMonth, monthCount, months) 
 {
-   var series = [];
-   var month = monthly_summary.firstMonth.month;
-   var year = monthly_summary.firstMonth.year;
+   var xAxisRefs = [];
+   var month = firstMonth.month;
+   var year = firstMonth.year;
 
    //
-   // The series array must contain as many elements as there are axis 
-   // categories. Those series elements that don't have any data values
-   // will be filed with null values.
+   // `i` tracks elements of the returned X axis array and `k` tracks months in the 
+   // input data array (`months`). 
    //
-   // Start with the actual first month in the report summary data and
-   // iterate once for every month in the series (`i`). If the series 
-   // year and the month match those in the `months` array, assign the
-   // series data point and move to the next summary month (`k`). The 
-   // loop ends when we run out of values in `months` or populated all 
-   // series months.
-   //
-   for(var i = 0, k = 0; k < months.length && i < monthly_summary.monthCount; i++) {
-      
-      if(months[k].month == month && months[k].year == year)
-         series.push(yValues[k++]);
+   for(let i = 0, k = 0; i < monthCount; i++) {
+      if(k < months.length && months[k].month == month && months[k].year == year)
+         xAxisRefs.push(k++);
       else
-         series.push(null);
+         xAxisRefs.push(null);
 
-      if(month == 12) {
+      if(month < 12)
+         month++;
+      else {
          month = 1;
          year++;
       }
-      else
-         month++;
    }
 
-   //
-   // Ideally, we could just set `series.length` to the total number of months
-   // and then just assign those elements that correspond to the values in the
-   // `months` array, but Highcharts ignores array elements with `undefined` 
-   // values, so we need to fill up the rest of the series with `null` values.
-   //
-   for(var i = series.length; i < monthly_summary.monthCount; i++)
-      series.push(null);
+   return xAxisRefs;   
+}
+
+///
+/// @brief  Returns of an array of Y axis values that positionally correspond to 
+///         elements of the X axis value reference array (`xAxisRefs`). 
+///
+function getMonthlySummaryData_Highcharts(xAxisRefs, yValues)
+{
+   var series = [];
+
+   for(let i = 0; i < xAxisRefs.length; i++) {
+      if(xAxisRefs[i] != null)
+         series.push(yValues[xAxisRefs[i]]);
+      else
+         series.push(null);
+   }
 
    return series;   
 }
@@ -199,6 +215,8 @@ function setupCharts(config)
 
 function renderDailyUsageChart(daily_usage)
 {
+   let xAxisRefs = getXAxisRefs_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days); 
+
    var daily_usage_chart_options = {
       chart: {
          animation: false,
@@ -231,46 +249,46 @@ function renderDailyUsageChart(daily_usage)
          type: "column",
          color: daily_usage.config.hits_color,
          name: daily_usage.chart.seriesNames.hits,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.hits)
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.hits)
       },{
          animation: false,
          type: "column",
          color: daily_usage.config.files_color,
          name: daily_usage.chart.seriesNames.files,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.files)
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.files)
       },{
          animation: false,
          type: "column",
          color: daily_usage.config.pages_color,
          name: daily_usage.chart.seriesNames.pages,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.pages)
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.pages)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: daily_usage.config.visits_color,
          name: daily_usage.chart.seriesNames.visits,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.visits)
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.visits)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: daily_usage.config.hosts_color,
          name: daily_usage.chart.seriesNames.hosts,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.hosts)
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.hosts)
       },{
          animation: false,
          type: "column",
          yAxis: 2,
          color: daily_usage.config.xfer_color,
          name: daily_usage.chart.seriesNames.xfer,
-         data: getUsageData_Highcharts(daily_usage.data.days, daily_usage.data.xfer),
+         data: getUsageData_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days, daily_usage.data.xfer),
          tooltip: {
             headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>",
             pointFormatter: function () 
             {
                return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
-               htmlEncode(this.series.name) + ": <b>" + htmlEncode(daily_usage.data.xfer_hr[getValueIndex_Highcharts(daily_usage.data.days, this.x)]) + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(daily_usage.data.xfer_hr[xAxisRefs[this.x]]) + "</b><br/>";
             }
          }
       }],
@@ -415,6 +433,8 @@ function renderDailyUsageChart(daily_usage)
 
 function renderHourlyUsageChart(hourly_usage)
 {
+   let xAxisRefs = getXAxisRefs_Highcharts(0, 23, hourly_usage.data.hours); 
+
    var hourly_usage_chart_options = {
       chart: {
          animation: false,
@@ -447,32 +467,32 @@ function renderHourlyUsageChart(hourly_usage)
          type: "column",
          color: hourly_usage.config.hits_color,
          name: hourly_usage.chart.seriesNames.hits,
-         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.hits)
+         data: getUsageData_Highcharts(0, 23, hourly_usage.data.hours, hourly_usage.data.hits)
       },{
          animation: false,
          type: "column",
          color: hourly_usage.config.files_color,
          name: hourly_usage.chart.seriesNames.files,
-         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.files)
+         data: getUsageData_Highcharts(0, 23, hourly_usage.data.hours, hourly_usage.data.files)
       },{
          animation: false,
          type: "column",
          color: hourly_usage.config.pages_color,
          name: hourly_usage.chart.seriesNames.pages,
-         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.pages)
+         data: getUsageData_Highcharts(0, 23, hourly_usage.data.hours, hourly_usage.data.pages)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: hourly_usage.config.xfer_color,
          name: hourly_usage.chart.seriesNames.xfer,
-         data: getUsageData_Highcharts(hourly_usage.data.hours, hourly_usage.data.xfer),
+         data: getUsageData_Highcharts(0, 23, hourly_usage.data.hours, hourly_usage.data.xfer),
          tooltip: {
             headerFormat: "<span style=\"font-size: 14px\">{point.key}</span><br/>",
             pointFormatter: function () 
             {
                return "<span style=\"color: " + this.color + "\">\u25CF</span> " + 
-               htmlEncode(this.series.name) + ": <b>" + htmlEncode(hourly_usage.data.xfer_hr[getValueIndex_Highcharts(hourly_usage.data.hours, this.x)]) + "</b><br/>";
+               htmlEncode(this.series.name) + ": <b>" + htmlEncode(hourly_usage.data.xfer_hr[xAxisRefs[this.x]]) + "</b><br/>";
             }
          }
       }],
@@ -708,6 +728,8 @@ function renderCountryUsageChartMap(country_usage)
 
 function renderMonthlySummaryChart(monthly_summary)
 {
+   var xAxisRefs = getMonthlyXAxisRefs_Highcharts(monthly_summary.chart.firstMonth, monthly_summary.chart.monthCount, monthly_summary.data.months);
+
    var monthly_summary_chart_options = {
       chart: {
          animation: false,
@@ -745,8 +767,8 @@ function renderMonthlySummaryChart(monthly_summary)
             var tooltipText;
             
             // for the transfer amount series (5) use human-readable transfer values when available
-            if(this.series.index == 5 && monthly_summary.data.xfer_hr[this.point.x])
-               tooltipText = htmlEncode(monthly_summary.data.xfer_hr[this.point.x]);
+            if(this.series.index == 5)
+               tooltipText = htmlEncode(monthly_summary.data.xfer_hr[xAxisRefs[this.point.x]]);
             else
                tooltipText = this.point.y;
 
@@ -762,40 +784,40 @@ function renderMonthlySummaryChart(monthly_summary)
          type: "column",
          color: monthly_summary.config.hits_color,
          name: monthly_summary.chart.seriesNames.hits,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.hits)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.hits)
       },{
          animation: false,
          type: "column",
          color: monthly_summary.config.files_color,
          name: monthly_summary.chart.seriesNames.files,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.files)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.files)
       },{
          animation: false,
          type: "column",
          color: monthly_summary.config.pages_color,
          name: monthly_summary.chart.seriesNames.pages,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.pages)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.pages)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: monthly_summary.config.visits_color,
          name: monthly_summary.chart.seriesNames.visits,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.visits)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.visits)
       },{
          animation: false,
          type: "column",
          yAxis: 1,
          color: monthly_summary.config.hosts_color,
          name: monthly_summary.chart.seriesNames.hosts,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.hosts)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.hosts)
       },{
          animation: false,
          type: "column",
          yAxis: 2,
          color: monthly_summary.config.xfer_color,
          name: monthly_summary.chart.seriesNames.xfer,
-         data: getMonthlySummaryData_Highcharts(monthly_summary.chart, monthly_summary.data.months, monthly_summary.data.xfer)
+         data: getMonthlySummaryData_Highcharts(xAxisRefs, monthly_summary.data.xfer)
       }],
       //
       // This is a category axis that lists only short month names. The numeric value of 
