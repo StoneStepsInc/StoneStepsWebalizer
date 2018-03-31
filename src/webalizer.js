@@ -135,11 +135,10 @@ function findPrevSibling(node, tagname)
    return node;
 }
 
-// ----------------------------------------------------------------------------
-//
-// Report functions
-//
-// ----------------------------------------------------------------------------
+///
+/// @name   Report functions
+///
+/// @{
 
 //
 // Returns the version of the report from the data-version attribute in reportTable. 
@@ -160,6 +159,8 @@ function reportVersion(reportTable)
    return Number(reportTable.dataset.version);
 }
 
+/// @}
+
 //
 // Checks if the on-click even target contains a country code and a latitude/longitude 
 // and if it does, opens a window using the external map URL passed as an argument, with 
@@ -177,11 +178,10 @@ function openExtMapURL(event, ext_map_url)
    }
 }
 
-// ----------------------------------------------------------------------------
-//
-// Fragment navigation
-//
-// ----------------------------------------------------------------------------
+///
+/// @name   Fragment navigation functions
+///
+/// @{
 
 function onKeyUpFragHandler(event)
 {
@@ -285,11 +285,12 @@ function getNextFragId(fragid)
    return frags[0];
 }
 
-// ----------------------------------------------------------------------------
-//
-// Help
-//
-// ----------------------------------------------------------------------------
+/// @}
+
+///
+/// @name   Help function
+///
+/// @{
 
 function onKeyUpHelpHandler(event)
 {
@@ -422,11 +423,12 @@ function isHelpShown()
    return helpbox.style.display != "none";
 }
 
-// ----------------------------------------------------------------------------
-//
-// Charts
-//
-// ----------------------------------------------------------------------------
+/// @}
+
+///
+/// @name   JavaScript chart functions
+///
+/// @{
 
 //
 // Define a global config prototype object, so we can define global properties
@@ -569,9 +571,12 @@ function getTableDataRows(reportTable)
    return rows;
 }
 
-//
-// DailyUsageChart
-//
+/// @}
+
+///
+/// @name   DailyUsageChart
+///
+/// @{
 
 function DailyUsageChart(unused_version, config, chart)
 {
@@ -677,9 +682,12 @@ function getDailyUsageData()
    return usage;
 }
 
-//
-// HourlyUsageChart
-//
+/// @}
+
+///
+/// @name   HourlyUsageChart
+///
+/// @{
 
 function HourlyUsageChart(unused_version, config, chart)
 {
@@ -758,9 +766,12 @@ function getHourlyUsageData()
    return usage;
 }
 
-//
-// CountryUsageChart
-//
+/// @}
+
+///
+/// @name   CountryUsageChart
+///
+/// @{
 
 function CountryUsageChart(unused_version, config, chart)
 {
@@ -899,9 +910,12 @@ function getCountryUsageData(total_visits)
    return usage;
 }
 
-//
-// MonthlySummaryChart
-//
+/// @}
+
+///
+/// @name   MonthlySummaryChart
+///
+/// @{
 
 function MonthlySummaryChart(unused_version, config, chart)
 {
@@ -1010,12 +1024,15 @@ function getMonthlySummaryData()
    return usage;
 }
 
-//
-// Compatibility functions (v3.10.3 to v4.0.4)
-//
-// Keep these functions in the script file to avoid JavaScript errors when older 
-// reports are viewed.
-//
+/// @}
+
+///
+/// @name   Compatibility functions (v3.10.3 to v4.0.4).
+///
+/// Keep these functions in the script file to avoid JavaScript errors when older 
+/// reports are viewed.
+///
+/// @{
 
 function onloadpage(pagetype)
 {
@@ -1038,3 +1055,5 @@ function onclickmenu(a)
 {
 	return true;
 }
+
+/// @}

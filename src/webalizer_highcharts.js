@@ -53,10 +53,9 @@ function getUsageData_Highcharts(minX, maxX, xValues, yValues)
    return series;   
 }
 
-//
-// Converts country usage data arrays into a Highcharts pie chart series data 
-// point array.
-//
+///
+/// @brief  Returns an array of data points for the country usage pie chart series.
+///
 function getCountryUsageData_Highcharts(country_usage)
 {
    var series = [];
@@ -68,14 +67,17 @@ function getCountryUsageData_Highcharts(country_usage)
    return series;
 }
 
+///
+/// @brief  Returns an array of data points for the country usage map chart series.
+///
 function getCountryUsageData_HighchartsMap(country_usage)
 {
    var series = [];
 
    for(var i = 0; i < country_usage.getValueCount(); i++) {
-      // do not push the roll-up slice into the map data array
+      // do not push the roll-up slice, which doesn't have a country code, into the map data array
       if(country_usage.getCCode(i).length)
-         // Highmaps expects countr codes in upper case
+         // Highmaps expects country codes in upper case
          series.push({ccode: country_usage.getCCode(i).toUpperCase(), 
                       value: country_usage.getVisits(i), 
                       color: country_usage.getColor(i)});
@@ -84,9 +86,9 @@ function getCountryUsageData_HighchartsMap(country_usage)
    return series;
 }
 
-//
-// Returns an array of colors for the country usage pie chart
-//
+///
+/// @brief  Returns an array of colors for the country usage pie chart.
+///
 function getCountryUsageColors_Highcharts(country_usage)
 {
    var colors = [];
@@ -98,9 +100,9 @@ function getCountryUsageColors_Highcharts(country_usage)
    return colors;
 }
 
-//
-// Returns color-coded Hits/Files/Pages axis title markup with a shadow
-//
+///
+/// @brief  Returns color-coded Hits/Files/Pages axis title markup with a shadow.
+///
 function getHitsTitleHtml_Highcharts(config, titles)
 {
    // Highcharts translates this markup to SVG and does not support CSS classes, so the style has to be repeated
@@ -109,26 +111,27 @@ function getHitsTitleHtml_Highcharts(config, titles)
       "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.pages_color + "\">" + htmlEncode(titles.pages) + "</span>";
 }
 
-//
-// Returns color-coded Transfer axis title markup with a shadow
-//
+///
+/// @brief  Returns color-coded Transfer axis title markup with a shadow.
+///
 function getXferTitleHtml_Highcharts(config, titles)
 {
    return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.xfer_color + "\">" + htmlEncode(titles.xfer) + "</span>";
 }
 
-//
-// Returns color-coded Visits/Hosts axis title markup with a shadow
-//
+///
+/// @brief  Returns color-coded Visits/Hosts axis title markup with a shadow
+///
 function getVisitsTitleHtml_Highcharts(config, titles)
 {
    return "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.visits_color + "\">" + htmlEncode(titles.visits) + "</span> / " +
       "<span style=\"text-shadow: 1px 1px 0 #777; color: " + config.hosts_color + "\">" + htmlEncode(titles.hosts) + "</span>";
 }
 
-//
-// Returns an array of short month names for the category axis of the summary usage chart
-//
+///
+/// @brief  Returns an array of short month names for the category axis of the monthly 
+///         usage chart.
+///
 function getMonthlySummaryMonths_Highcharts(monthly_summary)
 {
    var months = [];
@@ -195,9 +198,9 @@ function getMonthlySummaryData_Highcharts(xAxisRefs, yValues)
    return series;   
 }
 
-//
-// Configure global Highcharts properties
-//
+///
+/// @brief  Configures global Highcharts properties.
+///
 function setupCharts(config)
 {
    Highcharts.setOptions({
@@ -209,10 +212,9 @@ function setupCharts(config)
 
 }
 
-//
-// Daily usage chart
-//
-
+///
+/// @brief  Renders a daily usage chart.
+///
 function renderDailyUsageChart(daily_usage)
 {
    let xAxisRefs = getXAxisRefs_Highcharts(1, daily_usage.chart.maxDay, daily_usage.data.days); 
@@ -427,10 +429,9 @@ function renderDailyUsageChart(daily_usage)
    Highcharts.chart("daily_usage_chart", daily_usage_chart_options);
 }
 
-//
-// Hourly usage chart
-//
-
+///
+/// #brief  Renders an hourly usage chart.
+///
 function renderHourlyUsageChart(hourly_usage)
 {
    let xAxisRefs = getXAxisRefs_Highcharts(0, 23, hourly_usage.data.hours); 
@@ -578,10 +579,9 @@ function renderHourlyUsageChart(hourly_usage)
    Highcharts.chart("hourly_usage_chart", hourly_usage_chart_options);
 }
 
-//
-// Country usage chart
-//
-
+///
+/// @brief  Renders a country usage pie chart.
+///
 function renderCountryUsageChart(country_usage)
 {
    var country_usage_chart_options = {
@@ -652,6 +652,9 @@ function renderCountryUsageChart(country_usage)
    Highcharts.chart("country_usage_chart", country_usage_chart_options);
 }
 
+///
+/// @brief  Renders a country usage map chart.
+///
 function renderCountryUsageChartMap(country_usage)
 {
    var country_usage_chart_options = {
@@ -722,10 +725,9 @@ function renderCountryUsageChartMap(country_usage)
    Highcharts.mapChart("country_usage_chart", country_usage_chart_options);
 }
 
-//
-// Monthly summary chart
-//
-
+///
+/// Renders a monthly summary chart.
+///
 function renderMonthlySummaryChart(monthly_summary)
 {
    var xAxisRefs = getMonthlyXAxisRefs_Highcharts(monthly_summary.chart.firstMonth, monthly_summary.chart.monthCount, monthly_summary.data.months);
