@@ -1,4 +1,17 @@
 --------------------------------------------------------------------
+4.4.x.x [xx-Apr-2018] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * Prevented custom BODY and DOCTYPE tags to ensure JS report initialization is performed
+ * Changed how HTMLPre, HTMLBody, HTMLPost, HTMLEnd are processed (e.g. some are moved in the report); see README
+ * [BUG] Fixed erroneus message "DNS resolver is not initialized" shown when maintenance commands were being processed
+ * [BUG] Fixed a bug preventing malformed URLs containing Latin1 characters from being converted to lower case
+ * [BUG] Fixed a bug that was binding Country Code instead of Country to the country heading
+ * Reduced memory consumption caused by late ending of visits when running in the database mode
+ * Added missing HTMLJsPath to README
+ * [JS Charts] Updated the Highcharts version from 4.2 to 6.0
+ * [JS Charts][BUG] When mouse hovered over Transfer columns, transfer amount was not shown or was not in the human-readable format
+
+--------------------------------------------------------------------
 4.3.0.18 [16-Nov-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Changed the configuration file reader to ignore the UTF-8 BOM sequence
