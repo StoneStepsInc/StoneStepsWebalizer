@@ -16,6 +16,23 @@ formatter_tmpl.cpp
 #include <cstddef>
 #include <utility>
 
+///
+/// @brief  Formats output within the remaining buffer space using the formatting 
+///         function passed as the template argument.
+///
+/// @tparam `format_cb_t`    A formatting function.
+///
+/// A formatting function or a function call operator of some object that is passed 
+/// into this method is expected to have this signature:
+/// ```
+///    size_t formatcb(string_t::char_buffer_t&, format_param_t ...);
+/// ```
+/// The character buffer object passed into the formatting function will hold formatted 
+/// text after the function returns. The function should return the number of characters 
+/// in the new formatted text, including the null character, if there is one. The formatter 
+/// does not interpret or modify the formatted string in any way. There is no error value 
+/// reserved and the function should throw an exception in case of any error.
+///
 template <typename format_cb_t, typename ... format_param_t>
 string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, format_param_t&& ... arg)
 {
