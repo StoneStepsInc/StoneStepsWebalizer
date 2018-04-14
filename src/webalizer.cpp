@@ -3123,27 +3123,28 @@ int main(int argc, char *argv[])
 
       //
       // Route commands that don't require webalizer_t initialized right away. Note
-      // that these commands exited with code one historically, so this exit code
-      // doesn't indicate an actual failure, but rather that no log processing was
-      // done. This may change in the future.
+      // that these commands exited with code one historically, which indicated that 
+      // no log processing was done. However, the failure exit code breaks scripts
+      // that check for failures (e.g. printing a version after a build) and was 
+      // changed to return success in v4.4.0.
       //
 
       // check if version is requested
       if(config.print_version) {
          logproc.print_version();
-         return EXIT_FAILURE;
+         return EXIT_SUCCESS;
       }
 
       // check if warranty is requested
       if(config.print_warranty) {
          logproc.print_warranty();
-         return EXIT_FAILURE;
+         return EXIT_SUCCESS;
       }
 
       // check if help is requested
       if(config.print_options) {
          logproc.print_options(argv[0]);
-         return EXIT_FAILURE;
+         return EXIT_SUCCESS;
       }
 
       // be polite and announce yourself...

@@ -1,6 +1,7 @@
 --------------------------------------------------------------------
 4.4.x.x [xx-Apr-2018] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
+ * Changed exit code for --version --warranty and --help to return 0 (zero) instead of 1 (one) to faciliate scripting
  * Prevented custom BODY and DOCTYPE tags to ensure JS report initialization is performed
  * Changed how HTMLPre, HTMLBody, HTMLPost, HTMLEnd are processed (e.g. some are moved in the report); see README
  * [BUG] Fixed erroneus message "DNS resolver is not initialized" shown when maintenance commands were being processed
