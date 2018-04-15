@@ -621,14 +621,11 @@ bool dns_resolver_t::dns_init(void)
       dns_db_env = new DbEnv(0);
 
       //
-      // While it is possible to use a standalone Berkeley DB database without an 
-      // environment, we need one with to deal with a threading bug in BDB that causes 
-      // some successful Db::put calls using distinct Db handles in separate threads 
-      // lose data before it is written into the database on disk. The visible effect 
-      // of this bug was that a small number of IP addresses would go through DNS 
-      // resolution again and again when more than one DNS handle was used concurrently. 
+      // Initialize Berkeley DB for concurrent access (DB_INIT_CDB), which allows multiple
+      // concurrent readers and a single writer. Note that DB_INIT_LOCK alone does not 
+      // protect against deadlocks that may occur during some operations like page splits.
       //
-      u_int32_t dbenv_flags = DB_CREATE | DB_INIT_LOCK | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
+      u_int32_t dbenv_flags = DB_CREATE | DB_INIT_CDB | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
 
       if(dns_db_env->open(config.dns_db_path, dbenv_flags, 0664)) {
          if (config.verbose) 
