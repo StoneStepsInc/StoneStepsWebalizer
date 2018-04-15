@@ -50,6 +50,19 @@ ETCDIR   := /etc
 export   ETCDIR
 endif
 
+#
+# Package variables
+#
+PKG_NAME  := webalizer-$$(build/webalizer -v -Q | sed -e s/\\./-/g).tar
+PKG_OWNER := --owner=root --group=root
+PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
+	src/webalizer.js README CHANGES COPYING Copyright
+PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
+	galician german greek hungarian icelandic indonesian italian japanese \
+	korean latvian malay norwegian polish portuguese portuguese_brazilian \
+	romanian russian serbian simplified_chinese slovak slovene spanish \
+	swedish turkish ukrainian
+
 # source and build directories
 SRCDIR   := src
 BLDDIR   := build
@@ -160,6 +173,17 @@ clean:
 	@for obj in $(RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing webalizer..."
 	@if [[ -e $(BLDDIR)/$(TARGET) ]]; then rm $(BLDDIR)/$(TARGET); fi
+	@echo "Done"
+
+package:
+	@echo "Adding Webalizer files..." 
+	@strip --strip-debug build/webalizer
+	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C build $(TARGET)
+	@tar $(PKG_OWNER) -rf $(PKG_NAME) $(PKG_FILES) 
+	@echo "Adding language files..."
+	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
+	@echo "Compressing..."
+	@gzip $(PKG_NAME)
 	@echo "Done"
 
 # ------------------------------------------------------------------------
