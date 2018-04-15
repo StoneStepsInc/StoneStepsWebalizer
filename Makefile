@@ -175,10 +175,10 @@ clean:
 	@if [[ -e $(BLDDIR)/$(TARGET) ]]; then rm $(BLDDIR)/$(TARGET); fi
 	@echo "Done"
 
-package:
+package: $(BLDDIR)/$(TARGET)
 	@echo "Adding Webalizer files..." 
 	@strip --strip-debug build/webalizer
-	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C build $(TARGET)
+	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C $(BLDDIR) $(TARGET)
 	@tar $(PKG_OWNER) -rf $(PKG_NAME) $(PKG_FILES) 
 	@echo "Adding language files..."
 	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
