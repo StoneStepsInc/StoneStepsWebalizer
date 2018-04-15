@@ -1022,13 +1022,13 @@ void berkeleydb_t::delete_db(Db *db)
 bool berkeleydb_t::open(void)
 {
    u_int32_t dbflags = readonly ? DB_RDONLY : DB_CREATE;
-   u_int32_t envflags = DB_CREATE | DB_INIT_LOCK | DB_INIT_MPOOL | DB_PRIVATE;
+   u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
 
    // do some additional initialization for threaded environment
    if(!readonly && trickle) {
-      // initialize the environment and databases as thread-safe
+      // initialize the environment and databases as thread-safe and with a single writer
       dbflags |= DB_THREAD;
-      envflags |= DB_THREAD;
+      envflags |= DB_THREAD | DB_INIT_CDB;
 
       // create an event to indicate that there's something to write
       if((trickle_event = event_create(true, false)) == NULL)
