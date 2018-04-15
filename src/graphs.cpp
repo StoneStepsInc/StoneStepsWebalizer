@@ -481,7 +481,7 @@ int graph_t::month_graph6(const char *fname,          // filename
                           const char *title,          // graph title
                           int month,                  // graph month
                           int year,                   // graph year
-                          const daily_t daily[31])    // daily data
+                          const storable_t<daily_t> daily[31])    // daily data
 {
    u_int i;
    int x1,y1,x2;
@@ -669,7 +669,7 @@ int graph_t::month_graph6(const char *fname,          // filename
 
 int graph_t::day_graph3(const char *fname,
                const char *title,
-               const hourly_t hourly[24])
+               const storable_t<hourly_t> hourly[24])
 {
    u_int i;
    int x1,y1,x2, baridx;

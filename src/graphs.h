@@ -124,8 +124,8 @@ class graph_t {
 
       int year_graph6x(const history_t& history, const char *fname, const char *title, u_int& graph_width, u_int& graph_height);
       int pie_chart(const char *fname, const char *title, uint64_t t_val, const uint64_t data1[], const char *legend[]);
-      int month_graph6(const char *fname, const char *title, int month, int year, const daily_t daily[31]);
-      int day_graph3(const char *fname, const char *title, const hourly_t hourly[24]);
+      int month_graph6(const char *fname, const char *title, int month, int year, const storable_t<daily_t> daily[31]);
+      int day_graph3(const char *fname, const char *title, const storable_t<hourly_t> hourly[24]);
 };
 
 #endif  // GRAPHS_H
