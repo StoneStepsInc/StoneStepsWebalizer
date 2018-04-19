@@ -13,14 +13,12 @@
 #include "../tstring.h"
 #include <ctime>
 
-namespace mstest = Microsoft::VisualStudio::CppUnitTestFramework;
-
 //
 // TimeStampTest
 //
 namespace sswtest {
-TEST_CLASS(TimeStampTest) {
-   private:
+class TimeStampTest : public testing::Test {
+   protected:
       int tz_offset;
 
    public:
@@ -39,13 +37,12 @@ TEST_CLASS(TimeStampTest) {
          // treat UTC as if it is local time to get a time zone offset in minutes
          tz_offset = (mktime(&lct) - mktime(&gmt)) / 60;
       }
+};
 
-      BEGIN_TEST_METHOD_ATTRIBUTE(WeekdayNonLeapYear)
-         TEST_DESCRIPTION(L"Weekday Test Non-Leap Year")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"TimeStamp Test")
-      END_TEST_METHOD_ATTRIBUTE()
-
-      TEST_METHOD(WeekdayNonLeapYear)
+///
+/// @brief  Weekday Test Non-Leap Year
+///
+TEST_F(TimeStampTest, WeekdayNonLeapYear)
       {
          // 2017-01-01 00:00:00
          struct tm tms = {0, 0, 0, 1, 0, 117};
@@ -53,8 +50,7 @@ TEST_CLASS(TimeStampTest) {
 
          time_t ts = tstamp.mktime();
 
-         // VS CPP unit doesn't provide string conversion for signed 64-bit integers, which is what time_t is
-         mstest::Assert::AreEqual((unsigned long long) mktime(&tms), (unsigned long long) ts, L"Start UTC time of a non-leap yearshould match that from the standard mktime return value");
+         EXPECT_EQ(mktime(&tms), ts) << "Start UTC time of a non-leap yearshould match that from the standard mktime return value";
 
          // go through all days of the year and check that weekdays match those returned by C runtime
          for(int i = 0; i < 365; i++, ts += 86400) {
@@ -65,86 +61,78 @@ TEST_CLASS(TimeStampTest) {
             // a date without time is not affected by time zone conversions (i.e. the
             // same date components always yield the same weekday in any time zone).
             //
-            mstest::Assert::AreEqual((u_int) gmtime(&ts)->tm_wday, tstamp.wday(), L"Weekday of a non-leap year must match that from the standard gmtime function");
+            EXPECT_EQ((u_int) gmtime(&ts)->tm_wday, tstamp.wday()) << "Weekday of a non-leap year must match that from the standard gmtime function";
          }
       }
 
-      BEGIN_TEST_METHOD_ATTRIBUTE(WeekdayLeapYear)
-         TEST_DESCRIPTION(L"Weekday Test Leap Year")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"TimeStamp Test")
-      END_TEST_METHOD_ATTRIBUTE()
+///
+/// @brief  Weekday Test Leap Year
+///
+TEST_F(TimeStampTest, WeekdayLeapYear)
+{
+   // 2016-01-01 00:00:00
+   struct tm tms = {0, 0, 0, 1, 0, 116};
+   tstamp_t tstamp(2016, 1, 1, 0, 0, 0, tz_offset);
 
-      TEST_METHOD(WeekdayLeapYear)
-      {
-         // 2016-01-01 00:00:00
-         struct tm tms = {0, 0, 0, 1, 0, 116};
-         tstamp_t tstamp(2016, 1, 1, 0, 0, 0, tz_offset);
+   time_t ts = tstamp.mktime();
 
-         time_t ts = tstamp.mktime();
+   EXPECT_EQ(mktime(&tms), ts) << "Start UTC time of a leap year should match that from the standard mktime return value";
 
-         // VS CPP unit doesn't provide string conversion for signed 64-bit integers, which is what time_t is
-         mstest::Assert::AreEqual((unsigned long long) mktime(&tms), (unsigned long long) ts, L"Start UTC time of a leap year should match that from the standard mktime return value");
+   // go through all days of the year and check that weekdays match those returned by C runtime
+   for(int i = 0; i < 365; i++, ts += 86400) {
+      tstamp.reset(ts);
 
-         // go through all days of the year and check that weekdays match those returned by C runtime
-         for(int i = 0; i < 365; i++, ts += 86400) {
-            tstamp.reset(ts);
+      // see WeekdayNonLeapYear
+      EXPECT_EQ((u_int) gmtime(&ts)->tm_wday, tstamp.wday()) << "Weekday of a leap year must match that from the standard gmtime function";
+   }
+}
 
-            // see WeekdayNonLeapYear
-            mstest::Assert::AreEqual((u_int) gmtime(&ts)->tm_wday, tstamp.wday(), L"Weekday of a leap year must match that from the standard gmtime function");
-         }
-      }
+///
+/// @brief  Weekday Test Non-Leap Year
+///
+TEST_F(TimeStampTest, TimeStampParseUTC)
+{
+   tstamp_t tstamp_utc(2017, 8, 30, 15, 10, 25);
+   tstamp_t tstamp;
 
-      BEGIN_TEST_METHOD_ATTRIBUTE(TimeStampParseUTC)
-         TEST_DESCRIPTION(L"Weekday Test Non-Leap Year")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"TimeStamp Test")
-      END_TEST_METHOD_ATTRIBUTE()
+   EXPECT_TRUE(tstamp.parse("2017-08-30 15:10:25")) << "2017-08-30 15:10:25 UTC should be parsed without an error";
+   EXPECT_TRUE(tstamp_utc == tstamp) << "Parsed 2017-08-30 15:10:25 UTC should compare equal to a constructed time stamp";
 
-      TEST_METHOD(TimeStampParseUTC)
-      {
-         tstamp_t tstamp_utc(2017, 8, 30, 15, 10, 25);
-         tstamp_t tstamp;
+   EXPECT_TRUE(tstamp.parse("2017-08-30T15:10:25")) << L"2017-08-30T15:10:25 UTC should be parsed without an error";
+   EXPECT_TRUE(tstamp_utc == tstamp) << "Parsed 2017-08-30T15:10:25 UTC should compare equal to a constructed time stamp";
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30 15:10:25"), L"2017-08-30 15:10:25 UTC should be parsed without an error");
-         mstest::Assert::IsTrue(tstamp_utc == tstamp, L"Parsed 2017-08-30 15:10:25 UTC should compare equal to a constructed time stamp");
+   EXPECT_TRUE(tstamp.parse("2017-08-30T15:10")) << "2017-08-30T15:10 UTC should be parsed without an error";
+   EXPECT_TRUE(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE)) << "Parsed 2017-08-30T15:10 UTC should compare equal to a constructed time stamp";
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30T15:10:25"), L"2017-08-30T15:10:25 UTC should be parsed without an error");
-         mstest::Assert::IsTrue(tstamp_utc == tstamp, L"Parsed 2017-08-30T15:10:25 UTC should compare equal to a constructed time stamp");
+   EXPECT_TRUE(tstamp.parse("2017-08-30")) << "2017-08-30 UTC should be parsed without an error";
+   EXPECT_TRUE(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017-08-30 UTC should compare equal to a constructed time stamp";
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30T15:10"), L"2017-08-30T15:10 UTC should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE), L"Parsed 2017-08-30T15:10 UTC should compare equal to a constructed time stamp");
+   EXPECT_TRUE(tstamp.parse("2017/08/30")) << "2017/08/30 UTC should be parsed without an error";
+   EXPECT_TRUE(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017/08/30 UTC should compare equal to a constructed time stamp";
+}
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30"), L"2017-08-30 UTC should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE), L"Parsed 2017-08-30 UTC should compare equal to a constructed time stamp");
+///
+/// @brief  Weekday Test Non-Leap Year
+///
+TEST_F(TimeStampTest, TimeStampParseLocal)
+{
+   tstamp_t tstamp_local(2017, 8, 30, 15, 10, 25, tz_offset);
+   tstamp_t tstamp;
 
-         mstest::Assert::IsTrue(tstamp.parse("2017/08/30"), L"2017/08/30 UTC should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_utc.compare(tstamp, tstamp_t::tm_parts::DATE), L"Parsed 2017/08/30 UTC should compare equal to a constructed time stamp");
-      }
+   EXPECT_TRUE(tstamp.parse("2017-08-30 15:10:25", tz_offset)) << "2017-08-30 15:10:25 local time should be parsed without an error";
+   EXPECT_TRUE(tstamp_local == tstamp) << "Parsed 2017-08-30 15:10:25 local time should compare equal to a constructed time stamp";
 
-      BEGIN_TEST_METHOD_ATTRIBUTE(TimeStampParseLocal)
-         TEST_DESCRIPTION(L"Weekday Test Non-Leap Year")
-         TEST_METHOD_ATTRIBUTE(L"Category", L"TimeStamp Test")
-      END_TEST_METHOD_ATTRIBUTE()
+   EXPECT_TRUE(tstamp.parse("2017-08-30T15:10:25", tz_offset)) << "2017-08-30T15:10:25 local time should be parsed without an error";
+   EXPECT_TRUE(tstamp_local == tstamp) << "Parsed 2017-08-30T15:10:25 local time should compare equal to a constructed time stamp";
 
-      TEST_METHOD(TimeStampParseLocal)
-      {
-         tstamp_t tstamp_local(2017, 8, 30, 15, 10, 25, tz_offset);
-         tstamp_t tstamp;
+   EXPECT_TRUE(tstamp.parse("2017-08-30T15:10", tz_offset)) << "2017-08-30T15:10 local time should be parsed without an error";
+   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE)) << "Parsed 2017-08-30T15:10 local time should compare equal to a constructed time stamp";
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30 15:10:25", tz_offset), L"2017-08-30 15:10:25 local time should be parsed without an error");
-         mstest::Assert::IsTrue(tstamp_local == tstamp, L"Parsed 2017-08-30 15:10:25 local time should compare equal to a constructed time stamp");
+   EXPECT_TRUE(tstamp.parse("2017-08-30", tz_offset)) << "2017-08-30 local time should be parsed without an error";
+   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017-08-30 local time should compare equal to a constructed time stamp";
 
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30T15:10:25", tz_offset), L"2017-08-30T15:10:25 local time should be parsed without an error");
-         mstest::Assert::IsTrue(tstamp_local == tstamp, L"Parsed 2017-08-30T15:10:25 local time should compare equal to a constructed time stamp");
-
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30T15:10", tz_offset), L"2017-08-30T15:10 local time should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE), L"Parsed 2017-08-30T15:10 local time should compare equal to a constructed time stamp");
-
-         mstest::Assert::IsTrue(tstamp.parse("2017-08-30", tz_offset), L"2017-08-30 local time should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE), L"Parsed 2017-08-30 local time should compare equal to a constructed time stamp");
-
-         mstest::Assert::IsTrue(tstamp.parse("2017/08/30", tz_offset), L"2017/08/30 local time should be parsed without an error");
-         mstest::Assert::IsTrue(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE), L"Parsed 2017/08/30 local time should compare equal to a constructed time stamp");
-      }
-};
+   EXPECT_TRUE(tstamp.parse("2017/08/30", tz_offset)) << "2017/08/30 local time should be parsed without an error";
+   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017/08/30 local time should compare equal to a constructed time stamp";
+}
 }
 

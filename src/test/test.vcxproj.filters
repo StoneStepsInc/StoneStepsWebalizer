@@ -12,12 +12,6 @@
     <Filter Include="obj">
       <UniqueIdentifier>{6f16ce7d-c732-470d-887f-726cad06b012}</UniqueIdentifier>
     </Filter>
-    <Filter Include="obj\Debug">
-      <UniqueIdentifier>{6e7c76b5-91e3-4d21-81d1-f011a06dea1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="obj\Release">
-      <UniqueIdentifier>{22bbef28-876d-434d-a892-3b7766df2287}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pchtest.cpp">
@@ -56,6 +50,9 @@
     <ClCompile Include="ut_linklist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -63,146 +60,31 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\..\build\Win32\Debug\obj\tstring.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\char_buffer.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\char_buffer_stack.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\cp1252_ucs2.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\encoder.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\exception_win.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\formatter.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\p2_buffer_allocator.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\serialize.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\unicode.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\tstamp.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\pch.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\char_buffer.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\cp1252_ucs2.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\encoder.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\exception_win.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\formatter.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\pch.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\serialize.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\tstamp.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\tstring.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\unicode.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\char_buffer_stack.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\cp1252.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\cp1252.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\lang.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\lang.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\hashtab.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\hashtab.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\hckdel.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\hckdel.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_http.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_url.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_http.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_url.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_ipaddr.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_path.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_string.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\util_time.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_ipaddr.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_path.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_string.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\util_time.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\fmt_impl.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\fmt_impl.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Debug\obj\linklist.obj">
-      <Filter>obj\Debug</Filter>
-    </Object>
-    <Object Include="..\..\build\Win32\Release\obj\linklist.obj">
-      <Filter>obj\Release</Filter>
-    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer_stack.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252_ucs2.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\encoder.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\exception_win.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\formatter.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hckdel.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\lang.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\linklist.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\pch.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\serialize.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstamp.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstring.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unicode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\fmt_impl.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_http.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_ipaddr.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_path.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_string.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_time.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_url.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

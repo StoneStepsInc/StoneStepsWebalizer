@@ -14,6 +14,9 @@
       <PrecompiledHeaderFile>pchtest.h</PrecompiledHeaderFile>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

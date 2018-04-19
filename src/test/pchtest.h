@@ -10,6 +10,6 @@
 #ifndef PCHTEST_H
 #define PCHTEST_H
 
-#include <CppUnitTest.h>
+#include <gtest/gtest.h>
 
 #endif // PCHTEST_H
