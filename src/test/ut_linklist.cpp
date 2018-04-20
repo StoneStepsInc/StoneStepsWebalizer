@@ -176,7 +176,7 @@ TEST_F(LinkedListTest, GListDuplicateValues)
    list.add_glist("value-e\tname-7");
    list.add_glist("value-f\tname-8");
 
-   glist::iterator iter = list.begin();
+   glist::const_iterator iter = list.begin();
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
@@ -214,7 +214,7 @@ TEST_F(LinkedListTest, GListDuplicateSearchValues)
    list.add_glist("value-e\tname-7=seven", true);
    list.add_glist("value-f\tname-8=eight", true);
 
-   glist::iterator iter = list.begin();
+   glist::const_iterator iter = list.begin();
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
