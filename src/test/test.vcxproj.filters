@@ -60,29 +60,75 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer_stack.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252_ucs2.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\encoder.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\exception_win.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\formatter.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hckdel.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\lang.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\linklist.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\pch.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\serialize.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstamp.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstring.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unicode.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\fmt_impl.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_http.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_ipaddr.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_path.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_string.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_time.obj" />
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_url.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer_stack.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252_ucs2.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\encoder.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\exception_win.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\fmt_impl.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\formatter.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hckdel.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\lang.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\linklist.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\pch.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\serialize.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstamp.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstring.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unicode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_http.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_ipaddr.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_path.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_string.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_time.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_url.obj">
+      <Filter>obj</Filter>
+    </Object>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
