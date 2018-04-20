@@ -5,6 +5,7 @@
   <PropertyGroup>
     <OutDir>$(SolutionDir)..\build\test\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\test\$(Platform)\$(Configuration)\obj\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -13,6 +14,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pchtest.h</PrecompiledHeaderFile>
       <UseFullPaths>true</UseFullPaths>
+      <DisableLanguageExtensions>true</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
