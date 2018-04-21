@@ -207,7 +207,7 @@ $(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(TARGET) $(addprefix $(BL
 # run unit tests and generate an XML results file in buikd/test-results/
 #
 test: $(BLDDIR)/$(TEST)
-	$(BLDDIR)/$(TEST) --gtest_output=xml:$(BLDDIR)/$(TEST_RSLT_DIR)/:$(TEST_RPT_FILE)
+	$(BLDDIR)/$(TEST) --gtest_output=xml:$(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE)
 
 install:
 	@echo
