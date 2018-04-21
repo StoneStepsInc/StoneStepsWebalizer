@@ -25,19 +25,17 @@ SHELL := /bin/bash
 # Remove all standard suffix rules and declare phony targets
 #
 .SUFFIXES:
-.PHONY: all clean install
+.PHONY: all clean install test package
 
 # ------------------------------------------------------------------------
 #
-# Define directories and file names
+# Webalizer variables
 #
 # ------------------------------------------------------------------------
 TARGET   := webalizer
 
 #
-# Define precompiled header file names. Make sure the source PCH file 
-# is the first in the list of source files, so when it's built, PCH 
-# header will be rebuilt before any other source files are processed.
+# Precompiled header file names.
 #
 PCHHDR	 := pch.h
 PCHSRC	 := $(PCHHDR:.h=.cpp)
@@ -50,26 +48,9 @@ ETCDIR   := /etc
 export   ETCDIR
 endif
 
-#
-# Package variables
-#
-PKG_NAME  := webalizer-$$(build/webalizer -v -Q | sed -e s/\\./-/g).tar
-PKG_OWNER := --owner=root --group=root
-PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
-	src/webalizer.js README CHANGES COPYING Copyright
-PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
-	galician german greek hungarian icelandic indonesian italian japanese \
-	korean latvian malay norwegian polish portuguese portuguese_brazilian \
-	romanian russian serbian simplified_chinese slovak slovene spanish \
-	swedish turkish ukrainian
-
 # source and build directories
 SRCDIR   := src
 BLDDIR   := build
-
-# search paths for source and object files
-vpath %.cpp $(SRCDIR) 
-vpath %.o   $(BLDDIR)
 
 # include and library search paths
 INCDIRS  := $(SRCDIR)
@@ -113,8 +94,60 @@ RPOS := $(OBJS:.o=.rpo)
 INCDIRS := $(addprefix -I,$(INCDIRS))
 LIBDIRS := $(addprefix -L,$(LIBDIRS))
 
-# add the library option to each library in the list
-LIBS := $(addprefix -l,$(LIBS))
+# ------------------------------------------------------------------------
+#
+# Unit test variables
+#
+# ------------------------------------------------------------------------
+TEST     := test
+
+# precompiled header file names
+TEST_PCHHDR	 := pchtest.h
+TEST_PCHSRC	 := $(TEST_PCHHDR:.h=.cpp)
+TEST_PCHOUT	 := $(TEST_PCHHDR:.h=.h.gch)
+TEST_PCHOBJ	 := $(TEST_PCHHDR:.h=.o)
+
+# unit test source directory
+TEST_SRCDIR := src/test
+TEST_RSLT_DIR := test-results
+TEST_RPT_FILE := test-report.xml
+
+TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
+	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
+	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp
+
+TEST_LIBS     := stdc++ pthread gtest
+
+#
+# List unit test object files and some from the main project to link against. 
+# Note that unit test files are prefixed with ut_ and will not collide with
+# any main project files, so we don't need to place them into their own build
+# directory.
+#
+TEST_OBJS := $(TEST_SRC:.cpp=.o) \
+	char_buffer.o char_buffer_stack.o cp1252.o cp1252_ucs2.o \
+	encoder.o formatter.o hashtab.o hckdel.o lang.o linklist.o \
+	pch.o serialize.o tstamp.o tstring.o unicode.o fmt_impl.o \
+	util_http.o util_ipaddr.o util_path.o util_string.o util_time.o \
+	util_url.o
+
+TEST_DEPS := $(TEST_OBJS:.o=.d)
+TEST_RPOS := $(TEST_OBJS:.o=.rpo)
+
+# ------------------------------------------------------------------------
+#
+# Package variables
+#
+# ------------------------------------------------------------------------
+PKG_NAME  := webalizer-$$(build/webalizer -v -Q | sed -e s/\\./-/g).tar
+PKG_OWNER := --owner=root --group=root
+PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
+	src/webalizer.js README CHANGES COPYING Copyright
+PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
+	galician german greek hungarian icelandic indonesian italian japanese \
+	korean latvian malay norwegian polish portuguese portuguese_brazilian \
+	romanian russian serbian simplified_chinese slovak slovene spanish \
+	swedish turkish ukrainian
 
 # ------------------------------------------------------------------------
 #
@@ -141,6 +174,12 @@ endif
 # flags passed to the linker through $(CC)
 CC_LDFLAGS := 
 
+# ------------------------------------------------------------------------
+#
+# Search paths for source files
+#
+# ------------------------------------------------------------------------
+vpath %.cpp $(SRCDIR) $(TEST_SRCDIR)
 
 # ------------------------------------------------------------------------
 #
@@ -149,13 +188,26 @@ CC_LDFLAGS :=
 # ------------------------------------------------------------------------
 
 # default target
-all: $(BLDDIR)/$(TARGET) ;
+all: $(BLDDIR)/$(TARGET) $(BLDDIR)/$(TEST)
 
 #
 # build/webalizer
 #
-$(BLDDIR)/$(TARGET): $(OBJS)
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(LIBS) $(addprefix $(BLDDIR)/,$(OBJS))
+$(BLDDIR)/$(TARGET): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
+	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix -l,$(LIBS)) $(addprefix $(BLDDIR)/,$(OBJS))
+
+#
+# build/test
+#
+$(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(TARGET) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
+	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix -l,$(LIBS)) $(addprefix -l,$(TEST_LIBS)) \
+			$(addprefix $(BLDDIR)/,$(TEST_OBJS))
+
+#
+# run unit tests and generate an XML results file in buikd/test-results/
+#
+test: $(BLDDIR)/$(TEST)
+	$(BLDDIR)/$(TEST) --gtest_output=xml:$(BLDDIR)/$(TEST_RSLT_DIR)/:$(TEST_RPT_FILE)
 
 install:
 	@echo
@@ -165,14 +217,21 @@ install:
 clean:
 	@echo "Removing object files..."
 	@for obj in $(OBJS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@for obj in $(TEST_OBJS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing dependency files..."
 	@for obj in $(DEPS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@for obj in $(TEST_DEPS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing the precompiled header..."
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
+	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
 	@echo "Removing template repository files..."
 	@for obj in $(RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
-	@echo "Removing webalizer..."
+	@for obj in $(TEST_RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@echo "Removing executables..."
 	@if [[ -e $(BLDDIR)/$(TARGET) ]]; then rm $(BLDDIR)/$(TARGET); fi
+	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
+	@echo "Removing test results..."
+	@if [[ -e $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE) ]]; then rm $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE); fi
 	@echo "Done"
 
 package: $(BLDDIR)/$(TARGET)
@@ -207,37 +266,35 @@ package: $(BLDDIR)/$(TARGET)
 #
 #  webalizer.o webalizer.d: webalizer.cpp version.h config.h ...
 #
-# Note that the target variable $@ will contain the build directory,
-# but the stem variable $* will only contain the name of the file. 
-# This ensures that file path separators are not misinterpreted as
-# sed options.
-#
 $(BLDDIR)/%.d : %.cpp
-	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
+	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 $(BLDDIR)/%.d : %.c
-	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
+	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 #
 # Rules to compile source file
 #
-%.o : %.cpp
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $(BLDDIR)/$@
+$(BLDDIR)/%.o : %.cpp
+	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
 
-%.o : %.c
+$(BLDDIR)/%.o : %.c
 	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
 
 #
-# Build the precompiled header file and the object file
+# Build the precompiled header file
 #
-$(BLDDIR)/$(PCHOBJ) : $(PCHSRC)
+$(BLDDIR)/$(PCHOUT) : $(PCHSRC)
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $(BLDDIR)/$(PCHOUT)
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
+	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $@
+
+$(BLDDIR)/$(TEST_PCHOUT) : $(TEST_PCHSRC)
+	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
+	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(TEST_SRCDIR)/$(TEST_PCHHDR) -o $@
 
 # ------------------------------------------------------------------------
 #
@@ -252,7 +309,6 @@ $(BLDDIR)/$(PCHOBJ) : $(PCHSRC)
 #
 ifeq ($(MAKECMDGOALS),)
 include $(addprefix $(BLDDIR)/, $(DEPS))
-else ifneq ($(filter-out clean install,$(MAKECMDGOALS)),)
+else ifneq ($(filter-out clean install package,$(MAKECMDGOALS)),)
 include $(addprefix $(BLDDIR)/, $(DEPS))
 endif
-
