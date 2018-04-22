@@ -172,13 +172,6 @@ CC_LDFLAGS :=
 
 # ------------------------------------------------------------------------
 #
-# Search paths for source files
-#
-# ------------------------------------------------------------------------
-vpath %.cpp $(SRCDIR) $(TEST_SRCDIR)
-
-# ------------------------------------------------------------------------
-#
 # Targets
 #
 # ------------------------------------------------------------------------
@@ -263,35 +256,35 @@ package: $(BLDDIR)/$(TARGET)
 #
 #  webalizer.o webalizer.d: webalizer.cpp version.h config.h ...
 #
-$(BLDDIR)/%.d : %.cpp
+$(BLDDIR)/%.d : $(SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
+	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
 
-$(BLDDIR)/%.d : %.c
+$(BLDDIR)/%.d : $(TEST_SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
+	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
 
 #
 # Rules to compile source file
 #
-$(BLDDIR)/%.o : %.cpp
+$(BLDDIR)/%.o : $(SRCDIR)/%.cpp
 	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-$(BLDDIR)/%.o : %.c
+$(BLDDIR)/%.o : $(TEST_SRCDIR)/%.cpp
 	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@	
 
 #
 # Build the precompiled header file
 #
-$(BLDDIR)/$(PCHOUT) : $(PCHSRC)
+$(BLDDIR)/$(PCHOUT) : $(SRCDIR)/$(PCHHDR) $(SRCDIR)/$(PCHSRC)
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $(SRCDIR)/$(PCHHDR) -o $@
+	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-$(BLDDIR)/$(TEST_PCHOUT) : $(TEST_PCHSRC)
+$(BLDDIR)/$(TEST_PCHOUT) : $(TEST_SRCDIR)/$(TEST_PCHHDR) $(TEST_SRCDIR)/$(TEST_PCHSRC)
 	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $(TEST_SRCDIR)/$(TEST_PCHHDR) -o $@
+	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 # ------------------------------------------------------------------------
 #
@@ -305,7 +298,7 @@ $(BLDDIR)/$(TEST_PCHOUT) : $(TEST_PCHSRC)
 # of the maintenance targets.
 #
 ifeq ($(MAKECMDGOALS),)
-include $(addprefix $(BLDDIR)/, $(DEPS))
+include $(addprefix $(BLDDIR)/, $(DEPS)) $(addprefix $(BLDDIR)/, $(TEST_DEPS))
 else ifneq ($(filter-out clean install package,$(MAKECMDGOALS)),)
-include $(addprefix $(BLDDIR)/, $(DEPS))
+include $(addprefix $(BLDDIR)/, $(DEPS)) $(addprefix $(BLDDIR)/, $(TEST_DEPS))
 endif
