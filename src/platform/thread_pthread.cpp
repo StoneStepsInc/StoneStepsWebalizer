@@ -7,7 +7,7 @@
 
    thread_pthread.cpp
 */
-#include "thread.h"
+#include "../thread.h"
 #include "unistd.h"
 #include <sys/times.h>
 

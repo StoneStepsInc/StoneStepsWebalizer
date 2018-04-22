@@ -8,7 +8,7 @@
    exception_linux.cpp
 */
 
-#include "exception.h"
+#include "../exception.h"
 
 void set_os_ex_translator(void)
 {
