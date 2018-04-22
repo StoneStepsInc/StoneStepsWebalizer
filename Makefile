@@ -54,7 +54,7 @@ BLDDIR   := build
 
 # include and library search paths
 INCDIRS  := $(SRCDIR)
-LIBDIRS  := $(BLDDIR)
+LIBDIRS  := 
 
 # list of source files (precompiled header file must be first in the list)
 SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
@@ -194,14 +194,13 @@ all: $(BLDDIR)/$(TARGET) $(BLDDIR)/$(TEST)
 # build/webalizer
 #
 $(BLDDIR)/$(TARGET): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix -l,$(LIBS)) $(addprefix $(BLDDIR)/,$(OBJS))
+	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
 # build/test
 #
 $(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(TARGET) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix -l,$(LIBS)) $(addprefix -l,$(TEST_LIBS)) \
-			$(addprefix $(BLDDIR)/,$(TEST_OBJS))
+	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
 
 #
 # run unit tests and generate an XML results file in buikd/test-results/
