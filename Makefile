@@ -53,7 +53,7 @@ SRCDIR   := src
 BLDDIR   := build
 
 # include and library search paths
-INCDIRS  := $(SRCDIR)
+INCDIRS  := 
 LIBDIRS  := 
 
 # list of source files (precompiled header file must be first in the list)
@@ -89,10 +89,6 @@ DEPS := $(OBJS:.o=.d)
 
 # and a list of template repository files
 RPOS := $(OBJS:.o=.rpo)
-
-# add GCC include and library options to each search path
-INCDIRS := $(addprefix -I,$(INCDIRS))
-LIBDIRS := $(addprefix -L,$(LIBDIRS))
 
 # ------------------------------------------------------------------------
 #
@@ -194,13 +190,15 @@ all: $(BLDDIR)/$(TARGET) $(BLDDIR)/$(TEST)
 # build/webalizer
 #
 $(BLDDIR)/$(TARGET): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
+	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
+		$(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
 # build/test
 #
 $(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(TARGET) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
+	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
+		$(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
 
 #
 # run unit tests and generate an XML results file in buikd/test-results/
@@ -267,33 +265,33 @@ package: $(BLDDIR)/$(TARGET)
 #
 $(BLDDIR)/%.d : %.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
+	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 $(BLDDIR)/%.d : %.c
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
+	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 #
 # Rules to compile source file
 #
 $(BLDDIR)/%.o : %.cpp
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
+	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 $(BLDDIR)/%.o : %.c
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
+	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@	
 
 #
 # Build the precompiled header file
 #
 $(BLDDIR)/$(PCHOUT) : $(PCHSRC)
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $@
+	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $(SRCDIR)/$(PCHHDR) -o $@
 
 $(BLDDIR)/$(TEST_PCHOUT) : $(TEST_PCHSRC)
 	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(TEST_SRCDIR)/$(TEST_PCHHDR) -o $@
+	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $(TEST_SRCDIR)/$(TEST_PCHHDR) -o $@
 
 # ------------------------------------------------------------------------
 #
