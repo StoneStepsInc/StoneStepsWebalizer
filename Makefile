@@ -32,7 +32,7 @@ SHELL := /bin/bash
 # Webalizer variables
 #
 # ------------------------------------------------------------------------
-TARGET   := webalizer
+WEBALIZER   := webalizer
 
 #
 # Precompiled header file names.
@@ -181,19 +181,19 @@ CC_LDFLAGS :=
 # ------------------------------------------------------------------------
 
 # default target
-all: $(BLDDIR)/$(TARGET) $(BLDDIR)/$(TEST)
+all: $(BLDDIR)/$(WEBALIZER) $(BLDDIR)/$(TEST)
 
 #
 # build/webalizer
 #
-$(BLDDIR)/$(TARGET): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
+$(BLDDIR)/$(WEBALIZER): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
 	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
 # build/test
 #
-$(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(TARGET) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
+$(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
 	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
 
@@ -222,16 +222,16 @@ clean:
 	@for obj in $(RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@for obj in $(TEST_RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
 	@echo "Removing executables..."
-	@if [[ -e $(BLDDIR)/$(TARGET) ]]; then rm $(BLDDIR)/$(TARGET); fi
+	@if [[ -e $(BLDDIR)/$(WEBALIZER) ]]; then rm $(BLDDIR)/$(WEBALIZER); fi
 	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
 	@echo "Removing test results..."
 	@if [[ -e $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE) ]]; then rm $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE); fi
 	@echo "Done"
 
-package: $(BLDDIR)/$(TARGET)
+package: $(BLDDIR)/$(WEBALIZER)
 	@echo "Adding Webalizer files..." 
 	@strip --strip-debug build/webalizer
-	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C $(BLDDIR) $(TARGET)
+	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
 	@tar $(PKG_OWNER) -rf $(PKG_NAME) $(PKG_FILES) 
 	@echo "Adding language files..."
 	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
