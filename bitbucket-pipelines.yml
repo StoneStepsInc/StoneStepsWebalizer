@@ -7,4 +7,4 @@ pipelines:
         name: Build
         script: 
           - make
-          - build/webalizer --version
+          - make test
