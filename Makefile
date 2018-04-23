@@ -91,9 +91,10 @@ DEPS := $(OBJS:.o=.d)
 RPOS := $(OBJS:.o=.rpo)
 
 # ------------------------------------------------------------------------
+# Unit tests
 #
-# Unit test variables
-#
+# Unit test object files share the build directory with the rest of the 
+# project and should always be named to avoid name collisions.
 # ------------------------------------------------------------------------
 TEST     := test
 
@@ -105,9 +106,12 @@ TEST_PCHOBJ	 := $(TEST_PCHHDR:.h=.o)
 
 # unit test source directory
 TEST_SRCDIR := src/test
+
+# Bitbucket unit test results location
 TEST_RSLT_DIR := test-results
 TEST_RPT_FILE := test-report.xml
 
+# unit tests source files
 TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
 	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp
