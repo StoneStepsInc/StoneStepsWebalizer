@@ -574,6 +574,14 @@ int state_t::restore_state(void)
    rcnode_t rcnode;
    ccnode_t ccnode;
    
+   // restore history, unless we are told otherwise
+   if(!config.ignore_hist) 
+      history.get_history();
+   else {
+      if(config.verbose>1) 
+         fprintf(stderr, "%s\n",config.lang.msg_ign_hist); 
+   }
+
    // sysnode is not populated if the databases is new or has been truncated
    if(!sysnode.appver)
       return 0;
@@ -620,18 +628,8 @@ int state_t::restore_state(void)
    }
 
    //
-   // Restore history, unless we are told otherwise
-   //
-   if (config.ignore_hist) {
-      if (config.verbose>1) 
-         printf("%s\n",config.lang.msg_ign_hist); 
-   }
-   else
-      history.get_history();
-
-   //
-   // If the history file is missing or there is no record of this month, update 
-   // history from the state database for this month.
+   // If there is no record of the current month, set the initial history using 
+   // values from the state database.
    //
    if(!history.find_month(totals.cur_tstamp.year, totals.cur_tstamp.month))
       history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
