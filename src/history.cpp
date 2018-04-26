@@ -13,6 +13,7 @@
 #include "history.h"
 #include "lang.h"
 #include "util_path.h"
+#include "tstring.h"
 
 #include <cstdio>
 
@@ -213,7 +214,6 @@ bool history_t::get_history(void)
    size_t i;
    FILE *hist_fp;
    hist_month_t hnode;
-   char *buffer;
    string_t fpath;
 
    fpath = make_path(config.out_dir, config.hist_fname);
@@ -224,7 +224,7 @@ bool history_t::get_history(void)
       return false;
    }
 
-   buffer = new char[BUFSIZE];
+   string_t::char_buffer_t buffer(BUFSIZE);
 
    if (config.verbose>1) 
       printf("%s %s\n", config.lang.msg_get_hist, fpath.c_str());
@@ -278,7 +278,6 @@ bool history_t::get_history(void)
    }
    
    fclose(hist_fp);
-   delete [] buffer;
 
    // length includes empty months in between, so delete one and check how many are left
    while(length() > max_length)
