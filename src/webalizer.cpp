@@ -1212,9 +1212,19 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          /* GOOD RECORD, CHECK INCREMENTAL/TIMESTAMPS */
          /*********************************************/
 
-         // check if need to convert log time stamp to local time
-         if(config.local_time)
-            log_rec.tstamp.tolocal(config.get_utc_offset(log_rec.tstamp, dst_iter));
+         //
+         // Convert the log record time zone only if local time setting in the configuration 
+         // doesn't match the log record time zone setting. This ensures that local time 
+         // stamps in Apache and CLF logs are not converted to a different time zone using 
+         // UTCOffset, which may not even be set, in which case it will appear that the time 
+         // stamp is adjusted to UTC, while it is actually local time and may be DST adjusted.
+         //
+         if(config.local_time != log_rec.tstamp.islocal()) {
+            if(config.local_time)
+               log_rec.tstamp.tolocal(config.get_utc_offset(log_rec.tstamp, dst_iter));
+            else
+               log_rec.tstamp.toutc();
+         }
 
          /* get current records timestamp (seconds since epoch) */
          tstamp_t& rec_tstamp = log_rec.tstamp;
