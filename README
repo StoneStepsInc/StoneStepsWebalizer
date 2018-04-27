@@ -992,18 +992,21 @@ GMTTime       time instead of local time.  Normally The Webalizer will
               display of timestamps in GMT (UTC) time instead.  Values
               may be either 'yes' or 'no'.  Default is 'no'.
 
-UTCOffset     Specifies the difference between the local time and UTC
-              time. For example, Eastern Standard Time (EST) is 5 hours 
-              behind UTC and the UTCOffset value for EST would be -5h.
-              If UTCOffset is a non-zero value, log time stamps will 
-              be adjusted by the offset amount. UTCOffset has no effect 
-              if UTCTime is set to "no".
+UTCOffset     Specifies the difference between the local time and UTC time, 
+              without factoring in the daylight saving time adjustment. For 
+              example, Eastern Standard Time (EST) is 5 hours behind UTC and 
+              the UTCOffset value for EST would be -5h. UTCOffset is only 
+              applied when the log time zone type doesn't match the UTCTime 
+              value. In other words, log time in Apache and CLF logs will 
+              not be adjusted by UTCOffset if UTCTime is set to "no", but 
+              IIS logs will be in the same configuration. 
               Default value: 0
 
 LocalUTCOffset Controls if the UTC offset of the machine running Stone 
               Steps Webalizer can be used to automatically set UTCOffset.
+              Note that daylight savings time offset is not included into
+              UTCOffset.
               Default value: no
-
 
 DSTOffset     Specifies the difference between the standard and daylight
               saving time. For example, setting DSTOffset to 1h instructs 

@@ -132,6 +132,9 @@ struct tstamp_t {
       void toutc(void);
       void tolocal(int offset);
 
+      inline bool isutc(void) const {return utc;}
+      inline bool islocal(void) const {return !utc;}
+
       int64_t compare(const tstamp_t& tstamp, int mode = tm_parts::TIMESTAMP) const;
 
       bool operator == (const tstamp_t& tstamp) const {return compare(tstamp) == 0;}
