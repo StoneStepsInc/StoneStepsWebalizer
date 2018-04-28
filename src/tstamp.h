@@ -23,19 +23,19 @@
 /// Date and time components may be stored in local time or UTC and are converted to the internal 
 /// serial time for all date/time math operations.
 ///
-/// The internal serial time (intime_t) is represented in seconds since midnight January 1st, 1970 
+/// The internal serial time (`intime_t`) is represented in seconds since midnight January 1st, 1970 
 /// and may have the time zone offset included in the value. This data type allows us to operate on 
 /// local time and UTC values uniformly. The former, effectively, is treated as a UTC value shifted 
 /// by the time zone offset, which also makes calculating Julian day numbers for the internal serial 
 /// time more straightforward because a Julian day number is placed at noon UTC for the resulting 
 /// day.
 ///
-/// The internal serial time cannot be used outside of tstamp_t because it is impossible to figure 
+/// The internal serial time cannot be used outside of `tstamp_t` because it is impossible to figure 
 /// out the value of the time zone offset included in the internal serial time value. Caller of any 
 /// function that makes use of the internal serial time must track whether it's local time or UTC, 
 /// as well as the time zone offset value.
 ///
-/// In order to convert a local time stamp X to time_t via the internal serial time:
+/// In order to convert a local time stamp X to `time_t` via the internal serial time:
 ///
 ///   * Time components of X are converted to seconds since midnight (B)
 ///   * A Julian day number is computed for date components of X as if it is in UTC
@@ -57,7 +57,7 @@
 ///          |                                                     |<---A--->|
 ///          |<----------------------------D-------------------------->|
 /// ```
-/// The math for UTC time stamps is even simpler because the internal seria time in this case
+/// The math for UTC time stamps is even simpler because the internal serial time in this case
 /// is in UTC and contains no time zone offset. 
 ///
 

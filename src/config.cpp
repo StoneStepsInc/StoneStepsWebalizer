@@ -421,11 +421,11 @@ void config_t::add_def_srch_list(void)
 /// unrecoverable errors.
 ///
 /// Warnings are collected in the `messages` vector and will be reported when 
-/// report_config is called. The configuration object can be used without any 
+/// `report_config` is called. The configuration object can be used without any 
 /// restrictions in this case. 
 ///
 /// Errors are collected in the `errors` vector and if this vector is not empty, 
-/// config_t::is_bad will return true and the configuration object can be used
+/// `config_t::is_bad` will return true and the configuration object can be used
 /// only to report the configuration and not for log processing. Errors can be
 /// reported via report_errors.
 ///
