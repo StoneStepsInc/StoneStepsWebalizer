@@ -6,6 +6,9 @@ syntax: regexp
 
 ^build/
 
+# Nuget packages
+^src/packages/
+
 # test directories and files
 ^logfiles/
 ^reports/
