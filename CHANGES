@@ -1,4 +1,10 @@
 --------------------------------------------------------------------
+4.2.2.3 [29-Apr-2018] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * [BUG][BB-5] Adjust log record time stamp only if its time zone setting doesn't match that in the configuration
+ * [BUG][BB-4] Fixed a bug causing history being wiped out if there is no state database
+
+--------------------------------------------------------------------
 4.2.1.18 [28-May-2017] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * Added DNSLookups configuration variable to use the DNS database as a generic host database (e.g. track spammers)
