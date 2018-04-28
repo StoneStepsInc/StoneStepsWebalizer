@@ -19,7 +19,7 @@
 namespace sswtest {
 class TimeStampTest : public testing::Test {
    protected:
-      int tz_offset;
+      int tz_offset;             ///< UTC offset in minutes of the machine running this test.
 
    public:
       TimeStampTest(void)
@@ -126,13 +126,55 @@ TEST_F(TimeStampTest, TimeStampParseLocal)
    EXPECT_TRUE(tstamp_local == tstamp) << "Parsed 2017-08-30T15:10:25 local time should compare equal to a constructed time stamp";
 
    EXPECT_TRUE(tstamp.parse("2017-08-30T15:10", tz_offset)) << "2017-08-30T15:10 local time should be parsed without an error";
-   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE)) << "Parsed 2017-08-30T15:10 local time should compare equal to a constructed time stamp";
+   EXPECT_EQ(0, tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE | tstamp_t::tm_parts::HOUR | tstamp_t::tm_parts::MINUTE)) << "Parsed 2017-08-30T15:10 local time should compare equal to a constructed time stamp";
 
    EXPECT_TRUE(tstamp.parse("2017-08-30", tz_offset)) << "2017-08-30 local time should be parsed without an error";
-   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017-08-30 local time should compare equal to a constructed time stamp";
+   EXPECT_EQ(0, tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017-08-30 local time should compare equal to a constructed time stamp";
 
    EXPECT_TRUE(tstamp.parse("2017/08/30", tz_offset)) << "2017/08/30 local time should be parsed without an error";
-   EXPECT_TRUE(!tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017/08/30 local time should compare equal to a constructed time stamp";
+   EXPECT_EQ(0, tstamp_local.compare(tstamp, tstamp_t::tm_parts::DATE)) << "Parsed 2017/08/30 local time should compare equal to a constructed time stamp";
 }
+
+TEST_F(TimeStampTest, TimeZoneConversion)
+{
+   const tstamp_t tstamp_lcl_neg5hrs(2018, 4, 26, 15, 10, 25, -300);
+   const tstamp_t tstamp_lcl_pos2hrs(2018, 4, 26, 22, 10, 25, 120);
+   const tstamp_t tstamp_utc(2018, 4, 26, 20, 10, 25);
+
+   tstamp_t tstamp;
+
+   tstamp = tstamp_utc;
+   tstamp.toutc();
+   EXPECT_EQ(tstamp_utc, tstamp) << "UTC time stamp converted to UTC should not change";
+
+   tstamp = tstamp_lcl_neg5hrs;
+   tstamp.tolocal(-300);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp) << "Time stamp with the same UTC offset should not change";
+
+   tstamp = tstamp_lcl_neg5hrs;
+   tstamp.tolocal(120);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp) << "UTC-5 local time to UTC+2 local time moves 7 hours ahead";
+
+   tstamp = tstamp_lcl_neg5hrs;
+   tstamp.tolocal(-300);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp) << "UTC+2 local time to UTC-5 local time moves 7 hours back";
+
+   tstamp = tstamp_lcl_neg5hrs;
+   tstamp.toutc();
+   EXPECT_EQ(tstamp_utc, tstamp) << "UTC-5 local time to UTC moves 5 hours ahead";
+
+   tstamp = tstamp_lcl_pos2hrs;
+   tstamp.toutc();
+   EXPECT_EQ(tstamp_utc, tstamp) << "UTC+2 local time to UTC moves 2 hours back";
+
+   tstamp = tstamp_utc;
+   tstamp.tolocal(-300);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp) << "UTC to UTC-5 local time moves 5 hours back";
+
+   tstamp = tstamp_utc;
+   tstamp.tolocal(120);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp) << "UTC to UTC+2 local time moves 2 hours ahead";
+}
+
 }
 
