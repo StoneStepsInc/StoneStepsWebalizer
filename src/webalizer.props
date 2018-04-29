@@ -18,7 +18,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/we4239 /we4101 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/std:c++14 /we4239 /we4101 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -26,7 +26,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImageHasSafeExceptionHandlers />
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalOptions>/std:c++14 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <BuildLog>
       <Path>$(IntDir)msbuild.log</Path>
