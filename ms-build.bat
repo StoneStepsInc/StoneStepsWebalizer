@@ -76,7 +76,7 @@ rem
 set runnable=0
 if "%PROCESSOR_ARCHITECTURE%" == "x86" (
    if "%platform%" == "Win32" set runnable=1
-) else if  "%PROCESSOR_ARCHITECTURE%" == "x64" (
+) else if  "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
    set runnable=1
 )
 
