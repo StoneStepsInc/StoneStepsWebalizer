@@ -30,7 +30,7 @@ sysnode_t::sysnode_t(void) : keynode_t<uint32_t>(1)
    sizeof_longlong = sizeof(long long);
    
    byte_order = 0x12345678u;
-   byte_order_x64 = 0x1234567809ABCDEFull;
+   byte_order_x64 = 0x1234567890ABCDEFull;
 
    utc_time = true;
    utc_offset = 0; 
@@ -55,7 +55,7 @@ void sysnode_t::reset(const config_t& config)
    sizeof_longlong = sizeof(long long);
    
    byte_order = 0x12345678u;
-   byte_order_x64 = 0x1234567809ABCDEFull;
+   byte_order_x64 = 0x1234567890ABCDEFull;
 
    utc_time = !config.local_time;
    utc_offset = config.utc_offset; 
