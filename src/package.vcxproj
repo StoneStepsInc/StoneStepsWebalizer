@@ -180,11 +180,21 @@
     <None Include="..\lang\webalizer_lang.ukrainian" />
     <None Include="..\README" />
     <None Include="..\sample.conf" />
+    <None Include="packages.package.config" />
     <None Include="webalizer.css" />
     <None Include="webalizer.js" />
     <None Include="webalizer_highcharts.js" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets" Condition="Exists('packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets')" />
+    <Import Project="packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets" Condition="Exists('packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.OracleBerkeleyDB.6.0.20\build\native\StoneStepsWebalizer.OracleBerkeleyDB.targets'))" />
+    <Error Condition="!Exists('packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\StoneStepsWebalizer.GD.2.1.0\build\native\StoneStepsWebalizer.GD.targets'))" />
+  </Target>
 </Project>

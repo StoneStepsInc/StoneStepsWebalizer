@@ -474,6 +474,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.webalizer.config" />
   </ItemGroup>
 </Project>
