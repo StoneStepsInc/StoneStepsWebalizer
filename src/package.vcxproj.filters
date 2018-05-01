@@ -117,6 +117,7 @@
       <Filter>src</Filter>
     </None>
     <None Include="..\CHANGES" />
+    <None Include="packages.package.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lang">
@@ -125,5 +126,16 @@
     <Filter Include="src">
       <UniqueIdentifier>{29606b9d-4d93-4ab6-a4de-52769551a03f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{f3eb9a1f-54f4-41d0-ae5e-94761fbd011a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="$(GDLibDir)$(GDLibName).lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="$(BDBLibDir)$(BDBLibName).lib">
+      <Filter>Libraries</Filter>
+    </Library>
   </ItemGroup>
 </Project>
