@@ -181,7 +181,7 @@ CC_LDFLAGS :=
 # ------------------------------------------------------------------------
 
 # default target
-all: $(BLDDIR)/$(WEBALIZER) $(BLDDIR)/$(TEST)
+all: $(BLDDIR)/$(WEBALIZER)
 
 #
 # build/webalizer
