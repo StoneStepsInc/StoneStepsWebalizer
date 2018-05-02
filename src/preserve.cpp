@@ -513,8 +513,12 @@ void state_t::database_info(void) const
 
    // output numeric storage sizes and byte order in debug mode
    if(config.debug_mode) {
-      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd d=%hd\n", get_sysnode().sizeof_char, get_sysnode().sizeof_short, get_sysnode().sizeof_int, get_sysnode().sizeof_long, get_sysnode().sizeof_double);
-      printf("Byte order      : %02x%02x%02x%02x\n", (u_int)*(u_char*)&get_sysnode().byte_order, (u_int)*((u_char*)&get_sysnode().byte_order+1), (u_int)*((u_char*)&get_sysnode().byte_order+2), (u_int)*((u_char*)&get_sysnode().byte_order+3));
+      printf("Numeric storage : c=%hd s=%hd i=%hd l=%hd ll=%hd d=%hd\n", get_sysnode().sizeof_char, get_sysnode().sizeof_short, get_sysnode().sizeof_int, get_sysnode().sizeof_long, get_sysnode().sizeof_longlong, get_sysnode().sizeof_double);
+      printf("Byte order      : %02X%02X%02X%02X\n", 
+                        (u_int)*(u_char*)&get_sysnode().byte_order, (u_int)*((u_char*)&get_sysnode().byte_order+1), (u_int)*((u_char*)&get_sysnode().byte_order+2), (u_int)*((u_char*)&get_sysnode().byte_order+3));
+      printf("Byte order x64  : %02X%02X%02X%02X%02X%02X%02X%02X\n", 
+                        (u_int)*(u_char*)&get_sysnode().byte_order_x64, (u_int)*((u_char*)&get_sysnode().byte_order_x64+1), (u_int)*((u_char*)&get_sysnode().byte_order_x64+2), (u_int)*((u_char*)&get_sysnode().byte_order_x64+3),
+                        (u_int)*((u_char*)&get_sysnode().byte_order_x64+4), (u_int)*((u_char*)&get_sysnode().byte_order_x64+5), (u_int)*((u_char*)&get_sysnode().byte_order_x64+6), (u_int)*((u_char*)&get_sysnode().byte_order_x64+7));
    }
 
    printf("\n");
