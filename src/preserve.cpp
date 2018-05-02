@@ -532,17 +532,6 @@ int state_t::restore_state(void)
 {
    string_t str;
    u_int i;
-   storable_t<vnode_t> vnode;
-   storable_t<danode_t> danode;
-   storable_t<hnode_t> hnode;
-   storable_t<dlnode_t> dlnode;
-   storable_t<unode_t> unode;
-   storable_t<rnode_t> rnode;
-   storable_t<anode_t> anode;
-   storable_t<snode_t> snode;
-   storable_t<inode_t> inode;
-   storable_t<rcnode_t> rcnode;
-   storable_t<ccnode_t> ccnode;
 
    // restore history, unless we are told otherwise
    if(!config.ignore_hist) 
@@ -591,6 +580,7 @@ int state_t::restore_state(void)
 
    // restore country code data
    {database_t::iterator<ccnode_t> iter = database.begin_countries();
+   storable_t<ccnode_t> ccnode;
    while(iter.next(ccnode)) {
       cc_htab.update_ccnode(ccnode);
    }
@@ -618,7 +608,9 @@ int state_t::restore_state(void)
 
    if(!config.memory_mode) {
       {// restore active visits and associated hosts
+      storable_t<vnode_t> vnode;
       database_t::iterator<vnode_t> iter = database.begin_visits();
+      storable_t<hnode_t> hnode;
       while(iter.next(vnode)) {
          hnode.nodeid = vnode.nodeid;
          if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
@@ -629,6 +621,8 @@ int state_t::restore_state(void)
 
       {// restore active download jobs 
       database_t::iterator<danode_t> iter = database.begin_active_downloads();
+      storable_t<danode_t> danode;
+      storable_t<dlnode_t> dlnode;
       while(iter.next(danode)) {
          dlnode.nodeid = danode.nodeid;
          if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
@@ -656,6 +650,7 @@ int state_t::restore_state(void)
 
    {// start with URLs, as they may be referenced by visit nodes (see unpack_vnode_cb)
    database_t::iterator<unode_t> iter = database.begin_urls(NULL);
+   storable_t<unode_t> unode;
    while(iter.next(unode)) {
       if(!um_htab.put_node(new storable_t<unode_t>(unode)))
          return 10;
@@ -666,6 +661,7 @@ int state_t::restore_state(void)
 
    {// monthly hosts (unpack_hnode_cb ignores groups)
    database_t::iterator<hnode_t> iter = database.begin_hosts(NULL);
+   storable_t<hnode_t> hnode;
    while(iter.next(hnode, unpack_hnode_cb, this)) {
       if(!hm_htab.put_node(new storable_t<hnode_t>(hnode)))
          return 8;
@@ -676,6 +672,7 @@ int state_t::restore_state(void)
 
    {// referrers table
    database_t::iterator<rnode_t> iter = database.begin_referrers(NULL);
+   storable_t<rnode_t> rnode;
    while(iter.next(rnode)) {
       if(!rm_htab.put_node(new storable_t<rnode_t>(rnode)))
          return 11;
@@ -685,6 +682,7 @@ int state_t::restore_state(void)
 
    {// User agent list
    database_t::iterator<anode_t> iter = database.begin_agents(NULL);
+   storable_t<anode_t> anode;
    while(iter.next(anode)) {
       if(!am_htab.put_node(new storable_t<anode_t>(anode)))
          return 12;
@@ -694,6 +692,7 @@ int state_t::restore_state(void)
 
    {// Search String list
    database_t::iterator<snode_t> iter = database.begin_search(NULL);
+   storable_t<snode_t> snode;
    while(iter.next(snode)) {
       if(!sr_htab.put_node(new storable_t<snode_t>(snode)))
          return 13;
@@ -703,6 +702,7 @@ int state_t::restore_state(void)
 
    {// username list
    database_t::iterator<inode_t> iter = database.begin_users(NULL);
+   storable_t<inode_t> inode;
    while(iter.next(inode)) {
       if(!im_htab.put_node(new storable_t<inode_t>(inode)))
          return 14;
@@ -712,6 +712,7 @@ int state_t::restore_state(void)
 
    {// error list
    database_t::iterator<rcnode_t> iter = database.begin_errors(NULL);
+   storable_t<rcnode_t> rcnode;
    while(iter.next(rcnode)) {
       if(!rc_htab.put_node(new storable_t<rcnode_t>(rcnode)))
          return 15;
@@ -721,6 +722,7 @@ int state_t::restore_state(void)
 
    {// downloads
    database_t::iterator<dlnode_t> iter = database.begin_downloads(NULL);
+   storable_t<dlnode_t> dlnode;
    while(iter.next(dlnode, unpack_dlnode_cb, this)) {
       if(!dl_htab.put_node(new storable_t<dlnode_t>(dlnode)))
          return 16;
