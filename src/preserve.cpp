@@ -530,7 +530,6 @@ void state_t::database_info(void) const
 
 int state_t::restore_state(void)
 {
-   string_t str;
    u_int i;
 
    // restore history, unless we are told otherwise
@@ -990,7 +989,6 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 {
    state_t *_this = (state_t*) arg;
    std::unique_ptr<storable_t<vnode_t>> vptr;
-   string_t str;
 
    if(hnode.flag == OBJ_GRP)
       return;
@@ -1013,7 +1011,6 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
 {
    state_t *_this = (state_t*) arg;
-   string_t str;
 
    if(hnode.flag == OBJ_GRP)
       return;
