@@ -1259,6 +1259,10 @@ bool config_t::ispage(const string_t& url) const
 
 u_char config_t::get_url_type(u_short port) const
 {
+   // keep the port type unknown if it was not set
+   if(port == 0)
+      return URL_TYPE_UNKNOWN;
+
    if(port == http_port)
       return (u_char) URL_TYPE_HTTP;
 
@@ -1270,6 +1274,7 @@ u_char config_t::get_url_type(u_short port) const
 
 bool config_t::is_secure_url(u_char urltype) const
 {
+   // check for HTTPS only and, if UseHTTPS is set, check if the port is unknown or there was at least one HTTPS request
    return urltype == URL_TYPE_HTTPS || (use_https && (urltype & URL_TYPE_HTTPS || urltype == URL_TYPE_UNKNOWN));
 }
 
