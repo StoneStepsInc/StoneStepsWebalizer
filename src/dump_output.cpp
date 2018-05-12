@@ -179,7 +179,7 @@ void dump_output_t::dump_all_urls()
          fprintf(out_fp,"%" PRIu64 "\t%.0f\t%.03f\t%.03f\t%c\t%s\n",
             unode.count,unode.xfer/1024.,
             unode.avgtime, unode.maxtime,
-            (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
+            unode.get_url_type_ind(),
             unode.string.c_str());
       }
    }

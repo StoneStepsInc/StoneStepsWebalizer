@@ -69,6 +69,8 @@ struct unode_t : public base_node<unode_t> {
 
          u_char update_url_type(u_char type);
 
+         char get_url_type_ind(void) const;
+
          bool match_key_ex(const unode_t::param_block *pb) const;
 
          virtual bool match_key(const string_t& key) const override 

@@ -88,13 +88,27 @@ void unode_t::reset(uint64_t nodeid)
 
 u_char unode_t::update_url_type(u_char type)
 {
-   // make sure only allowed bits are set in the argument
-   if(type & ~(URL_TYPE_HTTP | URL_TYPE_HTTPS | URL_TYPE_OTHER))
-      throw exception_t(0, "Bad URL type");
+   if(type == URL_TYPE_UNKNOWN) {
+      // if we already saw at least one request with a known port, treat the unknown type as other
+      if(urltype & (URL_TYPE_HTTP | URL_TYPE_HTTPS))
+         type |= URL_TYPE_OTHER;
+   }
+   else {
+      // make sure only allowed bits are set in the argument
+      if(type & ~(URL_TYPE_HTTP | URL_TYPE_HTTPS | URL_TYPE_OTHER))
+         throw exception_t(0, "Bad URL type");
+   }
 
    urltype |= type;
 
    return urltype;
+}
+
+char unode_t::get_url_type_ind(void) const
+{
+   return (urltype == URL_TYPE_HTTPS) ? '*' : 
+            (urltype == URL_TYPE_MIXED) ? '-' : 
+            (urltype & URL_TYPE_OTHER) ? '+' : ' ';
 }
 
 bool unode_t::match_key_ex(const unode_t::param_block *pb) const

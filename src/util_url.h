@@ -15,12 +15,12 @@
 #include "tstring.h"
 #include "char_buffer.h"
 
-/* Request types (bit values) */
-#define URL_TYPE_UNKNOWN      0x00
-#define URL_TYPE_HTTP         0x01
-#define URL_TYPE_HTTPS        0x02
-#define URL_TYPE_MIXED        0x03        /* HTTP and HTTPS (nothing else) */
-#define URL_TYPE_OTHER        0x04
+/// HTTP request types based on port values (bit values)
+#define URL_TYPE_UNKNOWN      0x00        ///< Port was not set 
+#define URL_TYPE_HTTP         0x01        ///< Port matches `HttpPort`
+#define URL_TYPE_HTTPS        0x02        ///< Port matches `HttpsPort`
+#define URL_TYPE_MIXED        0x03        ///< Both `HttpPort` and `HttpsPort` values have been seen
+#define URL_TYPE_OTHER        0x04        ///< Port matches neither `HttpPort` nor `HttpsPort`
 
 ///
 /// @brief  Converts two text hexadecimal characters in `cp1` to a decoded 

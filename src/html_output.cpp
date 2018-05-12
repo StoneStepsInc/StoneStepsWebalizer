@@ -1659,7 +1659,7 @@ int html_output_t::all_urls_page(void)
             unode.xfer, fmt_xfer(unode.xfer, true),
             (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
             unode.avgtime, unode.maxtime,
-            (unode.urltype == URL_TYPE_HTTPS) ? '*' : (unode.urltype == URL_TYPE_MIXED) ? '-' : ' ',
+            unode.get_url_type_ind(),
             unode.target ? " class=\"target\"" : "",
             html_encode(unode.string));
       }
