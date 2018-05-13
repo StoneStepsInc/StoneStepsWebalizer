@@ -965,13 +965,17 @@ UseHTTPS      Causes the links in the 'Top URL's' table to use 'https://'
               HttpsPort and HttpPort settings, respectively. UseHTTPS is 
               ignored for URLs that were requested over the port identified 
               by HttpPort or some port other than HttpsPort. For example, 
-              if HttpPort is 80 and HttpsPort is 443 and a URL A was requested 
-              over port 80, page B was requested over port 443, page C was 
-              requested over ports 80 and 443 and a page D was requested 
-              over ports 80 and 8080, the when UseHTTPS is set to 'no', 
-              only page B will be rendered with the 'https://' prefix and 
-              when UseHTTPS is set to 'yes', pages B and C will be rendered 
-              with the 'https://' prefix.
+              if HttpPort is 80 and HttpsPort is 443 and
+              
+              * page A was requested over port 80, 
+              * page B was requested over port 443, 
+              * page C was requested over ports 80 and 443,
+              * page D was requested over ports 80 and 8080, 
+              * page E was requested over ports 8080 and 443
+
+              , then when UseHTTPS is set to 'no', only page B will be rendered 
+              with the 'https://' prefix and when UseHTTPS is set to 'yes', 
+              pages B, C and E will be rendered with the 'https://' prefix.
 
 Quiet         This allows you to enable or disable informational messages
               while it is running.  The values for this keyword can be
