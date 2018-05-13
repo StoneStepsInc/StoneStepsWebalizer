@@ -367,7 +367,7 @@ class config_t {
       
       void add_output_format(const string_t& format);
       
-      void set_dst_range(const string_t *dst_start, const string_t *dst_end);
+      void set_dst_range(const char *dst_start, const char *dst_end);
       
       void proc_stdin_log_files(void);
 

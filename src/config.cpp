@@ -1194,8 +1194,8 @@ void config_t::get_config(const char *fname)
          case 158: ignore_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 159: group_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 160: utc_offset = get_interval(value, errors) / 60; break;  // in minutes
-         case 161: set_dst_range(&value, NULL); break;
-         case 162: set_dst_range(NULL, &value); break;
+         case 161: set_dst_range(value, NULL); break;
+         case 162: set_dst_range(NULL, value); break;
          case 163: dst_offset = get_interval(value, errors) / 60; break;  // in minutes
          case 164: excl_agent_args.add_nlist(value); break;
          case 165: incl_agent_args.add_nlist(value); break;
@@ -1730,17 +1730,17 @@ bool config_t::is_dns_enabled(void) const
 /// Time stamps are just saved in the DST range vector in this method and not 
 /// validated in any way.
 ///
-void config_t::set_dst_range(const string_t *start, const string_t *end)
+void config_t::set_dst_range(const char *start, const char *end)
 {
    // get the last element (guaranteed to be there)
    dst_pair_t& dst_pair = dst_pairs[dst_pairs.size()-1];
    
    // set the start/end timestamps (overwrite, if more than one of same kind is found)
    if(start)
-      dst_pair.dst_start = *start;
+      dst_pair.dst_start = start;
 
    if(end)
-      dst_pair.dst_end = *end;
+      dst_pair.dst_end = end;
 
    // if we don't have a complete range, return
    if(dst_pair.dst_start.isempty() || dst_pair.dst_end.isempty())
