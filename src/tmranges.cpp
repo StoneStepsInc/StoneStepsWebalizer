@@ -31,7 +31,7 @@ bool tm_ranges_t::add_range(const tstamp_t& start, const tstamp_t& end)
    }
 
    // make sure that the end of the new range doesn't cross into the start of the next one
-   if(i != tm_ranges.size()) {
+   if(tm_ranges.size() && i < tm_ranges.size()-1) {
       if(end >= tm_ranges[i+1].start)
          return false;
    }

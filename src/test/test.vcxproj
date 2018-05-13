@@ -109,6 +109,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ut_caseconv.cpp" />
+    <ClCompile Include="ut_config.cpp" />
     <ClCompile Include="ut_formatter.cpp" />
     <ClCompile Include="ut_hostname.cpp" />
     <ClCompile Include="ut_ipaddr.cpp" />
@@ -121,6 +122,9 @@
     <ClCompile Include="ut_tstamp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\utsname.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tmranges.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\config.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer_stack.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252.obj" />

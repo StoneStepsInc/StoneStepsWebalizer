@@ -1663,7 +1663,7 @@ int config_t::get_interval(const char *value, std::vector<string_t>& errors) con
    int time;
    const char *cp;
 
-   if(!value)
+   if(!value || !*value)
       return 0;
 
    time = (int) str2l(value, &cp);
@@ -1722,7 +1722,7 @@ bool config_t::is_dns_enabled(void) const
 /// is inserted into the DST range vector. 
 ///
 /// Passing the same parameter multiple times just overwrites the one that was 
-/// there before. This means that DST start and ed time stamps from the same 
+/// there before. This means that DST start and end time stamps from the same 
 /// range must follow one another in the configuration file. However, DST ranges
 /// don't need to be sorted between themselves (i.e. start/end time stamps for 
 /// 2017 may be before start/end time stamps for 2016).

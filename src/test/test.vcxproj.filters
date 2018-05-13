@@ -53,6 +53,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -127,6 +130,15 @@
       <Filter>obj</Filter>
     </Object>
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_url.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\utsname.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tmranges.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\config.obj">
       <Filter>obj</Filter>
     </Object>
   </ItemGroup>

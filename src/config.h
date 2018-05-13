@@ -47,6 +47,12 @@
 #define DEF_HTTPS_PORT           ((u_short) 443)
 
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
+
+/// Unit test classes that need access to private members.
+namespace sswtest {
+   class ConfigTest_GetInterval_Test;
+   class ConfigTest_DSTRanges_Test;
+}
       
 ///
 /// @class  config_t
@@ -63,6 +69,9 @@
 /// information that persists outside monthly state databases.
 ///
 class config_t {
+   friend class sswtest::ConfigTest_GetInterval_Test;
+   friend class sswtest::ConfigTest_DSTRanges_Test;
+
    private:
       ///
       /// @struct dst_pair_t

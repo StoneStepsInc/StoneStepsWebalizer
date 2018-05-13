@@ -114,7 +114,8 @@ TEST_RPT_FILE := test-report.xml
 # unit tests source files
 TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
-	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp
+	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp \
+	ut_config.cpp
 
 TEST_LIBS     := stdc++ pthread gtest
 
@@ -129,7 +130,7 @@ TEST_OBJS := $(TEST_SRC:.cpp=.o) \
 	encoder.o formatter.o hashtab.o hckdel.o lang.o linklist.o \
 	pch.o serialize.o tstamp.o tstring.o unicode.o fmt_impl.o \
 	util_http.o util_ipaddr.o util_path.o util_string.o util_time.o \
-	util_url.o
+	util_url.o utsname.o tmranges.o config.o
 
 TEST_DEPS := $(TEST_OBJS:.o=.d)
 TEST_RPOS := $(TEST_OBJS:.o=.rpo)
