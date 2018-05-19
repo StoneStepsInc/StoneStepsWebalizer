@@ -62,7 +62,6 @@ config_t::config_t(void)
    db_info = false;
    end_month = false;
    memory_mode = true;
-   user_config = false;
 
    pipe_log_names  = false;
 
@@ -415,7 +414,21 @@ void config_t::add_def_srch_list(void)
 }
 
 ///
-/// @brief  Reads command line options and then reads configuration files. 
+/// @brief  Reads configuration files and processes command line options to
+///         initialize the configuration object.
+///
+/// Configuration is read in this order:
+///
+///   * Main configuration file 
+///   * Configuration files included in the main configuraiton file
+///   * Command line options, intermixed with additional configuration
+///     files referenced via one or more `-c` options.
+///   * Configuration files included in command line configuration files.
+///
+/// If a single configuration value, such as `TopURLs`, is found more than once
+/// while processing these steps, its value is overwritten every subsequent time. 
+/// If a cumulative configuration value, such as `IgnoreURL`, is found multiple
+/// times, each subsequent value is added to the existing set of values.
 ///
 /// Configuration issues are classified as warning messages, errors and 
 /// unrecoverable errors.
@@ -446,15 +459,6 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    cur_dir = basepath;
 
    //
-   // Process command line arguments
-   //
-   proc_cmd_line(argc, argv);
-
-   // check stdin for log file names
-   if(pipe_log_names )
-      proc_stdin_log_files();
-
-   //
    // If no user configuration file was provided, try to locate the
    // default one in the
    //
@@ -462,41 +466,47 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    //    - common system directory
    //    - directory where the executable is
    //
-   if(!user_config) {
-      fpath = make_path(cur_dir, "webalizer.conf");
+   fpath = make_path(cur_dir, "webalizer.conf");
+   if (!access(fpath, R_OK))
+      get_config(fpath);
+   else {
+      fpath = make_path(ETCDIR, "webalizer.conf");
       if (!access(fpath, R_OK))
          get_config(fpath);
       else {
-         fpath = make_path(ETCDIR, "webalizer.conf");
-         if (!access(fpath, R_OK))
-            get_config(fpath);
-         else {
-            if(argv[0] && *argv[0]) {
-               cp1 = strchr(argv[0], 0);
+         if(argv[0] && *argv[0]) {
+            cp1 = strchr(argv[0], 0);
 
-               while(cp1 > argv[0] && *cp1 != '/' && *cp1 != '\\') cp1--;
+            while(cp1 > argv[0] && *cp1 != '/' && *cp1 != '\\') cp1--;
 
-               if(cp1 > argv[0]) {
-                  fpath.assign(argv[0], cp1-argv[0]+1);
-                  fpath.append("webalizer.conf");
+            if(cp1 > argv[0]) {
+               fpath.assign(argv[0], cp1-argv[0]+1);
+               fpath.append("webalizer.conf");
 
-                  if (!access(fpath,R_OK))
-                     get_config(fpath);
-               }
+               if (!access(fpath,R_OK))
+                  get_config(fpath);
             }
          }
       }
    }
 
-   //
-   // Process optional domain-specific include files
-   //
+   // process includes found in the main configuration file
+   process_includes();
+
+   // process command line arguments
+   proc_cmd_line(argc, argv);
+
+   // process includes queued from the command line
    process_includes();
 
    //
    // Additional initializations and validations
    //
    
+   // check stdin for log file names
+   if(pipe_log_names)
+      proc_stdin_log_files();
+
    //
    // Do not print any messages at this point, as they will appear before
    // version text. Instead, add them to the messages vector, which is
@@ -1253,11 +1263,20 @@ void config_t::get_config_cb(const char *fname, void *_this)
 }
 
 ///
-/// @brief  Reads configuration files matching any of the host name patterns.
+/// @brief  Reads configuration files without a host name pattern or those with a 
+///         pattern that matches the host name for the current report.
+///
+/// Included configuration files are collected during two distinct phases - when
+/// the primary configuration file is being processed and when command line options
+/// are being processed. After each phase the list of included configuration files
+/// is cleared, so they are not processed more than once.
 ///
 void config_t::process_includes(void)
 {
    includes.for_each(hname, get_config_cb, this);
+
+   // clear the list in case more includes are queued
+   includes.clear();
 }
 
 ///
@@ -1464,7 +1483,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
       switch (*nptr) {
           case 'a': hidden_agents.add_nlist(vptr); break;            // Hide agents
           case 'A': ntop_agents=atoi(vptr); break;                   // Top agents
-          case 'c': user_config = true; get_config(vptr); break;     // User Config file
+          case 'c': get_config(vptr); break;                         // User Config file
           case 'C': ntop_ctrys=atoi(vptr); break;                    // Top countries
           case 'd': debug_mode=1; break;                             // Debug
           case 'D': set_dns_db_path(vptr); break;                    // DNS Cache filename

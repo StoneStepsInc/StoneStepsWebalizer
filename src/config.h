@@ -88,7 +88,6 @@ class config_t {
       std::vector<string_t> messages;           ///< Configuration warnings
       std::vector<string_t> errors;             ///< Configuration errors
       std::vector<dst_pair_t> dst_pairs;        ///< Intermediate textual DST ranges
-      bool user_config;                         ///< user-supplied configuration file?
 
    public:
       bool print_options;                       ///< Print help?

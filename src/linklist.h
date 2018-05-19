@@ -90,6 +90,9 @@ class base_list {
 
       bool isempty(void) const {return list.empty();}
 
+      /// Removes all elements from the list.
+      void clear(void) {list.clear();}
+
       /// scan list values for str as substring and return the matching one, if found, or NULL otherwise
       const string_t *isinlist(const string_t& str, bool nocase = false) const;
 
