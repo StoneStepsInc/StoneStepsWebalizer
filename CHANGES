@@ -1,6 +1,9 @@
 --------------------------------------------------------------------
 4.4.x.x [xx-Jun-2018] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
+ * [BB-7]: Changed the exit code from failure (1) to success (0) when no valid records were found
+ * [BUG][BB-8] Command line options now take precedence over default configuration file options
+ * [BUG][BB-8] Only one set of log file names from a single source is accepted for processing
  * [BUG][BB-6] UseHTTPS is ignored when processing CLF logs other log types without a port number
  * [BUG][BB-5] Adjust log record time stamp only if its time zone setting doesn't match that in the configuration
  * [BUG][BB-4] Fixed a bug causing history being wiped out if there is no state database
