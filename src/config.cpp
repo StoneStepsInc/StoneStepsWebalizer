@@ -417,10 +417,10 @@ void config_t::add_def_srch_list(void)
 /// @brief  Reads configuration files and processes command line options to
 ///         initialize the configuration object.
 ///
-/// Configuration is read in this order:
+/// Configuration is read and processed in this order:
 ///
-///   * Main configuration file 
-///   * Configuration files included in the main configuraiton file
+///   * The default configuration file 
+///   * Configuration files included in the default configuration file
 ///   * Command line options, intermixed with additional configuration
 ///     files referenced via one or more `-c` options.
 ///   * Configuration files included in command line configuration files.
@@ -429,6 +429,15 @@ void config_t::add_def_srch_list(void)
 /// while processing these steps, its value is overwritten every subsequent time. 
 /// If a cumulative configuration value, such as `IgnoreURL`, is found multiple
 /// times, each subsequent value is added to the existing set of values.
+///
+/// Log file names are treated differently from other configuration values in 
+/// that log file names collected while processing one source of log file names
+/// are cleared if any names are found while processing the next source of log
+/// file names. The three distinct sources of log file names are: a) the default
+/// configuration file and its includes, b) the command line and its includes 
+/// and c) standard input, if `--pipe-log-names` is used. For example, if log
+/// files `A` and `B` are specified in `webalizer.conf`, and log files `C` and 
+/// `D` are specified on the command line, then only `C` and `D` will be processed. 
 ///
 /// Configuration issues are classified as warning messages, errors and 
 /// unrecoverable errors.
@@ -493,20 +502,33 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    // process includes found in the main configuration file
    process_includes();
 
+   // keep track of how many log files were added (see method description for details)
+   size_t logcnt = log_fnames.size();
+
    // process command line arguments
    proc_cmd_line(argc, argv);
 
    // process includes queued from the command line
    process_includes();
 
-   //
-   // Additional initializations and validations
-   //
-   
+   // if any log files were added via the command line, remove those from earlier
+   if(logcnt < log_fnames.size()) {
+      log_fnames.erase(log_fnames.begin(), log_fnames.begin() + logcnt);
+      logcnt = log_fnames.size();
+   }
+
    // check stdin for log file names
    if(pipe_log_names)
       proc_stdin_log_files();
 
+   // similarly, if any log files were added via stdin, remove those from earlier
+   if(logcnt < log_fnames.size())
+      log_fnames.erase(log_fnames.begin(), log_fnames.begin() + logcnt);
+
+   //
+   // Additional initializations and validations
+   //
+   
    //
    // Do not print any messages at this point, as they will appear before
    // version text. Instead, add them to the messages vector, which is

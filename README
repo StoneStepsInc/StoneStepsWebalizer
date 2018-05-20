@@ -145,11 +145,31 @@ webalizer [options ...] [logfile [[ logfile]...] | report-database]
 Where 'options' can be one or more of the supported command line
 switches described below.
 
-'logfile' is the name of the log file to process (see below for more 
-detailed information). If a dash ("-") is specified for the log-file 
-name, STDIN will be used. If more than one log file is specified, 
-Stone Steps Webalizer will process log records from each file in their 
-time stamp order.
+'logfile' is the name of the log file to process. Log file names are 
+collected from three distinct sources: 
+
+  a) LogFile variables in the default configuration file and its
+     includes.
+  b) Command line, configuration files specified with the -c option
+     and its includes.
+  c) If the --pipe-log-names option was used, log file names are 
+     read from the standard input.
+
+If a log file name is found in any of the sources above, the previous
+set of log file names is cleared, which prevents the possibility of
+the same log file name accepted for processing more than once. For 
+example, if log files 'A' and 'B' are specified in webalizer.conf, and 
+log files 'C' and  'D' are specified on the command line, then only 'C' 
+and 'D' will be processed.
+
+Multiple log file collected from the same source will be processed in
+the in their log record time stamp order. This feature is intended for
+processing load-balanced log files from multiple web servers behind
+the same site, but can also be used to process log files from the same
+web server, in which case newer logs will just be processed after older
+logs. 
+
+If a dash ("-") is specified for the log-file name, STDIN will be used. 
 
 'report-database' is the name of the database, not including file path 
 or file extension, that will be used to generate a report. 
@@ -891,12 +911,13 @@ will be used (which should be sufficient for most sites).
 General Configuration Keywords
 ------------------------------
 
-LogFile       This defines the log file to use. It should be a fully qualified
-              name (ie: contain the path), but relative names will work as
-              well. If used more than one time, Stone Steps Webalizer will 
-              process log records from each file in their time stamp order.
-              If LogFile is not specified and none is provided through the 
-              command line, the logfile defaults to STDIN. 
+LogFile       This defines the log file to use. It can be a fully qualified
+              path or a relative path. In the latter case, the current 
+              directory and the directory identified with LogDir will be 
+              searched. If used more than one time, Stone Steps Webalizer 
+              will process log records from each file in their time stamp 
+              order. If LogFile is not specified and none is provided through 
+              the command line, the logfile defaults to STDIN.
               
 LogDir        Defines an optional path to the log directory. If LogDir is not 
               empty and LogFile is not an absolute path (i.e. not starting with 
