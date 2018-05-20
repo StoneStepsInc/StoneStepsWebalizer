@@ -457,10 +457,7 @@ void config_t::add_def_srch_list(void)
 void config_t::initialize(const string_t& basepath, int argc, const char * const argv[])
 {
    const char *cp1;
-   uint32_t max_ctry;                      /* max countries defined       */
-   uint32_t i;
    string_t fpath;
-   utsname system_info;
 
    //
    // Store the current directory to resolve relative paths
@@ -525,15 +522,20 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if(logcnt < log_fnames.size())
       log_fnames.erase(log_fnames.begin(), log_fnames.begin() + logcnt);
 
-   //
-   // Additional initializations and validations
-   //
-   
-   //
-   // Do not print any messages at this point, as they will appear before
-   // version text. Instead, add them to the messages vector, which is
-   // dumped to the standard output at a later time.
-   //
+   prep_and_validate();
+}
+
+///
+/// @brief  Provides additional configuration initializations and validations.
+///
+/// This method should not print any messages because they will appear before
+/// the version text. Instead, warning messages should be added to `messages`, 
+/// which is dumped to the standard output at a later time.
+///
+void config_t::prep_and_validate(void)
+{
+   uint32_t max_ctry;                      /* max countries defined       */
+   utsname system_info;
 
    // check if custom HTML contains any disallowed tags
    validate_custom_html();
@@ -723,7 +725,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    if (graph_lines> 20)       graph_lines= 20;         /* keep graphs sane! */
 
    /* ensure entry/exits don't exceed urls */
-   i = (ntop_urls > ntop_urlsK) ? ntop_urls : ntop_urlsK;
+   uint32_t i = (ntop_urls > ntop_urlsK) ? ntop_urls : ntop_urlsK;
    if(ntop_entry > i) ntop_entry=i;
    if(ntop_exit > i)  ntop_exit=i;
    

@@ -390,6 +390,8 @@ class config_t {
       void add_def_ua_filters(void);
 
       void add_def_srch_list(void);
+
+      void prep_and_validate(void);
       
    public:
       config_t(void);
