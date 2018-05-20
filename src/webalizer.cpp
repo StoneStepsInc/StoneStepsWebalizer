@@ -1878,11 +1878,16 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    }
    else
    {
-      /* No valid records found... exit with error (1) */
+      // No valid records found...
       if (config.verbose) 
          printf("%s\n",config.lang.msg_no_vrec);
 
-      retcode = EXIT_FAILURE;
+      //
+      // This used to be a failure exit code, but it often interfered with
+      // various automation scripts because not having any site traffic is
+      // not an error, but it was reported as such based on the exit code. 
+      //
+      retcode = EXIT_SUCCESS;
    }
 
    return retcode;
