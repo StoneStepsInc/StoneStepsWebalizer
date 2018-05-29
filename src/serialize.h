@@ -31,7 +31,7 @@ typedef int64_t (*s_compare_cb_t)(const void *buf1, const void *buf2);
 /// @brief  Returns a pointer to a serialized field.
 ///
 /// `buffer` should point to a data record containing the requested field. The 
-/// return value points to a field within the record and datasize is set to 
+/// return value points to a field within the record and `datasize` is set to 
 /// reflect the size of the field.
 ///
 typedef const void *(*s_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize);
@@ -60,11 +60,10 @@ typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int p
 ///
 typedef const void *(*s_mp_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize, u_int partid, bool& lastpart);
 
-// -----------------------------------------------------------------------
-//
-// serialization
-//
-// -----------------------------------------------------------------------
+///
+/// @name   Serialization
+///
+/// @{
 
 ///
 /// @brief  Serializes a buffer of `u_char` characters.
@@ -135,11 +134,12 @@ inline void *serialize(void *ptr, bool value)
    return (u_char*) ptr + sizeof(u_char);
 }
 
-// -----------------------------------------------------------------------
-//
-// de-serialization
-//
-// -----------------------------------------------------------------------
+/// @}
+
+///
+/// @name   De-serialization
+///
+/// @{
 
 ///
 /// @brief  Deseriaizes a series of `u_char` characters.
@@ -213,11 +213,12 @@ inline const void *deserialize(const void *ptr, bool& value)
    return (u_char*) ptr + sizeof(u_char);
 }
 
-// -----------------------------------------------------------------------
-//
-// size-of functions (value)
-//
-// -----------------------------------------------------------------------
+/// @}
+
+///
+/// @name   Size-of functions (value)
+///
+/// @{
 
 ///
 /// @brief  Returns the storage size of a value.
@@ -251,11 +252,12 @@ inline size_t s_size_of(const string_t& value)
 ///
 size_t s_size_of(const tstamp_t& tstamp);
 
-// -----------------------------------------------------------------------
-//
-// size-of functions (buffer)
-//
-// -----------------------------------------------------------------------
+/// @}
+
+///
+/// @name   Size-of functions (buffer)
+///
+/// @{
 
 ///
 /// @brief  Returns the size of a `type_t` value in a buffer.
@@ -292,11 +294,10 @@ inline size_t s_size_of<string_t>(const void *ptr)
 template <> 
 size_t s_size_of<tstamp_t>(const void *ptr);
 
-// -----------------------------------------------------------------------
-//
-// skip functions
-//
-// -----------------------------------------------------------------------
+///
+/// @name   Skip functions
+///
+/// @{
 
 ///
 /// @brief  Skips a field of type `type_t` and returns a pointer to the first
@@ -340,11 +341,12 @@ inline void *s_skip_field<tstamp_t>(const void *ptr)
    return (u_char*) ptr + s_size_of<tstamp_t>(ptr);
 }
 
-// -----------------------------------------------------------------------
-//
-// comparison functions (buffer)
-//
-// -----------------------------------------------------------------------
+/// @} 
+
+///
+/// @name   Comparison functions (buffer)
+///
+/// @{
 
 ///
 /// @brief  Compares two values of `type_t` in their buffers.
@@ -371,5 +373,7 @@ inline int64_t s_compare<string_t>(const void *buf1, const void *buf2)
 
    return strncmp_ex(cp1, slen1, cp2, slen2);
 }
+
+/// @}
 
 #endif // SERIALIZE_H
