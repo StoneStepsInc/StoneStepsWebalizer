@@ -11,11 +11,12 @@
 
 #include "scnode.h"
 #include "serialize.h"
+#include "storable.h"
 
 sc_table_t::sc_table_t(void)
 {
    memset(clsindex, 0, sizeof(clsindex));
-   stcodes.push_back(scnode_t(0));           // unknown status code node
+   stcodes.push_back(storable_t<scnode_t>(0));           // unknown status code node
 }
 
 sc_table_t::~sc_table_t(void)
@@ -38,7 +39,7 @@ void sc_table_t::add_status_code(u_int code)
    if(clsindex[cls] == 0)
       clsindex[cls] = stcodes.size();
 
-   stcodes.push_back(scnode_t(code));
+   stcodes.push_back(storable_t<scnode_t>(code));
 }
 
 storable_t<scnode_t>& sc_table_t::get_status_code(u_int code)
