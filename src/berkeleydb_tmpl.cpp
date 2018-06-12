@@ -784,7 +784,7 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
    key.set_flags(DB_DBT_USERMEM);
 
    data.set_data(buffer+keysize);
-   data.set_ulen(DBBUFSIZE);
+   data.set_ulen((u_int32_t) (DBBUFSIZE-keysize));
    data.set_flags(DB_DBT_USERMEM);
 
    if(table->get(NULL, &key, &data, 0))
@@ -825,7 +825,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
    pkey.set_flags(DB_DBT_USERMEM);
 
    data.set_data(buffer+keysize);
-   data.set_ulen(DBBUFSIZE);
+   data.set_ulen((u_int32_t) (DBBUFSIZE-keysize));
    data.set_flags(DB_DBT_USERMEM);
 
    // open a cursor
