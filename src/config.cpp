@@ -1292,15 +1292,14 @@ void config_t::get_config_cb(const char *fname, void *_this)
 ///
 /// Included configuration files are collected during two distinct phases - when
 /// the primary configuration file is being processed and when command line options
-/// are being processed. After each phase the list of included configuration files
-/// is cleared, so they are not processed more than once.
+/// are being processed. After each phase the included configuration files that 
+/// matched the pattern are removed from the list, so they are not processed more 
+/// than once.
 ///
 void config_t::process_includes(void)
 {
-   includes.for_each(hname, get_config_cb, this);
-
-   // clear the list in case more includes are queued
-   includes.clear();
+   // walk the includes and remove from the list all includes for which the callback was called 
+   includes.for_each(hname, get_config_cb, this, true, true);
 }
 
 ///

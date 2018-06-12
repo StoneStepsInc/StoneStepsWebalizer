@@ -206,7 +206,7 @@ class glist : public base_list<gnode_t> {
       const string_t *isinglist(const char *str, size_t slen, bool substr) const;
 
       /// calls the callback function for each node with no name or a name (not pattern) matching str
-      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL, bool nocase = false);
+      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL, bool nocase = false, bool delmatch = false);
 
       /// enable or disable the phrase values mode, which allows values with spaces
       void set_enable_phrase_values(bool enable) {enable_phrase_values = enable;}

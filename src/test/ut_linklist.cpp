@@ -133,24 +133,58 @@ TEST_F(LinkedListTest, NListSuffixSearch)
 /// @brief  glist Config Include
 ///
 
-TEST_F(LinkedListTest, GListConfigInclude)
+TEST_F(LinkedListTest, GListConfigHostInclude)
 {
    int included = 0;
    glist list;
 
+   auto include_callback = [] (const char *val, void *included) 
+   {
+      EXPECT_TRUE(strstr(val, "/file-b") != nullptr) << "The matching include should contain /file-b";
+      (*(int*)included)++;
+   };
+
    list.set_enable_phrase_values(true);
 
-   // simulate config include files
+   // simulate config include files with a host name
    list.add_glist("/path-1/to/config/file-a\thost-a");
    list.add_glist("/path-2/to/config/file-b\thost-b");
    list.add_glist("/path-3/to/config/file-c\thost-c");
    list.add_glist("/path-4/to/config/file-b\thost-b");
 
-   // the lambda should be called twice for file-b
-   list.for_each("host-b", [] (const char *val, void *included) {if(strstr(val, "/file-b")) (*(int*)included)++;}, &included);
+   // simulate two include files without a host name (always processed)
+   list.add_glist("/path-5/to/config/file-b");
+   list.add_glist("/path-6/to/config/file-b");
 
-   // make sure we had two calls and two matche
-   EXPECT_EQ(2, included) << "Two config files for host-b are expected";
+   list.for_each("host-b", include_callback, &included);
+
+   EXPECT_EQ(4, included) << "Two includes for host-b and two without a host name should match";
+
+   included = 0;
+
+   list.for_each("HOST-B", include_callback, &included);
+
+   EXPECT_EQ(2, included) << "When called case-sensitevely, only two includes without a host name should match";
+
+   included = 0;
+
+   list.for_each("HOST-B", include_callback, &included, true);
+
+   EXPECT_EQ(4, included) << "When called case-insensitevely, two includes for host-b and two without a host name should match";
+
+   included = 0;
+
+   // this time delete matching includes
+   list.for_each("host-b", include_callback, &included, true, true);
+
+   EXPECT_EQ(4, included) << "When called case-sensitevely, two includes for host-b and two without a host name should match";
+   EXPECT_EQ(2, list.size()) << "The two includes matching host-b and two without a host should be deleted from the list";
+
+   included = 0;
+
+   list.for_each("host-b", include_callback, &included, true);
+
+   EXPECT_EQ(0, included) << "After all matching includes were deleted none should match";
 }
 
 ///

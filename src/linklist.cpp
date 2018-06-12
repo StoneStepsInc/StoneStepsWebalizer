@@ -186,15 +186,23 @@ const string_t *glist::isinglist(const char *str, size_t slen, bool substr) cons
    return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->name : NULL;
 }
 
-void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr, bool nocase)
+void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr, bool nocase, bool delmatch)
 {
    size_t slen;
 
    slen = (str && *str) ? strlen(str) : 0;
 
-   for(std::list<gnode_t>::iterator nptr = list.begin(); nptr != list.end(); nptr++) {
-      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, NULL, nocase)))
+   std::list<gnode_t>::iterator nptr = list.begin();
+   while(nptr != list.end()) {
+      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, NULL, nocase))) {
          cb(nptr->string, ptr);
+         if(delmatch)
+            nptr = list.erase(nptr);
+         else
+            nptr++;
+      }
+      else 
+         nptr++;
    }
 }
 
