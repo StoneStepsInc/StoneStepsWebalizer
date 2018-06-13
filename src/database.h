@@ -27,6 +27,9 @@
 ///
 class database_t : public berkeleydb_t {
    private:
+      struct table_desc_t;
+      struct index_desc_t;
+
       class db_config_t : public berkeleydb_t::config_t {
          private:
             const ::config_t& config;
@@ -59,6 +62,9 @@ class database_t : public berkeleydb_t {
       };
 
    private:
+      static const table_desc_t table_desc[];
+      static const index_desc_t index_desc[];
+
       const ::config_t& config;
 
       table_t           urls;

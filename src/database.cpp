@@ -39,6 +39,133 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
    return sc_extract_cb<extract>(secondary, key, data, result);
 }
 
+///
+/// An array of primary table descriptors that contains all data to set up
+/// all primary tables without indexes.
+///
+const struct database_t::table_desc_t {
+   berkeleydb_t::table_t   database_t::*table;        ///< Pointer to a data member table for a given database.
+   const char              *primary_db;               ///< Name of the primary database.
+   bt_compare_cb_t         key_compare_cb;            ///< Primary key comparison callback.
+
+   const char              *sequence_db;              ///< Name of the sequence database or `nullptr` if it's not used.
+
+   const char              *value_db;                 ///< Name of the value database or `nullptr` if it's not used.
+   bt_compare_cb_t         value_hash_compare_cb;     ///< Value hash comparison callback.
+   sc_extract_cb_t         value_hash_extract_cb;     ///< Value hash extraction callback.
+} database_t::table_desc[] = {
+   {&database_t::system, "system", 
+         &bt_compare_cb<sysnode_t::s_compare_key>},
+   {&database_t::urls, "urls", 
+         &bt_compare_cb<unode_t::s_compare_key>, 
+         "urls.seq",
+         "urls.values", &bt_compare_cb<unode_t::s_compare_value_hash>, &sc_extract_cb<unode_t::s_field_value_hash>},
+   {&database_t::hosts, "hosts", 
+         &bt_compare_cb<hnode_t::s_compare_key>, 
+         "hosts.seq",
+         "hosts.values", &bt_compare_cb<hnode_t::s_compare_value_hash>, &sc_extract_cb<hnode_t::s_field_value_hash>},
+   {&database_t::visits, "visits.active", 
+         &bt_compare_cb<vnode_t::s_compare_key>},
+   {&database_t::downloads, "downloads", 
+         &bt_compare_cb<dlnode_t::s_compare_key>,
+         "downloads.seq", 
+         "downloads.values", &bt_compare_cb<dlnode_t::s_compare_value_hash>, &sc_extract_cb<dlnode_t::s_field_value_hash>},
+   {&database_t::active_downloads, "downloads.active", 
+         &bt_compare_cb<danode_t::s_compare_key>},
+   {&database_t::agents, "agents", 
+         &bt_compare_cb<anode_t::s_compare_key>,
+         "agents.seq", 
+         "agents.values", &bt_compare_cb<anode_t::s_compare_value_hash>, &sc_extract_cb<anode_t::s_field_value_hash>},
+   {&database_t::referrers, "referrers", 
+         &bt_compare_cb<rnode_t::s_compare_key>,
+         "referrers.seq", 
+         "referrers.values", &bt_compare_cb<rnode_t::s_compare_value_hash>, &sc_extract_cb<rnode_t::s_field_value_hash>},
+   {&database_t::search, "search", 
+         &bt_compare_cb<snode_t::s_compare_key>,
+         "search.seq", 
+         "search.values", &bt_compare_cb<snode_t::s_compare_value_hash>, &sc_extract_cb<snode_t::s_field_value_hash>},
+   {&database_t::users, "users", 
+         &bt_compare_cb<inode_t::s_compare_key>,
+         "users.seq",
+         "users.values", &bt_compare_cb<inode_t::s_compare_value_hash>, &sc_extract_cb<inode_t::s_field_value_hash>},
+   {&database_t::errors, "errors", 
+         &bt_compare_cb<rcnode_t::s_compare_key>,
+         "errors.seq",
+         "errors.values", bt_compare_cb<rcnode_t::s_compare_value_hash>, &sc_extract_cb<rcnode_t::s_field_value_hash>},
+   {&database_t::scodes, "statuscodes", 
+         &bt_compare_cb<scnode_t::s_compare_key>},
+   {&database_t::daily, "totals.daily", 
+         &bt_compare_cb<daily_t::s_compare_key>},
+   {&database_t::hourly, "totals.hourly", 
+         &bt_compare_cb<hourly_t::s_compare_key>},
+   {&database_t::totals, "totals", 
+         &bt_compare_cb<totals_t::s_compare_key>},
+   {&database_t::countries, "countries", 
+         &bt_compare_cb<ccnode_t::s_compare_key>}
+};
+
+///
+/// An array of index descriptors that contains all data to set up all indexes
+/// for each primary table.
+///
+const struct database_t::index_desc_t {
+   table_t           database_t::*table;              ///< Pointer to a data member table for a given database.
+   const char        *index_db;                       ///< Name of the secondary database. 
+
+   bt_compare_cb_t   index_compare_cb;                ///< Index value comparison callback.
+   bt_compare_cb_t   index_dup_compare_cb;            ///< Index duplicate value comparison callback.
+   sc_extract_cb_t   index_extract_cb;                ///< index value extraction callback.
+} database_t::index_desc[] = {
+   // urls
+   {&database_t::urls, "urls.hits", 
+         &bt_compare_cb<unode_t::s_compare_hits>, &bt_compare_cb<unode_t::s_compare_key>, &sc_extract_cb<unode_t::s_field_hits>},
+   {&database_t::urls, "urls.xfer", 
+         &bt_compare_cb<unode_t::s_compare_xfer>, &bt_compare_cb<unode_t::s_compare_key>, &sc_extract_cb<unode_t::s_field_xfer>},
+   {&database_t::urls, "urls.entry", 
+         &bt_compare_cb<unode_t::s_compare_entry>, &bt_compare_cb<unode_t::s_compare_key>, &sc_extract_cb<unode_t::s_field_entry>},
+   {&database_t::urls, "urls.exit", 
+         &bt_compare_cb<unode_t::s_compare_exit>, &bt_compare_cb<unode_t::s_compare_key>, &sc_extract_cb<unode_t::s_field_exit>},
+   {&database_t::urls, "urls.groups.hits",
+         &bt_compare_cb<unode_t::s_compare_hits>, &bt_compare_cb<unode_t::s_compare_key>, &sc_extract_group_cb<unode_t, unode_t::s_field_hits>},
+   {&database_t::urls, "urls.groups.xfer", 
+         &bt_compare_cb<unode_t::s_compare_xfer>, &bt_compare_cb<unode_t::s_compare_key>, sc_extract_group_cb<unode_t, unode_t::s_field_xfer>},
+   // hosts
+   {&database_t::hosts, "hosts.hits", 
+         &bt_compare_cb<hnode_t::s_compare_hits>, &bt_compare_cb<hnode_t::s_compare_key>, &sc_extract_cb<hnode_t::s_field_hits>},
+   {&database_t::hosts, "hosts.xfer", 
+         &bt_compare_cb<hnode_t::s_compare_xfer>, &bt_compare_cb<hnode_t::s_compare_key>, &sc_extract_cb<hnode_t::s_field_xfer>},
+   {&database_t::hosts, "hosts.groups.hits",
+         &bt_compare_cb<hnode_t::s_compare_hits>, &bt_compare_cb<hnode_t::s_compare_key>, &sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>},
+   {&database_t::hosts, "hosts.groups.xfer", 
+         &bt_compare_cb<hnode_t::s_compare_xfer>, &bt_compare_cb<hnode_t::s_compare_key>, &sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>},
+   // downloads
+   {&database_t::downloads, "downloads.xfer", 
+         &bt_compare_cb<dlnode_t::s_compare_xfer>, &bt_compare_cb<dlnode_t::s_compare_key>, &sc_extract_cb<dlnode_t::s_field_xfer>},
+   // agents
+   {&database_t::agents, "agents.hits", 
+         &bt_compare_cb<anode_t::s_compare_hits>, &bt_compare_cb<anode_t::s_compare_key>, &sc_extract_cb<anode_t::s_field_hits>},
+   {&database_t::agents, "agents.visits", 
+         &bt_compare_cb<anode_t::s_compare_visits>, &bt_compare_cb<anode_t::s_compare_key>, &sc_extract_cb<anode_t::s_field_visits>},
+   {&database_t::agents, "agents.groups.visits", 
+         &bt_compare_cb<anode_t::s_compare_hits>, &bt_compare_cb<anode_t::s_compare_key>, &sc_extract_group_cb<anode_t, anode_t::s_field_visits>},
+   // referrers
+   {&database_t::referrers, "referrers.hits", 
+         &bt_compare_cb<rnode_t::s_compare_hits>, &bt_compare_cb<rnode_t::s_compare_key>, &sc_extract_cb<rnode_t::s_field_hits>},
+   {&database_t::referrers, "referrers.groups.hits", 
+         &bt_compare_cb<rnode_t::s_compare_hits>, &bt_compare_cb<rnode_t::s_compare_key>, &sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>},
+   // search
+   {&database_t::search, "search.hits", 
+         &bt_compare_cb<snode_t::s_compare_hits>, &bt_compare_cb<snode_t::s_compare_key>, &sc_extract_cb<snode_t::s_field_hits>},
+   // users
+   {&database_t::users, "users.hits", 
+         &bt_compare_cb<inode_t::s_compare_hits>, &bt_compare_cb<inode_t::s_compare_key>, &sc_extract_cb<inode_t::s_field_hits>},
+   {&database_t::users, "users.groups.hits", 
+         &bt_compare_cb<inode_t::s_compare_hits>, &bt_compare_cb<inode_t::s_compare_key>, &sc_extract_group_cb<inode_t, inode_t::s_field_hits>},
+   // errors
+   {&database_t::errors, "errors.hits", 
+         &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>}
+};
+
 // -----------------------------------------------------------------------
 //
 // database_t
@@ -89,89 +216,10 @@ database_t::~database_t(void)
 
 bool database_t::attach_indexes(bool rebuild)
 {
-   //
-   // urls
-   //
-   if(urls.associate("urls.hits", sc_extract_cb<unode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(urls.associate("urls.xfer", sc_extract_cb<unode_t::s_field_xfer>, rebuild))
-      return false;
-
-   if(urls.associate("urls.entry", sc_extract_cb<unode_t::s_field_entry>, rebuild))
-      return false;
-
-   if(urls.associate("urls.exit", sc_extract_cb<unode_t::s_field_exit>, rebuild))
-      return false;
-
-   if(urls.associate("urls.groups.hits", sc_extract_group_cb<unode_t, unode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(urls.associate("urls.groups.xfer", sc_extract_group_cb<unode_t, unode_t::s_field_xfer>, rebuild))
-      return false;
-
-   //
-   // hosts
-   //
-   if(hosts.associate("hosts.hits", sc_extract_cb<hnode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(hosts.associate("hosts.xfer", sc_extract_cb<hnode_t::s_field_xfer>, rebuild))
-      return false;
-
-   if(hosts.associate("hosts.groups.hits", sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(hosts.associate("hosts.groups.xfer", sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>, rebuild))
-      return false;
-
-   // 
-   // downloads
-   // 
-   if(downloads.associate("downloads.xfer", sc_extract_cb<dlnode_t::s_field_xfer>, rebuild))
-      return false;
-
-   //
-   // agents
-   //
-   if(agents.associate("agents.hits", sc_extract_cb<anode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(agents.associate("agents.visits", sc_extract_cb<anode_t::s_field_visits>, rebuild))
-      return false;
-
-   if(agents.associate("agents.groups.visits", sc_extract_group_cb<anode_t, anode_t::s_field_visits>, rebuild))
-      return false;
-
-   //
-   // referrers
-   //
-   if(referrers.associate("referrers.hits", sc_extract_cb<rnode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(referrers.associate("referrers.groups.hits", sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>, rebuild))
-      return false;
-
-   //
-   // search strings
-   //
-   if(search.associate("search.hits", sc_extract_cb<snode_t::s_field_hits>, rebuild))
-      return false;
-
-   //
-   // users
-   //
-   if(users.associate("users.hits", sc_extract_cb<inode_t::s_field_hits>, rebuild))
-      return false;
-
-   if(users.associate("users.groups.hits", sc_extract_group_cb<inode_t, inode_t::s_field_hits>, rebuild))
-      return false;
-
-   //
-   // errors
-   //
-   if(errors.associate("errors.hits", sc_extract_cb<rcnode_t::s_field_hits>, rebuild))
-      return false;
+   for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
+      if((this->*index_desc[i].table).associate(index_desc[i].index_db, index_desc[i].index_extract_cb, rebuild))
+         return false;
+   }
 
    return true;
 }
@@ -186,241 +234,48 @@ bool database_t::open(void)
    //
 
    //
-   // system
+   // Secondary databases used for indexes must be initialized first because some 
+   // of the callbacks, such as the duplicate compare callback, must be called 
+   // before the database is opened. Otherwise BDB gets confused and crashes on a 
+   // NULL pointer when indexes are attached later, after all logs are processed.
    //
-   if(system.open(config.get_db_path(), "system", bt_compare_cb<sysnode_t::s_compare_key>))
-      return false;
-
-   //
-   // urls
-   //
-   if(!get_readonly()) {
-      if(urls.open_sequence("urls.seq", config.db_seq_cache_size))
+   for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
+      if((this->*index_desc[i].table).associate(config.get_db_path(), index_desc[i].index_db, index_desc[i].index_compare_cb, index_desc[i].index_dup_compare_cb, get_readonly() ? index_desc[i].index_extract_cb : nullptr))
          return false;
    }
 
-   if(urls.associate(config.get_db_path(), "urls.values", bt_compare_cb<unode_t::s_compare_value_hash>, bt_compare_cb<unode_t::s_compare_value_hash>, sc_extract_cb<unode_t::s_field_value_hash>))
-      return false;
-
-   urls.set_values_db("urls.values");
-
-   if(urls.associate(config.get_db_path(), "urls.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(urls.associate(config.get_db_path(), "urls.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_xfer>) : NULL))
-      return false;
-
-   if(urls.associate(config.get_db_path(), "urls.entry", bt_compare_cb<unode_t::s_compare_entry>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_entry>) : NULL))
-      return false;
-
-   if(urls.associate(config.get_db_path(), "urls.exit", bt_compare_cb<unode_t::s_compare_exit>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<unode_t::s_field_exit>) : NULL))
-      return false;
-
-   if(urls.associate(config.get_db_path(), "urls.groups.hits", bt_compare_cb<unode_t::s_compare_hits>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_hits>)) : NULL))
-      return false;
-
-   if(urls.associate(config.get_db_path(), "urls.groups.xfer", bt_compare_cb<unode_t::s_compare_xfer>, bt_compare_cb<unode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<unode_t, unode_t::s_field_xfer>)) : NULL))
-      return false;
-
-   if(urls.open(config.get_db_path(), "urls", bt_compare_cb<unode_t::s_compare_key>))
-      return false;
-
    //
-   // hosts
+   // Set up the primary databases and the associated value and sequence databases 
+   // for those tables that have them configured.
    //
-   if(!get_readonly()) {
-      if(hosts.open_sequence("hosts.seq", config.db_seq_cache_size))
+   for(size_t i = 0; i < sizeof(table_desc)/sizeof(table_desc[0]); i++) {
+      // open the sequence database only if we intend to generate new record identifiers
+      if(!get_readonly() && table_desc[i].sequence_db) {
+         if((this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.db_seq_cache_size))
+            return false;
+      }
+
+      // open a value database if this table has one
+      if(table_desc[i].value_db) {
+         //
+         // The duplicate value hash comparison callback is the same as the value hash 
+         // comparison function just to indicate that there may be hash collisions, so
+         // the secondary database is set up to allow duplicates. The value database is
+         // never traverses by value, so record ordering defined by these callbacks is 
+         // is irrelevant and for value look-ups all duplicates are examined until a
+         // matching value is found.
+         //
+         if((this->*table_desc[i].table).associate(config.get_db_path(), table_desc[i].value_db, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_extract_cb))
+            return false;
+
+         // configure the secondary values database for this table
+         (this->*table_desc[i].table).set_values_db(table_desc[i].value_db);
+      }
+
+      // open the primary database that contains all data
+      if((this->*table_desc[i].table).open(config.get_db_path(), table_desc[i].primary_db, table_desc[i].key_compare_cb))
          return false;
    }
-
-   if(hosts.associate(config.get_db_path(), "hosts.values", bt_compare_cb<hnode_t::s_compare_value_hash>, bt_compare_cb<hnode_t::s_compare_value_hash>, sc_extract_cb<hnode_t::s_field_value_hash>))
-      return false;
-
-   hosts.set_values_db("hosts.values");
-
-   if(hosts.associate(config.get_db_path(), "hosts.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(hosts.associate(config.get_db_path(), "hosts.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<hnode_t::s_field_xfer>) : NULL))
-      return false;
-
-   if(hosts.associate(config.get_db_path(), "hosts.groups.hits", bt_compare_cb<hnode_t::s_compare_hits>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_hits>)) : NULL))
-      return false;
-
-   if(hosts.associate(config.get_db_path(), "hosts.groups.xfer", bt_compare_cb<hnode_t::s_compare_xfer>, bt_compare_cb<hnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<hnode_t, hnode_t::s_field_xfer>)) : NULL))
-      return false;
-
-   if(hosts.open(config.get_db_path(), "hosts", bt_compare_cb<hnode_t::s_compare_key>))
-      return false;
-
-   //
-   // visits
-   //
-   if(visits.open(config.get_db_path(), "visits.active", bt_compare_cb<vnode_t::s_compare_key>))
-      return false;
-
-   //
-   // downloads
-   //
-   if(!get_readonly()) {
-      if(downloads.open_sequence("downloads.seq", config.db_seq_cache_size))
-         return false;
-   }
-   
-   if(downloads.associate(config.get_db_path(), "downloads.values", bt_compare_cb<dlnode_t::s_compare_value_hash>, bt_compare_cb<dlnode_t::s_compare_value_hash>, sc_extract_cb<dlnode_t::s_field_value_hash>))
-      return false;
-
-   downloads.set_values_db("downloads.values");
-
-   if(downloads.associate(config.get_db_path(), "downloads.xfer", bt_compare_cb<dlnode_t::s_compare_xfer>, bt_compare_cb<dlnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<dlnode_t::s_field_xfer>) : NULL))
-      return false;
-
-   if(downloads.open(config.get_db_path(), "downloads", bt_compare_cb<dlnode_t::s_compare_key>))
-      return false;
-
-   //
-   // active downloads
-   //
-   if(active_downloads.open(config.get_db_path(), "downloads.active", bt_compare_cb<danode_t::s_compare_key>))
-      return false;
-
-   //
-   // agents
-   //
-   if(!get_readonly()) {
-      if(agents.open_sequence("agents.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(agents.associate(config.get_db_path(), "agents.values", bt_compare_cb<anode_t::s_compare_value_hash>, bt_compare_cb<anode_t::s_compare_value_hash>, sc_extract_cb<anode_t::s_field_value_hash>))
-      return false;
-
-   agents.set_values_db("agents.values");
-
-   if(agents.associate(config.get_db_path(), "agents.hits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(agents.associate(config.get_db_path(), "agents.visits", bt_compare_cb<anode_t::s_compare_visits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<anode_t::s_field_visits>) : NULL))
-      return false;
-
-   if(agents.associate(config.get_db_path(), "agents.groups.visits", bt_compare_cb<anode_t::s_compare_hits>, bt_compare_cb<anode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<anode_t, anode_t::s_field_visits>)) : NULL))
-      return false;
-
-   if(agents.open(config.get_db_path(), "agents", bt_compare_cb<anode_t::s_compare_key>))
-      return false;
-
-   //
-   // referrers
-   //
-   if(!get_readonly()) {
-      if(referrers.open_sequence("referrers.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(referrers.associate(config.get_db_path(), "referrers.values", bt_compare_cb<rnode_t::s_compare_value_hash>, bt_compare_cb<rnode_t::s_compare_value_hash>, sc_extract_cb<rnode_t::s_field_value_hash>))
-      return false;
-
-   referrers.set_values_db("referrers.values");
-
-   if(referrers.associate(config.get_db_path(), "referrers.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<rnode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(referrers.associate(config.get_db_path(), "referrers.groups.hits", bt_compare_cb<rnode_t::s_compare_hits>, bt_compare_cb<rnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<rnode_t, rnode_t::s_field_hits>)) : NULL))
-      return false;
-
-   if(referrers.open(config.get_db_path(), "referrers", bt_compare_cb<rnode_t::s_compare_key>))
-      return false;
-
-   //
-   // search strings
-   //
-   if(!get_readonly()) {
-      if(search.open_sequence("search.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(search.associate(config.get_db_path(), "search.values", bt_compare_cb<snode_t::s_compare_value_hash>, bt_compare_cb<snode_t::s_compare_value_hash>, sc_extract_cb<snode_t::s_field_value_hash>))
-      return false;
-
-   search.set_values_db("search.values");
-
-   if(search.associate(config.get_db_path(), "search.hits", bt_compare_cb<snode_t::s_compare_hits>, bt_compare_cb<snode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<snode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(search.open(config.get_db_path(), "search", bt_compare_cb<snode_t::s_compare_key>))
-      return false;
-
-   //
-   // users
-   //
-   if(!get_readonly()) {
-      if(users.open_sequence("users.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(users.associate(config.get_db_path(), "users.values", bt_compare_cb<inode_t::s_compare_value_hash>, bt_compare_cb<inode_t::s_compare_value_hash>, sc_extract_cb<inode_t::s_field_value_hash>))
-      return false;
-
-   users.set_values_db("users.values");
-
-   if(users.associate(config.get_db_path(), "users.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<inode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(users.associate(config.get_db_path(), "users.groups.hits", bt_compare_cb<inode_t::s_compare_hits>, bt_compare_cb<inode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__((sc_extract_group_cb<inode_t, inode_t::s_field_hits>)) : NULL))
-      return false;
-
-   if(users.open(config.get_db_path(), "users", bt_compare_cb<inode_t::s_compare_key>))
-      return false;
-
-   //
-   // errors
-   //
-   if(!get_readonly()) {
-      if(errors.open_sequence("errors.seq", config.db_seq_cache_size))
-         return false;
-   }
-
-   if(errors.associate(config.get_db_path(), "errors.values", bt_compare_cb<rcnode_t::s_compare_value_hash>, bt_compare_cb<rcnode_t::s_compare_value_hash>, sc_extract_cb<rcnode_t::s_field_value_hash>))
-      return false;
-
-   errors.set_values_db("errors.values");
-
-   if(errors.associate(config.get_db_path(), "errors.hits", bt_compare_cb<rcnode_t::s_compare_hits>, bt_compare_cb<rcnode_t::s_compare_key>, get_readonly() ? __gcc_bug11407__(sc_extract_cb<rcnode_t::s_field_hits>) : NULL))
-      return false;
-
-   if(errors.open(config.get_db_path(), "errors", bt_compare_cb<rcnode_t::s_compare_key>))
-      return false;
-
-   //
-   // status codes
-   //
-   if(scodes.open(config.get_db_path(), "statuscodes", bt_compare_cb<scnode_t::s_compare_key>))
-      return false;
-
-   //
-   // daily totals
-   //
-   if(daily.open(config.get_db_path(), "totals.daily", bt_compare_cb<daily_t::s_compare_key>))
-      return false;
-
-
-   //
-   // hourly totals
-   //
-   if(hourly.open(config.get_db_path(), "totals.hourly", bt_compare_cb<hourly_t::s_compare_key>))
-      return false;
-
-   //
-   // totals
-   //
-   if(totals.open(config.get_db_path(), "totals", bt_compare_cb<totals_t::s_compare_key>))
-      return false;
-
-   //
-   // country codes
-   //
-   if(countries.open(config.get_db_path(), "countries", bt_compare_cb<ccnode_t::s_compare_key>))
-      return false;
 
    return true;
 }
