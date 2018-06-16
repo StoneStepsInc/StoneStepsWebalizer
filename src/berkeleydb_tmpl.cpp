@@ -413,7 +413,6 @@ int berkeleydb_t::table_t::truncate(u_int32_t *count)
 
 int berkeleydb_t::table_t::compact(u_int& bytes)
 {
-#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
    DB_COMPACT c_data;
    int error;
    u_int32_t pagesize;
@@ -449,9 +448,6 @@ int berkeleydb_t::table_t::compact(u_int& bytes)
    bytes += c_data.compact_pages_truncated * pagesize;
    
    return 0;
-#else
-   return EINVAL;
-#endif
 }
 
 int berkeleydb_t::table_t::sync(void)
@@ -1002,10 +998,17 @@ void berkeleydb_t::delete_db(Db *db)
    }
 }
 
-bool berkeleydb_t::open(void)
+berkeleydb_t::status_t berkeleydb_t::open(void)
 {
    u_int32_t dbflags = readonly ? DB_RDONLY : DB_CREATE;
    u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
+   int major, minor, patch;
+   status_t status;
+
+   db_version(&major, &minor, &patch);
+
+   if(major < 4 || major == 4 && minor < 4)
+      return string_t::_format("Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
 
    // do some additional initialization for threaded environment
    if(!readonly && trickle) {
@@ -1015,7 +1018,7 @@ bool berkeleydb_t::open(void)
 
       // create an event to indicate that there's something to write
       if((trickle_event = event_create(true, false)) == NULL)
-         return false;
+         return "Cannot create a trickle event";
    
       // create a trickle thread
       trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
@@ -1032,54 +1035,52 @@ bool berkeleydb_t::open(void)
    }
 
    // set the temporary directory
-   if(dbenv.set_tmp_dir(config.get_tmp_path()))
-      return false;
+   if(!(status = dbenv.set_tmp_dir(config.get_tmp_path())).success())
+      return status;
 
    // if configured cache size is non-zero,
    if(config.get_db_cache_size()) {
       // set the maximum database cache size
-      if(dbenv.set_cachesize(0, config.get_db_cache_size(), 0))
-         return false;
+      if(!(status = dbenv.set_cachesize(0, config.get_db_cache_size(), 0)).success())
+         return status;
 
       // and the maximum memory-mapped file size (read-only mode)
       if(readonly) {
-         if(dbenv.set_mp_mmapsize(config.get_db_cache_size()))
-            return false;
+         if(!(status = dbenv.set_mp_mmapsize(config.get_db_cache_size())).success())
+            return status;
       }
    }
 
    // disable OS buffering, if requested
    if(config.get_db_direct()) {
-      if(dbenv.set_flags(DB_DIRECT_DB, 1))
-         return false;
+      if(!(status = dbenv.set_flags(DB_DIRECT_DB, 1)).success())
+         return status;
    }
 
    // enable write-through I/O, if requested
    if(config.get_db_dsync()) {
-#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
-      if(dbenv.set_flags(DB_DSYNC_DB, 1))
-         return false;
-#else
-      fprintf(stderr, "DB_DSYNC_DB is not supported in versions of Berkeley DB prior to v4.3\n");
-#endif
+      if(!(status = dbenv.set_flags(DB_DSYNC_DB, 1)).success())
+         return status;
    }
 
    // open the DB environment
-   if(dbenv.open(config.get_db_path(), envflags, FILEMASK))
-      return false;
+   if(!(status = dbenv.open(config.get_db_path(), envflags, FILEMASK)).success())
+      return status;
 
    //
    // create the sequences database (unique node IDs)
    //
-   if(sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK))
-      return false;
+   if(!(status = sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
+      return status;
 
-   return true;
+   return status;
 }
 
-bool berkeleydb_t::close(void)
+berkeleydb_t::status_t berkeleydb_t::close(void)
 {
    u_int errcnt = 0;
+   int error = 0;
+   status_t status;
 
    // tell trickle thread to stop
    trickle_thread_stop = true;
@@ -1090,17 +1091,27 @@ bool berkeleydb_t::close(void)
 
    // close all table databases
    for(size_t i = 0; i < tables.size(); i++) {
-      if(tables[i]->close())
+      if((error = tables[i]->close()) != 0)
          errcnt++;
+
+      // report the first error
+      if(errcnt == 1)
+         status = error;
    }
 
    // close the sequences database
-   if(sequences.close(0))
+   if((error = sequences.close(0)) != 0)
       errcnt++;
 
+   if(errcnt == 1)
+      status = error;
+
    // finally, close the environment
-   if(dbenv.close(0))
+   if((error = dbenv.close(0)) != 0)
       errcnt++;
+
+   if(errcnt == 1)
+      status = error;
 
    reset_db_handles();
 
@@ -1110,54 +1121,51 @@ bool berkeleydb_t::close(void)
       trickle_event = NULL;
    }
 
-   return !errcnt ? true : false;
+   return status;
 }
 
-bool berkeleydb_t::truncate(void)
+berkeleydb_t::status_t berkeleydb_t::truncate(void)
 {
-   u_int errcnt = 0;
+   status_t status;
 
    for(size_t i = 0; i < tables.size(); i++) {
-      if(tables[i]->truncate())
-         errcnt++;
+      // bail out as soon as we see the first erro
+      if(!(status = tables[i]->truncate()).success())
+         return status;
    }
 
-   return !errcnt ? true : false;
+   return status;
 }
 
-int berkeleydb_t::compact(u_int& bytes)
+berkeleydb_t::status_t berkeleydb_t::compact(u_int& bytes)
 {
-#if DB_VERSION_MAJOR > 4 || DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR >= 4
-   int error;
+   status_t status;
    u_int tbytes;
 
    bytes = 0;
 
    for(size_t i = 0; i < tables.size(); i++) {
-      if((error = tables[i]->compact(tbytes)) != 0)
-         return error;
+      if(!(status = tables[i]->compact(tbytes)).success())
+         return status;
       bytes += tbytes;
    }
 
-   return 0;
-#else
-   return EINVAL;
-#endif
+   return status;
 }
 
-bool berkeleydb_t::flush(void)
+berkeleydb_t::status_t berkeleydb_t::flush(void)
 {
-   u_int errcnt = 0;
+   status_t status;
 
-   if(dbenv.memp_sync(NULL))
-      errcnt++;
+   if(!(status = dbenv.memp_sync(NULL)).success())
+      return status;
 
    for(size_t i = 0; i < tables.size(); i++) {
-      if(tables[i]->sync())
-         errcnt++;
+      if(!(status = tables[i]->sync()).success())
+         return status;
    }
 
-   return !errcnt ? true : false;
+   return status;
 }
 
 void berkeleydb_t::trickle_thread_proc(void)

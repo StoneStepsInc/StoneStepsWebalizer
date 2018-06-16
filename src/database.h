@@ -89,11 +89,11 @@ class database_t : public berkeleydb_t {
 
       ~database_t(void);
 
-      bool open(void);
+      status_t open(void);
 
-      bool attach_indexes(bool rebuild);
+      status_t attach_indexes(bool rebuild);
 
-      bool rollover(const tstamp_t& tstamp);
+      status_t rollover(const tstamp_t& tstamp);
 
       // urls
       uint64_t get_unode_id(void) {return (uint64_t) urls.get_seq_id();}

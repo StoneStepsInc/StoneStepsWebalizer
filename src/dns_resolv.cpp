@@ -1194,9 +1194,9 @@ Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
 
    db_version(&major, &minor, &patch);
 
-   if(major < 4 && minor < 3) {
+   if(major < 4 || major == 4 && minor < 4) {
       if(config.verbose)
-         fprintf(stderr, "Error: The Berkeley DB library must be v4.3 or newer (found v%d.%d.%d).\n", major, minor, patch);
+         fprintf(stderr, "Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
       return NULL;
    }
 

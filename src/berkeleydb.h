@@ -84,6 +84,82 @@ class berkeleydb_t {
       template <typename node_t> class reverse_iterator;
 
       ///
+      /// @class  status_t
+      ///
+      /// @brief  Combines a Berkeley DB error and an application error message in one
+      ///         class that is returned from `berkeleydb_t` methods.
+      ///
+      /// Application messages are not localized at this point. If there will be a desire
+      /// to localize error messages, the constructor that takes an application error 
+      /// message will be changed to take an `enum` value corresponding to the application
+      /// error code.
+      ///
+      class status_t {
+         private:
+            int         error;           ///< Berkeley DB error code.
+            string_t    message;         ///< Berkeley DB or application error message.
+
+         public:
+            /// A special template constructor that triggers a compiler error if it was used. 
+            template <typename T>
+            status_t(T value)
+            {
+               static_assert(false, "Cannot initialize berkeleydb_t::status_t with this value");
+            }
+
+            /// Constructs a status object from a Berkeley DB error code.
+            status_t(int error = 0) : 
+               error(error)
+            {
+               if(error)
+                  message = db_strerror(error);
+            }
+
+            /// Constructs a status object from an application error message.
+            status_t(const char *message) : 
+               error(0),
+               message(message)
+            {
+            }
+
+            /// Constructs a status object from an application error message.
+            status_t(string_t&& message) : 
+               error(0),
+               message(std::move(message))
+            {
+            }
+
+            /// Constructs the status object by moving data from another instance.
+            status_t(status_t&& other) :
+               error(other.error),
+               message(std::move(other.message))
+            {
+            }
+
+            /// Moves the status object data from another instance.
+            status_t& operator = (status_t&& other)
+            {
+               error = other.error;
+               message = std::move(other.message);
+
+               return *this;
+            }
+
+            /// Indicates whether the status is a success or not.
+            bool success(void) const
+            {
+               // check the error just in case db_strerror returns an empty string
+               return !error && message.isempty(); 
+            }
+
+            /// Returns an error message if there is one or an empty string otherwise.
+            const string_t& err_msg(void) const 
+            {
+               return message;
+            }
+      };
+
+      ///
       /// @class  config_t
       ///
       /// @brief  Defines an interface for a configuration necessary to construct a
@@ -541,19 +617,19 @@ class berkeleydb_t {
       bool get_readonly(void) const {return readonly;}
 
       /// sets up the Berkeley DB environment and opens the sequence database, but not table databases
-      bool open(void);
+      status_t open(void);
 
       /// closes all table databases and the Berkeley DB environment
-      bool close(void);
+      status_t close(void);
 
       /// erases data from all tables in the database
-      bool truncate(void);
+      status_t truncate(void);
 
       /// writes modified data pages to disk
-      bool flush(void);
+      status_t flush(void);
 
       /// rearranges data pages on disk to minimize unused space
-      int compact(u_int& bytes);
+      status_t compact(u_int& bytes);
 };
 
 ///

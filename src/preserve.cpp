@@ -347,8 +347,11 @@ bool state_t::initialize(void)
          database.set_trickle(true);
    }
 
-   if(!database.open())
-      throw exception_t(0, string_t::_format("Cannot open the database %s", config.get_db_path().c_str()));
+   database_t::status_t status;
+   if(!(status = database.open()).success()) {
+      fprintf(stderr, "Cannot open the database %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
+      return false;
+   }
 
    // report which database was opened
    if(config.verbose > 1)
@@ -389,8 +392,8 @@ bool state_t::initialize(void)
          // attach indexes to generate a report or to end the current month
          if(config.prep_report || config.end_month) {
             // if the last run was in the batch mode, rebuild indexes
-            if(!database.attach_indexes(sysnode.batch ? true : false))
-               throw exception_t(0, "Cannot activate secondary database indexes");
+            if(!(status = database.attach_indexes(sysnode.batch ? true : false)).success())
+               throw exception_t(0, string_t::_format("Cannot activate secondary database indexes (%s)", status.err_msg().c_str()));
          }
          else {
             // do not truncate incremental database for a non-incremental run
@@ -403,8 +406,9 @@ bool state_t::initialize(void)
             //   b) an incremental run following a non-incremental one
             //
             if(!config.incremental || !sysnode.incremental) {
-               if(!database.truncate())
-                  throw exception_t(0, "Cannot truncate the database\n");
+               database_t::status_t status;
+               if(!(status = database.truncate()).success())
+                  throw exception_t(0, string_t::_format("Cannot truncate the database (%s)\n", status.err_msg().c_str()));
                sysnode.reset(config);
             }
          }
@@ -478,7 +482,7 @@ void state_t::cleanup(void)
    if(!config.db_info)
       history.cleanup();
 
-   if(!database.close()) {
+   if(!database.close().success()) {
       if(config.verbose)
          fprintf(stderr, "Cannot close the database. The database file may be corrupt\n");
    }
@@ -804,10 +808,12 @@ void state_t::del_htabs()
 
 void state_t::clear_month()
 {
+   database_t::status_t status;
+
    // if there's any data in the database, rename the file
    if(!totals.cur_tstamp.null) {
-      if(!database.rollover(totals.cur_tstamp))
-         throw exception_t(0, "Cannot roll over the current state database");
+      if(!(status = database.rollover(totals.cur_tstamp)).success())
+         throw exception_t(0, string_t::_format("Cannot roll over the current state database (%s)", status.err_msg().c_str()));
       
       // it's a new database - reset the system node
       sysnode.reset(config);

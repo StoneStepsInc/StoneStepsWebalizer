@@ -866,14 +866,14 @@ int webalizer_t::prep_report(void)
 int webalizer_t::compact_database(void)
 {
    u_int bytes;
-   int error;
+   database_t::status_t status;
 
-   if((error = state.database.compact(bytes)) == 0) {
+   if((status = state.database.compact(bytes)).success()) {
       if(config.verbose > 1)
          printf("%s: %d KB\n", config.lang.msg_cmpctdb, bytes/1024);
    }
    else
-      fprintf(stderr, "Cannot compact the database (%d)\n", error);
+      fprintf(stderr, "Cannot compact the database (%s)\n", status.err_msg().c_str());
    
    return 0;
 }
@@ -1380,9 +1380,10 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
                // generate monthly reports if not in batch mode
                if(!config.batch) {
+                  database_t::status_t status;
                   stime = msecs();
-                  if(!state.database.attach_indexes(true))
-                     throw exception_t(0, "Cannot create secondary database indexes");
+                  if(!(status = state.database.attach_indexes(true)).success())
+                     throw exception_t(0, string_t::_format("Cannot create secondary database indexes (%s)", status.err_msg().c_str()));
                   write_monthly_report();                /* generate HTML for month */
                   ptms.rpt_time += elapsed(stime, msecs());
                }
@@ -1856,9 +1857,10 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          // generate intermediate reports if not in batch mode
          if(!config.batch) {
+            database_t::status_t status;
             stime = msecs();
-            if(!state.database.attach_indexes(true))
-               throw exception_t(0, "Cannot create secondary database indexes");
+            if(!(status = state.database.attach_indexes(true)).success())
+               throw exception_t(0, string_t::_format("Cannot create secondary database indexes (%s)", status.err_msg().c_str()));
             write_monthly_report();             /* write monthly HTML file  */
             write_main_index();                 /* write main HTML file     */
             ptms.rpt_time += elapsed(stime, msecs());

@@ -214,20 +214,25 @@ database_t::~database_t(void)
 {
 }
 
-bool database_t::attach_indexes(bool rebuild)
+berkeleydb_t::status_t database_t::attach_indexes(bool rebuild)
 {
+   status_t status;
+
+   // attach all registered indexes
    for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
-      if((this->*index_desc[i].table).associate(index_desc[i].index_db, index_desc[i].index_extract_cb, rebuild))
-         return false;
+      if(!(status = (this->*index_desc[i].table).associate(index_desc[i].index_db, index_desc[i].index_extract_cb, rebuild)).success())
+         return status;
    }
 
-   return true;
+   return status;
 }
 
-bool database_t::open(void)
+berkeleydb_t::status_t database_t::open(void)
 {
-   if(!berkeleydb_t::open())
-      return false;
+   status_t status;
+
+   if(!(status = berkeleydb_t::open()).success())
+      return status;
 
    //
    // confgure all databases
@@ -240,8 +245,8 @@ bool database_t::open(void)
    // NULL pointer when indexes are attached later, after all logs are processed.
    //
    for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
-      if((this->*index_desc[i].table).associate(config.get_db_path(), index_desc[i].index_db, index_desc[i].index_compare_cb, index_desc[i].index_dup_compare_cb, get_readonly() ? index_desc[i].index_extract_cb : nullptr))
-         return false;
+      if(!(status = (this->*index_desc[i].table).associate(config.get_db_path(), index_desc[i].index_db, index_desc[i].index_compare_cb, index_desc[i].index_dup_compare_cb, get_readonly() ? index_desc[i].index_extract_cb : nullptr)).success())
+         return status;
    }
 
    //
@@ -251,8 +256,8 @@ bool database_t::open(void)
    for(size_t i = 0; i < sizeof(table_desc)/sizeof(table_desc[0]); i++) {
       // open the sequence database only if we intend to generate new record identifiers
       if(!get_readonly() && table_desc[i].sequence_db) {
-         if((this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.db_seq_cache_size))
-            return false;
+         if(!(status = (this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.db_seq_cache_size)).success())
+            return status;
       }
 
       // open a value database if this table has one
@@ -265,33 +270,34 @@ bool database_t::open(void)
          // is irrelevant and for value look-ups all duplicates are examined until a
          // matching value is found.
          //
-         if((this->*table_desc[i].table).associate(config.get_db_path(), table_desc[i].value_db, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_extract_cb))
-            return false;
+         if(!(status = (this->*table_desc[i].table).associate(config.get_db_path(), table_desc[i].value_db, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_extract_cb)).success())
+            return status;
 
          // configure the secondary values database for this table
          (this->*table_desc[i].table).set_values_db(table_desc[i].value_db);
       }
 
       // open the primary database that contains all data
-      if((this->*table_desc[i].table).open(config.get_db_path(), table_desc[i].primary_db, table_desc[i].key_compare_cb))
-         return false;
+      if(!(status = (this->*table_desc[i].table).open(config.get_db_path(), table_desc[i].primary_db, table_desc[i].key_compare_cb)).success())
+         return status;
    }
 
-   return true;
+   return status;
 }
 
-bool database_t::rollover(const tstamp_t& tstamp)
+berkeleydb_t::status_t database_t::rollover(const tstamp_t& tstamp)
 {
    u_int seqnum = 1;
    string_t path, curpath, newpath;
+   status_t status;
 
    // rollover is only called for the default database
    if(!config.is_default_db())
-      return false;
+      return "Rollover can only be called for the default database";
 
    // close the database, so we can work with the database file
-   if(!close())
-      return false;
+   if(!(status = close()).success())
+      return status;
 
    // make the initial part of the path
    path = make_path(config.db_path, config.db_fname);
@@ -306,7 +312,7 @@ bool database_t::rollover(const tstamp_t& tstamp)
 
    // rename the file
    if(rename(curpath, newpath))
-      return false;
+      return string_t::_format("Cannot rename %s to %s", curpath.c_str(), newpath.c_str());
 
    // and reopen the database
    return open();
