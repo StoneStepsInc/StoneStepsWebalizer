@@ -170,15 +170,15 @@ void webalizer_t::cleanup(void)
 bool webalizer_t::init_output_engines(void)
 {
    output_t::graphinfo_t *graphinfo = NULL;
-   output_t *optr;
+   std::unique_ptr<output_t> optr;
    nlist::const_iterator iter = config.output_formats.begin();
    
    for(nlist::const_iterator iter = config.output_formats.begin(); iter != config.output_formats.end(); iter++) {
       // allocate an output engine of the requested type
       if(iter->string == "html") 
-         optr = new html_output_t(config, state);
+         optr.reset(new html_output_t(config, state));
       else if(iter->string == "tsv") 
-         optr = new dump_output_t(config, state);
+         optr.reset(new dump_output_t(config, state));
       else {
          fprintf(stderr, "Unrecognized output format (%s)\n", iter->string.c_str());
          continue;
@@ -194,13 +194,12 @@ bool webalizer_t::init_output_engines(void)
       
       // and initialize this output engine
       if(!optr->init_output_engine()) {
-         delete optr;
          if(config.verbose)
             fprintf(stderr, "Cannot initialize output engine (%s)\n", iter->string.c_str());
          continue;
       }
       
-      output.push_back(optr);
+      output.push_back(optr.release());
    }
    
    if(!output.size())
