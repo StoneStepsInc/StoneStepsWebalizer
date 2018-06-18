@@ -447,9 +447,9 @@ void config_t::add_def_srch_list(void)
 /// restrictions in this case. 
 ///
 /// Errors are collected in the `errors` vector and if this vector is not empty, 
-/// `config_t::is_bad` will return true and the configuration object can be used
-/// only to report the configuration and not for log processing. Errors can be
-/// reported via report_errors.
+/// the configuration object is invalid and cannot be used. Use `config_t::is_bad` 
+/// to detect if there are any configuration errors. Configuration errors can be 
+/// reported via `report_errors`.
 ///
 /// Unrecoverable errors are thrown as exceptions and the configuration object
 /// should not be used in this case. 
@@ -496,8 +496,13 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       }
    }
 
+   // stop reading configuration if there are any errors
+   if(!errors.empty())
+      return;
+
    // process includes found in the main configuration file
-   process_includes();
+   if(!process_includes())
+      return;
 
    // keep track of how many log files were added (see method description for details)
    size_t logcnt = log_fnames.size();
@@ -505,8 +510,13 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
    // process command line arguments
    proc_cmd_line(argc, argv);
 
+   // stop reading configuration if there are any errors
+   if(!errors.empty())
+      return;
+
    // process includes queued from the command line
-   process_includes();
+   if(!process_includes())
+      return;
 
    // if any log files were added via the command line, remove those from earlier
    if(logcnt < log_fnames.size()) {
@@ -1010,8 +1020,7 @@ void config_t::get_config(const char *fname)
 
    if ( (fp=fopen(fname,"r")) == NULL)
    {
-      if (verbose)
-      fprintf(stderr,"%s %s\n", lang.msg_bad_conf, fname);
+      errors.push_back(string_t::_format("%s %s\n", lang.msg_bad_conf, fname));
       return;
    }
 
@@ -1296,10 +1305,13 @@ void config_t::get_config_cb(const char *fname, void *_this)
 /// matched the pattern are removed from the list, so they are not processed more 
 /// than once.
 ///
-void config_t::process_includes(void)
+bool config_t::process_includes(void)
 {
    // walk the includes and remove from the list all includes for which the callback was called 
    includes.for_each(hname, get_config_cb, this, true, true);
+
+   // indicate success if there are no configuration errors
+   return errors.empty();
 }
 
 ///

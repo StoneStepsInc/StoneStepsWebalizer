@@ -369,7 +369,7 @@ class config_t {
 
       int get_interval(const char *value, std::vector<string_t>& errors) const;
 
-      void process_includes(void);
+      bool process_includes(void);
 
       string_t& set_url_path(const char *str, string_t& path) const;
       
