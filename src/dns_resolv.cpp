@@ -585,11 +585,16 @@ funcexit:
 ///
 /// @brief   Initializes the DNS resolver
 ///
+/// This method reports all errors to the standard error stream and returns `false` if 
+/// the DNS resolver could not be initialized.
+///
 bool dns_resolver_t::dns_init(void)
 {
    // dns_init shouldn't be called if there are no workers configured
-   if(!config.dns_children)
-      throw std::runtime_error("The number of DNS workers cannot be zero");
+   if(!config.dns_children) {
+      fprintf(stderr, "The number of DNS workers cannot be zero");
+      return false;
+   }
 
    dns_cache_ttl = config.dns_cache_ttl;
    
@@ -599,16 +604,14 @@ bool dns_resolver_t::dns_init(void)
    WSADATA wsdata;
 
    if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot initialize Windows sockets\n");
+      fprintf(stderr, "Cannot initialize Windows sockets\n");
       return false;
    }
 #endif
 
    // initialize synchronization primitives
    if((dns_done_event = event_create(true, true)) == NULL) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot initialize DNS event\n");
+      fprintf(stderr, "Cannot initialize DNS event\n");
       return false;
    }
 
@@ -628,8 +631,8 @@ bool dns_resolver_t::dns_init(void)
       u_int32_t dbenv_flags = DB_CREATE | DB_INIT_CDB | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
 
       if(dns_db_env->open(config.dns_db_path, dbenv_flags, 0664)) {
-         if (config.verbose) 
-            fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, config.dns_cache.c_str());
+         fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, config.dns_cache.c_str());
+         return false;
       }
       
       //
@@ -1195,8 +1198,7 @@ Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
    db_version(&major, &minor, &patch);
 
    if(major < 4 || major == 4 && minor < 4) {
-      if(config.verbose)
-         fprintf(stderr, "Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
+      fprintf(stderr, "Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
       return NULL;
    }
 

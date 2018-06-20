@@ -69,6 +69,12 @@ parser_t::~parser_t(void)
 {
 }
 
+///
+/// @brief  Initializes the log file parser.
+///
+/// This method reports all errors to the stderr stream and returns `false` if the 
+/// log file parser could not be initialized.
+///
 bool parser_t::init_parser(int logtype)
 {
    switch(logtype) {
@@ -78,8 +84,7 @@ bool parser_t::init_parser(int logtype)
 
       case LOG_APACHE:
          if(!parse_apache_log_format(config.apache_log_format)) {
-            if(config.verbose)
-               fprintf(stderr, "%s\n", config.lang.msg_afm_err);
+            fprintf(stderr, "%s\n", config.lang.msg_afm_err);
             return false;
          }
          break;
@@ -573,8 +578,7 @@ bool parser_t::parse_apache_log_format(const char *format)
 
          case 't':
             if(paramlen) {
-               if(config.verbose)
-                  fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
+               fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
                goto errexit;
             }
             log_rec_fields.push_back(eDateTime);

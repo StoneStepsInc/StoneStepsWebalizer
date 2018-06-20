@@ -5,6 +5,8 @@
 #include "tstring.h"
 #include "types.h"
 
+#include <vector>
+
 ///
 /// @class  lang_t
 ///
@@ -330,7 +332,7 @@ class lang_t {
 
       void init_lang_htab(void);
 
-      bool read_lang_file(const char *fname, int verbose);
+      bool read_lang_file(const char *fname, std::vector<string_t>& errors);
 
    public:
       lang_t(void);
@@ -338,7 +340,7 @@ class lang_t {
 
       void report_lang_fname(void) const;
 
-      void proc_lang_file(const char *fname, int verbose);
+      void proc_lang_file(const char *fname, std::vector<string_t>& errors);
       void cleanup_lang_data(void);
 
       u_int resp_code_count(void) const;

@@ -3179,7 +3179,6 @@ int html_output_t::write_main_index()
 
    if ( (out_fp=fopen(make_path(config.out_dir, index_fname),"w")) == NULL)
    {
-      if (config.verbose)
       fprintf(stderr,"%s %s!\n",config.lang.msg_no_open,index_fname.c_str());
       return 1;
    }

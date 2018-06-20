@@ -101,7 +101,7 @@ class history_t {
 
       bool get_history(void);
 
-      void put_history(void);
+      bool put_history(void);
 };
 
 #endif // HISTORY_H

@@ -79,6 +79,13 @@ webalizer_t::~webalizer_t(void)
 /// @brief  Initializes a log processor instance using a fully initialized 
 ///         configuration object.
 ///
+/// All initialization methods called from this method must report unrecoverable errors to 
+/// the standard error stream and return `false`. If any initialization throws an exception, 
+/// this exception must be self-explanatory because it will be reported on its own. This 
+/// alows us to keep this method simpler because otherwise each initialization method call 
+/// would have to be wrapped in its own exception handler to keep the same level of detail 
+/// (e.g. that a DNS resolver failed with a particular error).
+///
 void webalizer_t::initialize(void)
 {
    u_int i;
@@ -167,6 +174,9 @@ void webalizer_t::cleanup(void)
 ///
 /// @brief  Initializes all output engines for each selected report type.
 ///
+/// This method reports all errors to the stderr stream and returns `false` if 
+/// any output engine could not be initialized.
+///
 bool webalizer_t::init_output_engines(void)
 {
    output_t::graphinfo_t *graphinfo = NULL;
@@ -194,9 +204,8 @@ bool webalizer_t::init_output_engines(void)
       
       // and initialize this output engine
       if(!optr->init_output_engine()) {
-         if(config.verbose)
-            fprintf(stderr, "Cannot initialize output engine (%s)\n", iter->string.c_str());
-         continue;
+         fprintf(stderr, "Cannot initialize output engine (%s)\n", iter->string.c_str());
+         return false;
       }
       
       output.push_back(optr.release());
@@ -827,8 +836,7 @@ int webalizer_t::end_month(void)
    
    if (state.save_state()) {
       /* Error: Unable to save current run data */
-      if (config.verbose) 
-         fprintf(stderr,"%s\n",config.lang.msg_data_err);
+      fprintf(stderr,"%s\n",config.lang.msg_data_err);
       return 1;
    }
    
@@ -1370,8 +1378,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
                stime = msecs();
                if (state.save_state()) {
                   /* Error: Unable to save current run data */
-                  if (config.verbose) 
-                     fprintf(stderr,"%s\n",config.lang.msg_data_err);
+                  fprintf(stderr,"%s\n",config.lang.msg_data_err);
                   // report generator uses saved state data
                   return 1;
                }
@@ -1845,8 +1852,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          stime = msecs();
          if (state.save_state()) {
             /* Error: Unable to save current run data */
-            if (config.verbose) 
-               fprintf(stderr,"%s\n",config.lang.msg_data_err);
+            fprintf(stderr,"%s\n",config.lang.msg_data_err);
          }
          ptms.mnt_time += elapsed(stime, msecs());
 
@@ -3193,20 +3199,16 @@ int main(int argc, char *argv[])
          return retcode;
       }
       catch(const os_ex_t& err) {
-         if(config.verbose)
-            fprintf(stderr, "%s\n", err.desc().c_str());
+         fprintf(stderr, "%s\n", err.desc().c_str());
        }
       catch (const DbException &err) {
-         if(config.verbose)
-            fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
+         fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
       }
       catch (const exception_t &err) {
-         if(config.verbose)
-            fprintf(stderr, "%s\n", err.desc().c_str());
+         fprintf(stderr, "%s\n", err.desc().c_str());
       }
       catch (const std::exception &err) {
-         if(config.verbose)
-            fprintf(stderr, "%s\n", err.what());
+         fprintf(stderr, "%s\n", err.what());
       }
 
       //
@@ -3217,20 +3219,16 @@ int main(int argc, char *argv[])
       logproc.cleanup();
    }
    catch(const os_ex_t& err) {
-      if(config.verbose)
-         fprintf(stderr, "%s\n", err.desc().c_str());
+      fprintf(stderr, "%s\n", err.desc().c_str());
    }
    catch (const DbException &err) {
-      if(config.verbose)
-         fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
+      fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
    }
    catch (const exception_t &err) {
-      if(config.verbose)
-         fprintf(stderr, "%s\n", err.desc().c_str());
+      fprintf(stderr, "%s\n", err.desc().c_str());
    }
    catch (const std::exception &err) {
-      if(config.verbose)
-         fprintf(stderr, "%s\n", err.what());
+      fprintf(stderr, "%s\n", err.what());
    }
 
    return EXIT_FAILURE;

@@ -763,41 +763,27 @@ lang_t::~lang_t(void)
       delete [] lang_buffer;
 }
 
-bool lang_t::read_lang_file(const char *fname, int verbose)
+bool lang_t::read_lang_file(const char *fname, std::vector<string_t>& errors)
 {
    long filelen;
    size_t lang_len;
-   FILE *lang_file;
+   FILE *lang_file = nullptr;
 
    if(fname == NULL || *fname == 0) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Language file name is invalid. ");
-      goto errexit;
+      errors.emplace_back("The name of the language file name is not valid.");
+      return false;
    }
 
-   if((lang_file = fopen(fname, "r")) == NULL) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Cannot find the language file (%s). ", fname);
+   if((lang_file = fopen(fname, "r")) == NULL)
       goto errexit;
-   }
 
-   if(fseek(lang_file, 0, SEEK_END) == -1 || (filelen = ftell(lang_file)) == -1L) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Cannot determine the length of the language file (%s). ", fname);
+   if(fseek(lang_file, 0, SEEK_END) == -1 || (filelen = ftell(lang_file)) == -1L)
       goto errexit;
-   }
 
-   if((lang_buffer = new u_char[filelen+1]) == NULL) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Cannot allocate memory to process the language file (%s). ", fname);
-      goto errexit;
-   }
+   lang_buffer = new u_char[filelen+1];
 
-   if(fseek(lang_file, 0, SEEK_SET) == -1 || (lang_len = fread(lang_buffer, 1, filelen, lang_file)) == 0) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Cannot read the language file (%s)." , fname);
+   if(fseek(lang_file, 0, SEEK_SET) == -1 || (lang_len = fread(lang_buffer, 1, filelen, lang_file)) == 0)
       goto errexit;
-   }
 
    fclose(lang_file);
 
@@ -806,8 +792,11 @@ bool lang_t::read_lang_file(const char *fname, int verbose)
    return true;
 
 errexit:
-   if(verbose > 1)
-      fprintf(stderr, "Using default language (%s).\n\n", language);
+   errors.push_back(string_t::_format("Cannot open the language file (%s). ", fname));
+
+   if(lang_file)
+      fclose(lang_file);
+
    return false;
 }
 
@@ -1061,7 +1050,7 @@ void lang_t::init_lang_htab(void)
 //
 //   See webalizer_lang.english for file format description
 //
-void lang_t::proc_lang_file(const char *fname, int verbose)
+void lang_t::proc_lang_file(const char *fname, std::vector<string_t>& errors)
 {
    u_char *name, *cptr, *cctld;
    const lang_node_t *lnode;
@@ -1069,7 +1058,7 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
    bool endofinput, quoted;
    string_t str;
 
-   if(read_lang_file(fname, verbose) == false)
+   if(!read_lang_file(fname, errors))
       return;
 
    //
@@ -1089,8 +1078,7 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
       cptr += 3;
    }
    else if(cptr[0] == 0xFF && cptr[1] == 0xFE || cptr[0] == 0xFE && cptr[1] == 0xFF) {
-      if(verbose)
-         fprintf(stderr, "ERROR: Unicode language files must be stored in the UTF-8 format (%s)\n", fname);
+      errors.push_back(string_t::_format("Unicode language files must be stored in the UTF-8 format (%s)", fname));
       return;
    }
 
@@ -1120,17 +1108,15 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
       while(*cptr && *cptr != ' ' && *cptr != '\t' && *cptr != '=') cptr++;
 
       if(*cptr == 0) {
-         if(verbose)
-            fprintf(stderr, "The format of the language file is not valid (%s)\n", fname);
+         errors.push_back(string_t::_format("The format of the language file is not valid (%s)", fname));
          break;
       }
 
       *cptr++ = 0;
 
+      // skip unknown language variables
       if((lnode = ln_htab.find_lang_var(str.assign((const char*) name, cptr-name-1))) == NULL) {
          while(!iseolchar(*cptr++));
-         if(verbose)
-            fprintf(stderr, "Unknown language variable (%s)\n", name);
          continue;
       }
 
@@ -1139,11 +1125,9 @@ void lang_t::proc_lang_file(const char *fname, int verbose)
       //
       while(*cptr == ' ' || *cptr == '\t' || *cptr == '=') cptr++;
 
-      if(iseolchar(*cptr)) {
-         if(verbose)
-            fprintf(stderr, "Language variable (%s) is empty. The default value will be used.\n", name);
+      // ignore language variables with empty values
+      if(iseolchar(*cptr))
          continue;
-      }
 
       //
       //   Assign new values

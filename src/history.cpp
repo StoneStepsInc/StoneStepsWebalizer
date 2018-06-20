@@ -208,6 +208,15 @@ void history_t::cleanup(void)
 {
 }
 
+///
+/// @brief  Initializes monthly history data.
+///
+/// Reads and parses the history file. 
+///
+/// This method reports all errors to the stderr stream and returns `false` if the 
+/// history file is malformed. If the history file is missing, the method prints a 
+/// warning to the standard output and returns `true` to indicate success.
+///
 bool history_t::get_history(void)
 {
    int numfields;
@@ -218,10 +227,15 @@ bool history_t::get_history(void)
 
    fpath = make_path(config.out_dir, config.hist_fname);
 
+   //
+   // A history file may be missing for a variety of reasons and this should not
+   // be considered as an error. Report the missing history file to the standard 
+   // output, and return success.
+   //
    if((hist_fp=fopen(fpath,"r")) == NULL) {
       if (config.verbose>1) 
          printf("%s\n", config.lang.msg_no_hist);
-      return false;
+      return true;
    }
 
    string_t::char_buffer_t buffer(BUFSIZE);
@@ -252,9 +266,9 @@ bool history_t::get_history(void)
       
       // check if the month is in the 1-12 range
       if(hnode.month == 0 || hnode.month > 12) {
-         if (config.verbose)
-            fprintf(stderr,"%s (mth=%d)\n",config.lang.msg_bad_hist, hnode.month);
-         continue;
+         fprintf(stderr,"%s (mth=%d)\n",config.lang.msg_bad_hist, hnode.month);
+         fclose(hist_fp);
+         return false;
       }
       
       //
@@ -290,7 +304,7 @@ bool history_t::get_history(void)
 /* PUT_HISTORY - write out history file      */
 /*********************************************/
 
-void history_t::put_history(void)
+bool history_t::put_history(void)
 {
    FILE *hist_fp;
    const hist_month_t *hptr;
@@ -300,9 +314,8 @@ void history_t::put_history(void)
    fpath = make_path(config.out_dir, config.hist_fname);
 
    if((hist_fp = fopen(fpath,"w")) == NULL) {
-      if (config.verbose)
-         fprintf(stderr,"%s %s\n", config.lang.msg_hist_err, fpath.c_str());
-      return;
+      fprintf(stderr,"%s %s\n", config.lang.msg_hist_err, fpath.c_str());
+      return false;
    }
 
    if (config.verbose>1) 
@@ -325,4 +338,6 @@ void history_t::put_history(void)
       }
    }
    fclose(hist_fp);
+
+   return true;
 }

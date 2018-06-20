@@ -106,10 +106,15 @@ void state_t::swap_out(void)
 
 }
 
-/*********************************************/
-/* SAVE_STATE - save internal data structs   */
-/*********************************************/
-
+///
+/// @brief  Saves the current monthly state to the database.
+///
+/// This method should report all errors to the standard error stream and return a 
+/// non-zero value to indicate an error. Historically, however, this method did not
+/// reporte errors to the standard error stream when it returned a non-zero value. 
+/// This eventually should be fixed, but in the meantime all new code in this method 
+/// should be written to report errors properly.
+///
 int state_t::save_state(void)
 {
    std::vector<uint64_t>::iterator iter;
@@ -144,15 +149,19 @@ int state_t::save_state(void)
       sysnode.batch = config.batch;
    }
 
-   if(!database.put_sysnode(sysnode, sysnode.storage_info))
-      throw exception_t(0, "Cannot write the system node to the database");
+   if(!database.put_sysnode(sysnode, sysnode.storage_info)) {
+      fprintf(stderr, "Cannot write the system node to the database");
+      return 1;
+   }
 
    // delete stale active visits
    iter = v_ended.begin();
    while(iter != v_ended.end()) {
       vnode.reset(*iter++);
-      if(!database.delete_visit(vnode))
-         throw exception_t(0, string_t::_format("Cannot delete an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid));
+      if(!database.delete_visit(vnode)) {
+         fprintf(stderr, "Cannot delete an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid);
+         return 1;
+      }
    }
    v_ended.clear();
 
@@ -160,8 +169,10 @@ int state_t::save_state(void)
    iter = dl_ended.begin();
    while(iter != dl_ended.end()) {
       dlnode.reset(*iter++);
-      if(!database.delete_download(dlnode))
-         throw exception_t(0, string_t::_format("Cannot delete a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid));
+      if(!database.delete_download(dlnode)) {
+         fprintf(stderr, "Cannot delete a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid);
+         return 1;
+      }
    }
    dl_ended.clear();
 
@@ -317,11 +328,20 @@ int state_t::save_state(void)
    // a new one will be created with this data. 
    //
    history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
-   history.put_history();
+
+   // put_history will report the error
+   if(history.put_history())
+      return 1;
 
    return 0;            /* successful, return with good return code      */
 }
 
+///
+/// @brief  Initializes the montly state database.
+///
+/// This method reports all errors to the stderr stream and return `false` if the 
+/// monthly state database could not be initialized.
+///
 bool state_t::initialize(void)
 {
    u_int index;
@@ -336,8 +356,7 @@ bool state_t::initialize(void)
    if(config.is_maintenance()) {
       // make sure database exists, so database_t::open doesn't create an empty one
       if(access(config.get_db_path(), F_OK)) {
-         if(config.verbose)
-            fprintf(stderr, "%s: %s\n", config.lang.msg_nofile, config.get_db_path().c_str());
+         fprintf(stderr, "%s: %s\n", config.lang.msg_nofile, config.get_db_path().c_str());
          return false;
       }
    }
@@ -483,8 +502,7 @@ void state_t::cleanup(void)
       history.cleanup();
 
    if(!database.close().success()) {
-      if(config.verbose)
-         fprintf(stderr, "Cannot close the database. The database file may be corrupt\n");
+      fprintf(stderr, "Cannot close the database. The database file may be corrupt\n");
    }
 }
 
@@ -528,20 +546,30 @@ void state_t::database_info(void) const
    printf("\n");
 }
 
-/*********************************************/
-/* RESTORE_STATE - reload internal run data  */
-/*********************************************/
-
+///
+/// @brief  Restores the monthly database to the last run state.
+///
+/// This method reports errors to the stderr stream and returns a non-zero value if 
+/// the monthly state could not be initialized. Unlike other initialization methods, 
+/// this method may just return a non-zero value other than `1` if some particular 
+/// state value could not be initialized and the caller will report the returned value 
+/// to the standard error stream within some error message. The return value `1` 
+/// indicates a generic failure and must be accompanied by an error message reported 
+/// to the standar error stream. 
+///
 int state_t::restore_state(void)
 {
    u_int i;
 
    // restore history, unless we are told otherwise
-   if(!config.ignore_hist) 
-      history.get_history();
+   if(!config.ignore_hist) {
+      // the error is reported inside get_history, so just return
+      if(!history.get_history())
+         return 1;
+   }
    else {
       if(config.verbose>1) 
-         fprintf(stderr, "%s\n",config.lang.msg_ign_hist); 
+         printf("%s\n",config.lang.msg_ign_hist);
    }
 
    // sysnode is not populated if the databases is new or has been truncated
