@@ -330,7 +330,7 @@ int state_t::save_state(void)
    history.update(totals.cur_tstamp.year, totals.cur_tstamp.month, totals.t_hit, totals.t_file, totals.t_page, totals.t_visits, totals.t_hosts, totals.t_xfer, totals.f_day, totals.l_day);
 
    // put_history will report the error
-   if(history.put_history())
+   if(!history.put_history())
       return 1;
 
    return 0;            /* successful, return with good return code      */
