@@ -1045,7 +1045,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       // the file may be open if we skipped any lines
       if(!(*i)->is_open() && (errnum = (*i)->open()) != 0) {
          /* Error: Can't open log file ... */
-         throw exception_t(0, string_t::_format("%s %s (%d)\n", config.lang.msg_log_err, (*i)->get_fname().c_str(), errnum));
+         throw exception_t(0, string_t::_format("%s %s (%d)", config.lang.msg_log_err, (*i)->get_fname().c_str(), errnum));
       }
 
       // read the log record into the buffer
