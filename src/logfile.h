@@ -23,14 +23,15 @@
 ///
 class logfile_t {
    private:
-      string_t    log_fname;
+      string_t    log_fname;              ///< A log file name and path (relative or absolute).
       
-      bool        gz_log;                  // flag for zipped log
+      bool        gz_log;                 ///< Indicates whether the log file is compressed or not.
       
-      FILE        *log_fp;                 // regular logfile pointer
-      gzFile      gzlog_fp;                // gzip logfile pointer
+      FILE        *log_fp;                ///> A handle to an opened non-compressed log file.
+      gzFile      gzlog_fp;               ///< A handle to a gzip-compressed log file.
       
-      long        reopen_offset;
+      long        reopen_offset;          ///< A file offset to move the file pointer to after the 
+                                          ///< file is opened.
                                              
       u_int       id;                     ///< A file identifier used for reporting purposes.
    
