@@ -230,7 +230,7 @@ class webalizer_t {
       bool get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_state_list_t& lfp_states, logrec_list_t& logrecs, logrec_counts_t& lrcnt);
       
       int read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfile, logrec_counts_t& lrcnt); 
-      int parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, uint64_t recnum);
+      int parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, u_int fileid, uint64_t recnum);
 
       //
       // put_xnode methods

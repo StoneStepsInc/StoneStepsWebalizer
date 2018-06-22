@@ -31,6 +31,8 @@ class logfile_t {
       gzFile      gzlog_fp;                // gzip logfile pointer
       
       long        reopen_offset;
+                                             
+      u_int       id;                     ///< A file identifier used for reporting purposes.
    
    public:
       logfile_t(const string_t& fname);
@@ -56,6 +58,10 @@ class logfile_t {
       bool is_readable(void) const;
       
       bool is_open(void) const {return gz_log && gzlog_fp || log_fp;}
+
+      void set_id(u_int fileid) {id = fileid;}
+
+      u_int get_id(void) const {return id;}
 };
 
 #endif // LOGFILE_H

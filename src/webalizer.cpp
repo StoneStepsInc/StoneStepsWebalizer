@@ -996,6 +996,9 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
          /* Error: Can't open log file ... */
          throw exception_t(0, string_t::_format("%s %s\n",config.lang.msg_log_err, fname.c_str()));
       }
+
+      // set a one-based log file ID, so we can identify log files when we report bad log records
+      logfile->set_id((u_int) (logfiles.size() + 1));
       
       /* Using logfile ... */
       if (config.verbose>1)
@@ -1075,7 +1078,7 @@ void webalizer_t::prep_lfstates(logfile_list_t& logfiles, lfp_state_list_t& lfp_
       }
 
       // parse the log line
-      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, lrcnt.total_rec)) == PARSE_CODE_ERROR) {
+      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, wlfs.logfile->get_id(), lrcnt.total_rec)) == PARSE_CODE_ERROR) {
          lrcnt.total_bad++;
          continue;
       }
@@ -1170,7 +1173,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
       }
          
       // parse the log line
-      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, lrcnt.total_rec)) == PARSE_CODE_ERROR) {
+      if((parse_code = parse_log_record(buffer, reclen, *wlfs.logrec, wlfs.logfile->get_id(), lrcnt.total_rec)) == PARSE_CODE_ERROR) {
          lrcnt.total_bad++;
          continue;
       }
@@ -3308,7 +3311,7 @@ int webalizer_t::read_log_line(string_t::char_buffer_t& buffer, logfile_t& logfi
 /// @brief  Parses the log record text in the buffer and, if it's valid, populates
 ///         the log record structure.
 ///
-int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, uint64_t recnum)
+int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen, log_struct& logrec, u_int fileid, uint64_t recnum)
 {
    int parse_code;
    string_t lrecstr;
@@ -3326,7 +3329,7 @@ int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen
       /* really bad record... */
       if (config.verbose)
       {
-         fprintf(stderr,"%s (%" PRIu64 ")", config.lang.msg_bad_rec, recnum);
+         fprintf(stderr,"%s (%u:%" PRIu64 ")", config.lang.msg_bad_rec, fileid, recnum);
          if (config.debug_mode) fprintf(stderr,":\n%s\n", lrecstr.c_str());
          else fprintf(stderr,"\n");
       }

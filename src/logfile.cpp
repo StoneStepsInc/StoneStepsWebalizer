@@ -16,7 +16,7 @@
 #include <io.h>
 #endif
 
-logfile_t::logfile_t(const string_t& fname) : log_fname(fname)
+logfile_t::logfile_t(const string_t& fname) : log_fname(fname), id(0)
 {
    log_fp = NULL;
    gzlog_fp = NULL;
