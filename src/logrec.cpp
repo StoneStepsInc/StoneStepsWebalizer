@@ -12,9 +12,8 @@
 #include "logrec.h"
 #include <memory.h>
 
-log_struct::log_struct(void)
+log_struct::log_struct(void) : resp_code(0), xfer_size(0), proc_time(0), port(0)
 {
-   reset();
 }
 
 void log_struct::reset(void)
