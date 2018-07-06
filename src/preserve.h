@@ -83,11 +83,17 @@ class state_t {
 
       void init_counters(void);
 
+      ///
+      /// @name   Serialization callbacks
+      ///
+      /// @{
+
       static void unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this);
 
       static void unpack_hnode_cb(hnode_t& hnode, bool active, void *_this);
+      /// @}
 
       static bool eval_hnode_cb(const hnode_t *hnode, void *arg);
       static bool swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
@@ -122,9 +128,15 @@ class state_t {
 
       void database_info(void) const;
 
+      ///
+      /// @name   Serialization callbacks
+      ///
+      /// @{
+
       static void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
 
       static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);
+      /// @}
 
       static string_t get_app_version(void);
 

@@ -212,7 +212,7 @@ class berkeleydb_t {
       ///
       /// @class  cursor_iterator_base
       ///
-      /// @brief  A base class that wraps Berkeley DB cursors to traverse primary abd
+      /// @brief  A base class that wraps Berkeley DB cursors to traverse primary and
       ///         secondary databases
       ///
       class cursor_iterator_base {
@@ -432,9 +432,10 @@ class berkeleydb_t {
             /// gets the next ID from the sequence for this table
             db_seq_t get_seq_id(int32_t delta = 1);
             
+            /// Queries the current sequence ID without incrementing it.
             db_seq_t query_seq_id(void);
 
-            /// returns the number of unique keys in the primary of secondary databases
+            /// Returns the number of unique keys in the primary or a named secondary database.
             uint64_t count(const char *dbname = NULL) const;
 
             /// inserts a new node or updates the existing node in the primary database

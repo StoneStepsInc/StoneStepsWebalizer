@@ -690,7 +690,7 @@ int state_t::restore_state(void)
    iter.close();
    }
 
-   {// monthly hosts (unpack_hnode_cb ignores groups)
+   {// monthly hosts
    database_t::iterator<hnode_t> iter = database.begin_hosts(NULL);
    storable_t<hnode_t> hnode;
    while(iter.next(hnode, unpack_hnode_cb, this)) {

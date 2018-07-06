@@ -24,7 +24,7 @@
 /// node.
 ///
 struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
-      uint64_t    hits;              ///< Request count (if zero, no active job)
+      uint64_t    hits;              ///< Request count
       tstamp_t    tstamp;            ///< Last request timestamp
       uint64_t    proctime;          ///< Download job time (msec)
       uint64_t    xfer;              ///< xfer size in bytes
