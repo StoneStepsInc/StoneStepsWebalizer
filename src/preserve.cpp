@@ -683,8 +683,7 @@ int state_t::restore_state(void)
    database_t::iterator<unode_t> iter = database.begin_urls(NULL);
    storable_t<unode_t> unode;
    while(iter.next(unode)) {
-      if(!um_htab.put_node(new storable_t<unode_t>(unode)))
-         return 10;
+      um_htab.put_node(new storable_t<unode_t>(unode));
       unode.reset();
    }
    iter.close();
@@ -694,8 +693,7 @@ int state_t::restore_state(void)
    database_t::iterator<hnode_t> iter = database.begin_hosts(NULL);
    storable_t<hnode_t> hnode;
    while(iter.next(hnode, unpack_hnode_cb, this)) {
-      if(!hm_htab.put_node(new storable_t<hnode_t>(hnode)))
-         return 8;
+      hm_htab.put_node(new storable_t<hnode_t>(hnode));
       hnode.reset();
    }
    iter.close();
@@ -705,8 +703,7 @@ int state_t::restore_state(void)
    database_t::iterator<rnode_t> iter = database.begin_referrers(NULL);
    storable_t<rnode_t> rnode;
    while(iter.next(rnode)) {
-      if(!rm_htab.put_node(new storable_t<rnode_t>(rnode)))
-         return 11;
+      rm_htab.put_node(new storable_t<rnode_t>(rnode));
    }
    iter.close();
    }
@@ -715,8 +712,7 @@ int state_t::restore_state(void)
    database_t::iterator<anode_t> iter = database.begin_agents(NULL);
    storable_t<anode_t> anode;
    while(iter.next(anode)) {
-      if(!am_htab.put_node(new storable_t<anode_t>(anode)))
-         return 12;
+      am_htab.put_node(new storable_t<anode_t>(anode));
    }
    iter.close();
    }
@@ -725,8 +721,7 @@ int state_t::restore_state(void)
    database_t::iterator<snode_t> iter = database.begin_search(NULL);
    storable_t<snode_t> snode;
    while(iter.next(snode)) {
-      if(!sr_htab.put_node(new storable_t<snode_t>(snode)))
-         return 13;
+      sr_htab.put_node(new storable_t<snode_t>(snode));
    }
    iter.close();
    }
@@ -735,8 +730,7 @@ int state_t::restore_state(void)
    database_t::iterator<inode_t> iter = database.begin_users(NULL);
    storable_t<inode_t> inode;
    while(iter.next(inode)) {
-      if(!im_htab.put_node(new storable_t<inode_t>(inode)))
-         return 14;
+      im_htab.put_node(new storable_t<inode_t>(inode));
    }
    iter.close();
    }
@@ -745,8 +739,7 @@ int state_t::restore_state(void)
    database_t::iterator<rcnode_t> iter = database.begin_errors(NULL);
    storable_t<rcnode_t> rcnode;
    while(iter.next(rcnode)) {
-      if(!rc_htab.put_node(new storable_t<rcnode_t>(rcnode)))
-         return 15;
+      rc_htab.put_node(new storable_t<rcnode_t>(rcnode));
    }
    iter.close();
    }
@@ -755,8 +748,7 @@ int state_t::restore_state(void)
    database_t::iterator<dlnode_t> iter = database.begin_downloads(NULL);
    storable_t<dlnode_t> dlnode;
    while(iter.next(dlnode, unpack_dlnode_cb, this)) {
-      if(!dl_htab.put_node(new storable_t<dlnode_t>(dlnode)))
-         return 16;
+      dl_htab.put_node(new storable_t<dlnode_t>(dlnode));
       dlnode.reset();
    }
    iter.close();
