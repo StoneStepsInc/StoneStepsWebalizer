@@ -181,13 +181,6 @@ class hash_table {
       };
 
       ///
-      /// @brief  Evaluation callback is called first. Returns true if the node
-      ///         can be swapped out, false otherwise. In the latter case the
-      ///         swap-out callback will not be called.
-      ///
-      typedef bool (*eval_cb_t)(const typename inner_node<node_t>::type *node, void *arg);
-
-      ///
       /// @brief  If evaluation was successful, the swap-out callback is called.
       ///         If swap-out callback returns false, the swap_out method exits 
       ///         the loop and returns false.
@@ -261,10 +254,6 @@ class hash_table {
       size_t      emptycnt;   ///< Number of empty buckets
       bucket_t    *htab;      ///< Buckets
 
-      bool        swap;       ///< `true`, if some data is swapped out
-      bool        cleared;    ///< `true` when the table has been cleared
-
-      eval_cb_t   evalcb;     ///< Swap out evaluation callback
       swap_cb_t   swapcb;     ///< Swap out callback
       void        *cbarg;     ///< Swap out callback argument
 
@@ -279,13 +268,11 @@ class hash_table {
 
       swap_code swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr);
 
-      bool swap_out_bucket(bucket_t& bucket);
-
    protected:
       virtual bool load_array_check(const node_t *) const {return true;}
 
    public:
-      hash_table(size_t maxhash = MAXHASH, eval_cb_t evalcb = NULL, swap_cb_t swapcb = NULL, void *cbarg = NULL);
+      hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = NULL, void *cbarg = NULL);
 
       ~hash_table(void);
 
@@ -294,24 +281,10 @@ class hash_table {
       //
       size_t size(void) const {return count;}
 
-      size_t buckets(void) const {return maxhash;} 
-
-      size_t empty_buckets(void) const {return emptycnt;}
-
       //
       // swap-out interface
       //
-      bool is_cleared(void) const {return cleared;}
-
-      void set_cleared(bool value) {cleared = value;}
-
-      bool is_swapped_out(void) const {return swap;}
-
-      void set_swapped_out(bool value) {swap = value;}
-
-      void set_swap_out_cb(eval_cb_t evalcb, swap_cb_t swapcb, void *arg);
-
-      bool swap_out(void);
+      void set_swap_out_cb(swap_cb_t swapcb, void *arg);
 
       //
       // iterators

@@ -23,12 +23,10 @@
 //
 
 template <typename node_t>
-hash_table<node_t>::hash_table(size_t maxhash, eval_cb_t evalcb, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), evalcb(evalcb), swapcb(swapcb), cbarg(cbarg)
+hash_table<node_t>::hash_table(size_t maxhash, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), swapcb(swapcb), cbarg(cbarg)
 {
    count = 0;
    emptycnt = maxhash;
-   swap = false;
-   cleared = false;
    htab = new bucket_t[maxhash];
 }
 
@@ -40,9 +38,8 @@ hash_table<node_t>::~hash_table(void)
 }
 
 template <typename node_t>
-void hash_table<node_t>::set_swap_out_cb(eval_cb_t eval, swap_cb_t swap, void *arg)
+void hash_table<node_t>::set_swap_out_cb(swap_cb_t swap, void *arg)
 {
-   evalcb = eval;
    swapcb = swap;
    cbarg = arg;
 }
@@ -56,10 +53,6 @@ typename hash_table<node_t>::swap_code hash_table<node_t>::swap_out_node(bucket_
       return swap_failed;
 
    nptr = *pptr;
-
-   // check if the node can be swapped out
-   if(evalcb && !evalcb(nptr->node, cbarg))     
-      return swap_inuse;
 
    // unlink the node
    *pptr = nptr->next;
@@ -78,33 +71,9 @@ typename hash_table<node_t>::swap_code hash_table<node_t>::swap_out_node(bucket_
    if(--bucket.count == 0)
       emptycnt++;
 
-   // indicate that some data has been swapped out
-   if(!swap)
-      swap = true;
-
    delete nptr;
 
    return swap_ok;
-}
-
-template <typename node_t>
-bool hash_table<node_t>::swap_out_bucket(bucket_t& bucket)
-{
-   u_int index;
-   swap_code scode;
-   htab_node_t<node_t> **pptr;
-
-   for(index = 0, pptr = &bucket.head; *pptr; index++) {
-      // swap the node out
-      if((scode = swap_out_node(bucket, pptr)) == swap_failed)
-         return false;
-
-      // if the node is in use, assign pptr to node's next
-      if(scode == swap_inuse)
-         pptr = &(*pptr)->next;
-   }
-
-   return true;
 }
 
 template <typename node_t>
@@ -249,7 +218,6 @@ void hash_table<node_t>::clear(void)
       htab[index].count = 0;
    }
 
-   cleared = true;
    count = 0;
    emptycnt = maxhash;
 }
@@ -272,22 +240,3 @@ uint64_t hash_table<node_t>::load_array(const typename inner_node<node_t>::type 
 
    return arridx;
 }
-
-template <typename node_t>
-bool hash_table<node_t>::swap_out(void)
-{
-   if(swapcb == NULL)
-      return true;
-
-   // swap out each bucket
-   for(u_int index = 0; index < maxhash; index++) {
-      if(!htab[index].count)
-         continue;
-
-      if(!swap_out_bucket(htab[index]))
-         return false;
-   }
-
-   return true;
-}
-

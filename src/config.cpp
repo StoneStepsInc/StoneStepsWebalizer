@@ -61,7 +61,6 @@ config_t::config_t(void)
    compact_db = false;
    db_info = false;
    end_month = false;
-   memory_mode = true;
 
    pipe_log_names  = false;
 
@@ -121,9 +120,6 @@ config_t::config_t(void)
    db_seq_cache_size = 1024;
    db_direct = false;
    db_dsync = false;
-
-   swap_first_record = 100;
-   swap_frequency = 100;
 
    http_port = DEF_HTTP_PORT;                 // HTTP port number
    https_port = DEF_HTTPS_PORT;               // HTTPS port number
@@ -801,7 +797,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots:  
+                     // max key: 191; empty slots: 147, 151, 152 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -964,7 +960,6 @@ void config_t::get_config(const char *fname)
                      {"MaxURLs",             174},          // Maximum URLs
                      {"MaxUsers",            178},          // Maximum Users
                      {"MaxVisitLength",      187},          // Maximum visit length
-                     {"MemoryMode",          147},          // Memory or database mode?
                      {"MonthlyTotals",       127},          // Output monthly totals report?
                      {"NoDefaultIndexAlias", 92},           // Ignore default index alias?
                      {"OutputDir",           1},            // Output directory
@@ -980,8 +975,6 @@ void config_t::get_config(const char *fname)
                      {"SiteName",            4},            // Synonym for HostName
                      {"SortSearchArgs",      107},          // Sort search arguments ?
                      {"SpamReferrer",        142},          // Spam referrer
-                     {"SwapFirstRecord",     151},          // First record # to start DB swapping
-                     {"SwapFrequency",       152},          // DB-swap each N record
                      {"TargetDownloads",     169},          // Treat download URLs as targets?
                      {"TargetURL",           168},          // Target URL pattern
                      {"TimeMe",              7},            // Produce timing results
@@ -1223,12 +1216,9 @@ void config_t::get_config(const char *fname)
          case 144: db_path = value; break;
          case 145: db_fname = value; break;
          case 146: db_cache_size = get_db_cache_size(value); break;
-         case 147: memory_mode = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 148: db_fname_ext = value; break;
          case 149: db_seq_cache_size = atoi(value); break;
          case 150: db_trickle_rate = atoi(value); break;
-         case 151: swap_first_record = atoi(value) * 1000; break;
-         case 152: swap_frequency = atoi(value) * 1000; break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 154: db_dsync = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;

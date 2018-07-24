@@ -54,12 +54,6 @@ state_t::~state_t(void)
    delete [] buffer;
 }
 
-bool state_t::eval_hnode_cb(const hnode_t *hnode, void *arg)
-{
-   // do not swap out node if there are active visits or downloads
-   return (!hnode || hnode->visit || hnode->grp_visit || hnode->dlref) ? false : true;
-}
-
 bool state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
 {
    state_t *_this = (state_t*) arg;
@@ -72,12 +66,6 @@ bool state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
    return true;
 }
 
-bool state_t::eval_unode_cb(const unode_t *unode, void *arg)
-{
-   // do not swap out node is there are visits referring to this node
-   return (!unode || unode->vstref) ? false : true;
-}
-
 bool state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
 {
    state_t *_this = (state_t*) arg;
@@ -88,22 +76,6 @@ bool state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
    }
 
    return true;
-}
-
-void state_t::swap_out(void)
-{
-   //
-   // monthly hosts
-   //
-   if(!hm_htab.swap_out())
-      throw exception_t(0, "Cannot swap out the monthly hosts table");
-
-   //
-   // monthly URLs
-   //
-   if(!um_htab.swap_out())
-      throw exception_t(0, "Cannot swap out the monthly URL table");
-
 }
 
 ///
@@ -362,7 +334,7 @@ bool state_t::initialize(void)
    }
    else {
       // enable trickling if trickle rate is not zero (database mode)
-      if(config.db_trickle_rate && !config.memory_mode)
+      if(config.db_trickle_rate)
          database.set_trickle(true);
    }
 
@@ -461,37 +433,14 @@ bool state_t::initialize(void)
    for(index = 0; config.lang.ctry[index].desc; index++)
       cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc);
 
-   // indicate that hash tables are in sync with the database
-   hm_htab.set_cleared(false);
-   um_htab.set_cleared(false);
-   rm_htab.set_cleared(false);
-   am_htab.set_cleared(false);
-   sr_htab.set_cleared(false);
-   im_htab.set_cleared(false);
-   rc_htab.set_cleared(false);
-   dl_htab.set_cleared(false);
-
-   // indicate that none of data is swapped out
-   hm_htab.set_swapped_out(false);
-   um_htab.set_swapped_out(false);
-   rm_htab.set_swapped_out(false);
-   am_htab.set_swapped_out(false);
-   sr_htab.set_swapped_out(false);
-   im_htab.set_swapped_out(false);
-   rc_htab.set_swapped_out(false);
-   dl_htab.set_swapped_out(false);
-
    // initalize main counters
    init_counters();                      
 
    // initalize hash tables
    del_htabs();
 
-   if(!config.memory_mode) {
-      // set swap-out callbacks
-      hm_htab.set_swap_out_cb(eval_hnode_cb, swap_hnode_cb, this);
-      um_htab.set_swap_out_cb(eval_unode_cb, swap_unode_cb, this);
-   }
+   hm_htab.set_swap_out_cb(swap_hnode_cb, this);
+   um_htab.set_swap_out_cb(swap_unode_cb, this);
 
    return true;
 }
@@ -637,122 +586,29 @@ int state_t::restore_state(void)
    // and downloads).
    //
 
-   if(!config.memory_mode) {
-      {// restore active visits and associated hosts
-      storable_t<vnode_t> vnode;
-      database_t::iterator<vnode_t> iter = database.begin_visits();
-      storable_t<hnode_t> hnode;
-      while(iter.next(vnode)) {
-         hnode.nodeid = vnode.nodeid;
-         if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
-            return 20;
-         hm_htab.put_node(new storable_t<hnode_t>(hnode));
-         hnode.reset();
-      }}
-
-      {// restore active download jobs 
-      database_t::iterator<danode_t> iter = database.begin_active_downloads();
-      storable_t<danode_t> danode;
-      storable_t<dlnode_t> dlnode;
-      while(iter.next(danode)) {
-         dlnode.nodeid = danode.nodeid;
-         if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
-            return 21;
-         dl_htab.put_node(new storable_t<dlnode_t>(dlnode));
-         dlnode.reset();
-      }}
-
-      // indicate that hash tables contain only some database data
-      hm_htab.set_swapped_out(true);
-      um_htab.set_swapped_out(true);
-      rm_htab.set_swapped_out(true);
-      am_htab.set_swapped_out(true);
-      sr_htab.set_swapped_out(true);
-      im_htab.set_swapped_out(true);
-      rc_htab.set_swapped_out(true);
-      dl_htab.set_swapped_out(true);
-
-      return 0;
-   }
-
-   //
-   // In the memory mode, read all nodes into memory
-   //
-
-   {// start with URLs, as they may be referenced by visit nodes (see unpack_vnode_cb)
-   database_t::iterator<unode_t> iter = database.begin_urls(NULL);
-   storable_t<unode_t> unode;
-   while(iter.next(unode)) {
-      um_htab.put_node(new storable_t<unode_t>(unode));
-      unode.reset();
-   }
-   iter.close();
-   }
-
-   {// monthly hosts
-   database_t::iterator<hnode_t> iter = database.begin_hosts(NULL);
+   {// restore active visits and associated hosts
+   storable_t<vnode_t> vnode;
+   database_t::iterator<vnode_t> iter = database.begin_visits();
    storable_t<hnode_t> hnode;
-   while(iter.next(hnode, unpack_hnode_cb, this)) {
+   while(iter.next(vnode)) {
+      hnode.nodeid = vnode.nodeid;
+      if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
+         return 20;
       hm_htab.put_node(new storable_t<hnode_t>(hnode));
       hnode.reset();
-   }
-   iter.close();
-   }
+   }}
 
-   {// referrers table
-   database_t::iterator<rnode_t> iter = database.begin_referrers(NULL);
-   storable_t<rnode_t> rnode;
-   while(iter.next(rnode)) {
-      rm_htab.put_node(new storable_t<rnode_t>(rnode));
-   }
-   iter.close();
-   }
-
-   {// User agent list
-   database_t::iterator<anode_t> iter = database.begin_agents(NULL);
-   storable_t<anode_t> anode;
-   while(iter.next(anode)) {
-      am_htab.put_node(new storable_t<anode_t>(anode));
-   }
-   iter.close();
-   }
-
-   {// Search String list
-   database_t::iterator<snode_t> iter = database.begin_search(NULL);
-   storable_t<snode_t> snode;
-   while(iter.next(snode)) {
-      sr_htab.put_node(new storable_t<snode_t>(snode));
-   }
-   iter.close();
-   }
-
-   {// username list
-   database_t::iterator<inode_t> iter = database.begin_users(NULL);
-   storable_t<inode_t> inode;
-   while(iter.next(inode)) {
-      im_htab.put_node(new storable_t<inode_t>(inode));
-   }
-   iter.close();
-   }
-
-   {// error list
-   database_t::iterator<rcnode_t> iter = database.begin_errors(NULL);
-   storable_t<rcnode_t> rcnode;
-   while(iter.next(rcnode)) {
-      rc_htab.put_node(new storable_t<rcnode_t>(rcnode));
-   }
-   iter.close();
-   }
-
-   {// downloads
-   database_t::iterator<dlnode_t> iter = database.begin_downloads(NULL);
+   {// restore active download jobs 
+   database_t::iterator<danode_t> iter = database.begin_active_downloads();
+   storable_t<danode_t> danode;
    storable_t<dlnode_t> dlnode;
-   while(iter.next(dlnode, unpack_dlnode_cb, this)) {
+   while(iter.next(danode)) {
+      dlnode.nodeid = danode.nodeid;
+      if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
+         return 21;
       dl_htab.put_node(new storable_t<dlnode_t>(dlnode));
       dlnode.reset();
-   }
-   iter.close();
-   }
+   }}
 
    return 0;
 }

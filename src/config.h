@@ -108,7 +108,6 @@ class config_t {
       // run flags
       bool incremental;                         ///< incremental mode (partial log procesing)
       bool batch;                               ///< batch processing (no report generated)
-      bool memory_mode;                         ///< store least used data on disk during a run?
       
       bool pipe_log_names ;                     ///< Read log file names from stdin?
       bool last_log;                            ///< End month after this log file?
@@ -217,9 +216,6 @@ class config_t {
       uint32_t db_trickle_rate;                 ///< database trickle rate
       bool db_direct;                           ///< use system buffering?
       bool db_dsync;                            ///< write-through?
-
-      u_int swap_first_record;                  ///< first record to start swapping
-      u_int swap_frequency;                     ///< swap every n'th record
 
       u_int visit_timeout;                      ///< visit timeout, in seconds (30 min)   
       u_int max_visit_length;                   ///< maximum visit length, in seconds

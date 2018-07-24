@@ -122,8 +122,6 @@ class state_t {
 
       void set_tstamp(const tstamp_t& tstamp);
 
-      void swap_out(void);
-
       const sysnode_t& get_sysnode(void) const {return sysnode;}
 
       void database_info(void) const;

@@ -1776,25 +1776,6 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(config.is_dns_enabled())
             process_resolved_hosts();
-
-         //
-         // swap out hash tables in the database mode
-         //
-         if(!config.memory_mode && total_good >= config.swap_first_record) {
-            if(lrcnt.total_rec && total_good % config.swap_frequency == 0) {
-               stime = msecs();
-
-               //
-               // We need to process ended visits and downloads, so they don't prevent
-               // their associated host nodes from being swapped out. 
-               //
-               update_visits(log_rec.tstamp);
-               update_downloads(log_rec.tstamp);
-
-               state.swap_out();
-               ptms.mnt_time += elapsed(stime, msecs());
-            }
-         }
       }
    }
 
@@ -2304,7 +2285,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
-      if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
 
@@ -2416,7 +2397,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
-      if(!state.hm_htab.is_swapped_out() || !state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
 
@@ -2473,7 +2454,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
    if((nptr = state.rm_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rnode_t>(str);
-      if(!state.rm_htab.is_swapped_out() || !state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
+      if(!state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
          nptr->nodeid = state.database.get_rnode_id();
          nptr->flag  = type;
          nptr->count = count;
@@ -2527,7 +2508,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t&
       /* not hashed */
       cptr = new storable_t<unode_t>(str, srchargs);
       // check if in the database
-      if(!state.um_htab.is_swapped_out() || !state.database.get_unode_by_value(*cptr)) {
+      if(!state.database.get_unode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_unode_id();
          cptr->flag = type;
          cptr->count= 1;
@@ -2602,7 +2583,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
       /* not hashed */
       nptr = new storable_t<rcnode_t>(method, url, respcode);
 
-      if(!state.rc_htab.is_swapped_out() || !state.database.get_rcnode_by_value(*nptr, NULL, NULL)) {
+      if(!state.database.get_rcnode_by_value(*nptr, NULL, NULL)) {
          nptr->nodeid = state.database.get_rcnode_id();
          nptr->flag = OBJ_REG;
          nptr->count = count;
@@ -2640,7 +2621,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
    if((cptr = state.am_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
       cptr = new storable_t<anode_t>(str, robot);
-      if(!state.am_htab.is_swapped_out() || !state.database.get_anode_by_value(*cptr)) {
+      if(!state.database.get_anode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_anode_id();
          cptr->flag = type;
          cptr->count = 1;
@@ -2691,7 +2672,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    if((nptr = state.sr_htab.find_node(hashval, str)) == NULL) {
       /* not hashed */
       nptr = new storable_t<snode_t>(str);
-      if(!state.sr_htab.is_swapped_out() || !state.database.get_snode_by_value(*nptr)) {
+      if(!state.database.get_snode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_snode_id();
          nptr->count = 1;
          nptr->termcnt = termcnt;
@@ -2746,7 +2727,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    if((nptr = state.im_htab.find_node(hashval, str, type)) == NULL) {
       /* not hashed */
       nptr = new storable_t<inode_t>(str);
-      if(!state.im_htab.is_swapped_out() || !state.database.get_inode_by_value(*nptr)) {
+      if(!state.database.get_inode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_inode_id();
          nptr->flag  = type;
          nptr->count = 1;
@@ -2823,7 +2804,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    //
    if((nptr = state.dl_htab.find_node(hashval, &params)) == NULL) {
       nptr = new storable_t<dlnode_t>(name, &hnode);
-      if(!state.dl_htab.is_swapped_out() || !state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cb, &state)) {
+      if(!state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cb, &state)) {
          nptr->nodeid = state.database.get_dlnode_id();
          nptr->download = new storable_t<danode_t>(nptr->nodeid);
 

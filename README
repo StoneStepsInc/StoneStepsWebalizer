@@ -1774,17 +1774,6 @@ JavaScriptChartsPath
 Database Configuration Options
 ------------------------------
 
-MemoryMode    Controls whether SSW runs in memory (yes) or database 
-              mode (no). In memory mode, SSW loads all data in memory 
-              and saves all resulting data back to the database at the 
-              end of each run. This mode is the fastest when the size 
-              of the data set is relatively small. In the database 
-              mode, SSW loads only necessary data into memory and 
-              queries the database for missing data when processing a 
-              log file. While database mode is approximately 4 times 
-              slower than memory mode, it allows to process larger 
-              log files then memory mode does. Default value: yes
-              
 BatchProcessing
 Batch
               Instructs SSW to run in the special batch mode, which 
@@ -1793,17 +1782,6 @@ Batch
               command line argument can be used to generate the 
               monthly report (--prepare-report). Default value: no
               Command line argument: --batch
-
-SwapFirstRecord 
-SwapFrequency
-              These parameters instruct SSW to start moving processed 
-              data to the database file (swapping) after the number of 
-              processed records is greater than SwapFirstRecord and 
-              then every SwapFrequency records. These values are 
-              expressed in thousands of records. That is, values 100 
-              and 50 mean one hundred thousands and fifty thousand. 
-              These parameters are only used in the database mode. 
-              Default values: 100
 
 DbTrickleRate Specifies the percentage of database pages Berkeley DB 
               will try to clear in background while swapping data out 
