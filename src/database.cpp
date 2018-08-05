@@ -40,6 +40,47 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
 }
 
 ///
+/// @name   Database Schema
+///
+/// Most tables (primary databases) contain no references to other tables and are
+/// structured this way:
+/// ```
+/// * node ID        - Numeric key derived from sequence database with the `.seq` 
+///                    suffix
+/// * node value     - UTF-8 character value (e.g. URL, User Agent, etc)
+/// * value hash     - Hash of the node value to facilitate value sorting in value
+///                    databases with the `.values` suffix without value duplication
+/// * node data      - Serialized versioned node data
+/// ```
+/// A few tables listed below contain references to other tables.
+///
+/// **visits.active**
+///
+/// This table contains active visits that have not yet ended and reference these
+/// tables:
+/// ```
+/// hosts            - Visit ID is the same as the corresponding host ID
+/// urls             - Contains the node ID of the last visited URL
+/// ```
+///
+/// **downloads.active**
+///
+/// This table contains active downloads that have yet not been completed. 
+/// ```
+/// download node ID - Active download ID is the same as the download ID
+/// ```
+///
+/// **downloads**
+///
+/// This table contains all completed downloads.
+/// ```
+/// hosts            - Contains the node ID of the host for this download
+/// downloads.active - If a download is marked as active, download ID is the 
+///                    same as the active download ID
+/// ```
+/// @{
+
+///
 /// An array of primary table descriptors that contains all data to set up
 /// all primary tables without indexes.
 ///
@@ -165,6 +206,8 @@ const struct database_t::index_desc_t {
    {&database_t::errors, "errors.hits", 
          &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>}
 };
+
+/// @}
 
 // -----------------------------------------------------------------------
 //
