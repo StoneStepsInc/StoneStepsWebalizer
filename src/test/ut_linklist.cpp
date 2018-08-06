@@ -12,7 +12,7 @@
 #include "../linklist.h"
 
 namespace sswtest {
-class LinkedListTest : public testing::Test {
+class NListTest : public testing::Test {
    protected:
       void FillNList(nlist& list)
       {
@@ -26,7 +26,7 @@ class LinkedListTest : public testing::Test {
 ///
 /// @brief  nlist Substring Search
 ///
-TEST_F(LinkedListTest, NListSubstringSearch)
+TEST_F(NListTest, NListSubstringSearch)
 {
    nlist list;
 
@@ -49,7 +49,7 @@ TEST_F(LinkedListTest, NListSubstringSearch)
 ///
 /// @brief  nlist Word Search
 ///
-TEST_F(LinkedListTest, NListWordSearch)
+TEST_F(NListTest, NListWordSearch)
 {
    nlist list;
 
@@ -72,8 +72,7 @@ TEST_F(LinkedListTest, NListWordSearch)
 ///
 /// @brief  nlist Prefix Search
 ///
-
-TEST_F(LinkedListTest, NListPrefixSearch)
+TEST_F(NListTest, NListPrefixSearch)
 {
    const string_t *result = nullptr;
    nlist list;
@@ -102,8 +101,7 @@ TEST_F(LinkedListTest, NListPrefixSearch)
 ///
 /// @brief  nlist Suffix Search
 ///
-
-TEST_F(LinkedListTest, NListSuffixSearch)
+TEST_F(NListTest, NListSuffixSearch)
 {
    const string_t *result = nullptr;
    nlist list;
@@ -132,8 +130,7 @@ TEST_F(LinkedListTest, NListSuffixSearch)
 ///
 /// @brief  glist Config Include
 ///
-
-TEST_F(LinkedListTest, GListConfigHostInclude)
+TEST(GListTest, GListConfigHostInclude)
 {
    int included = 0;
    glist list;
@@ -190,8 +187,7 @@ TEST_F(LinkedListTest, GListConfigHostInclude)
 ///
 /// @brief  glist Duplicate Values
 ///
-
-TEST_F(LinkedListTest, GListDuplicateValues)
+TEST(GListTest, GListDuplicateValues)
 {
    const char *names[] = {"name-3", "name-4", "name-5", nullptr};
    int nameidx = 0;
@@ -227,8 +223,7 @@ TEST_F(LinkedListTest, GListDuplicateValues)
 ///
 /// @brief  glist Duplicate Search Engine Values
 ///
-
-TEST_F(LinkedListTest, GListDuplicateSearchValues)
+TEST(GListTest, GListDuplicateSearchValues)
 {
    const char *names[] = {"name-3=", "name-4=", "name-5=", nullptr};
    const char *qualifiers[] = {"three", "four", "five", nullptr};
