@@ -45,7 +45,6 @@ struct base_list_node_t {
       }
 
    public:
-      base_list_node_t(void) {}
       base_list_node_t(const char *str) {string.assign(str); init_delta_table();}
       base_list_node_t(const char *str, size_t slen) {string.assign(str, slen); init_delta_table();}
       base_list_node_t(const string_t& str) {string = str; init_delta_table();}
@@ -111,14 +110,7 @@ class base_list {
 ///
 /// @brief  A list node for IGNORE and HIDE list items
 ///
-struct nnode_t : public base_list_node_t {
-   private:
-      nnode_t(void) : base_list_node_t() {}
-
-   public:
-      nnode_t(const char *str) : base_list_node_t(str) {}
-      nnode_t(const string_t& str) : base_list_node_t(str) {}
-};
+typedef base_list_node_t nnode_t;
 
 ///
 /// @class  nlist
@@ -158,9 +150,6 @@ struct gnode_t : public base_list_node_t {
    string_t name;                            // name
    string_t qualifier;                       // name qualifier
    bool     noname;
-
-   private:
-      gnode_t(void) {noname = true;}
 
    public:
       gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen);

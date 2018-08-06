@@ -93,16 +93,11 @@ bool nlist::iswildcard(void) const
    return (!list.empty() && list.front().string[0] == '*' && list.front().string[1] == 0);
 }
 
-gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen)
+gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen) :
+      base_list_node_t(value ? value : "", vlen ? vlen : value && *value? strlen(value) : 0)
 {
-   if(value == NULL)
-      throw std::invalid_argument("Group key value cannot be NULL");
-
-   if(vlen == 0)
-      vlen = strlen(value);
-
    if(name == NULL || *name == 0) {
-      nlen = vlen;
+      nlen = vlen ? vlen : value && *value ? strlen(value) : 0;
       name = value;
    }
    else {
@@ -112,8 +107,6 @@ gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, 
 
    if(qualifier && qlen == 0)
       qlen = strlen(qualifier);
-
-   set_key(value, vlen);
 
    this->name.assign(name, nlen);
 

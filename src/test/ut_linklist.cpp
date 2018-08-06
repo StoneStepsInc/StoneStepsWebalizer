@@ -262,4 +262,68 @@ TEST_F(LinkedListTest, GListDuplicateSearchValues)
    // only three entries should be found
    EXPECT_EQ(3, nameidx) << "The number of iterations should match the number of entries in the names array";
 }
+
+///
+/// @brief  Tests how `gnode_t` is constructed with a name argument.
+///
+TEST(GListNodeTest, ConstructGNodeWithName)
+{
+   gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
+   EXPECT_TRUE(gn1.name.isempty()) << "A NULL name pointer should yield an empty node name";
+   EXPECT_TRUE(gn1.noname);
+   
+   gnode_t gn2("", 0, nullptr, 0, nullptr, 0);
+   EXPECT_TRUE(gn2.name.isempty()) << "An empty name pointer should yield an empty node name";
+   EXPECT_TRUE(gn2.noname);
+   
+   gnode_t gn3("name1", 0, nullptr, 0, nullptr, 0);
+   EXPECT_STREQ(gn3.name.c_str(), "name1") << "A non-empty name argument with a zero length should treat it as a C-string";
+   EXPECT_FALSE(gn3.noname);
+
+   gnode_t gn4("name1abc", 5, nullptr, 0, nullptr, 0);
+   EXPECT_STREQ(gn4.name.c_str(), "name1") << "Only the specified number of name characters should be used to assign the node name";
+   EXPECT_FALSE(gn4.noname);
+}
+
+///
+/// @brief  Tests how `gnode_t` is constructed with a value argument.
+///
+TEST(GListNodeTest, ConstructGNodeWithValue)
+{
+   gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
+   EXPECT_TRUE(gn1.string.isempty()) << "A NULL value pointer should yield an empty node name";
+   EXPECT_TRUE(gn1.noname);
+   
+   gnode_t gn2(nullptr, 0, "", 0, nullptr, 0);
+   EXPECT_TRUE(gn2.string.isempty()) << "An empty value pointer should yield an empty node name";
+   EXPECT_TRUE(gn2.noname);
+   
+   gnode_t gn3(nullptr, 0, "value1", 0, nullptr, 0);
+   EXPECT_STREQ(gn3.string.c_str(), "value1") << "A non-empty value argument with a zero length should treat it as a C-string";
+   EXPECT_STREQ(gn3.name.c_str(), "value1") << "An empty name argument should set the node name the same as its value";
+   EXPECT_TRUE(gn3.noname);
+
+   gnode_t gn4(nullptr, 0, "value1abc", 6, nullptr, 0);
+   EXPECT_STREQ(gn4.string.c_str(), "value1") << "Only the specified number of value characters should be used to assign the node value";
+   EXPECT_STREQ(gn4.name.c_str(), "value1") << "An empty name argument should set the node name the same as its value";
+   EXPECT_TRUE(gn4.noname);
+}
+
+///
+/// @brief  Tests how `gnode_t` is constructed with a qualifier argument.
+///
+TEST(GListNodeTest, ConstructGNodeWithQualifier)
+{
+   gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
+   EXPECT_TRUE(gn1.string.isempty()) << "A NULL qualifier pointer should yield an empty node name";
+   
+   gnode_t gn2(nullptr, 0, "", 0, nullptr, 0);
+   EXPECT_TRUE(gn2.string.isempty()) << "An empty qualifier pointer should yield an empty node name";
+   
+   gnode_t gn3(nullptr, 0, nullptr, 0, "qualifier1", 0);
+   EXPECT_STREQ(gn3.qualifier.c_str(), "qualifier1") << "A non-empty qualifier argument with a zero length should treat it as a C-string";
+
+   gnode_t gn4(nullptr, 0, nullptr, 0, "qualifier1abc", 10);
+   EXPECT_STREQ(gn4.qualifier.c_str(), "qualifier1") << "Only the specified number of qualifier characters should be used to assign the node qualifier";
+}
 }
