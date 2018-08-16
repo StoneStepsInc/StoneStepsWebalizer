@@ -147,9 +147,9 @@ class database_t : public berkeleydb_t {
 
       bool put_dlnode(const dlnode_t& dlnode, storage_info_t& strg_info);
 
-      bool get_dlnode_by_id(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_dlnode_by_id(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode) const;
 
-      bool get_dlnode_by_value(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg) const;
+      bool get_dlnode_by_value(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode) const;
 
       uint64_t get_dlcount(const char *dbname = NULL) const {return downloads.count(dbname);}
 

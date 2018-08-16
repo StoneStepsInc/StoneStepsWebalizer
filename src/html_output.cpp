@@ -1126,9 +1126,9 @@ void html_output_t::top_hosts_table(int flag)
    uint64_t a_ctr;
    u_int i;
    uint32_t tot_num, ntop_num;
-   const hnode_t *hptr;
+   const storable_t<hnode_t> *hptr;
    const char *cdesc = NULL;
-   hnode_t *h_array;
+   storable_t<hnode_t> *h_array;
 
    // return if nothing to process
    if (state.totals.t_hosts == 0) return;
@@ -1142,7 +1142,7 @@ void html_output_t::top_hosts_table(int flag)
    tot_num = (a_ctr > ntop_num) ? ntop_num : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   h_array = new hnode_t[tot_num];
+   h_array = new storable_t<hnode_t>[tot_num];
 
    i = 0;
 
@@ -1150,7 +1150,7 @@ void html_output_t::top_hosts_table(int flag)
    if(!flag && config.bundle_groups) {
       database_t::reverse_iterator<hnode_t> iter = state.database.rbegin_hosts(flag ? "hosts.groups.xfer" : "hosts.groups.hits");
 
-      while(i < tot_num && iter.prev(h_array[i]))
+      while(i < tot_num && iter.prev(h_array[i], nullptr, nullptr))
          i++;
 
       iter.close();
@@ -1160,7 +1160,7 @@ void html_output_t::top_hosts_table(int flag)
    if(i < tot_num) {
       database_t::reverse_iterator<hnode_t> iter = state.database.rbegin_hosts(flag ? "hosts.xfer" : "hosts.hits");
 
-      while(i < tot_num && iter.prev(h_array[i])) {
+      while(i < tot_num && iter.prev(h_array[i], nullptr, nullptr)) {
          if(h_array[i].flag == OBJ_REG) {
             // ignore hosts matching any of the hiding patterns
             if(config.hide_hosts || h_array[i].robot && config.hide_robots || config.hidden_hosts.isinlist(h_array[i].string) || config.hidden_hosts.isinlist(h_array[i].name))
@@ -1314,7 +1314,7 @@ void html_output_t::top_hosts_table(int flag)
 
 int html_output_t::all_hosts_page(void)
 {
-   hnode_t  hnode;
+   storable_t<hnode_t> hnode;
    string_t site_fname;
    FILE     *out_fp;
 
@@ -1352,7 +1352,7 @@ int html_output_t::all_hosts_page(void)
       database_t::reverse_iterator<hnode_t> iter = state.database.rbegin_hosts("hosts.groups.hits");
 
       /* Do groups first (if any) */
-      while(iter.prev(hnode)) {
+      while(iter.prev(hnode, nullptr, nullptr)) {
          if (hnode.flag == OBJ_GRP)
          {
             fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %7.02f %7.02f",
@@ -1383,7 +1383,7 @@ int html_output_t::all_hosts_page(void)
    if (!config.hide_hosts) {
       database_t::reverse_iterator<hnode_t> iter = state.database.rbegin_hosts("hosts.hits");
 
-      while(iter.prev(hnode)) {
+      while(iter.prev(hnode, nullptr, nullptr)) {
          if(hnode.flag == OBJ_REG) {
             if(hnode.robot && config.hide_robots || config.hidden_hosts.isinlist(hnode.string) || config.hidden_hosts.isinlist(hnode.name))
                continue;
@@ -1429,8 +1429,8 @@ void html_output_t::top_urls_table(int flag)
    uint64_t a_ctr;
    u_int i;
    uint32_t tot_num, ntop_num; 
-   const unode_t *uptr;
-   unode_t *u_array;
+   const storable_t<unode_t> *uptr;
+   storable_t<unode_t> *u_array;
    string_t str;
 
    // return if nothing to process
@@ -1445,7 +1445,7 @@ void html_output_t::top_urls_table(int flag)
    tot_num = (a_ctr > ntop_num) ? ntop_num : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   u_array = new unode_t[tot_num];
+   u_array = new storable_t<unode_t>[tot_num];
 
    i = 0;
 
@@ -1453,7 +1453,7 @@ void html_output_t::top_urls_table(int flag)
    if(config.bundle_groups) {
       database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls(flag ? "urls.groups.xfer" : "urls.groups.hits");
 
-      while(i < tot_num && iter.prev(u_array[i]))
+      while(i < tot_num && iter.prev(u_array[i], nullptr, nullptr))
          i++;
 
       iter.close();
@@ -1463,7 +1463,7 @@ void html_output_t::top_urls_table(int flag)
    if(i < tot_num) {
       database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls(flag ? "urls.xfer" : "urls.hits");
 
-      while(i < tot_num && iter.prev(u_array[i])) {
+      while(i < tot_num && iter.prev(u_array[i], nullptr, nullptr)) {
          if(u_array[i].flag == OBJ_REG) {
             // ignore URLs matching any of the hiding patterns
             if(config.hidden_urls.isinlistex(u_array[i].string, u_array[i].pathlen, true))
@@ -1600,7 +1600,7 @@ void html_output_t::top_urls_table(int flag)
 
 int html_output_t::all_urls_page(void)
 {
-   unode_t  unode;
+   storable_t<unode_t> unode;
    string_t url_fname;
    FILE     *out_fp;
 
@@ -1626,7 +1626,7 @@ int html_output_t::all_urls_page(void)
    if(state.totals.t_grp_urls) {
       database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls("urls.groups.hits");
       
-      while (iter.prev(unode)) {
+      while (iter.prev(unode, nullptr, nullptr)) {
          if (unode.flag == OBJ_GRP) {
             buffer_formatter.set_scope_mode(buffer_formatter_t::append),
             fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f   %s\n",
@@ -1647,7 +1647,7 @@ int html_output_t::all_urls_page(void)
    /* now do invididual sites (if any) */
    database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls("urls.hits");
 
-   while (iter.prev(unode)) {
+   while (iter.prev(unode, nullptr, nullptr)) {
       if(unode.flag == OBJ_REG) {
          if(config.hidden_urls.isinlistex(unode.string, unode.pathlen, true))
             continue;
@@ -1681,9 +1681,8 @@ void html_output_t::top_entry_table(int flag)
    uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
-   unode_t unode;
-   unode_t *u_array;
-   const unode_t *uptr;
+   storable_t<unode_t> *u_array;
+   const storable_t<unode_t> *uptr;
    string_t str;
 
    // return if nothing to process
@@ -1700,14 +1699,14 @@ void html_output_t::top_entry_table(int flag)
       tot_num = (a_ctr > config.ntop_entry) ? config.ntop_entry : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   u_array = new unode_t[tot_num];
+   u_array = new storable_t<unode_t>[tot_num];
 
    i = 0;
 
    // traverse the entry/exit tables and populate the array
    database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls(flag ? "urls.exit" : "urls.entry");
 
-   while(i < tot_num && iter.prev(u_array[i])) {
+   while(i < tot_num && iter.prev(u_array[i], nullptr, nullptr)) {
       if(u_array[i].flag == OBJ_REG && !config.hidden_urls.isinlistex(u_array[i].string, u_array[i].pathlen, true)) {
          // do not show entries with zero entry/exit values
          if(!flag && u_array[i].entry || flag && u_array[i].exit)
@@ -1809,8 +1808,8 @@ void html_output_t::top_refs_table()
    uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
-   const rnode_t *rptr;
-   rnode_t *r_array;
+   const storable_t<rnode_t> *rptr;
+   storable_t<rnode_t> *r_array;
    const char *cp1;
    string_t str;
 
@@ -1825,7 +1824,7 @@ void html_output_t::top_refs_table()
    tot_num = (a_ctr > config.ntop_refs) ? config.ntop_refs : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   r_array = new rnode_t[tot_num];
+   r_array = new storable_t<rnode_t>[tot_num];
 
    i = 0;
 
@@ -1833,7 +1832,7 @@ void html_output_t::top_refs_table()
    if(config.bundle_groups) {
       database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.groups.hits");
 
-      while(i < tot_num && iter.prev(r_array[i]))
+      while(i < tot_num && iter.prev(r_array[i], nullptr, nullptr))
          i++;
 
       iter.close();
@@ -1843,7 +1842,7 @@ void html_output_t::top_refs_table()
    if(i < tot_num) {
       database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.hits");
 
-      while(i < tot_num && iter.prev(r_array[i])) {
+      while(i < tot_num && iter.prev(r_array[i], nullptr, nullptr)) {
          if(r_array[i].flag == OBJ_REG) {
             // ignore referrers matching any of the hiding patterns
             if(config.hidden_refs.isinlist(r_array[i].string))
@@ -1969,9 +1968,11 @@ void html_output_t::top_dl_table(void)
    uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
-   const dlnode_t *nptr;
+   const storable_t<dlnode_t> *nptr;
    const char *cdesc = NULL;
-   dlnode_t *dl_array;
+   storable_t<dlnode_t> *dl_array;
+   storable_t<hnode_t> *h_array;
+   storable_t<danode_t> *da_array;
 
    if((a_ctr = state.totals.t_downloads) == 0)
       return;
@@ -1980,13 +1981,14 @@ void html_output_t::top_dl_table(void)
    tot_num = (a_ctr > config.ntop_downloads) ? config.ntop_downloads : (uint32_t) a_ctr;
 
    // get top tot_num xfer-ordered nodes from the state.database
-   dl_array = new dlnode_t[tot_num];
+   dl_array = new storable_t<dlnode_t>[tot_num];
+   h_array = new storable_t<hnode_t>[tot_num];
+   da_array = new storable_t<danode_t>[tot_num];
 
    database_t::reverse_iterator<dlnode_t> iter = state.database.rbegin_downloads("downloads.xfer");
 
    for(i = 0; i < tot_num; i++) {
-      // state_t::unpack_dlnode_const_cb does not modify state
-      if(!iter.prev(dl_array[i], state_t::unpack_dlnode_const_cb, const_cast<state_t*>(&state)))
+      if(!iter.prev(dl_array[i], state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), h_array[i], da_array[i]))
          break;
    }
 
@@ -2030,8 +2032,7 @@ void html_output_t::top_dl_table(void)
    i=0;
    nptr = &dl_array[0];
    for(i = 0; i < tot_num; i++) {
-      if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %" PRIu64 ")", nptr->nodeid));
+      dl_array[i].set_host(&h_array[i]);
 
       if(config.ntop_ctrys) {
          if(!nptr->hnode)
@@ -2079,7 +2080,10 @@ void html_output_t::top_dl_table(void)
    }
    fputs("</tbody>\n", out_fp);
 
+   // delete the download nodes first and then other nodes to avoid dangling references
    delete [] dl_array;
+   delete [] da_array;
+   delete [] h_array;
 
    // check if the all-downloads should be generated
    if (config.all_downloads && tot_num == config.ntop_downloads && a_ctr > config.ntop_downloads)
@@ -2104,7 +2108,9 @@ int html_output_t::all_downloads_page(void)
    FILE     *out_fp;
    string_t dl_fname;
    const char *cdesc = NULL;
-   dlnode_t dlnode;
+   storable_t<dlnode_t> dlnode;
+   storable_t<hnode_t> hnode;
+   storable_t<danode_t> danode;
 
    if(state.totals.t_downloads == 0)
       return 0;
@@ -2142,12 +2148,10 @@ int html_output_t::all_downloads_page(void)
    }
    fputs("  -------------------------------\n\n", out_fp);
 
-   // state_t::unpack_dlnode_const_cb does not modify state
-   while(iter.prev(dlnode, state_t::unpack_dlnode_const_cb, const_cast<state_t*>(&state))) {
-      nptr = &dlnode;
+   while(iter.prev(dlnode, state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode, danode)) {
+      dlnode.set_host(&hnode);
 
-      if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %" PRIu64 ")", nptr->nodeid));
+      nptr = &dlnode;
 
       if(config.ntop_ctrys) {
          if(!nptr->hnode)
@@ -2193,7 +2197,7 @@ void html_output_t::top_err_table(void)
    uint32_t tot_num;
    u_int i;
    const rcnode_t *rptr;
-   rcnode_t rcnode;
+   storable_t<rcnode_t> rcnode;
    string_t str;
 
    if(state.totals.t_err == 0) return;
@@ -2222,7 +2226,7 @@ void html_output_t::top_err_table(void)
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
-   for(i=0; i < tot_num && iter.prev(rcnode); i++) {
+   for(i=0; i < tot_num && iter.prev(rcnode, nullptr, nullptr); i++) {
       rptr = &rcnode;
 
       fprintf(out_fp,
@@ -2263,7 +2267,7 @@ void html_output_t::top_err_table(void)
 
 int html_output_t::all_errors_page(void)
 {
-   rcnode_t rcnode;
+   storable_t<rcnode_t> rcnode;
    const rcnode_t *rptr;
    string_t err_fname;
    FILE     *out_fp;
@@ -2288,7 +2292,7 @@ int html_output_t::all_errors_page(void)
    // get top tot_num hit-ordered nodes from the state.database
    database_t::reverse_iterator<rcnode_t> iter = state.database.rbegin_errors("errors.hits");
 
-   while(iter.prev(rcnode)) {
+   while(iter.prev(rcnode, nullptr, nullptr)) {
       rptr = &rcnode;
 
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
@@ -2314,7 +2318,7 @@ int html_output_t::all_errors_page(void)
 
 int html_output_t::all_refs_page(void)
 {
-   rnode_t  rnode;
+   storable_t<rnode_t> rnode;
    string_t ref_fname;
    FILE     *out_fp;
    string_t str;
@@ -2340,7 +2344,7 @@ int html_output_t::all_refs_page(void)
    if(state.totals.t_grp_refs) {
       database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.groups.hits");
 
-      while(iter.prev(rnode)) {
+      while(iter.prev(rnode, nullptr, nullptr)) {
          if (rnode.flag == OBJ_GRP) {
             fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  %s\n",
                rnode.count,
@@ -2358,7 +2362,7 @@ int html_output_t::all_refs_page(void)
 
    database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.hits");
 
-   while(iter.prev(rnode)) {
+   while(iter.prev(rnode, nullptr, nullptr)) {
       if(rnode.flag == OBJ_REG) {
          if(config.hidden_refs.isinlist(rnode.string))
             continue;
@@ -2397,8 +2401,8 @@ void html_output_t::top_agents_table()
    uint64_t a_ctr;
    uint32_t tot_num;
    u_int i;
-   const anode_t *aptr;
-   anode_t *a_array;
+   const storable_t<anode_t> *aptr;
+   storable_t<anode_t> *a_array;
 
    /* don't bother if we don't have any */
    if (state.totals.t_agent == 0) return;    
@@ -2411,7 +2415,7 @@ void html_output_t::top_agents_table()
    tot_num = (a_ctr > config.ntop_agents) ? config.ntop_agents : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   a_array = new anode_t[tot_num];
+   a_array = new storable_t<anode_t>[tot_num];
 
    i = 0;
 
@@ -2419,7 +2423,7 @@ void html_output_t::top_agents_table()
    if(config.bundle_groups) {
       database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.groups.visits");
 
-      while(i < tot_num && iter.prev(a_array[i]))
+      while(i < tot_num && iter.prev(a_array[i], nullptr, nullptr))
          i++;
 
       iter.close();
@@ -2429,7 +2433,7 @@ void html_output_t::top_agents_table()
    if(i < tot_num) {
       database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.visits");
 
-      while(i < tot_num && iter.prev(a_array[i])) {
+      while(i < tot_num && iter.prev(a_array[i], nullptr, nullptr)) {
          if(a_array[i].flag == OBJ_REG) {
             // ignore agents matching any of the hiding patterns
             if(config.hide_robots  && a_array[i].robot || config.hidden_agents.isinlist(a_array[i].string))
@@ -2535,7 +2539,7 @@ void html_output_t::top_agents_table()
 
 int html_output_t::all_agents_page(void)
 {
-   anode_t  anode;
+   storable_t<anode_t> anode;
    string_t agent_fname;
    FILE     *out_fp;
 
@@ -2560,7 +2564,7 @@ int html_output_t::all_agents_page(void)
    if(state.totals.t_grp_agents) {
       database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.groups.visits");
 
-      while(iter.prev(anode))
+      while(iter.prev(anode, nullptr, nullptr))
       {
          if (anode.flag == OBJ_GRP)
          {
@@ -2585,7 +2589,7 @@ int html_output_t::all_agents_page(void)
 
    database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.visits");
 
-   while(iter.prev(anode)) {
+   while(iter.prev(anode, nullptr, nullptr)) {
       if(anode.flag == OBJ_REG) {
          if(config.hide_robots  && anode.robot || config.hidden_agents.isinlist(anode.string))
             continue;
@@ -2621,7 +2625,7 @@ void html_output_t::top_search_table(void)
    uint64_t a_ctr;
    uint32_t tot_num;
    u_int i, termidx;
-   snode_t snode;
+   storable_t<snode_t> snode;
    const snode_t *sptr;
    string_t type, str;
    const char *cp1;
@@ -2650,7 +2654,7 @@ void html_output_t::top_search_table(void)
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
-   for(i = 0; i < tot_num && iter.prev(snode); i++) {
+   for(i = 0; i < tot_num && iter.prev(snode, nullptr, nullptr); i++) {
       sptr = &snode;
       fprintf(out_fp,
          "<tr>\n"
@@ -2714,7 +2718,7 @@ void html_output_t::top_search_table(void)
 int html_output_t::all_search_page(void)
 {
    const snode_t *sptr;
-   snode_t snode;
+   storable_t<snode_t> snode;
    string_t search_fname;
    const char *cp1;
    string_t type, str;
@@ -2743,7 +2747,7 @@ int html_output_t::all_search_page(void)
    fprintf(out_fp," %12s       %12s      %s\n",config.lang.msg_h_hits, config.lang.msg_h_visits, config.lang.msg_h_search);
    fputs("----------------  ----------------  ----------------------\n\n", out_fp);
 
-   while(iter.prev(snode)) {
+   while(iter.prev(snode, nullptr, nullptr)) {
       sptr = &snode;
       fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  %-8" PRIu64 " %6.02f%%  ",
          sptr->count,
@@ -2786,8 +2790,8 @@ void html_output_t::top_users_table()
    uint64_t a_ctr=0;
    uint32_t tot_num;
    u_int i;
-   const inode_t *iptr;
-   inode_t *i_array;
+   const storable_t<inode_t> *iptr;
+   storable_t<inode_t> *i_array;
    string_t str;
 
    // return if nothing to process
@@ -2801,7 +2805,7 @@ void html_output_t::top_users_table()
    tot_num = (a_ctr > config.ntop_users) ? config.ntop_users : (uint32_t) a_ctr;
 
    // allocate as if there are no hidden items
-   i_array = new inode_t[tot_num];
+   i_array = new storable_t<inode_t>[tot_num];
 
    i = 0;
 
@@ -2809,7 +2813,7 @@ void html_output_t::top_users_table()
    if(config.bundle_groups) {
       database_t::reverse_iterator<inode_t> iter = state.database.rbegin_users("users.groups.hits");
 
-      while(i < tot_num && iter.prev(i_array[i]))
+      while(i < tot_num && iter.prev(i_array[i], nullptr, nullptr))
          i++;
 
       iter.close();
@@ -2819,7 +2823,7 @@ void html_output_t::top_users_table()
    if(i < tot_num) {
       database_t::reverse_iterator<inode_t> iter = state.database.rbegin_users("users.hits");
 
-      while(i < tot_num && iter.prev(i_array[i])) {
+      while(i < tot_num && iter.prev(i_array[i], nullptr, nullptr)) {
          if(i_array[i].flag == OBJ_REG) {
             // ignore referrers matching any of the hiding patterns
             if(config.hidden_users.isinlist(i_array[i].string))
@@ -2922,7 +2926,7 @@ void html_output_t::top_users_table()
 
 int html_output_t::all_users_page(void)
 {
-   inode_t  inode;
+   storable_t<inode_t> inode;
    string_t user_fname;
    FILE     *out_fp;
 
@@ -2948,7 +2952,7 @@ int html_output_t::all_users_page(void)
    if(state.totals.t_grp_users) {
       database_t::reverse_iterator<inode_t> iter = state.database.rbegin_users("users.groups.hits");
 
-      while(iter.prev(inode)) {
+      while(iter.prev(inode, nullptr, nullptr)) {
          if (inode.flag == OBJ_GRP) {
             buffer_formatter.set_scope_mode(buffer_formatter_t::append),
             fprintf(out_fp, "%-8" PRIu64 " %6.02f%%  %8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %8" PRIu64 " %6.02f%%  %12.3f  %12.3f  %s\n",
@@ -2970,7 +2974,7 @@ int html_output_t::all_users_page(void)
    /* Now do individual users (if any) */
    database_t::reverse_iterator<inode_t> iter = state.database.rbegin_users("users.hits");
 
-   while(iter.prev(inode)) {
+   while(iter.prev(inode, nullptr, nullptr)) {
       if(inode.flag == OBJ_REG) {
          if(config.hidden_users.isinlist(inode.string))
             continue;

@@ -88,17 +88,15 @@ class state_t {
       ///
       /// @{
 
-      static void unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
+      static void unpack_dlnode_with_danode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
 
       static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this);
 
       static void unpack_hnode_cb(hnode_t& hnode, bool active, void *_this);
       /// @}
 
-      static bool eval_hnode_cb(const hnode_t *hnode, void *arg);
       static bool swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
 
-      static bool eval_unode_cb(const unode_t *unode, void *arg);
       static bool swap_unode_cb(storable_t<unode_t> *unode, void *arg);
 
    public:
@@ -131,9 +129,9 @@ class state_t {
       ///
       /// @{
 
-      static void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this);
+      static void unpack_dlnode_cached_host_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
 
-      static void unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg);
+      static void unpack_dlnode_and_host_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
       /// @}
 
       static string_t get_app_version(void);

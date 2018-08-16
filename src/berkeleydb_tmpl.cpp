@@ -643,7 +643,8 @@ berkeleydb_t::iterator<node_t>::iterator(buffer_allocator_t& buffer_allocator, c
 }
 
 template <typename node_t>
-bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+bool berkeleydb_t::iterator<node_t>::next(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg, param_t&& ... param)
 {
    Dbt key, data, pkey;
    buffer_holder_t buffer_holder(*buffer_allocator);
@@ -670,8 +671,10 @@ bool berkeleydb_t::iterator<node_t>::next(node_t& node, typename node_t::s_unpac
          return false;
    }
 
-   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
+   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg, std::forward<param_t>(param) ...) != data.get_size())
       return false;
+
+   node.storage_info.set_from_storage();
 
    return true;
 }
@@ -691,7 +694,8 @@ berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(buffer_allocator_t& buf
 }
 
 template <typename node_t>
-bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t::s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+bool berkeleydb_t::reverse_iterator<node_t>::prev(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg, param_t&& ... param)
 {
    Dbt key, data, pkey;
    buffer_holder_t buffer_holder(*buffer_allocator);
@@ -718,8 +722,10 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(node_t& node, typename node_t:
          return false;
    }
 
-   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
+   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg, std::forward<param_t>(param) ...) != data.get_size())
       return false;
+
+   node.storage_info.set_from_storage();
 
    return true;
 }
@@ -761,8 +767,8 @@ bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage
    return true;
 }
 
-template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+template <typename node_t, typename ... param_t>
+bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg, param_t&& ... arg_) const
 {
    Dbt key, pkey, data;
    size_t keysize = node.s_key_size();
@@ -786,7 +792,7 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
    if(table->get(NULL, &key, &data, 0))
       return false;
 
-   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
+   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg, std::forward<param_t>(arg_) ...) != data.get_size())
       return false;
    
    node.storage_info.set_from_storage();
@@ -794,8 +800,8 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
    return true;
 }
 
-template <typename node_t>
-bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg) const
+template <typename node_t, typename ... param_t>
+bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename node_t::s_unpack_cb_t upcb, void *arg, param_t&& ... arg_) const
 {
    Dbt key, pkey, data;
    u_int32_t keysize = (u_int32_t) node.s_key_size();
@@ -852,7 +858,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
       return false;
 
    // unpack data
-   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg) != data.get_size())
+   if(node.s_unpack_data(data.get_data(), data.get_size(), upcb, arg, std::forward<param_t>(arg_) ...) != data.get_size())
       return false;
 
    node.storage_info.set_from_storage();

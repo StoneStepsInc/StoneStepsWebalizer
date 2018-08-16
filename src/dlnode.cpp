@@ -30,8 +30,6 @@ dlnode_t::dlnode_t(void) : base_node<dlnode_t>()
 
    download = NULL;
    hnode = NULL;
-
-   ownhost = false;
 }
 
 dlnode_t::dlnode_t(const string_t& name, hnode_t *nptr) : base_node<dlnode_t>(name) 
@@ -46,11 +44,9 @@ dlnode_t::dlnode_t(const string_t& name, hnode_t *nptr) : base_node<dlnode_t>(na
 
    if((hnode = nptr) != NULL)
       hnode->dlref++;
-
-   ownhost = false;
 }
 
-dlnode_t::dlnode_t(const dlnode_t& tmp) : base_node<dlnode_t>(tmp)
+dlnode_t::dlnode_t(dlnode_t&& tmp) : base_node<dlnode_t>(std::move(tmp))
 {
    count = tmp.count;
    sumhits = tmp.sumhits;
@@ -60,15 +56,18 @@ dlnode_t::dlnode_t(const dlnode_t& tmp) : base_node<dlnode_t>(tmp)
    sumtime = tmp.sumtime;
 
    download = tmp.download;
-   if((hnode = tmp.hnode) != NULL)
-      hnode->dlref++;
+   tmp.download = nullptr;
 
-   ownhost = false;
+   hnode = tmp.hnode;
+   tmp.hnode = nullptr;
 }
 
 dlnode_t::~dlnode_t(void)
 {
    set_host(NULL);
+
+   if(download)
+      delete download;
 }
 
 void dlnode_t::reset(uint64_t nodeid)
@@ -91,12 +90,8 @@ void dlnode_t::set_host(hnode_t *nptr)
    if(hnode == nptr)
       return;
 
-   if(hnode) {
-      if(ownhost)
-         delete hnode;
-      else
-         hnode->dlref--;
-   }
+   if(hnode)
+      hnode->dlref--;
 
    if((hnode = nptr) != NULL)
       hnode->dlref++;
@@ -162,7 +157,7 @@ size_t dlnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode)
 {
    uint64_t hostid;
    bool active;
@@ -192,7 +187,7 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    download = NULL;
 
    if(upcb)
-      upcb(*this, hostid, active, arg);
+      upcb(*this, hostid, active, arg, hnode, danode);
 
    return datasize;
 }

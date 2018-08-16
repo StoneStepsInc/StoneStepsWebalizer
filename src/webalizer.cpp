@@ -1211,7 +1211,7 @@ bool webalizer_t::get_logrec(lfp_state_t& wlfs, logfile_list_t& logfiles, lfp_st
 ///
 int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 {
-   hnode_t *hptr;
+   storable_t<hnode_t> *hptr;
    storable_t<unode_t> *uptr;
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl, newspammer;
    bool newrgrp, newugrp, newagrp, newigrp;
@@ -2769,7 +2769,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 ///
 /// @brief  Adds or updates a download node in the state database.
 ///
-dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, hnode_t& hnode, bool& newnode)
+dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2803,8 +2803,11 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
    if((nptr = state.dl_htab.find_node(hashval, &params)) == NULL) {
+      storable_t<danode_t> ignored;
       nptr = new storable_t<dlnode_t>(name, &hnode);
-      if(!state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cb, &state)) {
+      if(!state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cached_host_cb, &state, hnode, ignored)) {
+         nptr->set_host(&hnode);
+
          nptr->nodeid = state.database.get_dlnode_id();
          nptr->download = new storable_t<danode_t>(nptr->nodeid);
 

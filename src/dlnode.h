@@ -46,14 +46,12 @@ struct dlnode_t : public base_node<dlnode_t> {
       storable_t<danode_t> *download;  ///< Active download job
       hnode_t     *hnode;              ///< Host node
 
-      bool        ownhost : 1;         ///< `true`, if `dlnode_t` owns `hnode`
-
       public:
-         typedef void (*s_unpack_cb_t)(dlnode_t& vnode, uint64_t hostid, bool active, void *arg);
+         typedef void (*s_unpack_cb_t)(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
 
       public:
          dlnode_t(void);
-         dlnode_t(const dlnode_t& tmp);
+         dlnode_t(dlnode_t&& tmp);
          dlnode_t(const string_t& name, hnode_t *hnode);
 
          ~dlnode_t(void);
@@ -81,7 +79,7 @@ struct dlnode_t : public base_node<dlnode_t> {
          //
          size_t s_data_size(void) const;
          size_t s_pack_data(void *buffer, size_t bufsize) const;
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
 
          uint64_t s_hash_value(void) const;
 

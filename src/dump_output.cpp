@@ -101,7 +101,7 @@ int dump_output_t::write_monthly_report(void)
 
 void dump_output_t::dump_all_hosts()
 {
-   hnode_t hnode;
+   storable_t<hnode_t> hnode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -126,7 +126,7 @@ void dump_output_t::dump_all_hosts()
    /* dump 'em */
    database_t::reverse_iterator<hnode_t> iter = state.database.rbegin_hosts("hosts.hits");
 
-   while (iter.prev(hnode)) {
+   while (iter.prev(hnode, nullptr, nullptr)) {
       if (hnode.flag != OBJ_GRP)
       {
          fprintf(out_fp,
@@ -153,7 +153,7 @@ void dump_output_t::dump_all_hosts()
 
 void dump_output_t::dump_all_urls()
 {
-   unode_t  unode;
+   storable_t<unode_t> unode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -173,7 +173,7 @@ void dump_output_t::dump_all_urls()
    /* dump 'em */
    database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls("urls.hits");
 
-   while (iter.prev(unode)) {
+   while (iter.prev(unode, nullptr, nullptr)) {
       if (unode.flag != OBJ_GRP)
       {
          fprintf(out_fp,"%" PRIu64 "\t%.0f\t%.03f\t%.03f\t%c\t%s\n",
@@ -195,7 +195,7 @@ void dump_output_t::dump_all_urls()
 
 void dump_output_t::dump_all_refs()
 {
-   rnode_t  rnode;
+   storable_t<rnode_t> rnode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -215,7 +215,7 @@ void dump_output_t::dump_all_refs()
    database_t::reverse_iterator<rnode_t> iter = state.database.rbegin_referrers("referrers.hits");
 
    /* dump 'em */
-   while(iter.prev(rnode)) {
+   while(iter.prev(rnode, nullptr, nullptr)) {
       if (rnode.flag != OBJ_GRP)
          fprintf(out_fp,"%" PRIu64 "\t%" PRIu64 "\t%s\n", rnode.count, rnode.visits, rnode.string[0] == '-' ? config.lang.msg_ref_dreq : rnode.string.c_str());
    }
@@ -228,7 +228,7 @@ void dump_output_t::dump_all_refs()
 
 void dump_output_t::dump_all_downloads(void)
 {
-   dlnode_t dlnode;
+   storable_t<dlnode_t> dlnode;
    const dlnode_t *nptr;
    FILE     *out_fp;
    char     filename[256];
@@ -255,13 +255,12 @@ void dump_output_t::dump_all_downloads(void)
    database_t::reverse_iterator<dlnode_t> iter = state.database.rbegin_downloads("downloads.xfer");
 
    /* dump 'em */
+   storable_t<hnode_t> hnode;
+   storable_t<danode_t> danode;
+   while(iter.prev(dlnode, state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode, danode)) {
+      dlnode.set_host(&hnode);
 
-   // state_t::unpack_dlnode_const_cb does not modify state
-   while(iter.prev(dlnode, state_t::unpack_dlnode_const_cb, const_cast<state_t*>(&state))) {
       nptr = &dlnode;
-
-      if(!nptr->hnode)
-         throw exception_t(0, string_t::_format("Missing host in a download node (ID: %" PRIu64 ")", nptr->nodeid));
 
       if(!nptr->hnode)
          cdesc = "";
@@ -287,7 +286,7 @@ void dump_output_t::dump_all_downloads(void)
 
 void dump_output_t::dump_all_errors(void)
 {
-   rcnode_t rcnode;
+   storable_t<rcnode_t> rcnode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -308,7 +307,7 @@ void dump_output_t::dump_all_errors(void)
    database_t::reverse_iterator<rcnode_t> iter = state.database.rbegin_errors("errors.hits");
 
    /* dump 'em */
-   while(iter.prev(rcnode))
+   while(iter.prev(rcnode, nullptr, nullptr))
    {
       fprintf(out_fp,"%" PRIu64 "\t%d\t%s\t%s\n",rcnode.count, rcnode.respcode, rcnode.method.c_str(), rcnode.string.c_str());
    }
@@ -324,7 +323,7 @@ void dump_output_t::dump_all_errors(void)
 
 void dump_output_t::dump_all_agents()
 {
-   anode_t  anode;
+   storable_t<anode_t> anode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -344,7 +343,7 @@ void dump_output_t::dump_all_agents()
    database_t::reverse_iterator<anode_t> iter = state.database.rbegin_agents("agents.hits");
 
    /* dump 'em */
-   while(iter.prev(anode)) {
+   while(iter.prev(anode, nullptr, nullptr)) {
       if (anode.flag != OBJ_GRP)
          fprintf(out_fp,"%" PRIu64 "\t%.0f\t%c\t%s\n", anode.count, anode.xfer/1024., anode.robot ? '#' : ' ', anode.string.c_str());
    }
@@ -360,7 +359,7 @@ void dump_output_t::dump_all_agents()
 
 void dump_output_t::dump_all_users()
 {
-   inode_t  inode;
+   storable_t<inode_t> inode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -381,7 +380,7 @@ void dump_output_t::dump_all_users()
    database_t::reverse_iterator<inode_t> iter = state.database.rbegin_users("users.hits");
 
    /* dump 'em */
-   while(iter.prev(inode)) {
+   while(iter.prev(inode, nullptr, nullptr)) {
       if (inode.flag != OBJ_GRP) {
          fprintf(out_fp, "%" PRIu64 "\t%" PRIu64 "\t%.0f\t%" PRIu64 "\t%.3f\t%.3f\t%s\n",
             inode.count, inode.files, inode.xfer/1024.,
@@ -402,7 +401,7 @@ void dump_output_t::dump_all_users()
 
 void dump_output_t::dump_all_search()
 {
-   snode_t snode;
+   storable_t<snode_t> snode;
    FILE     *out_fp;
    char     filename[256];
 
@@ -422,7 +421,7 @@ void dump_output_t::dump_all_search()
    database_t::reverse_iterator<snode_t> iter = state.database.rbegin_search("search.hits");
 
    /* dump 'em */
-   while(iter.prev(snode))
+   while(iter.prev(snode, nullptr, nullptr))
    {
       fprintf(out_fp,"%" PRIu64 "\t%" PRIu64 "\t%s\n", snode.count, snode.visits, snode.string.c_str());
    }

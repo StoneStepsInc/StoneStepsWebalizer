@@ -27,6 +27,13 @@ base_node<node_t>::base_node(const base_node& node) : keynode_t<uint64_t>(node)
 }
 
 template <typename node_t> 
+base_node<node_t>::base_node(base_node&& node) : keynode_t<uint64_t>(std::move(node)) 
+{
+   flag = node.flag; 
+   string = std::move(node.string);
+}
+
+template <typename node_t> 
 base_node<node_t>::base_node(const string_t& str) : keynode_t<uint64_t>(0) 
 {
    string = str; 

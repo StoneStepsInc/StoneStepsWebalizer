@@ -561,7 +561,7 @@ int state_t::restore_state(void)
    // restore country code data
    {database_t::iterator<ccnode_t> iter = database.begin_countries();
    storable_t<ccnode_t> ccnode;
-   while(iter.next(ccnode)) {
+   while(iter.next(ccnode, nullptr, nullptr)) {
       cc_htab.update_ccnode(ccnode);
    }
    iter.close();
@@ -590,11 +590,17 @@ int state_t::restore_state(void)
    storable_t<vnode_t> vnode;
    database_t::iterator<vnode_t> iter = database.begin_visits();
    storable_t<hnode_t> hnode;
-   while(iter.next(vnode)) {
+   while(iter.next(vnode, nullptr, nullptr)) {
       hnode.nodeid = vnode.nodeid;
       if(!database.get_hnode_by_id(hnode, unpack_hnode_cb, this))
          return 20;
+
       hm_htab.put_node(new storable_t<hnode_t>(hnode));
+
+      // remember spammers
+      if(hnode.spammer)
+         sp_htab.put_node(new storable_t<spnode_t>(hnode.string));
+
       hnode.reset();
    }}
 
@@ -602,12 +608,34 @@ int state_t::restore_state(void)
    database_t::iterator<danode_t> iter = database.begin_active_downloads();
    storable_t<danode_t> danode;
    storable_t<dlnode_t> dlnode;
-   while(iter.next(danode)) {
+   storable_t<hnode_t> hnode;
+   hnode_t *hptr;
+   while(iter.next(danode, nullptr, nullptr)) {
       dlnode.nodeid = danode.nodeid;
-      if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_cb, this))
+      if(!database.get_dlnode_by_id(dlnode, unpack_dlnode_with_danode_cb, this, hnode, danode))
          return 21;
-      dl_htab.put_node(new storable_t<dlnode_t>(dlnode));
+
+      // if the host is not in the hash table, insert a copy of the one we read from the database
+      if((hptr = hm_htab.find_node(hnode.string)) == nullptr) {
+         hptr = hm_htab.put_node(new storable_t<hnode_t>(hnode));
+
+         // remember spammers
+         if(hnode.spammer)
+            sp_htab.put_node(new storable_t<spnode_t>(hnode.string));
+      }
+
+      // make a copy of the active download
+      dlnode.download = new storable_t<danode_t>(danode);
+
+      // point the download to the associated host node
+      dlnode.set_host(hptr);
+
+      // finish up and insert the download node into the hash table
+      dl_htab.put_node(new storable_t<dlnode_t>(std::move(dlnode)));
+
       dlnode.reset();
+      danode.reset();
+      hnode.reset();
    }}
 
    return 0;
@@ -774,74 +802,106 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
 //
 // -----------------------------------------------------------------------
 
-//
-//
-//
-void state_t::unpack_dlnode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
+///
+/// This method does not read anything from the database and just ensures referential
+/// integrity for all node arguments.
+///
+/// The method expects `dlnode` and `hnode` to be populated from the database and `hnode` 
+/// to be modified since it was read from the database. In other words, `hnode` is looked 
+/// up in the hash table before this method is called and its `storage_info_t` instance 
+/// must indicate that it came from storage and was since modified. This means that `hnode` 
+/// *must not* be populated from the database in this method or current data will be lost.
+///
+/// The `danode` argument is ignored because active downloads are read into memory when 
+/// the `state_t` instance is initialized and are never swapped out during log processing
+/// until active downloads are ended, so this method is only called when an existing 
+/// download node is loaded from the database and a new active download node will be 
+/// created after this method returns. Based on this, the method will enforce that the 
+/// `active` argument is never `true`.
+///
+void state_t::unpack_dlnode_cached_host_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode)
 {
-   storable_t<hnode_t> hnode, *hptr;
    std::unique_ptr<storable_t<danode_t>> daptr;
-   state_t *_this = (state_t*) arg;
-
-   // for active downloads, lookup the download job descriptor
-   if(active) {
-      daptr.reset(new storable_t<danode_t>(dlnode.nodeid));
-
-      // read the active download node from the database
-      if(!_this->database.get_danode_by_id(*daptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the active download job (ID: %" PRIu64 ")", dlnode.nodeid));
-
-      dlnode.download = daptr.release();
-   }
-
-   // if there's a host ID, restore the host node
-   if(hostid) {
-      hnode.nodeid = hostid;
-
-      // read the active host node from the database
-      if(!_this->database.get_hnode_by_id(hnode, unpack_hnode_cb, _this))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
-
-      // check if the node is already in the hash table
-      if((hptr = _this->hm_htab.find_node(hnode.string)) != NULL)
-         dlnode.set_host(hptr);
-      else
-         dlnode.set_host(_this->hm_htab.put_node(new storable_t<hnode_t>(hnode)));
-   }
-}
-
-//
-// unpack_dlnode_const_cb provides a way of loading the host node without
-// having to load any of the host's dependencies (e.g. a visit and a URL).
-//
-// The loaded host node is not inserted into any of the hash tables and
-// is owned and will be destroyed by the instance of dlnode_t that is 
-// being loaded.
-//
-// A better declaration for this method would be to take a const pointer:
-//
-// void unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, const void *_this)
-//
-// This, however, would require all node unpack callbacks duplicated. 
-// Instead, just make sure unpack_dlnode_const_cb is used for reporting 
-// purposes only.
-//
-void state_t::unpack_dlnode_const_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg)
-{
-   std::unique_ptr<storable_t<hnode_t>> hptr;
    const state_t *_this = (const state_t*) arg;
 
-   if(hostid) {
-      hptr.reset(new storable_t<hnode_t>);
-      hptr->nodeid = hostid;
+   // a download node must have a valid host node ID
+   if(!hostid)
+      throw std::runtime_error(string_t::_format("Invalid host node for the download (ID: %" PRIu64 ")", dlnode.nodeid));
 
-      // look up the host node in the database
-      if(!_this->database.get_hnode_by_id(*hptr, NULL, NULL))
-         throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download job (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
+   // the host ID in the host node must match the host ID in the download node from the database
+   if(hnode.nodeid != hostid)
+      throw std::runtime_error(string_t::_format("Supplied host node (ID:%" PRIu64 ") doesn't match the reference in the download node (ID: %PRIu64)", hostid, dlnode.nodeid));
 
-       dlnode.set_host(hptr.release());
-       dlnode.ownhost = true;
+   if(active)
+      throw std::runtime_error(string_t::_format("Invalid state of the active download for the download (ID: %" PRIu64 ")", dlnode.nodeid));
+}
+
+///
+/// This method is intended for report writers and expects `dlnode` to be populated from 
+/// the database. The initial content of `danode` and `hnode` is ignored and is overwritten 
+/// on every call with the data from the database.
+///
+/// If the host associated with this download has an active visit, it will not be loaded
+/// from the database because the host callback modifies the `state_t` instance, which
+/// is not allowed when reports are being generated.
+///
+/// Neither of the node arguments is linked to one another. That is, the active download, 
+/// if one exists, is not attached to the download node. Similarly, the host node is not 
+/// associated with the download node. This ensures that there are no dangling pointers 
+/// in any of the node arguments because this methods cannot make any assumptions about 
+/// how node arguments are defined.
+///
+void state_t::unpack_dlnode_and_host_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode)
+{
+   const state_t *_this = (const state_t*) arg;
+
+   // a download node must have a valid host node ID
+   if(!hostid)
+      throw std::runtime_error(string_t::_format("Invalid host node for the download (ID: %" PRIu64 ")", dlnode.nodeid));
+
+   // reset danode if there is no active download or read it from the database otherwise
+   if(!active)
+      danode.reset();
+   else {
+      if(!_this->database.get_danode_by_id(danode, NULL, NULL))
+         throw exception_t(0, string_t::_format("Cannot find the active download (ID: %" PRIu64 ")", dlnode.nodeid));
    }
+
+   // look up the host node in the database
+   hnode.nodeid = hostid;
+   if(!_this->database.get_hnode_by_id(hnode, nullptr, nullptr))
+      throw exception_t(0, string_t::_format("Cannot find the host node (ID: %d) for the download (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
+}
+
+///
+/// This method is intended for internal use within `state_t` and it expects `danode` 
+/// and `dlnode` to be populated from the database before this method is called. The 
+/// initial content of `hnode` is ignored and is overwritten on every call with the 
+/// data from the database.
+///
+/// If there is an active visit for this host, the visit node will be read from the 
+/// database and associated with `hnode`.
+///
+/// Neither of the node arguments is linked to one another for same reasons as described
+/// in `unpack_dlnode_and_host_cb`.
+///
+void state_t::unpack_dlnode_with_danode_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode)
+{
+   std::unique_ptr<storable_t<dlnode_t>> dlptr;
+   state_t *_this = (state_t*) arg;
+
+   // a download node must have a valid host node ID
+   if(!hostid)
+      throw std::runtime_error(string_t::_format("Invalid host node for the download (ID: %" PRIu64 ")", dlnode.nodeid));
+
+   // make sure the supplied active download is for this download node
+   if(danode.nodeid != dlnode.nodeid)
+      throw std::runtime_error(string_t::_format("Supplied active download ID (%" PRIu64 ") must match the primary download ID (& " PRIu64 ")", danode.nodeid, dlnode.nodeid));
+
+   // look up the host node in the database
+   hnode.nodeid = hostid;
+   if(!_this->database.get_hnode_by_id(hnode, unpack_hnode_cb, _this))
+      throw std::runtime_error(string_t::_format("Cannot find the host node (ID: %" PRIu64 ") for the download (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
 }
 
 void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
@@ -864,10 +924,12 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg)
    }
 }
 
-//
-// see comment above state_t::unpack_dlnode_const_cb
-//
-void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
+///
+/// This method expects `hnode` populated from the database and if there is an active 
+/// visit for this host, it reads a visit node from the database and attaches it to 
+/// `hnode`.
+///
+void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
 {
    state_t *_this = (state_t*) arg;
    std::unique_ptr<storable_t<vnode_t>> vptr;
@@ -885,23 +947,6 @@ void state_t::unpack_hnode_const_cb(hnode_t& hnode, bool active, void *arg)
 
       hnode.set_visit(vptr.release());
    }
-}
-
-//
-// hnode unpack callback
-//
-void state_t::unpack_hnode_cb(hnode_t& hnode, bool active, void *arg)
-{
-   state_t *_this = (state_t*) arg;
-
-   if(hnode.flag == OBJ_GRP)
-      return;
-
-   unpack_hnode_const_cb(hnode, active, arg);
-
-   // remember spammers
-   if(hnode.spammer)
-      _this->sp_htab.put_node(new storable_t<spnode_t>(hnode.string));
 }
 
 string_t state_t::get_app_version(void)

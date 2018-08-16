@@ -31,6 +31,7 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
       public:
          base_node(uint64_t nodeid = 0);
          base_node(const base_node& node);
+         base_node(base_node&& node);
          base_node(const string_t& str);
 
          virtual ~base_node(void) {}
