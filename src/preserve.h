@@ -88,7 +88,7 @@ class state_t {
       ///
       /// @{
 
-      static void state_t::unpack_danode_cb(danode_t& danode, void *arg, storable_t<dlnode_t>& dlnode, storable_t<hnode_t>& hnode);
+      static void unpack_danode_cb(danode_t& danode, void *arg, storable_t<dlnode_t>& dlnode, storable_t<hnode_t>& hnode);
 
       static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this, storable_t<hnode_t>& hnode, storable_t<unode_t>& unode);
 
