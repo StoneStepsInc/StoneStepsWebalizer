@@ -38,7 +38,8 @@ struct rcnode_t : public base_node<rcnode_t> {
       string_t       method;           ///< HTTP method
 
       public:
-         typedef void (*s_unpack_cb_t)(rcnode_t& rcnode, void *arg);
+         template <typename ... param_t>
+         using s_unpack_cb_t = void (*)(rcnode_t& rcnode, void *arg, param_t ... param);
 
       public:
          rcnode_t(void) : base_node<rcnode_t>() {count = 0; respcode = 0;}
@@ -67,7 +68,9 @@ struct rcnode_t : public base_node<rcnode_t> {
          //
          size_t s_data_size(void) const;
          size_t s_pack_data(void *buffer, size_t bufsize) const;
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+         template <typename ... param_t>
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
          uint64_t s_hash_value(void) const;
 

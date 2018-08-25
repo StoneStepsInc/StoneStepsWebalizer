@@ -2285,7 +2285,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
-      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
 
@@ -2397,7 +2397,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
-      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
 
@@ -2803,9 +2803,8 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
    if((nptr = state.dl_htab.find_node(hashval, &params)) == NULL) {
-      storable_t<danode_t> ignored;
       nptr = new storable_t<dlnode_t>(name, &hnode);
-      if(!state.database.get_dlnode_by_value(*nptr, state_t::unpack_dlnode_cached_host_cb, &state, hnode, ignored)) {
+      if(!state.database.get_dlnode_by_value(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
 
          nptr->nodeid = state.database.get_dlnode_id();

@@ -94,7 +94,8 @@ struct hnode_t : public base_node<hnode_t> {
       double   longitude;            ///< Longitude reported by GeoIP
 
       public:
-         typedef void (*s_unpack_cb_t)(hnode_t& hnode, bool active, void *arg);
+         template <typename ... param_t>
+         using s_unpack_cb_t = void (*)(hnode_t& hnode, bool active, void *arg, param_t ... param);
 
       public:
          hnode_t(void);
@@ -130,7 +131,9 @@ struct hnode_t : public base_node<hnode_t> {
          //
          size_t s_data_size(void) const;
          size_t s_pack_data(void *buffer, size_t bufsize) const;
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+         template <typename ... param_t>
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
          static size_t s_data_size(const void *buffer);
 

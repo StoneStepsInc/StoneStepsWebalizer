@@ -36,7 +36,8 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
    uint64_t    xfer;                   ///< Transfer amount in bytes
 
    public:
-      typedef void (*s_unpack_cb_t)(ccnode_t& vnode, void *arg);
+      template <typename ... param_t>
+      using s_unpack_cb_t = void (*)(ccnode_t& vnode, void *arg, param_t ... param);
 
    private:
       static uint64_t ctry_idx(const char *ccode);
@@ -64,7 +65,9 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       //
       size_t s_data_size(void) const;
       size_t s_pack_data(void *buffer, size_t bufsize) const;
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+      template <typename ... param_t>
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
       static size_t s_data_size(const void *buffer);
 };

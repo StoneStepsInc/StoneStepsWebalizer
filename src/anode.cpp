@@ -70,7 +70,8 @@ size_t anode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t anode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t anode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    bool tmp;
    size_t datasize, basesize;
@@ -102,7 +103,7 @@ size_t anode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
       xfer = 0;
 
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -149,3 +150,8 @@ int64_t anode_t::s_compare_visits(const void *buf1, const void *buf2)
 {
    return s_compare<uint64_t>(buf1, buf2);
 }
+
+//
+// Instantiate all template callbacks
+//
+template size_t anode_t::s_unpack_data(const void *buffer, size_t bufsize, anode_t::s_unpack_cb_t<> upcb, void *arg);

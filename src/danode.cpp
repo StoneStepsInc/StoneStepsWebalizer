@@ -71,7 +71,8 @@ size_t danode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    u_short version;
    size_t datasize, basesize;
@@ -101,7 +102,7 @@ size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = deserialize(ptr, xfer);
    
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -122,3 +123,11 @@ size_t danode_t::s_data_size(const void *buffer)
             sizeof(uint64_t) * 2;           // proctime, xfer;
 }
 
+//
+// Instantiate all template callbacks
+//
+struct hnode_t;
+struct dlnode_t;
+
+template size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, danode_t::s_unpack_cb_t<> upcb, void *arg);
+template size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, danode_t::s_unpack_cb_t<storable_t<dlnode_t>&, storable_t<hnode_t>&> upcb, void *arg, storable_t<dlnode_t>& dlnode, storable_t<hnode_t>& hnode);

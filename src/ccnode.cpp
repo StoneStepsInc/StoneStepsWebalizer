@@ -125,7 +125,8 @@ size_t ccnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    u_short version;
    size_t datasize, basesize;
@@ -158,7 +159,7 @@ size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
       pages = 0;
 
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -224,3 +225,7 @@ void cc_hash_table::reset(void)
    }
 }
 
+//
+// Instantiate all template callbacks
+//
+template size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, ccnode_t::s_unpack_cb_t<> upcb, void *arg);

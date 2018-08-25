@@ -157,7 +157,8 @@ size_t dlnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode)
+template <typename ... param_t>
+size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    uint64_t hostid;
    bool active;
@@ -187,7 +188,7 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    download = NULL;
 
    if(upcb)
-      upcb(*this, hostid, active, arg, hnode, danode);
+      upcb(*this, hostid, active, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -264,3 +265,10 @@ int64_t dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
 {
    return s_compare<uint64_t>(buf1, buf2);
 }
+
+//
+// Instantiate all template callbacks
+//
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<> upcb, void *arg);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<const storable_t<hnode_t>&> upcb, void *arg, const storable_t<hnode_t>& hnode);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<storable_t<hnode_t>&> upcb, void *arg, storable_t<hnode_t>& hnode);

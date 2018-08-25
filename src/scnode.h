@@ -32,7 +32,8 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
    u_char         v2pad;            ///< v2 serialized node padding (see class definition)
 
    public:
-      typedef void (*s_unpack_cb_t)(scnode_t& scnode, void *arg);
+      template <typename ... param_t>
+      using s_unpack_cb_t = void (*)(scnode_t& scnode, void *arg, param_t ... param);
 
    public:
       scnode_t(u_int code) : keynode_t<u_int>(code), v2pad(0) {count = 0;}
@@ -48,7 +49,9 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
       //
       size_t s_data_size(void) const;
       size_t s_pack_data(void *buffer, size_t bufsize) const;
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+      template <typename ... param_t>
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
       static size_t s_data_size(const void *buffer);
 };

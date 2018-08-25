@@ -26,7 +26,8 @@ struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
       uint64_t th_xfer;             ///< Hourly transfer amount total, in bytes
 
       public:
-         typedef void (*s_unpack_cb_t)(hourly_t& hourly, void *arg);
+         template <typename ... param_t>
+         using s_unpack_cb_t = void (*)(hourly_t& hourly, void *arg, param_t ... param);
 
       public:
          hourly_t(u_int hour = 0);
@@ -38,7 +39,9 @@ struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {
          //
          size_t s_data_size(void) const;
          size_t s_pack_data(void *buffer, size_t bufsize) const;
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+         template <typename ... param_t>
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
          static size_t s_data_size(const void *buffer, bool fixver);
 };

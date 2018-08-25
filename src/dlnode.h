@@ -47,7 +47,8 @@ struct dlnode_t : public base_node<dlnode_t> {
       hnode_t     *hnode;              ///< Host node
 
       public:
-         typedef void (*s_unpack_cb_t)(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
+         template <typename ... param_t>
+         using s_unpack_cb_t = void (*)(dlnode_t& dlnode, uint64_t hostid, bool active, void *arg, param_t ... param);
 
       public:
          dlnode_t(void);
@@ -79,7 +80,9 @@ struct dlnode_t : public base_node<dlnode_t> {
          //
          size_t s_data_size(void) const;
          size_t s_pack_data(void *buffer, size_t bufsize) const;
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<danode_t>& danode);
+
+         template <typename ... param_t>
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
          uint64_t s_hash_value(void) const;
 

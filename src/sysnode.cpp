@@ -152,7 +152,8 @@ size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    u_short version;
    size_t datasize, basesize;
@@ -226,7 +227,7 @@ size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_
    }
 
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -273,3 +274,8 @@ size_t sysnode_t::s_data_size(const void *buffer)
             sizeof(u_short)      +        // sizeof_longlong
             sizeof(uint64_t);             // byte_order_x64
 }
+
+//
+// Instantiate all template callbacks
+//
+template size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, sysnode_t::s_unpack_cb_t<> upcb, void *arg);

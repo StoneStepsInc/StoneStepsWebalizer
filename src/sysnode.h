@@ -50,7 +50,8 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
    int         utc_offset;          ///< UTC offset in minutes if local time
 
    public:
-      typedef void (*s_unpack_cb_t)(sysnode_t& sysnode, void *arg);
+      template <typename ... param_t>
+      using s_unpack_cb_t = void (*)(sysnode_t& sysnode, void *arg, param_t ... param);
 
    public:
       /// Constructs a default instance without the configuration object
@@ -79,7 +80,9 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       size_t s_pack_data(void *buffer, size_t bufsize) const;
 
       /// Populates current node with deserialized data from the buffer.
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg);
+
+      template <typename ... param_t>
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
       /// Returns the size of serialized data in the buffer.
       static size_t s_data_size(const void *buffer);

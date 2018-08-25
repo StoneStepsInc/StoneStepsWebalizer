@@ -238,7 +238,8 @@ size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    bool active, tmp;
    size_t datasize, basesize;
@@ -312,7 +313,7 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t 
    resolved = true;
    
    if(upcb)
-      upcb(*this, active, arg);
+      upcb(*this, active, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -400,4 +401,8 @@ int64_t hnode_t::s_compare_hits(const void *buf1, const void *buf2)
    return s_compare<uint64_t>(buf1, buf2);
 }
 
-
+//
+// Instantiate all template callbacks
+//
+template size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, hnode_t::s_unpack_cb_t<> upcb, void *arg);
+template size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, hnode_t::s_unpack_cb_t<storable_t<vnode_t>&, storable_t<unode_t>&> upcb, void *arg, storable_t<vnode_t>& vnode, storable_t<unode_t>& unode);

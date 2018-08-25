@@ -59,7 +59,8 @@ size_t hourly_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    bool fixver = (intptr_t) arg == -1;
    u_short version;
@@ -87,7 +88,7 @@ size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = deserialize(ptr, th_xfer);
    
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -98,3 +99,8 @@ size_t hourly_t::s_data_size(const void *buffer, bool fixver)
             sizeof(uint64_t) * 3 + 
             sizeof(uint64_t);          // th_xfer
 }
+
+//
+// Instantiate all template callbacks
+//
+template size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, hourly_t::s_unpack_cb_t<> upcb, void *arg);

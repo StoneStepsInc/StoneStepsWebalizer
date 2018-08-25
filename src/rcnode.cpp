@@ -84,7 +84,8 @@ size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
    return datasize;
 }
 
-size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t upcb, void *arg)
+template <typename ... param_t>
+size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
    size_t basesize, datasize;
    const void *ptr = buffer;
@@ -107,7 +108,7 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = s_skip_field<uint64_t>(ptr);        // value hash
    
    if(upcb)
-      upcb(*this, arg);
+      upcb(*this, arg, std::forward<param_t>(param) ...);
 
    return datasize;
 }
@@ -190,3 +191,8 @@ int64_t rcnode_t::s_compare_hits(const void *buf1, const void *buf2)
 {
    return s_compare<uint64_t>(buf1, buf2);
 }
+
+//
+// Instantiate all template callbacks
+//
+template size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, rcnode_t::s_unpack_cb_t<> upcb, void *arg);
