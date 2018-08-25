@@ -127,7 +127,10 @@ size_t danode_t::s_data_size(const void *buffer)
 // Instantiate all template callbacks
 //
 struct hnode_t;
+template <> struct storable_t<hnode_t>;
+
 struct dlnode_t;
+template <> struct storable_t<dlnode_t>;
 
 template size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, danode_t::s_unpack_cb_t<> upcb, void *arg);
 template size_t danode_t::s_unpack_data(const void *buffer, size_t bufsize, danode_t::s_unpack_cb_t<storable_t<dlnode_t>&, storable_t<hnode_t>&> upcb, void *arg, storable_t<dlnode_t>& dlnode, storable_t<hnode_t>& hnode);

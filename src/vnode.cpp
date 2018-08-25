@@ -221,6 +221,7 @@ size_t vnode_t::s_data_size(const void *buffer)
 // Instantiate all template callbacks
 //
 struct hnode_t;
+template <> struct storable_t<hnode_t>;
 
 template size_t vnode_t::s_unpack_data(const void *buffer, size_t bufsize, vnode_t::s_unpack_cb_t<storable_t<unode_t>&> upcb, void *arg, storable_t<unode_t>& unode);
 template size_t vnode_t::s_unpack_data(const void *buffer, size_t bufsize, vnode_t::s_unpack_cb_t<storable_t<hnode_t>&, storable_t<unode_t>&> upcb, void *arg, storable_t<hnode_t>& hnode, storable_t<unode_t>& unode);
