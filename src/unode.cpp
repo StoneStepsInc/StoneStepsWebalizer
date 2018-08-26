@@ -32,7 +32,7 @@ unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid)
    vstref = 0;
 }
 
-unode_t::unode_t(const unode_t& unode) : base_node<unode_t>(unode) 
+unode_t::unode_t(unode_t&& unode) : base_node<unode_t>(std::move(unode)) 
 {
    target = unode.target;
    count = unode.count;
@@ -45,12 +45,8 @@ unode_t::unode_t(const unode_t& unode) : base_node<unode_t>(unode)
    urltype = unode.urltype; 
    pathlen = unode.pathlen;
 
-   //
-   // unode.vstref should not be copied, since there are no visits
-   // referring to the new node. The caller must adjust vstref, if
-   // necessary.
-   //
-   vstref = 0;
+   vstref = unode.vstref;
+   unode.vstref = 0;
 }
 
 unode_t::unode_t(const string_t& urlpath, const string_t& srchargs) : base_node<unode_t>(urlpath) 

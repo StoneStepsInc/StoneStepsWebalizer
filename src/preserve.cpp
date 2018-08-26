@@ -605,14 +605,14 @@ int state_t::restore_state(void)
             vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode))));
       }
 
-      // now we can insert a copy of the host node and set it up with the active visit
-      hptr = hm_htab.put_node(new storable_t<hnode_t>(hnode));
-
-      hptr->set_visit(new storable_t<vnode_t>(std::move(vnode)));
+      hnode.set_visit(new storable_t<vnode_t>(std::move(vnode)));
 
       // remember spammers
       if(hnode.spammer)
          sp_htab.put_node(new storable_t<spnode_t>(hnode.string));
+
+      // now we can move the host node into the new instance in the hash table
+      hptr = hm_htab.put_node(new storable_t<hnode_t>(std::move(hnode)));
 
       hnode.reset();
       unode.reset();

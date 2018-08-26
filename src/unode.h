@@ -26,8 +26,8 @@
 ///
 /// 2. URL path and search arguments are combined in `unode_t` into a single string,
 /// along with the question mark that separates the two. This allows us to generate
-/// the same hash values regardless whether the entire combined URL was hashed or
-/// its individual components. URL path lebgth withiin the combined URL is identified 
+/// the same hash values regardless whether the entire combined URL was hashed or its 
+/// individual components were. URL path lebgth within the combined URL is identified 
 /// by `pathlen`.
 ///
 struct unode_t : public base_node<unode_t> {
@@ -63,7 +63,7 @@ struct unode_t : public base_node<unode_t> {
 
       public:
          unode_t(uint64_t nodeid = 0);
-         unode_t(const unode_t& unode);
+         unode_t(unode_t&& unode);
          unode_t(const string_t& urlpath, const string_t& srchargs);
 
          void reset(uint64_t nodeid = 0);

@@ -18,6 +18,12 @@ keynode_t<type_t>::keynode_t(type_t nodeid) : nodeid(nodeid)
 }
 
 template <typename type_t>
+keynode_t<type_t>::keynode_t(keynode_t&& keynode) : nodeid(keynode.nodeid)
+{
+   keynode.nodeid = 0;
+}
+
+template <typename type_t>
 keynode_t<type_t>::keynode_t(const keynode_t& keynode) : nodeid(keynode.nodeid)
 {
 }

@@ -36,7 +36,8 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
    latitude = longitude = 0.;
 }
 
-hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
+hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
+      name(std::move(hnode.name))
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
@@ -58,22 +59,23 @@ hnode_t::hnode_t(const hnode_t& hnode) : base_node<hnode_t>(hnode)
    max_v_pages = hnode.max_v_pages;
    max_v_xfer = hnode.max_v_xfer;
 
-   name = hnode.name;
-
    ccode[0] = hnode.ccode[0];
    ccode[1] = hnode.ccode[1];
    ccode[2] = 0;
 
-   dlref = 0;
+   dlref = hnode.dlref;
+   hnode.dlref = 0;
+
    tstamp = hnode.tstamp;
 
-   grp_visit = NULL;                         // grp_visit is not copied
+   grp_visit = hnode.grp_visit;
+   hnode.grp_visit = nullptr;
 
    latitude = hnode.latitude;
    longitude = hnode.longitude;
 
-   if((visit = hnode.visit) != NULL)
-      visit->hostref++;
+   visit = hnode.visit;
+   hnode.visit = nullptr;
 }
 
 hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)

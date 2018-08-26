@@ -38,10 +38,6 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
    public:
       scnode_t(u_int code) : keynode_t<u_int>(code), v2pad(0) {count = 0;}
 
-      scnode_t(const scnode_t& node) : keynode_t<u_int>(node), v2pad(node.v2pad) {count = node.count;}
-      
-      scnode_t& operator = (const scnode_t& node) {keynode_t<u_int>::operator = (node); count = node.count; v2pad = node.v2pad; return *this;}
-
       u_int get_scode(void) const {return nodeid;}
 
       //

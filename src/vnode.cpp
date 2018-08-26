@@ -25,8 +25,8 @@ vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid),
    hostref = 0;
 }
 
-vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
-   next(NULL)
+vnode_t::vnode_t(vnode_t&& vnode) : keynode_t<uint64_t>(std::move(vnode)),
+   next(vnode.next)
 {
    entry_url = vnode.entry_url;
    robot = vnode.robot;
@@ -38,15 +38,13 @@ vnode_t::vnode_t(const vnode_t& vnode) : keynode_t<uint64_t>(vnode),
    pages = vnode.pages; 
    xfer = vnode.xfer;
 
-   if((lasturl = vnode.lasturl) != NULL)
-      lasturl->vstref++;
+   vnode.next = nullptr;
 
-   //
-   // vnode.hostref should not be copied, since there are no hosts
-   // referring to the new node. The caller must adjust hostref, if
-   // necessary.
-   //
-   hostref = 0;
+   lasturl = vnode.lasturl;
+   vnode.lasturl = nullptr;
+
+   hostref = vnode.hostref;
+   vnode.hostref = 0;
 }
 
 vnode_t::~vnode_t(void)

@@ -3012,7 +3012,7 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
       group_host_by_name(*hptr, *visit);
    else {
       // otherwise, queue a copy of the visit for grouping when the host name is available
-      hptr->add_grp_visit(new storable_t<vnode_t>(*visit));
+      hptr->add_grp_visit(new storable_t<vnode_t>(std::move(*visit)));
    }
 
    return visit;
