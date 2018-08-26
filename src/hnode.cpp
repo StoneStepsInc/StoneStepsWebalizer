@@ -37,7 +37,8 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
 }
 
 hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
-      name(std::move(hnode.name))
+      name(std::move(hnode.name)),
+      city(std::move(hnode.city))
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
