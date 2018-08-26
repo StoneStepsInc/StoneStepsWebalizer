@@ -27,14 +27,6 @@ anode_t::anode_t(const string_t& agent, bool robot) : base_node<anode_t>(agent),
    xfer = 0;
 }
 
-anode_t::anode_t(const anode_t& anode) : base_node<anode_t>(anode)
-{
-   count = anode.count;
-   visits = anode.visits;
-   xfer = anode.xfer;
-   robot = anode.robot;
-}
-
 //
 // serialization
 //

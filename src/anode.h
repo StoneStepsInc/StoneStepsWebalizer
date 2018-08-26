@@ -34,7 +34,6 @@ struct anode_t : public base_node<anode_t> {
 
       public:
          anode_t(void);
-         anode_t(const anode_t& anode);
          anode_t(const string_t& agent, bool robot);
 
          //

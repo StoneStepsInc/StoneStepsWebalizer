@@ -19,13 +19,6 @@
 //
 //
 
-rcnode_t::rcnode_t(const rcnode_t& rcnode) : base_node<rcnode_t>(rcnode)
-{
-   count = rcnode.count;
-   method = rcnode.method;
-   respcode = rcnode.respcode;
-}
-
 rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respcode) : base_node<rcnode_t>(url) 
 {
    count = 0; 

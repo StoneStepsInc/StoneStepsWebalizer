@@ -12,13 +12,6 @@
 #include "snode.h"
 #include "serialize.h"
 
-snode_t::snode_t(const snode_t& snode) : base_node<snode_t>(snode)
-{
-   termcnt = snode.termcnt;
-   count = snode.count;
-   visits = snode.visits;
-}
-
 //
 // serialization
 //

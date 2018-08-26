@@ -19,14 +19,6 @@ danode_t::danode_t(uint64_t _nodeid) : keynode_t<uint64_t>(_nodeid)
    proctime = 0;
 }
 
-danode_t::danode_t(const danode_t& danode) : keynode_t<uint64_t>(danode)
-{
-   hits = danode.hits; 
-   tstamp = danode.tstamp; 
-   xfer = danode.xfer; 
-   proctime = danode.proctime;
-}
-
 void danode_t::reset(uint64_t _nodeid)
 {
    keynode_t<uint64_t>::reset(_nodeid);

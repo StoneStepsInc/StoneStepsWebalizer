@@ -35,7 +35,6 @@ struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
 
       public:
          danode_t(uint64_t _nodeid = 0);
-         danode_t(const danode_t& danode);
 
          void reset(uint64_t _nodeid = 0);
 

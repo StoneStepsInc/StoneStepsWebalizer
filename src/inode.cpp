@@ -19,17 +19,6 @@ inode_t::inode_t(void) : base_node<inode_t>()
    avgtime = maxtime = .0;
 }
 
-inode_t::inode_t(const inode_t& inode) : base_node<inode_t>(inode)
-{
-   count = inode.count;
-   files = inode.files;
-   visit = inode.visit;
-   tstamp = inode.tstamp;
-   xfer = inode.xfer;
-   avgtime = inode.avgtime;
-   maxtime = inode.maxtime;
-}
-
 inode_t::inode_t(const string_t& ident) : base_node<inode_t>(ident) 
 {
    count = 1; 

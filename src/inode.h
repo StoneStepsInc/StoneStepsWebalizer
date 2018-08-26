@@ -36,7 +36,6 @@ struct inode_t : public base_node<inode_t> {
 
       public:
          inode_t(void);
-         inode_t(const inode_t& inode);
          inode_t(const string_t& ident);
 
          //

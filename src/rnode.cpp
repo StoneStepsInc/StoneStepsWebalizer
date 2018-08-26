@@ -15,11 +15,6 @@
 //
 //
 //
-rnode_t::rnode_t(const rnode_t& rnode) : base_node<rnode_t>(rnode)
-{
-   count = rnode.count;
-   visits = rnode.visits;
-}
 
 rnode_t::rnode_t(const string_t& ref) : base_node<rnode_t>(ref) 
 {

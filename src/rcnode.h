@@ -43,7 +43,6 @@ struct rcnode_t : public base_node<rcnode_t> {
 
       public:
          rcnode_t(void) : base_node<rcnode_t>() {count = 0; respcode = 0;}
-         rcnode_t(const rcnode_t& rcnode);
          rcnode_t(const string_t& method, const string_t& url, u_short respcode);
 
          bool match_key_ex(const rcnode_t::param_block *pb) const;
