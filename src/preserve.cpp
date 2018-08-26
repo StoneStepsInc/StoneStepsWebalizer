@@ -593,14 +593,17 @@ int state_t::restore_state(void)
    storable_t<unode_t> unode, *uptr;
    hnode_t *hptr;
    while(iter.next(vnode, unpack_vnode_cb, this, hnode, unode)) {
-      //
-      // The visit doesn't own the URL node, so we need to find a URL node in the 
-      // hash table or insert a new one, so it's deleted properly. 
-      //
-      if((uptr = um_htab.find_node(unode.string)) != NULL)
-         vnode.set_lasturl(uptr);
-      else
-         vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode))));
+      // check if the visit has a reference to the last visited URL
+      if(unode.nodeid) {
+         //
+         // The visit doesn't own the URL node, so we need to find a URL node in the 
+         // hash table or insert a new one, so it's deleted properly. 
+         //
+         if((uptr = um_htab.find_node(unode.string)) != NULL)
+            vnode.set_lasturl(uptr);
+         else
+            vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode))));
+      }
 
       // now we can insert a copy of the host node and set it up with the active visit
       hptr = hm_htab.put_node(new storable_t<hnode_t>(hnode));
