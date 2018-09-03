@@ -104,7 +104,7 @@ class berkeleydb_t {
             /// @brief  A special template constructor that triggers a compiler error 
             ///         if it was used.
             ///
-            /// A specialization of this constructor that takes an``int` argument, which is 
+            /// A specialization of this constructor that takes an `int` argument, which is 
             /// how Berkeley DB error is defined, follows the definition of the `berkeleydb_t` 
             /// class. 
             ///
@@ -112,6 +112,15 @@ class berkeleydb_t {
             status_t(T value)
             {
                static_assert(sizeof(T) != 0, "Cannot initialize berkeleydb_t::status_t with this value");
+            }
+
+            ///
+            /// @brief  Constructs a status object from a Berkeley DB error code.
+            ///
+            berkeleydb_t::status_t::status_t(int error) : error(error)
+            {
+               if(error)
+                  message = db_strerror(error);
             }
 
             /// Constructs a status object that indicates a success.
@@ -639,16 +648,6 @@ class berkeleydb_t {
       /// rearranges data pages on disk to minimize unused space
       status_t compact(u_int& bytes);
 };
-
-///
-/// @brief  Constructs a status object from a Berkeley DB error code.
-///
-template <>
-inline berkeleydb_t::status_t::status_t(int error) : error(error)
-{
-   if(error)
-      message = db_strerror(error);
-}
 
 ///
 /// @brief  Compares two Dbt values by calling `compare`
