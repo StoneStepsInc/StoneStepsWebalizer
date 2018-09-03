@@ -71,7 +71,7 @@ class lang_t {
          public:
             void put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize);
 
-            const lang_node_t *find_lang_var(const string_t& varname);
+            const lang_node_t *find_lang_var(const string_t& varname) const;
       };
 
       // VC6 generates errors unless friendship is declared after declaring lang_hash_table

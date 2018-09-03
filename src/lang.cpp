@@ -462,7 +462,7 @@ void lang_t::lang_hash_table::put_lang_var(const char *varname, int vartype, voi
    put_node(lnode);
 }
 
-const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t& varname)
+const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t& varname) const
 {
    if(varname == NULL || *varname == 0)
       return NULL;
