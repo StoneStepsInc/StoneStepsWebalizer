@@ -114,38 +114,22 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node)
 }
 
 template <typename node_t>
-const node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key) const
+const node_t *hash_table<node_t>::find_node(const string_t& key, nodetype_t type) const
 {
+   uint64_t hashval;
    htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
+
+   hashval = hash_ex(0, key);
 
    pptr = &htab[hashval % maxhash].head;
    nptr = *pptr;
 
    for(u_int index = 0; nptr != NULL; index++) {
-      if(nptr->node->match_key(key))
-         return nptr->node;
-
-      prev = nptr;
-      nptr = nptr->next;
-   }
-
-   return NULL;
-}
-
-template <typename node_t>
-node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key)
-{
-   htab_node_t<node_t> **pptr, *nptr, *prev = NULL;
-
-   pptr = &htab[hashval % maxhash].head;
-   nptr = *pptr;
-
-   for(u_int index = 0; nptr != NULL; index++) {
-      if(nptr->node->match_key(key)) {
-         if(index > NO_SWAP_COUNT)
-            move_node(nptr, prev, pptr);
-         return nptr->node;
+      if(nptr->node->get_type() == type) {
+         if(nptr->node->match_key(key))
+            return nptr->node;
       }
+
       prev = nptr;
       nptr = nptr->next;
    }

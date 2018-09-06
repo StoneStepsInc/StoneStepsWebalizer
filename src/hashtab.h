@@ -65,7 +65,7 @@ inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, 
 ///
 /// Hash table nodes may be identified by a simple string key or by a compound key 
 /// via node-specific `param_block`. Note that `match_key_ex` is not a virtual method
-/// and is called in template methods that using node types that define `param_block` 
+/// and is called in template methods using node types that define `param_block` 
 /// appropriate for each node type.
 ///
 struct htab_obj_t {
@@ -298,21 +298,15 @@ class hash_table {
       //
       void clear(void);
 
-      bool find_key(const string_t& key) const {return find_node(key) != NULL;}
+      bool find_key(const string_t& key, nodetype_t type) const {return find_node(key, type) != NULL;}
 
-      const node_t *find_node(const string_t& key) const {return find_node(hash_ex(0, key), key);}
+      const node_t *find_node(const string_t& key, nodetype_t type) const;
 
-      node_t *find_node(const string_t& key) {return find_node(hash_ex(0, key), key);}
-
-      const node_t *find_node(uint64_t hashval, const string_t& key) const;
-
-      node_t *find_node(uint64_t hashval, const string_t& key);
+      node_t *find_node(const string_t& key, nodetype_t type) {return find_node(hash_ex(0, key), key, type);}
 
       node_t *find_node(uint64_t hashval, const string_t& str, nodetype_t type);
 
       node_t *find_node(uint64_t hashval, const typename node_t::param_block *params);
-
-      node_t *put_node(const string_t& key, node_t *nptr) {return put_node(hash_ex(0, key), nptr);}
 
       node_t *put_node(node_t *nptr);
 

@@ -599,7 +599,7 @@ int state_t::restore_state(void)
          // The visit doesn't own the URL node, so we need to find a URL node in the 
          // hash table or insert a new one, so it's deleted properly. 
          //
-         if((uptr = um_htab.find_node(unode.string)) != NULL)
+         if((uptr = um_htab.find_node(unode.string, OBJ_REG)) != NULL)
             vnode.set_lasturl(uptr);
          else
             vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode))));
@@ -627,7 +627,7 @@ int state_t::restore_state(void)
    hnode_t *hptr;
    while(iter.next(danode, unpack_danode_cb, this, dlnode, hnode)) {
       // the host must be in the hosts table because active downloads are a subset of active visits
-      if((hptr = hm_htab.find_node(hnode.string)) == nullptr)
+      if((hptr = hm_htab.find_node(hnode.string, OBJ_REG)) == nullptr)
          throw std::runtime_error(string_t::_format("Cannot find the host (%s) for the download (ID: %" PRIu64 ")", hnode.string.c_str(), dlnode.nodeid));
 
       // make a copy of the active download and link it to the kdownload node

@@ -192,10 +192,10 @@ const ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode) const
 {
    const ccnode_t *cptr;
 
-   if((cptr = find_node(ccode)) != NULL)
+   if((cptr = find_node(ccode, OBJ_REG)) != NULL)
       return *cptr;
 
-   if((cptr = find_node(string_t("*"))) != NULL)
+   if((cptr = find_node(string_t("*"), OBJ_REG)) != NULL)
       return *cptr;
 
    return empty;
@@ -205,10 +205,10 @@ ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode)
 {
    ccnode_t *cptr;
 
-   if((cptr = find_node(ccode)) != NULL)
+   if((cptr = find_node(ccode, OBJ_REG)) != NULL)
       return *cptr;
 
-   if((cptr = find_node(string_t("*"))) != NULL)
+   if((cptr = find_node(string_t("*"), OBJ_REG)) != NULL)
       return *cptr;
 
    throw exception_t(0, string_t::_format("Cannot find country node (%s)", ccode.c_str()));

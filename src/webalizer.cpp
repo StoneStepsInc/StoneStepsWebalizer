@@ -1549,7 +1549,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(config.log_type != LOG_SQUID) {
             // if appears to be not a spammer, check their past
             if(!spammer)
-               spammer = state.sp_htab.find_key(log_rec.hostname);
+               spammer = state.sp_htab.find_key(log_rec.hostname, OBJ_REG);
          }
          
          // initialize those that may be not set otherwise (e.g. if URL is not added)
@@ -2669,7 +2669,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    hashval = snode_t::hash(str);
 
    /* check if hashed */
-   if((nptr = state.sr_htab.find_node(hashval, str)) == NULL) {
+   if((nptr = state.sr_htab.find_node(hashval, str, OBJ_REG)) == NULL) {
       /* not hashed */
       nptr = new storable_t<snode_t>(str);
       if(!state.database.get_snode_by_value(*nptr)) {
@@ -2859,7 +2859,7 @@ spnode_t *webalizer_t::put_spnode(const string_t& host)
    hashval = spnode_t::hash(host);
 
    /* check if hashed */
-   if((spnode = state.sp_htab.find_node(hashval, host)) != NULL)
+   if((spnode = state.sp_htab.find_node(hashval, host, OBJ_REG)) != NULL)
       return spnode;
 
    spnode = new storable_t<spnode_t>(host);

@@ -467,7 +467,7 @@ const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t
    if(varname == NULL || *varname == 0)
       return NULL;
 
-   return find_node(varname);
+   return find_node(varname, OBJ_REG);
 }
 
 // -----------------------------------------------------------------------
