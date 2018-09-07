@@ -23,7 +23,7 @@
     <Link>
       <AdditionalDependencies>ws2_32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <ImageHasSafeExceptionHandlers />
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
