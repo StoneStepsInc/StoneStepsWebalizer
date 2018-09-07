@@ -80,17 +80,17 @@ TEST_F(NListTest, NListPrefixSearch)
    FillNList(list);
 
    // case-sensitive prefix search
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("start your engines"), false));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("start your engines"), false));
    EXPECT_STREQ("start*", result->c_str()) << "A string should match one of the prefix list entries case-sensitively";
 
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("start"), false));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("start"), false));
    EXPECT_STREQ("start*", result->c_str()) << "A string that is equal the prefix should match one of the prefix list entries case-sensitively";
 
    // case-insensitive prefix search
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("START YOUR ENGINES"), true));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("START YOUR ENGINES"), true));
    EXPECT_STREQ("start*", result->c_str()) << "A string should match one of the prefix list entries case-insensitively";
 
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("START"), true));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("START"), true));
    EXPECT_STREQ("start*", result->c_str()) << "A string that is equal the prefix should match one of the prefix list entries case-insensitively";
 
    // non-existing strings should't match any prefix entries
@@ -109,17 +109,17 @@ TEST_F(NListTest, NListSuffixSearch)
    FillNList(list);
 
    // case-sensitive suffix search
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("the end"), false));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("the end"), false));
    EXPECT_STREQ("*end", result->c_str()) << "A string should match one of the suffix list entries case-sensitively";
 
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("end"), false));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("end"), false));
    EXPECT_STREQ("*end", result->c_str()) << "A string that is equal the suffix should match one of the suffix list entries case-sensitively";
 
    // case-insensitive suffix search
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("THE END"), true));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("THE END"), true));
    EXPECT_STREQ("*end", result->c_str()) << "A string should match one of the suffix list entries case-insensitively";
 
-   EXPECT_NE(nullptr, result = list.isinlist(string_t("END"), true));
+   EXPECT_NE((const string_t*) nullptr, result = list.isinlist(string_t("END"), true));
    EXPECT_STREQ("*end", result->c_str()) << "A string that is equal the suffix should match one of the suffix list entries case-insensitively";
 
    // non-existing strings should't match any suffix entries
@@ -210,7 +210,7 @@ TEST(GListTest, GListDuplicateValues)
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
-      EXPECT_NE(nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
+      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
       EXPECT_STREQ(names[nameidx], node->name.c_str()) << "A name for a duplicate entry should match the extected name";
 
       nameidx++;
@@ -247,7 +247,7 @@ TEST(GListTest, GListDuplicateSearchValues)
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
-      EXPECT_NE(nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
+      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
       EXPECT_STREQ(names[nameidx], node->name.c_str()) << "A name for a duplicate entry should match the extected name";
       EXPECT_STREQ(qualifiers[nameidx], node->qualifier.c_str()) << "A search qualifier for a duplicate entry should match the extected qualifier";
 
