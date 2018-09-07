@@ -214,13 +214,8 @@ class pool_allocator_t {
       std::shared_ptr<memory_pool_t<BUCKETSIZE, POOLSIZE>> mempool;
 
    public:
-      typedef typename std::allocator<T>::value_type value_type;
-      typedef typename std::allocator<T>::size_type size_type;
-
-      typedef typename std::allocator<T>::pointer pointer;
-      typedef typename std::allocator<T>::const_pointer const_pointer;
-      typedef typename std::allocator<T>::reference reference;
-      typedef typename std::allocator<T>::const_reference const_reference;
+      typedef T value_type;
+      typedef std::size_t size_type;
 
       template <typename U> struct rebind {typedef pool_allocator_t<U, BUCKETSIZE, POOLSIZE> other;};
 
@@ -258,25 +253,14 @@ class pool_allocator_t {
          return mempool != other.mempool;
       }
 
-      pointer allocate(size_type count)
+      T* allocate(std::size_t count)
       {
-         return (pointer) mempool->allocate(count * sizeof(T));
+         return (T*) mempool->allocate(count * sizeof(T));
       }
 
-      void deallocate(pointer area, size_type count)
+      void deallocate(T *area, std::size_t count)
       {
          mempool->deallocate(area, count * sizeof(T));
-      }
-
-      template <typename U, typename ...Args>
-      void construct(U *block, Args&&... args)
-      {
-         new (block) U(std::forward<Args>(args)...);
-      }
-
-      void destroy(pointer object)
-      {
-         object->~T();
       }
 };
 
