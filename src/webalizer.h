@@ -128,8 +128,8 @@ class webalizer_t {
       };
 
       typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
-      typedef std::list<log_struct*, pool_allocator_t<log_struct, FOPEN_MAX>> logrec_list_t;
-      typedef std::list<logfile_t*, pool_allocator_t<logfile_t, FOPEN_MAX>> logfile_list_t;
+      typedef std::list<log_struct*, pool_allocator_t<log_struct*, FOPEN_MAX>> logrec_list_t;
+      typedef std::list<logfile_t*, pool_allocator_t<logfile_t*, FOPEN_MAX>> logfile_list_t;
 
       // user agent token types
       enum toktype_t {vertok, urltok, strtok};
