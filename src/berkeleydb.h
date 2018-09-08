@@ -117,7 +117,7 @@ class berkeleydb_t {
             ///
             /// @brief  Constructs a status object from a Berkeley DB error code.
             ///
-            berkeleydb_t::status_t::status_t(int error) : error(error)
+            status_t::status_t(int error) : error(error)
             {
                if(error)
                   message = db_strerror(error);
