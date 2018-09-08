@@ -25,17 +25,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
 
-#include "hashtab.h"
 #include "lang.h"
-
-//
-//
-//
-#define LANG_VAR_CHAR   0               /* char **                           */
-#define LANG_VAR_CHARR   1               /* char *[]                           */
-#define LANG_VAR_RCARR   2               /* response_code[]                  */
-#define LANG_VAR_CCARR   3               /* country_code[]                     */
 
 //
 // Language array literals are defined here to make lang_t constructor more readable 
@@ -432,42 +424,12 @@ inline bool iseolchar(char ch) {return (ch == '\n' || ch == '\r') ? true : false
 //
 //
 
-lang_t::lang_node_t::lang_node_t(const char *varname) : varname(varname) 
+lang_t::lang_node_t::lang_node_t(lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize) : 
+      vartype(vartype),
+      varptr(varptr), 
+      maxcount(maxcount), 
+      elemsize(elemsize) 
 {
-   vartype = LANG_VAR_CHAR; 
-   varptr = NULL; 
-   maxcount = 0; 
-   elemsize = 0; 
-}
-
-lang_t::lang_node_t::~lang_node_t(void)
-{
-   memset(varptr, 0, maxcount * elemsize);
-}
-
-void lang_t::lang_hash_table::put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize)
-{
-   lang_node_t *lnode;
-
-   if(varname == NULL || *varname == 0)
-      return;
-
-   lnode = new lang_node_t(varname);
-
-   lnode->vartype = vartype;
-   lnode->varptr = (u_char*) varptr;
-   lnode->maxcount = maxcount;
-   lnode->elemsize = elemsize;
-
-   put_node(lnode);
-}
-
-const lang_t::lang_node_t *lang_t::lang_hash_table::find_lang_var(const string_t& varname) const
-{
-   if(varname == NULL || *varname == 0)
-      return NULL;
-
-   return find_node(varname, OBJ_REG);
 }
 
 // -----------------------------------------------------------------------
@@ -1053,7 +1015,8 @@ void lang_t::init_lang_htab(void)
 void lang_t::proc_lang_file(const char *fname, std::vector<string_t>& errors)
 {
    u_char *name, *cptr, *cctld;
-   const lang_node_t *lnode;
+   lang_hash_table::iterator lit;
+   lang_node_t *lnode;
    int index;
    bool endofinput, quoted;
    string_t str;
@@ -1115,10 +1078,12 @@ void lang_t::proc_lang_file(const char *fname, std::vector<string_t>& errors)
       *cptr++ = 0;
 
       // skip unknown language variables
-      if((lnode = ln_htab.find_lang_var(str.assign((const char*) name, cptr-name-1))) == NULL) {
+      if((lit = ln_htab.find(std::string_view((const char*) name, cptr-name-1))) == ln_htab.end()) {
          while(!iseolchar(*cptr++));
          continue;
       }
+
+      lnode = &lit->second;
 
       //
       //   Skip to the first character of the value
@@ -1216,7 +1181,7 @@ void lang_t::proc_lang_file(const char *fname, std::vector<string_t>& errors)
             // array, set the rest of the array to zeros.
             //
             if(index < lnode->maxcount)
-               memset(&lnode->varptr[index * lnode->elemsize], 0, lnode->elemsize * (lnode->maxcount - index));
+               memset(&((u_char*)(lnode->varptr))[index * lnode->elemsize], 0, lnode->elemsize * (lnode->maxcount - index));
 
             break;
 
@@ -1238,9 +1203,12 @@ void lang_t::cleanup_lang_data(void)
    }
 }
 
-void lang_t::put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize)
+void lang_t::put_lang_var(const std::string_view& varname, lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize)
 {
-   ln_htab.put_lang_var(varname, vartype, varptr, maxcount, elemsize);
+   if(varname.empty())
+      throw std::logic_error("Invalid language variable name");
+
+   ln_htab.emplace(varname, lang_node_t(vartype, varptr, maxcount, elemsize));
 }
 
 u_int lang_t::resp_code_count(void) const
@@ -1305,12 +1273,3 @@ bool lang_t::check_language(const char *lc1, const char *lc2, size_t slen)
 
    return !slen || *lc1 == *lc2;
 }
-
-//
-// instantiate language node and hash table
-//
-#include "hashtab_tmpl.cpp"
-
-template struct htab_node_t<lang_t::lang_node_t>;
-template class hash_table<lang_t::lang_node_t>;
-

@@ -6,6 +6,9 @@
 #include "types.h"
 
 #include <vector>
+#include <unordered_map>
+#include <memory>
+#include <string_view>
 
 ///
 /// @class  lang_t
@@ -37,45 +40,35 @@ class lang_t {
 
    private:
       ///
+      /// @brief  Language variable type
+      ///
+      enum lang_vartype_t {
+         LANG_VAR_CHAR,                   ///< Individual text message (char **)
+         LANG_VAR_CHARR,                  ///< Array of text messages (char *[])
+         LANG_VAR_RCARR,                  ///< Array of HTTP response codes (response_code[])
+         LANG_VAR_CCARR                   ///< Array of country codes and names (country_code[])
+      };
+
+      ///
       /// @struct lang_node_t
       ///
       /// @brief  A localized language entry node
       ///
-      struct lang_node_t : public htab_obj_t {
-            int                  vartype;
-            string_t             varname;
-            u_char               *varptr;
+      struct lang_node_t {
+            lang_vartype_t       vartype;
+            void                 *varptr;
             int                  maxcount;         // maximum array size (array types)
             size_t               elemsize;         // size of a single element
 
             public:
-               lang_node_t(const char *varname);
-
-               ~lang_node_t(void);
-
-               bool match_key(const string_t& key) const override {return varname == key;}
-
-               nodetype_t get_type(void) const override {return OBJ_REG;}
-
-               static uint64_t hash(const char *varname) {return hash_ex(0, varname);}
-
-               virtual uint64_t get_hash(void) const override {return hash_ex(0, varname);}
+               lang_node_t(lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize);
       };
 
       ///
-      /// @class  lang_hash_table
+      /// All language variable names are string literals in `lang.cpp` wrapped in an
+      /// instance of `std::string_view` each and used as a key in the hash map below.
       ///
-      /// @brief  A hash table to keep all language variables
-      ///
-      class lang_hash_table : public hash_table<lang_node_t> {
-         public:
-            void put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize);
-
-            const lang_node_t *find_lang_var(const string_t& varname) const;
-      };
-
-      // VC6 generates errors unless friendship is declared after declaring lang_hash_table
-      friend class lang_hash_table;
+      typedef std::unordered_map<std::string_view, lang_node_t> lang_hash_table;
 
    public:
       const char *msg_ctrl_c;
@@ -328,7 +321,7 @@ class lang_t {
       u_char *lang_buffer;
 
    private:
-      void put_lang_var(const char *varname, int vartype, void *varptr, int maxcount, size_t elemsize);
+      void put_lang_var(const std::string_view& varname, lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize);
 
       void init_lang_htab(void);
 
