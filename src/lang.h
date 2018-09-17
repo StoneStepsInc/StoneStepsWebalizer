@@ -10,6 +10,21 @@
 #include <memory>
 #include <string_view>
 
+/// Unit test classes that need access to private members.
+namespace sswtest {
+   class LangTest_AssignCharLangVarSpace_Test;
+   class LangTest_AssignCharLangVarLineEnding_Test;
+   class LangTest_AssignCharArrLangVarOneLine_Test;
+   class LangTest_AssignCharArrLangVarMultiLine_Test;
+   class LangTest_AssignRespArrLangVarOneLine_Test;
+   class LangTest_AssignRespArrLangVarMultiLine_Test;
+   class LangTest_AssignCharArrLangVarQuoted_Test;
+   class LangTest_AssignCharArrTrailingComma_Test;
+   class LangTest_AssignCharArrTrailingCommaNoLineEnding_Test;
+   class LangTest_AssignCountryArrLangVarMultiLine_Test;
+   class LangTest_AssignCharArrLangVarUnbalancedQuotes_Test;
+}
+
 ///
 /// @class  lang_t
 ///
@@ -17,6 +32,18 @@
 ///         available to the application
 ///
 class lang_t {
+   friend class sswtest::LangTest_AssignCharLangVarSpace_Test;
+   friend class sswtest::LangTest_AssignCharLangVarLineEnding_Test;
+   friend class sswtest::LangTest_AssignCharArrLangVarOneLine_Test;
+   friend class sswtest::LangTest_AssignCharArrLangVarMultiLine_Test;
+   friend class sswtest::LangTest_AssignRespArrLangVarOneLine_Test;
+   friend class sswtest::LangTest_AssignRespArrLangVarMultiLine_Test;
+   friend class sswtest::LangTest_AssignCharArrLangVarQuoted_Test;
+   friend class sswtest::LangTest_AssignCharArrTrailingComma_Test;
+   friend class sswtest::LangTest_AssignCharArrTrailingCommaNoLineEnding_Test;
+   friend class sswtest::LangTest_AssignCountryArrLangVarMultiLine_Test;
+   friend class sswtest::LangTest_AssignCharArrLangVarUnbalancedQuotes_Test;
+
    public:
       ///
       /// @struct resp_code_t
@@ -55,13 +82,53 @@ class lang_t {
       /// @brief  A localized language entry node
       ///
       struct lang_node_t {
-            lang_vartype_t       vartype;
-            void                 *varptr;
-            int                  maxcount;         // maximum array size (array types)
-            size_t               elemsize;         // size of a single element
+            lang_vartype_t       vartype;             ///< Language variable type.
+
+            union {
+               const char                 **msg;      ///< A single message (`LANG_VAR_CHAR`)
+               std::vector<const char*>   *msgs;      ///< An array of messages (`LANG_VAR_CHARR`)
+               std::vector<resp_code_t>   *respcode;  ///< An array of HTTP response codes (`LANG_VAR_RCARR`)
+               std::vector<country_t>     *country;   ///< An array of country descriptors (`LANG_VAR_CCARR`)
+            };
 
             public:
-               lang_node_t(lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize);
+               lang_node_t(const char **msg) :
+                     vartype(LANG_VAR_CHAR), msg(msg)
+               {
+               }
+
+               lang_node_t(std::vector<const char*> *msgs) :
+                     vartype(LANG_VAR_CHARR), msgs(msgs)
+               {
+               }
+
+               lang_node_t(std::vector<resp_code_t> *respcode) :
+                     vartype(LANG_VAR_RCARR), respcode(respcode)
+               {
+               }
+
+               lang_node_t(std::vector<country_t> *country) :
+                     vartype(LANG_VAR_CCARR), country(country)
+               {
+               }
+
+               void reset(void)
+               {
+                  switch (vartype) {
+                     case LANG_VAR_CHAR:
+                        *msg = nullptr;
+                        break;
+                     case LANG_VAR_CHARR:
+                        msgs->clear();
+                        break;
+                     case LANG_VAR_RCARR:
+                        respcode->clear();
+                        break;
+                     case LANG_VAR_CCARR:
+                        country->clear();
+                        break;
+                  }
+               }
       };
 
       ///
@@ -85,17 +152,17 @@ class lang_t {
 
       const char *h_usage1;
       const char *h_usage2;
-      const char *h_msg[51];
+      std::vector<const char*> h_msg;
 
-      const char *s_month[12];
-      const char *l_month[12];
+      std::vector<const char*> s_month;
+      std::vector<const char*> l_month;
 
-      const char *msg_unit_pfx[7];
+      std::vector<const char*> msg_unit_pfx;
       const char *msg_xfer_unit;
 
-      resp_code_t response[41];
+      std::vector<resp_code_t> response;
 
-      country_t ctry[271];
+      std::vector<country_t> ctry;
 
       const char *language;
       const char *language_code;
@@ -318,14 +385,14 @@ class lang_t {
 
       lang_hash_table ln_htab;
 
-      u_char *lang_buffer;
+      string_t::char_buffer_t lang_buffer;
 
    private:
-      void put_lang_var(const std::string_view& varname, lang_vartype_t vartype, void *varptr, int maxcount, size_t elemsize);
-
       void init_lang_htab(void);
 
       bool read_lang_file(const char *fname, std::vector<string_t>& errors);
+
+      void parse_lang_file(const char *fname, char *buffer, std::vector<string_t>& errors);
 
    public:
       lang_t(void);
