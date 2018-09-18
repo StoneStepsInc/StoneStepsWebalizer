@@ -1230,11 +1230,6 @@ void lang_t::cleanup_lang_data(void)
    ln_htab.clear();
 }
 
-u_int lang_t::resp_code_count(void) const
-{
-   return (u_int) response.size();
-}
-
 const lang_t::resp_code_t& lang_t::get_resp_code(u_int respcode) const
 {
    u_int lbound = 1, rbound = (u_int) response.size()-1, index = 3;
@@ -1252,14 +1247,6 @@ const lang_t::resp_code_t& lang_t::get_resp_code(u_int respcode) const
    }
 
    return response[0];
-}
-
-const lang_t::resp_code_t& lang_t::get_resp_code_by_index(u_int index) const
-{
-   if(index > response.size()-1)
-      return response[0];
-
-   return response[index];
 }
 
 void lang_t::report_lang_fname(void) const

@@ -403,11 +403,7 @@ class lang_t {
       void proc_lang_file(const char *fname, std::vector<string_t>& errors);
       void cleanup_lang_data(void);
 
-      u_int resp_code_count(void) const;
-
       const resp_code_t& get_resp_code(u_int respcode) const;
-
-      const resp_code_t& get_resp_code_by_index(u_int index) const;
 
       static bool check_language(const char *lc1, const char *lc2);
       static bool check_language(const char *lc1, const char *lc2, size_t slen);

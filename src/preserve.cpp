@@ -426,8 +426,8 @@ bool state_t::initialize(void)
    //
 
    // add response codes for which we have localized descriptions
-   for(index = 0; index < config.lang.resp_code_count(); index++)
-      response.add_status_code(config.lang.get_resp_code_by_index(index).code);
+   for(index = 0; index < config.lang.response.size(); index++)
+      response.add_status_code(config.lang.response[index].code);
 
    // add localized country codes and names to the hash table
    for(index = 0; config.lang.ctry[index].desc; index++)
