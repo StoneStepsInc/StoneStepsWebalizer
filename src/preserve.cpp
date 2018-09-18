@@ -430,8 +430,8 @@ bool state_t::initialize(void)
       response.add_status_code(config.lang.response[index].code);
 
    // add localized country codes and names to the hash table
-   for(index = 0; config.lang.ctry[index].desc; index++)
-      cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc);
+   for(index = 0; index < (u_int) config.lang.ctry.size(); index++)
+      cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc, 0);
 
    // initalize main counters
    init_counters();                      
