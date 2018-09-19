@@ -13,6 +13,8 @@
 #include "serialize.h"
 #include "storable.h"
 
+#include <stdexcept>
+
 sc_table_t::sc_table_t(void)
 {
    memset(clsindex, 0, sizeof(clsindex));
@@ -33,7 +35,7 @@ void sc_table_t::add_status_code(u_int code)
 
    // and in the ascending order
    if(stcodes.size() && code <= stcodes[stcodes.size()-1].get_scode())
-      return;
+      throw std::runtime_error(string_t::_format("HTTP response code %d is being inserted out of order", code));
 
    // if first in its class, update the index
    if(clsindex[cls] == 0)
