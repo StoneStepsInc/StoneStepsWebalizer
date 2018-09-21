@@ -106,7 +106,7 @@ const char *html_output_t::fmt_xfer(uint64_t xfer, bool pre)
       return buffer_formatter.format(fmt_kbyte, xfer / (config.decimal_kbytes ? 1000. : 1024.));
 
    // buffer_formatter_t::format always returns a holder buffer, so we can return a pointer to the buffer memory
-   return buffer_formatter.format(fmt_hr_num, xfer, pre ? " " : "&nbsp;", config.lang.msg_unit_pfx, config.lang.msg_xfer_unit, config.decimal_kbytes);
+   return buffer_formatter.format(fmt_hr_num, xfer, pre ? " " : "&nbsp;", config.lang.msg_unit_pfx.data(), config.lang.msg_xfer_unit, config.decimal_kbytes);
 }
 
 void html_output_t::write_js_charts_head_links(FILE *out_fp)
