@@ -47,9 +47,24 @@ uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen);
 uint64_t hash_str(uint64_t hashval, const char *str, size_t slen);
 template <typename type_t> uint64_t hash_num(uint64_t hashval, type_t num);
 
-inline uint64_t hash_ex(uint64_t hashval, const char *str) {return (str && *str) ? hash_str(hashval, str, strlen(str)) : 0;}
 inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
 inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, data);}
+
+///
+/// @struct hash_string
+///
+/// @brief  A hash function for `std::unordered_map` with a `string_t` key.
+///
+struct hash_string {
+   size_t operator () (const string_t& str) const
+   {
+      //
+      // The sdbm hash is well-distributed across the entire 64-bit range, so we 
+      // can throw away the top half of the hash value on the 32-bit platform. 
+      //
+      return (size_t) hash_ex(0, str);
+   }
+};
 
 ///
 /// @struct struct htab_obj_t

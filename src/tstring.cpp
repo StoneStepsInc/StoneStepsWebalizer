@@ -318,7 +318,7 @@ int string_base<char_t>::compare(const char_t *str1, const char_t *str2, size_t 
    // characters.
    //
    for(const char_t *cp1 = str1, *cp2 = str2; (*cp1 || *cp2) && count; cp1++, cp2++, count--) {
-      // one of the characters may be a null character if on of the strings is shorter
+      // one of the characters may be a null character if one of the strings is shorter
       if(*cp1 != *cp2)
          return char_diff(*cp1, *cp2);
    }

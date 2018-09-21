@@ -1023,6 +1023,7 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
 {
    char *cptr;
    const char *name;
+   string_t sname;
    lang_hash_table::iterator lit;
    lang_node_t *lnode;
 
@@ -1038,6 +1039,9 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
       errors.push_back(string_t::_format("Unicode language files must be stored in the UTF-8 format (%s)", fname));
       return;
    }
+
+   // reserve enough room for the longest language variable name
+   sname.reserve(32);
 
    while(*cptr) {
       // skip comments
@@ -1074,10 +1078,13 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
          break;
       }
 
+      // must copy the string because there is no way to hold it without a null character
+      sname.assign(name, cptr-name);
+
       // look up the language variable by name (name is not null-terminated)
-      if((lit = ln_htab.find(std::string_view(name, cptr-name))) == ln_htab.end()) {
+      if((lit = ln_htab.find(sname)) == ln_htab.end()) {
          // skip unknown language variables
-         errors.push_back(string_t::_format("Unknown language variable (%s)", std::string(name, cptr-name).c_str()));
+         errors.push_back(string_t::_format("Unknown language variable (%s)", sname.c_str()));
          while(*cptr && !iseolchar(*cptr++));
          continue;
       }
@@ -1091,7 +1098,7 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
       // make sure there's an equal sign
       if(*cptr != '=') {
          while(*cptr && !iseolchar(*cptr++));
-         errors.push_back(string_t::_format("Language variable %s must be followed by an equal sign", std::string(lit->first).c_str()));
+         errors.push_back(string_t::_format("Language variable %s must be followed by an equal sign", sname.c_str()));
          break;
       }
 
@@ -1158,7 +1165,7 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
 
                // check for a missing value
                if(*cptr == 0) {
-                  errors.push_back(string_t::_format("Missing value for language variable %s", std::string(lit->first).c_str()));
+                  errors.push_back(string_t::_format("Missing value for language variable %s", sname.c_str()));
                   break;
                }
 
@@ -1178,7 +1185,7 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
 
                // report unbalanced quotes
                if(quoted) {
-                  errors.push_back(string_t::_format("Unbalanced quotes for language variable %s", std::string(lit->first).c_str()));
+                  errors.push_back(string_t::_format("Unbalanced quotes for language variable %s", sname.c_str()));
                   return;
                }
 

@@ -8,7 +8,6 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
-#include <string_view>
 
 /// Unit test classes that need access to private members.
 namespace sswtest {
@@ -133,9 +132,9 @@ class lang_t {
 
       ///
       /// All language variable names are string literals in `lang.cpp` wrapped in an
-      /// instance of `std::string_view` each and used as a key in the hash map below.
+      /// instance of `string_t` and used as a key in the hash map below.
       ///
-      typedef std::unordered_map<std::string_view, lang_node_t> lang_hash_table;
+      typedef std::unordered_map<string_t, lang_node_t, hash_string> lang_hash_table;
 
    public:
       const char *msg_ctrl_c;
