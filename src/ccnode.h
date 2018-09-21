@@ -56,8 +56,6 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       
       void update(const ccnode_t& ccnode);
 
-      static uint64_t hash(const char *ccode) {return hash_ex(0, ccode);}
-
       virtual uint64_t get_hash(void) const override {return hash_ex(0, ccode);}
 
       //
