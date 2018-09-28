@@ -1438,7 +1438,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          // remember spammers
          if(spammer)
-            put_spnode(log_rec.hostname);
+            state.sp_htab.insert(log_rec.hostname);
 
          //
          // Filter and, optionally, sort search arguments. Afer filter_srchargs returns,
@@ -1549,7 +1549,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(config.log_type != LOG_SQUID) {
             // if appears to be not a spammer, check their past
             if(!spammer)
-               spammer = state.sp_htab.find_key(log_rec.hostname, OBJ_REG);
+               spammer = state.sp_htab.find(log_rec.hostname) != state.sp_htab.end();
          }
          
          // initialize those that may be not set otherwise (e.g. if URL is not added)
@@ -2846,26 +2846,6 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
       nptr->storage_info.set_modified();
 
    return nptr;
-}
-
-///
-/// @brief  Adds or updates a spammer node in the state database.
-///
-spnode_t *webalizer_t::put_spnode(const string_t& host) 
-{
-   storable_t<spnode_t> *spnode;
-   uint64_t hashval;
-
-   hashval = spnode_t::hash(host);
-
-   /* check if hashed */
-   if((spnode = state.sp_htab.find_node(hashval, host, OBJ_REG)) != NULL)
-      return spnode;
-
-   spnode = new storable_t<spnode_t>(host);
-   state.sp_htab.put_node(hashval, spnode);
-
-   return spnode;
 }
 
 ///

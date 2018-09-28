@@ -145,9 +145,6 @@
     <ClCompile Include="snode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="spnode.cpp">
-      <Filter>Source Files\nodes</Filter>
-    </ClCompile>
     <ClCompile Include="sysnode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
@@ -346,9 +343,6 @@
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="snode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="spnode.h">
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="sysnode.h">

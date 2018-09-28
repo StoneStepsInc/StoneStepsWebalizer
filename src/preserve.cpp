@@ -609,7 +609,7 @@ int state_t::restore_state(void)
 
       // remember spammers
       if(hnode.spammer)
-         sp_htab.put_node(new storable_t<spnode_t>(hnode.string));
+         sp_htab.insert(hnode.string);
 
       // now we can move the host node into the new instance in the hash table
       hptr = hm_htab.put_node(new storable_t<hnode_t>(std::move(hnode)));
@@ -709,6 +709,7 @@ void state_t::del_htabs()
    sr_htab.clear();
    im_htab.clear();
    rc_htab.clear();
+
    sp_htab.clear();
 }
 

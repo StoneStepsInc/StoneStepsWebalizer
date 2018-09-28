@@ -287,8 +287,6 @@ class webalizer_t {
       storable_t<danode_t> *update_download(storable_t<dlnode_t> *dlnode, const tstamp_t& tstamp);
 
       void update_downloads(const tstamp_t& tstamp);
-
-      spnode_t *put_spnode(const string_t& host);
 };
 
 #endif  // WEBALIZER_H

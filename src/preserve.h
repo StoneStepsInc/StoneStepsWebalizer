@@ -23,6 +23,7 @@
 #include "storable.h"
 
 #include <vector>
+#include <unordered_set>
 
 class config_t;
 class lang_t;
@@ -58,7 +59,8 @@ class state_t {
       i_hash_table im_htab;                      // ident table (username)
       rc_hash_table rc_htab;                     // HTTP status codes
       dl_hash_table dl_htab;                     // active download jobs
-      sp_hash_table sp_htab;                     // spammers
+
+      std::unordered_set<string_t, hash_string> sp_htab; ///< Spammer hosts
 
       cc_hash_table cc_htab;                     // countries
 

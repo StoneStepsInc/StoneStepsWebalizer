@@ -30,7 +30,6 @@ template<> const u_short datanode_t<inode_t> ::__version = 3;
 template<> const u_short datanode_t<vnode_t> ::__version = 4;
 template<> const u_short datanode_t<rcnode_t>::__version = 1;
 template<> const u_short datanode_t<dlnode_t>::__version = 1;
-template<> const u_short datanode_t<spnode_t>::__version = 1;
 template<> const u_short datanode_t<ccnode_t>::__version = 3;
 template<> const u_short datanode_t<totals_t>::__version = 7;
 template<> const u_short datanode_t<danode_t>::__version = 2;
@@ -50,7 +49,6 @@ template struct base_node<snode_t>;
 template struct base_node<inode_t>;
 template struct base_node<rcnode_t>;
 template struct base_node<dlnode_t>;
-template struct base_node<spnode_t>;
 
 //
 //
@@ -63,7 +61,6 @@ template class datanode_t<snode_t>;
 template class datanode_t<inode_t>;
 template class datanode_t<rcnode_t>;
 template class datanode_t<dlnode_t>;
-template class datanode_t<spnode_t>;
 template class datanode_t<ccnode_t>;
 template class datanode_t<totals_t>;
 template class datanode_t<vnode_t>;
@@ -84,7 +81,6 @@ template struct htab_node_t<storable_t<snode_t>>;
 template struct htab_node_t<storable_t<inode_t>>;
 template struct htab_node_t<storable_t<rcnode_t>>;
 template struct htab_node_t<storable_t<dlnode_t>>;
-template struct htab_node_t<storable_t<spnode_t>>;
 template struct htab_node_t<storable_t<ccnode_t>>;
 
 //
@@ -98,6 +94,5 @@ template class hash_table<storable_t<snode_t>>;
 template class hash_table<storable_t<inode_t>>;
 template class hash_table<storable_t<rcnode_t>>;
 template class hash_table<storable_t<dlnode_t>>;
-template class hash_table<storable_t<spnode_t>>;
 template class hash_table<storable_t<ccnode_t>>;
 

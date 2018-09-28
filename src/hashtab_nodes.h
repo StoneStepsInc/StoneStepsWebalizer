@@ -18,7 +18,6 @@
 #include "rcnode.h"
 #include "rnode.h"
 #include "snode.h"
-#include "spnode.h"
 #include "unode.h"
 #include "basenode.h"
 #include "danode.h"
