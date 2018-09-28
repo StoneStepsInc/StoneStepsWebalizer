@@ -540,7 +540,6 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
 ///
 void config_t::prep_and_validate(void)
 {
-   uint32_t max_ctry;                      /* max countries defined       */
    utsname system_info;
 
    // check if custom HTML contains any disallowed tags
@@ -724,8 +723,9 @@ void config_t::prep_and_validate(void)
    if(geoip_db_path.isempty()) 
       ntop_ctrys = 0;
    else {
-      for (max_ctry=0; lang.ctry[max_ctry].desc; max_ctry++);
-      if (ntop_ctrys > max_ctry) ntop_ctrys = max_ctry;   /* force upper limit */
+      // force upper limit
+      if(ntop_ctrys > lang.ctry.size())
+         ntop_ctrys = (uint32_t) lang.ctry.size();
    }
 
    if (graph_lines> 20)       graph_lines= 20;         /* keep graphs sane! */
