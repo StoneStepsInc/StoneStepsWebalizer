@@ -738,7 +738,7 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len)
    const_char_buffer_t char_buffer(str, len+1, true);
 
    // create and return a read-only string (see note #2 in the class definition)
-   return string_base<char_t>(char_buffer, len);
+   return string_base<char_t>(std::move(char_buffer), len);
 }
 
 //

@@ -144,6 +144,9 @@ class string_base {
       string_base(const string_base& str) {init(); assign(str);}
       string_base(string_base&& str);
 
+      /// Prevents copy constructor from picking up `const string_t` instance wrapped in `std::move`.
+      string_base(const string_base&& str) = delete;
+
       explicit string_base(const char_t *str);
       string_base(const char_t *str, size_t len) {init(); assign(str, len);}
 
