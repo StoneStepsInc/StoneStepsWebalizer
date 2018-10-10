@@ -3025,16 +3025,16 @@ void html_output_t::top_ctry_table()
    // allocate and load the country array
    ccarray = new const ccnode_t*[state.cc_htab.size()];
 
-   state.cc_htab.load_array(ccarray);
+   uint64_t ccarray_size = state.cc_htab.load_array(ccarray);
 
    // find the first node with a zero count
-   for(i = 0; i < state.cc_htab.size(); i++, tot_ctry++) {
+   for(i = 0; i < ccarray_size; i++, tot_ctry++) {
       if(ccarray[i]->count == 0) 
          break;
    }
 
    // swap the nodes with zero and non-zero counts
-   for(j = i+1; j < state.cc_htab.size(); j++) {
+   for(j = i+1; j < ccarray_size; j++) {
       if(ccarray[j]->count) {           
          tptr = ccarray[i];
          ccarray[i++] = ccarray[j];    // the next one always has count == 0
