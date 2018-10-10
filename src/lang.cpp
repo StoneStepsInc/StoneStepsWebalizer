@@ -86,10 +86,7 @@
          "--end-month         end active visits and close the database", \
          "--compact-db        compact the database", \
          "--db-info           print database information", \
-         "--pipe-log-names    read log file names from standard input", \
-         NULL
-
-#define HELPMSG_ARRAY_SIZE (sizeof(h_msg)/sizeof(h_msg[0])-1)
+         "--pipe-log-names    read log file names from standard input"
 
 /* short month names MUST BE 3 CHARS in size... pad if needed*/
 #define S_MONTH_INIT \
@@ -98,20 +95,14 @@
    "Jul", "Aug", "Sep", \
    "Oct", "Nov", "Dec"
 
-#define SMONTH_ARRAY_SIZE sizeof(s_month)/sizeof(s_month[0])
-
 /* long month names - can be any length */
 #define L_MONTH_INIT \
    "January",  "February", "March",   "April",    \
    "May",      "June",     "July",    "August",   \
    "September","October",  "November","December"
 
-#define LMONTH_ARRAY_SIZE sizeof(l_month)/sizeof(l_month[0])
-
 // unit prefix characters (i.e. kilo, mega, etc)
 #define UNIT_PFX_INIT "K", "M", "G", "T", "P", "E", "Z"
-
-#define UNIT_PREFIX_ARRAY_SIZE sizeof(msg_unit_pfx)/sizeof(msg_unit_pfx[0])
 
 /* response code descriptions... order IS important!      */
 #define HTTP_RESP_INIT \
@@ -156,8 +147,6 @@
          {503, "Code 503 - Service Unavailable"             }, \
          {504, "Code 504 - Gateway Timeout"                 }, \
          {505, "Code 505 - HTTP Version Not Supported"      } 
-
-#define RESPCODE_ARRAY_SIZE sizeof(response)/sizeof(response[0])
 
 /* Country codes */
 
@@ -411,10 +400,7 @@
          {"yt",        "Mayotte"                           }, \
          {"za",        "South Africa"                      }, \
          {"zm",        "Zambia"                            }, \
-         {"zw",        "Zimbabwe"                          }, \
-         {NULL,        NULL                                }
-
-#define CCODE_ARRAY_SIZE (sizeof(ctry)/sizeof(ctry[0])-1)
+         {"zw",        "Zimbabwe"                          }
 
 ///
 /// @brief  Performs a quick test whether `ch` is any of new line characters.
