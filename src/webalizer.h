@@ -235,22 +235,22 @@ class webalizer_t {
       //
       // put_xnode methods
       //
-      storable_t<hnode_t> *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost, bool& newspammer);
-      storable_t<hnode_t> *put_hnode(const string_t& grpname, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
+      storable_t<hnode_t> *put_hnode(const string_t& ipaddr, const tstamp_t& tstamp, int64_t relts, uint64_t xfer, bool fileurl, bool pageurl, bool spammer, bool robot, bool target, bool& newvisit, bool& newnode, bool& newthost, bool& newspammer);
+      storable_t<hnode_t> *put_hnode(const string_t& grpname, int64_t relts, uint64_t hits, uint64_t files, uint64_t pages, uint64_t xfer, uint64_t visitlen, bool& newnode);
 
-      rnode_t *put_rnode(const string_t&, nodetype_t type, uint64_t, bool newvisit, bool& newnode);
+      rnode_t *put_rnode(const string_t&, int64_t relts, nodetype_t type, uint64_t, bool newvisit, bool& newnode);
 
-      storable_t<unode_t> *put_unode(const string_t& url, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
+      storable_t<unode_t> *put_unode(const string_t& url, int64_t relts, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode);
 
-      anode_t *put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode);
+      anode_t *put_anode(const string_t& agent, int64_t relts, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode);
 
-      snode_t *put_snode(const string_t& str, u_short termcnt, bool newvisit, bool& newnode);
+      snode_t *put_snode(const string_t& srch, int64_t relts, u_short termcnt, bool newvisit, bool& newnode);
 
-      inode_t *put_inode(const string_t& str, nodetype_t type, bool fileurl, uint64_t xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
+      inode_t *put_inode(const string_t& ident, int64_t relts, nodetype_t type, bool fileurl, uint64_t xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
 
-      rcnode_t *put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode = NULL);
+      rcnode_t *put_rcnode(const string_t& method, int64_t relts, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode = NULL);
 
-      dlnode_t *put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode);
+      dlnode_t *put_dlnode(const string_t& name, int64_t relts, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode);
 
       //
       //

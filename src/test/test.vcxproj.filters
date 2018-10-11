@@ -59,6 +59,12 @@
     <ClCompile Include="ut_poolalloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_hashtab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ut_strcreate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -142,6 +148,33 @@
       <Filter>obj</Filter>
     </Object>
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\config.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\anode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ccnode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab_nodes.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\keynode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rcnode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\dlnode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hnode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\vnode.obj">
       <Filter>obj</Filter>
     </Object>
   </ItemGroup>

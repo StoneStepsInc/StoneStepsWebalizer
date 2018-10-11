@@ -382,7 +382,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    if(config.group_hosts.size() && ((hostname && (group = config.group_hosts.isinglist(*hostname)) != NULL) ||
                                                 ((group = config.group_hosts.isinglist(hnode.string)) != NULL))) {
-      put_hnode(*group, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
+      put_hnode(*group, 0, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
    }
    else
    {
@@ -391,7 +391,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       {
          const char *domain = get_domain((hostname) ? *hostname : hnode.string, config.group_domains);
          if (domain)
-            put_hnode(string_t::hold(domain), vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
+            put_hnode(string_t::hold(domain), 0, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
       }
    }
    
@@ -403,7 +403,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    // Update country counters, ignoring robot and spammer activity
    //
    if(!hnode.robot && !hnode.spammer) {
-      ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode());
+      ccptr = &state.cc_htab.get_ccnode(hnode.get_ccode(), 0);
 
       ccptr->count += vnode.hits;
       ccptr->files += vnode.files;
@@ -1223,6 +1223,8 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    string_t srchterms;
    string_t urlhost;
 
+   int64_t htab_tstamp = 0;            ///< A time stamp for all hash tables
+
    uint64_t total_good = 0;
 
    int retcode = 0;
@@ -1285,6 +1287,9 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          /* get current records timestamp (seconds since epoch) */
          tstamp_t& rec_tstamp = log_rec.tstamp;
+
+         // hold onto the time stamp value, so we don't have to do time math more than we need
+         htab_tstamp = rec_tstamp.mktime();
 
          //
          // Skip log records that we processed in the past, but not the first few that have 
@@ -1561,7 +1566,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // put_hnode sets newvisit and must be called before any other put_xnode 
          // function.
          //
-         hptr = put_hnode(log_rec.hostname, rec_tstamp, log_rec.xfer_size, fileurl, pageurl, 
+         hptr = put_hnode(log_rec.hostname, rec_tstamp, htab_tstamp, log_rec.xfer_size, fileurl, pageurl, 
             spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer);
 
          // 
@@ -1602,7 +1607,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(goodurl) {
             /* URL hash table */
-            uptr = put_unode(log_rec.url, log_rec.srchargs, OBJ_REG,
+            uptr = put_unode(log_rec.url, htab_tstamp, log_rec.srchargs, OBJ_REG,
                 log_rec.xfer_size, log_rec.proc_time/1000., log_rec.port, entryurl, target, newurl);
             
             // update the last URL for the current visit
@@ -1610,7 +1615,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
             /* ident (username) hash table */
             if(!log_rec.ident.isempty())
-               put_inode(log_rec.ident, OBJ_REG, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newuser);
+               put_inode(log_rec.ident, htab_tstamp, OBJ_REG, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newuser);
          }
 
          //
@@ -1619,7 +1624,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(config.ntop_downloads || config.dump_downloads) {
             if((sptr = config.downloads.isinglist(log_rec.url)) != NULL) {
                if(log_rec.resp_code == RC_OK || log_rec.resp_code == RC_PARTIALCONTENT)
-                  put_dlnode(*sptr, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl);
+                  put_dlnode(*sptr, htab_tstamp, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl);
             }
          }
 
@@ -1627,7 +1632,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // error HTTP response codes
          //
          if(httperr && (config.ntop_errors || config.dump_errors))
-            put_rcnode(log_rec.method, log_rec.url, log_rec.resp_code, false, 1, &newerr);
+            put_rcnode(log_rec.method, htab_tstamp, log_rec.url, log_rec.resp_code, false, 1, &newerr);
 
          //
          // referrer hash table
@@ -1638,7 +1643,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             if(!spammer) {
                // check if it's a partial request and ignore the referrer if requested
                if(!config.ignore_referrer_partial || log_rec.resp_code != RC_PARTIALCONTENT)
-                  put_rnode(log_rec.refer, OBJ_REG, (uint64_t)1, newvisit, newref);
+                  put_rnode(log_rec.refer, htab_tstamp, OBJ_REG, (uint64_t)1, newvisit, newref);
             }
          }
 
@@ -1655,14 +1660,14 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if (config.ntop_agents)
          {
             if(!log_rec.agent.isempty())
-               put_anode(log_rec.agent, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent);
+               put_anode(log_rec.agent, htab_tstamp, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent);
          }
 
          /* do search string stuff if needed     */
          if(config.ntop_search) {
             newsrch = false;
             if(termcnt && !srchterms.isempty())
-               put_snode(srchterms, termcnt, newvisit, newsrch);
+               put_snode(srchterms, htab_tstamp, termcnt, newvisit, newsrch);
          }
 
          //
@@ -1739,31 +1744,31 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          /* URL Grouping */
          if((sptr = config.group_urls.isinglist(log_rec.url))!=NULL)
-            put_unode(*sptr, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
+            put_unode(*sptr, 0, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
 
          // group URL domains for proxy requests
          if(config.log_type == LOG_SQUID) {
             if(config.group_url_domains && !get_url_host(log_rec.url, urlhost).isempty()) {
                const char *domain = get_domain(urlhost.c_str(), config.group_url_domains);
-               put_unode(string_t::hold(domain), empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
+               put_unode(string_t::hold(domain), 0, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
             }
          }
 
          /* Referrer Grouping */
          if((sptr = config.group_refs.isinglist(log_rec.refer))!=NULL)
-            put_rnode(*sptr, OBJ_GRP, 1ul, newvisit, newrgrp);
+            put_rnode(*sptr, 0, OBJ_GRP, 1ul, newvisit, newrgrp);
 
          /* User Agent Grouping */
          if((sptr = config.group_agents.isinglist(log_rec.agent))!=NULL)
-            put_anode(*sptr, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp);
+            put_anode(*sptr, 0, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp);
 
          // group robots
          if(robot && ragent && config.group_robots)
-            put_anode(*ragent, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp);
+            put_anode(*ragent, 0, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp);
 
          /* Ident (username) Grouping */
          if((sptr = config.group_users.isinglist(log_rec.ident))!=NULL)
-            put_inode(*sptr, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp);
+            put_inode(*sptr, 0, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp);
 
          // update group counts (host counts are updated in process_resolved_hosts)
          if(newugrp) state.totals.t_grp_urls++;
@@ -2260,6 +2265,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 storable_t<hnode_t> *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
                const tstamp_t& tstamp,          // timestamp 
+               int64_t  htab_tstamp,                  // relative time stamp
                uint64_t xfer,                   // xfer size 
                bool     fileurl,                // file count
                bool     pageurl,
@@ -2282,7 +2288,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    hashval = hnode_t::hash(ipaddr);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
       if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
@@ -2310,7 +2316,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
             
          found = false;
       }
-      state.hm_htab.put_node(hashval, cptr);
+      state.hm_htab.put_node(hashval, cptr, htab_tstamp);
    }
    
    if(found) {
@@ -2378,6 +2384,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
 ///
 storable_t<hnode_t> *webalizer_t::put_hnode(
                const string_t& grpname,         // Hostname  
+               int64_t     htab_tstamp,
                uint64_t    hits,                  // hit count 
                uint64_t    files,                 // file count
                uint64_t    pages,
@@ -2394,7 +2401,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    hashval = hnode_t::hash(grpname);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
       if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
@@ -2416,7 +2423,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
          newnode = true;
          found = false;
       }
-      state.hm_htab.put_node(hashval, cptr);
+      state.hm_htab.put_node(hashval, cptr, htab_tstamp);
    }
    
    if(found) {
@@ -2440,7 +2447,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
 ///
 /// @brief  Adds or updates a referrer node in the state database.
 ///
-rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t count, bool newvisit, bool& newnode)
+rnode_t *webalizer_t::put_rnode(const string_t& str, int64_t htab_tstamp, nodetype_t type, uint64_t count, bool newvisit, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2451,7 +2458,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
    hashval = rnode_t::hash(str);
 
    /* check if hashed */
-   if((nptr = state.rm_htab.find_node(hashval, str, type)) == NULL) {
+   if((nptr = state.rm_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rnode_t>(str);
       if(!state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
@@ -2466,7 +2473,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
          found = false;
       }
 
-      state.rm_htab.put_node(hashval, nptr);
+      state.rm_htab.put_node(hashval, nptr, htab_tstamp);
    }
 
    if(nptr->storage_info.storage)
@@ -2488,7 +2495,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, nodetype_t type, uint64_t c
 ///
 /// @brief  Adds or updates a URL node in the state database.
 ///
-storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
+storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, int64_t htab_tstamp, const string_t& srchargs, nodetype_t type, uint64_t xfer, double proctime, u_short port, bool entryurl, bool target, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2504,7 +2511,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t&
    hashval = unode_t::hash(str, srchargs);
 
    /* check if hashed */
-   if((cptr = state.um_htab.find_node(hashval, &param)) == NULL) {
+   if((cptr = state.um_htab.find_node(hashval, &param, type, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<unode_t>(str, srchargs);
       // check if in the database
@@ -2532,7 +2539,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t&
          newnode = true;
          found = false;
       }
-      state.um_htab.put_node(hashval, cptr);
+      state.um_htab.put_node(hashval, cptr, htab_tstamp);
    }
 
    if(found) {
@@ -2558,7 +2565,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, const string_t&
 ///
 /// @brief  Adds or updates an HTTP response code node in the state database.
 ///
-rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode)
+rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode)
 {
    bool found = true;
    storable_t<rcnode_t> *nptr;
@@ -2579,7 +2586,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
    hashval = rcnode_t::hash(respcode, method, url);
 
    /* check if hashed */
-   if((nptr = state.rc_htab.find_node(hashval, &param)) == NULL) {
+   if((nptr = state.rc_htab.find_node(hashval, &param, OBJ_REG, htab_tstamp)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rcnode_t>(method, url, respcode);
 
@@ -2590,7 +2597,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
          if(newnode) *newnode = true;
          found = false;
       }
-      state.rc_htab.put_node(hashval, nptr);
+      state.rc_htab.put_node(hashval, nptr, htab_tstamp);
    }
    
    if(found) {
@@ -2607,7 +2614,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, const string_t& url, u
 ///
 /// @brief  Adds or updates a user agent node in the state database.
 ///
-anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode)
+anode_t *webalizer_t::put_anode(const string_t& str, int64_t htab_tstamp, nodetype_t type, uint64_t xfer, bool newvisit, bool robot, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2618,7 +2625,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
    hashval = anode_t::hash(str);
 
    /* check if hashed */
-   if((cptr = state.am_htab.find_node(hashval, str, type)) == NULL) {
+   if((cptr = state.am_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<anode_t>(str, robot);
       if(!state.database.get_anode_by_value(*cptr)) {
@@ -2635,7 +2642,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
          found = false;
       }
 
-      state.am_htab.put_node(hashval, cptr);
+      state.am_htab.put_node(hashval, cptr, htab_tstamp);
    }
 
    if(found) {
@@ -2655,7 +2662,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, nodetype_t type, uint64_t x
 ///
 /// @brief  Adds or updates a search engine search ters node in the state database.
 ///
-snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvisit, bool& newnode)
+snode_t *webalizer_t::put_snode(const string_t& str, int64_t htab_tstamp, u_short termcnt, bool newvisit, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2669,7 +2676,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
    hashval = snode_t::hash(str);
 
    /* check if hashed */
-   if((nptr = state.sr_htab.find_node(hashval, str, OBJ_REG)) == NULL) {
+   if((nptr = state.sr_htab.find_node(hashval, str, OBJ_REG, htab_tstamp)) == NULL) {
       /* not hashed */
       nptr = new storable_t<snode_t>(str);
       if(!state.database.get_snode_by_value(*nptr)) {
@@ -2683,7 +2690,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
          found = false;
          newnode = true;
       }
-      state.sr_htab.put_node(hashval, nptr);
+      state.sr_htab.put_node(hashval, nptr, htab_tstamp);
    }
 
    if(found) {
@@ -2706,6 +2713,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, u_short termcnt, bool newvi
 /// @brief  Adds or updates a user node in the state database.
 ///
 inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
+               int64_t htab_tstamp,
                nodetype_t    type,       /* obj type  */
                bool     fileurl,    /* File flag */
                uint64_t xfer,       /* xfer size */
@@ -2724,7 +2732,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    hashval = inode_t::hash(str);
 
    /* check if hashed */
-   if((nptr = state.im_htab.find_node(hashval, str, type)) == NULL) {
+   if((nptr = state.im_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
       /* not hashed */
       nptr = new storable_t<inode_t>(str);
       if(!state.database.get_inode_by_value(*nptr)) {
@@ -2743,7 +2751,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
          newnode = true;
          found = false;
       }
-      state.im_htab.put_node(hashval, nptr);
+      state.im_htab.put_node(hashval, nptr, htab_tstamp);
    }
 
    if(nptr->storage_info.storage)
@@ -2769,7 +2777,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 ///
 /// @brief  Adds or updates a download node in the state database.
 ///
-dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode)
+dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode)
 {
    bool found = true;
    uint64_t hashval;
@@ -2802,7 +2810,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
    // 12:36:43 GET /.../webalizer_win.zip Download+Master                   206 530125 360 436546
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
-   if((nptr = state.dl_htab.find_node(hashval, &params)) == NULL) {
+   if((nptr = state.dl_htab.find_node(hashval, &params, OBJ_REG, htab_tstamp)) == NULL) {
       nptr = new storable_t<dlnode_t>(name, &hnode);
       if(!state.database.get_dlnode_by_value(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
@@ -2819,7 +2827,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, u_int respcode, const ts
          found = false;
       }
 
-      state.dl_htab.put_node(hashval, nptr);
+      state.dl_htab.put_node(hashval, nptr, htab_tstamp);
    }
    
    if(found) {

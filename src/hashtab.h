@@ -15,32 +15,32 @@
 #include "types.h"
 #include "storable.h"
 
+#include <list>
 #include <stdexcept>
 
 #define LMAXHASH     1048576ul
 #define MAXHASH      16384ul
 #define SMAXHASH     1024ul
 
-//
-// Hash tables may contain primary objects, such as user agents or URLs, and 
-// object groups, such all versions of a particular browser or all URLs in a 
-// selected directory.
-//
+///
+/// Hash tables may contain primary objects, such as user agents or URLs, and 
+/// object groups, such all versions of a particular browser or all URLs in a 
+/// selected directory.
+///
 enum nodetype_t {
    OBJ_REG = 0,                     /* Regular object               */
    OBJ_GRP = 2                      /* Grouped object               */
 };
 
-// -----------------------------------------------------------------------
-//
-// hash functions
-//
-// -----------------------------------------------------------------------
+///
+/// @name   Hash functions
+///
+/// @{
 
-//
-// The sdbm hash function below generates 64-bit hash values that are well 
-// distributed across the entire 64-bit range.
-//
+///
+/// The sdbm hash function below generates 64-bit hash values that are well 
+/// distributed across the entire 64-bit range.
+///
 inline uint64_t hash_byte(uint64_t hashval, u_char b) {return (uint64_t) b + (hashval << 6) + (hashval << 16) - hashval;}
 
 uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen);
@@ -49,6 +49,7 @@ template <typename type_t> uint64_t hash_num(uint64_t hashval, type_t num);
 
 inline uint64_t hash_ex(uint64_t hashval, const string_t& str) {return hash_str(hashval, str.c_str(), str.length());}
 inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, data);}
+/// @}
 
 ///
 /// @struct hash_string
@@ -65,6 +66,9 @@ struct hash_string {
       return (size_t) hash_ex(0, str);
    }
 };
+
+template <typename node_t> struct htab_node_t;
+template <typename node_t> using node_list_t = std::list<htab_node_t<node_t>*>;
 
 ///
 /// @struct struct htab_obj_t
@@ -131,13 +135,15 @@ template <typename node_t>
 struct htab_node_t {
       node_t         *node;                ///< Hash table content object
       htab_node_t    *next;                ///< Next hash table node
+      htab_node_t    *prev;                ///< Previous hash table node
+      uint64_t       hashval;              ///< Hash value of the node object.
+      int64_t        tstamp;               ///< Relative time stamp associated with this node.
+
+      typename node_list_t<node_t>::iterator    lsnode;
 
       public:
-         htab_node_t(void) : node(NULL), next(NULL) 
-         {
-         }
-
-         htab_node_t(node_t *node) : node(node), next(NULL) 
+         htab_node_t(node_t *node, uint64_t hashval, typename node_list_t<node_t>::iterator lsnode, int64_t tstamp) :
+               node(node), next(nullptr), prev(nullptr), tstamp(tstamp), lsnode(lsnode), hashval(hashval)
          {
          }
 
@@ -152,13 +158,33 @@ struct htab_node_t {
 ///
 /// @tparam node_t   Hash table node type
 ///
-/// @brief  A generic hash table class
+/// @brief  A specialized hash table class that provides simple and compound key 
+///         look-up functionality and also maintains a time-ordered list of all
+///         regular object nodes in the hash table.
+///
+/// This hash table is optimized as a cache for some external storage and minimizes 
+/// the number of hash value computations and key comparisons at the expense of 
+/// having a less flexible and robust interface. The caller is expected to perform
+/// these steps when working with instances of this class:
+///
+///   * Obtain the hash value for the node object
+///   * Call `find_node` with this hash value and the node key
+///   * If `find_value` returned NULL, look up the key in the external storage
+///   * If the key was not found in the external storage, call `put_node` with
+///     the hash value to insert a new node in the hash table. Otherwise, insert
+///     the node found in the external storage.
+///   * Call `tmrange` to infer that some objects have not been accessed for some
+///     time and call `swap_out` to move oldest nodes to the external storage
+///   * Once main processing is done, walk the hash table and save all remaining
+///     nodes in the external storage.
+///
+/// Only regular object nodes participate in time stamp ordering and are inserted
+/// into the time stamp list (`tmlist`). Consequently, only regular object nodes may
+/// be swapped out to the external storage while log processing is in progress.
 ///
 template <typename node_t>
 class hash_table {
    private:
-      enum swap_code {swap_ok, swap_failed, swap_inuse};
-
       ///
       /// @struct bucket_t
       ///
@@ -169,7 +195,9 @@ class hash_table {
          u_int                count;      ///< Number of nodes in this bucket
 
          public:
-            bucket_t(void) {head = NULL; count = 0;}
+            bucket_t(void) : head(nullptr), count(0)
+            {
+            }
       };
 
    public:
@@ -200,7 +228,7 @@ class hash_table {
       ///         If swap-out callback returns false, the swap_out method exits 
       ///         the loop and returns false.
       ///
-      typedef bool (*swap_cb_t)(node_t *node, void *arg);
+      typedef void (*swap_cb_t)(node_t *node, void *arg);
 
    public:
       ///
@@ -213,15 +241,15 @@ class hash_table {
 
          private:
             bucket_t    *htab;                  ///< Bucket of nodes with the same key hash
-            uint64_t    index;                  ///< Current bucket index
+            uint64_t    index;                  ///< Index of the next bucket
             uint64_t    maxhash;                ///< Maximum number of buckets in the hash table
             htab_node_t<node_t> *nptr;          ///< Current node pointer
 
          protected:
-            iterator(bucket_t _htab[], uint64_t _maxhash) {htab = _htab; index = 0; maxhash = _maxhash; nptr = NULL;}
+            iterator(bucket_t htab[], uint64_t maxhash) : htab(htab), index(0), maxhash(maxhash), nptr(nullptr) {}
 
          public:
-            iterator(void) {htab = NULL; nptr = NULL; index = 0; maxhash = 0;}
+            iterator(void) : htab(nullptr), nptr(nullptr), index(0), maxhash(0) {}
 
             node_t *item(void) {return nptr ? nptr->node : NULL;}
 
@@ -253,10 +281,10 @@ class hash_table {
          friend class hash_table<node_t>;
 
          private:
-            const_iterator(bucket_t _htab[], uint64_t _maxhash) : iterator(_htab, _maxhash) {}
+            const_iterator(bucket_t htab[], uint64_t maxhash) : iterator(htab, maxhash) {}
 
          public:
-            const_iterator(void) : iterator() {}
+            const_iterator(void) {}
 
             const node_t *item(void) {return iterator::item();}
 
@@ -269,68 +297,102 @@ class hash_table {
       size_t      emptycnt;   ///< Number of empty buckets
       bucket_t    *htab;      ///< Buckets
 
+      std::list<htab_node_t<node_t>*>  tmlist;  ///< Time-ordered list of nodes.
+
       swap_cb_t   swapcb;     ///< Swap out callback
       void        *cbarg;     ///< Swap out callback argument
 
    private:
-      htab_node_t<node_t> *move_node(htab_node_t<node_t> *nptr, htab_node_t<node_t> *prev, htab_node_t<node_t> **next) const
-      {
-         prev->next = nptr->next;
-         nptr->next = *next;
-         *next = nptr;
-         return nptr;
-      }
+      /// Completely unlinks the specified node from the bucket list.
+      void unlink_node(bucket_t& bucket, htab_node_t<node_t> *nptr) const;
 
-      swap_code swap_out_node(bucket_t& bucket, htab_node_t<node_t> **pptr);
+      /// Moves the specified node to the beginning of the bucket list.
+      void move_to_front(bucket_t& bucket, htab_node_t<node_t> *nptr) const;
+
+      /// Implements `find_node` methods that look up nodes with a hash value and a key and move the node to the end of the time stamp list.
+      template <typename ... param_t>
+      node_t *find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (inner_node<node_t>::type::*match_key)(param_t ... args) const, param_t ... param);
 
    protected:
+      /// Returns true if the specified node should appear in the array populated by `load_array`.
       virtual bool load_array_check(const node_t *) const {return true;}
 
    public:
+      /// Constructs a hash table with the specified number of buckets.
       hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = NULL, void *cbarg = NULL);
 
+      /// Destroys the hash table and its contents.
       ~hash_table(void);
 
-      //
-      // informational
-      //
-      size_t size(void) const {return count;}
+      ///
+      /// @name   Informational
+      ///
+      /// @{
 
-      //
-      // swap-out interface
-      //
+      /// Returns the number of nodes in the hash table.
+      size_t size(void) const {return count;}
+      /// @}
+
+      ///
+      /// @brief  Swap-out interface
+      ///
+      /// @{
+
+      /// Sets a swap-out callback function and its argument.
       void set_swap_out_cb(swap_cb_t swapcb, void *arg);
 
-      //
-      // iterators
-      //
+      /// Swaps out nodes with time stamps less than or equal to `tmspan` to some external storage.
+      void swap_out(int64_t tmspan);
+      /// @}
+
+      ///
+      /// @name   Iterators
+      ///
+      /// @{
+
       iterator begin(void) {return iterator(htab, maxhash);}
 
       const_iterator begin(void) const {return const_iterator(htab, maxhash);}
+      /// @}
 
-      //
-      // hash table interface
-      //
+      ///
+      /// @name   Hash table interface
+      ///
+      /// @{
+
+      /// Deletes all hash table nodes.
       void clear(void);
 
-      bool find_key(const string_t& key, nodetype_t type) const {return find_node(key, type) != NULL;}
-
+      /// Looks for a node with a string key and does not move the node to the end of the time stamp list.
       const node_t *find_node(const string_t& key, nodetype_t type) const;
 
-      node_t *find_node(const string_t& key, nodetype_t type) {return find_node(hash_ex(0, key), key, type);}
+      /// Looks for a node with a string key and, if found, moves it to the end of the time stamp list.
+      node_t *find_node(const string_t& key, nodetype_t type, int64_t tstamp) {return find_node(hash_ex(0, key), key, type, tstamp);}
 
-      node_t *find_node(uint64_t hashval, const string_t& str, nodetype_t type);
+      /// Looks for a node with a hash value and a string key and, if found, moves it to the end of the time stamp list.
+      node_t *find_node(uint64_t hashval, const string_t& str, nodetype_t type, int64_t tstamp);
 
-      node_t *find_node(uint64_t hashval, const typename node_t::param_block *params);
+      /// Looks for a node with a hash value and a compound key and, if found, moves it to the end of the time stamp list.
+      node_t *find_node(uint64_t hashval, const typename node_t::param_block *params, nodetype_t type, int64_t tstamp);
 
-      node_t *put_node(node_t *nptr);
+      /// Obtains a hash value from `nptr` and inserts it into the corresponding bucket.
+      node_t *put_node(node_t *nptr, int64_t tstamp);
 
-      node_t *put_node(uint64_t hashval, node_t *node);
+      /// Inserts `node` into a bucket identified by `hashval`.
+      node_t *put_node(uint64_t hashval, node_t *node, int64_t tstamp);
+      /// @}
 
-      //
-      // miscellaneous
-      //
+      ///
+      /// @name   Miscellaneous
+      ///
+      /// @{
+
+      /// Fills the specified array with pointers to nodes in the hash table.
       uint64_t load_array(const typename inner_node<node_t>::type *array[]) const;
+
+      /// Returns the difference between the newest and oldest time stamps in the hash table.
+      int64_t tmrange(void) const;
+      /// @}
 };
 
 #endif  // HASHTAB_H

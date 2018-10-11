@@ -54,7 +54,7 @@ state_t::~state_t(void)
    delete [] buffer;
 }
 
-bool state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
+void state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
 {
    state_t *_this = (state_t*) arg;
 
@@ -62,11 +62,9 @@ bool state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
       if(!_this->database.put_hnode(*hnode, hnode->storage_info))
          throw exception_t(0, "Cannot swap out a monthly host node to the database");
    }
-
-   return true;
 }
 
-bool state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
+void state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
 {
    state_t *_this = (state_t*) arg;
 
@@ -74,8 +72,6 @@ bool state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
       if(!_this->database.put_unode(*unode, unode->storage_info))
          throw exception_t(0, "Cannot swap out a URL node to the database");
    }
-
-   return true;
 }
 
 ///
@@ -431,7 +427,7 @@ bool state_t::initialize(void)
 
    // add localized country codes and names to the hash table
    for(index = 0; index < (u_int) config.lang.ctry.size(); index++)
-      cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc);
+      cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc, 0);
 
    // initalize main counters
    init_counters();                      
@@ -533,6 +529,8 @@ int state_t::restore_state(void)
    if(!database.get_tgnode_by_id(totals, NULL, NULL))
       return 3;
 
+   int64_t htab_tstamp = totals.cur_tstamp.mktime();
+
    // no need to restore the rest if we just need database information
    if(config.db_info)
       return 0;
@@ -562,7 +560,7 @@ int state_t::restore_state(void)
    {database_t::iterator<ccnode_t> iter = database.begin_countries();
    storable_t<ccnode_t> ccnode;
    while(iter.next(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
-      cc_htab.update_ccnode(ccnode);
+      cc_htab.update_ccnode(ccnode, 0);
    }
    iter.close();
    }
@@ -599,10 +597,10 @@ int state_t::restore_state(void)
          // The visit doesn't own the URL node, so we need to find a URL node in the 
          // hash table or insert a new one, so it's deleted properly. 
          //
-         if((uptr = um_htab.find_node(unode.string, OBJ_REG)) != NULL)
+         if((uptr = um_htab.find_node(unode.string, OBJ_REG, htab_tstamp)) != NULL)
             vnode.set_lasturl(uptr);
          else
-            vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode))));
+            vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode)), htab_tstamp));
       }
 
       hnode.set_visit(new storable_t<vnode_t>(std::move(vnode)));
@@ -612,7 +610,7 @@ int state_t::restore_state(void)
          sp_htab.insert(hnode.string);
 
       // now we can move the host node into the new instance in the hash table
-      hptr = hm_htab.put_node(new storable_t<hnode_t>(std::move(hnode)));
+      hptr = hm_htab.put_node(new storable_t<hnode_t>(std::move(hnode)), htab_tstamp);
 
       hnode.reset();
       unode.reset();
@@ -627,7 +625,7 @@ int state_t::restore_state(void)
    hnode_t *hptr;
    while(iter.next(danode, unpack_danode_cb, this, dlnode, hnode)) {
       // the host must be in the hosts table because active downloads are a subset of active visits
-      if((hptr = hm_htab.find_node(hnode.string, OBJ_REG)) == nullptr)
+      if((hptr = hm_htab.find_node(hnode.string, OBJ_REG, htab_tstamp)) == nullptr)
          throw std::runtime_error(string_t::_format("Cannot find the host (%s) for the download (ID: %" PRIu64 ")", hnode.string.c_str(), dlnode.nodeid));
 
       // make a copy of the active download and link it to the kdownload node
@@ -637,7 +635,7 @@ int state_t::restore_state(void)
       dlnode.set_host(hptr);
 
       // finish up and insert the download node into the hash table
-      dl_htab.put_node(new storable_t<dlnode_t>(std::move(dlnode)));
+      dl_htab.put_node(new storable_t<dlnode_t>(std::move(dlnode)), htab_tstamp);
 
       dlnode.reset();
       danode.reset();

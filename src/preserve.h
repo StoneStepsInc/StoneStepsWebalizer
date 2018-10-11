@@ -99,9 +99,9 @@ class state_t {
       static void unpack_active_hnode_cb(hnode_t& hnode, bool active, void *_this);
       /// @}
 
-      static bool swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
+      static void swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
 
-      static bool swap_unode_cb(storable_t<unode_t> *unode, void *arg);
+      static void swap_unode_cb(storable_t<unode_t> *unode, void *arg);
 
    public:
       state_t(const config_t& config);

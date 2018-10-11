@@ -78,13 +78,13 @@ class cc_hash_table : public hash_table<storable_t<ccnode_t>> {
 
       void reset(void);
       
-      void update_ccnode(const ccnode_t& ccnode) {get_ccnode(ccnode.ccode).update(ccnode);}
+      void update_ccnode(const ccnode_t& ccnode, int64_t tstamp) {get_ccnode(ccnode.ccode, tstamp).update(ccnode);}
 
-      void put_ccnode(const char *ccode, const char *cdesc) {put_node(new storable_t<ccnode_t>(ccode, cdesc));}
+      void put_ccnode(const char *ccode, const char *cdesc, int64_t tstamp) {put_node(new storable_t<ccnode_t>(ccode, cdesc), tstamp);}
 
       const ccnode_t& get_ccnode(const string_t& ccode) const;
 
-      ccnode_t& get_ccnode(const string_t& ccode);
+      ccnode_t& get_ccnode(const string_t& ccode, int64_t tstamp);
 };
 
 #endif // CCNODE_H

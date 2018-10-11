@@ -115,7 +115,7 @@ TEST_RPT_FILE := test-report.xml
 TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
 	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp \
-	ut_config.cpp
+	ut_config.cpp ut_strcreate.cpp ut_hashtab.cpp
 
 TEST_LIBS     := stdc++ pthread gtest
 
