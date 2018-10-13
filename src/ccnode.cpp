@@ -206,10 +206,12 @@ ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode, int64_t tstamp)
 {
    ccnode_t *cptr;
 
-   if((cptr = find_node(ccode, OBJ_REG, tstamp)) != NULL)
-      return *cptr;
+   if(!ccode.isempty()) {
+      if((cptr = find_node(ccode, OBJ_REG, tstamp)) != NULL)
+         return *cptr;
+   }
 
-   if((cptr = find_node(string_t("*"), OBJ_REG, tstamp)) != NULL)
+   if((cptr = find_node(string_t::hold("*", 1), OBJ_REG, tstamp)) != NULL)
       return *cptr;
 
    throw std::runtime_error(string_t::_format("Country code list must include '*' (%s)", ccode.c_str()));
