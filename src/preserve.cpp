@@ -425,7 +425,7 @@ bool state_t::initialize(void)
    for(index = 0; index < config.lang.response.size(); index++)
       response.add_status_code(config.lang.response[index].code);
 
-   // add localized country codes and names to the hash table
+   // all country nodes are always kept in memory and are never swapped out
    for(index = 0; index < (u_int) config.lang.ctry.size(); index++)
       cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc, 0);
 

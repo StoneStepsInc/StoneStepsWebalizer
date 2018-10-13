@@ -11,7 +11,8 @@
 
 #include "ccnode.h"
 #include "serialize.h"
-#include "exception.h"
+
+#include <stdexcept>
 
 ccnode_t::ccnode_t(void) : keynode_t<uint64_t>(0)
 {
@@ -211,7 +212,7 @@ ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode, int64_t tstamp)
    if((cptr = find_node(string_t("*"), OBJ_REG, tstamp)) != NULL)
       return *cptr;
 
-   throw exception_t(0, string_t::_format("Cannot find country node (%s)", ccode.c_str()));
+   throw std::runtime_error(string_t::_format("Country code list must include '*' (%s)", ccode.c_str()));
 }
 
 void cc_hash_table::reset(void)
