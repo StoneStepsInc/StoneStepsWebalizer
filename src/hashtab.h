@@ -311,7 +311,7 @@ class hash_table {
 
       /// Implements `find_node` methods that look up nodes with a hash value and a key and move the node to the end of the time stamp list.
       template <typename ... param_t>
-      node_t *find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (inner_node<node_t>::type::*match_key)(param_t ... args) const, param_t ... param);
+      node_t *find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (node_t::*match_key)(param_t ... args) const, param_t ... param);
 
    protected:
       /// Returns true if the specified node should appear in the array populated by `load_array`.

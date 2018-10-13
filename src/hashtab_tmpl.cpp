@@ -209,7 +209,7 @@ void hash_table<node_t>::move_to_front(bucket_t& bucket, htab_node_t<node_t> *np
 
 template <typename node_t>
 template <typename ... param_t>
-node_t *hash_table<node_t>::find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (inner_node<node_t>::type::*match_key)(param_t ... args) const, param_t ... arg)
+node_t *hash_table<node_t>::find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (node_t::*match_key)(param_t ... args) const, param_t ... arg)
 {
    bucket_t& bucket = htab[hashval % maxhash];
    
@@ -244,13 +244,25 @@ node_t *hash_table<node_t>::find_node_ex(uint64_t hashval, nodetype_t type, int6
 template <typename node_t>
 node_t *hash_table<node_t>::find_node(uint64_t hashval, const string_t& key, nodetype_t type, int64_t tstamp)
 {
-   return find_node_ex<const string_t&>(hashval, type, tstamp, &node_t::match_key, key);
+   //
+   // GCC 6.4.1 for some reason deduces node_t in node_t::match_key not as the actual
+   // node_t type, such as storable_t<hnode_t>, but rather as one of the base classes, 
+   // such as base_node<hnode_t>, when the member function pointer expression appears
+   // directly in the find_node_ex call below. If the member function pointer is defined
+   // as a variable, it compiles just fine.
+   //
+   bool (node_t::*match_key)(const string_t&) const = &node_t::match_key;
+
+   return find_node_ex<const string_t&>(hashval, type, tstamp, match_key, key);
 }
 
 template <typename node_t>
 node_t *hash_table<node_t>::find_node(uint64_t hashval, const typename node_t::param_block *params, nodetype_t type, int64_t tstamp)
 {
-   return find_node_ex<const typename node_t::param_block*>(hashval, type, tstamp, &node_t::match_key_ex, params);
+   // see find_node above for details
+   bool (node_t::*match_key_ex)(const typename node_t::param_block*) const = &node_t::match_key_ex;
+
+   return find_node_ex<const typename node_t::param_block*>(hashval, type, tstamp, match_key_ex, params);
 }
 
 template <typename node_t>
