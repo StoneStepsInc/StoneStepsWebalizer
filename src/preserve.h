@@ -39,8 +39,6 @@ class webalizer_t;
 /// items, such as URLs or hosts. The state is stored in the database between runs.
 ///
 class state_t {
-   friend class webalizer_t;
-
    public:
       storable_t<totals_t> totals;
 
@@ -93,8 +91,6 @@ class state_t {
       static void unpack_danode_cb(danode_t& danode, void *arg, storable_t<dlnode_t>& dlnode, storable_t<hnode_t>& hnode);
 
       static void unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *_this, storable_t<hnode_t>& hnode, storable_t<unode_t>& unode);
-
-      static void unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *_this);
 
       static void unpack_active_hnode_cb(hnode_t& hnode, bool active, void *_this);
       /// @}

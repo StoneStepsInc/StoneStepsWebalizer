@@ -910,23 +910,6 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg, storabl
 }
 
 ///
-/// This method does not read anything from the database and just ensures that there 
-/// is no active visit associated with the host being loaded. 
-///
-/// This method is intended for the log processor to look up existing hosts without 
-/// active visits in the database.
-///
-void state_t::unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *arg)
-{
-   if(hnode.flag == OBJ_GRP)
-      return;
-
-   // make sure there is not active visit for this host
-   if(active)
-      throw std::runtime_error(string_t::_format("A new host node (ID: %" PRIu64 ") cannot have an active visit", hnode.nodeid));
-}
-
-///
 /// This method does not read anything from the database and just ensures that there is 
 /// an active visit associated with the host being loaded, but the caller will verify on 
 /// its own that the visit node matches the host node. 

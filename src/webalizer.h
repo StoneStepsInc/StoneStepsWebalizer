@@ -258,6 +258,8 @@ class webalizer_t {
       static int qs_srcharg_name_cmp(const arginfo_t *e1, const arginfo_t *e2);
       static int qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2);
 
+      static void unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *_this);
+
    public:
       webalizer_t(const config_t& config);
 

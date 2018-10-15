@@ -2260,6 +2260,23 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 }
 
 ///
+/// This method just ensures that there is no active visit associated with the host 
+/// being loaded from the database. Hosts with active visits are loaded when the 
+/// state is restored and then maintained in memory, same as new hosts, until their 
+/// visits end, at which point they are saved to the database. If we found an active
+/// visit in the `put_hnode` call, something went wrong and we cannot proceed.
+///
+void webalizer_t::unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *arg)
+{
+   if(hnode.flag == OBJ_GRP)
+      return;
+
+   // make sure there is no active visit for this host
+   if(active)
+      throw std::runtime_error(string_t::_format("A new host node (ID: %" PRIu64 ") cannot have an active visit", hnode.nodeid));
+}
+
+///
 /// @brief  Adds or updates a host node in the state database.
 ///
 storable_t<hnode_t> *webalizer_t::put_hnode(
@@ -2291,7 +2308,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
-      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, &unpack_inactive_hnode_cb, this)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
 
@@ -2404,7 +2421,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
-      if(!state.database.get_hnode_by_value(*cptr, state_t::unpack_inactive_hnode_cb, &state)) {
+      if(!state.database.get_hnode_by_value(*cptr, (hnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
 
