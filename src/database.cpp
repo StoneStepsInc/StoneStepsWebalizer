@@ -366,7 +366,6 @@ berkeleydb_t::status_t database_t::rollover(const tstamp_t& tstamp)
 //
 bool database_t::put_unode(const unode_t& unode, storage_info_t& strg_info)
 {
-   // unless unode_t::s_unpack_cb_t is provided, VC6 reports "fatal error C1506: unrecoverable block scoping error"
    return urls.put_node<unode_t>(unode, strg_info);
 }
 
