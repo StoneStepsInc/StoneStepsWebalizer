@@ -171,7 +171,7 @@ class hash_table_base {
       ///         nodes in the time stamp list.
       ///
       /// A range with both time stamps being zero is a null range and a range with
-      /// either of the time stamps being zero, but not both is an open-ended range.
+      /// either of the time stamps being zero, but not both, is an open-ended range.
       /// Neither should be used as an actual time range.
       ///
       struct tm_range_t {
@@ -183,29 +183,7 @@ class hash_table_base {
          {
             return max_tstamp - min_tstamp;
          }
-
-         /// Combines both ranges to form a larger range.
-         void operator |= (const tm_range_t& other)
-         {
-            // ignore null source time stamps
-            if(other.min_tstamp) {
-               // use the source for null target time stamps and otherwise use the smaller value
-               if(min_tstamp == 0)
-                  min_tstamp = other.min_tstamp;
-               else if(other.min_tstamp < min_tstamp)
-                  min_tstamp = other.min_tstamp;
-            }
-
-            // use the same logic for the maximum maximum
-            if(other.max_tstamp) {
-               if(max_tstamp == 0)
-                  max_tstamp = other.max_tstamp;
-               else if(other.max_tstamp > max_tstamp)
-                  max_tstamp = other.max_tstamp;
-            }
-         }
       };
-
 };
 
 ///
