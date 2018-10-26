@@ -14,7 +14,7 @@
 #include "hashtab.h"
 
 template <typename node_t>
-hash_table<node_t>::hash_table(size_t maxhash, swap_cb_t swapcb, void *cbarg) : maxhash(maxhash), swapcb(swapcb), cbarg(cbarg)
+hash_table<node_t>::hash_table(size_t maxhash, swap_cb_t swapcb, void *cbarg, eval_cb_t evalcb) : maxhash(maxhash), swapcb(swapcb), cbarg(cbarg), evalcb(evalcb)
 {
    count = 0;
    emptycnt = maxhash;
@@ -29,34 +29,31 @@ hash_table<node_t>::~hash_table(void)
 }
 
 template <typename node_t>
-void hash_table<node_t>::set_swap_out_cb(swap_cb_t swap, void *arg)
+void hash_table<node_t>::set_swap_out_cb(swap_cb_t swap, void *arg, eval_cb_t eval)
 {
+   evalcb = eval;
    swapcb = swap;
    cbarg = arg;
 }
 
 ///
-/// @param[in] tmspan   Time stamp value relative to the oldest time stamp in
-///                     the hash table.
+/// @param[in] tstamp   The last inclusive time stamp in the swap-out range.
 ///
-/// The return value from `hash_table<node_t>::tmrange` may be used to derive the
-/// `tmspan` value. For example, if `tmrange()` returns 3x of the visit timeout, 
-/// calling `htab.tmrange()/3` will swap out all nodes that haven't been touched 
-/// for a duration of at least two visit timeouts.
+/// The caller can subtract the visit timeout value from the current log time stamp
+/// to derive `tstamp`, which will swap out all nodes that haven't been touched in 
+/// visit timeout time.
 ///
 template <typename node_t>
-void hash_table<node_t>::swap_out(int64_t tmspan)
+void hash_table<node_t>::swap_out(int64_t tstamp)
 {
+   // cannot swap out without a callback 
    if(!swapcb)
       throw std::logic_error("Cannot swap out nodes without a swap callback");
-
-   // use the first time stamp as the base time value
-   int64_t basetime = tmlist.empty() ? 0 : tmlist.front()->tstamp;
 
    typename node_list_t<node_t>::iterator lsnode = tmlist.begin();
 
    // swap out oldest nodes
-   while(lsnode != tmlist.end() && (*lsnode)->tstamp <= basetime + tmspan) {
+   while(lsnode != tmlist.end() && (*lsnode)->tstamp <= tstamp) {
       // only regular nodes can be in the time stamp list
       if((*lsnode)->node->get_type() != OBJ_REG)
          throw std::logic_error("Only regular object nodes may be swapped out");
@@ -67,22 +64,27 @@ void hash_table<node_t>::swap_out(int64_t tmspan)
       if(nptr->lsnode == tmlist.end())
          throw std::logic_error("Bad time stamp list node reference");
 
-      // remove the node from the bucket
-      unlink_node(bucket, nptr);
+      // check if we can swap out this node
+      if(evalcb && !evalcb(nptr->node, cbarg))
+         lsnode++;
+      else {
+         // remove the node from the bucket
+         unlink_node(bucket, nptr);
 
-      // and from the time stamp list and advance the node iterator
-      lsnode = tmlist.erase(nptr->lsnode);
+         // and from the time stamp list and advance the node iterator
+         lsnode = tmlist.erase(nptr->lsnode);
 
-      // adjust counters
-      count--;
-      if(--bucket.count == 0)
-         emptycnt++;
+         // adjust counters
+         count--;
+         if(--bucket.count == 0)
+            emptycnt++;
 
-      // wrap the node in a unique pointer in case swapcb throws an exception
-      std::unique_ptr<htab_node_t<node_t>> uptr(nptr);
+         // wrap the node in a unique pointer in case swapcb throws an exception
+         std::unique_ptr<htab_node_t<node_t>> uptr(nptr);
 
-      // finally, save the node in some external storage
-      swapcb(nptr->node, cbarg);
+         // finally, save the node in some external storage
+         swapcb(nptr->node, cbarg);
+      }
    }
 }
 
@@ -315,7 +317,10 @@ uint64_t hash_table<node_t>::load_array(const typename inner_node<node_t>::type 
 }
 
 template <typename node_t>
-int64_t hash_table<node_t>::tmrange(void) const
+typename hash_table<node_t>::tm_range_t hash_table<node_t>::tm_range(void) const
 {
-   return tmlist.empty() ? 0 : tmlist.back()->tstamp - tmlist.front()->tstamp;
+   if(tmlist.empty())
+      return {0, 0};
+      
+   return {tmlist.front()->tstamp, tmlist.back()->tstamp};
 }

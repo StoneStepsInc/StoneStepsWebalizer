@@ -34,8 +34,11 @@
 #include <cstring>
 #include <cctype>
 #include <memory>
+#include <algorithm>
 
-state_t::state_t(const config_t& config) : config(config), history(config), database(config)
+state_t::state_t(const config_t& config, end_visit_cb_t end_visit_cb, end_download_cb_t end_download_cb, void *end_cb_arg) : 
+   config(config), history(config), database(config),
+   end_visit_cb(end_visit_cb), end_download_cb(end_download_cb), end_cb_arg(end_cb_arg)
 {
    buffer = new char[BUFSIZE];
 
@@ -54,23 +57,109 @@ state_t::~state_t(void)
    delete [] buffer;
 }
 
-void state_t::swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg)
+///
+/// @brief  Returns `true` if the host node can be swapped out and `false`
+///         otherwise.
+///
+bool state_t::eval_hnode_cb(const hnode_t *hnode, void *arg)
+{
+   // check if there are any active download jobs referencing this host node
+   if(hnode->dlref)
+      return false;
+
+   // cannot swap out if there are any visit nodes queued up for name grouping
+   if(hnode->grp_visit)
+      return false;
+
+   // check if the host is still in the DNS resolver pipeline
+   if(((state_t*)arg)->config.is_dns_enabled() && !hnode->resolved)
+      return false;
+
+   return true;
+}
+
+///
+/// @brief  Returns `true` if the URL node can be swapped out and `false`
+///         otherwise.
+///
+bool state_t::eval_unode_cb(const unode_t *unode, void *arg)
+{
+   // cannot swap out if there are any visits referencing this URL node
+   return (unode->vstref) == 0;
+}
+
+///
+/// @brief  Stores a node without any special dependency considerations in
+///         the database.
+///
+template <typename node_t, bool (database_t::*put_node)(const node_t& node, storage_info_t& strg_info)>
+void state_t::swap_out_node_cb(storable_t<node_t> *node, void *arg)
+{
+   state_t *_this = (state_t*) arg;
+
+   if(node->storage_info.dirty) {
+      // save the node to the database
+      if(!(_this->database.*put_node)(*node, node->storage_info))
+         throw exception_t(0, string_t::_format("Cannot store a node to the database (%s)", typeid(node).name()));
+   }
+}
+
+///
+/// @brief  Stores a host node in the database.
+///
+/// If a host node has an associated visit, this visit node will be detached and
+/// factored into the host data.
+///
+/// @warning   This callback may only be called for hosts whose visits have been
+///            inactive for at least visit timeout time, so these visits may be
+///            ended without any additional checks because this class does not
+///            control log processing logic, including visit timeouts.
+///
+template <>
+void state_t::swap_out_node_cb<hnode_t, &database_t::put_hnode>(storable_t<hnode_t> *hnode, void *arg)
 {
    state_t *_this = (state_t*) arg;
 
    if(hnode->storage_info.dirty) {
+      // if there is a visit, end it and delete the node
+      if(hnode->visit) {
+         storable_t<vnode_t> *visit = _this->end_visit_cb(hnode, _this->end_cb_arg);
+         delete visit;
+      }
+
+      // save the host node to the database
       if(!_this->database.put_hnode(*hnode, hnode->storage_info))
-         throw exception_t(0, "Cannot swap out a monthly host node to the database");
+         throw exception_t(0, "Cannot store a host node to the database (hnode)");
    }
 }
 
-void state_t::swap_unode_cb(storable_t<unode_t> *unode, void *arg)
+///
+/// @brief  Stores a download node in the database.
+///
+/// If there is an active download associated with this download job node, it
+/// will be detached and factored into the download job data.
+///
+/// @warning   This callback may only be called for download jobs whose active
+///            downloads have been inactive for at least download timeout time,
+///            so these downloads may be ended without any additional checks 
+///            because this class does not control log processing logic, including
+///            download timeouts.
+///
+template <>
+void state_t::swap_out_node_cb<dlnode_t, &database_t::put_dlnode>(storable_t<dlnode_t> *dlnode, void *arg)
 {
    state_t *_this = (state_t*) arg;
 
-   if(unode->storage_info.dirty) {
-      if(!_this->database.put_unode(*unode, unode->storage_info))
-         throw exception_t(0, "Cannot swap out a URL node to the database");
+   if(dlnode->storage_info.dirty) {
+      // if there is a download, end it and delete the node
+      if(dlnode->download) {
+         storable_t<danode_t> *download = _this->end_download_cb(dlnode, _this->end_cb_arg);
+         delete download;
+      }
+
+      // save the download node to the database
+      if(!_this->database.put_dlnode(*dlnode, dlnode->storage_info))
+         throw exception_t(0, "Cannot store a download node to the database");
    }
 }
 
@@ -435,8 +524,13 @@ bool state_t::initialize(void)
    // initalize hash tables
    del_htabs();
 
-   hm_htab.set_swap_out_cb(swap_hnode_cb, this);
-   um_htab.set_swap_out_cb(swap_unode_cb, this);
+   dl_htab.set_swap_out_cb(&swap_out_node_cb<dlnode_t, &database_t::put_dlnode>, this);
+   hm_htab.set_swap_out_cb(&swap_out_node_cb<hnode_t, &database_t::put_hnode>, this, eval_hnode_cb);
+   um_htab.set_swap_out_cb(&swap_out_node_cb<unode_t, &database_t::put_unode>, this, eval_unode_cb);
+   rm_htab.set_swap_out_cb(&swap_out_node_cb<rnode_t, &database_t::put_rnode>, this);
+   am_htab.set_swap_out_cb(&swap_out_node_cb<anode_t, &database_t::put_anode>, this);
+   sr_htab.set_swap_out_cb(&swap_out_node_cb<snode_t, &database_t::put_snode>, this);
+   im_htab.set_swap_out_cb(&swap_out_node_cb<inode_t, &database_t::put_inode>, this);
 
    return true;
 }
@@ -529,6 +623,7 @@ int state_t::restore_state(void)
    if(!database.get_tgnode_by_id(totals, NULL, NULL))
       return 3;
 
+   // keep the serial time stamp to avoid doing math in every put_node call
    int64_t htab_tstamp = totals.cur_tstamp.mktime();
 
    // no need to restore the rest if we just need database information
@@ -578,13 +673,7 @@ int state_t::restore_state(void)
    if(config.prep_report)
       return 0;
 
-   //
-   // In the database mode, just read those nodes that must be in memory
-   // or could improve performance if read earlier (e.g. active visits 
-   // and downloads).
-   //
-
-   {// restore active visits and associated hosts
+   {// restore active visits and the associated host and URL nodes
    storable_t<vnode_t> vnode;
    database_t::iterator<vnode_t> iter = database.begin_visits();
    storable_t<hnode_t> hnode;
@@ -617,7 +706,7 @@ int state_t::restore_state(void)
       vnode.reset();
    }}
 
-   {// restore active download jobs 
+   {// restore active download jobs and the associated host and download nodes
    database_t::iterator<danode_t> iter = database.begin_active_downloads();
    storable_t<danode_t> danode;
    storable_t<dlnode_t> dlnode;
@@ -799,6 +888,30 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
 
    // update current timestamp
    totals.cur_tstamp = tstamp;
+}
+
+///
+/// @brief  Stores all nodes with last access time stamps that are less than or
+///         equal to `tstamp` in the database.
+///
+void state_t::swap_out(int64_t tstamp)
+{
+   //
+   // The order of swap_out calls is important because nodes may reference one 
+   // another. These are current dependencies:
+   //
+   //    dlnode_t > hnode_t > vnode_t > unode_t
+   //             > danode_t
+   //
+   dl_htab.swap_out(tstamp);
+   hm_htab.swap_out(tstamp);
+   um_htab.swap_out(tstamp);
+
+   // these nodes currently do not reference other nodes
+   rm_htab.swap_out(tstamp);
+   am_htab.swap_out(tstamp);
+   sr_htab.swap_out(tstamp);
+   im_htab.swap_out(tstamp);
 }
 
 // -----------------------------------------------------------------------

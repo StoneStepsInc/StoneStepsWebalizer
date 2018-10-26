@@ -260,6 +260,12 @@ class webalizer_t {
 
       static void unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *_this);
 
+      static storable_t<vnode_t> *end_visit_cb(storable_t<hnode_t> *hnode, void *arg);
+      static storable_t<danode_t> *end_download_cb(storable_t<dlnode_t> *dlnode, void *arg);
+
+      storable_t<vnode_t> *end_visit(storable_t<hnode_t> *hnode);
+      storable_t<danode_t> *end_download(storable_t<dlnode_t> *dlnode);
+
    public:
       webalizer_t(const config_t& config);
 

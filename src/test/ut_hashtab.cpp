@@ -192,7 +192,7 @@ TEST(HashTableTest, TimeStampRange)
 {
    hash_table<storable_t<anode_t>> htab(10);
 
-   EXPECT_EQ(0, htab.tmrange()) << "An empty hash table should report a zero for time range";
+   EXPECT_EQ(0, htab.tm_range()) << "An empty hash table should report a zero for time range";
 
    for(int i = 100; i < 200; i++) {
       int tstamp = i - i % 2;
@@ -202,7 +202,201 @@ TEST(HashTableTest, TimeStampRange)
       ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
    }
 
-   EXPECT_EQ(98, htab.tmrange()) << "The difference between the newest and oldest time stamps should be 98";
+   EXPECT_EQ(98, htab.tm_range()) << "The difference between the newest and oldest time stamps should be 98";
+}
+
+///
+/// @brief  Tests non-overlaping hash table time stamp ranges.
+///
+TEST(HashTableTest, TimeStampRangesApart)
+{
+   hash_table_base::tm_range_t tm_range = {};
+   hash_table<storable_t<anode_t>> htab1(10), htab2(20);
+
+   EXPECT_EQ(0, htab1.tm_range()) << "An empty hash table (1) should report a zero for time range";
+   EXPECT_EQ(0, htab2.tm_range()) << "An empty hash table (2) should report a zero for time range";
+
+   tm_range = htab1.tm_range();
+   tm_range |= htab2.tm_range();
+
+   EXPECT_EQ(0, tm_range) << "Combined range of two empty ranges should be zero";
+
+   // populate first hash map
+   for(int i = 100; i < 200; i++) {
+      int tstamp = i - i % 2;
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      ASSERT_NO_THROW(htab1.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
+   }
+
+   EXPECT_EQ(98, htab1.tm_range()) << "The difference between the newest and oldest time stamps should be 98 (1)";
+
+   // populate the second hash map
+   for(int i = 400; i < 450; i++) {
+      int tstamp = i - i % 2;
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      ASSERT_NO_THROW(htab2.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
+   }
+
+   EXPECT_EQ(48, htab2.tm_range()) << "The difference between the newest and oldest time stamps should be 48 (2)";
+
+   tm_range = htab1.tm_range();
+   tm_range |= htab2.tm_range();
+
+   EXPECT_EQ(100, tm_range.min_tstamp) << "The earliest combined time stamp should be 100";
+   EXPECT_EQ(448, tm_range.max_tstamp) << "The latest combined time stamp should be 448";
+
+   EXPECT_EQ(348, tm_range) << "Combined range of two ranges 100-198 and 400-448 should be 348";
+}
+
+///
+/// @brief  Tests overlaping hash table time stamp ranges.
+///
+TEST(HashTableTest, TimeStampRangesOverlap)
+{
+   hash_table_base::tm_range_t tm_range = {};
+   hash_table<storable_t<anode_t>> htab1(10), htab2(20);
+
+   ASSERT_NO_THROW(htab1.put_node(new storable_t<anode_t>(string_t::hold("Agent 10"), false), 10));
+   ASSERT_NO_THROW(htab1.put_node(new storable_t<anode_t>(string_t::hold("Agent 50"), false), 50));
+
+   ASSERT_NO_THROW(htab2.put_node(new storable_t<anode_t>(string_t::hold("Agent 30"), false), 30));
+   ASSERT_NO_THROW(htab2.put_node(new storable_t<anode_t>(string_t::hold("Agent 60"), false), 60));
+
+   tm_range = htab1.tm_range();
+
+   tm_range |= {};
+   EXPECT_EQ(40, tm_range) << "A null range should not change the original range";
+
+   tm_range |= htab2.tm_range();
+
+   EXPECT_EQ(10, tm_range.min_tstamp) << "The earliest combined time stamp should be 10";
+   EXPECT_EQ(60, tm_range.max_tstamp) << "The latest combined time stamp should be 60";
+
+   EXPECT_EQ(50, tm_range) << "Combined range of two ranges 10-50 and 30-60 should be 50";
+}
+
+///
+/// @brief  Tests an enclosed hash table time stamp range.
+///
+TEST(HashTableTest, TimeStampRangesEnclosed)
+{
+   hash_table_base::tm_range_t tm_range = {};
+   hash_table<storable_t<anode_t>> htab1(10), htab2(20);
+
+   // add ranges in the reverse order
+   ASSERT_NO_THROW(htab1.put_node(new storable_t<anode_t>(string_t::hold("Agent 30"), false), 30));
+   ASSERT_NO_THROW(htab1.put_node(new storable_t<anode_t>(string_t::hold("Agent 40"), false), 40));
+
+   ASSERT_NO_THROW(htab2.put_node(new storable_t<anode_t>(string_t::hold("Agent 10"), false), 10));
+   ASSERT_NO_THROW(htab2.put_node(new storable_t<anode_t>(string_t::hold("Agent 50"), false), 50));
+
+   tm_range = htab1.tm_range();
+
+   tm_range |= {};
+   EXPECT_EQ(10, tm_range) << "A null range should not change the original range";
+
+   tm_range |= htab2.tm_range();
+
+   EXPECT_EQ(10, tm_range.min_tstamp) << "The earliest combined time stamp should be 10";
+   EXPECT_EQ(50, tm_range.max_tstamp) << "The latest combined time stamp should be 50";
+
+   EXPECT_EQ(40, tm_range) << "Combined range of two ranges 10-50 and 30-40 should be 40";
+}
+
+///
+/// @brief  Tests how null and open-ended ranges combine with each other
+///
+TEST(HashTableTest, TimeStampNullRanges)
+{
+   hash_table_base::tm_range_t target, source;
+
+   // null target range is replaced with the source range
+   source = {20, 50};
+   target = {};
+   target |= source;
+   EXPECT_EQ(20, target.min_tstamp) << "A null target range minimum takes source values";
+   EXPECT_EQ(50, target.max_tstamp) << "A null target range maximum takes source values";
+
+   // null target minimum is replaced
+   source = {10, 50};
+   target = {0, 40};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A null target range minimum takes source values";
+   EXPECT_EQ(50, target.max_tstamp) << "A smaller non-null target range maximum is replaced with the source";
+
+   // null target minimum is replaced
+   source = {20, 50};
+   target = {0, 60};
+   target |= source;
+   EXPECT_EQ(20, target.min_tstamp) << "A null target range minimum takes source values";
+   EXPECT_EQ(60, target.max_tstamp) << "A greater non-null target range maximum is not changed";
+
+   // null source range is ignored
+   source = {};
+   target = {10, 60};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A null source range minimum is ignored";
+   EXPECT_EQ(60, target.max_tstamp) << "A null source range maximum is ignored";
+
+   // null source maximum is ignored
+   source = {5, 0};
+   target = {10, 60};
+   target |= source;
+   EXPECT_EQ(5, target.min_tstamp) << "A greater target range minimum is replaced with the source";
+   EXPECT_EQ(60, target.max_tstamp) << "A null source range maximum is ignored";
+
+   // null source maximum is ignored
+   source = {20, 0};
+   target = {10, 60};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A smaller target range minimum is not changed";
+   EXPECT_EQ(60, target.max_tstamp) << "A null source range maximum is ignored";
+
+   // source range includes the target range
+   source = {10, 80};
+   target = {30, 60};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A greater target range minimum is replaced with the source";
+   EXPECT_EQ(80, target.max_tstamp) << "A smaller target range maximum is replaced with the source";
+
+   // source range is included in the target range
+   source = {40, 50};
+   target = {20, 70};
+   target |= source;
+   EXPECT_EQ(20, target.min_tstamp) << "A smaller target range minimum is not changed";
+   EXPECT_EQ(70, target.max_tstamp) << "A greater target range maximum is not changed";
+
+   // source range is earlier than the target range
+   source = {10, 30};
+   target = {40, 80};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A greater target range minimum is replaced with the source";
+   EXPECT_EQ(80, target.max_tstamp) << "A greater target range maximum is not changed";
+
+   // source range is later than the target range
+   source = {50, 70};
+   target = {10, 30};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A smaller target range minimum is not changed";
+   EXPECT_EQ(70, target.max_tstamp) << "A smaller target range maximum is replaced with the source";
+
+   // source range starts earlier and overlaps the target range
+   source = {5, 30};
+   target = {40, 60};
+   target |= source;
+   EXPECT_EQ(5, target.min_tstamp) << "A greater target range minimum is replaced with the source";
+   EXPECT_EQ(60, target.max_tstamp) << "A greater target range maximum is not changed";
+
+   // source range starts later and overlaps the target range
+   source = {30, 70};
+   target = {10, 50};
+   target |= source;
+   EXPECT_EQ(10, target.min_tstamp) << "A smaller target range minimum is not changed";
+   EXPECT_EQ(70, target.max_tstamp) << "A smaller target range maximum is replaced with the source";
 }
 
 ///
@@ -243,10 +437,10 @@ TEST(HashTableTest, SwapOut)
    }
 
    // 100 to 198, two of each time stamp
-   EXPECT_EQ(98, htab.tmrange()) << "Time range should be 100-198 => 98";
+   EXPECT_EQ(98, htab.tm_range()) << "Time range should be 100-198 => 98";
 
-   // swap swap nodes with relative time stamps from 0 to 38
-   ASSERT_NO_THROW(htab.swap_out(htab.tmrange()/2 - 10));
+   // swap swap nodes with time stamps 100-138 => 40 (two for each value)
+   ASSERT_NO_THROW(htab.swap_out(138));
 
    // nodes with time stamps from 0 to 38, even values, no groups
    EXPECT_EQ(40, swapcnt) << "40 regular objects should be swapped out";
@@ -255,7 +449,7 @@ TEST(HashTableTest, SwapOut)
    EXPECT_EQ(60 + 10, htab.size()) << "60 regular nodes and 10 group nodes should remain in the hash table";
 
    // remaining nodes
-   EXPECT_EQ(58, htab.tmrange()) << "The remaining  time range should be 140-198 => 58";
+   EXPECT_EQ(58, htab.tm_range()) << "The remaining  time range should be 140-198 => 58";
 
    // make sure all swapped out keys are gone
    for(int i = 100; i < 140; i++) {

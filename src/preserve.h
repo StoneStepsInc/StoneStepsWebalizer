@@ -27,7 +27,6 @@
 
 class config_t;
 class lang_t;
-class webalizer_t;
 
 ///
 /// @class  state_t
@@ -39,6 +38,10 @@ class webalizer_t;
 /// items, such as URLs or hosts. The state is stored in the database between runs.
 ///
 class state_t {
+   public:
+      typedef storable_t<vnode_t> *(*end_visit_cb_t)(storable_t<hnode_t> *hnode, void *arg);
+      typedef storable_t<danode_t> *(*end_download_cb_t)(storable_t<dlnode_t> *dlnode, void *arg);
+
    public:
       storable_t<totals_t> totals;
 
@@ -75,6 +78,10 @@ class state_t {
 
       storable_t<sysnode_t> sysnode;
 
+      end_visit_cb_t       end_visit_cb;
+      end_download_cb_t    end_download_cb;
+      void                 *end_cb_arg;
+
    private:
       template <typename type_t>
       void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
@@ -95,12 +102,15 @@ class state_t {
       static void unpack_active_hnode_cb(hnode_t& hnode, bool active, void *_this);
       /// @}
 
-      static void swap_hnode_cb(storable_t<hnode_t> *hnode, void *arg);
+      static bool eval_hnode_cb(const hnode_t *hnode, void *arg);
 
-      static void swap_unode_cb(storable_t<unode_t> *unode, void *arg);
+      static bool eval_unode_cb(const unode_t *unode, void *arg);
+
+      template <typename node_t, bool (database_t::*put_node)(const node_t& node, storage_info_t& strg_info)>
+      static void swap_out_node_cb(storable_t<node_t> *node, void *arg);
 
    public:
-      state_t(const config_t& config);
+      state_t(const config_t& config, end_visit_cb_t end_visit_db, end_download_cb_t end_download_cb, void *and_cb_arg);
 
       ~state_t(void);
 
@@ -123,6 +133,8 @@ class state_t {
       const sysnode_t& get_sysnode(void) const {return sysnode;}
 
       void database_info(void) const;
+
+      void swap_out(int64_t tstamp);
 
       ///
       /// @name   Serialization callbacks

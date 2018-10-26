@@ -154,6 +154,61 @@ struct htab_node_t {
 };
 
 ///
+/// @class  hash_table_base
+///
+/// @brief  A non-template hash table base class.
+///
+/// This non-template class is intended for definitions that can be passed between
+/// different hash table instantiations without having to declare member function
+/// templates to access these definitions in their own instantiations.
+///
+class hash_table_base {
+   public:
+      ///
+      /// @struct tm_range_t
+      ///
+      /// @brief  Represents a range of time stamps between the last and the first 
+      ///         nodes in the time stamp list.
+      ///
+      /// A range with both time stamps being zero is a null range and a range with
+      /// either of the time stamps being zero, but not both is an open-ended range.
+      /// Neither should be used as an actual time range.
+      ///
+      struct tm_range_t {
+         int64_t  min_tstamp;          ///< Earliest time stamp in the hash table.
+         int64_t  max_tstamp;          ///< Latest time stamp in the hash table.
+
+         /// Returns the time stamp range value.
+         operator int64_t (void) const
+         {
+            return max_tstamp - min_tstamp;
+         }
+
+         /// Combines both ranges to form a larger range.
+         void operator |= (const tm_range_t& other)
+         {
+            // ignore null source time stamps
+            if(other.min_tstamp) {
+               // use the source for null target time stamps and otherwise use the smaller value
+               if(min_tstamp == 0)
+                  min_tstamp = other.min_tstamp;
+               else if(other.min_tstamp < min_tstamp)
+                  min_tstamp = other.min_tstamp;
+            }
+
+            // use the same logic for the maximum maximum
+            if(other.max_tstamp) {
+               if(max_tstamp == 0)
+                  max_tstamp = other.max_tstamp;
+               else if(other.max_tstamp > max_tstamp)
+                  max_tstamp = other.max_tstamp;
+            }
+         }
+      };
+
+};
+
+///
 /// @class  hash_table
 ///
 /// @tparam node_t   Hash table node type
@@ -163,18 +218,21 @@ struct htab_node_t {
 ///         regular object nodes in the hash table.
 ///
 /// This hash table is optimized as a cache for some external storage and minimizes 
-/// the number of hash value computations and key comparisons at the expense of 
-/// having a less flexible and robust interface. The caller is expected to perform
-/// these steps when working with instances of this class:
+/// the number of hash value computations and key comparisons at the expense of having
+/// a less flexible and robust interface in the sense that the caller is trusted to 
+/// compute correct hash values for some hash table methods.
+/// 
+/// The caller is expected to perform these steps when working with instances of this
+/// class:
 ///
 ///   * Obtain the hash value for the node object
 ///   * Call `find_node` with this hash value and the node key
-///   * If `find_value` returned NULL, look up the key in the external storage
+///   * If `find_node` returns NULL, look up the key in the external storage
 ///   * If the key was not found in the external storage, call `put_node` with
 ///     the hash value to insert a new node in the hash table. Otherwise, insert
 ///     the node found in the external storage.
-///   * Call `tmrange` to infer that some objects have not been accessed for some
-///     time and call `swap_out` to move oldest nodes to the external storage
+///   * Call `swap_out` with a time stamp far enough in the past to move oldest 
+///     nodes to the external storage
 ///   * Once main processing is done, walk the hash table and save all remaining
 ///     nodes in the external storage.
 ///
@@ -183,7 +241,7 @@ struct htab_node_t {
 /// be swapped out to the external storage while log processing is in progress.
 ///
 template <typename node_t>
-class hash_table {
+class hash_table : public hash_table_base {
    private:
       ///
       /// @struct bucket_t
@@ -224,9 +282,16 @@ class hash_table {
       };
 
       ///
-      /// @brief  If evaluation was successful, the swap-out callback is called.
-      ///         If swap-out callback returns false, the swap_out method exits 
-      ///         the loop and returns false.
+      /// @brief  Evaluates whether the node can be swapped out to some external storage.
+      ///
+      /// Should returns `true` if `node` can be swapped out, `false` otherwise.
+      ///
+      /// Note that only the inner node should be evaluated and not the storable flags.
+      ///
+      typedef bool (*eval_cb_t)(const typename inner_node<node_t>::type *node, void *arg);
+
+      ///
+      /// @brief  Saves the node in some external storage.
       ///
       typedef void (*swap_cb_t)(node_t *node, void *arg);
 
@@ -299,8 +364,9 @@ class hash_table {
 
       std::list<htab_node_t<node_t>*>  tmlist;  ///< Time-ordered list of nodes.
 
-      swap_cb_t   swapcb;     ///< Swap out callback
-      void        *cbarg;     ///< Swap out callback argument
+      eval_cb_t   evalcb;     ///< Evaluation callback.
+      swap_cb_t   swapcb;     ///< Swap out callback.
+      void        *cbarg;     ///< Swap out and evaluation callbacks argument.
 
    private:
       /// Completely unlinks the specified node from the bucket list.
@@ -319,7 +385,7 @@ class hash_table {
 
    public:
       /// Constructs a hash table with the specified number of buckets.
-      hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = NULL, void *cbarg = NULL);
+      hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = nullptr, void *cbarg = nullptr, eval_cb_t evalcb = nullptr);
 
       /// Destroys the hash table and its contents.
       ~hash_table(void);
@@ -339,10 +405,10 @@ class hash_table {
       /// @{
 
       /// Sets a swap-out callback function and its argument.
-      void set_swap_out_cb(swap_cb_t swapcb, void *arg);
+      void set_swap_out_cb(swap_cb_t swapcb, void *arg, eval_cb_t evalcb = nullptr);
 
-      /// Swaps out nodes with time stamps less than or equal to `tmspan` to some external storage.
-      void swap_out(int64_t tmspan);
+      /// Swaps out oldest nodes with time stamps less than or equal `tstamp` to some external storage.
+      void swap_out(int64_t tstamp);
       /// @}
 
       ///
@@ -390,8 +456,8 @@ class hash_table {
       /// Fills the specified array with pointers to nodes in the hash table.
       uint64_t load_array(const typename inner_node<node_t>::type *array[]) const;
 
-      /// Returns the difference between the newest and oldest time stamps in the hash table.
-      int64_t tmrange(void) const;
+      /// Returns the time stamp range between the newest and oldest time stamps in the hash table.
+      tm_range_t tm_range(void) const;
       /// @}
 };
 

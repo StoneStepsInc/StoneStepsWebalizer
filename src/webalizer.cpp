@@ -61,7 +61,7 @@ bool webalizer_t::abort_signal = false;   // true if Ctrl-C was pressed
 ///
 /// @brief  Constructs an instance of a log processor.
 ///
-webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config), dns_resolver(config)
+webalizer_t::webalizer_t(const config_t& config) : config(config), parser(config), state(config, &end_visit_cb, &end_download_cb, this), dns_resolver(config)
 {
    // preallocate all character buffers we need for log processing
    buffer_allocator.release_buffer(string_t::char_buffer_t(BUFSIZE));
@@ -1781,6 +1781,10 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          //
          if(config.is_dns_enabled())
             process_resolved_hosts();
+
+         // every thousand records swap out nodes older than two visit timeouts
+         if(total_good % 1000 == 0)
+            state.swap_out(htab_tstamp - config.visit_timeout * 2);
       }
    }
 
@@ -2874,8 +2878,9 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
 }
 
 ///
-/// @brief  Checks if the specified visit has ended and if it has, detaches it 
-///         from the host and factors visit data into host and total counters.
+/// @brief  Checks if the visit in the specified host has ended and if it has, 
+///         detaches it from the host and factors visit data into host and total 
+///         counters.
 ///
 /// The time stamp is either the current log time or a null time stamp if the
 /// current month is being ended. 
@@ -2885,7 +2890,6 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
 storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const tstamp_t& tstamp)
 {
    storable_t<vnode_t> *visit;
-   uint64_t vlen;
 
    if(!hptr || hptr->flag == OBJ_GRP || !hptr->visits)
       return NULL;
@@ -2902,6 +2906,25 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
             return NULL;
       }
    }
+
+   return end_visit(hptr);
+}
+
+///
+/// @brief  Ends the visit within the host, if one exists and returns the visit
+///         node, so it can be reused ot deleted.
+///
+/// This method does not check whether the last visit request is outside of the
+/// visit timeout window and should be called only when it is known that the visit
+/// can be ended safely. 
+///
+storable_t<vnode_t> *webalizer_t::end_visit(storable_t<hnode_t> *hptr)
+{
+   storable_t<vnode_t> *visit;
+   uint64_t vlen;
+
+   if((visit = hptr->visit) == nullptr)
+      return nullptr;
 
    // detach the visit from the host
    hptr->set_visit(NULL);
@@ -3024,25 +3047,19 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
 }
 
 ///
+/// @brief  A callback method that ends a visit and factors its data into the
+///         host.
+///
+storable_t<vnode_t> *webalizer_t::end_visit_cb(storable_t<hnode_t> *hnode, void *arg)
+{
+   return ((webalizer_t*) arg)->end_visit(hnode);
+}
+
+///
 /// @brief  Checks all hosts for active visits and ends those that exceed the
 ///         maximum visit time or all if we are ending a month.
 ///
 /// Deletes all returned ended visits, as we have no use for them at this point.
-///
-/// @todo   This method walks all host nodes in the montly state, which is very
-///         expensive. A much better solution would be to insert all `vnode_t`
-///         structures that represent active visits from all hosts into a single
-///         list that is naturally ordered by request time stamp and move visit
-///         nodes to the end of the list as more requests for each host are read
-///         from a log file. The visit node will need a host node pointer and as 
-///         a new log line is read, a host node would be looked up, and if it has 
-///         an active visit, it will be located in the visit list, removed from 
-///         its current position and added to the end of the list. `update_visits`
-///         would then walk this list from the start until a time stamp is found 
-///         in the current visit timeout time frame and would end all visits prior 
-///         to that list node. Host pointer in the visit node will be used to 
-///         update visit reference counts and visit pointer in the host node. 
-///         
 ///
 void webalizer_t::update_visits(const tstamp_t& tstamp)
 {
@@ -3056,14 +3073,13 @@ void webalizer_t::update_visits(const tstamp_t& tstamp)
 }
 
 ///
-/// @brief  Checks if the specified active download has ended and if it has, detaches 
-///         it from the download node and factors download data into download and total 
-///         counters.
+/// @brief  Checks if the active download in the specified has ended and if it has, 
+///         detaches it from the download node and factors download data into download 
+///         and total counters.
 ///
 storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode, const tstamp_t& tstamp)
 {
    storable_t<danode_t> *download;
-   double value;
 
    if(!dlnode || dlnode->flag == OBJ_GRP || tstamp.null)
       return NULL;
@@ -3074,6 +3090,26 @@ storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode,
    // the elapsed time is always positive, so usual arithmetic conversions work
    if(tstamp.elapsed(download->tstamp) < config.download_timeout)
       return NULL;
+
+   return end_download(dlnode);
+}
+
+///
+/// @brief  Ends the active download within the download job, if one exists,
+///         and returns the active download node, so it can be reused ot
+///         deleted.
+///
+/// This method does not check whether the last download request is outside of
+/// the download timeout window and should be called only when it is known that
+/// the download can be ended safely.
+///
+storable_t<danode_t> *webalizer_t::end_download(storable_t<dlnode_t> *dlnode)
+{
+   storable_t<danode_t> *download;
+   double value;
+
+   if((download = dlnode->download) == nullptr)
+      return nullptr;
 
    dlnode->download = NULL;
    if(dlnode->storage_info.storage)
@@ -3098,6 +3134,15 @@ storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode,
    }
 
    return download;
+}
+
+///
+/// @brief  A callback method that ends a download and factors its data into the
+///         download job.
+///
+storable_t<danode_t> *webalizer_t::end_download_cb(storable_t<dlnode_t> *dlnode, void *arg)
+{
+   return ((webalizer_t*) arg)->end_download(dlnode);
 }
 
 ///
