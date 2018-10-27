@@ -1969,7 +1969,6 @@ void html_output_t::top_dl_table(void)
    uint32_t tot_num;
    u_int i;
    const storable_t<dlnode_t> *nptr;
-   const char *cdesc = NULL;
    storable_t<dlnode_t> *dl_array;
    storable_t<hnode_t> *h_array;
 
@@ -2032,13 +2031,6 @@ void html_output_t::top_dl_table(void)
    for(i = 0; i < tot_num; i++) {
       dl_array[i].set_host(&h_array[i]);
 
-      if(config.ntop_ctrys) {
-         if(!nptr->hnode)
-            cdesc = "";
-         else
-            cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
-      }
-
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,
           "<tr>\n"
@@ -2062,9 +2054,9 @@ void html_output_t::top_dl_table(void)
       if(config.ntop_ctrys) { 
          fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lg\" data-lon=\"%.6lg\">%s</td>", 
                !config.ext_map_url.isempty() && *nptr->hnode->ccode ? " ext_map_url" : "", 
-               nptr->hnode ? nptr->hnode->ccode : "", nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
+               nptr->hnode->ccode, nptr->hnode->latitude, nptr->hnode->longitude, html_encode(state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc));
          if(config.geoip_city)
-            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
+            fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", html_encode(nptr->hnode->city.c_str()));
       }
 
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
@@ -2104,7 +2096,6 @@ int html_output_t::all_downloads_page(void)
    const dlnode_t *nptr;
    FILE     *out_fp;
    string_t dl_fname;
-   const char *cdesc = NULL;
    storable_t<dlnode_t> dlnode;
    storable_t<hnode_t> hnode;
 
@@ -2149,13 +2140,6 @@ int html_output_t::all_downloads_page(void)
 
       nptr = &dlnode;
 
-      if(config.ntop_ctrys) {
-         if(!nptr->hnode)
-            cdesc = "";
-         else
-            cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
-      }
-
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),
       fprintf(out_fp,"%5" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%11s</span> %6.02f%%  %6.02f  %6.02f   %6" PRIu64 "  %-32s",
          nptr->sumhits, (state.totals.t_hit == 0) ? 0 : ((double)nptr->sumhits/state.totals.t_hit)*100.0,
@@ -2167,9 +2151,9 @@ int html_output_t::all_downloads_page(void)
 
       if(config.ntop_ctrys) {
          fprintf(out_fp, "  <span data-lat=\"%.6lg\" data-lon=\"%.6lg\">%-22s</span>", 
-               nptr->hnode->latitude, nptr->hnode->longitude, html_encode(cdesc));
+               nptr->hnode->latitude, nptr->hnode->longitude, html_encode(state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc));
          if(config.geoip_city)
-            fprintf(out_fp, "  %-22s", nptr->hnode ? html_encode(nptr->hnode->city.c_str()) : "");
+            fprintf(out_fp, "  %-22s", html_encode(nptr->hnode->city.c_str()));
       }
       
       buffer_formatter.set_scope_mode(buffer_formatter_t::append),

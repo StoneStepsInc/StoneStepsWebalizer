@@ -232,7 +232,6 @@ void dump_output_t::dump_all_downloads(void)
    const dlnode_t *nptr;
    FILE     *out_fp;
    char     filename[256];
-   const char *cdesc;
 
    /* generate file name */
    sprintf(filename,"%s/dl_%04d%02d.%s",
@@ -261,22 +260,17 @@ void dump_output_t::dump_all_downloads(void)
 
       nptr = &dlnode;
 
-      if(!nptr->hnode)
-         cdesc = "";
-      else
-         cdesc = state.cc_htab.get_ccnode(nptr->hnode->get_ccode()).cdesc;
-
       fprintf(out_fp,"%" PRIu64 "\t%8.02f\t%6.02f\t%6.02f\t%" PRIu64 "\t%s\t%s\t%s\t%s\t%.6lf\t%.6lf\t%s\t%s\n", 
          nptr->sumhits, nptr->sumxfer/1024., 
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
          nptr->string.c_str(),
-         nptr->hnode ? nptr->hnode->ccode : "", 
-         cdesc,
-         nptr->hnode ? nptr->hnode->city.c_str() : "",
-         nptr->hnode->latitude, nptr->hnode->longitude,
-         nptr->hnode->string.c_str(),
-         nptr->hnode->hostname().c_str());
+         hnode.ccode, 
+         state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str(),
+         hnode.city.c_str(),
+         hnode.latitude, hnode.longitude,
+         hnode.string.c_str(),
+         hnode.hostname().c_str());
    }
    iter.close();
    fclose(out_fp);
