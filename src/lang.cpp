@@ -1186,7 +1186,7 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
                
                if(*cptr == '\r' && *(cptr + 1) == '\n') {
                   *cptr++ = 0;
-                  *cptr++;
+                  cptr++;
                }
                else if(*cptr == '\r' || *cptr == '\n')
                   *cptr++ = 0;
