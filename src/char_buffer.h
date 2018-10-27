@@ -167,6 +167,8 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
 template <typename char_t, typename ... alloc_params_t>
 class char_buffer_allocator_tmpl {
    public:
+      virtual ~char_buffer_allocator_tmpl(void) {}
+
       virtual char_buffer_base<char_t> get_buffer(alloc_params_t ... args) = 0;
 
       virtual void release_buffer(char_buffer_base<char_t>&& buffer) = 0;
