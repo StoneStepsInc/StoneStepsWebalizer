@@ -12,6 +12,8 @@
 #include "../fmt_impl.h"
 #include "../formatter.h"
 
+#include <locale>
+
 namespace sswtest {
 class FormatterTest : public testing::Test {
    protected:
@@ -121,6 +123,52 @@ TEST_F(FormatterTest, VSPrintF)
    EXPECT_STREQ("x=1235", fmt_printf("x=%.0f", 1234.5678));
    EXPECT_STREQ("abc=xyz", fmt_printf("abc=%s", "xyz"));
 }
+
+TEST_F(FormatterTest, FormatterScope)
+{
+   // a formatting function that converts two first characters of the input to upper case and discards the rest
+   auto to_upper = [] (string_t::char_buffer_t& buffer, const char *cptr) -> size_t
+   {
+      if(buffer.capacity() < 3)
+         throw std::logic_error("Buffer is too small");
+
+      buffer[0] = std::toupper(*cptr, std::locale::classic());
+      buffer[1] = std::toupper(*++cptr, std::locale::classic());
+      buffer[2] = '\x0';
+
+      return 3;
+   };
+
+   formatter.format(to_upper, "xyz");
+
+   EXPECT_STREQ(buffer, "XY") << "Buffer should contain first two characters converted to upper case";
+
+   formatter.format(to_upper, "abc");
+
+   EXPECT_STREQ(buffer, "AB") << "In the overrite mode each formatting call should overwrite the buffer";
+
+   {
+      //
+      // The compiler may optimize out the move constructor call, so get a reference
+      // first and then explicitly move it to make sure to test how scopes are moved.
+      //
+      buffer_formatter_t::scope_t&& scope_ref = formatter.set_scope_mode(buffer_formatter_t::append);
+      buffer_formatter_t::scope_t scope(std::move(scope_ref));
+
+      formatter.format(to_upper, "def");
+      formatter.format(to_upper, "ghi");
+      formatter.format(to_upper, "jkl");
+
+      EXPECT_STREQ(buffer, "DE") << "First formatted sequence should be at the start of the buffer";
+      EXPECT_STREQ(buffer + 3, "GH") << "Second appended sequence should be at the offset 3";
+      EXPECT_STREQ(buffer + 6, "JK") << "Third appended sequence should be at the offset 6";
+   }
+
+   formatter.format(to_upper, "xyz");
+
+   EXPECT_STREQ(buffer, "XY") << "The original overwrite mode should be restored after the scoped formatter is destroyed";
+}
+
 }
 
 #include "../formatter_tmpl.cpp"
