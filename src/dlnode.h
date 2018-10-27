@@ -24,6 +24,12 @@ struct hnode_t;
 ///
 /// @brief  Download job node
 ///
+/// A download node owns the active download job node and will delete it in its
+/// destructor.
+///
+/// A download node does not own a host node and will merely increment a download
+/// reference count in the host node when it is attached to the download node.
+///
 struct dlnode_t : public base_node<dlnode_t> {
       ///
       /// @struct param_block
