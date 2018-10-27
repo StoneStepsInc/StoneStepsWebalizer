@@ -2286,7 +2286,7 @@ void webalizer_t::unpack_inactive_hnode_cb(hnode_t& hnode, bool active, void *ar
 storable_t<hnode_t> *webalizer_t::put_hnode(
                const string_t& ipaddr,          // IP address
                const tstamp_t& tstamp,          // timestamp 
-               int64_t  htab_tstamp,                  // relative time stamp
+               int64_t  htab_tstamp,            // serial time stamp
                uint64_t xfer,                   // xfer size 
                bool     fileurl,                // file count
                bool     pageurl,

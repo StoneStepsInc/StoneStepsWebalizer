@@ -127,6 +127,13 @@ char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc)
    return op;
 }
 
+///
+/// The function does not change the size of the buffer and just checks that the
+/// encoded string fits in the buffer.
+///
+/// The function returns the number of bytes the encoded string occupies within 
+/// the buffer.
+///
 template <encode_char_t encode_char>
 size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
 {
