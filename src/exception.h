@@ -25,9 +25,9 @@ class exception_t {
       string_t   errdesc;
 
    public:
-      exception_t(u_int code, const char *desc) {errcode = code; errdesc = desc;}
+      exception_t(u_int code, const char *desc) : errcode(code), errdesc(desc) {}
 
-      exception_t(const exception_t& exception) {errcode = exception.errcode; errdesc = exception.errdesc;};
+      exception_t(const exception_t& exception) : errcode(exception.errcode), errdesc(exception.errdesc) {}
 
       u_int code(void) const {return errcode;}
 
