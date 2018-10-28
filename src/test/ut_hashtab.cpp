@@ -425,4 +425,52 @@ TEST(HashTableTest, MultipleLookUps)
    }
 }
 
+///
+/// @brief  Tests a hash table iterator going over regular and group nodes.
+///
+TEST(HashTableTest, Iterator)
+{
+   std::set<string_t> agent_node_names;
+   hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
+
+   // new nodes are inserted at the head of each bucket list
+   for(int i = 0; i < 100; i++) {
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      agent_node_names.insert(agent_key);
+
+      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, false), 0)));
+
+      if(i % 10 == 0) {
+         std::string agent = "Agent Group " + std::to_string(i);
+         string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+         storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, false);
+         agent_grp->flag = OBJ_GRP;
+
+         agent_node_names.insert(agent_key);
+
+         ASSERT_NO_THROW((htab.put_node(agent_grp, 0)));
+      }
+   }
+
+   hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
+
+   while(iter.next()) {
+      std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
+
+      ASSERT_TRUE(agent_name != agent_node_names.end()) << "Agent node name must be found in the name set";
+
+      if(iter.item()->flag == OBJ_REG)
+         ASSERT_TRUE(strncmp("Agent ", iter.item()->string, 6) == 0);
+      else
+         ASSERT_TRUE(strncmp("Agent Group ", iter.item()->string, 12) == 0);
+
+      agent_node_names.erase(agent_name);
+   }
+
+   EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
+}
+
 }
