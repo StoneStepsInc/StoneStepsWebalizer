@@ -129,8 +129,7 @@ void state_t::swap_out_node_cb<hnode_t, &database_t::put_hnode>(storable_t<hnode
    //
    if(hnode->visit) {
       // the callback must update storage flags in the host and visit nodes
-      storable_t<vnode_t> *visit = _this->end_visit_cb(hnode, _this->end_cb_arg);
-      delete visit;
+      delete _this->end_visit_cb(hnode, _this->end_cb_arg);
    }
 
    //
@@ -167,8 +166,7 @@ void state_t::swap_out_node_cb<dlnode_t, &database_t::put_dlnode>(storable_t<dln
    // see the comment in the hnode specialization above
    if(dlnode->download) {
       // the callback must update storage flags in the download and active download nodes
-      storable_t<danode_t> *download = _this->end_download_cb(dlnode, _this->end_cb_arg);
-      delete download;
+      delete _this->end_download_cb(dlnode, _this->end_cb_arg);
    }
 
    // see the comment in the hnode specialization above
