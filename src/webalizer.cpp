@@ -989,7 +989,8 @@ void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
    std::vector<string_t>::const_iterator iter = config.log_fnames.begin();
    while(iter != config.log_fnames.end()) {
       const string_t& fname = *iter++;
-      std::unique_ptr<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? make_path(config.cur_dir, fname) : fname));
+      // VC++ Intellisense erroneously highlights make_path as trying to create a string with `const string_t&&`
+      std::unique_ptr<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? (const string_t&) make_path(config.cur_dir, fname) : fname));
       
       // check if we can read the file
       if(!logfile->is_readable()) {
