@@ -120,13 +120,27 @@ void state_t::swap_out_node_cb<hnode_t, &database_t::put_hnode>(storable_t<hnode
 {
    state_t *_this = (state_t*) arg;
 
-   if(hnode->storage_info.dirty) {
-      // if there is a visit, end it and delete the node
-      if(hnode->visit) {
-         storable_t<vnode_t> *visit = _this->end_visit_cb(hnode, _this->end_cb_arg);
-         delete visit;
-      }
+   //
+   // If a host node was stored in the database with a active visit, but wasn't
+   // seen in the new logs until it rolled off the left side of the swap-out range,
+   // the host node will not be dirty at this point and we may end up in a bad
+   // state with an active visit in the database, but not in memory, unless we end
+   // the visit now. 
+   //
+   if(hnode->visit) {
+      // the callback must update storage flags in the host and visit nodes
+      storable_t<vnode_t> *visit = _this->end_visit_cb(hnode, _this->end_cb_arg);
+      delete visit;
+   }
 
+   //
+   // This check may be an overkill because the only non-dirty nodes in the hash
+   // table will be those with active visits that haven't been updated recently,
+   // which are updated above. All other host nodes would be marked as dirty when
+   // they receive new traffic. TODO: consider reporting an error if we find a
+   // non-dirty node here. 
+   //
+   if(hnode->storage_info.dirty) {
       // save the host node to the database
       if(!_this->database.put_hnode(*hnode, hnode->storage_info))
          throw exception_t(0, "Cannot store a host node to the database (hnode)");
@@ -150,13 +164,15 @@ void state_t::swap_out_node_cb<dlnode_t, &database_t::put_dlnode>(storable_t<dln
 {
    state_t *_this = (state_t*) arg;
 
-   if(dlnode->storage_info.dirty) {
-      // if there is a download, end it and delete the node
-      if(dlnode->download) {
-         storable_t<danode_t> *download = _this->end_download_cb(dlnode, _this->end_cb_arg);
-         delete download;
-      }
+   // see the comment in the hnode specialization above
+   if(dlnode->download) {
+      // the callback must update storage flags in the download and active download nodes
+      storable_t<danode_t> *download = _this->end_download_cb(dlnode, _this->end_cb_arg);
+      delete download;
+   }
 
+   // see the comment in the hnode specialization above
+   if(dlnode->storage_info.dirty) {
       // save the download node to the database
       if(!_this->database.put_dlnode(*dlnode, dlnode->storage_info))
          throw exception_t(0, "Cannot store a download node to the database");
