@@ -282,53 +282,6 @@ TEST(HashTableTest, SwapOut)
 }
 
 ///
-/// @brief  Tests a hash table iterator
-///
-TEST(HashTableTest, IterateOver)
-{
-   std::set<std::string> agent_keys;
-   hash_table<storable_t<anode_t>> htab(10);
-
-   // no look-ups are done because keys are guaranteed to be unique
-   for(int i = 100; i < 200; i++) {
-      int tstamp = i - i % 2;
-      std::string agent = "Agent " + std::to_string(i);
-      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
-
-      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
-
-      agent_keys.insert(agent);
-
-      // every 10 iterations insert a group entry with a zero time stamp, which should be ignored
-      if(i % 10 == 0) {
-         std::string agent_group = "Agent Group " + std::to_string(i);
-
-         storable_t<anode_t> *anode_group = new storable_t<anode_t>(string_t::hold(agent_group.c_str(), agent_group.length()), false);
-         anode_group->flag = OBJ_GRP;
-
-         // pass a zero time stamp because group nodes do not participate in time stamp ordering
-         ASSERT_NO_THROW(htab.put_node(anode_group, 0));
-
-         agent_keys.insert(agent_group);
-      }
-   }
-
-   // check that every hash table key can be accessed via an iterator (keys are in unspecified order)
-   hash_table<storable_t<anode_t>>::iterator agent_it = htab.begin();
-
-   while(agent_it.next()) {
-      std::string agent = agent_it.item()->string.c_str();
-
-      ASSERT_TRUE(agent_keys.find(agent) != agent_keys.end()) << "Iterator key must exist in the agent key set";
-
-      // erase the key to ensure hash table keys are unique
-      agent_keys.erase(agent);
-   }
-
-   EXPECT_EQ(0, agent_keys.size()) << "Number of iterated keys must match the number of inserted nodes";
-}
-
-///
 /// @brief  Tests the hash table loading an array of object pointers.
 ///
 TEST(HashTableTest, LoadAgentNodeArray)
