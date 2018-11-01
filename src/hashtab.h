@@ -275,63 +275,157 @@ class hash_table : public hash_table_base {
 
    public:
       ///
-      /// @class  iterator
+      /// @class  iterator_base
       ///
-      /// @brief  Hash table iterator
+      /// @tparam list_iter_t    Either `std::list::iterator` or `std::list::const_iterator`.
       ///
-      class iterator {
+      /// @brief  A hash table iterator template for `const` and non-`const` iterator types.
+      ///
+      /// This is a specialized iterator that walks over two hash table lists - the unordered
+      /// group node list and the time-ordered regular node list.
+      ///
+      /// The iterator is initially positioned before the first node in the combined logical
+      /// node list, which simplifies the traversal loop by having only one method to call to
+      /// advance and check whethere there are any more nodes in the logical list.
+      ///
+      /// Neither of the underlying lists can change while there are any active iterators
+      /// referencing any of those lists.
+      ///
+      template <typename list_iter_t>
+      class iterator_base {
          friend class hash_table<node_t>;
 
          private:
-            bucket_t    *htab;                  ///< Bucket of nodes with the same key hash
-            uint64_t    index;                  ///< Index of the next bucket
-            uint64_t    maxhash;                ///< Maximum number of buckets in the hash table
-            htab_node_t<node_t> *nptr;          ///< Current node pointer
+            bool pre;                     ///< A pre-first node position indicator.
+
+            list_iter_t    grpnode;       ///< The iterator pointing to the current group node.
+            list_iter_t    grpend;        ///< The end iterator of the group node list.
+
+            list_iter_t    tmnode;        ///< The iterator pointing to the current regular node.
+            list_iter_t    tmend;         ///< The end iterator of the time-ordered list of regular nodes.
 
          protected:
-            iterator(bucket_t htab[], uint64_t maxhash) : htab(htab), index(0), maxhash(maxhash), nptr(nullptr) {}
+            iterator_base(list_iter_t grpbegin, list_iter_t grpend, list_iter_t tmbegin, list_iter_t tmend) : 
+               pre(true), grpnode(grpbegin), grpend(grpend), tmnode(tmbegin), tmend(tmend)
+            {
+            }
 
          public:
-            iterator(void) : htab(nullptr), nptr(nullptr), index(0), maxhash(0) {}
+            /// Returns the current combined list item, if there is one, or `nullptr` otherwise.
+            node_t *item(void) 
+            {
+               // return a NULL if we have not started iterating
+               if(pre)
+                  return nullptr;
 
-            node_t *item(void) {return nptr ? nptr->node : NULL;}
+               // if there are nodes in the group list, return a group node
+               if(grpnode != grpend)
+                  return (*grpnode)->node;
 
+               // if there are nodes in the time-ordered list, return a regular node
+               if(tmnode != tmend)
+                  return (*tmnode)->node;
+
+               // otherwise there are no nodes in either of the lists
+               return nullptr;
+            }
+
+            /// Moves to the next item in the combined list and returns that item, if there is one or `nullptr` otherwise.
             node_t *next(void)
             {
-               if(htab == NULL)
-                  return NULL;
+               //
+               // When the iterator is positioned before the first node, there's no
+               // change in either of the list iterators - we just return the node
+               // from the first valid iterator and clear the pre-first node flag.
+               //
+               if(pre) {
+                  pre = false;
 
-               if(nptr && nptr->next) {
-                  nptr = nptr->next;
-                  return nptr->node;
+                  // if the group list has any nodes, return the first one
+                  if(grpnode != grpend)
+                     return (*grpnode)->node;
+
+                  // if there are no group nodes, return the first regular node
+                  if(tmnode != tmend)
+                     return (*tmnode)->node;
+
+                  // both lists are empty, return NULL
+                  return nullptr;
                }
 
-               while(index < maxhash) {
-                  if((nptr = htab[index++].head) != NULL)
-                     return nptr->node;
+               //
+               // Once we returned the first node, walk the group list until we run out 
+               // of group nodes.
+               //
+               if(grpnode != grpend) {
+                  grpnode++;
+
+                  if(grpnode != grpend)
+                     return (*grpnode)->node;
+
+                  if(tmnode != tmend)
+                     return (*tmnode)->node;
+
+                  return nullptr;
                }
 
-               return NULL;
+               //
+               // Finally, walk the time-ordered regular node list until we run out of 
+               // regular nodes too.
+               //
+               if(tmnode != tmend)
+                  tmnode++;
+
+               if(tmnode != tmend)
+                  return (*tmnode)->node;
+
+               return nullptr;
+            }
+      };
+
+      ///
+      /// @class  iterator
+      ///
+      /// @brief  A hash table iterator.
+      ///
+      class iterator : public iterator_base<typename node_list_t<node_t>::iterator> {
+         friend class hash_table<node_t>;
+
+         private:
+            typedef typename node_list_t<node_t>::iterator list_iter_t;
+
+         public:
+            iterator(list_iter_t grpbegin, list_iter_t grpend, list_iter_t tmbegin, list_iter_t tmend) :
+               iterator_base<list_iter_t>(grpbegin, grpend, tmbegin, tmend)
+            {
             }
       };
 
       ///
       /// @class  const_iterator
       ///
-      /// @brief  Hash table iterator over const nodes
+      /// @brief  A hash table iterator to iterate over `const` nodes.
       ///
-      class const_iterator : public iterator {
+      /// This iterator class hides both methods of the base template iterator class
+      /// and overrides them with versions that call the base and return pointers to
+      /// `const` nodes of the same type.
+      ///
+      class const_iterator : private iterator_base<typename node_list_t<node_t>::const_iterator> {
          friend class hash_table<node_t>;
 
          private:
-            const_iterator(bucket_t htab[], uint64_t maxhash) : iterator(htab, maxhash) {}
+            typedef typename node_list_t<node_t>::const_iterator list_iter_t;
+
+         private:
+            const_iterator(list_iter_t grpbegin, list_iter_t grpend, list_iter_t tmbegin, list_iter_t tmend) :
+               iterator_base<list_iter_t>(grpbegin, grpend, tmbegin, tmend)
+            {
+            }
 
          public:
-            const_iterator(void) {}
+            const node_t *item(void) {return iterator_base<list_iter_t>::item();}
 
-            const node_t *item(void) {return iterator::item();}
-
-            const node_t *next(void) {return iterator::next();}
+            const node_t *next(void) {return iterator_base<list_iter_t>::next();}
       };
 
    private:
@@ -340,7 +434,8 @@ class hash_table : public hash_table_base {
       size_t      emptycnt;   ///< Number of empty buckets
       bucket_t    *htab;      ///< Buckets
 
-      std::list<htab_node_t<node_t>*>  tmlist;  ///< Time-ordered list of nodes.
+      node_list_t<node_t>  tmlist;  ///< Time-ordered list of regular nodes.
+      node_list_t<node_t>  grplist; ///< Unordered list of group nodes.
 
       eval_cb_t   evalcb;     ///< Evaluation callback.
       swap_cb_t   swapcb;     ///< Swap out callback.
@@ -394,9 +489,9 @@ class hash_table : public hash_table_base {
       ///
       /// @{
 
-      iterator begin(void) {return iterator(htab, maxhash);}
+      iterator begin(void) {return iterator(grplist.begin(), grplist.end(), tmlist.begin(), tmlist.end());}
 
-      const_iterator begin(void) const {return const_iterator(htab, maxhash);}
+      const_iterator begin(void) const {return const_iterator(grplist.begin(), grplist.end(), tmlist.begin(), tmlist.end());}
       /// @}
 
       ///

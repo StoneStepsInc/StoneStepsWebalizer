@@ -125,9 +125,11 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node, int64_t tst
    if(!node)
       throw std::logic_error("Cannot insert a NULL node pointer");
 
-   // group nodes don't participate in time stamp ordering
-   if(node->get_type() != OBJ_REG)
-      nptr = new htab_node_t<node_t>(objptr.release(), hashval, tmlist.end(), tstamp);
+   if(node->get_type() != OBJ_REG) {
+      // ignore the time stamp because group nodes don't participate in time stamp ordering
+      nptr = new htab_node_t<node_t>(objptr.release(), hashval, grplist.insert(grplist.end(), nullptr), 0);
+      grplist.back() = nptr;
+   }
    else {
       // enforce time stamp order for new regular nodes
       if(!tmlist.empty() && tmlist.back()->tstamp > tstamp)
@@ -182,6 +184,11 @@ const node_t *hash_table<node_t>::find_node(const string_t& key, nodetype_t type
    return nullptr;
 }
 
+///
+/// @warning   `unlink_node` may be used to move nodes within the bucket and
+///            it does not adjust bucket and hash table counts. The caller
+///            must do so if the node is being completely removed.
+///
 template <typename node_t>
 void hash_table<node_t>::unlink_node(bucket_t& bucket, htab_node_t<node_t> *nptr) const
 {
@@ -270,29 +277,21 @@ node_t *hash_table<node_t>::find_node(uint64_t hashval, const typename node_t::p
 template <typename node_t>
 void hash_table<node_t>::clear(void)
 {
-   /* free memory used by hash table */
-   htab_node_t<node_t> *nptr, *tptr;
-   uint64_t index;
-
-   for(index = 0; index < maxhash; index++) {
-      if((nptr = htab[index].head) == NULL)
-         continue;
-
-      while(nptr != NULL) {
-         // if it's a regular node, erase it from the time stamp list
-         if(nptr->node->get_type() == OBJ_REG && nptr->lsnode != tmlist.end())
-            tmlist.erase(nptr->lsnode);
-
-         tptr = nptr;
-         nptr = nptr->next;
-
-         delete tptr;
-      }
-
-      htab[index].head = NULL;
-      htab[index].count = 0;
+   // clear group nodes and ignore all counts
+   while(!grplist.empty()) {
+      unlink_node(htab[grplist.front()->hashval % maxhash], grplist.front());
+      delete grplist.front();
+      grplist.erase(grplist.begin());
    }
 
+   // clear regular nodes and ignore all counts
+   while(!tmlist.empty()) {
+      unlink_node(htab[tmlist.front()->hashval % maxhash], tmlist.front());
+      delete tmlist.front();
+      tmlist.erase(tmlist.begin());
+   }
+
+   // now adjust all counts
    count = 0;
    emptycnt = maxhash;
 }

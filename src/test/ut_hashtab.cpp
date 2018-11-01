@@ -381,7 +381,7 @@ TEST(HashTableTest, MultipleLookUps)
 ///
 /// @brief  Tests a hash table iterator going over regular and group nodes.
 ///
-TEST(HashTableTest, Iterator)
+TEST(HashTableTest, IteratorAllTypes)
 {
    std::set<string_t> agent_node_names;
    hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
@@ -410,6 +410,8 @@ TEST(HashTableTest, Iterator)
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
 
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+
    while(iter.next()) {
       std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
 
@@ -423,7 +425,103 @@ TEST(HashTableTest, Iterator)
       agent_node_names.erase(agent_name);
    }
 
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+
    EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
+}
+
+///
+/// @brief  Tests a hash table iterator going over regular nodes.
+///
+TEST(HashTableTest, IteratorRegularObjects)
+{
+   std::set<string_t> agent_node_names;
+   hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
+
+   // new nodes are inserted at the head of each bucket list
+   for(int i = 0; i < 100; i++) {
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      agent_node_names.insert(agent_key);
+
+      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, false), 0)));
+   }
+
+   hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
+
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+
+   while(iter.next()) {
+      std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
+
+      ASSERT_TRUE(agent_name != agent_node_names.end()) << "Agent node name must be found in the name set";
+
+      ASSERT_EQ(OBJ_REG, iter.item()->flag) << "This hash map must only contain regular objects";
+
+      ASSERT_TRUE(strncmp("Agent ", iter.item()->string, 6) == 0);
+
+      agent_node_names.erase(agent_name);
+   }
+
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+
+   EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
+}
+
+///
+/// @brief  Tests a hash table iterator going over group nodes.
+///
+TEST(HashTableTest, IteratorGroupObjects)
+{
+   std::set<string_t> agent_node_names;
+   hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
+
+   // new nodes are inserted at the head of each bucket list
+   for(int i = 0; i < 100; i++) {
+      std::string agent = "Agent Group " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, false);
+      agent_grp->flag = OBJ_GRP;
+
+      agent_node_names.insert(agent_key);
+
+      ASSERT_NO_THROW((htab.put_node(agent_grp, 0)));
+   }
+
+   hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
+
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+
+   while(iter.next()) {
+      std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
+
+      ASSERT_TRUE(agent_name != agent_node_names.end()) << "Agent node name must be found in the name set";
+
+      ASSERT_EQ(OBJ_GRP, iter.item()->flag) << "This hash map must only contain group objects";
+
+      ASSERT_TRUE(strncmp("Agent Group ", iter.item()->string, 12) == 0);
+
+      agent_node_names.erase(agent_name);
+   }
+
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+
+   EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
+}
+
+///
+/// @brief  Tests a hash table iterator going over an empty hash table.
+///
+TEST(HashTableTest, IteratorEmpty)
+{
+   hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
+
+   hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
+
+   ASSERT_EQ(nullptr, iter.next()) << "Next node of an empty hash map iterator should return NULL";
+   ASSERT_EQ(nullptr, iter.item()) << "Current node of an empty hash map iterator should be NULL";
 }
 
 }
