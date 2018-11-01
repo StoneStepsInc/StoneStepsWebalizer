@@ -147,7 +147,7 @@ const char *graph_t::fmt_xfer(uint64_t xfer)
    auto fmt_kbyte = [](string_t::char_buffer_t& buffer, double xfer) -> size_t
    {
       // buffer_formatter is never in the append mode in graph_t, so we never go beyond its capacity 
-      return snprintf(buffer, buffer.capacity(), "%.0f", xfer) + 1;
+      return (size_t) snprintf(buffer, buffer.capacity(), "%.0f", xfer) + 1;
    };
 
    // check if we need to output classic transfer amounts without a human-readable suffix
