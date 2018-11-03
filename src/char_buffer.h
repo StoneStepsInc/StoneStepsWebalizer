@@ -206,7 +206,10 @@ class char_buffer_holder_tmpl {
       char_buffer_base<char_t>             buffer;
 
    public:
-      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t, alloc_params_t ...>& allocator, alloc_params_t ... alloc_args) : allocator(allocator), buffer(allocator.get_buffer(alloc_args ...)) {}
+      char_buffer_holder_tmpl(char_buffer_allocator_tmpl<char_t, alloc_params_t ...>& allocator, alloc_params_t ... alloc_args) :
+               allocator(allocator), buffer(allocator.get_buffer(alloc_args ...)) 
+      {
+      }
 
       char_buffer_holder_tmpl(const char_buffer_holder_tmpl&) = delete;
 
