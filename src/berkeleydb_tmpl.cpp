@@ -651,7 +651,8 @@ bool berkeleydb_t::iterator<node_t>::next(storable_t<node_t>& node, typename nod
    buffer_t& buffer = buffer_holder.buffer; 
 
    // for a secondary database we retrieve two keys
-   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
+   if(buffer.capacity() < DBBUFSIZE * (primdb ? 2 : 3))
+      buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
 
    set_dbt_buffer(key, buffer, DBBUFSIZE);
    set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
@@ -702,7 +703,8 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(storable_t<node_t>& node, type
    buffer_t& buffer = buffer_holder.buffer; 
 
    // for a secondary database we retrieve two keys
-   buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
+   if(buffer.capacity() < DBBUFSIZE * (primdb ? 2 : 3))
+      buffer.resize(DBBUFSIZE * (primdb ? 2 : 3), 0);
 
    set_dbt_buffer(key, buffer, DBBUFSIZE);
    set_dbt_buffer(data, buffer + DBBUFSIZE, DBBUFSIZE);
@@ -744,7 +746,8 @@ bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+datasize, 0);
+   if(buffer.capacity() < keysize+datasize)
+      buffer.resize(keysize+datasize, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
@@ -775,7 +778,8 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+DBBUFSIZE, 0);
+   if(buffer.capacity() < keysize+DBBUFSIZE)
+      buffer.resize(keysize+DBBUFSIZE, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
@@ -809,7 +813,8 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize+DBBUFSIZE, 0);
+   if(buffer.capacity() < keysize+DBBUFSIZE)
+      buffer.resize(keysize+DBBUFSIZE, 0);
 
    if(values == NULL)
       return false;
@@ -873,7 +878,8 @@ bool berkeleydb_t::table_t::delete_node(const keynode_t<uint64_t>& node)
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
-   buffer.resize(keysize, 0);
+   if(buffer.capacity() < keysize)
+      buffer.resize(keysize, 0);
 
    if(node.s_pack_key(buffer, keysize) != keysize)
       return false;
