@@ -1784,8 +1784,11 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             process_resolved_hosts();
 
          // every thousand records swap out nodes older than two visit timeouts
-         if(total_good % 1000 == 0)
+         if(total_good % 1000 == 0) {
+            stime = msecs();
             state.swap_out(htab_tstamp - config.visit_timeout * 2);
+            ptms.mnt_time += elapsed(stime, msecs());
+         }
       }
    }
 
