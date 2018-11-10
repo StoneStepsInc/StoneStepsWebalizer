@@ -134,7 +134,7 @@ class state_t {
 
       void database_info(void) const;
 
-      void swap_out(int64_t tstamp);
+      void swap_out(int64_t tstamp, size_t maxmem);
 
       ///
       /// @name   Serialization callbacks

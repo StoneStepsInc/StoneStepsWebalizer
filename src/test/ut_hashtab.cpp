@@ -282,6 +282,85 @@ TEST(HashTableTest, SwapOut)
 }
 
 ///
+/// @brief  Tests swapping out oldest nodes from the hash table by memory size.
+///
+TEST(HashTableTest, SwapOutByMemSize)
+{
+   size_t swapcnt = 0;     // number of swapped out nodes
+   size_t nodesize = 0;    // estimated number of serialized bytes in the hash table
+
+   auto swap_cb = [] (storable_t<anode_t> *node, void *arg)
+   {
+      // increment the swap node count
+      (*(size_t*) arg)++;
+   };
+
+   hash_table<storable_t<anode_t>> htab(10);
+
+   htab.set_swap_out_cb(swap_cb, &swapcnt);
+
+   // no look-ups are done because keys are guaranteed to be unique and must be the same length
+   for(int i = 100; i < 200; i++) {
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, false);
+
+      nodesize += (anode->s_data_size() + sizeof(storable_t<anode_t>));
+
+      ASSERT_NO_THROW(htab.put_node(anode, 0));
+   }
+
+   // swap out 40 nodes (50 + 10)
+   ASSERT_NO_THROW(htab.swap_out(0, nodesize / 2 + nodesize / 10));
+
+   EXPECT_EQ(40, swapcnt) << "40 nodes should be swapped out";
+
+   EXPECT_EQ(60, htab.size()) << "60 nodes should remain in the hash table";
+}
+
+///
+/// @brief  Tests swapping out oldest nodes from the hash table by memory size
+///         that is less than actual table size.
+///
+TEST(HashTableTest, SwapOutByMemSizeLessThan)
+{
+   size_t swapcnt = 0;     // number of swapped out nodes
+   size_t nodesize = 0;    // estimated number of serialized bytes in the hash table
+
+   auto swap_cb = [] (storable_t<anode_t> *node, void *arg)
+   {
+      // increment the swap node count
+      (*(size_t*) arg)++;
+   };
+
+   hash_table<storable_t<anode_t>> htab(10);
+
+   htab.set_swap_out_cb(swap_cb, &swapcnt);
+
+   // no look-ups are done because keys are guaranteed to be unique and must be the same length
+   for(int i = 100; i < 200; i++) {
+      std::string agent = "Agent " + std::to_string(i);
+      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
+
+      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, false);
+
+      // simulate nodes reduced in size after they have been inserted into the hash table
+      nodesize += anode->s_data_size() + sizeof(storable_t<anode_t>);
+      nodesize -= 10;
+
+      ASSERT_NO_THROW(htab.put_node(anode, 0));
+   }
+
+   // swap out to keep one node, but because nodes in the hast table are bigger, all will be swapped out
+   ASSERT_NO_THROW(htab.swap_out(0, (nodesize + 100)/100));
+
+   EXPECT_EQ(100, swapcnt) << "All nodes should be swapped out";
+
+   EXPECT_EQ(0, htab.size()) << "Zero nodes should remain in the hash table";
+}
+
+///
 /// @brief  Tests the hash table loading an array of object pointers.
 ///
 TEST(HashTableTest, LoadAgentNodeArray)

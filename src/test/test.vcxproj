@@ -160,6 +160,9 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rcnode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hnode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\vnode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\inode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\snode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rnode.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

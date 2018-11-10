@@ -1783,10 +1783,18 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(config.is_dns_enabled())
             process_resolved_hosts();
 
-         // every thousand records swap out nodes older than two visit timeouts
+         //
+         // Every thousand records swap out nodes older than two visit timeouts. This
+         // number is arbitrary and seems like a reasonable balance between how many
+         // nodes are saved at one time and the size of the hash tables.
+         //
          if(total_good % 1000 == 0) {
             stime = msecs();
-            state.swap_out(htab_tstamp - config.visit_timeout * 2);
+            //
+            // Use the database cache size as a guiding number for the combined size of
+            // our hash tables or 256 MB if the former was not set.
+            //
+            state.swap_out(htab_tstamp - config.visit_timeout * 2, std::max(config.db_cache_size, 256u * 1024u * 1024u));
             ptms.mnt_time += elapsed(stime, msecs());
          }
       }

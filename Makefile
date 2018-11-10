@@ -131,7 +131,8 @@ TEST_OBJS := $(TEST_SRC:.cpp=.o) \
 	pch.o serialize.o tstamp.o tstring.o unicode.o fmt_impl.o \
 	util_http.o util_ipaddr.o util_path.o util_string.o util_time.o \
 	util_url.o tmranges.o config.o anode.o dlnode.o ccnode.o hnode.o \
-	rcnode.o vnode.o unode.o keynode.o hashtab_nodes.o
+	rcnode.o vnode.o unode.o snode inode.o.o rnode.o \
+	keynode.o hashtab_nodes.o
 
 TEST_DEPS := $(TEST_OBJS:.o=.d)
 TEST_RPOS := $(TEST_OBJS:.o=.rpo)

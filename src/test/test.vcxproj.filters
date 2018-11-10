@@ -177,6 +177,15 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\vnode.obj">
       <Filter>obj</Filter>
     </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\inode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\snode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rnode.obj">
+      <Filter>obj</Filter>
+    </Object>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

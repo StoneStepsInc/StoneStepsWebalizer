@@ -432,6 +432,7 @@ class hash_table : public hash_table_base {
       size_t      count;      ///< Number of hash table entries
       size_t      maxhash;    ///< Number of buckets in the hash table
       size_t      emptycnt;   ///< Number of empty buckets
+      size_t      memsize;    ///< Estimated serialized size in bytes of all nodes.
       bucket_t    *htab;      ///< Buckets
 
       node_list_t<node_t>  tmlist;  ///< Time-ordered list of regular nodes.
@@ -481,7 +482,7 @@ class hash_table : public hash_table_base {
       void set_swap_out_cb(swap_cb_t swapcb, void *arg, eval_cb_t evalcb = nullptr);
 
       /// Swaps out oldest nodes with time stamps less than or equal `tstamp` to some external storage.
-      void swap_out(int64_t tstamp);
+      void swap_out(int64_t tstamp, size_t maxsize = 0);
       /// @}
 
       ///

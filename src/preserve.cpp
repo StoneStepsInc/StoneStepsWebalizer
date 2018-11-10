@@ -906,10 +906,19 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
 
 ///
 /// @brief  Stores all nodes with last access time stamps that are less than or
-///         equal to `tstamp` in the database.
+///         equal to `tstamp` in the database, up to `maxmem` in hash table memory
+///         size.
 ///
-void state_t::swap_out(int64_t tstamp)
+void state_t::swap_out(int64_t tstamp, size_t maxmem)
 {
+   //
+   // Use 2/3 of the memory for the large hash tables and 1/3 for small ones.
+   // If the resulting size is zero, then it will be ignored by the swap_out
+   // call.
+   //
+   size_t lg_htab_sz = (maxmem * 2) / 9;     // ((x / 3) * 2) / 3
+   size_t sm_htab_sz = (maxmem * 2) / 12;    // ((x / 3) * 2) / 4
+
    //
    // The order of swap_out calls is important because nodes may reference one 
    // another. These are current dependencies:
@@ -917,15 +926,15 @@ void state_t::swap_out(int64_t tstamp)
    //    dlnode_t > hnode_t > vnode_t > unode_t
    //             > danode_t
    //
-   dl_htab.swap_out(tstamp);
-   hm_htab.swap_out(tstamp);
-   um_htab.swap_out(tstamp);
+   dl_htab.swap_out(tstamp, lg_htab_sz);
+   hm_htab.swap_out(tstamp, lg_htab_sz);
+   um_htab.swap_out(tstamp, lg_htab_sz);
 
    // these nodes currently do not reference other nodes
-   rm_htab.swap_out(tstamp);
-   am_htab.swap_out(tstamp);
-   sr_htab.swap_out(tstamp);
-   im_htab.swap_out(tstamp);
+   rm_htab.swap_out(tstamp, sm_htab_sz);
+   am_htab.swap_out(tstamp, sm_htab_sz);
+   sr_htab.swap_out(tstamp, sm_htab_sz);
+   im_htab.swap_out(tstamp, sm_htab_sz);
 }
 
 // -----------------------------------------------------------------------

@@ -14,7 +14,8 @@
 #include "hashtab.h"
 
 template <typename node_t>
-hash_table<node_t>::hash_table(size_t maxhash, swap_cb_t swapcb, void *cbarg, eval_cb_t evalcb) : maxhash(maxhash), swapcb(swapcb), cbarg(cbarg), evalcb(evalcb)
+hash_table<node_t>::hash_table(size_t maxhash, swap_cb_t swapcb, void *cbarg, eval_cb_t evalcb) : 
+      maxhash(maxhash), swapcb(swapcb), cbarg(cbarg), evalcb(evalcb), memsize(0)
 {
    count = 0;
    emptycnt = maxhash;
@@ -38,13 +39,14 @@ void hash_table<node_t>::set_swap_out_cb(swap_cb_t swap, void *arg, eval_cb_t ev
 
 ///
 /// @param[in] tstamp   The last inclusive time stamp in the swap-out range.
+/// @param[in] maxsize  The expected maximum memory size after the method returns
 ///
 /// The caller can subtract the visit timeout value from the current log time stamp
 /// to derive `tstamp`, which will swap out all nodes that haven't been touched in 
 /// visit timeout time.
 ///
 template <typename node_t>
-void hash_table<node_t>::swap_out(int64_t tstamp)
+void hash_table<node_t>::swap_out(int64_t tstamp, size_t maxsize)
 {
    // cannot swap out without a callback 
    if(!swapcb)
@@ -52,8 +54,14 @@ void hash_table<node_t>::swap_out(int64_t tstamp)
 
    typename node_list_t<node_t>::iterator lsnode = tmlist.begin();
 
-   // swap out oldest nodes
-   while(lsnode != tmlist.end() && (*lsnode)->tstamp <= tstamp) {
+   //
+   // Swap out oldest nodes with time stamps less than or equal to tstamp until the
+   // remaining hash table memory size is less than maxsize. Note, though, that memory
+   // size is an estimated quantity and we can reach zero while there are still nodes
+   // in the hash table, so once the hash table memory size is zero, ignore it and
+   // finish evaluating time stamps.
+   //
+   while(lsnode != tmlist.end() && (*lsnode)->tstamp <= tstamp && (!memsize || memsize > maxsize)) {
       // only regular nodes can be in the time stamp list
       if((*lsnode)->node->get_type() != OBJ_REG)
          throw std::logic_error("Only regular object nodes may be swapped out");
@@ -71,8 +79,15 @@ void hash_table<node_t>::swap_out(int64_t tstamp)
          // remove the node from the bucket
          unlink_node(bucket, nptr);
 
-         // and from the time stamp list and advance the node iterator
+         // and from the time-ordered list and advance the node iterator
          lsnode = tmlist.erase(nptr->lsnode);
+
+         // serialized node size may have changed since it was added (e.g. city was added later)
+         size_t nsize = nptr->node->s_data_size() + sizeof(node_t);
+         if(memsize > nsize)
+            memsize -= nsize;
+         else
+            memsize = 0;
 
          // adjust counters
          count--;
@@ -159,6 +174,9 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node, int64_t tst
       (*hptr)->prev = nptr;
    }
    *hptr = nptr;
+
+   // update sizes and counts
+   memsize += (nptr->node->s_data_size() + sizeof(node_t));
 
    htab[hashidx].count++;
    count++;
@@ -294,6 +312,7 @@ void hash_table<node_t>::clear(void)
    // now adjust all counts
    count = 0;
    emptycnt = maxhash;
+   memsize = 0;
 }
 
 template <typename node_t>
