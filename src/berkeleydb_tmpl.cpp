@@ -1177,7 +1177,7 @@ void berkeleydb_t::trickle_thread_proc(void)
 {
    int pagecnt = 0, error;
 
-   std::unique_lock lock(trickle_mtx);
+   std::unique_lock<std::mutex> lock(trickle_mtx);
 
    while(!trickle_thread_stop) {
       //
