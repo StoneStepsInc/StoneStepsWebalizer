@@ -919,9 +919,8 @@ berkeleydb_t::berkeleydb_t(config_t&& config) :
    if(dbenv.set_alloc(berkeleydb_t::malloc, berkeleydb_t::realloc, berkeleydb_t::free))
       throw exception_t(0, "Cannot set memory management functions for the database environment");
 
-   trickle_event = NULL;
+   // no threading at this point, we can just assign
    trickle_thread_stop = false;
-   trickle_thread_stopped = true;
 
    readonly = false;
    trickle = false;
@@ -1028,13 +1027,6 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
       dbflags |= DB_THREAD;
       envflags |= DB_THREAD | DB_INIT_CDB;
 
-      // create an event to indicate that there's something to write
-      if((trickle_event = event_create(true, false)) == NULL)
-         return "Cannot create a trickle event";
-   
-      // create a trickle thread
-      trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
-
       // initialize table databases as free-threaded
       for(size_t i = 0; i < tables.size(); i++)
          tables[i]->set_threaded(true);
@@ -1085,6 +1077,10 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
    if(!(status = sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
       return status;
 
+   // now that everything is initialized, we can start the trickle thread
+   if(!readonly && trickle)
+      trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
+
    return status;
 }
 
@@ -1095,7 +1091,10 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
    status_t status;
 
    // tell trickle thread to stop
+   trickle_mtx.lock();
    trickle_thread_stop = true;
+   trickle_cv.notify_one();
+   trickle_mtx.unlock();
 
    // if the trickle thread was started, wait for it to stop
    if(trickle_thread.joinable())
@@ -1126,12 +1125,6 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
       status = error;
 
    reset_db_handles();
-
-   // destroy all trickling events
-   if(trickle_event) {
-      event_destroy(trickle_event);
-      trickle_event = NULL;
-   }
 
    return status;
 }
@@ -1182,48 +1175,30 @@ berkeleydb_t::status_t berkeleydb_t::flush(void)
 
 void berkeleydb_t::trickle_thread_proc(void)
 {
-   int nwrote, error;
-   uint64_t eventrc, count = 0;
+   int pagecnt = 0, error;
 
-   trickle_thread_stopped = false;
+   std::unique_lock lock(trickle_mtx);
 
    while(!trickle_thread_stop) {
-      if((eventrc = event_wait(trickle_event, 50)) == EVENT_TIMEOUT) {
-         // trickle every second, even if event was not set
-         if(++count < 20)
-            continue;
+      //
+      // Switch the wait time between one and five seconds, depending on whether any
+      // pages were written to disk the last time.
+      //
+      if(trickle_cv.wait_for(lock, std::chrono::seconds(pagecnt ? 1 : 5)) == std::cv_status::timeout) {
+         lock.unlock();
 
-         // set the event to avoid waiting
-         if(!event_set(trickle_event)) {
-            trickle_error = "Failed to set the database trickle event";
+         //
+         // Keep 10% of the pages in the memory pool clean, so when we look up previously
+         // saved items, they can be read into memory without having to write existing
+         // items to disk in the context of the main thread.
+         //
+         if((error = dbenv.memp_trickle(10, &pagecnt)) != 0) {
+            trickle_error.format("Failed to trickle database cache to disk (%d)", error);
             break;
          }
-         count = 0;
-      }
 
-      if(eventrc == EVENT_ERROR) {
-         trickle_error = "Failed while waiting for the database trickle event";
-         break;
-      }
-
-      // trickle some dirty pages to disk
-      if((error = dbenv.memp_trickle(config.get_db_trickle_rate(), &nwrote)) != 0) {
-         trickle_error.format("Failed to trickle database cache to disk (%d)", error);
-         break;
-      }
-
-      // check if anything was actually written
-      if(!nwrote) {
-         // if there's nothing written, slow down trickling
-         if(!event_reset(trickle_event)) {
-            trickle_error = "Failed to reset the database trickle event";
-            break;
-         }
+         lock.lock();
       }
    }
-
-   // reset the stop request and indicate that the thread is not running
-   trickle_thread_stop = false;
-   trickle_thread_stopped = true;
 }
 

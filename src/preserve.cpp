@@ -432,9 +432,8 @@ bool state_t::initialize(void)
       }
    }
    else {
-      // enable trickling if trickle rate is not zero (database mode)
-      if(config.db_trickle_rate)
-         database.set_trickle(true);
+      // enable trickling for log processing
+      database.set_trickle(true);
    }
 
    database_t::status_t status;

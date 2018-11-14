@@ -36,7 +36,6 @@
 
 #define DB_DEF_CACHE_SIZE  ((uint32_t) 0)          // Default cache size (ignored)
 #define DB_MIN_CACHE_SIZE  ((uint32_t) 20 * 1024)  // Minimum cache size (20K)
-#define DB_DEF_TRICKLE_RATE ((u_int) 5)            // Default database trickle rate
 
 #define FONT_SIZE_SMALL       8.                   // points
 #define FONT_SIZE_MEDIUM      10.                  // points
@@ -213,7 +212,6 @@ class config_t {
 
       uint32_t db_cache_size;                   ///< database cache size, in bytes
       uint32_t db_seq_cache_size;               ///< database sequence cache size
-      uint32_t db_trickle_rate;                 ///< database trickle rate
       bool db_direct;                           ///< use system buffering?
       bool db_dsync;                            ///< write-through?
 

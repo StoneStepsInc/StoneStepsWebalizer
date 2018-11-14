@@ -54,8 +54,6 @@ class database_t : public berkeleydb_t {
 
             uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
 
-            uint32_t get_db_trickle_rate(void) const {return config.db_trickle_rate;}
-
             bool get_db_direct(void) const {return config.db_direct;}
 
             bool get_db_dsync(void) const {return config.db_dsync;}

@@ -115,7 +115,6 @@ config_t::config_t(void)
    dump_errors = false;                       /* HTTP errors              */
    dump_downloads = false;                    // Downloads
 
-   db_trickle_rate = DB_DEF_TRICKLE_RATE;
    db_cache_size = DB_DEF_CACHE_SIZE;         // Default cache size (ignored)
    db_seq_cache_size = 1024;
    db_direct = false;
@@ -641,9 +640,6 @@ void config_t::prep_and_validate(void)
    if(db_seq_cache_size < 256)
       db_seq_cache_size = 256;
 
-   if(db_trickle_rate > 100)
-      db_trickle_rate = 100;
-
    // check DNS/GeoIP settings
    if(dns_children) {
       if(dns_children > DNS_MAX_THREADS)
@@ -797,7 +793,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 147, 151, 152 
+                     // max key: 191; empty slots: 147, 150, 151, 152 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -825,7 +821,6 @@ void config_t::get_config(const char *fname)
                      {"DbName",              145},          // State database file name
                      {"DbPath",              144},          // State database path
                      {"DbSeqCacheSize",      149},          // Database sequence cache size
-                     {"DbTrickleRate",       150},          // Database trickle rate
                      {"Debug",               8},            // Produce debug information
                      {"DecimalKBytes",       172},          // Use 1000, not 1024 as a transfer multiplier
                      {"DNSCache",            84},           // DNS Cache file name
@@ -1218,7 +1213,6 @@ void config_t::get_config(const char *fname)
          case 146: db_cache_size = get_db_cache_size(value); break;
          case 148: db_fname_ext = value; break;
          case 149: db_seq_cache_size = atoi(value); break;
-         case 150: db_trickle_rate = atoi(value); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 154: db_dsync = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;

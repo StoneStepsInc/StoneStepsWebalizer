@@ -1783,11 +1783,6 @@ Batch
               monthly report (--prepare-report). Default value: no
               Command line argument: --batch
 
-DbTrickleRate Specifies the percentage of database pages Berkeley DB 
-              will try to clear in background while swapping data out 
-              of memory. The default value of 5 (five percent) is 
-              sufficient in most cases.
-              
 DbDirect      Configures Berkeley DB not to use system caching and 
               just rely on the built-in caching mechanism. This flag 
               may be useful when system cache is not effective. 

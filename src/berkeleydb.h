@@ -24,6 +24,8 @@
 #include <db_cxx.h>
 #include <vector>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 ///
 /// @class  berkeleydb_t
@@ -209,8 +211,6 @@ class berkeleydb_t {
             virtual uint32_t get_db_cache_size(void) const = 0;
 
             virtual uint32_t get_db_seq_cache_size(void) const = 0;
-
-            virtual uint32_t get_db_trickle_rate(void) const = 0;
 
             virtual bool get_db_direct(void) const = 0;
 
@@ -605,11 +605,11 @@ class berkeleydb_t {
 
       std::vector<table_t*> tables;
 
+      std::mutex        trickle_mtx;
+      std::condition_variable trickle_cv;
       std::thread       trickle_thread;
-      event_t           trickle_event;
       string_t          trickle_error;
       bool              trickle_thread_stop;
-      bool              trickle_thread_stopped;
 
       bool              readonly;
       bool              trickle;
