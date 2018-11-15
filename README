@@ -1751,6 +1751,9 @@ JavaScriptCharts
               Only Highcharts is supported at the moment. By default this
               value is empty and all charts are rendered as PNG images.
 
+              If you configure this value, you also need to configure the
+              JavaScript directory via HTMLJsPath.
+
               Please note that Highcharts is not an Open Source package 
               and may be used without buying a license only for non-commercial 
               purposes. Read Highcharts' page for additional information 
