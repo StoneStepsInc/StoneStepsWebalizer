@@ -1127,6 +1127,11 @@ CountryGraph  This keyword is used to either enable or disable the creation
               'yes' or 'no', with the default being 'yes'.
               Command line argument: -Y
 
+JavaScriptChartsMap
+              If CountryGraph is enabled and JavaScriptCharts is configured,
+              the country chart will be rendered as a world map instead of
+              a pie chart.
+
 DailyGraph    This keyword is used to either enable or disable the creation
               and display of the Daily Usage graph.  Values may be either
               'yes' or 'no', with the default being 'yes'.
