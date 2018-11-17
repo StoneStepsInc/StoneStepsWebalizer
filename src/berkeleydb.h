@@ -346,11 +346,11 @@ class berkeleydb_t {
                Db                *scdb;      ///< Secondary database instance.
                string_t          dbname;     ///< Secondary database name.
                string_t          dbpath;     ///< A file path to the database that contains primary and secondary databases.
-               sc_extract_cb_t   sccb;       ///< Extracts a secondary database key from the primary record.
+               sc_extract_cb_t   scxcb;      ///< Extracts a secondary database key from the primary record.
 
                public:
-               db_desc_t(void) {scdb = NULL; sccb = NULL;}
-               db_desc_t(Db *scdb, const char *dbname, const char *dbpath, sc_extract_cb_t sccb) : scdb(scdb), dbname(dbname), dbpath(dbpath), sccb(sccb) {}
+               db_desc_t(void) : scdb(nullptr), scxcb(nullptr) {}
+               db_desc_t(Db *scdb, const char *dbname, const char *dbpath, sc_extract_cb_t scxcb) : scdb(scdb), dbname(dbname), dbpath(dbpath), scxcb(scxcb) {}
             };
 
          private:
@@ -416,10 +416,10 @@ class berkeleydb_t {
             void set_values_db(const char *dbname) {values = secondary_db(dbname);}
 
             /// Prepares a named secondary database association with the primary database.
-            int associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb = NULL);
+            int associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb = nullptr);
 
             /// Associates a prepared secondary database with the primary database.
-            int associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild);
+            int associate(const char *dbname, sc_extract_cb_t scxcb, bool rebuild);
 
             Db *primary_db(void) const {return table;}
 

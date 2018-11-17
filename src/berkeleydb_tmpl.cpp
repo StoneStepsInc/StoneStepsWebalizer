@@ -367,8 +367,8 @@ int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compa
    // associate all secondary databases with a non-NULL data extraction callback
    for(index = 0; index < indexes.size(); index++) {
       // if the extraction callback is not NULL, associate immediately
-      if(indexes[index].scdb && indexes[index].sccb) {
-         if((error = table->associate(NULL, indexes[index].scdb, indexes[index].sccb, 0)) != 0)
+      if(indexes[index].scdb && indexes[index].scxcb) {
+         if((error = table->associate(NULL, indexes[index].scdb, indexes[index].scxcb, 0)) != 0)
             return error;
       }
    }
@@ -470,7 +470,7 @@ int berkeleydb_t::table_t::sync(void)
 /// this method with the primary database. Otherwise, this secondary database will
 /// need to be attached later via the second `associate` method.
 ///
-int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb)
+int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb)
 {
    int error;
    Db *scdb = new_db(dbenv, DBFLAGS);
@@ -492,7 +492,7 @@ int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_
    if((error = scdb->set_bt_compare(btcb)) != 0)
       goto errexit;
 
-   indexes.push_back(db_desc_t(scdb, dbname, dbpath, sccb));
+   indexes.push_back(db_desc_t(scdb, dbname, dbpath, scxcb));
 
    return 0;
 
@@ -523,7 +523,7 @@ errexit:
 ///         and would be much more expensive than truncation. May have to be changed
 ///         in the future.
 ///
-int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild)
+int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t scxcb, bool rebuild)
 {
    int error;
    u_int32_t temp;
@@ -531,7 +531,7 @@ int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, b
    db_desc_t *desc = get_sc_desc(dbname);
 
    // skip those that have been associated
-   if(!desc || desc->sccb)
+   if(!desc || desc->scxcb)
       return 0;
 
    if(rebuild) {
@@ -541,11 +541,11 @@ int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, b
    }
 
    // associate the secondary, rebuilding if requested
-   if((error = table->associate(NULL, desc->scdb, sccb, flags)) != 0)
+   if((error = table->associate(NULL, desc->scdb, scxcb, flags)) != 0)
       return error;
 
    // mark as associated
-   desc->sccb = sccb;
+   desc->scxcb = scxcb;
 
    return 0;
 }
