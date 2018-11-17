@@ -116,7 +116,7 @@ config_t::config_t(void)
    dump_downloads = false;                    // Downloads
 
    db_cache_size = DB_DEF_CACHE_SIZE;         // Default cache size (ignored)
-   db_seq_cache_size = 1024;
+   db_seq_cache_size = 64;
    db_direct = false;
    db_dsync = false;
 
