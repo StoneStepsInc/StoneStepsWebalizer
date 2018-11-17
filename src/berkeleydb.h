@@ -32,8 +32,8 @@
 ///
 /// @brief  A base class of a Berkeley DB interface wrapper
 ///
-/// The berkeleydb_t class wraps various Berkeley DB interfaces, such as primary and 
-/// secondary databases storing blobs, and exposes them in somewhat more traditional 
+/// The `berkeleydb_t` class wraps various Berkeley DB interfaces, such as primary and 
+/// secondary databases storing blobs, and exposes them in a somewhat more traditional 
 /// form of database tables storing record-like node objects that are indexed with 
 /// customizable keys.
 /// 
@@ -179,19 +179,19 @@ class berkeleydb_t {
       /// @class  config_t
       ///
       /// @brief  Defines an interface for a configuration necessary to construct a
-      ///         berkeley_db instance.
+      ///         `berkeleydb_t` instance.
       ///
-      /// 1. config_t provides all configuration data needed to construct a berkeleydb_t
-      /// instance. Configuration cannot be changed after an instance of berkeleydb_t has
+      /// 1. `config_t` provides all configuration data needed to construct a `berkeleydb_t`
+      /// instance. Configuration cannot be changed after an instance of `berkeleydb_t` has
       /// been constructed.
       ///
-      /// 2. berkeleydb_t will use the config_t::clone and config_t::release methods to 
-      /// maintain a copy of the configuration object throughout the lifespan of each
-      /// berkeleydb_t instance. This allows berkeleydb_t instances constructed using 
-      /// temporary config_t objects.
+      /// 2. `berkeleydb_t` will use the `config_t::clone` and `config_t::release` methods
+      /// to maintain a copy of the configuration object throughout the lifespan of each
+      /// `berkeleydb_t` instance. This allows `berkeleydb_t` instances constructed using 
+      /// temporary `config_t` objects.
       ///
-      /// 3. The reference to a config_t instance returned by config_t::clone must point
-      /// to a valid object until config_t::release is called. Otherwise config_t makes
+      /// 3. The reference to a `config_t` instance returned by `config_t::clone` must point
+      /// to a valid object until `config_t::release` is called. Otherwise `config_t` makes
       /// no assumption of how the underlying object memory is maintained.
       ///
       class config_t {
@@ -300,22 +300,22 @@ class berkeleydb_t {
       /// string (values database). Secondary databases, even the values 
       /// database, will contain duplicates, each pointing back to the primary 
       /// database using the primary key. Secondary databases are associated
-      /// with the primary database when table_t is constructed and are updated 
+      /// with the primary database when `table_t` is constructed and are updated 
       /// automatically by Berkeley DB.
       /// ```
       ///    hosts (primary database)       values (secondary database)
       ///    +----------------------+       +---------------------+
-      ///    | key  : 123           |       | hash: hash(value)   |
+      ///    | key  : 123           |       | hash: H(127.0.0.1)  |
       ///    | value: 127.0.0.1     |       | key : 123           |
       ///    | hash : hash(value)   |       | ...                 |
       ///    | hits : 1234          |       
       ///    | pages: 567           |       hits (secondary database) 
       ///    +----------------------+       +---------------------+
-      ///                                   | hits: 1234          |
-      ///    +----------------------+       | key : 123           |
       ///    | key  : 456           |       | hits: 1234          |
-      ///    | value: 127.0.0.2     |       | key : 456           |
-      ///    | ...                  |       | ...                 |
+      ///    | value: 127.0.0.2     |       | key : 123           |
+      ///    | ...                  |       | hits: 1234          |
+      ///                                   | key : 456           |
+      ///                                   | ...                 |
       /// ```
       /// Secondary databases (indexes) may be optionally associated with the
       /// primary database via two `associate` calls. The first one registers
@@ -325,15 +325,15 @@ class berkeleydb_t {
       /// It is not necessary to associate a secondary database for a table
       /// that is not intended to be queried by its associated field.
       ///
-      /// 2. Berkeley databases cannot be copied, so table_t instances only use
+      /// 2. Berkeley databases cannot be copied, so `table_t` instances only use
       /// move semantics, which requires all non-copyable data members maintained 
       /// as pointers. These pointers can only be NULL for objects that are near
       /// their lifetime. Calling any methods for these objects will result in
       /// undefined behavior.
       ///
       /// 3. Buffer allocator is also maintained as a pointer to allow creating
-      /// buffers in const table_t methods. The assumption is that buffer allocators 
-      /// are safe for the current threading model.
+      /// buffers in `const` `table_t` methods. The assumption is that buffer 
+      /// allocators are safe for the current threading model.
       ///
       class table_t {
          private:

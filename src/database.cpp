@@ -45,12 +45,16 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
 /// Most tables (primary databases) contain no references to other tables and are
 /// structured this way:
 /// ```
-/// * node ID        - Numeric key derived from sequence database with the `.seq` 
-///                    suffix
+/// * node ID        - A numeric key obtained from sequence database with the `.seq` 
+///                    suffix. Node ID is stored as a Berkeley DB key and not within
+///                    node data.
+///
+/// * node version   - A numeric version of the node data layout.
 /// * node value     - UTF-8 character value (e.g. URL, User Agent, etc)
-/// * value hash     - Hash of the node value to facilitate value sorting in value
+/// * value hash     - Hash of the node value to facilitate value look-ups in value
 ///                    databases with the `.values` suffix without value duplication
-/// * node data      - Serialized versioned node data
+///                    between the primary and the secondary values database.
+/// * node data      - Node data serialized according to the node version.
 /// ```
 /// A few tables listed below contain references to other tables.
 ///
@@ -87,13 +91,13 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
 const struct database_t::table_desc_t {
    berkeleydb_t::table_t   database_t::*table;        ///< Pointer to a data member table for a given database.
    const char              *primary_db;               ///< Name of the primary database.
-   bt_compare_cb_t         key_compare_cb;            ///< Primary key comparison callback.
+   bt_compare_cb_t         key_compare_cb;            ///< Compares two primary keys.
 
    const char              *sequence_db;              ///< Name of the sequence database or `nullptr` if it's not used.
 
    const char              *value_db;                 ///< Name of the value database or `nullptr` if it's not used.
-   bt_compare_cb_t         value_hash_compare_cb;     ///< Value hash comparison callback.
-   sc_extract_cb_t         value_hash_extract_cb;     ///< Value hash extraction callback.
+   bt_compare_cb_t         value_hash_compare_cb;     ///< Compares two value hashes in secondary database keys.
+   sc_extract_cb_t         value_hash_extract_cb;     ///< Extracts value hash from serialized node data.
 } database_t::table_desc[] = {
    {&database_t::system, "system", 
          &bt_compare_cb<sysnode_t::s_compare_key>},
@@ -149,13 +153,22 @@ const struct database_t::table_desc_t {
 /// An array of index descriptors that contains all data to set up all indexes
 /// for each primary table.
 ///
+/// Secondary databases have a key that is some data from the primary database, such as
+/// the number of pages or transfer amount, and its data is the primary key that links
+/// secondary database records to their primary database records. The primary key for
+/// most tables with indexes (secondary databases) is a node ID, which means that the
+/// duplicate compare callback will only have node IDs in the data items passed into the
+/// callback. This makes it impossible to sort duplicate secondary database values by
+/// anything, but their order of insertion in the pkrimary database, which is how the 
+/// node ID works out. 
+///
 const struct database_t::index_desc_t {
    table_t           database_t::*table;              ///< Pointer to a data member table for a given database.
    const char        *index_db;                       ///< Name of the secondary database. 
 
-   bt_compare_cb_t   index_compare_cb;                ///< Index value comparison callback.
-   bt_compare_cb_t   index_dup_compare_cb;            ///< Index duplicate value comparison callback.
-   sc_extract_cb_t   index_extract_cb;                ///< index value extraction callback.
+   bt_compare_cb_t   index_compare_cb;                ///< Compares two serialized secondary database keys.
+   bt_compare_cb_t   index_dup_compare_cb;            ///< Compares two serialized nodes to sort duplicate secondary database keys (see above).
+   sc_extract_cb_t   index_extract_cb;                ///< Extracts a secondary database key from a serialized node.
 } database_t::index_desc[] = {
    // urls
    {&database_t::urls, "urls.hits", 
@@ -288,7 +301,11 @@ berkeleydb_t::status_t database_t::open(void)
    // NULL pointer when indexes are attached later, after all logs are processed.
    //
    for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
-      if(!(status = (this->*index_desc[i].table).associate(config.get_db_path(), index_desc[i].index_db, index_desc[i].index_compare_cb, index_desc[i].index_dup_compare_cb, get_readonly() ? index_desc[i].index_extract_cb : nullptr)).success())
+      if(!(status = (this->*index_desc[i].table).associate(config.get_db_path(), 
+                                                      index_desc[i].index_db, 
+                                                      index_desc[i].index_compare_cb, 
+                                                      index_desc[i].index_dup_compare_cb, 
+                                                      get_readonly() ? index_desc[i].index_extract_cb : nullptr)).success())
          return status;
    }
 
