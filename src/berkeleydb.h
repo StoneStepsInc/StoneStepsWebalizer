@@ -343,10 +343,10 @@ class berkeleydb_t {
             /// @brief  A secondary database descriptor
             ///
             struct db_desc_t {
-               Db                *scdb;      // secondary database
-               string_t          dbname;     // database name
-               string_t          dbpath;     // database file path
-               sc_extract_cb_t   sccb;       // secondary database data extract callback
+               Db                *scdb;      ///< Secondary database instance.
+               string_t          dbname;     ///< Secondary database name.
+               string_t          dbpath;     ///< A file path to the database that contains primary and secondary databases.
+               sc_extract_cb_t   sccb;       ///< Extracts a secondary database key from the primary record.
 
                public:
                db_desc_t(void) {scdb = NULL; sccb = NULL;}
@@ -423,10 +423,10 @@ class berkeleydb_t {
             /// designates the specified secondary database name as the value database
             void set_values_db(const char *dbname) {values = secondary_db(dbname);}
 
-            /// initiates secondary database associations with the primary database
+            /// Prepares a named secondary database association with the primary database.
             int associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb = NULL);
 
-            /// completes secondary database associations started by the `associate` overload
+            /// Associates a prepared secondary database with the primary database.
             int associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild);
 
             Db *primary_db(void) const {return table;}

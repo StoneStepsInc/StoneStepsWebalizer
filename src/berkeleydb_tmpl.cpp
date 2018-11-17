@@ -367,7 +367,7 @@ int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compa
    if((error = table->open(NULL, dbpath, dbname, DB_BTREE, flags, FILEMASK)) != 0)
       return error;
 
-   // associate all secondary databases with a non-NULL callback
+   // associate all secondary databases with a non-NULL data extraction callback
    for(index = 0; index < indexes.size(); index++) {
       // if the extraction callback is not NULL, associate immediately
       if(indexes[index].scdb && indexes[index].sccb) {
@@ -462,6 +462,17 @@ int berkeleydb_t::table_t::sync(void)
    return table->sync(0);
 }
 
+///
+/// Creates a secondary database and sets it up with the B-tree comparison callback and
+/// an optional duplicate key callback and registers this database with the table under
+/// `dbname`. The new secondary database is not associated with the primary database at
+/// this point. 
+///
+/// If the secondary database key extraction callback is provided in this call, the 
+/// subsequent `table_t::open` call will associate the secondary database created in
+/// this method with the primary database. Otherwise, this secondary database will
+/// need to be attached later via the second `associate` method.
+///
 int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t sccb)
 {
    int error;
@@ -493,6 +504,28 @@ errexit:
    return error;
 }
 
+///
+/// For performance reasons, it works faster if a primary database that has a lot
+/// of inserts and updates is not associated with any secondary databases. Once all
+/// updates are done, all secondary databases may be attached and each secondary key
+/// will be extracted only once. This method is intended for this purpose.
+///
+/// In order to use this method, the alternative `associate` method must be called
+/// first with a NULL extraction callback to register a secondary database and then
+/// this method should be called after all updates to the primary database have been
+/// completed.
+///
+/// If `rebuild` parameter is `true`, the secondary database is truncated before it
+/// is associated with the primary database. If `rebuild` is `false` and the secondary
+/// database contains any entries, it will not be properly updated.
+///
+/// @note   Truncating the secondary database in order to rebuild the index was used
+///         historically by this method and it appears to work, but the documented
+///         way to rebuild secondary databases is to remove it from the pkrimary
+///         database and then associate again, which cannot be done on open databases
+///         and would be much more expensive than truncation. May have to be changed
+///         in the future.
+///
 int berkeleydb_t::table_t::associate(const char *dbname, sc_extract_cb_t sccb, bool rebuild)
 {
    int error;

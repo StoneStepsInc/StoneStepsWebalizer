@@ -326,7 +326,7 @@ berkeleydb_t::status_t database_t::open(void)
          // The duplicate value hash comparison callback is the same as the value hash 
          // comparison function just to indicate that there may be hash collisions, so
          // the secondary database is set up to allow duplicates. The value database is
-         // never traverses by value, so record ordering defined by these callbacks is 
+         // never traversed by value, so record ordering defined by these callbacks is 
          // is irrelevant and for value look-ups all duplicates are examined until a
          // matching value is found.
          //
