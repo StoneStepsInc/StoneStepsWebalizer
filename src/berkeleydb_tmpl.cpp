@@ -219,8 +219,7 @@ berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb, buffer_allocator_t& buff
       seqdb(&seqdb),
       sequence(NULL),
       buffer_allocator(&buffer_allocator),
-      threaded(false),
-      readonly(false)
+      threaded(false)
 {
 }
 
@@ -232,8 +231,7 @@ berkeleydb_t::table_t::table_t(table_t&& other) :
       sequence(other.sequence),
       indexes(std::move(other.indexes)),
       buffer_allocator(other.buffer_allocator),
-      threaded(other.threaded),
-      readonly(other.readonly)
+      threaded(other.threaded)
 {
    other.dbenv = NULL;
    other.table = NULL;
@@ -268,7 +266,6 @@ berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other)
    indexes = std::move(other.indexes);
 
    threaded = other.threaded;
-   readonly = other.readonly;
 
    other.dbenv = NULL;
    other.table = NULL;
@@ -342,7 +339,7 @@ int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compa
 {
    u_int index;
    int error;
-   u_int32_t flags = readonly ? DB_RDONLY : DB_CREATE;
+   u_int32_t flags = DB_CREATE;
 
    if(threaded)
       flags |= DB_THREAD;
@@ -955,7 +952,6 @@ berkeleydb_t::berkeleydb_t(config_t&& config) :
    // no threading at this point, we can just assign
    trickle_thread_stop = false;
 
-   readonly = false;
    trickle = false;
 }
 
@@ -1044,7 +1040,7 @@ void berkeleydb_t::delete_db(Db *db)
 
 berkeleydb_t::status_t berkeleydb_t::open(void)
 {
-   u_int32_t dbflags = readonly ? DB_RDONLY : DB_CREATE;
+   u_int32_t dbflags = DB_CREATE;
    u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
    int major, minor, patch;
    status_t status;
@@ -1055,7 +1051,7 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
       return string_t::_format("Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
 
    // do some additional initialization for threaded environment
-   if(!readonly && trickle) {
+   if(trickle) {
       // initialize the environment and databases as thread-safe and with a single writer
       dbflags |= DB_THREAD;
       envflags |= DB_THREAD | DB_INIT_CDB;
@@ -1063,12 +1059,6 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
       // initialize table databases as free-threaded
       for(size_t i = 0; i < tables.size(); i++)
          tables[i]->set_threaded(true);
-   }
-
-   // initialize table databases as read-only, if requested
-   if(readonly) {
-      for(size_t i = 0; i < tables.size(); i++)
-         tables[i]->set_readonly(true);
    }
 
    // set the temporary directory
@@ -1080,12 +1070,6 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
       // set the maximum database cache size
       if(!(status = dbenv.set_cachesize(0, config.get_db_cache_size(), 0)).success())
          return status;
-
-      // and the maximum memory-mapped file size (read-only mode)
-      if(readonly) {
-         if(!(status = dbenv.set_mp_mmapsize(config.get_db_cache_size())).success())
-            return status;
-      }
    }
 
    // disable OS buffering, if requested
@@ -1111,7 +1095,7 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
       return status;
 
    // now that everything is initialized, we can start the trickle thread
-   if(!readonly && trickle)
+   if(trickle)
       trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
 
    return status;

@@ -368,8 +368,6 @@ class berkeleydb_t {
 
             bool                 threaded;
 
-            bool                 readonly;
-
             buffer_allocator_t   *buffer_allocator;
 
          private:
@@ -394,12 +392,6 @@ class berkeleydb_t {
 
             /// returns whether Berkeley DB was initialized for multi-thread calls
             bool get_threaded(void) const {return threaded;}
-
-            /// a read-only table can be queried, but cannot be modified
-            void set_readonly(bool value) {readonly = value;}
-
-            /// returns whether the table is opened as read-only
-            bool get_readonly(void) const {return readonly;}
 
             void init_db_handles(void);
 
@@ -611,7 +603,6 @@ class berkeleydb_t {
       string_t          trickle_error;
       bool              trickle_thread_stop;
 
-      bool              readonly;
       bool              trickle;
 
    protected:
@@ -626,12 +617,6 @@ class berkeleydb_t {
 
       /// if trickle is enabled, dirty pages will be trickled to disk by a background thread
       void set_trickle(bool value) {trickle = value;}
-
-      /// a read-only database can be queried, but cannot be modified
-      void set_readonly(bool value) {readonly = value;}
-
-      /// returns whether the database is opened as read-only
-      bool get_readonly(void) const {return readonly;}
 
       /// sets up the Berkeley DB environment and opens the sequence database, but not table databases
       status_t open(void);

@@ -305,7 +305,7 @@ berkeleydb_t::status_t database_t::open(void)
                                                       index_desc[i].index_db, 
                                                       index_desc[i].index_compare_cb, 
                                                       index_desc[i].index_dup_compare_cb, 
-                                                      get_readonly() ? index_desc[i].index_extract_cb : nullptr)).success())
+                                                      nullptr)).success())
          return status;
    }
 
@@ -315,7 +315,7 @@ berkeleydb_t::status_t database_t::open(void)
    //
    for(size_t i = 0; i < sizeof(table_desc)/sizeof(table_desc[0]); i++) {
       // open the sequence database only if we intend to generate new record identifiers
-      if(!get_readonly() && table_desc[i].sequence_db) {
+      if(table_desc[i].sequence_db) {
          if(!(status = (this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.db_seq_cache_size)).success())
             return status;
       }
