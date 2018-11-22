@@ -21,7 +21,7 @@
 //
 // initialize specialized node versions
 //
-template<> const u_short datanode_t<hnode_t> ::__version = 7;
+template<> const u_short datanode_t<hnode_t> ::__version = 8;
 template<> const u_short datanode_t<unode_t> ::__version = 3;
 template<> const u_short datanode_t<rnode_t> ::__version = 2;
 template<> const u_short datanode_t<anode_t> ::__version = 3;

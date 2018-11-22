@@ -150,6 +150,7 @@ config_t::config_t(void)
    ntop_refs = 30;                            /* top n referrers ""       */
    ntop_agents = 15;                          /* top n user agents ""     */
    ntop_ctrys = 30;                           /* top n countries   ""     */
+   ntop_cities = 30;                          // top n countries
    ntop_search = 20;                          /* top n search strings     */
    ntop_users = 20;                           /* top n users to display   */
    ntop_errors = 20;                          /* top n HTTP result codes  */
@@ -715,9 +716,11 @@ void config_t::prep_and_validate(void)
          page_type.add_nlist(html_ext);
    }
 
-   // if there is no GeoIP database configured, don't output country information
-   if(geoip_db_path.isempty()) 
+   // if there is no GeoIP database configured, don't output country or city information
+   if(geoip_db_path.isempty()) {
       ntop_ctrys = 0;
+      ntop_cities = 0;
+   }
    else {
       // force upper limit
       if(ntop_ctrys > lang.ctry.size())
@@ -793,7 +796,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 147, 150, 151, 152 
+                     // max key: 191; empty slots: 150, 151, 152 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -974,6 +977,7 @@ void config_t::get_config(const char *fname)
                      {"TargetURL",           168},          // Target URL pattern
                      {"TimeMe",              7},            // Produce timing results
                      {"TopAgents",           14},           // Top User Agents
+                     {"TopCities",           147},          // Top Cities
                      {"TopCountries",        15},           // Top Countries
                      {"TopDownloads",        122},          // Top downloads
                      {"TopEntry",            57},           // Top Entry Pages
@@ -1211,6 +1215,7 @@ void config_t::get_config(const char *fname)
          case 144: db_path = value; break;
          case 145: db_fname = value; break;
          case 146: db_cache_size = get_db_cache_size(value); break;
+         case 147: ntop_cities = atoi(value); break;
          case 148: db_fname_ext = value; break;
          case 149: db_seq_cache_size = atoi(value); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;

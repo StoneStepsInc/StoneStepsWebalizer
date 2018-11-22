@@ -18,7 +18,8 @@
 //
 // -----------------------------------------------------------------------
 
-hnode_t::hnode_t(void) : base_node<hnode_t>()
+hnode_t::hnode_t(void) : base_node<hnode_t>(),
+      geoname_id(0)
 {
    count = files = pages = visits = visits_conv = 0;
    visit_avg = .0;
@@ -38,7 +39,8 @@ hnode_t::hnode_t(void) : base_node<hnode_t>()
 
 hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
       name(std::move(hnode.name)),
-      city(std::move(hnode.city))
+      city(std::move(hnode.city)),
+      geoname_id(hnode.geoname_id)
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
@@ -79,7 +81,8 @@ hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
    hnode.visit = nullptr;
 }
 
-hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr)
+hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr),
+      geoname_id(0)
 {
    spammer = false;
    robot = false;
@@ -194,7 +197,8 @@ size_t hnode_t::s_data_size(void) const
                s_size_of(name)    +             // name
                ccode_size         +             // country code
                s_size_of(city)    +             // city
-               sizeof(double) * 2;              // latitude, longitude
+               sizeof(double) * 2 +             // latitude, longitude
+               sizeof(uint32_t);                // geoname_id
 }
 
 size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -237,6 +241,8 @@ size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
 
    ptr = serialize(ptr, latitude);
    ptr = serialize(ptr, longitude);
+
+   ptr = serialize(ptr, geoname_id);
 
    return datasize;
 }
@@ -310,6 +316,9 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
       ptr = deserialize(ptr, longitude);
    }
 
+   if(version >= 8)
+      ptr = deserialize(ptr, geoname_id);
+
    visit = NULL;
 
    // all hosts in the state database are assumed to be resolved
@@ -363,6 +372,11 @@ size_t hnode_t::s_data_size(const void *buffer)
       return datasize;
 
    datasize += sizeof(double) * 2;        // latitude, longitude
+
+   if(version < 8)
+      return datasize;
+
+   datasize += sizeof(uint32_t);          // geoname_id
 
    return datasize; 
 }

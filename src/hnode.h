@@ -93,6 +93,8 @@ struct hnode_t : public base_node<hnode_t> {
       double   latitude;             ///< Latitude reported by GeoIP
       double   longitude;            ///< Longitude reported by GeoIP
 
+      uint32_t geoname_id;           ///< Geoname identifier (see `ctnode_t`)
+
       public:
          template <typename ... param_t>
          using s_unpack_cb_t = void (*)(hnode_t& hnode, bool active, void *arg, param_t ... param);
