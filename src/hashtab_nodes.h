@@ -7,11 +7,12 @@
 
    hashtab_nodes.h
 */
-#ifndef __HASHTAB_NODES_H
-#define __HASHTAB_NODES_H
+#ifndef HASHTAB_NODES_H
+#define HASHTAB_NODES_H
 
 #include "anode.h"
 #include "ccnode.h"
+#include "ctnode.h"
 #include "dlnode.h"
 #include "hnode.h"
 #include "inode.h"
@@ -27,5 +28,4 @@
 #include "totals.h"
 #include "sysnode.h"
 
-#endif // __HASHTAB_NODES_H
-
+#endif // HASHTAB_NODES_H

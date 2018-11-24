@@ -554,6 +554,12 @@ void html_output_t::write_country_report(void)
       top_ctry_table();     /* top countries table            */
 }
 
+void html_output_t::write_city_report(void)
+{
+   if(config.geoip_city && config.ntop_cities) 
+      top_city_table();
+}
+
 /*********************************************/
 /* WRITE_MONTH_HTML - does what it says...   */
 /*********************************************/
@@ -668,6 +674,7 @@ int html_output_t::write_monthly_report()
    write_user_report();
    write_user_agent_report();
    write_country_report();
+   write_city_report();
 
    write_html_tail(out_fp);               /* finish up the HTML document    */
    fclose(out_fp);                        /* close the file                 */
@@ -713,6 +720,8 @@ void html_output_t::month_links()
       fprintf(out_fp,"<td><a href=\"#useragents\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_a);
    if (config.ntop_ctrys)
       fprintf(out_fp,"<td><a href=\"#countries\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_c);
+   if (config.geoip_city && config.ntop_cities)
+      fprintf(out_fp,"<td><a href=\"#cities\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_ct);
 
    fputs("</tr></table>\n", out_fp);
 }
@@ -3134,6 +3143,74 @@ void html_output_t::top_ctry_table()
    fputs("</div>\n", out_fp);
 
    delete [] ccarray;
+}
+
+void html_output_t::top_city_table()
+{
+   // state.ct_htab is always loaded into memory, so we can use its size
+   u_int tot_num = state.ct_htab.size() > config.ntop_cities ? config.ntop_cities : (u_int) state.ct_htab.size();
+
+   fputs("\n<!-- Top Cities Table -->\n", out_fp);
+   fputs("<div id=\"top_cities_report\">\n", out_fp);
+   fputs("<a name=\"cities\"></a>\n", out_fp);
+
+   fputs("<table id=\"city_usage_table\" class=\"report_table stats_table\" data-version=\"1\">\n", out_fp);
+   fputs("<thead>\n", out_fp);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %u %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, (u_int) state.ct_htab.size(), config.lang.msg_top_ct);
+   fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
+   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_city);
+
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+
+   storable_t<ctnode_t> ctnode;
+   database_t::reverse_iterator<ctnode_t> iter = state.database.rbegin_cities("cities.visits");
+
+   for(size_t i = 0; i < tot_num && iter.prev(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+      
+      if(ctnode.hits != 0) {
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+         fprintf(out_fp,"<tr>"
+              "<th>%" PRIu64 "</th>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td class=\"stats_data_item_td\" data-geoname-id=\"%" PRIu32 "\">%s</td></tr>\n",
+              i+1, ctnode.hits,
+              (state.totals.t_hit==0)?0:((double)ctnode.hits/state.totals.t_hit)*100.0,
+              ctnode.files,
+              (state.totals.t_file==0)?0:((double)ctnode.files/state.totals.t_file)*100.0,
+              ctnode.pages,
+              (state.totals.t_page==0)?0:((double)ctnode.pages/state.totals.t_page)*100.0,
+              ctnode.xfer, fmt_xfer(ctnode.xfer),
+              (state.totals.t_xfer==0)?0:(ctnode.xfer/state.totals.t_xfer)*100.0,
+              ctnode.visits,
+              (state.totals.t_visits==0)?0:(ctnode.visits/state.totals.t_visits)*100.0,
+              ctnode.nodeid,
+              html_encode(ctnode.unknown() ? config.lang.msg_unk_city : ctnode.city.c_str()));
+      }
+   }
+   iter.close();
+
+   fputs("</tbody>\n", out_fp);
+   fputs("</table>\n", out_fp);
+
+   // output a note that robot activity is not included in this report 
+   if(state.totals.t_rhits)
+      fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_robots);
+
+   fputs("</div>\n", out_fp);
 }
 
 /*********************************************/

@@ -80,6 +80,7 @@ class database_t : public berkeleydb_t {
       table_t           hourly;
       table_t           totals;
       table_t           countries;
+      table_t           cities;
       table_t           system;
 
    public:
@@ -289,6 +290,17 @@ class database_t : public berkeleydb_t {
       bool put_ccnode(const ccnode_t& ccnode, storage_info_t& strg_info);
 
       bool get_ccnode_by_id(storable_t<ccnode_t>& ccnode, ccnode_t::s_unpack_cb_t<> upcb, void *arg) const;
+
+      //
+      // cities
+      //
+      iterator<ctnode_t> begin_cities(const char *dbname) const {return cities.begin<ctnode_t>(dbname);}
+
+      reverse_iterator<ctnode_t> rbegin_cities(const char *dbname) const {return cities.rbegin<ctnode_t>(dbname);}
+
+      bool put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info);
+
+      bool get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const;
 
       //
       // system

@@ -54,6 +54,8 @@ state_t::~state_t(void)
    um_htab.clear();
 
    cc_htab.clear();
+   ct_htab.clear();
+
    delete [] buffer;
 }
 
@@ -278,6 +280,14 @@ int state_t::save_state(void)
          if(!database.put_ccnode(*ccptr, cc_iter.item()->storage_info))
             return 22;
       }
+   }
+
+   // cities
+   hash_table<storable_t<ctnode_t>>::iterator ct_iter = ct_htab.begin();
+   while(ct_iter.next()) {
+      ctnode_t *ctnode = ct_iter.item();
+      if(!database.put_ctnode(*ctnode, ct_iter.item()->storage_info))
+         return 23;
    }
 
    /* now we need to save our hash tables */
@@ -669,6 +679,15 @@ int state_t::restore_state(void)
    storable_t<ccnode_t> ccnode;
    while(iter.next(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
       cc_htab.update_ccnode(ccnode, 0);
+   }
+   iter.close();
+   }
+
+   // restore city data
+   {database_t::iterator<ctnode_t> iter = database.begin_cities("cities");
+   storable_t<ctnode_t> ccnode;
+   while(iter.next(ccnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+      ct_htab.put_node(new storable_t<ctnode_t>(std::move(ccnode)), 0);
    }
    iter.close();
    }

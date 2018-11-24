@@ -146,7 +146,9 @@ const struct database_t::table_desc_t {
    {&database_t::totals, "totals", 
          &bt_compare_cb<totals_t::s_compare_key>},
    {&database_t::countries, "countries", 
-         &bt_compare_cb<ccnode_t::s_compare_key>}
+         &bt_compare_cb<ccnode_t::s_compare_key>},
+   {&database_t::cities, "cities", 
+         &bt_compare_cb<ctnode_t::s_compare_key>}
 };
 
 ///
@@ -217,7 +219,10 @@ const struct database_t::index_desc_t {
          &bt_compare_cb<inode_t::s_compare_hits>, &bt_compare_cb<inode_t::s_compare_key>, &sc_extract_group_cb<inode_t, inode_t::s_field_hits>},
    // errors
    {&database_t::errors, "errors.hits", 
-         &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>}
+         &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>},
+   // cities
+   {&database_t::cities, "cities.visits", 
+         &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>}
 };
 
 /// @}
@@ -245,6 +250,7 @@ database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(conf
       hourly(make_table()),
       totals(make_table()),
       countries(make_table()),
+      cities(make_table()),
       system(make_table())
 {
    // initialize the array to hold table pointers
@@ -263,6 +269,7 @@ database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(conf
    add_table(hourly);
    add_table(totals);
    add_table(countries);
+   add_table(cities);
    add_table(system);
 }
 
@@ -653,6 +660,21 @@ bool database_t::get_ccnode_by_id(storable_t<ccnode_t>& ccnode, ccnode_t::s_unpa
 
 // -----------------------------------------------------------------------
 //
+// cities
+//
+// -----------------------------------------------------------------------
+bool database_t::put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info)
+{
+   return cities.put_node<ctnode_t>(ctnode, strg_info);
+}
+
+bool database_t::get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const
+{
+   return cities.get_node_by_id(ctnode, upcb, arg);
+}
+
+// -----------------------------------------------------------------------
+//
 // system
 //
 // -----------------------------------------------------------------------
@@ -968,6 +990,21 @@ template class berkeleydb_t::iterator_base<ccnode_t>;
 
 template class berkeleydb_t::iterator<ccnode_t>;
 template bool berkeleydb_t::iterator<ccnode_t>::next(storable_t<ccnode_t>& node, ccnode_t::s_unpack_cb_t<> upcb, void *arg);
+
+// cities
+template bool berkeleydb_t::table_t::put_node<ctnode_t>(const ctnode_t& node, storage_info_t& strg_info);
+template bool berkeleydb_t::table_t::get_node_by_id(storable_t<ctnode_t>& node, ctnode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
+
+template berkeleydb_t::iterator<ctnode_t> berkeleydb_t::table_t::begin<ctnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<ctnode_t> berkeleydb_t::table_t::rbegin<ctnode_t>(const char *dbname) const; 
+
+template class berkeleydb_t::iterator_base<ctnode_t>;
+
+template class berkeleydb_t::iterator<ctnode_t>;
+template bool berkeleydb_t::iterator<ctnode_t>::next(storable_t<ctnode_t>& node, ctnode_t::s_unpack_cb_t<> upcb, void *arg);
+
+template class berkeleydb_t::reverse_iterator<ctnode_t>;
+template bool berkeleydb_t::reverse_iterator<ctnode_t>::prev(storable_t<ctnode_t>& node, ctnode_t::s_unpack_cb_t<> upcb, void *arg);
 
 // system
 template bool berkeleydb_t::table_t::put_node<sysnode_t>(const sysnode_t& node, storage_info_t& strg_info);

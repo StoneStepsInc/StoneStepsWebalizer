@@ -296,6 +296,7 @@ class lang_t {
       const char *msg_hlnk_s  ;
       const char *msg_hlnk_a  ;
       const char *msg_hlnk_c  ;
+      const char *msg_hlnk_ct ;
       const char *msg_hlnk_r  ;
       const char *msg_hlnk_en ;
       const char *msg_hlnk_ex ;
@@ -356,6 +357,7 @@ class lang_t {
       const char *msg_top_r   ;
       const char *msg_top_a   ;
       const char *msg_top_c   ;
+      const char *msg_top_ct  ;
       const char *msg_top_en  ;
       const char *msg_top_ex  ;
       const char *msg_top_sr  ;
@@ -378,6 +380,7 @@ class lang_t {
       const char *msg_h_other ;
 
       const char *msg_h_city;
+      const char *msg_unk_city;
       
    private:
       string_t lang_fname;

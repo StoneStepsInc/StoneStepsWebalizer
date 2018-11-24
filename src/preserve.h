@@ -64,6 +64,7 @@ class state_t {
       std::unordered_set<string_t, hash_string> sp_htab; ///< Spammer hosts
 
       cc_hash_table cc_htab;                     // countries
+      ct_hash_table ct_htab;                     ///< City hash table
 
       std::vector<uint64_t> v_ended;             // ended active visit node IDs
       std::vector<uint64_t> dl_ended;            // ended active download node IDs

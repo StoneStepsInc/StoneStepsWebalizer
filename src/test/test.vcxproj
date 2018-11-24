@@ -154,6 +154,7 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\anode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\dlnode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ccnode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ctnode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab_nodes.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\keynode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unode.obj" />

@@ -156,6 +156,9 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ccnode.obj">
       <Filter>obj</Filter>
     </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ctnode.obj">
+      <Filter>obj</Filter>
+    </Object>
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab_nodes.obj">
       <Filter>obj</Filter>
     </Object>

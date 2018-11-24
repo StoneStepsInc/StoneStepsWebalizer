@@ -166,6 +166,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="cp1252.cpp" />
     <ClCompile Include="cp1252_ucs2.cpp" />
+    <ClCompile Include="ctnode.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="datanode_tmpl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -291,6 +292,7 @@
     <ClInclude Include="char_buffer.h" />
     <ClInclude Include="char_buffer_stack.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="ctnode.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="dns_resolv.h" />
     <ClInclude Include="dump_output.h" />

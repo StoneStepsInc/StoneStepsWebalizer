@@ -228,6 +228,7 @@ class config_t {
       uint32_t ntop_refs;                       ///< top n referrers ""       
       uint32_t ntop_agents;                     ///< top n user agents ""     
       uint32_t ntop_ctrys;                      ///< top n countries   ""     
+      u_int ntop_cities;                        ///< Top n cities.
       uint32_t ntop_search;                     ///< top n search strings     
       uint32_t ntop_users;                      ///< top n users to display   
       uint32_t ntop_errors;                     ///< top n HTTP errors        

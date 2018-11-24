@@ -590,6 +590,7 @@ lang_t::lang_t(void) :
    msg_hlnk_s  = "Hosts";
    msg_hlnk_a  = "Agents";
    msg_hlnk_c  = "Countries";
+   msg_hlnk_ct  = "Cities";
    msg_hlnk_r  = "Referrers";
    msg_hlnk_en = "Entry";
    msg_hlnk_ex = "Exit";
@@ -656,6 +657,7 @@ lang_t::lang_t(void) :
    msg_top_r   = "Total Referrers";
    msg_top_a   = "Total User Agents";
    msg_top_c   = "Total Countries";
+   msg_top_ct = "Total Cities";
    msg_top_en  = "Total Entry Pages";
    msg_top_ex  = "Total Exit Pages";
    msg_top_sr  = "Total Search Strings";
@@ -682,6 +684,7 @@ lang_t::lang_t(void) :
    msg_h_other = "Other";
 
    msg_h_city = "City";
+   msg_unk_city = "(Unresolved/Unknown)";
 
    msg_ctrl_c  = "Ctrl-C detected. Aborting...";
 
@@ -891,6 +894,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace("msg_hlnk_s", &msg_hlnk_s);
    ln_htab.emplace("msg_hlnk_a", &msg_hlnk_a);
    ln_htab.emplace("msg_hlnk_c", &msg_hlnk_c);
+   ln_htab.emplace("msg_hlnk_ct", &msg_hlnk_ct);
    ln_htab.emplace("msg_hlnk_r", &msg_hlnk_r);
    ln_htab.emplace("msg_hlnk_en", &msg_hlnk_en);
    ln_htab.emplace("msg_hlnk_ex", &msg_hlnk_ex);
@@ -954,6 +958,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace("msg_top_r", &msg_top_r);
    ln_htab.emplace("msg_top_a", &msg_top_a);
    ln_htab.emplace("msg_top_c", &msg_top_c);
+   ln_htab.emplace("msg_top_ct", &msg_top_ct);
    ln_htab.emplace("msg_top_en", &msg_top_en);
    ln_htab.emplace("msg_top_ex", &msg_top_ex);
    ln_htab.emplace("msg_top_sr", &msg_top_sr);
@@ -989,6 +994,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace("ctry", &ctry);
 
    ln_htab.emplace("msg_h_city", &msg_h_city);
+   ln_htab.emplace("msg_unk_city", &msg_unk_city);
 }
 
 //
