@@ -688,40 +688,38 @@ int html_output_t::write_monthly_report()
 
 void html_output_t::month_links()
 {
-   string_t onclick;
-
    fputs("<table id=\"main_menu\" class=\"page_links_table\"><tr>\n", out_fp);
    
    if (config.daily_stats || config.daily_graph)
-      fprintf(out_fp,"<td><a href=\"#daily\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_ds);
+      fprintf(out_fp,"<td><a href=\"#daily\">%s</a></td>\n", config.lang.msg_hlnk_ds);
    if (config.hourly_stats || config.hourly_graph)
-      fprintf(out_fp,"<td><a href=\"#hourly\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_hs);
+      fprintf(out_fp,"<td><a href=\"#hourly\">%s</a></td>\n", config.lang.msg_hlnk_hs);
    if (config.ntop_urls || config.ntop_urlsK)
-      fprintf(out_fp,"<td><a href=\"#urls\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_u);
+      fprintf(out_fp,"<td><a href=\"#urls\">%s</a></td>\n", config.lang.msg_hlnk_u);
    if (config.ntop_entry)
-      fprintf(out_fp,"<td><a href=\"#entry\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_en);
+      fprintf(out_fp,"<td><a href=\"#entry\">%s</a></td>\n", config.lang.msg_hlnk_en);
    if (config.ntop_exit)
-      fprintf(out_fp,"<td><a href=\"#exit\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_ex);
+      fprintf(out_fp,"<td><a href=\"#exit\">%s</a></td>\n", config.lang.msg_hlnk_ex);
    if(config.log_type == LOG_SQUID && config.ntop_search && state.totals.t_srchits)
-      fprintf(out_fp,"<td><a href=\"#search\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_sr);
+      fprintf(out_fp,"<td><a href=\"#search\">%s</a></td>\n", config.lang.msg_hlnk_sr);
    if (config.ntop_downloads && state.totals.t_downloads)
-      fprintf(out_fp,"<td><a href=\"#downloads\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_dl);
+      fprintf(out_fp,"<td><a href=\"#downloads\">%s</a></td>\n", config.lang.msg_hlnk_dl);
    if (config.ntop_errors && state.totals.t_err)
-      fprintf(out_fp,"<td><a href=\"#errors\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_err);
+      fprintf(out_fp,"<td><a href=\"#errors\">%s</a></td>\n", config.lang.msg_hlnk_err);
    if (config.ntop_hosts || config.ntop_hostsK)
-      fprintf(out_fp,"<td><a href=\"#hosts\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_s);
+      fprintf(out_fp,"<td><a href=\"#hosts\">%s</a></td>\n", config.lang.msg_hlnk_s);
    if (config.ntop_refs && state.totals.t_ref)
-      fprintf(out_fp,"<td><a href=\"#referrers\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_r);
+      fprintf(out_fp,"<td><a href=\"#referrers\">%s</a></td>\n", config.lang.msg_hlnk_r);
    if(config.log_type != LOG_SQUID && config.ntop_search && state.totals.t_srchits)
-      fprintf(out_fp,"<td><a href=\"#search\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_sr);
+      fprintf(out_fp,"<td><a href=\"#search\">%s</a></td>\n", config.lang.msg_hlnk_sr);
    if (config.ntop_users && state.totals.t_user)
-      fprintf(out_fp,"<td><a href=\"#users\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_i);
+      fprintf(out_fp,"<td><a href=\"#users\">%s</a></td>\n", config.lang.msg_hlnk_i);
    if (config.ntop_agents && state.totals.t_agent)
-      fprintf(out_fp,"<td><a href=\"#useragents\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_a);
+      fprintf(out_fp,"<td><a href=\"#useragents\">%s</a></td>\n", config.lang.msg_hlnk_a);
    if (config.ntop_ctrys)
-      fprintf(out_fp,"<td><a href=\"#countries\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_c);
+      fprintf(out_fp,"<td><a href=\"#countries\">%s</a></td>\n", config.lang.msg_hlnk_c);
    if (config.geoip_city && config.ntop_cities)
-      fprintf(out_fp,"<td><a href=\"#cities\"%s>%s</a></td>\n", onclick.c_str(), config.lang.msg_hlnk_ct);
+      fprintf(out_fp,"<td><a href=\"#cities\">%s</a></td>\n", config.lang.msg_hlnk_ct);
 
    fputs("</tr></table>\n", out_fp);
 }
