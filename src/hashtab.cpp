@@ -60,4 +60,5 @@ uint64_t hash_num(uint64_t hashval, type_t num)
 // Instantiate numeric hash functions
 //
 template uint64_t hash_num<u_short>(uint64_t hashval, u_short num);
+template uint64_t hash_num<uint32_t>(uint64_t hashval, uint32_t num);
 template uint64_t hash_num<uint64_t>(uint64_t hashval, uint64_t num);

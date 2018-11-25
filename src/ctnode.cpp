@@ -132,21 +132,23 @@ ct_hash_table::ct_hash_table(void) : hash_table<storable_t<ctnode_t>>(SMAXHASH)
 }
 
 ///
-/// Looks up a city node by city name. If a non-empty city is not found, a new
-/// node is inserted into the hash table. An empty city name is considered as 
-/// an unknown city. Use `ctnode_t::unknown` to localize this city in reports.
+/// A GeoName ID with the value of zero indicates an unknown city and must have
+/// its city name empty. Use `ctnode_t::unknown` to localize this city name in
+/// the reports.
 ///
 ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, int64_t tstamp) 
 {
-   // use asterisk to track unknown city names - no collisions, faster to compare, language-independent
-   static const string_t ucity("*", 1);
-   const string_t& rcity = city.isempty() ? ucity : city;
+   ctnode_t::param_block pb = {geoname_id};
    ctnode_t *ctnode;
 
-   if((ctnode = find_node(rcity, OBJ_REG, tstamp)) != nullptr)
+   // we should never see empty city names with a valid GeoName and vice versa
+   if(!geoname_id != city.isempty())
+      throw std::logic_error("GeoName ID must match city name in whether it contains data or not");
+
+   if((ctnode = find_node(hash_num(0, geoname_id), &pb, OBJ_REG, tstamp)) != nullptr)
       return *ctnode;
 
-   return *put_node(new storable_t<ctnode_t>(geoname_id, rcity), tstamp);
+   return *put_node(new storable_t<ctnode_t>(geoname_id, city), tstamp);
 }
 
 //

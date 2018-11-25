@@ -20,10 +20,13 @@
 ///
 /// @brief  A city node
 ///
-/// Each city is identified by a geoname identifier, as reported by the GeoIP library
+/// Each city is identified by a GeoName identifier, as reported by the GeoIP library
 /// in the `geoname_id` field, which in turn is derived it from this database:
 ///
 ///   http://www.geonames.org/
+///
+/// A GeoName ID with the value zero identifies an unknown city and must have its node
+/// city name string empty.
 ///
 /// There are no latitude and longitude available for cities in the GeoIP databases
 /// at this point, only for their locations within cities, even though it is listed
@@ -32,6 +35,10 @@
 /// be added to `ctnode_t`.
 ///
 struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
+   struct param_block {
+      uint32_t    geoname_id;          ///< A city GeoName ID
+   };
+
    string_t    city;                   ///< A localized city name, as reported by GeoIP
                                        ///< for the current language.
 
@@ -53,18 +60,23 @@ struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
       ctnode_t(ctnode_t&& ctnode);
 
       /// Indicates whether this city was found in the GeoIP database or not.
-      bool unknown(void) const {return !city.isempty() && *city == '*';}
+      bool unknown(void) const {return nodeid == 0;}
 
       ///
       /// @name   Hash table interface
       ///
       /// @{
 
-      bool match_key(const string_t& key) const override {return city == key;}
+      bool match_key_ex(const ctnode_t::param_block *pb) const {return pb && pb->geoname_id == nodeid;}
+
+      virtual bool match_key(const string_t& key) const override
+      {
+         throw std::logic_error("This node only supports searches with a compound key");
+      }
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
 
-      virtual uint64_t get_hash(void) const override {return hash_ex(0, city);}
+      virtual uint64_t get_hash(void) const override {return hash_ex(0, nodeid);}
 
       /// @}
 
@@ -91,10 +103,10 @@ struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
 /// @brief  A hash table to store city nodes.
 ///
 class ct_hash_table : public hash_table<storable_t<ctnode_t>> {
-
    public:
       ct_hash_table(void);
 
+      /// Looks up a city node by a GeoName ID and inserts a new node if none is found.
       ctnode_t& get_ctnode(uint32_t geoname_id, const string_t& city, int64_t tstamp);
 };
 
