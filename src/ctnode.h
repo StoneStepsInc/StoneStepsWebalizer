@@ -20,13 +20,15 @@
 ///
 /// @brief  A city node
 ///
-/// Each city is identified by a GeoName identifier, as reported by the GeoIP library
-/// in the `geoname_id` field, which in turn is derived it from this database:
+/// Each city is identified by a GeoName identifier, as reported by the GeoIP library,
+/// which in turn is derived it from this database:
 ///
 ///   http://www.geonames.org/
 ///
-/// A GeoName ID with the value zero identifies an unknown city and must have its node
-/// city name string empty.
+/// Each `ctnode_t` is identified by a 64-bit value that is made up of a city GeoName
+/// ID stored in the lower 32 bits and country code characters shifted to the upper
+/// 32 bits. This allows us to identify unknown cities within their countries when the
+/// city is not found in the GeoIP database and its GeoName ID is zero.
 ///
 /// There are no latitude and longitude available for cities in the GeoIP databases
 /// at this point, only for their locations within cities, even though it is listed
@@ -34,11 +36,22 @@
 /// if more precise databases may list city coordinates, latitude and longitude may
 /// be added to `ctnode_t`.
 ///
-struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
+struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
+   ///
+   /// @struct param_block
+   ///
+   /// @brief  A compound key for a city node.
+   ///
+   /// Each pair of a GeoName ID for the city and the country code identify a city
+   /// within its country. Note that city GeoName ID is unique on its own, but for
+   /// cities that are not present in the GeoIP database, it will be zero.
+   ///
    struct param_block {
       uint32_t    geoname_id;          ///< A city GeoName ID
+      const char  *ccode;              ///< Country code
    };
 
+   string_t    ccode;                  ///< Country code
    string_t    city;                   ///< A localized city name, as reported by GeoIP
                                        ///< for the current language.
 
@@ -52,22 +65,32 @@ struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
       template <typename ... param_t>
       using s_unpack_cb_t = void (*)(ctnode_t& vnode, void *arg, param_t ... param);
 
+   private:
+      /// Combines a 32-bit GeoName ID and a country code to form a unique 64-bit `ctnode_t` identifier.
+      static uint64_t make_nodeid(uint32_t geoname_id, const char *ccode);      
+
    public:
       ctnode_t(void);
 
-      ctnode_t(uint32_t geoname_id, const string_t& city);
+      ctnode_t(uint32_t geoname_id, const string_t& city, const string_t& ccode);
 
       ctnode_t(ctnode_t&& ctnode);
 
+      /// Returns the GeoName ID for this city.
+      uint32_t geoname_id(void) const {return (uint32_t) nodeid;}
+
       /// Indicates whether this city was found in the GeoIP database or not.
-      bool unknown(void) const {return nodeid == 0;}
+      bool unknown_city(void) const {return geoname_id() == 0;}
 
       ///
       /// @name   Hash table interface
       ///
       /// @{
 
-      bool match_key_ex(const ctnode_t::param_block *pb) const {return pb && pb->geoname_id == nodeid;}
+      bool match_key_ex(const ctnode_t::param_block *pb) const 
+      {
+         return pb && make_nodeid(pb->geoname_id, pb->ccode) == nodeid;
+      }
 
       virtual bool match_key(const string_t& key) const override
       {
@@ -76,7 +99,13 @@ struct ctnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<ctnode_t> {
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
 
-      virtual uint64_t get_hash(void) const override {return hash_ex(0, nodeid);}
+      virtual uint64_t get_hash(void) const override
+      {
+         if(ccode.isempty())
+            return  hash_str(hash_num(0, nodeid), "*", 1);
+
+         return hash_str(hash_num(0, nodeid), ccode.c_str(), ccode.length());
+      }
 
       /// @}
 
@@ -107,7 +136,7 @@ class ct_hash_table : public hash_table<storable_t<ctnode_t>> {
       ct_hash_table(void);
 
       /// Looks up a city node by a GeoName ID and inserts a new node if none is found.
-      ctnode_t& get_ctnode(uint32_t geoname_id, const string_t& city, int64_t tstamp);
+      ctnode_t& get_ctnode(uint32_t geoname_id, const string_t& city, const string_t& ccode, int64_t tstamp);
 };
 
 #endif // CTNODE_H

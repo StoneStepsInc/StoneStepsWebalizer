@@ -411,7 +411,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       ccptr->xfer += vnode.xfer;
       ccptr->visits++;
 
-      ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, 0);
+      ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, hnode.get_ccode(), 0);
 
       ctnode.hits += vnode.hits;
       ctnode.files += vnode.files;

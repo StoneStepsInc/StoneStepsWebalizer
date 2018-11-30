@@ -3154,14 +3154,15 @@ void html_output_t::top_city_table()
 
    fputs("<table id=\"city_usage_table\" class=\"report_table stats_table\" data-version=\"1\">\n", out_fp);
    fputs("<thead>\n", out_fp);
-   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"12\">%s %u %s %u %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, (u_int) state.ct_htab.size(), config.lang.msg_top_ct);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %u %s %u %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, (u_int) state.ct_htab.size(), config.lang.msg_top_ct);
    fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
    fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
    fprintf(out_fp,"<th colspan=\"2\" class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
    fprintf(out_fp,"<th colspan=\"2\" class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
-   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_city);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_ctry);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th></tr>\n", config.lang.msg_h_city);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
@@ -3184,6 +3185,7 @@ void html_output_t::top_city_table()
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"
               "<td>%" PRIu64 "</td>\n"
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td>\n"
               "<td class=\"stats_data_item_td\" data-geoname-id=\"%" PRIu32 "\">%s</td></tr>\n",
               i+1, ctnode.hits,
               (state.totals.t_hit==0)?0:((double)ctnode.hits/state.totals.t_hit)*100.0,
@@ -3195,8 +3197,10 @@ void html_output_t::top_city_table()
               (state.totals.t_xfer==0)?0:(ctnode.xfer/state.totals.t_xfer)*100.0,
               ctnode.visits,
               (state.totals.t_visits==0)?0:(ctnode.visits/state.totals.t_visits)*100.0,
-              ctnode.nodeid,
-              html_encode(ctnode.unknown() ? config.lang.msg_unk_city : ctnode.city.c_str()));
+              ctnode.ccode.c_str(), 
+              html_encode(state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str()),
+              ctnode.geoname_id(),
+              html_encode(ctnode.unknown_city() ? config.lang.msg_unk_city : ctnode.city.c_str()));
       }
    }
    iter.close();

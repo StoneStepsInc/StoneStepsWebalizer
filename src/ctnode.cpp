@@ -15,20 +15,21 @@
 #include <stdexcept>
 
 ctnode_t::ctnode_t(void) :
-      keynode_t<uint32_t>(0),
+      keynode_t<uint64_t>(0),
       hits(0), files(0), pages(0), visits(0), xfer(0)
 {
 }
 
-ctnode_t::ctnode_t(uint32_t geoname_id, const string_t& city) :
-      keynode_t<uint32_t>(geoname_id),
-      city(city),
+ctnode_t::ctnode_t(uint32_t geoname_id, const string_t& city, const string_t& ccode) :
+      keynode_t<uint64_t>(make_nodeid(geoname_id, ccode.c_str())),
+      ccode(ccode), city(city),
       hits(0), files(0), pages(0), visits(0), xfer(0)
 {
 }
 
 ctnode_t::ctnode_t(ctnode_t&& ctnode) :
-      keynode_t<uint32_t>(std::move(ctnode)),
+      keynode_t<uint64_t>(std::move(ctnode)),
+      ccode(std::move(ctnode.ccode)),
       city(std::move(ctnode.city)),
       hits(ctnode.hits),
       files(ctnode.files),
@@ -36,6 +37,20 @@ ctnode_t::ctnode_t(ctnode_t&& ctnode) :
       xfer(ctnode.xfer),
       visits(ctnode.visits)
 {
+}
+
+uint64_t ctnode_t::make_nodeid(uint32_t geoname_id, const char *ccode)
+{
+   // we shouldn't ever have a city without a country, so this should return a zero
+   if(!ccode || !*ccode || *ccode == '*')
+      return (uint64_t) geoname_id;
+
+   // city names come from GeoIP and domain name suffixes shouldn't appear here
+   if(!*(ccode + 1) || *(ccode + 2))
+      throw std::logic_error("Country code must be two characters long");
+
+   // there is enough room to just shift characters without additional bit packing (e.g. ccnode_t::ctry_idx)
+   return (uint64_t) (u_char) *ccode << 48 | (uint64_t) (u_char) *(ccode + 1) << 32 | geoname_id;
 }
 
 size_t ctnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -57,6 +72,7 @@ size_t ctnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = serialize(ptr, pages);
    ptr = serialize(ptr, visits);
    ptr = serialize(ptr, xfer);
+   ptr = serialize(ptr, ccode);
          serialize(ptr, city);
 
    return datasize;
@@ -85,6 +101,7 @@ size_t ctnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = deserialize(ptr, pages);
    ptr = deserialize(ptr, visits);
    ptr = deserialize(ptr, xfer);
+   ptr = deserialize(ptr, ccode);
          deserialize(ptr, city);
 
    if(upcb)
@@ -99,6 +116,7 @@ size_t ctnode_t::s_data_size(void) const
             sizeof(uint64_t) * 3 +     // hits, files, pages
             sizeof(uint64_t) +         // visits
             sizeof(uint64_t) +         // xfer
+            s_size_of(ccode) +
             s_size_of(city);
 }
 
@@ -110,6 +128,7 @@ size_t ctnode_t::s_data_size(const void *buffer)
             sizeof(uint64_t) +         // visits
             sizeof(uint64_t);          // xfer
    
+   datasize += s_size_of<string_t>((u_char*) buffer + datasize);  // ccode
    datasize += s_size_of<string_t>((u_char*) buffer + datasize);  // city
 
    return datasize;
@@ -136,19 +155,21 @@ ct_hash_table::ct_hash_table(void) : hash_table<storable_t<ctnode_t>>(SMAXHASH)
 /// its city name empty. Use `ctnode_t::unknown` to localize this city name in
 /// the reports.
 ///
-ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, int64_t tstamp) 
+ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, const string_t& ccode, int64_t tstamp) 
 {
-   ctnode_t::param_block pb = {geoname_id};
+   static const string_t uccode("*", 1);
+   ctnode_t::param_block pb = {geoname_id, !ccode.isempty() ? ccode.c_str() : uccode.c_str()};
+   uint64_t hashval = hash_ex(hash_num(0, geoname_id), !ccode.isempty() ? ccode : uccode);
    ctnode_t *ctnode;
 
    // we should never see empty city names with a valid GeoName and vice versa
    if(!geoname_id != city.isempty())
       throw std::logic_error("GeoName ID must match city name in whether it contains data or not");
 
-   if((ctnode = find_node(hash_num(0, geoname_id), &pb, OBJ_REG, tstamp)) != nullptr)
+   if((ctnode = find_node(hashval, &pb, OBJ_REG, tstamp)) != nullptr)
       return *ctnode;
 
-   return *put_node(new storable_t<ctnode_t>(geoname_id, city), tstamp);
+   return *put_node(hashval, new storable_t<ctnode_t>(geoname_id, city, !ccode.isempty() ? ccode : uccode), tstamp);
 }
 
 //
