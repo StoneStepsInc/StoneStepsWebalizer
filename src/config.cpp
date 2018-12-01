@@ -150,7 +150,7 @@ config_t::config_t(void)
    ntop_refs = 30;                            /* top n referrers ""       */
    ntop_agents = 15;                          /* top n user agents ""     */
    ntop_ctrys = 30;                           /* top n countries   ""     */
-   ntop_cities = 30;                          // top n countries
+   ntop_cities = 30;                          // top n cities
    ntop_search = 20;                          /* top n search strings     */
    ntop_users = 20;                           /* top n users to display   */
    ntop_errors = 20;                          /* top n HTTP result codes  */
