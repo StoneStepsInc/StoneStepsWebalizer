@@ -1842,7 +1842,14 @@ TopCountries  This allows you to specify how many "Top" countries are
               displayed in the "Top Countries" table.  The default is
               30.  If you want to disable the countries table, specify
               a value of zero (0).
-              Command line argument: -C 
+              Command line argument: -C
+
+TopCities     Limits the number of cities listed in the Top Cities report.
+              This report is generated only if GeoIP is configured and if
+              GeoIPCity is set to `yes`. Set TopCities to zero if you would 
+              like to disable the city report, but show city names in other
+              reports. 
+              Default value: 30
 
 TopReferrers  This allows you to specify how many "Top" referrers are
               displayed in the "Top Referrers" table.  The default is
