@@ -3200,7 +3200,7 @@ void html_output_t::top_city_table()
               ctnode.ccode.c_str(), 
               html_encode(state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str()),
               ctnode.geoname_id(),
-              html_encode(ctnode.unknown_city() ? config.lang.msg_unk_city : ctnode.city.c_str()));
+              html_encode(ctnode.unknown_city() ? "" : ctnode.city.c_str()));
       }
    }
    iter.close();

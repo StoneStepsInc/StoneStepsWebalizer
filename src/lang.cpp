@@ -684,7 +684,6 @@ lang_t::lang_t(void) :
    msg_h_other = "Other";
 
    msg_h_city = "City";
-   msg_unk_city = "(Unresolved/Unknown)";
 
    msg_ctrl_c  = "Ctrl-C detected. Aborting...";
 
@@ -994,7 +993,6 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace("ctry", &ctry);
 
    ln_htab.emplace("msg_h_city", &msg_h_city);
-   ln_htab.emplace("msg_unk_city", &msg_unk_city);
 }
 
 //

@@ -380,7 +380,6 @@ class lang_t {
       const char *msg_h_other ;
 
       const char *msg_h_city;
-      const char *msg_unk_city;
       
    private:
       string_t lang_fname;
