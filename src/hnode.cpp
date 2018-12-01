@@ -318,6 +318,8 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
 
    if(version >= 8)
       ptr = deserialize(ptr, geoname_id);
+   else
+      geoname_id = 0;
 
    visit = NULL;
 
