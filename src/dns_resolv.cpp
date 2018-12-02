@@ -310,6 +310,7 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       hostname = hnode.name;
       ccode.assign(hnode.ccode, hnode_t::ccode_size);
       city = hnode.city;
+      geoname_id = hnode.geoname_id;
    }
 }
 
