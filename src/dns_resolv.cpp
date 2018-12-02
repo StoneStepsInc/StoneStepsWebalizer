@@ -113,22 +113,27 @@ struct dns_db_record_t {
 /// @brief  An internal DNS resolver node associated with each host node being processed
 ///
 /// DNS resolver cannot modify const host nodes in the context of its own threads and 
-/// uses dnode_t instances to carry new and updated information until get_hnode is called, 
-/// at which point hnode_t may be modified in the context of the application thread that 
-/// queued the host node for resolution.
+/// uses `dnode_t` instances to carry new and updated information until `get_hnode` is
+/// called, at which point `hnode_t` may be modified in the context of the application
+/// thread that queued the host node for resolution.
+///
+/// A `dnode_t` instance may be queued for a database update after it has been resolved.
+/// In this case `hnode` will be NULL and `hostaddr` will be a non-empty sting. Such
+/// instances must be destroyed after the database was updated and should never be queued
+/// to be returned from `get_hnode`.
 ///
 class dns_resolver_t::dnode_t {
-   // allow get_hnode to get a modifiable pointer to hnode_t
+   /// Allow `get_hnode` to get a modifiable pointer to `hnode_t`.
    friend hnode_t *dns_resolver_t::get_hnode(void);
 
    private:
-      hnode_t        *m_hnode;            // modifiable host node
+      hnode_t        *m_hnode;            ///< A modifiable host node.
 
    public:
-      const hnode_t  *hnode;              // read-only host node
+      const hnode_t  *hnode;              ///< A read-only host node.
       class dnode_t  *llist;
 
-      string_t       hostaddr;            // only populated when hnode is NULL
+      string_t       hostaddr;            ///< An IP address that is populated only when `hnode` is NULL.
 
       string_t       hostname;
       string_t       ccode;
@@ -458,7 +463,7 @@ bool dns_resolver_t::put_hnode(hnode_t *hnode)
    // create a new DNS node
    nptr = new dnode_t(*hnode, sa_family);
 
-   // check if this node should be resolved
+   // check if this node should be DNS-resolved
    if(nptr->hnode) {
       // convert the IP address string to sockaddr
       if(!nptr->fill_sockaddr()) {
