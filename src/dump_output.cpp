@@ -486,7 +486,7 @@ void dump_output_t::dump_all_countries()
    char filename[FILENAME_MAX];
 
    // generate a file name
-   if(snprintf(filename, sizeof(filename), "%s/ctry_%04d%02d.%s",
+   if(snprintf(filename, sizeof(filename), "%s/country_%04d%02d.%s",
          !config.dump_path.isempty() ? config.dump_path.c_str() : config.out_dir.c_str(), 
          state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.dump_ext.c_str()) >= sizeof(filename)) {
       throw std::runtime_error("DumpPath is too long");
