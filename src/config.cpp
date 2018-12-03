@@ -114,6 +114,8 @@ config_t::config_t(void)
    dump_header = false;                       /* Dump header as first rec */
    dump_errors = false;                       /* HTTP errors              */
    dump_downloads = false;                    // Downloads
+   dump_countries = false;
+   dump_cities = false;
 
    db_cache_size = DB_DEF_CACHE_SIZE;         // Default cache size (ignored)
    db_seq_cache_size = 64;
@@ -672,11 +674,13 @@ void config_t::prep_and_validate(void)
    if(output_formats.isinlist(string_t("tsv"))) {
       dump_hosts = dump_urls = dump_refs = dump_agents = true;
       dump_users = dump_search = dump_errors = dump_downloads = true;
+      dump_countries = dump_cities = true;
    }
    else {
       // otherwise, add a TSV format if there is at least one DumpX property set
       if(dump_hosts || dump_urls || dump_refs || dump_agents ||
-            dump_users || dump_search || dump_errors || dump_downloads) {
+            dump_users || dump_search || dump_errors || dump_downloads ||
+            dump_countries || dump_cities) {
          add_output_format(string_t("tsv"));
       }
    }
@@ -796,7 +800,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 150, 151, 152 
+                     // max key: 191; empty slots: 152 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -836,6 +840,8 @@ void config_t::get_config(const char *fname)
                      {"DSTOffset",           163},          // Daylight saving offset
                      {"DSTStart",            161},          // Daylight saving start date/time
                      {"DumpAgents",          81},           // Dump user agents tab file
+                     {"DumpCities",          150},          // Dump city information
+                     {"DumpCountries",       151},          // Dump country information
                      {"DumpDownloads",       121},          // Dump downloads?
                      {"DumpErrors",          112},          // Dump HTTP errors?
                      {"DumpExtension",       76},           // Dump filename extension
@@ -1218,6 +1224,8 @@ void config_t::get_config(const char *fname)
          case 147: ntop_cities = atoi(value); break;
          case 148: db_fname_ext = value; break;
          case 149: db_seq_cache_size = atoi(value); break;
+         case 150: dump_cities = (string_t::tolower(value[0])=='y'); break;
+         case 151: dump_countries = (string_t::tolower(value[0])=='y'); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 154: db_dsync = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;

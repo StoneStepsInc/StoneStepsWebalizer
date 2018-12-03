@@ -36,6 +36,8 @@
 #include "dump_output.h"
 #include "preserve.h"
 
+#include <stdexcept>
+
 dump_output_t::dump_output_t(const config_t& config, const state_t& state) : output_t(config, state)
 {
 }
@@ -90,7 +92,13 @@ int dump_output_t::write_monthly_report(void)
 
    // dump user agents tab file
    if (config.dump_agents) 
-      dump_all_agents();  
+      dump_all_agents();
+      
+   if(config.dump_countries)
+      dump_all_countries();
+
+   if(config.dump_cities)
+      dump_all_cities();
       
    return 0;
 }
@@ -423,3 +431,95 @@ void dump_output_t::dump_all_search()
    return;
 }
 
+void dump_output_t::dump_all_cities()
+{
+   storable_t<ctnode_t> ctnode;
+   FILE *out_fp;
+   char filename[FILENAME_MAX];
+
+   // generate a file name
+   if(snprintf(filename, sizeof(filename), "%s/city_%04d%02d.%s",
+         !config.dump_path.isempty() ? config.dump_path.c_str() : config.out_dir.c_str(), 
+         state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.dump_ext.c_str()) >= sizeof(filename)) {
+      throw std::runtime_error("DumpPath is too long");
+   }
+
+   // open the file
+   if((out_fp = open_out_file(filename)) == nullptr) {
+      fprintf(stderr,"%s %s!\n",config.lang.msg_no_open, filename);
+      return;
+   }
+
+   // check if we need a header
+   if (config.dump_header) {
+      // GeoNameID is not localized on purpose because it's a fixed name for a feature on www.geonames.org
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+            config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, 
+            config.lang.msg_h_xfer, config.lang.msg_h_visits, 
+            config.lang.msg_h_ccode, config.lang.msg_h_ctry, 
+            "GeoNameID", config.lang.msg_h_city);
+   }
+
+   // output rows ordered by visit counts, in descending order
+   database_t::reverse_iterator<ctnode_t> iter = state.database.rbegin_cities("cities.visits");
+
+   while(iter.prev(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+      fprintf(out_fp,
+      "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t"
+      "%.0f\t%" PRIu64 "\t"
+      "%s\t%s\t"
+      "%" PRIu32 "\t%s\n",
+         ctnode.hits, ctnode.files, ctnode.pages, 
+         ctnode.xfer/1024., ctnode.visits, 
+         ctnode.ccode.c_str(), state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str(),
+         ctnode.geoname_id(), ctnode.city.c_str());
+   }
+   iter.close();
+
+   fclose(out_fp);
+}
+
+void dump_output_t::dump_all_countries()
+{
+   storable_t<ccnode_t> ctnode;
+   FILE *out_fp;
+   char filename[FILENAME_MAX];
+
+   // generate a file name
+   if(snprintf(filename, sizeof(filename), "%s/ctry_%04d%02d.%s",
+         !config.dump_path.isempty() ? config.dump_path.c_str() : config.out_dir.c_str(), 
+         state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.dump_ext.c_str()) >= sizeof(filename)) {
+      throw std::runtime_error("DumpPath is too long");
+   }
+
+   // open the file
+   if((out_fp = open_out_file(filename)) == nullptr) {
+      fprintf(stderr,"%s %s!\n",config.lang.msg_no_open, filename);
+      return;
+   }
+
+   // check if we need a header
+   if (config.dump_header) {
+      // GeoNameID is not localized on purpose because it's a fixed name for a feature on www.geonames.org
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+            config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, 
+            config.lang.msg_h_xfer, config.lang.msg_h_visits, 
+            config.lang.msg_h_ccode, config.lang.msg_h_ctry);
+   }
+
+   // TODO: add an index for country visits
+   database_t::iterator<ccnode_t> iter = state.database.begin_countries();
+
+   while(iter.next(ctnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+      fprintf(out_fp,
+      "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t"
+      "%.0f\t%" PRIu64 "\t"
+      "%s\t%s\n",
+         ctnode.count, ctnode.files, ctnode.pages, 
+         ctnode.xfer/1024., ctnode.visits, 
+         ctnode.ccode.c_str(), state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str());
+   }
+   iter.close();
+
+   fclose(out_fp);
+}
