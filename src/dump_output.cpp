@@ -507,10 +507,10 @@ void dump_output_t::dump_all_countries()
             config.lang.msg_h_ccode, config.lang.msg_h_ctry);
    }
 
-   // TODO: add an index for country visits
-   database_t::iterator<ccnode_t> iter = state.database.begin_countries();
+   // output rows ordered by visit counts, in descending order
+   database_t::reverse_iterator<ccnode_t> iter = state.database.rbegin_countries("countries.visits");
 
-   while(iter.next(ctnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+   while(iter.prev(ctnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
       fprintf(out_fp,
       "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t"
       "%.0f\t%" PRIu64 "\t"

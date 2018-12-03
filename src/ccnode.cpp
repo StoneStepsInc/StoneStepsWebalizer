@@ -185,6 +185,18 @@ size_t ccnode_t::s_data_size(const void *buffer)
    return datasize;
 }
 
+int64_t ccnode_t::s_compare_visits(const void *buf1, const void *buf2)
+{
+   return s_compare<uint64_t>(buf1, buf2);
+}
+
+const void *ccnode_t::s_field_visits(const void *buffer, size_t bufsize, size_t& datasize)
+{
+   datasize = sizeof(uint64_t);
+   return (u_char*) buffer + datanode_t<ccnode_t>::s_data_size(buffer) + 
+            sizeof(uint64_t) * 3;      // hits, pages, files
+}
+
 //
 // hash table
 //

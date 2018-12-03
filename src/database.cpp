@@ -220,6 +220,9 @@ const struct database_t::index_desc_t {
    // errors
    {&database_t::errors, "errors.hits", 
          &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>},
+   // countries
+   {&database_t::countries, "countries.visits", 
+         &bt_compare_cb<ccnode_t::s_compare_visits>, &bt_compare_cb<ccnode_t::s_compare_key>, &sc_extract_cb<ccnode_t::s_field_visits>},
    // cities
    {&database_t::cities, "cities.visits", 
          &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>}
@@ -985,11 +988,15 @@ template bool berkeleydb_t::table_t::put_node<ccnode_t>(const ccnode_t& node, st
 template bool berkeleydb_t::table_t::get_node_by_id(storable_t<ccnode_t>& node, ccnode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
 template berkeleydb_t::iterator<ccnode_t> berkeleydb_t::table_t::begin<ccnode_t>(const char *dbname) const; 
+template berkeleydb_t::reverse_iterator<ccnode_t> berkeleydb_t::table_t::rbegin<ccnode_t>(const char *dbname) const; 
 
 template class berkeleydb_t::iterator_base<ccnode_t>;
 
 template class berkeleydb_t::iterator<ccnode_t>;
 template bool berkeleydb_t::iterator<ccnode_t>::next(storable_t<ccnode_t>& node, ccnode_t::s_unpack_cb_t<> upcb, void *arg);
+
+template class berkeleydb_t::reverse_iterator<ccnode_t>;
+template bool berkeleydb_t::reverse_iterator<ccnode_t>::prev(storable_t<ccnode_t>& node, ccnode_t::s_unpack_cb_t<> upcb, void *arg);
 
 // cities
 template bool berkeleydb_t::table_t::put_node<ctnode_t>(const ctnode_t& node, storage_info_t& strg_info);

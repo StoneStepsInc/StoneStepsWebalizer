@@ -675,7 +675,7 @@ int state_t::restore_state(void)
    }
 
    // restore country code data
-   {database_t::iterator<ccnode_t> iter = database.begin_countries();
+   {database_t::iterator<ccnode_t> iter = database.begin_countries("countries");
    storable_t<ccnode_t> ccnode;
    while(iter.next(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
       cc_htab.update_ccnode(ccnode, 0);

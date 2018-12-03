@@ -285,7 +285,9 @@ class database_t : public berkeleydb_t {
       //
       // country codes
       //
-      iterator<ccnode_t> begin_countries(void) const {return countries.begin<ccnode_t>(NULL);}
+      iterator<ccnode_t> begin_countries(const char *dbname) const {return countries.begin<ccnode_t>(dbname);}
+
+      reverse_iterator<ccnode_t> rbegin_countries(const char *dbname) const {return countries.rbegin<ccnode_t>(dbname);}
 
       bool put_ccnode(const ccnode_t& ccnode, storage_info_t& strg_info);
 
