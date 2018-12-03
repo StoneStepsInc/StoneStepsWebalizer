@@ -2267,7 +2267,14 @@ DumpErrors
               If this configuration parameter is set to yes, Stone Steps 
               Webalizer will generate a tab-delimited file listing all 
               HTTP errors for the current month. Default value: no 
-    
+
+DumpCountries Generate a tab-delimited data file for all countries. The
+              file name will be country_YYYYMM.tab.
+              Default value: no
+
+DumpCities    Generate a tab-delimited data file for all cities. The file
+              name will be city_YYYYMM.tab.
+              Default value: no
 
 HTML Generation Keywords
 ------------------------
