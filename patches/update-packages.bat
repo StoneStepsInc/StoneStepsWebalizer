@@ -80,10 +80,10 @@ if NOT EXIST "%GEOIPDEST%build\native\%%d\" mkdir "%GEOIPDEST%build\native\%%d\"
 
 xcopy %XCOPYOPTS% "%GEOIPSRC%include\*.h" "%GEOIPDEST%build\native\include\"
 
-xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS14\Debug\libmaxminddbd.lib" "%GEOIPDEST%build\native\lib\Win32\Debug\"
-xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS14\Release\libmaxminddb.lib" "%GEOIPDEST%build\native\lib\Win32\Release\"
-xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS14\x64\Debug\libmaxminddbd.lib" "%GEOIPDEST%build\native\lib\x64\Debug\"
-xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS14\x64\Release\libmaxminddb.lib" "%GEOIPDEST%build\native\lib\x64\Release\"
+xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS2017\Debug\libmaxminddbd.lib" "%GEOIPDEST%build\native\lib\Win32\Debug\"
+xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS2017\Release\libmaxminddb.lib" "%GEOIPDEST%build\native\lib\Win32\Release\"
+xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS2017\x64\Debug\libmaxminddbd.lib" "%GEOIPDEST%build\native\lib\x64\Debug\"
+xcopy %XCOPYOPTS% "%GEOIPSRC%projects\VS2017\x64\Release\libmaxminddb.lib" "%GEOIPDEST%build\native\lib\x64\Release\"
 
 rem
 rem ZLib
