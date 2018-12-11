@@ -1,0 +1,48 @@
+# HG changeset patch
+# Parent 724286615987b5a8950c408c8212119dd3407fb7
+# Parent  b42b0bb4134edb796cc7128d03d8bc98d8efe601
+Visual Studio 2017 hgignore files
+* maxminddb_config.h is ignored because a copy of it is taken from the
+  VS2017 project directory.
+
+diff -r b42b0bb4134e .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Tue Dec 11 07:28:45 2018 -0500
+@@ -0,0 +1,37 @@
++syntax: glob
++
++# VS maintenance files
++*.sdf
++*.opensdf
++*.suo
++*.VC.db
++*.VC.VC.opendb
++
++syntax: regexp
++
++# VS maintenance directory
++^projects/VS2017/\.vs/
++
++# build directories
++^projects/VS12/Debug/
++^projects/VS12/Release/
++^projects/VS12/x64/
++
++^projects/VS14/Debug/
++^projects/VS14/Release/
++^projects/VS14/x64/
++
++^projects/VS2017/Debug/
++^projects/VS2017/Release/
++^projects/VS2017/x64/
++
++^projects/VS14-tests/Debug/
++^projects/VS14-tests/Release/
++^projects/VS14-tests/x64/
++
++# user settings
++^projects/VS2017/libmaxminddb\.vcxproj\.user$
++
++^include/maxminddb_config\.h$
++
++^projects/VS12/example\.c$
