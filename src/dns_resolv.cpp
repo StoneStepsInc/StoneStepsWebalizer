@@ -33,9 +33,6 @@ extern "C" {
 #include <maxminddb.h>
 }
 
-// winsock2.h and maxminddb.h define max as a macro, which conflicts with std::max
-#undef max
-
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
