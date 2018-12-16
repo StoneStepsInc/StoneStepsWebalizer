@@ -30,8 +30,8 @@
 //
 //
 //
-#define DBFLAGS               0
-#define DBENVFLAGS            0
+#define DBFLAGS               ((u_int32_t) 0)
+#define DBENVFLAGS            ((u_int32_t) 0)
 
 #define FILEMASK              0664              // database file access mask (rw-rw-r--)
 

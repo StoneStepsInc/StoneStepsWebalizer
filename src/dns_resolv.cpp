@@ -638,7 +638,7 @@ bool dns_resolver_t::dns_init(void)
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
-      dns_db_env = new DbEnv(0);
+      dns_db_env = new DbEnv((u_int32_t) 0);
 
       //
       // Initialize Berkeley DB for concurrent access (DB_INIT_CDB), which allows multiple
