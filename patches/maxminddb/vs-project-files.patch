@@ -1,5 +1,5 @@
 # HG changeset patch
-# Parent  dff6e705ea9d2606a6354a785d9a9befcd81ecc9
+# Parent  539102a2aacfcde40a5021f5d10e5dbb03446e9c
 Visual Studio 2017 project files
 * A pre-build event is configured in the project properties to copy
   maxminddb_config.h to the include directory. This file is supposed
@@ -8,10 +8,10 @@ Visual Studio 2017 project files
 * Check if maxminddb_config.h.in in the next source drop has anything
   new. Note that maxminddb_config.h is listed in .hgignore.
 
-diff -r dff6e705ea9d projects/VS2017/README.md
+diff -r 539102a2aacf projects/VS2017/README.md
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/README.md	Mon Dec 10 23:38:52 2018 -0500
-@@ -0,0 +1,59 @@
++++ b/projects/VS2017/README.md	Sun Dec 16 10:46:36 2018 -0500
+@@ -0,0 +1,60 @@
 +# Project Notes
 +
 +DO NOT modify project settings for each configuration and/or platform
@@ -63,23 +63,27 @@ diff -r dff6e705ea9d projects/VS2017/README.md
 +each library file's property to assign them to the proper build confguration.
 +Unused libraries will be shown with a traffic stop sign in each configuration.
 +If you have a lot of projects, it might be easier to do this by editing .vcxproj
-+and .vcxproj.filters in a text editor.
-+
-+# Tests
-+
-+To use the tests, you must download the `libtap` and `maxmind-db` submodules.
-+This can be done by running `git submodule update --init --recursive` from
-+the Git checkout. Each test source file has a separate project. Once compiled,
-+the tests must be run from the base directory of the checkout.
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb-release.props
++and .vcxproj.filters in a text editor. Alternatively, you can edit your .vcxproj
++and .vcxproj.filters files and add libmaxminddb.lib using `$(Platform)` and 
++`$(Configuration)` macros and a user macro for libmaxminddb based on whether 
++it's a debug or a release build, and library location like this:
++```
++<ItemGroup>
++   <Library Include="$(MaxMindDBDir)lib\$(Platform)\$(Configuration)\$(MaxMindDBLibName).lib" />
++</ItemGroup>
++```
+\ No newline at end of file
+diff -r 539102a2aacf projects/VS2017/libmaxminddb-release.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb-release.props	Mon Dec 10 23:38:52 2018 -0500
-@@ -0,0 +1,32 @@
++++ b/projects/VS2017/libmaxminddb-release.props	Sun Dec 16 10:46:36 2018 -0500
+@@ -0,0 +1,34 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ImportGroup Label="PropertySheets" />
 +  <PropertyGroup Label="UserMacros" />
-+  <PropertyGroup />
++  <PropertyGroup>
++    <TargetName>$(ProjectName)</TargetName>
++  </PropertyGroup>
 +  <ItemDefinitionGroup>
 +    <ClCompile>
 +      <Optimization>MaxSpeed</Optimization>
@@ -108,9 +112,9 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb-release.props
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb-x64.props
+diff -r 539102a2aacf projects/VS2017/libmaxminddb-x64.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb-x64.props	Mon Dec 10 23:38:52 2018 -0500
++++ b/projects/VS2017/libmaxminddb-x64.props	Sun Dec 16 10:46:36 2018 -0500
 @@ -0,0 +1,14 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -127,9 +131,9 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb-x64.props
 +  <ItemGroup />
 +</Project>
 \ No newline at end of file
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb.props
+diff -r 539102a2aacf projects/VS2017/libmaxminddb.props
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb.props	Mon Dec 10 23:38:52 2018 -0500
++++ b/projects/VS2017/libmaxminddb.props	Sun Dec 16 10:46:36 2018 -0500
 @@ -0,0 +1,32 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -137,6 +141,7 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.props
 +  <PropertyGroup Label="UserMacros" />
 +  <PropertyGroup>
 +    <IntDir>$(SolutionDir)$(Configuration)\obj\</IntDir>
++    <TargetName>$(ProjectName)d</TargetName>
 +  </PropertyGroup>
 +  <ItemDefinitionGroup>
 +    <ClCompile>
@@ -145,7 +150,7 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.props
 +      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <WarningLevel>Level3</WarningLevel>
 +      <ExceptionHandling>false</ExceptionHandling>
-+      <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
++      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
 +      <Optimization>Disabled</Optimization>
 +      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
 +      <OmitFramePointers>false</OmitFramePointers>
@@ -158,21 +163,26 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.props
 +    </PreBuildEvent>
 +    <Lib>
 +      <TargetMachine>MachineX86</TargetMachine>
-+      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
 +    </Lib>
 +  </ItemDefinitionGroup>
 +  <ItemGroup />
 +</Project>
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb.sln
+\ No newline at end of file
+diff -r 539102a2aacf projects/VS2017/libmaxminddb.sln
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb.sln	Mon Dec 10 23:38:52 2018 -0500
-@@ -0,0 +1,31 @@
++++ b/projects/VS2017/libmaxminddb.sln	Sun Dec 16 10:46:36 2018 -0500
+@@ -0,0 +1,36 @@
 +﻿
 +Microsoft Visual Studio Solution File, Format Version 12.00
 +# Visual Studio 15
 +VisualStudioVersion = 15.0.28307.136
 +MinimumVisualStudioVersion = 10.0.40219.1
 +Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmaxminddb", "libmaxminddb.vcxproj", "{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}"
++EndProject
++Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BDD174BE-C5BE-433F-956A-3ADBE8F06426}"
++	ProjectSection(SolutionItems) = preProject
++		README.md = README.md
++	EndProjectSection
 +EndProject
 +Global
 +	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -198,10 +208,10 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.sln
 +		SolutionGuid = {29F7AD35-1F8F-4B76-8D2E-E1F8C33B1DE9}
 +	EndGlobalSection
 +EndGlobal
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj
+diff -r 539102a2aacf projects/VS2017/libmaxminddb.vcxproj
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb.vcxproj	Mon Dec 10 23:38:52 2018 -0500
-@@ -0,0 +1,143 @@
++++ b/projects/VS2017/libmaxminddb.vcxproj	Sun Dec 16 10:46:36 2018 -0500
+@@ -0,0 +1,131 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
@@ -230,40 +240,32 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj
 +    <ClInclude Include="..\..\include\maxminddb.h" />
 +    <ClInclude Include="..\..\src\data-pool.h" />
 +  </ItemGroup>
-+  <ItemGroup>
-+    <None Include="README" />
-+  </ItemGroup>
 +  <PropertyGroup Label="Globals">
 +    <ProjectGuid>{82953BDA-2960-4ADA-A6D5-92E65CCB4A3D}</ProjectGuid>
 +    <Keyword>Win32Proj</Keyword>
 +    <RootNamespace>libmaxminddb</RootNamespace>
++    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
 +  </PropertyGroup>
 +  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <UseDebugLibraries>true</UseDebugLibraries>
 +    <PlatformToolset>v141</PlatformToolset>
-+    <CharacterSet>Unicode</CharacterSet>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <UseDebugLibraries>true</UseDebugLibraries>
 +    <PlatformToolset>v141</PlatformToolset>
-+    <CharacterSet>Unicode</CharacterSet>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <UseDebugLibraries>false</UseDebugLibraries>
 +    <PlatformToolset>v141</PlatformToolset>
-+    <WholeProgramOptimization>true</WholeProgramOptimization>
-+    <CharacterSet>Unicode</CharacterSet>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <UseDebugLibraries>false</UseDebugLibraries>
 +    <PlatformToolset>v141</PlatformToolset>
-+    <WholeProgramOptimization>true</WholeProgramOptimization>
-+    <CharacterSet>Unicode</CharacterSet>
 +  </PropertyGroup>
 +  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 +  <ImportGroup Label="ExtensionSettings">
@@ -289,12 +291,8 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj
 +    <Import Project="libmaxminddb-release.props" />
 +  </ImportGroup>
 +  <PropertyGroup Label="UserMacros" />
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-+    <TargetName>$(ProjectName)d</TargetName>
-+  </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-+    <TargetName>$(ProjectName)d</TargetName>
-+  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 +    <ClCompile>
 +      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -346,10 +344,10 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj
 +  </ImportGroup>
 +</Project>
 \ No newline at end of file
-diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj.filters
+diff -r 539102a2aacf projects/VS2017/libmaxminddb.vcxproj.filters
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/libmaxminddb.vcxproj.filters	Mon Dec 10 23:38:52 2018 -0500
-@@ -0,0 +1,32 @@
++++ b/projects/VS2017/libmaxminddb.vcxproj.filters	Sun Dec 16 10:46:36 2018 -0500
+@@ -0,0 +1,29 @@
 +﻿<?xml version="1.0" encoding="utf-8"?>
 +<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup>
@@ -378,14 +376,11 @@ diff -r dff6e705ea9d projects/VS2017/libmaxminddb.vcxproj.filters
 +      <Filter>Header Files</Filter>
 +    </ClInclude>
 +  </ItemGroup>
-+  <ItemGroup>
-+    <None Include="README" />
-+  </ItemGroup>
 +</Project>
 \ No newline at end of file
-diff -r dff6e705ea9d projects/VS2017/maxminddb_config.h
+diff -r 539102a2aacf projects/VS2017/maxminddb_config.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/projects/VS2017/maxminddb_config.h	Mon Dec 10 23:38:52 2018 -0500
++++ b/projects/VS2017/maxminddb_config.h	Sun Dec 16 10:46:36 2018 -0500
 @@ -0,0 +1,14 @@
 +#ifndef MAXMINDDB_CONFIG_H
 +#define MAXMINDDB_CONFIG_H

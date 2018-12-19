@@ -1,22 +1,15 @@
 # HG changeset patch
 # Parent 58dba29c8e66a9aec8a86292019a4a880325840c
-.hgignore
+# Parent  737edef5de1916b10f233b52ec71a311799e4837
+Visual Studio 2017 .hgignore files
 
-diff -r 58dba29c8e66 .hgignore
+diff -r 737edef5de19 .hgignore
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/.hgignore	Wed Dec 10 00:34:10 2014 -0500
-@@ -0,0 +1,14 @@
++++ b/.hgignore	Sun Dec 16 22:48:53 2018 -0500
+@@ -0,0 +1,6 @@
 +syntax: regexp
 +
-+^contrib/vstudio/vc12/zlib\.sdf$
-+^contrib/vstudio/vc12/zlib\.opensdf$
-+^contrib/vstudio/vc12/zlib\.v12\.suo$
-+^contrib/vstudio/vc12/zlib\.vcxproj\.user$
++^contrib/vstudio/VS2017/\.vs/
++^contrib/vstudio/VS2017/x86/
++^contrib/vstudio/VS2017/x64/
 +
-+^contrib/vstudio/vc12/x86/
-+^contrib/vstudio/vc12/x64/
-+
-+^contrib/masmx86/[a-z0-9]+.lst$
-+^contrib/masmx86/[a-z0-9]+.obj$
-+^contrib/masmx64/[a-z0-9]+.lst$
-+^contrib/masmx64/[a-z0-9]+.obj$

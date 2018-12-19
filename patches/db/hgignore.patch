@@ -1,0 +1,17 @@
+# HG changeset patch
+# Parent 0012ed0c5a505ba3d2cb3e8d6d56bf4226d6dd43
+# Parent  805b36a6e93ab0d6bd538dade898c6af79544c27
+Visual Studio 2017 hgignore files
+
+diff -r 805b36a6e93a .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Sun Dec 16 13:45:35 2018 -0500
+@@ -0,0 +1,8 @@
++syntax: regexp
++
++# build directory
++^build_windows/Win32/
++^build_windows/x64/
++
++# VS maintenance directory
++^build_windows/\.vs/
