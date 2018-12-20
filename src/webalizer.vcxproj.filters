@@ -463,10 +463,10 @@
     <Library Include="$(GDLibDir)$(GDLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(BDBLibDir)$(BDBLibName).lib">
+    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(ZLibLibDir)$(ZLibName).lib">
+    <Library Include="$(ZLibDir)lib\$(Platform)\$(Configuration)\$(ZLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
     <Library Include="$(MaxMindDBDir)lib\$(Platform)\$(Configuration)\$(MaxMindDBLibName).lib">
