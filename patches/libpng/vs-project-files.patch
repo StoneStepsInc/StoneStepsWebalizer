@@ -1,12 +1,11 @@
 # HG changeset patch
 # Parent f7e9a19365141281e7bba90e5ad0203b853507e5
-VS12 project files
-* * *
-Changed zlib path to 1.2.8
+# Parent  f7e9a19365141281e7bba90e5ad0203b853507e5
+Upgraded project files to Visual Studio 2017
 
 diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 --- a/projects/vstudio/libpng/libpng.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/libpng/libpng.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/libpng/libpng.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,234 +1,441 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -243,7 +242,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 -  </ImportGroup>
 -</Project>
 +﻿<?xml version="1.0" encoding="utf-8"?>
-+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
 +    <ProjectConfiguration Include="Debug Library|Win32">
 +      <Configuration>Debug Library</Configuration>
@@ -289,45 +288,45 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 +    <ConfigurationType>DynamicLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
 +    <ConfigurationType>DynamicLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Library|Win32'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Library|x64'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
 +    <ConfigurationType>DynamicLibrary</ConfigurationType>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
 +    <ConfigurationType>DynamicLibrary</ConfigurationType>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Library|Win32'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Library|x64'" Label="Configuration">
 +    <ConfigurationType>StaticLibrary</ConfigurationType>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 +  <ImportGroup Label="ExtensionSettings">
@@ -469,7 +468,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 +      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <Optimization>Disabled</Optimization>
 +      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <IntrinsicFunctions>true</IntrinsicFunctions>
 +      <FunctionLevelLinking>true</FunctionLevelLinking>
 +      <FloatingPointExceptions>false</FloatingPointExceptions>
@@ -497,7 +496,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 +      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <Optimization>Disabled</Optimization>
 +      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <IntrinsicFunctions>true</IntrinsicFunctions>
 +      <FunctionLevelLinking>true</FunctionLevelLinking>
 +      <FloatingPointExceptions>false</FloatingPointExceptions>
@@ -587,7 +586,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 +      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
 +      <FunctionLevelLinking>true</FunctionLevelLinking>
 +      <IntrinsicFunctions>true</IntrinsicFunctions>
-+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <FloatingPointExceptions>false</FloatingPointExceptions>
 +      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
 +      <PrecompiledHeaderFile>pngpriv.h</PrecompiledHeaderFile>
@@ -620,7 +619,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 +      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
 +      <FunctionLevelLinking>true</FunctionLevelLinking>
 +      <IntrinsicFunctions>true</IntrinsicFunctions>
-+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 +      <FloatingPointExceptions>false</FloatingPointExceptions>
 +      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
 +      <PrecompiledHeaderFile>pngpriv.h</PrecompiledHeaderFile>
@@ -686,7 +685,7 @@ diff -r f7e9a1936514 projects/vstudio/libpng/libpng.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/pnglibconf/pnglibconf.vcxproj
 --- a/projects/vstudio/pnglibconf/pnglibconf.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/pnglibconf/pnglibconf.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/pnglibconf/pnglibconf.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,61 +1,104 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -750,7 +749,7 @@ diff -r f7e9a1936514 projects/vstudio/pnglibconf/pnglibconf.vcxproj
 -  </ImportGroup>
 -</Project>
 +﻿<?xml version="1.0" encoding="utf-8"?>
-+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +  <ItemGroup Label="ProjectConfigurations">
 +    <ProjectConfiguration Include="Release|Win32">
 +      <Configuration>Release</Configuration>
@@ -771,14 +770,14 @@ diff -r f7e9a1936514 projects/vstudio/pnglibconf/pnglibconf.vcxproj
 +    <UseDebugLibraries>false</UseDebugLibraries>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
 +    <ConfigurationType>Application</ConfigurationType>
 +    <UseDebugLibraries>false</UseDebugLibraries>
 +    <WholeProgramOptimization>true</WholeProgramOptimization>
 +    <CharacterSet>MultiByte</CharacterSet>
-+    <PlatformToolset>v120</PlatformToolset>
++    <PlatformToolset>v141</PlatformToolset>
 +  </PropertyGroup>
 +  <Import Project="$(SolutionDir)\zlib.props" />
 +  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -856,7 +855,7 @@ diff -r f7e9a1936514 projects/vstudio/pnglibconf/pnglibconf.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/pngstest/pngstest.vcxproj
 --- a/projects/vstudio/pngstest/pngstest.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/pngstest/pngstest.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/pngstest/pngstest.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,219 +1,223 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1303,7 +1302,7 @@ diff -r f7e9a1936514 projects/vstudio/pngstest/pngstest.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/pngtest/pngtest.vcxproj
 --- a/projects/vstudio/pngtest/pngtest.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/pngtest/pngtest.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/pngtest/pngtest.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,220 +1,224 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1752,7 +1751,7 @@ diff -r f7e9a1936514 projects/vstudio/pngtest/pngtest.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/pngunknown/pngunknown.vcxproj
 --- a/projects/vstudio/pngunknown/pngunknown.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/pngunknown/pngunknown.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/pngunknown/pngunknown.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,219 +1,223 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -2199,7 +2198,7 @@ diff -r f7e9a1936514 projects/vstudio/pngunknown/pngunknown.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/pngvalid/pngvalid.vcxproj
 --- a/projects/vstudio/pngvalid/pngvalid.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/pngvalid/pngvalid.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/pngvalid/pngvalid.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,219 +1,223 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -2646,7 +2645,7 @@ diff -r f7e9a1936514 projects/vstudio/pngvalid/pngvalid.vcxproj
 \ No newline at end of file
 diff -r f7e9a1936514 projects/vstudio/vstudio.sln
 --- a/projects/vstudio/vstudio.sln	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/vstudio.sln	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/vstudio.sln	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,109 +1,151 @@
 -Microsoft Visual Studio Solution File, Format Version 11.00
 -# Visual Studio 2010
@@ -2910,7 +2909,7 @@ diff -r f7e9a1936514 projects/vstudio/vstudio.sln
 +EndGlobal
 diff -r f7e9a1936514 projects/vstudio/zlib.props
 --- a/projects/vstudio/zlib.props	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/zlib.props	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/zlib.props	Sun Dec 23 10:09:08 2018 -0500
 @@ -32,7 +32,7 @@
  	 versions do not match.  The zlib version used in this build is recorded
  	 below:
@@ -2922,7 +2921,7 @@ diff -r f7e9a1936514 projects/vstudio/zlib.props
           Studio 2012.  Notice that this is not supported by the Visual Studio
 diff -r f7e9a1936514 projects/vstudio/zlib/zlib.vcxproj
 --- a/projects/vstudio/zlib/zlib.vcxproj	Sun Mar 02 21:59:21 2014 -0500
-+++ b/projects/vstudio/zlib/zlib.vcxproj	Sun Dec 07 12:47:29 2014 -0500
++++ b/projects/vstudio/zlib/zlib.vcxproj	Sun Dec 23 10:09:08 2018 -0500
 @@ -1,169 +1,173 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

@@ -1,4 +1,2 @@
-vs12-project-files.patch
+vs-project-files.patch
 vs12-hgignore.patch
-vs14-hgignore.patch
-vs14-project-files.patch
