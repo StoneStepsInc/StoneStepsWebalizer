@@ -3169,12 +3169,12 @@ void html_output_t::top_city_table()
    storable_t<ctnode_t> ctnode;
    database_t::reverse_iterator<ctnode_t> iter = state.database.rbegin_cities("cities.visits");
 
-   for(size_t i = 0; i < tot_num && iter.prev(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+   for(u_int i = 0; i < tot_num && iter.prev(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
       
       if(ctnode.hits != 0) {
          buffer_formatter.set_scope_mode(buffer_formatter_t::append),
          fprintf(out_fp,"<tr>"
-              "<th>%" PRIu64 "</th>\n"
+              "<th>%u</th>\n"
               "<td>%" PRIu64 "</td>\n"
               "<td class=\"data_percent_td\">%3.02f%%</td>\n"
               "<td>%" PRIu64 "</td>\n"
