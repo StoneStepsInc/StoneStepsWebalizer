@@ -131,10 +131,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(GDLibDir)$(GDLibName).lib">
+    <Library Include="$(GDDir)lib\$(Platform)\$(Configuration)\$(GDLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
-    <Library Include="$(BDBLibDir)$(BDBLibName).lib">
+    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
   </ItemGroup>

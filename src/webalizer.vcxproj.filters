@@ -460,16 +460,16 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(GDLibDir)$(GDLibName).lib">
-      <Filter>Libraries</Filter>
-    </Library>
-    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
-      <Filter>Libraries</Filter>
-    </Library>
     <Library Include="$(ZLibDir)lib\$(Platform)\$(Configuration)\$(ZLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
     <Library Include="$(MaxMindDBDir)lib\$(Platform)\$(Configuration)\$(MaxMindDBLibName).lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="$(GDDir)lib\$(Platform)\$(Configuration)\$(GDLibName).lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
       <Filter>Libraries</Filter>
     </Library>
   </ItemGroup>
