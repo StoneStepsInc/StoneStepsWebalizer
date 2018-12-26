@@ -1,6 +1,12 @@
 --------------------------------------------------------------------
-5.0.x.x [xx-Xxx-2018] -- Stone Steps Inc. (www.stonesteps.ca)
+5.0.0.x [xx-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
+ * Changed the country tab-delimited file name prefix from ctry_* to country_*
+ * Removed MemoryMode and related settings and changed the application to balance between the state database and memory
+ * Added a log file number to the error message reporting a bad record
+ * [BB-9] Reworked how errors are handled and reported to the standard error stream
+ * [Windows] Updated MaxMind DB, ZLib and berkeley DB to their latest versions
+ * [BB-11] Added a top N cities report and a tab-delimited list of cities
  * [BUG] Fixed a bug causing city names lost for some hosts restored from the database for previous runs
  * [BB-7]: Changed the exit code from failure (1) to success (0) when no valid records were found
  * [BUG][BB-8] Command line options now take precedence over default configuration file options
@@ -8,6 +14,9 @@
  * [BUG][BB-6] UseHTTPS is ignored when processing CLF logs other log types without a port number
  * [BUG][BB-5] Adjust log record time stamp only if its time zone setting doesn't match that in the configuration
  * [BUG][BB-4] Fixed a bug causing history being wiped out if there is no state database
+ * [BUG][BB-10] Fixed a lock-up within Berkeley DB in the DNS resolver
+ * [Windows] Changed Visual Studio projects to use Nuget packages for 3rd-party libraries
+ * [BUG] Country Code appears instead of Country in some report headings
  * Changed exit code for --version --warranty and --help to return 0 (zero) instead of 1 (one) to faciliate scripting
  * Prevented custom BODY and DOCTYPE tags to ensure JS report initialization is performed
  * Changed how HTMLPre, HTMLBody, HTMLPost, HTMLEnd are processed (e.g. some are moved in the report); see README
