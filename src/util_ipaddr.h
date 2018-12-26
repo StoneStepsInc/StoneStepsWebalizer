@@ -1,7 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2017, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)
    Copyright (C) 1997-2001  Bradford L. Barrett (brad@mrunix.net)
 
    See COPYING and Copyright files for additional licensing and copyright information 
