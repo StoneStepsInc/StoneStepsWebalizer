@@ -13,8 +13,8 @@
     <CustomBuildStep>
       <Command>echo Copying binaries to $(OutDir)
 xcopy /Q /Y ..\build\$(Platform)\$(Configuration)\webalizer.exe "$(OutDir)" &gt; nul
-xcopy /Q /Y "$(BDBLibDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul
-xcopy /Q /Y "$(GDLibDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
+xcopy /Q /Y "$(BDBBinDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul
+xcopy /Q /Y "$(GDBinDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
 
 echo Copying additional files to $(OutDir)
 xcopy /Q /Y ..\sample.conf "$(OutDir)" &gt; nul
