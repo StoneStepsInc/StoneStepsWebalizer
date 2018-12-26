@@ -1,30 +1,30 @@
 --------------------------------------------------------------------
 5.0.0.x [xx-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
- * Changed the country tab-delimited file name prefix from ctry_* to country_*
+ * [BB-11] Added a top N cities report and a tab-delimited list of cities
+ * [BB-9] Reworked how errors are handled and reported to the standard error stream
+ * [BB-7]: Changed the exit code from failure (1) to success (0) when no valid records were found
  * Removed MemoryMode and related settings and changed the application to balance between the state database and memory
  * Added a log file number to the error message reporting a bad record
- * [BB-9] Reworked how errors are handled and reported to the standard error stream
- * [Windows] Updated MaxMind DB, ZLib and berkeley DB to their latest versions
- * [BB-11] Added a top N cities report and a tab-delimited list of cities
- * [BUG] Fixed a bug causing city names lost for some hosts restored from the database for previous runs
- * [BB-7]: Changed the exit code from failure (1) to success (0) when no valid records were found
+ * Changed exit code for --version --warranty and --help to return 0 (zero) instead of 1 (one) to faciliate scripting
+ * Prevented custom BODY and DOCTYPE tags to ensure JS report initialization is performed
+ * Reduced memory consumption caused by late ending of visits when running in the database mode
+ * Changed how HTMLPre, HTMLBody, HTMLPost, HTMLEnd are processed (e.g. some are moved in the report); see README
+ * Changed the country tab-delimited file name prefix from ctry_* to country_*
  * [BUG][BB-8] Command line options now take precedence over default configuration file options
  * [BUG][BB-8] Only one set of log file names from a single source is accepted for processing
  * [BUG][BB-6] UseHTTPS is ignored when processing CLF logs other log types without a port number
  * [BUG][BB-5] Adjust log record time stamp only if its time zone setting doesn't match that in the configuration
  * [BUG][BB-4] Fixed a bug causing history being wiped out if there is no state database
  * [BUG][BB-10] Fixed a lock-up within Berkeley DB in the DNS resolver
- * [Windows] Changed Visual Studio projects to use Nuget packages for 3rd-party libraries
+ * [BUG] Fixed a bug causing city names lost for some hosts restored from the database for previous runs
  * [BUG] Country Code appears instead of Country in some report headings
- * Changed exit code for --version --warranty and --help to return 0 (zero) instead of 1 (one) to faciliate scripting
- * Prevented custom BODY and DOCTYPE tags to ensure JS report initialization is performed
- * Changed how HTMLPre, HTMLBody, HTMLPost, HTMLEnd are processed (e.g. some are moved in the report); see README
  * [BUG] Fixed erroneus message "DNS resolver is not initialized" shown when maintenance commands were being processed
  * [BUG] Fixed a bug preventing malformed URLs containing Latin1 characters from being converted to lower case
  * [BUG] Fixed a bug that was binding Country Code instead of Country to the country heading
- * Reduced memory consumption caused by late ending of visits when running in the database mode
- * Added missing HTMLJsPath to README
+ * [BUG] Added missing HTMLJsPath to README
+ * [Windows] Changed Visual Studio projects to use Nuget packages for 3rd-party libraries
+ * [Windows] Updated MaxMind DB, ZLib and berkeley DB to their latest versions
  * [JS Charts] Updated the Highcharts version from 4.2 to 6.0
  * [JS Charts][BUG] When mouse hovered over Transfer columns, transfer amount was not shown or was not in the human-readable format
 
