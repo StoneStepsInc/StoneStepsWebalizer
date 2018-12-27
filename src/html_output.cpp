@@ -2993,13 +2993,9 @@ int html_output_t::all_users_page(void)
 void html_output_t::top_ctry_table()
 {
    u_int tot_num=0, tot_ctry=0;
-   uint64_t i,j;
-   uint64_t pie_data[10];
    uint64_t t_hit, t_file, t_page, t_visits;
    uint64_t t_xfer;
-   const char *pie_legend[10];
-   const ccnode_t **ccarray;
-   const ccnode_t *tptr;
+   storable_t<ccnode_t> ccnode;
 
    if(state.cc_htab.size() == 0)
       return;
@@ -3013,29 +3009,12 @@ void html_output_t::top_ctry_table()
    // only include human activity
    t_visits = state.totals.t_hvisits_end;
 
-   // allocate and load the country array
-   ccarray = new const ccnode_t*[state.cc_htab.size()];
-
-   uint64_t ccarray_size = state.cc_htab.load_array(ccarray);
-
-   // find the first node with a zero count
-   for(i = 0; i < ccarray_size; i++, tot_ctry++) {
-      if(ccarray[i]->count == 0) 
-         break;
-   }
-
-   // swap the nodes with zero and non-zero counts
-   for(j = i+1; j < ccarray_size; j++) {
-      if(ccarray[j]->count) {           
-         tptr = ccarray[i];
-         ccarray[i++] = ccarray[j];    // the next one always has count == 0
-         ccarray[j] = tptr;
+   // count countries with non-zero request counts for the title
+   hash_table<storable_t<ccnode_t>>::const_iterator cc_iter = state.cc_htab.begin();
+   while(cc_iter.next()) {
+      if(cc_iter.item()->count)
          tot_ctry++;
-      }
    }
-
-   // sort those at the beginning of the array
-   qsort(ccarray, tot_ctry, sizeof(ccnode_t*), qs_cc_cmpv);
 
    // select how many top entries to report
    tot_num = (tot_ctry > config.ntop_ctrys) ? config.ntop_ctrys : tot_ctry;
@@ -3054,17 +3033,6 @@ void html_output_t::top_ctry_table()
          string_t pie_title;
          string_t pie_fname, pie_fname_lang;
 
-         for (i=0;i<10;i++) {
-            pie_data[i] = 0;                           /* init data array      */
-            pie_legend[i] = NULL;
-         }
-         j = std::min(tot_num, 10u);                   /* ensure data size     */
-
-         for(i = 0; i < j; i++) {
-            pie_data[i]=ccarray[i]->visits;            /* load the array       */
-            pie_legend[i]=ccarray[i]->cdesc;
-         }
-
          pie_title.format("%s %s %d",config.lang.msg_ctry_use, config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
          pie_fname.format("ctry_usage_%04d%02d.png",state.totals.cur_tstamp.year,state.totals.cur_tstamp.month);
 
@@ -3073,8 +3041,21 @@ void html_output_t::top_ctry_table()
          else
             pie_fname_lang = pie_fname;
 
-         if(makeimgs)
-            graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);  /* do it   */
+         if(makeimgs) {
+            uint64_t pie_data[10] = {};
+            const char *pie_legend[10] = {};
+
+            database_t::reverse_iterator<ccnode_t> iter = state.database.rbegin_countries("countries.visits");
+
+            // we only store country nodes with some activity, so no need to check for zero counts
+            for(u_int i = 0; i < 10u && iter.prev(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+               pie_data[i] = ccnode.visits;
+               pie_legend[i] = state.cc_htab.get_ccnode(ccnode.ccode).cdesc.c_str();
+            }
+            iter.close();
+
+            graph.pie_chart(pie_fname_lang, pie_title, t_visits, pie_data, pie_legend);
+         }
 
          /* put the image tag in the page */
          fprintf(out_fp,"<div id=\"country_usage_graph\" class=\"graph_holder\"><img src=\"%s\" alt=\"%s\" height=\"300\" width=\"512\"></div>\n", pie_fname.c_str(), pie_title.c_str());
@@ -3101,36 +3082,38 @@ void html_output_t::top_ctry_table()
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
-   for(i = 0; i < tot_num; i++) {
-      if(ccarray[i]->count != 0) {
-         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-         fprintf(out_fp,"<tr>"
-              "<th>%" PRIu64 "</th>\n"
-              "<td>%" PRIu64 "</td>\n"
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-              "<td>%" PRIu64 "</td>\n"
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-              "<td>%" PRIu64 "</td>\n"
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-              "<td>%" PRIu64 "</td>\n"
-              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-              "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td></tr>\n",
-              i+1, ccarray[i]->count,
-              (t_hit==0)?0:((double)ccarray[i]->count/t_hit)*100.0,
-              ccarray[i]->files,
-              (t_file==0)?0:((double)ccarray[i]->files/t_file)*100.0,
-              ccarray[i]->pages,
-              (t_page==0)?0:((double)ccarray[i]->pages/t_page)*100.0,
-              ccarray[i]->xfer, fmt_xfer(ccarray[i]->xfer),
-              (t_xfer==0)?0:(ccarray[i]->xfer/t_xfer)*100.0,
-              ccarray[i]->visits,
-              (t_visits==0)?0:((double)ccarray[i]->visits/t_visits)*100.0,
-              ccarray[i]->ccode.c_str(),
-              html_encode(ccarray[i]->cdesc.c_str()));
-      }
+   database_t::reverse_iterator<ccnode_t> iter = state.database.rbegin_countries("countries.visits");
+
+   for(u_int i = 0; i < tot_num && iter.prev(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+      buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+      fprintf(out_fp,"<tr>"
+            "<th>%u</th>\n"
+            "<td>%" PRIu64 "</td>\n"
+            "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+            "<td>%" PRIu64 "</td>\n"
+            "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+            "<td>%" PRIu64 "</td>\n"
+            "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+            "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+            "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+            "<td>%" PRIu64 "</td>\n"
+            "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+            "<td class=\"stats_data_item_td\" data-ccode=\"%s\">%s</td></tr>\n",
+            i+1, ccnode.count,
+            (t_hit==0)?0:((double)ccnode.count/t_hit)*100.0,
+            ccnode.files,
+            (t_file==0)?0:((double)ccnode.files/t_file)*100.0,
+            ccnode.pages,
+            (t_page==0)?0:((double)ccnode.pages/t_page)*100.0,
+            ccnode.xfer, fmt_xfer(ccnode.xfer),
+            (t_xfer==0)?0:(ccnode.xfer/t_xfer)*100.0,
+            ccnode.visits,
+            (t_visits==0)?0:((double)ccnode.visits/t_visits)*100.0,
+            ccnode.ccode.c_str(),
+            html_encode(state.cc_htab.get_ccnode(ccnode.ccode).cdesc.c_str()));
    }
+   iter.close();
+
    fputs("</tbody>\n", out_fp);
    fputs("</table>\n", out_fp);
 
@@ -3139,8 +3122,6 @@ void html_output_t::top_ctry_table()
       fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_robots);
 
    fputs("</div>\n", out_fp);
-
-   delete [] ccarray;
 }
 
 void html_output_t::top_city_table()
