@@ -107,8 +107,6 @@ class database_t : public berkeleydb_t {
 
       bool get_unode_by_value(storable_t<unode_t>& unode, unode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
-      uint64_t get_ucount(const char *dbname = NULL) const {return urls.count(dbname);}
-
       // hosts
       uint64_t get_hnode_id(void) {return (uint64_t) hosts.get_seq_id();}
 
@@ -123,8 +121,6 @@ class database_t : public berkeleydb_t {
 
       template <typename ... param_t>
       bool get_hnode_by_value(storable_t<hnode_t>& hnode, hnode_t::s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param) const;
-
-      uint64_t get_hcount(const char *dbname = NULL) const {return hosts.count(dbname);}
 
       // visits
       bool put_vnode(const vnode_t& vnode, storage_info_t& strg_info);
@@ -154,8 +150,6 @@ class database_t : public berkeleydb_t {
       template <typename ... param_t>
       bool get_dlnode_by_value(storable_t<dlnode_t>& dlnode, dlnode_t::s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param) const;
 
-      uint64_t get_dlcount(const char *dbname = NULL) const {return downloads.count(dbname);}
-
       bool delete_download(const keynode_t<uint64_t>& danode);
 
       //
@@ -184,8 +178,6 @@ class database_t : public berkeleydb_t {
 
       bool get_anode_by_value(storable_t<anode_t>& anode, anode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
-      uint64_t get_acount(const char *dbname = NULL) const {return agents.count(dbname);}
-
       //
       // referrers
       //
@@ -200,8 +192,6 @@ class database_t : public berkeleydb_t {
       bool get_rnode_by_id(storable_t<rnode_t>& rnode, rnode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
       bool get_rnode_by_value(storable_t<rnode_t>& rnode, rnode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
-
-      uint64_t get_rcount(const char *dbname = NULL) const {return referrers.count(dbname);}
 
       //
       // search strings
@@ -218,8 +208,6 @@ class database_t : public berkeleydb_t {
 
       bool get_snode_by_value(storable_t<snode_t>& snode, snode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
-      uint64_t get_scount(const char *dbname = NULL) const {return search.count(dbname);}
-
       //
       // users
       //
@@ -234,8 +222,6 @@ class database_t : public berkeleydb_t {
       bool get_inode_by_id(storable_t<inode_t>& inode, inode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
 
       bool get_inode_by_value(storable_t<inode_t>& inode, inode_t::s_unpack_cb_t<> upcb = NULL, void *arg = NULL) const;
-
-      uint64_t get_icount(const char *dbname = NULL) const {return users.count(dbname);}
 
       //
       // errors
