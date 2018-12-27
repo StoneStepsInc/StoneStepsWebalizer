@@ -453,10 +453,6 @@ class hash_table : public hash_table_base {
       template <typename ... param_t>
       node_t *find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (node_t::*match_key)(param_t ... args) const, param_t ... param);
 
-   protected:
-      /// Returns true if the specified node should appear in the array populated by `load_array`.
-      virtual bool load_array_check(const node_t *) const {return true;}
-
    public:
       /// Constructs a hash table with the specified number of buckets.
       hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = nullptr, void *cbarg = nullptr, eval_cb_t evalcb = nullptr);
@@ -526,9 +522,6 @@ class hash_table : public hash_table_base {
       /// @name   Miscellaneous
       ///
       /// @{
-
-      /// Fills the specified array with pointers to nodes in the hash table.
-      uint64_t load_array(const typename inner_node<node_t>::type *array[]) const;
 
       /// Returns the time stamp range between the newest and oldest time stamps in the hash table.
       tm_range_t tm_range(void) const;

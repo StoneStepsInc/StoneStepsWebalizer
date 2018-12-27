@@ -361,59 +361,6 @@ TEST(HashTableTest, SwapOutByMemSizeLessThan)
 }
 
 ///
-/// @brief  Tests the hash table loading an array of object pointers.
-///
-TEST(HashTableTest, LoadAgentNodeArray)
-{
-   std::set<std::string> agent_keys;
-   hash_table<storable_t<anode_t>> htab(10);
-
-   // no look-ups are done because keys are guaranteed to be unique
-   for(int i = 100; i < 200; i++) {
-      int tstamp = i - i % 2;
-      std::string agent = "Agent " + std::to_string(i);
-      string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
-
-      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
-
-      agent_keys.insert(agent);
-
-      // every 10 iterations insert a group entry with a zero time stamp, which should be ignored
-      if(i % 10 == 0) {
-         std::string agent_group = "Agent Group " + std::to_string(i);
-
-         storable_t<anode_t> *anode_group = new storable_t<anode_t>(string_t::hold(agent_group.c_str(), agent_group.length()), false);
-         anode_group->flag = OBJ_GRP;
-
-         // pass a zero time stamp because group nodes do not participate in time stamp ordering
-         ASSERT_NO_THROW(htab.put_node(anode_group, 0));
-
-         agent_keys.insert(agent_group);
-      }
-   }
-
-   // make sure we have the right number of elements before loading them into an array
-   ASSERT_EQ(110, htab.size()) << "Hash table should contain 100 regular nodes and 10 group nodes";
-
-   // define an array that is one element larger than we need to check overruns
-   const anode_t *anode[111] = {};
-
-   ASSERT_EQ(110, htab.load_array(anode)) << "All 100 regular nodes and 10 groups must appear in the array of node pointers";
-
-   ASSERT_EQ(nullptr, anode[110]) << "The last element in the array must remain NULL";
-
-   // keys in the array are in unspecified order
-   for(size_t i = 0; i < 110; i++) {
-      ASSERT_TRUE(agent_keys.find(anode[i]->string.c_str()) != agent_keys.end()) << "A key in the arraymust exist in the agent key set";
-
-      // erase the key to ensure hash table keys are unique
-      agent_keys.erase(anode[i]->string.c_str());
-   }
-
-   EXPECT_EQ(0, agent_keys.size()) << "Number of keys loaded in the array must match the number of inserted nodes";
-}
-
-///
 /// @brief  Tests multiple hash table look-ups.
 ///
 TEST(HashTableTest, MultipleLookUps)

@@ -316,25 +316,6 @@ void hash_table<node_t>::clear(void)
 }
 
 template <typename node_t>
-uint64_t hash_table<node_t>::load_array(const typename inner_node<node_t>::type *array[]) const
-{
-   htab_node_t<node_t> *nptr;
-   u_int hashidx, arridx;
-
-   /* load the array */
-   for(hashidx = 0, arridx = 0; hashidx < maxhash; hashidx++) {
-      nptr = htab[hashidx].head;
-      while(nptr) {
-         if(load_array_check(nptr->node))
-            array[arridx++] = nptr->node;
-         nptr = nptr->next;
-      }
-   }
-
-   return arridx;
-}
-
-template <typename node_t>
 typename hash_table<node_t>::tm_range_t hash_table<node_t>::tm_range(void) const
 {
    if(tmlist.empty())

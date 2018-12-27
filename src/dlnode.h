@@ -108,9 +108,6 @@ struct dlnode_t : public base_node<dlnode_t> {
 // Download Jobs
 //
 class dl_hash_table : public hash_table<storable_t<dlnode_t>> {
-   private:
-      virtual bool load_array_check(const storable_t<dlnode_t> *nptr) const override {return (nptr && !nptr->download) ? true : false;}
-
    public:
       dl_hash_table(void) : hash_table<storable_t<dlnode_t>>() {}
 };
