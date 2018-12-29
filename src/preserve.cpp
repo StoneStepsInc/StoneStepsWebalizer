@@ -518,12 +518,6 @@ bool state_t::initialize(void)
    if(config.db_info)
       return true;
 
-   // fix any issues with the database to make it compatible with the latest version
-   if(sysnode.appver_last != VERSION) {
-      if(upgrade_database())
-         throw exception_t(0, "Cannot upgrade the database to the latest version");
-   }
-
    //
    // Initialize history
    //
@@ -762,26 +756,6 @@ int state_t::restore_state(void)
       danode.reset();
       hnode.reset();
    }}
-
-   return 0;
-}
-
-//
-// Checks the database version and updates all fields that may need to be changed
-// to be compatible with the current application version. Always updates the last
-// application version in the system node, even if no other work was done.
-//
-int state_t::upgrade_database(void)
-{
-   // sysnode is not populated if the databases is new or has been truncated
-   if(!sysnode.appver)
-      return 0;
-   
-   // update the last application version and save sysnode
-   sysnode.appver_last = VERSION;
-
-   if(!database.put_sysnode(sysnode, sysnode.storage_info))
-      throw exception_t(0, "Cannot write the system node to the database");
 
    return 0;
 }
