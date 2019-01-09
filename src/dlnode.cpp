@@ -32,7 +32,7 @@ dlnode_t::dlnode_t(void) : base_node<dlnode_t>()
    hnode = NULL;
 }
 
-dlnode_t::dlnode_t(const string_t& name, hnode_t *nptr) : base_node<dlnode_t>(name) 
+dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) : base_node<dlnode_t>(name) 
 {
    count = 0;
    sumhits = 0;
@@ -42,8 +42,8 @@ dlnode_t::dlnode_t(const string_t& name, hnode_t *nptr) : base_node<dlnode_t>(na
 
    download = NULL;
 
-   if((hnode = nptr) != NULL)
-      hnode->dlref++;
+   hnode = &nptr;
+   hnode->dlref++;
 }
 
 dlnode_t::dlnode_t(dlnode_t&& tmp) : base_node<dlnode_t>(std::move(tmp))

@@ -162,7 +162,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
          ASSERT_EQ(nullptr, dlnode) << "Every even number should not be found in the hash table";
 
          // insert a new node and test equal and greater-than time stamps
-         ASSERT_NO_THROW((dlnode = htab.put_node(new storable_t<dlnode_t>(string_t::hold(dlnode_key.name), host), tstamp)));
+         ASSERT_NO_THROW((dlnode = htab.put_node(new storable_t<dlnode_t>(string_t::hold(dlnode_key.name), *host), tstamp)));
 
          ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
 

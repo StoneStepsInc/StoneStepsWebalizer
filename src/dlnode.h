@@ -59,7 +59,7 @@ struct dlnode_t : public base_node<dlnode_t> {
       public:
          dlnode_t(void);
          dlnode_t(dlnode_t&& tmp);
-         dlnode_t(const string_t& name, hnode_t *hnode);
+         dlnode_t(const string_t& name, hnode_t& hnode);
 
          ~dlnode_t(void);
 

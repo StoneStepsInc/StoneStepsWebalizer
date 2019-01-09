@@ -2852,7 +2852,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
    if((nptr = state.dl_htab.find_node(hashval, &params, OBJ_REG, htab_tstamp)) == NULL) {
-      nptr = new storable_t<dlnode_t>(name, &hnode);
+      nptr = new storable_t<dlnode_t>(name, hnode);
       if(!state.database.get_dlnode_by_value(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
 
