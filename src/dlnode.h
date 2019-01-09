@@ -22,13 +22,35 @@ struct hnode_t;
 ///
 /// @struct dlnode_t
 ///
-/// @brief  Download job node
+/// @brief  A download job node.
 ///
-/// A download node owns the active download job node and will delete it in its
-/// destructor.
+/// A download job is a download name tracked for a specific visitor identified
+/// by an IP address. A download job may be executed one or more times for its
+/// visitor, which is reflected as a download count for this download job.
 ///
-/// A download node does not own a host node and will merely increment a download
-/// reference count in the host node when it is attached to the download node.
+/// Another way to look at download jobs is to 
+///
+/// For example, if there are two files posted for a download, `a.zip` and `b.zip`
+/// and they correspond to download names `A` and `B`, respectively, and if `a.zip`
+/// was downloaded twice by a visitor `X` and `b.zip` was downloaded once by the
+/// visitor `X` and twice by a visitor `Y`, then there will be three download jobs
+/// - `{A, X}`, `{B, X}` and `{B, Y}`, and five downloads - `2 + 1 + 2`.
+///
+/// Only one download may be in progress (active) for each download job, which is
+/// tracked by an instance of an active download node (`danode_t`), which is owned
+/// by the download job and will be deleted with the download job node.
+///
+/// A download job node with a non-empty name must be associated with a host node
+/// one way ot another. In the most common case both nodes exist in their hash tables
+/// and the download job reference count in the host node reflects the number of
+/// download job nodes pointing to this host, which prevents host nodes with non-zero
+/// reference counts from being swapped out. However, it is also possible to read a
+/// download node and the associated host node from the database into local vatiables,
+/// in which case the download job node will not be set up automatically to point to
+/// the host node because having a pointer to an address of what could be a local
+/// variable is very error-prone, and instead the function using these local variables
+/// should call `set_host` to link both nodes and should arrange that the download
+/// node is destroyed first.
 ///
 struct dlnode_t : public base_node<dlnode_t> {
       ///
@@ -42,15 +64,15 @@ struct dlnode_t : public base_node<dlnode_t> {
       };
 
       // combined download job data
-      uint64_t    count;               ///< Download job count
-      uint64_t    sumhits;             ///< Total hits
-      uint64_t    sumxfer;             ///< Total transfer size
-      double      avgxfer;             ///< Average transfer size
-      double      avgtime;             ///< Average job processing time (minutes)
-      double      sumtime;             ///< Total job processing time (minutes)
+      uint64_t    count;               ///< Number of times this download was performed.
+      uint64_t    sumhits;             ///< Total number of requests.
+      uint64_t    sumxfer;             ///< Total transfer size.
+      double      avgxfer;             ///< Average transfer size per download.
+      double      avgtime;             ///< Average job processing time per download (minutes).
+      double      sumtime;             ///< Total job processing time (minutes).
 
-      storable_t<danode_t> *download;  ///< Active download job
-      hnode_t     *hnode;              ///< Host node
+      storable_t<danode_t> *download;  ///< Active download node.
+      hnode_t     *hnode;              ///< Host node.
 
       public:
          template <typename ... param_t>

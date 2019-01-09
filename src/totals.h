@@ -48,7 +48,7 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       uint64_t t_user;                             ///< User count
       uint64_t t_err;                              ///< Error count
       uint64_t t_dlcount;                          ///< Download count
-      uint64_t t_downloads;                        ///< Download record count
+      uint64_t t_downloads;                        ///< Download job count
       uint64_t t_srchits;                          ///< Search string request count
       uint64_t t_search;                           ///< Search string count
       uint64_t t_entry;                            ///< Entry page request count
