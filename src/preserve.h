@@ -123,6 +123,8 @@ class state_t {
 
       int restore_state(void);
 
+      int upgrade_database(void);
+
       void clear_month(void);
       
       void update_hourly_stats(void);

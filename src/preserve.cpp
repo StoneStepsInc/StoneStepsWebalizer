@@ -518,6 +518,12 @@ bool state_t::initialize(void)
    if(config.db_info)
       return true;
 
+   // upgrade older databases to make them compatible with the latest version
+   if(sysnode.appver && sysnode.appver_last != VERSION) {
+      if(upgrade_database())
+         throw exception_t(0, "Cannot upgrade the database to the latest version");
+   }
+
    //
    // Initialize history
    //
@@ -756,6 +762,37 @@ int state_t::restore_state(void)
       danode.reset();
       hnode.reset();
    }}
+
+   return 0;
+}
+
+///
+/// @brief  Makes the state database compatible with the current application version.
+///
+/// This method deals with all state database compatibility issues not covered by
+/// record versioning, such as database schema changes and bugs in record versioning.
+///
+/// Prior to calling this method, only `sysnode` can be read safely from the database.
+/// Any other data may change in the upgrade process. The state database may be closed
+/// and reopened in the upgrade process, in which case only `sysnode` will be populated
+/// when the method returns. 
+///
+/// After a successful upgrade, the state database can be processed by the rest of
+/// the code just based on record versions. All upgrade changes must be written to
+/// the database before the method returns and the last application version must be
+/// updated to reflect this upgrade.
+///
+int state_t::upgrade_database(void)
+{
+   // make sure this method is called in the right context
+   if(!sysnode.appver)
+      throw std::logic_error("Cannot upgrade a new or truncated database");
+   
+   // update the last application version and save sysnode
+   sysnode.appver_last = VERSION;
+
+   if(!database.put_sysnode(sysnode, sysnode.storage_info))
+      throw exception_t(0, "Cannot write the system node to the database");
 
    return 0;
 }
