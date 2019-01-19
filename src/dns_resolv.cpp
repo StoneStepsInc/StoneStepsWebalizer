@@ -577,7 +577,7 @@ bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 
 funcexit:
    if(config.dns_lookups && config.debug_mode)
-      fprintf(stderr, "[%04x] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
+      fprintf(stderr, "[%04lx] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
 
    return !dnode->hostname.isempty();
 }
@@ -1099,13 +1099,13 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
    recdata.set_ulen((u_int32_t) bufsize);
    recdata.set_data(buffer);
 
-   if (config.debug_mode) fprintf(stderr,"[%04x] Checking DNS cache for %s...\n", thread_id(), dnode->hnode->string.c_str());
+   if (config.debug_mode) fprintf(stderr,"[%04lx] Checking DNS cache for %s...\n", thread_id(), dnode->hnode->string.c_str());
 
    switch((dberror = dns_db->get(NULL, &key, &recdata, 0)))
    {
       case  DB_NOTFOUND: 
          if (config.debug_mode) 
-            fprintf(stderr,"[%04x] ... not found\n", thread_id());
+            fprintf(stderr,"[%04lx] ... not found\n", thread_id());
          break;
       case  0:
          if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
@@ -1121,7 +1121,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
             }
 
             if (retval && config.debug_mode)
-               fprintf(stderr,"[%04x] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
+               fprintf(stderr,"[%04lx] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
          }
 
          break;
