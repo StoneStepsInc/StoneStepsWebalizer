@@ -55,6 +55,8 @@ extern "C" {
 
 #define DBBUFSIZE          ((size_t) 8192)      // database buffer size
 
+#define DBFILEMASK         ((int) 0664)         ///< DNS cache database file mask (rw-rw-r--)
+
 ///
 /// @struct dns_db_record
 ///
@@ -644,7 +646,7 @@ bool dns_resolver_t::dns_init(void)
       //
       u_int32_t dbenv_flags = DB_CREATE | DB_INIT_CDB | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
 
-      if(dns_db_env->open(config.dns_db_path, dbenv_flags, 0664)) {
+      if(dns_db_env->open(config.dns_db_path, dbenv_flags, DBFILEMASK)) {
          fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, config.dns_cache.c_str());
          return false;
       }
@@ -1240,7 +1242,7 @@ Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
    dns_db = new Db(dns_db_env, 0);
 
    /* open cache file */
-   if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, 0664))
+   if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, DBFILEMASK))
    {
       /* Error: Unable to open DNS cache file <filename> */
       if (config.verbose) fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, dns_cache.c_str());
