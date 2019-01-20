@@ -125,7 +125,7 @@ ifdef CPUARCH
 CCFLAGS  += -march=$(CPUARCH)
 endif
 
-# flags passed to the linker through $(CC)
+# flags passed to the linker through $(CXX)
 CC_LDFLAGS := 
 
 
@@ -142,7 +142,7 @@ all: $(BLDDIR)/$(TARGET) ;
 # build/webalizer
 #
 $(BLDDIR)/$(TARGET): $(OBJS)
-	$(CC) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(LIBS) $(addprefix $(BLDDIR)/,$(OBJS))
+	$(CXX) -o $@ $(CC_LDFLAGS) $(LIBDIRS) $(addprefix $(BLDDIR)/,$(OBJS)) $(LIBS)
 
 install:
 	@echo
@@ -190,30 +190,30 @@ clean:
 #
 $(BLDDIR)/%.d : %.cpp
 	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
-	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
+	set -e; $(CXX) -MM $(CCFLAGS) $(INCDIRS) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 $(BLDDIR)/%.d : %.c
 	@if [[ ! -e $(BLDDIR)/platform ]]; then mkdir -p $(BLDDIR)/platform; fi
-	set -e; $(CC) -MM $(CCFLAGS) $(INCDIRS) $< | \
+	set -e; $(CXX) -MM $(CCFLAGS) $(INCDIRS) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/\1.o \1.d/g' > $@
 
 #
 # Rules to compile source file
 #
 %.o : %.cpp
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $(BLDDIR)/$@
+	$(CXX) -c $(CCFLAGS) $(INCDIRS) $< -o $(BLDDIR)/$@
 
 %.o : %.c
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
+	$(CXX) -c $(CCFLAGS) $(INCDIRS) $< -o $@	
 
 #
 # Build the precompiled header file and the object file
 #
 $(BLDDIR)/$(PCHOBJ) : $(PCHSRC)
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $(BLDDIR)/$(PCHOUT)
-	$(CC) -c $(CCFLAGS) $(INCDIRS) $< -o $@
+	$(CXX) -c -x c++-header $(CCFLAGS) $(INCDIRS) $(SRCDIR)/$(PCHHDR) -o $(BLDDIR)/$(PCHOUT)
+	$(CXX) -c $(CCFLAGS) $(INCDIRS) $< -o $@
 
 # ------------------------------------------------------------------------
 #
