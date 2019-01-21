@@ -220,4 +220,45 @@ TEST(URLNormalizerTest, URLEncodeNormString)
    url_encode(str, out);
    EXPECT_STREQ("x%22%3C%3Ey", out) << "Characters that are not explicitly listed in reserved and unreserved sets URL-encoded";
 }
+
+///
+/// @brief  Test encoding a special character at the end of the buffer.
+///
+/// This test is specifically for a bug caused by a special URL character, like a
+/// double quote, located at the end of the string that had only either one or two
+/// bytes available at the end of the buffer. The output size for a a few special
+/// characters tested here was calculated as if the character was not encoded and
+/// then an encoded character was placed in the buffer, which triggered a runtime
+/// exception.
+///
+TEST(URLNormalizerTest, URLEncodeBufEndSpecialCharacter)
+{
+   string_t in;
+   const char spch[] = "\"<>";
+
+   // test the case with two bytes remaining in the buffer (no room for the last pct-seq character and the null terminator)
+   for(const char *cp = spch; *cp; cp++) {
+      string_t out;
+
+      // string buffer is allocated in multiples of 4, plus the null character -> 5 bytes
+      out.reserve(3);
+      in = "123";
+      in += *cp;
+
+      EXPECT_NO_THROW(url_encode(in, out)) << "A special character at the end of the string shouldn't overwrite one byte in the buffer";
+      EXPECT_STREQ(string_t::_format("123%%%02X", (unsigned char) *cp).c_str(), out.c_str());
+   }
+
+   // test the case with three bytes remaining in the buffer (no room for the null character)
+   for(const char *cp = spch; *cp; cp++) {
+      string_t out;
+
+      out.reserve(3);
+      in = "12";
+      in += *cp;
+
+      EXPECT_NO_THROW(url_encode(in, out)) << "A special character at the end of the string should leave room for a null character";
+      EXPECT_STREQ(string_t::_format("12%%%02X", (unsigned char) *cp).c_str(), out.c_str());
+   }
+}
 }
