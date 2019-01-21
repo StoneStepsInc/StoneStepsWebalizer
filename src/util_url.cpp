@@ -254,20 +254,20 @@ string_t& url_encode(const string_t& str, string_t& out)
          throw std::invalid_argument("Bad UTF-8 character in the URL");
 
       // the size includes the null character
-      size_t reqsz = chsz > 1 || (unsigned char) *cp <= '\x20' || (unsigned char) *cp == '\x7F' ? chsz * 3 + 1 : 2;
+      size_t reqsz = chsz > 1 || (unsigned char) *cp <= '\x20' || (unsigned char) *cp == '\x7F' || strchr("\"<>", (unsigned char) *cp) ? chsz * 3 + 1 : 2;
 
       // check if the buffer has enough room for the next sequence
       if(buf.capacity() - (bcp - buf) < reqsz) {
          // hold onto the current buffer offset in case the buffer is moved
          of = bcp - buf;
 
-         // half of the minimum (32) should be enough to accommodate 4 * 3 + 1 bytes
+         // half of the minimum (32) should be enough to accommodate 4 code units * 3 pct-seq + 1 null character
          buf.resize(std::max((size_t) 32, buf.capacity() + buf.capacity() / 2), of);
          bcp = buf + of;
       }
 
-      // copy one-byte characters that are not control characters or space or '"', '<', '>'
-      if(chsz == 1 && (unsigned char) *cp > '\x20' && (unsigned char) *cp != '\x7F' && !strchr("\"<>", (unsigned char) *cp))
+      // copy safe one-byte characters
+      if(reqsz == 2)
          *bcp++ = *cp++;
       else {
          // and URL-encode everything else

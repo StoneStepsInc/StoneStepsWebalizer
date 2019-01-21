@@ -248,5 +248,58 @@ TEST_CLASS(URLNormalizer) {
          url_encode(str, out);
          mstest::Assert::AreEqual("x%22%3C%3Ey", out, L"Characters that are not explicitly listed in reserved and unreserved sets URL-encoded");
       }
+
+   ///
+   /// @brief  Test encoding a special character at the end of the buffer.
+   ///
+   /// This test is specifically for a bug caused by a special URL character, like a
+   /// double quote, located at the end of the string that had only either one or two
+   /// bytes available at the end of the buffer. The output size for a a few special
+   /// characters tested here was calculated as if the character was not encoded and
+   /// then an encoded character was placed in the buffer, which triggered a runtime
+   /// exception.
+   ///
+   TEST_METHOD(URLEncodeBufEndSpecialCharacter)
+   {
+      string_t in;
+      const char spch[] = "\"<>";
+
+      // test the case with two bytes remaining in the buffer (no room for the last pct-seq character and the null terminator)
+      for(const char *cp = spch; *cp; cp++) {
+         string_t out;
+
+         // string buffer is allocated in multiples of 4, plus the null character -> 5 bytes
+         out.reserve(3);
+         in = "123";
+         in += *cp;
+
+         try {
+            url_encode(in, out);
+         }
+         catch (...) {
+            mstest::Assert::Fail(L"A special character at the end of the string shouldn't overwrite one byte in the buffer");
+         }
+
+         mstest::Assert::AreEqual(string_t::_format("123%%%02X", (unsigned char) *cp).c_str(), out.c_str());
+      }
+
+      // test the case with three bytes remaining in the buffer (no room for the null character)
+      for(const char *cp = spch; *cp; cp++) {
+         string_t out;
+
+         out.reserve(3);
+         in = "12";
+         in += *cp;
+
+         try {
+            url_encode(in, out);
+         }
+         catch (...) {
+            mstest::Assert::Fail(L"A special character at the end of the string should leave room for a null character");
+         }
+
+         mstest::Assert::AreEqual(string_t::_format("12%%%02X", (unsigned char) *cp).c_str(), out.c_str());
+      }
+   }
 };
 }
