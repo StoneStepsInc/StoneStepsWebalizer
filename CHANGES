@@ -1,4 +1,9 @@
 --------------------------------------------------------------------
+4.3.5.1 [21-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * [BUG] Fixed a bug stopping log processing with a "Bad character buffer" message
+
+--------------------------------------------------------------------
 4.3.4.1 [20-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * [Linux] Fixed an issue in Makefile that caused build errors on Ubuntu
