@@ -115,8 +115,8 @@ config_t::config_t(void)
    db_direct = false;
    db_dsync = false;
 
-   swap_first_record = 100;
-   swap_frequency = 100;
+   swap_first_record = 100000;
+   swap_frequency = 100000;
 
    http_port = DEF_HTTP_PORT;                 // HTTP port number
    https_port = DEF_HTTPS_PORT;               // HTTPS port number
