@@ -23,6 +23,7 @@
  * [BUG] Fixed a bug preventing malformed URLs containing Latin1 characters from being converted to lower case
  * [BUG] Fixed a bug that was binding Country Code instead of Country to the country heading
  * [BUG] Added missing HTMLJsPath to README
+ * [BUG] Fixed a bug causing Ctrl-C to be ignored
  * [Windows] Changed Visual Studio projects to use Nuget packages for 3rd-party libraries
  * [Windows] Updated MaxMind DB, ZLib and berkeley DB to their latest versions
  * [JS Charts] Updated the Highcharts version from 4.2 to 6.0
