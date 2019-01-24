@@ -31,12 +31,11 @@ static BOOL WINAPI console_ctrl_c_handler(DWORD type)
 
 void set_ctrl_c_handler(void (*ctrl_c_handler)(void))
 {
-   // set or replace the handler callback
-   ::ctrl_c_handler = ctrl_c_handler;
-
    // register the handler only when called the first time or after a reset
-   if(!::ctrl_c_handler)
+   if(!::ctrl_c_handler) {
+      ::ctrl_c_handler = ctrl_c_handler;
       SetConsoleCtrlHandler(console_ctrl_c_handler, TRUE);   
+   }
 }
 
 void reset_ctrl_c_handler(void)

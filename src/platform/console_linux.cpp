@@ -23,25 +23,24 @@ static void console_ctrl_c_handler(int sig)
 
 void set_ctrl_c_handler(void (*ctrl_c_handler)(void))
 {
-   struct sigaction sa = {};
-   sa.sa_handler = console_ctrl_c_handler;
-
-   // set or replace the handler callback
-   ::ctrl_c_handler = ctrl_c_handler;
-
    // register the handler only when called the first time or after a reset
-   if(!::ctrl_c_handler)
+   if(!::ctrl_c_handler) {
+      ::ctrl_c_handler = ctrl_c_handler;
+
+      struct sigaction sa = {};
+      sa.sa_handler = console_ctrl_c_handler;
       sigaction(SIGINT, &sa, NULL);
+   }
 }
 
 void reset_ctrl_c_handler(void)
 {
-   struct sigaction sa = {};
-   sa.sa_handler = SIG_DFL;
-
    // reset the handler to the default value if it was set before
    if(ctrl_c_handler) {
+      struct sigaction sa = {};
+      sa.sa_handler = SIG_DFL;
       sigaction(SIGINT, &sa, NULL);
+
       ctrl_c_handler = NULL;
    }
 }
