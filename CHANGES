@@ -1,4 +1,10 @@
 --------------------------------------------------------------------
+4.3.6.1 [23-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * [BUG] Fixed a bug in the database mode configuration that caused very poor performance
+ * [BUG] Fixed a bug causing Ctrl-C to be ignored
+
+--------------------------------------------------------------------
 4.3.5.1 [21-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * [BUG] Fixed a bug stopping log processing with a "Bad character buffer" message
