@@ -398,7 +398,7 @@ response = Undefined response code,
            Code 502 - Bad Gateway,
            Code 503 - Service Unavailable,
            Code 504 - Gateway Timeout,
-           Code 505 - HTTP Version Not Supported
+           Code 505 - HTTP Version Not Supported,
            Code 506 - Variant Also Negotiates,
            Code 507 - Insufficient Storage,
            Code 508 - Loop Detected,

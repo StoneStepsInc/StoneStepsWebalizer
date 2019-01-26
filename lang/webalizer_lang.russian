@@ -405,7 +405,7 @@ response = Неизвестный код ответа,
            Код 502 - Bad Gateway,
            Код 503 - Service Unavailable,
            Код 504 - Gateway Timeout,
-           Код 505 - HTTP Version Not Supported
+           Код 505 - HTTP Version Not Supported,
            Код 506 - Variant Also Negotiates,
            Код 507 - Insufficient Storage,
            Код 508 - Loop Detected,

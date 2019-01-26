@@ -430,7 +430,7 @@ response =    Unbekannter Antwort-Code,
 			  Code 502 - Fehlerhaftes Gateway,
 			  Code 503 - Service nicht verfügbar,
 			  Code 504 - Gateway Zeitüberschreitung...,
-			  Code 505 - HTTP-Version wird nicht unterstützt
+			  Code 505 - HTTP-Version wird nicht unterstützt,
 			  Code 506 - Variant Also Negotiates,
 			  Code 507 - Insufficient Storage,
 			  Code 508 - Loop Detected,
