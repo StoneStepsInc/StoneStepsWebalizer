@@ -1589,8 +1589,9 @@ void config_t::set_enable_phrase_values(bool enable)
 
 ///
 /// @brief  Converts text representation of the state database cache size value 
-///         into a number. Suffixes `K` and `M` are interpreted as kilo and mega 
-///         multipliers.
+///         into a number in bytes.
+///
+/// Suffixes `K`, `M` and `G` are interpreted as kilo, mega and giga multipliers.
 ///
 uint32_t config_t::get_db_cache_size(const char *value) const
 {
@@ -1617,6 +1618,10 @@ uint32_t config_t::get_db_cache_size(const char *value) const
 
          case 'M':
             cachesize *= 1024 * 1024;
+            break;
+
+         case 'G':
+            cachesize *= 1024 * 1024 * 1024;
             break;
       }
    }
