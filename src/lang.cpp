@@ -109,6 +109,8 @@
          {  0, "Undefined response code"                    }, \
          {100, "Code 100 - Continue"                        }, \
          {101, "Code 101 - Switching Protocols"             }, \
+         {102, "Code 102 - Processing"                      }, \
+         {103, "Code 103 - Early Hints"                     }, \
          {200, "Code 200 - OK"                              }, \
          {201, "Code 201 - Created"                         }, \
          {202, "Code 202 - Accepted"                        }, \
@@ -116,13 +118,18 @@
          {204, "Code 204 - No Content"                      }, \
          {205, "Code 205 - Reset Content"                   }, \
          {206, "Code 206 - Partial Content"                 }, \
+         {207, "Code 207 - Multi-Status"                    }, \
+         {208, "Code 208 - Already Reported"                }, \
+         {226, "Code 226 - IM Used"                         }, \
          {300, "Code 300 - Multiple Choices"                }, \
          {301, "Code 301 - Moved Permanently"               }, \
          {302, "Code 302 - Found"                           }, \
          {303, "Code 303 - See Other"                       }, \
          {304, "Code 304 - Not Modified"                    }, \
          {305, "Code 305 - Use Proxy"                       }, \
+         {306, "Code 306 - (Unused)"                        }, \
          {307, "Code 307 - Moved Temporarily"               }, \
+         {308, "Code 308 - Permanent Redirect"              }, \
          {400, "Code 400 - Bad Request"                     }, \
          {401, "Code 401 - Unauthorized"                    }, \
          {402, "Code 402 - Payment Required"                }, \
@@ -141,12 +148,27 @@
          {415, "Code 415 - Unsupported Media Type"          }, \
          {416, "Code 416 - Requested Range Not Satisfiable" }, \
          {417, "Code 417 - Expectation Failed"              }, \
+         {421, "Code 421 - Misdirected Request"             }, \
+         {422, "Code 422 - Unprocessable Entity"            }, \
+         {423, "Code 423 - Locked"                          }, \
+         {424, "Code 424 - Failed Dependency"               }, \
+         {425, "Code 425 - Too Early"                       }, \
+         {426, "Code 426 - Upgrade Required"                }, \
+         {428, "Code 428 - Precondition Required"           }, \
+         {429, "Code 429 - Too Many Requests"               }, \
+         {431, "Code 431 - Request Header Fields Too Large" }, \
+         {451, "Code 451 - Unavailable For Legal Reasons"   }, \
          {500, "Code 500 - Internal Server Error"           }, \
          {501, "Code 501 - Not Implemented"                 }, \
          {502, "Code 502 - Bad Gateway"                     }, \
          {503, "Code 503 - Service Unavailable"             }, \
          {504, "Code 504 - Gateway Timeout"                 }, \
-         {505, "Code 505 - HTTP Version Not Supported"      } 
+         {505, "Code 505 - HTTP Version Not Supported"      }, \
+         {506, "Code 506 - Variant Also Negotiates"         }, \
+         {507, "Code 507 - Insufficient Storage"            }, \
+         {508, "Code 508 - Loop Detected"                   }, \
+         {510, "Code 510 - Not Extended"                    }, \
+         {511, "Code 511 - Network Authentication Required" }
 
 /* Country codes */
 
