@@ -418,7 +418,7 @@ s_month = Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
 l_month = January, February, March, April, May, June, July, August, September, October, November, December
 
 #
-# response code descriptions... order IS important!      
+# HTTP response code descriptions... order IS important!
 #
 response = Undefined response code,
          Code 100 - Continue,
@@ -488,7 +488,7 @@ msg_title   = Usage Statistics for
 msg_h_other = Other
 
 #
-# Country codes (descriptions that contain commas must be quoted - see .fx below)
+# Country codes (descriptions that contain commas must be enclosed in double quotes)
 #
 ctry =	*,        Unresolved/Unknown,
         ac,       Ascension Island,
