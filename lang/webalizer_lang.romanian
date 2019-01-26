@@ -400,13 +400,12 @@ response = Cod de raspuns nedefinit,
            Cod 502 - Gateway gresit,
            Cod 503 - Serviciu indisponibil,
            Cod 504 - Timeout la gateway,
-           Cod 505 - Versiune de HTTP nesuportata,    0   
+           Cod 505 - Versiune de HTTP nesuportata,
            Cod 506 - Variant Also Negotiates,
            Cod 507 - Insufficient Storage,
            Cod 508 - Loop Detected,
            Cod 510 - Not Extended,
            Cod 511 - Network Authentication Required
-	 ;
 
 msg_title   = Statisticile de utilizare ale lui
 msg_h_other = Altele
