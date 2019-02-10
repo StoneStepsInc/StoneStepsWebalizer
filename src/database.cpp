@@ -39,6 +39,65 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
    return sc_extract_cb<extract>(secondary, key, data, result);
 }
 
+system_database_t::system_database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
+      config(config),
+      system(make_table())
+{
+}
+
+system_database_t::~system_database_t(void)
+{
+}
+
+///
+/// Registers with the underlying tables of the derived class, along with its own system
+/// tables and opens the underlying database. 
+///
+berkeleydb_t::status_t system_database_t::open(std::initializer_list<table_t*> tblist)
+{
+   status_t status;
+
+   // combine all table pointers in a single array
+   std::vector<table_t*> tblist2(tblist.size() + 1);
+
+   tblist2[0] = &system;
+   std::copy(tblist.begin(), tblist.end(), tblist2.begin() + 1);
+
+   // open the underlying database and register all table pointers
+   if(!(status = berkeleydb_t::open(std::initializer_list<table_t*>(&tblist2.front(), &tblist2.back() + 1))).success())
+      return status;
+
+   // open the system database and return
+   return system.open(config.get_db_path(), "system", &bt_compare_cb<sysnode_t::s_compare_key>);
+}
+
+berkeleydb_t::status_t system_database_t::open(void)
+{
+   status_t status;
+
+   // open the underlying database and register the system table pointer
+   if(!(status = berkeleydb_t::open({&system})).success())
+      return status;
+
+   // open the system database and return
+   return system.open(config.get_db_path(), "system", &bt_compare_cb<sysnode_t::s_compare_key>);
+}
+
+bool system_database_t::is_sysnode(void) const
+{
+   return system.count() ? true : false;
+}
+
+bool system_database_t::put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info)
+{
+   return system.put_node<sysnode_t>(sysnode, strg_info);
+}
+
+bool system_database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const
+{
+   return system.get_node_by_id(sysnode, upcb, arg);
+}
+
 ///
 /// @name   Database Schema
 ///
@@ -99,8 +158,6 @@ const struct database_t::table_desc_t {
    bt_compare_cb_t         value_hash_compare_cb;     ///< Compares two value hashes in secondary database keys.
    sc_extract_cb_t         value_hash_extract_cb;     ///< Extracts value hash from serialized node data.
 } database_t::table_desc[] = {
-   {&database_t::system, "system", 
-         &bt_compare_cb<sysnode_t::s_compare_key>},
    {&database_t::urls, "urls", 
          &bt_compare_cb<unode_t::s_compare_key>, 
          "urls.seq",
@@ -236,8 +293,7 @@ const struct database_t::index_desc_t {
 //
 // -----------------------------------------------------------------------
 
-database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
-      config(config),
+database_t::database_t(const ::config_t& config) : system_database_t(config),
       urls(make_table()),
       hosts(make_table()),
       visits(make_table()),
@@ -253,27 +309,8 @@ database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(conf
       hourly(make_table()),
       totals(make_table()),
       countries(make_table()),
-      cities(make_table()),
-      system(make_table())
+      cities(make_table())
 {
-   // initialize the array to hold table pointers
-   add_table(urls);
-   add_table(hosts);
-   add_table(visits);
-   add_table(downloads);
-   add_table(active_downloads);
-   add_table(agents);
-   add_table(referrers);
-   add_table(search);
-   add_table(users);
-   add_table(errors);
-   add_table(scodes);
-   add_table(daily);
-   add_table(hourly);
-   add_table(totals);
-   add_table(countries);
-   add_table(cities);
-   add_table(system);
 }
 
 database_t::~database_t(void)
@@ -297,7 +334,13 @@ berkeleydb_t::status_t database_t::open(void)
 {
    status_t status;
 
-   if(!(status = berkeleydb_t::open()).success())
+   // initialize the table list for the underlying database layer
+   std::initializer_list<table_t*> tblist = {
+               &urls, &hosts, &visits, &downloads, &active_downloads, &agents,
+               &referrers, &search, &users, &errors, &scodes, &daily, &hourly,
+               &totals, &countries, &cities};
+
+   if(!(status = system_database_t::open(tblist)).success())
       return status;
 
    //
@@ -674,26 +717,6 @@ bool database_t::put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info)
 bool database_t::get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const
 {
    return cities.get_node_by_id(ctnode, upcb, arg);
-}
-
-// -----------------------------------------------------------------------
-//
-// system
-//
-// -----------------------------------------------------------------------
-bool database_t::is_sysnode(void) const
-{
-   return system.count() ? true : false;
-}
-
-bool database_t::put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info)
-{
-   return system.put_node<sysnode_t>(sysnode, strg_info);
-}
-
-bool database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const
-{
-   return system.get_node_by_id(sysnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------

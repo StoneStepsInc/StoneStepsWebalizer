@@ -173,6 +173,12 @@ class berkeleydb_t {
             {
                return message;
             }
+
+            /// Returns the error code. A zero indicates success.
+            int err_num(void) const
+            {
+               return error;
+            }
       };
 
       ///
@@ -606,8 +612,6 @@ class berkeleydb_t {
       bool              trickle;
 
    protected:
-      void add_table(table_t& table) {tables.push_back(&table);}
-
       table_t make_table(void) {return table_t(dbenv, sequences, buffer_stack);}
 
    public:
@@ -618,8 +622,8 @@ class berkeleydb_t {
       /// if trickle is enabled, dirty pages will be trickled to disk by a background thread
       void set_trickle(bool value) {trickle = value;}
 
-      /// sets up the Berkeley DB environment and opens the sequence database, but not table databases
-      status_t open(void);
+      /// Sets up the Berkeley DB environment and opens the sequence database, but not table databases.
+      status_t open(std::initializer_list<table_t*> tblist);
 
       /// closes all table databases and the Berkeley DB environment
       status_t close(void);

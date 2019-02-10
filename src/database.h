@@ -21,15 +21,14 @@
 #include "storable.h"
 
 ///
-/// @class  database_t
+/// @brief  Opens only the system table in the specified database.
 ///
-/// @brief  Application-specific database management class
+/// An instance of `system_database_t` has only the system table open and may be used
+/// to validate the database version, time settings and byte order, as well as to make
+/// schema changes, such as to rename tables other than the system tables.
 ///
-class database_t : public berkeleydb_t {
+class system_database_t : public berkeleydb_t {
    private:
-      struct table_desc_t;
-      struct index_desc_t;
-
       class db_config_t : public berkeleydb_t::config_t {
          private:
             const ::config_t& config;
@@ -59,11 +58,46 @@ class database_t : public berkeleydb_t {
             bool get_db_dsync(void) const {return config.db_dsync;}
       };
 
+   protected:
+      const ::config_t& config;           ///< A reference to the application configuration,
+
+      table_t           system;           ///< The system table.
+
+   protected:
+      /// Opens the system table and registers other tables from the derived database class.
+      status_t open(std::initializer_list<table_t*> tblist);
+
+   public:
+      system_database_t(const ::config_t& config);
+
+      ~system_database_t(void);
+
+      /// Opens the database with just the system table open.
+      status_t open(void);
+
+      /// Returns `true` if there is system node in the database.
+      bool is_sysnode(void) const;
+
+      /// Saves the system node in the database.
+      bool put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info);
+
+      /// Reads the system node from the database.
+      bool get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const;
+};
+
+///
+/// @class  database_t
+///
+/// @brief  Application-specific database management class
+///
+class database_t : public system_database_t {
+   private:
+      struct table_desc_t;
+      struct index_desc_t;
+
    private:
       static const table_desc_t table_desc[];
       static const index_desc_t index_desc[];
-
-      const ::config_t& config;
 
       table_t           urls;
       table_t           hosts;
@@ -81,7 +115,6 @@ class database_t : public berkeleydb_t {
       table_t           totals;
       table_t           countries;
       table_t           cities;
-      table_t           system;
 
    public:
       database_t(const ::config_t& config);
@@ -289,15 +322,6 @@ class database_t : public berkeleydb_t {
       bool put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info);
 
       bool get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const;
-
-      //
-      // system
-      //
-      bool is_sysnode(void) const;
-
-      bool put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info);
-
-      bool get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const;
 };
 
 #endif // DATABASE_H

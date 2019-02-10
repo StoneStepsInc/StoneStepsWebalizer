@@ -24,6 +24,7 @@
 
 #include <type_traits>
 #include <utility>
+#include <algorithm>
 
 #include "berkeleydb.h"
 
@@ -1038,12 +1039,27 @@ void berkeleydb_t::delete_db(Db *db)
    }
 }
 
-berkeleydb_t::status_t berkeleydb_t::open(void)
+///
+/// All tables passed via the parameter are registered with this class for subsequent
+/// table operations on all these tables, such as being able to close, truncate, etc
+/// all of them within this class.
+///
+/// The tables that are being registered must be initialized via `make_table` and must
+/// not be opened at the time of this call. After this call succeeds, the database must
+/// be closed even if derived method failed to open registered tables or failed in some
+/// other way. This ensures that all registered tables are disassociated from the opened
+/// environment.
+///
+berkeleydb_t::status_t berkeleydb_t::open(std::initializer_list<table_t*> tblist)
 {
    u_int32_t dbflags = DB_CREATE;
    u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
    int major, minor, patch;
    status_t status;
+
+   // it's a mistale to try to open the database twice without closing it after the first call
+   if(!tables.empty())
+      throw std::logic_error("No tables should be registered before the database is opened");
 
    db_version(&major, &minor, &patch);
 
@@ -1094,6 +1110,9 @@ berkeleydb_t::status_t berkeleydb_t::open(void)
    if(!(status = sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
       return status;
 
+   // hold onto all the tables for subsequent operations
+   tables = tblist;
+
    // now that everything is initialized, we can start the trickle thread
    if(trickle)
       trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
@@ -1107,15 +1126,17 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
    int error = 0;
    status_t status;
 
-   // tell trickle thread to stop
-   trickle_mtx.lock();
-   trickle_thread_stop = true;
-   trickle_cv.notify_one();
-   trickle_mtx.unlock();
+   if(trickle) {
+      // tell trickle thread to stop
+      trickle_mtx.lock();
+      trickle_thread_stop = true;
+      trickle_cv.notify_one();
+      trickle_mtx.unlock();
 
-   // if the trickle thread was started, wait for it to stop
-   if(trickle_thread.joinable())
-      trickle_thread.join();
+      // if the trickle thread was started, wait for it to stop
+      if(trickle_thread.joinable())
+         trickle_thread.join();
+   }
 
    // close all table databases
    for(size_t i = 0; i < tables.size(); i++) {
@@ -1142,6 +1163,8 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
       status = error;
 
    reset_db_handles();
+
+   tables.clear();
 
    return status;
 }

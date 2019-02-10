@@ -123,7 +123,7 @@ class state_t {
 
       int restore_state(void);
 
-      int upgrade_database(void);
+      static void upgrade_database(storable_t<sysnode_t>& sysnode, system_database_t& sysdb);
 
       void clear_month(void);
       

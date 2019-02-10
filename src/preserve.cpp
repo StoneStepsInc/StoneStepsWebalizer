@@ -441,12 +441,66 @@ bool state_t::initialize(void)
          return false;
       }
    }
+
+   database_t::status_t status;
+   system_database_t sysdb(config);
+
+   if(!(status = sysdb.open()).success()) {
+      if(status.err_num() != ENOENT) {
+         fprintf(stderr, "Cannot open the sysdb %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
+         return false;
+      }
+   }
    else {
+      //
+      // If there is a system node, check if we have anything to do, given state of 
+      // the database and current run parameters.
+      //
+      if(sysdb.is_sysnode()) {
+         if(!sysdb.get_sysnode_by_id(sysnode, NULL, NULL))
+            throw exception_t(0, "Cannot read the system node from the database");
+
+         // cannot read any data if byte order isn't the same
+         if(!sysnode.check_byte_order())
+            throw exception_t(0, "Incompatible database format (byte order)");
+
+         //
+         // Time stamps in the databases prior to v4 were saved without UTC offsets and
+         // cannot be interpreted without having to propagate current UTC offset from 
+         // the configuration to all the nodes, which would require a significant effort. 
+         // Instead, let's just cut off access to old databases here. In addition to this,
+         // all data counters in v4 were changed to 64-bit integers. Only continue if we
+         // need to read just the sysnode and query the database directly.
+         //
+         if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
+            throw exception_t(0, string_t::_format("Cannot open a database with a version prior to v%s", state_t::get_version(MIN_APP_DB_VERSION).c_str()));
+         
+         if(!sysnode.check_size_of())
+            throw exception_t(0, "Incompatible database format (data type sizes)");
+
+         // do not enforce time settings if we just need to print database information
+         if(!config.db_info && !sysnode.check_time_settings(config))
+            throw exception_t(0, "Incompatible database format (time settings)");
+
+         // upgrade older databases to make them compatible with the latest version
+         if(sysnode.appver && sysnode.appver_last != VERSION)
+            upgrade_database(sysnode, sysdb);
+
+         // make sure the database base is closed properly to ensure schema upgrades
+         if(!(status = sysdb.close()).success()) {
+            fprintf(stderr, "Cannot close the database %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
+            return false;
+         }
+      }
+   }
+
+   // set up background writing for log processing
+   if(!config.is_maintenance()) {
       // enable trickling for log processing
       database.set_trickle(true);
    }
 
-   database_t::status_t status;
+   // open the full state database (sysnode is already up to date)
    if(!(status = database.open()).success()) {
       fprintf(stderr, "Cannot open the database %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
       return false;
@@ -456,72 +510,35 @@ bool state_t::initialize(void)
    if(config.verbose > 1)
       printf("%s %s\n", config.lang.msg_use_db, config.get_db_path().c_str());
 
-   //
-   // If there is a system node, check if we have anything to do, given state of 
-   // the database and current run parameters.
-   //
-   if(database.is_sysnode()) {
-      if(!database.get_sysnode_by_id(sysnode, NULL, NULL))
-         throw exception_t(0, "Cannot read the system node from the database");
-
-      // cannot read any data if byte order isn't the same
-      if(!sysnode.check_byte_order())
-         throw exception_t(0, "Incompatible database format (byte order)");
-
-      //
-      // Time stamps in the databases prior to v4 were saved without UTC offsets and
-      // cannot be interpreted without having to propagate current UTC offset from 
-      // the configuration to all the nodes, which would require a significant effort. 
-      // Instead, let's just cut off access to old databases here. In addition to this,
-      // all data counters in v4 were changed to 64-bit integers. Only continue if we
-      // need to read just the sysnode and query the database directly.
-      //
-      if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
-         throw exception_t(0, string_t::_format("Cannot open a database with a version prior to v%s", state_t::get_version(MIN_APP_DB_VERSION).c_str()));
-         
-      if(!sysnode.check_size_of())
-         throw exception_t(0, "Incompatible database format (data type sizes)");
-
-      // do not enforce time settings if we just need to print database information
-      if(!config.db_info && !sysnode.check_time_settings(config))
-         throw exception_t(0, "Incompatible database format (time settings)");
-
-      // nothing to do if just compacting the database or printing information
-      if(!config.compact_db && !config.db_info) {
-         // attach indexes to generate a report or to end the current month
-         if(config.prep_report || config.end_month) {
-            // if the last run was in the batch mode, rebuild indexes
-            if(!(status = database.attach_indexes(sysnode.batch ? true : false)).success())
-               throw exception_t(0, string_t::_format("Cannot activate secondary database indexes (%s)", status.err_msg().c_str()));
-         }
-         else {
-            // do not truncate incremental database for a non-incremental run
-            if(!config.incremental && sysnode.incremental)
-               throw exception_t(0, "Cannot truncate an incremental database for a non-incremental run");
-
-            //
-            // Truncate the database for 
-            //   a) a non-incremental run or
-            //   b) an incremental run following a non-incremental one
-            //
-            if(!config.incremental || !sysnode.incremental) {
-               database_t::status_t status;
-               if(!(status = database.truncate()).success())
-                  throw exception_t(0, string_t::_format("Cannot truncate the database (%s)\n", status.err_msg().c_str()));
-               sysnode.reset(config);
-            }
-         }
-      }
-   }
-
    // no need to initialize the rest if we just need database information
    if(config.db_info)
       return true;
 
-   // upgrade older databases to make them compatible with the latest version
-   if(sysnode.appver && sysnode.appver_last != VERSION) {
-      if(upgrade_database())
-         throw exception_t(0, "Cannot upgrade the database to the latest version");
+   // nothing to do if just compacting the database or printing information
+   if(!config.compact_db && !config.db_info) {
+      // attach indexes to generate a report or to end the current month
+      if(config.prep_report || config.end_month) {
+         // if the last run was in the batch mode, rebuild indexes
+         if(!(status = database.attach_indexes(sysnode.batch ? true : false)).success())
+            throw exception_t(0, string_t::_format("Cannot activate secondary database indexes (%s)", status.err_msg().c_str()));
+      }
+      else {
+         // do not truncate incremental database for a non-incremental run
+         if(!config.incremental && sysnode.incremental)
+            throw exception_t(0, "Cannot truncate an incremental database for a non-incremental run");
+
+         //
+         // Truncate the database for 
+         //   a) a non-incremental run or
+         //   b) an incremental run following a non-incremental one
+         //
+         if(!config.incremental || !sysnode.incremental) {
+            database_t::status_t status;
+            if(!(status = database.truncate()).success())
+               throw exception_t(0, string_t::_format("Cannot truncate the database (%s)\n", status.err_msg().c_str()));
+            sysnode.reset(config);
+         }
+      }
    }
 
    //
@@ -767,34 +784,29 @@ int state_t::restore_state(void)
 }
 
 ///
-/// @brief  Makes the state database compatible with the current application version.
+/// @brief  Makes the state database schema compatible with the current application
+///         version.
 ///
-/// This method deals with all state database compatibility issues not covered by
-/// record versioning, such as database schema changes and bugs in record versioning.
+/// This method deals with all state database schema compatibility issues, which can
+/// be applied only if database tables that are being renamed, copied, etc, are not
+/// opened.
 ///
-/// Prior to calling this method, only `sysnode` can be read safely from the database.
-/// Any other data may change in the upgrade process. The state database may be closed
-/// and reopened in the upgrade process, in which case only `sysnode` will be populated
-/// when the method returns. 
+/// The system database passed into this method must be the most derived class to
+/// ensure that no tables except the system table are opened.
 ///
-/// After a successful upgrade, the state database can be processed by the rest of
-/// the code just based on record versions. All upgrade changes must be written to
-/// the database before the method returns and the last application version must be
-/// updated to reflect this upgrade.
-///
-int state_t::upgrade_database(void)
+void state_t::upgrade_database(storable_t<sysnode_t>& sysnode, system_database_t& sysdb)
 {
    // make sure this method is called in the right context
    if(!sysnode.appver)
       throw std::logic_error("Cannot upgrade a new or truncated database");
    
+   // schema upgrades go here...
+
    // update the last application version and save sysnode
    sysnode.appver_last = VERSION;
 
-   if(!database.put_sysnode(sysnode, sysnode.storage_info))
+   if(!sysdb.put_sysnode(sysnode, sysnode.storage_info))
       throw exception_t(0, "Cannot write the system node to the database");
-
-   return 0;
 }
 
 /*********************************************/
