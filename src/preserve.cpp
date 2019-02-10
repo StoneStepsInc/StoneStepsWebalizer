@@ -446,6 +446,7 @@ bool state_t::initialize(void)
    system_database_t sysdb(config);
 
    if(!(status = sysdb.open()).success()) {
+      // report any errors except that the database file does not exist
       if(status.err_num() != ENOENT) {
          fprintf(stderr, "Cannot open the sysdb %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
          return false;
