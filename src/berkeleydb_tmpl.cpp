@@ -284,10 +284,8 @@ void berkeleydb_t::table_t::init_db_handles(void)
 
    // construct secondary database handles
    for(u_int index = 0; index < indexes.size(); index++) {
-      if((scdb = indexes[index].scdb) == NULL) 
-         continue;
-
-      new (scdb) Db(dbenv, DBFLAGS);
+      if((scdb = indexes[index].scdb) != nullptr) 
+         new (scdb) Db(dbenv, DBFLAGS);
    }
 
    // construct the primary database
@@ -300,10 +298,8 @@ void berkeleydb_t::table_t::destroy_db_handles(void)
 
    // destroy secondary database handles
    for(u_int index = 0; index < indexes.size(); index++) {
-      if((scdb = indexes[index].scdb) == NULL) 
-         continue;
-
-      scdb->Db::~Db();
+      if((scdb = indexes[index].scdb) != nullptr) 
+         scdb->Db::~Db();
    }
 
    // destroy the primary database
