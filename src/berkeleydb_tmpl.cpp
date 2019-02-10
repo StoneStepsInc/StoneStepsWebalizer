@@ -978,7 +978,7 @@ void berkeleydb_t::reset_db_handles(void)
    
    // reconstruct the environment 
    dbenv.~DbEnv();
-   new (&dbenv) DbEnv(DBFLAGS);
+   new (&dbenv) DbEnv(DBENVFLAGS);
 
    // construct the sequence database
    new (&sequences) Db(&dbenv, DBFLAGS);
