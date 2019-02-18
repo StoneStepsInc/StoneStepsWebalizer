@@ -1792,17 +1792,18 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             process_resolved_hosts();
 
          //
-         // Every thousand records swap out nodes older than two visit timeouts. This
-         // number is arbitrary and seems like a reasonable balance between how many
-         // nodes are saved at one time and the size of the hash tables.
+         // Check periodically whether we need to write some of the values to disk. Doing
+         // so every 10K log records isn't frequent enough to have the evaluation process
+         // slow down log processing, but is not too infrequent to allow memory pile up
+         // between checks.
          //
-         if(total_good % 1000 == 0) {
+         if(total_good % 10000 == 0) {
             stime = msecs();
             //
             // Use the database cache size as a guiding number for the combined size of
-            // our hash tables or 256 MB if the former was not set.
+            // our hash tables or 10 MB if the former was not set.
             //
-            state.swap_out(htab_tstamp - config.visit_timeout * 2, std::max(config.db_cache_size, 256u * 1024u * 1024u));
+            state.swap_out(htab_tstamp - config.visit_timeout * 2, std::max(config.db_cache_size, 10u * 1024u * 1024u));
             ptms.mnt_time += elapsed(stime, msecs());
          }
       }

@@ -953,30 +953,41 @@ void state_t::set_tstamp(const tstamp_t& tstamp)
 ///
 void state_t::swap_out(int64_t tstamp, size_t maxmem)
 {
-   //
-   // Use 2/3 of the memory for the large hash tables and 1/3 for small ones.
-   // If the resulting size is zero, then it will be ignored by the swap_out
-   // call.
-   //
-   size_t lg_htab_sz = (maxmem * 2) / 9;     // ((x / 3) * 2) / 3
-   size_t sm_htab_sz = (maxmem * 2) / 12;    // ((x / 3) * 2) / 4
+   size_t totmem = 0;
+   hash_table_base *hti[] = {&dl_htab, &hm_htab, &um_htab, &rm_htab, &am_htab, &sr_htab, &im_htab};
 
-   //
-   // The order of swap_out calls is important because nodes may reference one 
-   // another. These are current dependencies:
-   //
-   //    dlnode_t > hnode_t > vnode_t > unode_t
-   //             > danode_t
-   //
-   dl_htab.swap_out(tstamp, lg_htab_sz);
-   hm_htab.swap_out(tstamp, lg_htab_sz);
-   um_htab.swap_out(tstamp, lg_htab_sz);
+   // compute total memory used by all hash tables
+   for(hash_table_base *h : hti)
+      totmem += h->get_memsize();
 
-   // these nodes currently do not reference other nodes
-   rm_htab.swap_out(tstamp, sm_htab_sz);
-   am_htab.swap_out(tstamp, sm_htab_sz);
-   sr_htab.swap_out(tstamp, sm_htab_sz);
-   im_htab.swap_out(tstamp, sm_htab_sz);
+   // check if if we are over the requested limit
+   if(totmem > maxmem) {
+      //
+      // Compute how much memory to swap out, which is all memory over the
+      // maximum, plus 20% of the maximum allowed size.
+      //
+      size_t overmem = totmem - maxmem + maxmem / 5;
+
+      //
+      // Walk all tables and for each compute the size of the excess memory
+      // that proportional to the size they occupy in the total memory.
+      //
+      for(hash_table_base *h : hti) {
+         size_t htotmem = h->get_memsize();
+
+         if(htotmem) {
+            // compute the percentage of this hash table in the total size
+            double htotpct = (htotmem * 100.) / totmem;
+
+            // compute the equivalent size in the excess memory size
+            size_t hcutmem = (size_t) ((overmem / 100.) * htotpct);
+
+            // swap out memory that is over the maximum for this hash table
+            if(hcutmem)
+               h->swap_out(tstamp, htotmem - hcutmem);
+         }
+      }
+   }
 }
 
 // -----------------------------------------------------------------------

@@ -162,6 +162,11 @@ struct htab_node_t {
 /// different hash table instantiations without having to declare member function
 /// templates to access these definitions in their own instantiations.
 ///
+/// Virtual functions declared in this class are not intended to describe the full
+/// hash table interface, but rather serve the purpose of being able to call these
+/// functions against a base hash table class in a loop for different hash table
+/// types.
+///
 class hash_table_base {
    public:
       ///
@@ -184,6 +189,13 @@ class hash_table_base {
             return max_tstamp - min_tstamp;
          }
       };
+
+   public:
+      /// Returns estimated memory size for this hash table.
+      virtual size_t get_memsize(void) const = 0;
+
+      /// Swaps out oldest nodes with time stamps less than or equal `tstamp` to some external storage.
+      virtual void swap_out(int64_t tstamp, size_t maxsize = 0) = 0;
 };
 
 ///
@@ -467,6 +479,9 @@ class hash_table : public hash_table_base {
 
       /// Returns the number of nodes in the hash table.
       size_t size(void) const {return count;}
+
+      /// Returns estimated memory size for this hash table.
+      size_t get_memsize(void) const override {return memsize;}
       /// @}
 
       ///
@@ -478,7 +493,7 @@ class hash_table : public hash_table_base {
       void set_swap_out_cb(swap_cb_t swapcb, void *arg, eval_cb_t evalcb = nullptr);
 
       /// Swaps out oldest nodes with time stamps less than or equal `tstamp` to some external storage.
-      void swap_out(int64_t tstamp, size_t maxsize = 0);
+      void swap_out(int64_t tstamp, size_t maxsize = 0) override;
       /// @}
 
       ///
