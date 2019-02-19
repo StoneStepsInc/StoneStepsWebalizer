@@ -30,6 +30,30 @@
 #include "util_ipaddr.h"
 #include "util_path.h"
 
+static const u_int DNS_CACHE_TTL       = 86400*30;    ///< Default TTL of an entry in the DNS cache (30 days, in seconds).
+
+static const u_int DNS_MAX_THREADS     = 100;         ///< Maximum number of DNS threads.
+
+static const double FONT_SIZE_SMALL    = 8.;          ///< Small font size for charts, in points.
+static const double FONT_SIZE_MEDIUM   = 10.;         ///< Medium font size for charts, in points.
+
+/* Port numbers */
+static const u_short DEF_HTTP_PORT     = 80;          ///< Default HTTP port number.
+static const u_short DEF_HTTPS_PORT    = 443;         ///< Default HTTP/SSL port number.
+
+///
+/// The default Berkeley DB cache size is in the order of a couple of hundred kilobytes,
+/// which results in very slow database look-up times. Use 50 MB as the default value,
+/// which provides a reasonable balance between log processing speed and the amount of
+/// consumed memory and will work well for most log sizes.
+///
+static const uint32_t DB_DEF_CACHE_SIZE = 50 * 1024 * 1024;
+
+///
+/// Minimum Berkeley DB cache size (1 MB).
+///
+static const uint32_t DB_MIN_CACHE_SIZE = 1 * 1024 * 1024;
+
 ///
 /// @struct kwinfo
 ///

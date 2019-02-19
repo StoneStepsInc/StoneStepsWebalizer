@@ -30,21 +30,6 @@
 #endif
 #endif
 
-#define DNS_CACHE_TTL     86400*30                 // Default TTL of an entry in the DNS cache (in seconds)
-
-#define DNS_MAX_THREADS   100                      // Maximum number of DNS threads
-
-#define DB_DEF_CACHE_SIZE  ((uint32_t) 0)          // Default cache size (ignored)
-#define DB_MIN_CACHE_SIZE  ((uint32_t) 20 * 1024)  // Minimum cache size (20K)
-
-#define FONT_SIZE_SMALL       8.                   // points
-#define FONT_SIZE_MEDIUM      10.                  // points
-
-/* Port numbers */
-#define PORT_UNKNOWN             ((u_short) 0)
-#define DEF_HTTP_PORT            ((u_short) 80)
-#define DEF_HTTPS_PORT           ((u_short) 443)
-
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
 
 /// Unit test classes that need access to private members.
