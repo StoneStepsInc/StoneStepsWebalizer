@@ -1803,7 +1803,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             // Use the database cache size as a guiding number for the combined size of
             // our hash tables or 10 MB if the former was not set.
             //
-            state.swap_out(htab_tstamp - config.visit_timeout * 2, std::max(config.db_cache_size, 10u * 1024u * 1024u));
+            state.swap_out(htab_tstamp - config.visit_timeout * 2, config.db_cache_size);
             ptms.mnt_time += elapsed(stime, msecs());
          }
       }

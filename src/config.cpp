@@ -141,7 +141,7 @@ config_t::config_t(void)
    dump_countries = false;
    dump_cities = false;
 
-   db_cache_size = DB_DEF_CACHE_SIZE;         // Default cache size (ignored)
+   db_cache_size = DB_DEF_CACHE_SIZE;
    db_seq_cache_size = 64;
    db_direct = false;
    db_dsync = false;
@@ -666,6 +666,9 @@ void config_t::prep_and_validate(void)
 
    if(db_seq_cache_size < 256)
       db_seq_cache_size = 256;
+
+   if(db_cache_size < DB_MIN_CACHE_SIZE)
+      db_cache_size = DB_MIN_CACHE_SIZE;
 
    // check DNS/GeoIP settings
    if(dns_children) {
@@ -1616,6 +1619,12 @@ void config_t::set_enable_phrase_values(bool enable)
 ///         into a number in bytes.
 ///
 /// Suffixes `K`, `M` and `G` are interpreted as kilo, mega and giga multipliers.
+///
+/// Values less than `DB_MIN_CACHE_SIZE` are ignored and `DB_MIN_CACHE_SIZE` is
+/// returned.
+///
+/// If the input value cannot be converted to a number, `DB_DEF_CACHE_SIZE` is
+/// returned. 
 ///
 uint32_t config_t::get_db_cache_size(const char *value) const
 {
