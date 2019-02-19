@@ -54,8 +54,6 @@ class system_database_t : public berkeleydb_t {
             uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
 
             bool get_db_direct(void) const {return config.db_direct;}
-
-            bool get_db_dsync(void) const {return config.db_dsync;}
       };
 
    protected:

@@ -200,7 +200,6 @@ class config_t {
       uint32_t db_cache_size;                   ///< Database cache size, in bytes.
       uint32_t db_seq_cache_size;               ///< Database sequence cache size, in elements.
       bool db_direct;                           ///< use system buffering?
-      bool db_dsync;                            ///< write-through?
 
       u_int visit_timeout;                      ///< visit timeout, in seconds (30 min)   
       u_int max_visit_length;                   ///< maximum visit length, in seconds

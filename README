@@ -1796,9 +1796,6 @@ DbDirect      Configures Berkeley DB not to use system caching and
               may be useful when system cache is not effective. 
               Default value: no
 
-DbDSync       Instructs Berkeley DB to avoid system buffering and 
-              write all changes to disk immediately. Default value: no
-
 DbSeqCacheSize 
               Is the number of cached DB sequence numbers used by 
               Stone Steps Webalizer. The default value of 1024 is 

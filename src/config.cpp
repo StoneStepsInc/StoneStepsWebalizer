@@ -144,7 +144,6 @@ config_t::config_t(void)
    db_cache_size = DB_DEF_CACHE_SIZE;
    db_seq_cache_size = 64;
    db_direct = false;
-   db_dsync = false;
 
    http_port = DEF_HTTP_PORT;                 // HTTP port number
    https_port = DEF_HTTPS_PORT;               // HTTPS port number
@@ -827,7 +826,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 152 
+                     // max key: 191; empty slots: 152, 154 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -850,7 +849,6 @@ void config_t::get_config(const char *fname)
                      {"DailyStats",          87},           // Daily Stats (0=no)
                      {"DbCacheSize",         146},          // State database cache size
                      {"DbDirect",            153},          // Use OS buffering?
-                     {"DbDSync",             154},          // Use write-through?
                      {"DbExt",               148},          // State database file extension
                      {"DbName",              145},          // State database file name
                      {"DbPath",              144},          // State database path
@@ -1254,7 +1252,6 @@ void config_t::get_config(const char *fname)
          case 150: dump_cities = (string_t::tolower(value[0])=='y'); break;
          case 151: dump_countries = (string_t::tolower(value[0])=='y'); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
-         case 154: db_dsync = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;
          case 156: batch = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 157: hide_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
