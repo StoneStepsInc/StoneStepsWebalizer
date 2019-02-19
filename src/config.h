@@ -197,8 +197,8 @@ class config_t {
 
       u_int max_hist_length;                    ///< Maximum history length, in months
 
-      uint32_t db_cache_size;                   ///< database cache size, in bytes
-      uint32_t db_seq_cache_size;               ///< database sequence cache size
+      uint32_t db_cache_size;                   ///< Database cache size, in bytes.
+      uint32_t db_seq_cache_size;               ///< Database sequence cache size, in elements.
       bool db_direct;                           ///< use system buffering?
       bool db_dsync;                            ///< write-through?
 
