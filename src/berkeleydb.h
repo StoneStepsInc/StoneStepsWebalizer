@@ -219,8 +219,6 @@ class berkeleydb_t {
             virtual uint32_t get_db_seq_cache_size(void) const = 0;
 
             virtual bool get_db_direct(void) const = 0;
-
-            virtual bool get_db_dsync(void) const = 0;
       };
 
    private:

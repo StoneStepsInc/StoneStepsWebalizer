@@ -1090,12 +1090,6 @@ berkeleydb_t::status_t berkeleydb_t::open(std::initializer_list<table_t*> tblist
          return status;
    }
 
-   // enable write-through I/O, if requested
-   if(config.get_db_dsync()) {
-      if(!(status = dbenv.set_flags(DB_DSYNC_DB, 1)).success())
-         return status;
-   }
-
    // open the DB environment
    if(!(status = dbenv.open(config.get_db_path(), envflags, FILEMASK)).success())
       return status;
