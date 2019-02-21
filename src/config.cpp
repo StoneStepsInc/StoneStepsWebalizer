@@ -142,7 +142,7 @@ config_t::config_t(void)
    dump_cities = false;
 
    db_cache_size = DB_DEF_CACHE_SIZE;
-   db_seq_cache_size = 64;
+   db_seq_cache_size = 100;
    db_direct = false;
 
    http_port = DEF_HTTP_PORT;                 // HTTP port number
@@ -663,8 +663,8 @@ void config_t::prep_and_validate(void)
    if(db_fname_ext.isempty())
       db_fname = "db";
 
-   if(db_seq_cache_size < 256)
-      db_seq_cache_size = 256;
+   if(db_seq_cache_size < 100)
+      db_seq_cache_size = 100;
 
    if(db_cache_size < DB_MIN_CACHE_SIZE)
       db_cache_size = DB_MIN_CACHE_SIZE;
