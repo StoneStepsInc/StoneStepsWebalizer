@@ -620,8 +620,11 @@ class berkeleydb_t {
       /// if trickle is enabled, dirty pages will be trickled to disk by a background thread
       void set_trickle(bool value) {trickle = value;}
 
-      /// Sets up the Berkeley DB environment and opens the sequence database, but not table databases.
+      /// A convenience method that calls `berkeleydb_t::open` with a table array.
       status_t open(std::initializer_list<table_t*> tblist);
+
+      /// Sets up the Berkeley DB environment and opens the sequence database, but not table databases.
+      status_t open(table_t * const tblist[], size_t tblcnt);
 
       /// closes all table databases and the Berkeley DB environment
       status_t close(void);

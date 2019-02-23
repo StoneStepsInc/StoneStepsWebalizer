@@ -57,14 +57,15 @@ berkeleydb_t::status_t system_database_t::open(std::initializer_list<table_t*> t
 {
    status_t status;
 
-   // combine all table pointers in a single array
+   // create a vector large enough to accommodate both sets of tables
    std::vector<table_t*> tblist2(tblist.size() + 1);
 
+   // combine all table pointers in one array, system table first
    tblist2[0] = &system;
    std::copy(tblist.begin(), tblist.end(), tblist2.begin() + 1);
 
    // open the underlying database and register all table pointers
-   if(!(status = berkeleydb_t::open(std::initializer_list<table_t*>(&tblist2.front(), &tblist2.back() + 1))).success())
+   if(!(status = berkeleydb_t::open(&tblist2.front(), tblist2.size())).success())
       return status;
 
    // open the system database and return

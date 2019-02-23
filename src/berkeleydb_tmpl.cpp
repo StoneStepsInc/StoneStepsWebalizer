@@ -1035,6 +1035,11 @@ void berkeleydb_t::delete_db(Db *db)
    }
 }
 
+berkeleydb_t::status_t berkeleydb_t::open(std::initializer_list<table_t*> tblist)
+{
+   return open(tblist.begin(), tblist.size());
+}
+
 ///
 /// All tables passed via the parameter are registered with this class for subsequent
 /// table operations on all these tables, such as being able to close, truncate, etc
@@ -1046,7 +1051,7 @@ void berkeleydb_t::delete_db(Db *db)
 /// other way. This ensures that all registered tables are disassociated from the opened
 /// environment.
 ///
-berkeleydb_t::status_t berkeleydb_t::open(std::initializer_list<table_t*> tblist)
+berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcnt)
 {
    u_int32_t dbflags = DB_CREATE;
    u_int32_t envflags = DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE;
@@ -1101,7 +1106,7 @@ berkeleydb_t::status_t berkeleydb_t::open(std::initializer_list<table_t*> tblist
       return status;
 
    // hold onto all the tables for subsequent operations
-   tables = tblist;
+   tables.assign(tblist, tblist + tblcnt);
 
    // now that everything is initialized, we can start the trickle thread
    if(trickle)
