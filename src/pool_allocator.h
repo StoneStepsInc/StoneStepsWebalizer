@@ -217,6 +217,12 @@ class pool_allocator_t {
       typedef T value_type;
       typedef std::size_t size_type;
 
+      // these definitions are required for GCC v5.4
+      typedef T* pointer;
+      typedef const T* const_pointer;
+      typedef T& reference;
+      typedef const T& const_reference;
+
       template <typename U> struct rebind {typedef pool_allocator_t<U, BUCKETSIZE, POOLSIZE> other;};
 
    public:
@@ -261,6 +267,18 @@ class pool_allocator_t {
       void deallocate(T *area, std::size_t count)
       {
          mempool->deallocate(area, count * sizeof(T));
+      }
+
+      // construct and destroy methods are required for GCC v5.4
+      template <typename ... param_t>
+      void construct(T *area, param_t&& ... arg)
+      {
+         ::new (area) T(std::forward<param_t>(arg)...);
+      }
+
+      void destroy(T *obj)
+      {
+         obj->~T();
       }
 };
 
