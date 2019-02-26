@@ -1784,11 +1784,12 @@ Database Configuration Options
 
 BatchProcessing
 Batch
-              Instructs SSW to run in the special batch mode, which 
-              avoids generating report files at the end of each run. 
-              Once the last log file has been processed, a special 
-              command line argument can be used to generate the 
-              monthly report (--prepare-report). Default value: no
+              Instructs Stone Steps Webalizer to run in a batch mode,
+              which avoids generating report files at the end of each
+              run. Once the last log file has been processed, a 
+              monthly report may be generated with the command line
+              argument `--prepare-report`. 
+              Default value: no
               Command line argument: --batch
 
 DbDirect      Configures Berkeley DB not to use the operating system
@@ -1802,8 +1803,7 @@ DbSeqCacheSize
               Stone Steps Webalizer. The default value of 100 is 
               sufficient in most cases.
 
-DbCacheSize 
-              This configuration value is used as a guiding number to
+DbCacheSize   This configuration value is used as a guiding number to
               limit the amount of memory used by Stone Steps Webalizer.
               The specified value is not used as a hard memory limit,
               but rather as a base value to initialize various components,
@@ -1812,18 +1812,19 @@ DbCacheSize
               of memory used may be about three-four times as much, but
               it should level at some point. You may need to experiment
               with different values to arrive at an acceptable limit.
-              Values may be suffixed with K, M or G for kilo-, mega- and
-              giga- multipliers. The minimum value is 1 MB and the default
-              value is 50 MB.
+              Values may be suffixed with K, M or G for kilo, mega and
+              giga multipliers. The minimum value is 1 MB.
+              Default value: 50 MB.
 
-DbPath         Specifies a fully-qualified path where the database will 
-              be created. Default value: output directory.
+DbPath        Specifies a fully-qualified directory path where the state
+              database will be created. 
+              Default value: output directory.
 
-DbName         Sets the name of the database file. Default value: 
-              webalizer
+DbName        Sets the name of the database file. 
+              Default value: webalizer
 
-DbExt         Sets the extension of the database file. Default 
-              value: db
+DbExt         Sets the extension of the database file. 
+              Default value: db
 
 Top Table Keywords
 ------------------
