@@ -2020,6 +2020,31 @@ HideRobots    If set to "yes", this option allows you to hide all robots
               robots. 
               Default value: no
 
+HideGroupedItems
+              Controls whether items that are being currently grouped with
+              one of the grouping configuration variables are also added to
+              the corresponding hide item list or not.
+
+              This configuration value may be used multiple times between
+              multiple sets of group configuration values. For example,
+              in this configuration `FireFox, `Chrome` and `Opera` user
+              agents will be reported in a group and individually, but
+              Internet Explorer will be reported only as a group.
+
+              ```
+              GroupAgent         Chrome
+              GroupAgent         Firefox
+
+              HideGroupedItems   yes
+
+              GroupAgent         MSIE        Internet Explorer
+
+              HideGroupedItems   no
+
+              GroupAgent         Opera
+              ```
+
+              Default value: no
 
 Group Object Keywords
 ---------------------

@@ -129,6 +129,8 @@ config_t::config_t(void)
    all_errors = false;                        /* List All HTTP Errors     */
    all_downloads = false;                     // List All Downloads
 
+   hide_grp_items = false;
+
    dump_hosts = false;                        /* Dump tab delimited sites */
    dump_urls = false;                         /* URL's                    */
    dump_refs = false;                         /* Referrers                */
@@ -806,6 +808,19 @@ void config_t::prep_and_validate(void)
 }
 
 ///
+/// @brief  Adds `value` to the specified group list and, if `HideGroupItem` is enabled,
+///         adds the group pattern string to the specified hidden item list.
+///
+void config_t::add_grp_item(glist& grplist, nlist& hidlist, const char *value)
+{
+   grplist.add_glist(value);
+
+   // if we are hiding grouped items, add the pattern string we just added to the hide list
+   if(hide_grp_items)
+      hidlist.add_nlist((--grplist.end())->string.c_str());
+}
+
+///
 /// @brief  Compares two configuration variable names
 ///
 /// @returns   A value less than zero if the keyword in `e1` is less than the one in `e2`, 
@@ -826,7 +841,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 152, 154 
+                     // max key: 191; empty slots: 154 
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -925,6 +940,7 @@ void config_t::get_config(const char *fname)
                      {"HideAgent",           19},           // User Agents to hide
                      {"HideAllHosts",        63},
                      {"HideAllSites",        63},           // Hide ind. sites (0=no)
+                     {"HideGroupedItems",    152},          // Hide grouped items?
                      {"HideHost",            16},
                      {"HideReferrer",        18},           // Referrers to hide
                      {"HideRobots",          157},          // Hide robots?
@@ -1126,10 +1142,10 @@ void config_t::get_config(const char *fname)
          case 28: ignored_agents.add_nlist(value); break;         // IgnoreAgent
          case 29: if (value[0]=='y') verbose=0; break;            // ReallyQuiet
          case 30: local_time=(string_t::tolower(*value)=='y') ? false : true; break; // GMTTime
-         case 31: group_urls.add_glist(value); break;             // GroupURL
-         case 32: group_hosts.add_glist(value); break;            // GroupSite
-         case 33: group_refs.add_glist(value); break;             // GroupReferrer
-         case 34: group_agents.add_glist(value); break;           // GroupAgent
+         case 31: add_grp_item(group_urls, hidden_urls, value); break;        // GroupURL
+         case 32: add_grp_item(group_hosts, hidden_hosts, value); break;      // GroupHost
+         case 33: add_grp_item(group_refs, hidden_refs, value); break;        // GroupReferrer
+         case 34: add_grp_item(group_agents, hidden_agents, value); break;    // GroupAgent
          case 35: shade_groups=(string_t::tolower(value[0])=='y'); break;   // GroupShading
          case 36: hlite_groups=(string_t::tolower(value[0])=='y'); break;   // GroupHighlight
          case 37: incremental=(value[0]=='y')?true:false; break;  // Incremental
@@ -1174,7 +1190,7 @@ void config_t::get_config(const char *fname)
          case 71: hidden_users.add_nlist(value); break;           // HideUser
          case 72: ignored_users.add_nlist(value); break;          // IgnoreUser
          case 73: include_users.add_nlist(value); break;          // IncludeUser
-         case 74: group_users.add_glist(value); break;            // GroupUser
+         case 74: add_grp_item(group_users, hidden_users, value); break;   // GroupUser
          case 75: dump_path=value; break;                         // DumpPath
          case 76: dump_ext=value; break;                          // Dumpfile ext
          case 77: dump_header=(string_t::tolower(value[0])=='y'); break;    // DumpHeader?
@@ -1251,6 +1267,7 @@ void config_t::get_config(const char *fname)
          case 149: db_seq_cache_size = atoi(value); break;
          case 150: dump_cities = (string_t::tolower(value[0])=='y'); break;
          case 151: dump_countries = (string_t::tolower(value[0])=='y'); break;
+         case 152: hide_grp_items = (string_t::tolower(value[0]) == 'y'); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 155: robots.add_glist(value); break;
          case 156: batch = (string_t::tolower(value[0]) == 'y') ? true : false; break;

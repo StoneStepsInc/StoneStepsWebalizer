@@ -131,6 +131,8 @@ class config_t {
       bool all_users;                           ///< List All Usernames       
       bool all_errors;                          ///< List All Errors          
       bool all_downloads;                       ///< List All Downloads
+
+      bool hide_grp_items;                      ///< Hide grouped items?
       
       bool accept_host_names;                   ///< accept host names instead of IP addresses in the logs?
       bool local_utc_offset;                    ///< assign utc_offset using local time zone?
@@ -373,6 +375,8 @@ class config_t {
       void add_def_srch_list(void);
 
       void prep_and_validate(void);
+
+      void add_grp_item(glist& grplist, nlist& hidlist, const char *value);
       
    public:
       config_t(void);
