@@ -2329,6 +2329,9 @@ HTMLPre        Allows code to be inserted at the very beginning of the
                for server-side scripting capabilities, such as php3, to
                insert scripting files and other directives.
 
+               It is an error to have the `<!doctype>` tag in any HTMLPre
+               entries.
+
 HTMLHead       Allows you to insert HTML code between the <HEAD></HEAD>
                block.  There is no default.  Useful for adding scripts
                to the HTML page, such as Javascript or php3, or even
@@ -2340,6 +2343,9 @@ HTMLBody       This keyword defines HTML code to be placed immediately
                mind the placement of this code in relation to the title
                and other aspects of the web page.  A typical use is to
                add a corporate logo (graphic) in the top right.
+
+               It is an error to have the `<body>` tag in any HTMLBody
+               entries.
 
 HTMLPost       This keyword defines HTML code that is placed after the
                title and "summary period/generated on" lines, just before
@@ -2357,6 +2363,8 @@ HTMLTail       This keyword defines HTML code that is placed at the bottom
 HTMLEnd        This allows insertion of closing code for HTMLBody tags, at 
                the very end of the page.
 
+               It is an error to have the closing `</body>` tag in any
+               HTMLEnd entries.
 HTMLCssPath
               Specifies a URL path to the webalizer.css file, not 
               including the file name. The path must be a URL path, 
