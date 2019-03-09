@@ -335,7 +335,7 @@ function renderDailyUsageChart(daily_usage)
             formatter: function() 
             {
                if(daily_usage.isWeekend(this.value))
-                  return "<span style=\"color: " + daily_usage.config.weekend_color + "\">" + this.value + "</span>";
+                  return "<span style=\"color: " + daily_usage.config.weekend_color + "; font-weight: bold\">" + this.value + "</span>";
 
                return this.value;
 
