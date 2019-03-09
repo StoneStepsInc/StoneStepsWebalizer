@@ -16,7 +16,7 @@
 /// points. This function returns an array of as many elements as there are data points 
 /// in the series, each containing either `null` or the index of the element within the 
 /// input data array. For example, if monthly usage series is populated only for 3 days 
-/// in the input array (e.g. 4, 5 and 28), elements `2`, `3` and `27` of the returned 
+/// in the input array (e.g. `4`, `5` and `28`), elements `3`, `4` and `27` of the returned 
 /// array will contain values `0`, `1` and `2`, and the rest of the elements will be 
 /// populated with `null` values.
 ///
@@ -198,6 +198,19 @@ function getMonthlySummaryData_Highcharts(xAxisRefs, yValues)
    return series;   
 }
 
+//
+// @brief   Returns an array of days from `1` to `lastDay`.
+//
+function getMonthDays(lastDay)
+{
+   var days = [];
+
+   for(let i = 1; i <= lastDay; i++)
+      days.push(i);
+
+   return days;
+}
+
 ///
 /// @brief  Configures global Highcharts properties.
 ///
@@ -302,13 +315,19 @@ function renderDailyUsageChart(daily_usage)
       // assigning offset a negative value, but cannot be moved below the base line of the
       // plot area. If this is required, adjust the top property of the lowest yAxis object. 
       //
+      // There is a bug in Highcharts in that `xAxis.min` is interpreted as an index into
+      // the series data array and not as axis values. In other words, if `1` is specified
+      // as `min`, the chart will start with the value of `chart.series[x].data[1]`, which
+      // results in all columns shifted by one to the left. Use `categories` to define day
+      // values instead and omit `min`/`max`, so the number of columns is inferred from the
+      // size of the `categories` array.
+      //
       xAxis: {
          offset: 0,
          allowDecimals: false,
          lineColor: daily_usage.config.gridline_color,
          tickColor: daily_usage.config.gridline_color,
-         min: 1,
-         max: daily_usage.chart.maxDay,
+         categories: getMonthDays(daily_usage.chart.maxDay),
          tickInterval: 1,
          labels: {
             step: 1,
