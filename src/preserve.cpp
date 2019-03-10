@@ -693,7 +693,7 @@ int state_t::restore_state(void)
    }
 
    // restore country code data
-   {database_t::iterator<ccnode_t> iter = database.begin_countries("countries");
+   {database_t::iterator<ccnode_t> iter = database.begin_countries(nullptr);
    storable_t<ccnode_t> ccnode;
    while(iter.next(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
       cc_htab.update_ccnode(ccnode, 0);
@@ -702,7 +702,7 @@ int state_t::restore_state(void)
    }
 
    // restore city data
-   {database_t::iterator<ctnode_t> iter = database.begin_cities("cities");
+   {database_t::iterator<ctnode_t> iter = database.begin_cities(nullptr);
    storable_t<ctnode_t> ccnode;
    while(iter.next(ccnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
       ct_htab.put_node(new storable_t<ctnode_t>(std::move(ccnode)), 0);
