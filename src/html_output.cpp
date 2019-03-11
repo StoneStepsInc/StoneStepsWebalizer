@@ -166,7 +166,7 @@ void html_output_t::write_js_charts_head_js_config(FILE *out_fp)
 
    // output unit prefixes, transfer unit and whether one KB is 1000 or 1024 bytes
    fputs("      unit_prefix: [", out_fp);
-   for(size_t i = 0; i < sizeof(config.lang.msg_unit_pfx) / sizeof(config.lang.msg_unit_pfx[0]); i++) {
+   for(size_t i = 0; i < config.lang.msg_unit_pfx.size(); i++) {
       if(i) fputs(", ", out_fp);
       fprintf(out_fp, "\"%s\"", js_encode(config.lang.msg_unit_pfx[i]));
    }
@@ -200,14 +200,14 @@ void html_output_t::write_js_charts_head_index(FILE *out_fp)
    fprintf(out_fp, "      title: \"%s %s\",\n", js_encode(config.lang.msg_main_us), js_encode(config.hname.c_str()));
 
    fputs("      shortMonths: [", out_fp);
-   for(u_int i = 0; i < sizeof(config.lang.s_month)/sizeof(config.lang.s_month[0]); i++) {
+   for(u_int i = 0; i < config.lang.s_month.size(); i++) {
       if(i) fputs(", ", out_fp);
       fprintf(out_fp, "\"%s\"", js_encode(config.lang.s_month[i]));
    }
    fputs("],\n", out_fp);
 
    fputs("      longMonths: [", out_fp);
-   for(u_int i = 0; i < sizeof(config.lang.l_month)/sizeof(config.lang.l_month[0]); i++) {
+   for(u_int i = 0; i < config.lang.l_month.size(); i++) {
       if(i) fputs(", ", out_fp);
       fprintf(out_fp, "\"%s\"", js_encode(config.lang.l_month[i]));
    }
