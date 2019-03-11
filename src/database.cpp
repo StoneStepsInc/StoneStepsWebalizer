@@ -107,7 +107,8 @@ bool system_database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnod
 /// ```
 /// * node ID        - A numeric key obtained from sequence database with the `.seq` 
 ///                    suffix. Node ID is stored as a Berkeley DB key and not within
-///                    node data.
+///                    node data. Some tables derive their node ID from the data,
+///                    such as those that store country and city data.
 ///
 /// * node version   - A numeric version of the node data layout.
 /// * node value     - UTF-8 character value (e.g. URL, User Agent, etc)
@@ -116,7 +117,7 @@ bool system_database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnod
 ///                    between the primary and the secondary values database.
 /// * node data      - Node data serialized according to the node version.
 /// ```
-/// A few tables listed below contain references to other tables.
+/// Tables listed below contain references to other tables.
 ///
 /// **visits.active**
 ///
