@@ -315,12 +315,14 @@ function renderDailyUsageChart(daily_usage)
       // assigning offset a negative value, but cannot be moved below the base line of the
       // plot area. If this is required, adjust the top property of the lowest yAxis object. 
       //
-      // There is a bug in Highcharts in that `xAxis.min` is interpreted as an index into
-      // the series data array and not as axis values. In other words, if `1` is specified
-      // as `min`, the chart will start with the value of `chart.series[x].data[1]`, which
-      // results in all columns shifted by one to the left. Use `categories` to define day
-      // values instead and omit `min`/`max`, so the number of columns is inferred from the
-      // size of the `categories` array.
+      // Highcharts needs X/Y pairs to render series with one value per data point, so they
+      // manufacture X values as a zero-based sequence of values, which, essentially, contains
+      // index values into the series data array. `xAxis.min` is used as a cut-off value for
+      // X values and assigning `1` to `xAxis.min` doesn't mean that the X axis should start
+      // with `1`, but rather that they should skip all X values up to `1`, which drops the
+      // first day point for this chart and shifts all columns to the left. Use `categories`
+      // instead to define day values and avoid setting `min`/`max` values, so the number of
+      // columns is inferred from the size of the `categories` array.
       //
       xAxis: {
          offset: 0,
@@ -745,7 +747,7 @@ function renderCountryUsageChartMap(country_usage)
 }
 
 ///
-/// Renders a monthly summary chart.
+/// @brief  Renders a monthly summary chart.
 ///
 function renderMonthlySummaryChart(monthly_summary)
 {
@@ -779,7 +781,7 @@ function renderMonthlySummaryChart(monthly_summary)
          //
          // The tooltip formatter function allows us to output a custom point header that
          // lists a full month and a year. However, having this function defined, disables 
-         // individual series pointFormatter calbacks.
+         // individual series pointFormatter callbacks.
          //
          formatter: function ()
          {
