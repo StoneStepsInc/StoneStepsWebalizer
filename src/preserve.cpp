@@ -703,9 +703,9 @@ int state_t::restore_state(void)
 
    // restore city data
    {database_t::iterator<ctnode_t> iter = database.begin_cities(nullptr);
-   storable_t<ctnode_t> ccnode;
-   while(iter.next(ccnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
-      ct_htab.put_node(new storable_t<ctnode_t>(std::move(ccnode)), 0);
+   storable_t<ctnode_t> ctnode;
+   while(iter.next(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+      ct_htab.put_node(new storable_t<ctnode_t>(std::move(ctnode)), 0);
    }
    iter.close();
    }
