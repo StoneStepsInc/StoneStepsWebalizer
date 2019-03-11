@@ -48,7 +48,7 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
    ///
    struct param_block {
       uint32_t    geoname_id;          ///< A city GeoName ID
-      const char  *ccode;              ///< Country code
+      const char  *ccode;              ///< Country code (empty is interpreted as a single asterisk)
    };
 
    string_t    ccode;                  ///< Country code
@@ -82,6 +82,12 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
       /// Indicates whether this city was found in the GeoIP database or not.
       bool unknown_city(void) const {return geoname_id() == 0;}
 
+      /// Returns a hash value for a GeoName ID and a country code.
+      static uint64_t get_hash(uint32_t geoname_id, const char *ccode)
+      {
+         return hash_num(0, make_nodeid(geoname_id, ccode));
+      }
+
       ///
       /// @name   Hash table interface
       ///
@@ -101,10 +107,7 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
 
       virtual uint64_t get_hash(void) const override
       {
-         if(ccode.isempty())
-            return  hash_str(hash_num(0, nodeid), "*", 1);
-
-         return hash_str(hash_num(0, nodeid), ccode.c_str(), ccode.length());
+         return hash_num(0, nodeid);
       }
 
       /// @}

@@ -22,7 +22,7 @@ ctnode_t::ctnode_t(void) :
 
 ctnode_t::ctnode_t(uint32_t geoname_id, const string_t& city, const string_t& ccode) :
       keynode_t<uint64_t>(make_nodeid(geoname_id, ccode.c_str())),
-      ccode(ccode), city(city),
+      ccode(!ccode.isempty() ? ccode : "*"), city(city),
       hits(0), files(0), pages(0), visits(0), xfer(0)
 {
 }
@@ -157,9 +157,8 @@ ct_hash_table::ct_hash_table(void) : hash_table<storable_t<ctnode_t>>(SMAXHASH)
 ///
 ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, const string_t& ccode, int64_t tstamp) 
 {
-   static const string_t uccode("*", 1);
-   ctnode_t::param_block pb = {geoname_id, !ccode.isempty() ? ccode.c_str() : uccode.c_str()};
-   uint64_t hashval = hash_ex(hash_num(0, geoname_id), !ccode.isempty() ? ccode : uccode);
+   ctnode_t::param_block pb = {geoname_id, ccode.c_str()};
+   uint64_t hashval = ctnode_t::get_hash(geoname_id, ccode);
    ctnode_t *ctnode;
 
    // we should never see empty city names with a valid GeoName and vice versa
@@ -169,7 +168,7 @@ ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, c
    if((ctnode = find_node(hashval, &pb, OBJ_REG, tstamp)) != nullptr)
       return *ctnode;
 
-   return *put_node(hashval, new storable_t<ctnode_t>(geoname_id, city, !ccode.isempty() ? ccode : uccode), tstamp);
+   return *put_node(hashval, new storable_t<ctnode_t>(geoname_id, city, ccode), tstamp);
 }
 
 //
