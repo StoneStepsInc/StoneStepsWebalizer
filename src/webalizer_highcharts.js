@@ -312,8 +312,8 @@ function renderDailyUsageChart(daily_usage)
       // for labels, ticks and padding at the bottom of the frame. All charts, on the other 
       // hand, are placed at a distance measured from the top of the frame, so the bottom 
       // of the lowest chart may not align with the X axis. The X axis can be moved up by
-      // assigning offset a negative value, but cannot be moved below the base line of the
-      // plot area. If this is required, adjust the top property of the lowest yAxis object. 
+      // assigning `offset` a negative value, but cannot be moved below the base line of the
+      // plot area. If this is required, adjust the top property of the lowest `yAxis` object. 
       //
       // Highcharts needs X/Y pairs to render series with one value per data point, so they
       // manufacture X values as a zero-based sequence of values, which, essentially, contains
@@ -325,7 +325,7 @@ function renderDailyUsageChart(daily_usage)
       // columns is inferred from the size of the `categories` array.
       //
       xAxis: {
-         offset: 0,
+         offset: -4,
          allowDecimals: false,
          lineColor: daily_usage.config.gridline_color,
          tickColor: daily_usage.config.gridline_color,
@@ -519,7 +519,7 @@ function renderHourlyUsageChart(hourly_usage)
          }
       }],
       xAxis: {
-         offset: 0,
+         offset: -4,
          allowDecimals: false,
          lineColor: hourly_usage.config.gridline_color,
          tickColor: hourly_usage.config.gridline_color,
@@ -850,7 +850,7 @@ function renderMonthlySummaryChart(monthly_summary)
       //
       xAxis: {
          type: "category",
-         offset: 0,
+         offset: -4,
          tickAmount: monthly_summary.chart.monthCount,
          categories: getMonthlySummaryMonths_Highcharts(monthly_summary.chart),
          allowDecimals: false,
