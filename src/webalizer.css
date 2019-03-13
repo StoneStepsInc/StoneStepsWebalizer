@@ -19,7 +19,7 @@ img {margin: 0 auto; display: block;}
 /*
  * Shared Classes
  */
-pre.details_pre {font-size: 8pt; margin-left: 5px;}
+pre.details_pre {font-size: 9pt; margin-left: 10px;}
 p.note_p {margin: 1em 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
 span.help_span {cursor: help;}
 
