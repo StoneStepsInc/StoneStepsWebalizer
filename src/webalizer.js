@@ -25,9 +25,6 @@ var keyUpHandlers = [];       // functions to call on keyup event
 
 var frags = null;             // report identifiers (fragments)
 
-var helpbox = null;           // help box div
-var helptext = null;          // hidden help text container div
-
 //
 // Page load event handlers for all three page types 
 //
@@ -37,8 +34,6 @@ var helptext = null;          // hidden help text container div
 //
 function onload_index_page(initCB)
 {
-   initHelp();
-
    if(initCB)
       initCB();
 
@@ -49,8 +44,6 @@ function onload_usage_page(initCB)
 {
    // initialize fragment navigation
    initPageFragments();
-
-   initHelp();
 
    if(initCB)
       initCB();
@@ -283,144 +276,6 @@ function getNextFragId(fragid)
    }
    
    return frags[0];
-}
-
-/// @}
-
-///
-/// @name   Help function
-///
-/// @{
-
-function onKeyUpHelpHandler(event)
-{
-   // check if it's the ESC key
-   if(event.keyCode == KEY_ESC) {
-      // if the help is visible, hide it and return
-      if(isHelpShown()) {
-         hideHelp();
-         return;
-      }
-   }      
-}
-
-function initHelp()
-{
-   // find the help box div
-   if((helpbox = document.getElementById("helpbox")) != null) 
-      helpbox.normalize();
-   
-   // find the help container div
-   helptext = document.getElementById("helptext");
-
-   // set up help keyboard handler only if we can show help
-   if(helpbox && helptext)
-      registerOnKeyUpHandler(onKeyUpHelpHandler);
-}
-
-//
-// findHelpTopic
-//
-// Walks the help container and returns a copy of the node whose title
-// attribute matches topic
-//
-function findHelpTopic(topic)
-{
-   var node;
-
-   if(helptext) {
-      // start with the first child (may be text node)
-      node = helptext.firstChild;
-   
-      // and loop until we found the topic div
-      while(node) {
-         if(node.nodeType == ELEMENT_NODE && node.title == topic) {
-            // clone the node to keep the source remains intact
-            node = node.cloneNode(true);
-            
-            // remove the title attribute, so the browser doesn't show it as a tool tip
-            node.removeAttribute("title");
-            
-            return node;
-         }
-            
-         node = node.nextSibling;
-      }
-   }
-   
-   // return a text node if the topic is not found
-   return document.createTextNode("Unknown topic (" + topic + ")");
-}
-
-//
-// showHelp
-//
-// Copies text from the title node into the help box title div. Also
-// locates help definition div by topic and copies it into the help 
-// box.
-//
-//                                      help topic
-//                                      v
-// <span onclick="showHelp(event, this, topic)">Hits</span>
-// ^                              ^             ^
-// title node                     title node     title
-//
-function showHelp(event, titlenode, topic)
-{
-   var top, left;
-   var title = "";
-   var titlediv;
-   var scrwidth, scrheight;
-   var offsetx, offsety;
-   
-   // nothing to show
-   if(!helpbox || !titlenode)
-      return;
-   
-   // get the text from the title node
-   titlenode.normalize();
-   title = titlenode.firstChild.data;
-   
-   // and put it in the title div, after the div with x
-   titlediv = helpbox.firstChild;
-   
-   if(titlediv.firstChild.nextSibling)
-      titlediv.replaceChild(document.createTextNode(title), titlediv.firstChild.nextSibling);
-   else
-      titlediv.appendChild(document.createTextNode(title));
-   
-   // find a help entry by topic and put it after the title div
-   if(titlediv.nextSibling)
-      helpbox.replaceChild(findHelpTopic(topic), titlediv.nextSibling);
-   else
-      helpbox.appendChild(findHelpTopic(topic));
-
-   // place the help box around the mouse pointer
-   scrwidth = document.body.parentNode.clientWidth;
-   scrheight = document.body.parentNode.clientHeight;
-   
-   offsetx = (event.clientX > scrwidth/2) ? -350 : 20;
-   offsety = (event.clientY > scrheight/2) ? -75 : 20;
-   
-	top = Math.round(document.body.parentNode.scrollTop + event.clientY + offsety);
-	left = Math.round(document.body.parentNode.scrollLeft + (event.clientX + offsetx));
-	
-	helpbox.style.top = top + "px";
-	helpbox.style.left = left + "px";
-
-   // and make it visible
-   helpbox.style.display = "block";
-}
-
-function hideHelp()
-{
-   if(helpbox.style.display != "none")
-      helpbox.style.display = "none";
-}
-
-function isHelpShown()
-{
-   return helpbox.style.display != "none";
 }
 
 /// @}
@@ -1042,8 +897,6 @@ function onloadpage(pagetype)
    // initialize fragment navigation (also was called without pagetype)
    if(pagetype == undefined || pagetype == PAGE_USAGE)
       initPageFragments();
-
-   initHelp();
 }
 
 function onpagekeyup(event)

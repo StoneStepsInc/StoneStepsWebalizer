@@ -23,13 +23,6 @@ pre.details_pre {font-size: 9pt; margin-left: 10px;}
 p.note_p {margin: 1em 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
 span.help_span {cursor: help;}
 
-div#helpbox {display: none; position: absolute; width: 400px; right: 0; top: 0; padding: 3px 5px; border: 1px solid black; background-color: #FFFFE0; font: 10pt Arial, sans-serif;}
-div#helpbox div.title {color: #AFEEEE; border-bottom: 1px solid #CCC; margin: -3px -5px .3em; background-color: #4682B4; padding: 2px 3px 3px 5px; font: bold 9pt Verdana, sans-serif;}
-div#helpbox div.title div.x {float: right; border-style: none; cursor: pointer; padding: 0; margin: 0; font: normal 16px/14px Arial, sans-serif;}
-div#helpbox p {margin: .3em 0;}
-div#helpbox a, div#helpbox a:visited {color: black;}
-div#helpbox samp {color: maroon;}
-
 /*
  *
  */
