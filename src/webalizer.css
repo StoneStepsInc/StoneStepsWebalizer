@@ -119,12 +119,6 @@ table.report_table thead th {border-color: #333;}
 table.report_table tr.table_title_tr {text-align: center; font-size: 12pt; background-color: #DDD;}
 table.report_table tr.table_footer_tr {background-color: #DDD;}
 table.report_table tr.all_items_tr {background-color: #D8D9E6;}
-/* anchors are not links in XML reports, so style them to look like links */
-table.report_table tr.all_items_tr a {cursor: pointer;}
-table.report_table tr.all_items_tr a:hover {text-decoration: underline;}
-/* turn off highlighting for the max-items-displayed row */
-table.report_table tr.max_items_tr {background-color: #D8D9E6;}
-table.report_table tr.max_items_tr:hover th {background-color: inherit;}
 
 table.report_table th.small_font_th {font-size: 7pt;}
 table.report_table tr.group_shade_tr {background-color: #D8D9E6;}
