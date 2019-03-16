@@ -3237,12 +3237,17 @@ int main(int argc, char *argv[])
       // print current configuration
       logproc.print_config();
 
+      //
+      // Initialize the log processor outside of the run time try/catch block, so if
+      // we exit initialization via an exception, we will not call `cleanup`, which
+      // could attempt to close the state database even though we failed to open it,
+      // and cause issues with table allocations.
+      //
+      logproc.initialize();
+
       try {
          // set the Ctrl-C handler
          set_ctrl_c_handler(webalizer_t::ctrl_c_handler);
-
-         // initialize the log processor
-         logproc.initialize();
 
          // run the log processor 
          retcode = logproc.run();
