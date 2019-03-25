@@ -281,10 +281,10 @@ const struct database_t::index_desc_t {
          &bt_compare_cb<rcnode_t::s_compare_hits>, &bt_compare_cb<rcnode_t::s_compare_key>, &sc_extract_cb<rcnode_t::s_field_hits>},
    // countries
    {&database_t::countries, "countries.visits", 
-         &bt_compare_cb<ccnode_t::s_compare_visits>, &bt_compare_cb<ccnode_t::s_compare_key>, &sc_extract_cb<ccnode_t::s_field_visits>},
+         &bt_compare_cb<ccnode_t::s_compare_visits>, &bt_reverse_compare_cb<ccnode_t::s_compare_key>, &sc_extract_cb<ccnode_t::s_field_visits>},
    // cities
    {&database_t::cities, "cities.visits", 
-         &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>}
+         &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_reverse_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>}
 };
 
 /// @}
