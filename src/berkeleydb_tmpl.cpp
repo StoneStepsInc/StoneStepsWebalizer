@@ -63,13 +63,15 @@ int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
 {
-   return -compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   return diff < 0ll ? 1 : diff > 0ll ? -1 : 0;
 }
 
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
-   return -compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   return diff < 0ll ? 1 : diff > 0ll ? -1 : 0;
 }
 
 //
