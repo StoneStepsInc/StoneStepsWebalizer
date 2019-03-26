@@ -50,17 +50,6 @@ typedef const void *(*s_field_cb_t)(const void *buffer, size_t bufsize, size_t& 
 typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
 
 ///
-/// @typedef   s_mp_field_cb_t
-///
-/// @brief  Returns a pointer to a serialized part of a multi-part field
-///
-/// `buffer` should point to a data record containing the requested field. The return 
-/// value points to the specified part of a multipart value. When the last part of the 
-/// value is evaluated, `lastpart` will be set by the function to `true`.
-///
-typedef const void *(*s_mp_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize, u_int partid, bool& lastpart);
-
-///
 /// @name   Serialization
 ///
 /// @{
