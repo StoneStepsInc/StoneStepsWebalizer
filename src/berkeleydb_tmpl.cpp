@@ -118,76 +118,47 @@ void berkeleydb_t::cursor_iterator_base::close(void)
 
 // -----------------------------------------------------------------------
 //
-// berkeleydb_t::cursor_iterator
+// berkeleydb_t::cursor_dup_iterator
 //
 // -----------------------------------------------------------------------
 
-bool berkeleydb_t::cursor_iterator::set(Dbt& key, Dbt& data, Dbt *pkey)
+bool berkeleydb_t::cursor_dup_iterator::set(Dbt& key, Dbt& data, Dbt *pkey)
 {
    if(!cursor || is_error())
       return false;
-
-   count = 0;
 
    if(pkey)
       error = cursor->pget(&key, pkey, &data, DB_SET);
    else
       error = cursor->get(&key, &data, DB_SET);
       
-   if(error)
-      return false;
-
-   if((error = cursor->count(&count, 0)) != 0)
-      return false;
-
-   // account for one record returned in this call
-   count--;
-
-   return true;
+   return !error;
 }
 
-bool berkeleydb_t::cursor_iterator::next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey)
+bool berkeleydb_t::cursor_dup_iterator::next(Dbt& key, Dbt& data, Dbt *pkey)
 {
    if(!cursor || is_error())
       return false;
 
-   if(count) {
-      // we still have duplicates - get the next one
-      if(pkey)
-         error = cursor->pget(&key, pkey, &data, DB_NEXT_DUP);
-      else
-         error = cursor->get(&key, &data, DB_NEXT_DUP);
+   if(pkey)
+      error = cursor->pget(&key, pkey, &data, DB_NEXT_DUP);
+   else
+      error = cursor->get(&key, &data, DB_NEXT_DUP);
 
-      if(error)
-         return false;
-          
-      count--;
-   }
-   else {
-      // return if a duplicate key is requested
-      if(dupkey) {
-         error = DB_NOTFOUND;
-         return false;
-      }
+   return !error;
+}
 
-      if(pkey)
-         error = cursor->pget(&key, pkey, &data, DB_NEXT);
-      else
-         error = cursor->get(&key, &data, DB_NEXT);
+bool berkeleydb_t::cursor_iterator::next(Dbt& key, Dbt& data, Dbt *pkey)
+{
+   if(!cursor || is_error())
+      return false;
 
-      if(error)
-         return false;
+   if(pkey)
+      error = cursor->pget(&key, pkey, &data, DB_NEXT);
+   else
+      error = cursor->get(&key, &data, DB_NEXT);
 
-      // grab the total number of duplicates for this key
-      if((error = cursor->count(&count, 0)) != 0) {
-         count = 0;
-         return false;
-      }
-
-      count--;
-   }
-
-   return true;
+   return !error;
 }
 
 // -----------------------------------------------------------------------
@@ -865,7 +836,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
    data.set_flags(DB_DBT_USERMEM);
 
    // open a cursor
-   {cursor_iterator cursor(values);
+   {cursor_dup_iterator cursor(values);
 
    // find the first value hash and get the primary key and value data
    if(!cursor.set(key, data, &pkey))
@@ -876,11 +847,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
       if(!node.s_compare_value(data.get_data(), data.get_size()))
          break;
 
-      // if there are no more duplicates, value is not found
-      if(!cursor.dup_count())
-         return false;
-
-   } while(cursor.next(key, data, &pkey, true));
+   } while(cursor.next(key, data, &pkey));
 
    // the destructor will close the cursor
    if(cursor.get_error())

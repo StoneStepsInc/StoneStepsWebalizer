@@ -236,7 +236,7 @@ class berkeleydb_t {
 
          private:
             // do not allow assignments
-            cursor_iterator_base& operator = (const cursor_iterator_base&) {return *this;}
+            cursor_iterator_base& operator = (const cursor_iterator_base&) = delete;
 
          public:
             cursor_iterator_base(Db *db);
@@ -251,22 +251,30 @@ class berkeleydb_t {
       };
 
       ///
+      /// @brief  A forward Berkeley DB iterator to traverse duplicate keys.
+      ///
+      /// The content of the `key` parameter must not change between `set` and any of the
+      /// subsequent `next` calls.
+      ///
+      class cursor_dup_iterator : public cursor_iterator_base {
+         public:
+            cursor_dup_iterator(Db *db) : cursor_iterator_base(db) {}
+
+            bool set(Dbt& key, Dbt& data, Dbt *pkey);
+
+            bool next(Dbt& key, Dbt& data, Dbt *pkey);
+      };
+
+      ///
       /// @class  cursor_iterator
       ///
       /// @brief  A forward Berkeley DB cursor iterator
       ///
       class cursor_iterator : public cursor_iterator_base {
-         private:
-            db_recno_t   count;     // remaining duplicate count (zero if unique)
-
          public:
-            cursor_iterator(Db *db) : cursor_iterator_base(db) {count = 0;}
+            cursor_iterator(Db *db) : cursor_iterator_base(db) {}
 
-            db_recno_t dup_count(void) const {return count;}
-
-            bool set(Dbt& key, Dbt& data, Dbt *pkey);
-
-            bool next(Dbt& key, Dbt& data, Dbt *pkey, bool dupkey = false);
+            bool next(Dbt& key, Dbt& data, Dbt *pkey);
       };
 
       ///
