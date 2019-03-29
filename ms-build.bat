@@ -44,6 +44,17 @@ if not exist build\%platform%\ mkdir build\%platform%\
 if not exist build\%platform%\Release\ mkdir build\%platform%\Release\
 
 rem
+rem Restore all Nuget packages in the solution
+rem
+echo Restoring Nuget packages
+nuget restore src\webalizer.sln -Verbosity quiet -NonInteractive
+
+rem
+rem Check for Nuget restore errors
+rem
+if ERRORLEVEL 1 goto :msbuild_error
+
+rem
 rem Make a release build of the project for the specified platform
 rem
 rem /nr         - msbuild node reuse 
