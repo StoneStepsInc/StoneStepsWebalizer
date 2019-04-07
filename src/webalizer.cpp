@@ -37,6 +37,7 @@
 #include "dump_output.h"
 #include "html_output.h"
 #include "console.h"
+#include "init_seq_guard.h"
 
 #include <ctime>
 #include <cstdio>
@@ -89,6 +90,7 @@ webalizer_t::~webalizer_t(void)
 void webalizer_t::initialize(void)
 {
    u_int i;
+   init_seq_guard_t init_seq_guard;
 
    // check if the output directory has write access
    if(access(config.out_dir, R_OK | W_OK)) {
@@ -108,12 +110,16 @@ void webalizer_t::initialize(void)
       if(config.is_dns_enabled()) {
          if(!dns_resolver.dns_init())
             throw exception_t(0, config.lang.msg_dns_init);
+
+         init_seq_guard.add_cleanup(dns_resolver, &dns_resolver_t::dns_clean_up);
       }
 
       // initialize the log file parser
       if(!parser.init_parser(config.log_type)) {
          throw exception_t(0, string_t::_format("%s", config.lang.msg_pars_err));
       }
+
+      init_seq_guard.add_cleanup(parser, &parser_t::cleanup_parser);
    }
 
    //
@@ -123,6 +129,8 @@ void webalizer_t::initialize(void)
       if(!init_output_engines()) {
          throw exception_t(0, "Cannot initialize output engine");
       }
+
+      init_seq_guard.add_cleanup(*this, &webalizer_t::cleanup_output_engines);
    }
 
    //
@@ -131,6 +139,8 @@ void webalizer_t::initialize(void)
    if(!state.initialize()) {
       throw exception_t(0, "Cannot initialize the state engine");
    }
+
+   init_seq_guard.add_cleanup(state, &state_t::cleanup);
 
    //
    // restore state, if required
@@ -141,6 +151,8 @@ void webalizer_t::initialize(void)
          throw exception_t(0, string_t::_format("%s (%d)\n", config.lang.msg_bad_data, i));
       }
    }
+
+   init_seq_guard.disengage();
 
    if(!config.db_info) {
       /* Creating output in ... */
