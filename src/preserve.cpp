@@ -685,11 +685,17 @@ int state_t::restore_state(void)
          return 6;
    }
    
-   // get response code totals
+   //
+   // Get totals for registered status codes. New status codes will not
+   // be found and will keep their initial zero request counts, as they
+   // were initialized. Status codes should not be removed, in general,
+   // but if the new set of status codes doesn't have any of those stored
+   // in the database, removed status codes will not be included in the
+   // report.
+   //
    for(i = 0; i < response.size(); i++) {
-      // nodeid has already been set in the constructor
-      if(!database.get_scnode_by_id(response[i], NULL, NULL))
-         return 7;
+      // ignore look-up errors for new status codes (other errors will be thrown as exceptions)
+      database.get_scnode_by_id(response[i], nullptr, nullptr);
    }
 
    // restore country code data
