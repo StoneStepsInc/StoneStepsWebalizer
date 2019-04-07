@@ -423,13 +423,21 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       ccptr->xfer += vnode.xfer;
       ccptr->visits++;
 
-      ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, hnode.get_ccode(), 0);
+      //
+      // Host nodes saved in the state database prior to introducing a city table
+      // will have a city name, but not a GeoName ID, which would create bad data
+      // if it wouldn't be caught in get_ctnode, which throws an excepktion in
+      // this case.
+      //
+      if(hnode.geoname_id) {
+         ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, hnode.get_ccode(), 0);
 
-      ctnode.hits += vnode.hits;
-      ctnode.files += vnode.files;
-      ctnode.pages += vnode.pages;
-      ctnode.xfer += vnode.xfer;
-      ctnode.visits++;
+         ctnode.hits += vnode.hits;
+         ctnode.files += vnode.files;
+         ctnode.pages += vnode.pages;
+         ctnode.xfer += vnode.xfer;
+         ctnode.visits++;
+      }
    }
 }
 
