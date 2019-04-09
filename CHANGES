@@ -9,7 +9,7 @@
  * Added new HTTP status codes
  * Added a tab-delimited country report
  * Removed MemoryMode and related settings and changed the application to balance between the state database and memory
- * Only one set of log file names from a single source is accepted for processing
+ * [BUG][BB-8] OnlyOnly one set of log file names from a single source is accepted for processing
  * Added a log file number to the error message reporting a bad record
  * Changed exit code for --version --warranty and --help to return 0 (zero) instead of 1 (one) to facilitate scripting
  * Prevented custom BODY and DOCTYPE tags to ensure JavaScript report initialization is performed
@@ -23,7 +23,6 @@
  * [BUG][BB-10] Fixed a lock-up within Berkeley DB in the DNS resolver
  * [BUG] Fixed a crash caused by a failure to restore from a state database
  * [BUG] Fixed a crash caused by --end-month used without a current state database
- * [BUG] Fixed a bug causing Ctrl-C to be ignored
  * [BUG] Fixed a bug causing city names lost for some hosts restored from the database for previous runs
  * [BUG] Country Code appears instead of Country in some report headings
  * [BUG] Fixed erroneous message "DNS resolver is not initialized" shown when maintenance commands were being processed
