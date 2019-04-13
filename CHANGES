@@ -4,7 +4,7 @@
  * [BB-15] Implemented HideGroupedItems for selective item grouping/hiding
  * [BB-11] Added a top N cities report and a tab-delimited list of cities
  * [BB-9] Reworked how errors are handled and reported to the standard error stream
- * [BB-8] Command line options now take precedence over default configuration file options
+ * [BUG][BB-8] Command line options now take precedence over default configuration file options
  * [BB-7] Changed the exit code from failure (1) to success (0) when no valid records were found
  * Added new HTTP status codes
  * Added a tab-delimited country report
