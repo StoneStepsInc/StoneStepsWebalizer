@@ -11,9 +11,31 @@
 #define THREAD_H
 
 #include "types.h"
+#include <chrono>
+#include <thread>
 
-void msleep(unsigned long timeout);
-uint64_t msecs(void);
+///
+/// @brief  Suspends the current thread for `timeout` milliseconds.
+///
+void msleep(unsigned long timeout)
+{
+   std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
+}
+
+///
+/// @brief  Returns a number of milliseconds since epoch.
+///
+uint64_t msecs(void)
+{
+   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+   std::chrono::system_clock::time_point zero;
+
+   return (uint64_t) std::chrono::duration_cast<std::chrono::milliseconds>(now - zero).count();
+}
+
+///
+/// @brief  Returns a numeric current thread identifier.
+///
 unsigned long thread_id(void);
 
 #endif /* THREAD_H */

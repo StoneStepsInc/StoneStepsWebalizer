@@ -10,18 +10,7 @@
 #include "../pch.h"
 
 #include "../thread.h"
-#include <process.h>
 #include <windows.h>
-
-void msleep(unsigned long timeout)
-{
-   Sleep(timeout);
-}
-
-uint64_t msecs(void)
-{
-   return (uint64_t) GetTickCount();
-}
 
 unsigned long thread_id(void)
 {
