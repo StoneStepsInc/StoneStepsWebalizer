@@ -17,7 +17,7 @@
 ///
 /// @brief  Suspends the current thread for `timeout` milliseconds.
 ///
-void msleep(unsigned long timeout)
+inline void msleep(unsigned long timeout)
 {
    std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
 }
@@ -25,7 +25,7 @@ void msleep(unsigned long timeout)
 ///
 /// @brief  Returns a number of milliseconds since epoch.
 ///
-uint64_t msecs(void)
+inline uint64_t msecs(void)
 {
    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
    std::chrono::system_clock::time_point zero;
