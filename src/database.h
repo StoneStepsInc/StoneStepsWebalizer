@@ -45,10 +45,6 @@ class system_database_t : public berkeleydb_t {
 
             const string_t& get_tmp_path(void) const {return config.db_path;}
 
-            const string_t& get_db_fname(void) const {return config.db_fname;}
-
-            const string_t& get_db_fname_ext(void) const {return config.db_fname_ext;}
-
             uint32_t get_db_cache_size(void) const {return config.db_cache_size;}
 
             uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}

@@ -210,10 +210,6 @@ class berkeleydb_t {
 
             virtual const string_t& get_tmp_path(void) const = 0;
 
-            virtual const string_t& get_db_fname(void) const = 0;
-
-            virtual const string_t& get_db_fname_ext(void) const = 0;
-
             virtual uint32_t get_db_cache_size(void) const = 0;
 
             virtual uint32_t get_db_seq_cache_size(void) const = 0;
