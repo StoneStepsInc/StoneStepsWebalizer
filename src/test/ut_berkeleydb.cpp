@@ -16,6 +16,9 @@
 
 namespace sswtest {
 
+///
+/// @brief  A test database configuration object for an in-memory database.
+///
 class test_config_t : public berkeleydb_t::config_t {
    private:
       const string_t empty_path;
@@ -38,6 +41,9 @@ class test_config_t : public berkeleydb_t::config_t {
       bool get_db_direct(void) const {return false;}
 };
 
+///
+/// @brief  Tests opening and closing a database.
+///
 TEST(BerkeleyDBTest, OpenDatabase)
 {
    test_config_t test_config;
@@ -55,6 +61,9 @@ TEST(BerkeleyDBTest, OpenDatabase)
    ASSERT_EQ(0, status.err_num()) << "A database should close without an error";
 }
 
+///
+/// @brief  Tests storing a few agent nodes in a database and looking some of them up.
+///
 TEST(BerkeleyDBTest, StoreAgentNodes)
 {
    test_config_t test_config;
