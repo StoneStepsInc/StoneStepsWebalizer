@@ -26,19 +26,19 @@ class test_config_t : public berkeleydb_t::config_t {
    public:
       test_config_t(void) {}
 
-      const test_config_t& clone(void) const {return *new test_config_t();}
+      const test_config_t& clone(void) const override {return *new test_config_t();}
 
-      void release(void) const {delete this;}
+      void release(void) const override {delete this;}
 
-      const string_t& get_db_path(void) const {return empty_path;}
+      const string_t& get_db_path(void) const override {return empty_path;}
 
-      const string_t& get_tmp_path(void) const {return empty_path;}
+      const string_t& get_tmp_path(void) const override {return empty_path;}
 
-      uint32_t get_db_cache_size(void) const {return 0;}
+      uint32_t get_db_cache_size(void) const override {return 0;}
 
-      uint32_t get_db_seq_cache_size(void) const {return 0;}
+      uint32_t get_db_seq_cache_size(void) const override {return 0;}
 
-      bool get_db_direct(void) const {return false;}
+      bool get_db_direct(void) const override {return false;}
 };
 
 ///
