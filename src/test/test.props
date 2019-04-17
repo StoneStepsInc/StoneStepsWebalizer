@@ -22,6 +22,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Q /Y "$(BDBBinDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul</Command>
+      <Message>Copying 3rd-party binaries</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

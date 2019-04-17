@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props" Condition="Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -108,6 +109,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ut_berkeleydb.cpp">
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="ut_caseconv.cpp" />
     <ClCompile Include="ut_config.cpp" />
     <ClCompile Include="ut_formatter.cpp" />
@@ -172,11 +183,14 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
+    <Import Project="..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets" Condition="Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
+    <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props'))" />
+    <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets'))" />
   </Target>
 </Project>

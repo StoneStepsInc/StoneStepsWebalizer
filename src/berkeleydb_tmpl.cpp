@@ -186,7 +186,8 @@ bool berkeleydb_t::cursor_reverse_iterator::prev(Dbt& key, Dbt& data, Dbt *pkey)
 //
 // -----------------------------------------------------------------------
 
-berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb, buffer_allocator_t& buffer_allocator) :
+berkeleydb_t::table_t::table_t(const config_t& config, DbEnv& dbenv, Db& seqdb, buffer_allocator_t& buffer_allocator) :
+      config(config),
       dbenv(&dbenv),
       table(new_db(&dbenv, DBFLAGS)),
       values(NULL),
@@ -198,6 +199,7 @@ berkeleydb_t::table_t::table_t(DbEnv& dbenv, Db& seqdb, buffer_allocator_t& buff
 }
 
 berkeleydb_t::table_t::table_t(table_t&& other) :
+      config(other.config),
       dbenv(other.dbenv),
       table(other.table),
       values(other.values),
@@ -305,7 +307,7 @@ berkeleydb_t::table_t::db_desc_t *berkeleydb_t::table_t::get_sc_desc(const char 
    return NULL;
 }
 
-int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb)
+int berkeleydb_t::table_t::open(const char *dbname, bt_compare_cb_t btcb)
 {
    u_int index;
    int error;
@@ -319,7 +321,13 @@ int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compa
       if(!indexes[index].scdb) 
          continue;
 
-      if((error = indexes[index].scdb->open(NULL, indexes[index].dbpath, indexes[index].dbname, DB_BTREE, flags, FILEMASK)) != 0)
+      if(config.is_db_path_empty()) {
+         // test configuration - skip checking if there's a memory pool file object
+         if((error = indexes[index].scdb->get_mpf()->set_flags(DB_MPOOL_NOFILE, true)) != 0)
+            return error;
+      }
+
+      if((error = indexes[index].scdb->open(NULL, config.get_db_path_ptr(), indexes[index].dbname, DB_BTREE, flags, FILEMASK)) != 0)
          return error;
    }
 
@@ -331,7 +339,13 @@ int berkeleydb_t::table_t::open(const char *dbpath, const char *dbname, bt_compa
    if((error = table->set_lorder(1234)) != 0)
       return error;
 
-   if((error = table->open(NULL, dbpath, dbname, DB_BTREE, flags, FILEMASK)) != 0)
+   if(config.is_db_path_empty()) {
+      // test configuration - skip checking if there's a memory pool file object
+      if((error = table->get_mpf()->set_flags(DB_MPOOL_NOFILE, true)) != 0)
+         return error;
+   }
+
+   if((error = table->open(NULL, config.get_db_path_ptr(), dbname, DB_BTREE, flags, FILEMASK)) != 0)
       return error;
 
    // associate all secondary databases with a non-NULL data extraction callback
@@ -440,7 +454,7 @@ int berkeleydb_t::table_t::sync(void)
 /// this method with the primary database. Otherwise, this secondary database will
 /// need to be attached later via the second `associate` method.
 ///
-int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb)
+int berkeleydb_t::table_t::associate(const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb)
 {
    int error;
    Db *scdb = new_db(dbenv, DBFLAGS);
@@ -462,7 +476,7 @@ int berkeleydb_t::table_t::associate(const char *dbpath, const char *dbname, bt_
    if((error = scdb->set_bt_compare(btcb)) != 0)
       goto errexit;
 
-   indexes.push_back(db_desc_t(scdb, dbname, dbpath, scxcb));
+   indexes.push_back(db_desc_t(scdb, dbname, scxcb));
 
    return 0;
 
@@ -1037,7 +1051,7 @@ berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcn
       return string_t::_format("Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
 
    // do some additional initialization for threaded environment
-   if(trickle) {
+   if(!config.is_db_path_empty() && trickle) {
       // initialize the environment and databases as thread-safe and with a single writer
       dbflags |= DB_THREAD;
       envflags |= DB_THREAD | DB_INIT_CDB;
@@ -1065,20 +1079,25 @@ berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcn
    }
 
    // open the DB environment
-   if(!(status = dbenv.open(config.get_db_path(), envflags, FILEMASK)).success())
+   if(!(status = dbenv.open(config.get_db_path_ptr(), envflags, FILEMASK)).success())
       return status;
 
+   if(config.is_db_path_empty()) {
+      // test configuration - skip checking if there's a memory pool file object
+      if(!(status = sequences.get_mpf()->set_flags(DB_MPOOL_NOFILE, true)).success())
+         return status;
+   }
    //
    // create the sequences database (unique node IDs)
    //
-   if(!(status = sequences.open(NULL, config.get_db_path(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
+   if(!(status = sequences.open(NULL, config.get_db_path_ptr(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
       return status;
 
    // hold onto all the tables for subsequent operations
    tables.assign(tblist, tblist + tblcnt);
 
    // now that everything is initialized, we can start the trickle thread
-   if(trickle)
+   if(!config.is_db_path_empty() && trickle)
       trickle_thread = std::thread(&berkeleydb_t::trickle_thread_proc, this);
 
    return status;
@@ -1090,7 +1109,7 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
    int error = 0;
    status_t status;
 
-   if(trickle) {
+   if(!config.is_db_path_empty() && trickle) {
       // tell trickle thread to stop
       trickle_mtx.lock();
       trickle_thread_stop = true;

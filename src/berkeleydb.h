@@ -27,6 +27,12 @@
 #include <mutex>
 #include <condition_variable>
 
+/// Unit test classes that need access to private members.
+namespace sswtest {
+   class BerkeleyDBTest_OpenDatabase_Test;
+   class BerkeleyDBTest_StoreAgentNodes_Test;
+}
+
 ///
 /// @class  berkeleydb_t
 ///
@@ -38,6 +44,9 @@
 /// customizable keys.
 /// 
 class berkeleydb_t {
+   friend class sswtest::BerkeleyDBTest_OpenDatabase_Test;
+   friend class sswtest::BerkeleyDBTest_StoreAgentNodes_Test;
+
    protected:
       //
       // Define BDB callback types (bt_compare_fcn_type, etc are deprecated)
@@ -208,6 +217,10 @@ class berkeleydb_t {
 
             virtual const string_t& get_db_path(void) const = 0;
 
+            const char *get_db_path_ptr(void) const {return !get_db_path().isempty() ? get_db_path().c_str() : nullptr;}
+
+            bool is_db_path_empty(void) const {return get_db_path().isempty();}
+
             virtual const string_t& get_tmp_path(void) const = 0;
 
             virtual uint32_t get_db_cache_size(void) const = 0;
@@ -353,15 +366,16 @@ class berkeleydb_t {
             struct db_desc_t {
                Db                *scdb;      ///< Secondary database instance.
                string_t          dbname;     ///< Secondary database name.
-               string_t          dbpath;     ///< A file path to the database that contains primary and secondary databases.
                sc_extract_cb_t   scxcb;      ///< Extracts a secondary database key from the primary record.
 
                public:
                db_desc_t(void) : scdb(nullptr), scxcb(nullptr) {}
-               db_desc_t(Db *scdb, const char *dbname, const char *dbpath, sc_extract_cb_t scxcb) : scdb(scdb), dbname(dbname), dbpath(dbpath), scxcb(scxcb) {}
+               db_desc_t(Db *scdb, const char *dbname, sc_extract_cb_t scxcb) : scdb(scdb), dbname(dbname), scxcb(scxcb) {}
             };
 
          private:
+            const config_t&      config;
+
             DbEnv                *dbenv;     // shared DB environment
 
             Db                   *table;     // primary database
@@ -383,7 +397,7 @@ class berkeleydb_t {
             db_desc_t *get_sc_desc(const char *dbname);
 
          public:
-            table_t(DbEnv& env, Db& seqdb, buffer_allocator_t& buffer_allocator);
+            table_t(const config_t& config, DbEnv& env, Db& seqdb, buffer_allocator_t& buffer_allocator);
 
             table_t(table_t&& other);
 
@@ -406,7 +420,7 @@ class berkeleydb_t {
             void destroy_db_handles(void);
 
             /// opes a table and all of its associated indexes located in the specified database file
-            int open(const char *dbpath, const char *dbname, bt_compare_cb_t btcb);
+            int open(const char *dbname, bt_compare_cb_t btcb);
 
             /// closes the table and all of its associated indexes
             int close(void);
@@ -424,7 +438,7 @@ class berkeleydb_t {
             void set_values_db(const char *dbname) {values = secondary_db(dbname);}
 
             /// Prepares a named secondary database association with the primary database.
-            int associate(const char *dbpath, const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb = nullptr);
+            int associate(const char *dbname, bt_compare_cb_t btcb, dup_compare_cb_t dpcb, sc_extract_cb_t scxcb = nullptr);
 
             /// Associates a prepared secondary database with the primary database.
             int associate(const char *dbname, sc_extract_cb_t scxcb, bool rebuild);
@@ -614,7 +628,7 @@ class berkeleydb_t {
       bool              trickle;
 
    protected:
-      table_t make_table(void) {return table_t(dbenv, sequences, buffer_stack);}
+      table_t make_table(void) {return table_t(config, dbenv, sequences, buffer_stack);}
 
    public:
       berkeleydb_t(config_t&& config);

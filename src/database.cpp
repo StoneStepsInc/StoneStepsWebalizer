@@ -69,7 +69,7 @@ berkeleydb_t::status_t system_database_t::open(std::initializer_list<table_t*> t
       return status;
 
    // open the system database and return
-   return system.open(config.get_db_path(), "system", &bt_compare_cb<sysnode_t::s_compare_key>);
+   return system.open("system", &bt_compare_cb<sysnode_t::s_compare_key>);
 }
 
 berkeleydb_t::status_t system_database_t::open(void)
@@ -81,7 +81,7 @@ berkeleydb_t::status_t system_database_t::open(void)
       return status;
 
    // open the system database and return
-   return system.open(config.get_db_path(), "system", &bt_compare_cb<sysnode_t::s_compare_key>);
+   return system.open("system", &bt_compare_cb<sysnode_t::s_compare_key>);
 }
 
 bool system_database_t::is_sysnode(void) const
@@ -356,7 +356,7 @@ berkeleydb_t::status_t database_t::open(void)
    // NULL pointer when indexes are attached later, after all logs are processed.
    //
    for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
-      if(!(status = (this->*index_desc[i].table).associate(config.get_db_path(), 
+      if(!(status = (this->*index_desc[i].table).associate(
                                                       index_desc[i].index_db, 
                                                       index_desc[i].index_compare_cb, 
                                                       index_desc[i].index_dup_compare_cb, 
@@ -385,7 +385,7 @@ berkeleydb_t::status_t database_t::open(void)
          // is irrelevant and for value look-ups all duplicates are examined until a
          // matching value is found.
          //
-         if(!(status = (this->*table_desc[i].table).associate(config.get_db_path(), table_desc[i].value_db, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_extract_cb)).success())
+         if(!(status = (this->*table_desc[i].table).associate(table_desc[i].value_db, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_compare_cb, table_desc[i].value_hash_extract_cb)).success())
             return status;
 
          // configure the secondary values database for this table
@@ -393,7 +393,7 @@ berkeleydb_t::status_t database_t::open(void)
       }
 
       // open the primary database that contains all data
-      if(!(status = (this->*table_desc[i].table).open(config.get_db_path(), table_desc[i].primary_db, table_desc[i].key_compare_cb)).success())
+      if(!(status = (this->*table_desc[i].table).open(table_desc[i].primary_db, table_desc[i].key_compare_cb)).success())
          return status;
    }
 

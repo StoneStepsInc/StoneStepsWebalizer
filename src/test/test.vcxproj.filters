@@ -68,6 +68,9 @@
     <ClCompile Include="ut_initseqguard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ut_berkeleydb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchtest.h">
@@ -195,5 +198,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib" />
   </ItemGroup>
 </Project>
