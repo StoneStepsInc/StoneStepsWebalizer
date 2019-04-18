@@ -21,6 +21,32 @@
 #include "storable.h"
 
 ///
+/// @brief  Translates application configuration into database configuration.
+///
+class db_config_t : public berkeleydb_t::config_t {
+   private:
+      const ::config_t& config;
+      string_t          db_path;
+
+   public:
+      db_config_t(const ::config_t& config) : config(config), db_path(config.get_db_path()) {}
+
+      const db_config_t& clone(void) const {return *new db_config_t(config);}
+
+      void release(void) const {delete this;}
+
+      const string_t& get_db_path(void) const {return db_path;}
+
+      const string_t& get_tmp_path(void) const {return config.db_path;}
+
+      uint32_t get_db_cache_size(void) const {return config.db_cache_size;}
+
+      uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
+
+      bool get_db_direct(void) const {return config.db_direct;}
+};
+
+///
 /// @brief  Opens only the system table in the specified database.
 ///
 /// An instance of `system_database_t` has only the system table open and may be used
@@ -28,38 +54,10 @@
 /// schema changes, such as to rename tables other than the system tables.
 ///
 class system_database_t : public berkeleydb_t {
-   private:
-      class db_config_t : public berkeleydb_t::config_t {
-         private:
-            const ::config_t& config;
-            string_t          db_path;
-
-         public:
-            db_config_t(const ::config_t& config) : config(config), db_path(config.get_db_path()) {}
-
-            const db_config_t& clone(void) const {return *new db_config_t(config);}
-
-            void release(void) const {delete this;}
-
-            const string_t& get_db_path(void) const {return db_path;}
-
-            const string_t& get_tmp_path(void) const {return config.db_path;}
-
-            uint32_t get_db_cache_size(void) const {return config.db_cache_size;}
-
-            uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
-
-            bool get_db_direct(void) const {return config.db_direct;}
-      };
-
    protected:
       const ::config_t& config;           ///< A reference to the application configuration,
 
       table_t           system;           ///< The system table.
-
-   protected:
-      /// Opens the system table and registers other tables from the derived database class.
-      status_t open(std::initializer_list<table_t*> tblist);
 
    public:
       system_database_t(const ::config_t& config);
@@ -84,7 +82,7 @@ class system_database_t : public berkeleydb_t {
 ///
 /// @brief  Application-specific database management class
 ///
-class database_t : public system_database_t {
+class database_t : public berkeleydb_t {
    private:
       struct table_desc_t;
       struct index_desc_t;
@@ -93,6 +91,9 @@ class database_t : public system_database_t {
       static const table_desc_t table_desc[];
       static const index_desc_t index_desc[];
 
+      const ::config_t& config;                    ///< A reference to the application configuration,
+
+      table_t           system;                    ///< The system table.
       table_t           urls;
       table_t           hosts;
       table_t           visits;
@@ -316,6 +317,17 @@ class database_t : public system_database_t {
       bool put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info);
 
       bool get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const;
+
+      ///
+      /// @name   System
+      /// @{
+
+      /// Saves the system node in the database.
+      bool put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info);
+
+      /// Reads the system node from the database.
+      bool get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const;
+      /// @}
 };
 
 #endif // DATABASE_H

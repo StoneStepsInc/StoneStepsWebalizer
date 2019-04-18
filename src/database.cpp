@@ -49,29 +49,6 @@ system_database_t::~system_database_t(void)
 {
 }
 
-///
-/// Registers with the underlying tables of the derived class, along with its own system
-/// tables and opens the underlying database. 
-///
-berkeleydb_t::status_t system_database_t::open(std::initializer_list<table_t*> tblist)
-{
-   status_t status;
-
-   // create a vector large enough to accommodate both sets of tables
-   std::vector<table_t*> tblist2(tblist.size() + 1);
-
-   // combine all table pointers in one array, system table first
-   tblist2[0] = &system;
-   std::copy(tblist.begin(), tblist.end(), tblist2.begin() + 1);
-
-   // open the underlying database and register all table pointers
-   if(!(status = berkeleydb_t::open(&tblist2.front(), tblist2.size())).success())
-      return status;
-
-   // open the system database and return
-   return system.open("system", &bt_compare_cb<sysnode_t::s_compare_key>);
-}
-
 berkeleydb_t::status_t system_database_t::open(void)
 {
    status_t status;
@@ -91,7 +68,7 @@ bool system_database_t::is_sysnode(void) const
 
 bool system_database_t::put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info)
 {
-   return system.put_node<sysnode_t>(sysnode, strg_info);
+   return system.put_node(sysnode, strg_info);
 }
 
 bool system_database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const
@@ -160,6 +137,8 @@ const struct database_t::table_desc_t {
    bt_compare_cb_t         value_hash_compare_cb;     ///< Compares two value hashes in secondary database keys.
    sc_extract_cb_t         value_hash_extract_cb;     ///< Extracts value hash from serialized node data.
 } database_t::table_desc[] = {
+   {&database_t::system, "system", 
+         &bt_compare_cb<sysnode_t::s_compare_key>},
    {&database_t::urls, "urls", 
          &bt_compare_cb<unode_t::s_compare_key>, 
          "urls.seq",
@@ -295,7 +274,9 @@ const struct database_t::index_desc_t {
 //
 // -----------------------------------------------------------------------
 
-database_t::database_t(const ::config_t& config) : system_database_t(config),
+database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
+      config(config),
+      system(make_table()),
       urls(make_table()),
       hosts(make_table()),
       visits(make_table()),
@@ -337,12 +318,12 @@ berkeleydb_t::status_t database_t::open(void)
    status_t status;
 
    // initialize the table list for the underlying database layer
-   std::initializer_list<table_t*> tblist = {
+   std::initializer_list<table_t*> tblist = {&system,
                &urls, &hosts, &visits, &downloads, &active_downloads, &agents,
                &referrers, &search, &users, &errors, &scodes, &daily, &hourly,
                &totals, &countries, &cities};
 
-   if(!(status = system_database_t::open(tblist)).success())
+   if(!(status = berkeleydb_t::open(tblist)).success())
       return status;
 
    //
@@ -719,6 +700,22 @@ bool database_t::put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info)
 bool database_t::get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb, void *arg) const
 {
    return cities.get_node_by_id(ctnode, upcb, arg);
+}
+
+// -----------------------------------------------------------------------
+//
+// system
+//
+// -----------------------------------------------------------------------
+
+bool database_t::put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info)
+{
+   return system.put_node(sysnode, strg_info);
+}
+
+bool database_t::get_sysnode_by_id(storable_t<sysnode_t>& sysnode, sysnode_t::s_unpack_cb_t<> upcb, void *arg) const
+{
+   return system.get_node_by_id(sysnode, upcb, arg);
 }
 
 // -----------------------------------------------------------------------
