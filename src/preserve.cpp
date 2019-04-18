@@ -486,12 +486,12 @@ bool state_t::initialize(void)
          // upgrade older databases to make them compatible with the latest version
          if(sysnode.appver && sysnode.appver_last != VERSION)
             upgrade_database(sysnode, sysdb);
+      }
 
-         // make sure the database base is closed properly to ensure schema upgrades
-         if(!(status = sysdb.close()).success()) {
-            fprintf(stderr, "Cannot close the database %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
-            return false;
-         }
+      // make sure the database base is closed properly to ensure schema upgrades
+      if(!(status = sysdb.close()).success()) {
+         fprintf(stderr, "Cannot close the database %s (%s)", config.get_db_path().c_str(), status.err_msg().c_str());
+         return false;
       }
    }
 
