@@ -50,7 +50,7 @@ string_t::char_buffer_t buffer_formatter_t::format(format_cb_t&& formatcb, forma
    string_t::char_buffer_t inbuf(cptr, avsize, true);
 
    // format the string in the available buffer space
-   olen = formatcb(inbuf, arg ...);
+   olen = formatcb(inbuf, std::forward<format_param_t>(arg) ...);
 
    // initialize the output buffer as a holder buffer pointing to the formatted string
    outbuf.attach(cptr, olen, true);
