@@ -211,22 +211,31 @@ class berkeleydb_t {
       ///
       class config_t {
          public:
+            /// Creates a copy of this object.
             virtual const config_t& clone(void) const = 0;
 
+            /// Releases a copy of this object returned from `clone`.
             virtual void release(void) const = 0;
 
+            /// Returns a database file path, including the file name.
             virtual const string_t& get_db_path(void) const = 0;
 
+            /// Returns a character pointer to the database path. May be NULL if it is empty.
             const char *get_db_path_ptr(void) const {return !get_db_path().isempty() ? get_db_path().c_str() : nullptr;}
 
+            /// Returns `true` if the database path is empty, `false` otherwise.
             bool is_db_path_empty(void) const {return get_db_path().isempty();}
 
+            /// Returns a path to a directory for temporary Berkeley DB files.
             virtual const string_t& get_tmp_path(void) const = 0;
 
+            /// Returns Berkeley DB cache size, in bytes. If zero, the default is used.
             virtual uint32_t get_db_cache_size(void) const = 0;
 
+            /// Number of sequence increments reserved for each sequence instance at a time.
             virtual uint32_t get_db_seq_cache_size(void) const = 0;
 
+            /// Indicates whether OS I/O buffering should be disabled (`true`) or not (`false`).
             virtual bool get_db_direct(void) const = 0;
       };
 
