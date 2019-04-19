@@ -559,8 +559,11 @@ int berkeleydb_t::table_t::open_sequence(const char *colname, int32_t cachesize,
    if((error = sequence->initial_value(ini_seq_id)) != 0)
       return error;
 
-   if((error = sequence->set_cachesize(cachesize)) != 0)
-      return error;
+   // set sequence cache size for this handle, if requested
+   if(cachesize) {
+      if((error = sequence->set_cachesize(cachesize)) != 0)
+         return error;
+   }
 
    key.set_data(const_cast<char*>(colname));
    key.set_size((u_int32_t) strlen(colname));
