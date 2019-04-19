@@ -376,39 +376,6 @@ berkeleydb_t::status_t database_t::open(void)
    return status;
 }
 
-berkeleydb_t::status_t database_t::rollover(const tstamp_t& tstamp)
-{
-   u_int seqnum = 1;
-   string_t path, curpath, newpath;
-   status_t status;
-
-   // rollover is only called for the default database
-   if(!config.is_default_db())
-      return "Rollover can only be called for the default database";
-
-   // close the database, so we can work with the database file
-   if(!(status = close()).success())
-      return status;
-
-   // make the initial part of the path
-   path = make_path(config.db_path, config.db_fname);
-
-   // create a file name with a year/month sequence (e.g. webalizer_200706.db)
-   curpath.format("%s.%s", path.c_str(), config.db_fname_ext.c_str());
-   newpath.format("%s_%04d%02d.%s", path.c_str(), tstamp.year, tstamp.month, config.db_fname_ext.c_str());
-
-   // if the file exists, increment the sequence number until a unique name is found
-   while(!access(newpath, F_OK))
-      newpath.format("%s_%04d%02d_%d.%s", path.c_str(), tstamp.year, tstamp.month, seqnum++, config.db_fname_ext.c_str());
-
-   // rename the file
-   if(rename(curpath, newpath))
-      return string_t::_format("Cannot rename %s to %s", curpath.c_str(), newpath.c_str());
-
-   // and reopen the database
-   return open();
-}
-
 //
 // unode
 //

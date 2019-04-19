@@ -117,8 +117,6 @@ class database_t : public berkeleydb_t {
 
       status_t attach_indexes(bool rebuild);
 
-      status_t rollover(const tstamp_t& tstamp);
-
       // urls
       uint64_t get_unode_id(void) {return (uint64_t) urls.get_seq_id();}
 

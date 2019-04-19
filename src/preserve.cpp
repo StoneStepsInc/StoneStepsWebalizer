@@ -859,6 +859,44 @@ void state_t::del_htabs()
    sp_htab.clear();
 }
 
+///
+/// The current state database file is renamed to include the year and the month
+/// of `tstamp` in the file name and a new empty state database is created.
+///
+void state_t::rollover_database(const tstamp_t& tstamp)
+{
+   u_int seqnum = 1;
+   string_t path, curpath, newpath;
+   berkeleydb_t::status_t status;
+
+   // rollover is only called for the default database
+   if(!config.is_default_db())
+      throw std::logic_error("Rollover may only be called for the default database");
+
+   // close the database, so we can work with the database file
+   if(!(status = database.close()).success())
+      throw exception_t(0, string_t::_format("Cannot close the database for a rollover (%s)", status.err_msg().c_str()));
+
+   // make the initial part of the path
+   path = make_path(config.db_path, config.db_fname);
+
+   // create a file name with a year/month sequence (e.g. webalizer_200706.db)
+   curpath.format("%s.%s", path.c_str(), config.db_fname_ext.c_str());
+   newpath.format("%s_%04d%02d.%s", path.c_str(), tstamp.year, tstamp.month, config.db_fname_ext.c_str());
+
+   // if the file exists, increment the sequence number until a unique name is found
+   while(!access(newpath, F_OK))
+      newpath.format("%s_%04d%02d_%d.%s", path.c_str(), tstamp.year, tstamp.month, seqnum++, config.db_fname_ext.c_str());
+
+   // rename the file
+   if(rename(curpath, newpath))
+      throw exception_t(0, string_t::_format("Cannot rename %s to %s", curpath.c_str(), newpath.c_str()));
+
+   // and reopen the database
+   if(!(status = database.open()).success())
+      throw exception_t(0, string_t::_format("Cannot open the database after a rollover (%s)", status.err_msg().c_str()));
+}
+
 /*********************************************/
 /* CLEAR_MONTH - initalize monthly stuff     */
 /*********************************************/
@@ -869,8 +907,7 @@ void state_t::clear_month()
 
    // if there's any data in the database, rename the file
    if(!totals.cur_tstamp.null) {
-      if(!(status = database.rollover(totals.cur_tstamp)).success())
-         throw exception_t(0, string_t::_format("Cannot roll over the current state database (%s)", status.err_msg().c_str()));
+      rollover_database(totals.cur_tstamp);
       
       // it's a new database - reset the system node
       sysnode.reset(config);

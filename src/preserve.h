@@ -91,6 +91,9 @@ class state_t {
 
       void init_counters(void);
 
+      /// Closes and renamed the current database file and opens a new empty one.
+      void rollover_database(const tstamp_t& tstamp);
+
       ///
       /// @name   Serialization callbacks
       ///
