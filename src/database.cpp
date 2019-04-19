@@ -40,7 +40,6 @@ int sc_extract_group_cb(Db *secondary, const Dbt *key, const Dbt *data, Dbt *res
 }
 
 system_database_t::system_database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
-      config(config),
       system(make_table())
 {
 }
@@ -270,7 +269,7 @@ const struct database_t::index_desc_t {
 // -----------------------------------------------------------------------
 
 database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
-      config(config),
+      //config(config),
       system(make_table()),
       urls(make_table()),
       hosts(make_table()),
@@ -347,7 +346,7 @@ berkeleydb_t::status_t database_t::open(void)
    for(size_t i = 0; i < sizeof(table_desc)/sizeof(table_desc[0]); i++) {
       // open the sequence database only if we intend to generate new record identifiers
       if(table_desc[i].sequence_db) {
-         if(!(status = (this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.db_seq_cache_size)).success())
+         if(!(status = (this->*table_desc[i].table).open_sequence(table_desc[i].sequence_db, config.get_db_seq_cache_size())).success())
             return status;
       }
 

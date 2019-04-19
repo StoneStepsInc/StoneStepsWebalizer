@@ -55,8 +55,6 @@ class db_config_t : public berkeleydb_t::config_t {
 ///
 class system_database_t : public berkeleydb_t {
    protected:
-      const ::config_t& config;           ///< A reference to the application configuration,
-
       table_t           system;           ///< The system table.
 
    public:
@@ -87,8 +85,6 @@ class database_t : public berkeleydb_t {
    private:
       static const table_desc_t table_desc[];
       static const index_desc_t index_desc[];
-
-      const ::config_t& config;                    ///< A reference to the application configuration,
 
       table_t           system;                    ///< The system table.
       table_t           urls;

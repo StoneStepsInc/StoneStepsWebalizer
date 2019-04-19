@@ -620,9 +620,10 @@ class berkeleydb_t {
       static void *realloc(void *block, size_t size);
       static void free(void *block);
 
-   private:
+   protected:
       const config_t&   config;
 
+   private:
       DbEnv             dbenv;
       Db                sequences;
 
