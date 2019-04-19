@@ -937,6 +937,15 @@ berkeleydb_t::berkeleydb_t(config_t&& config) :
 
 berkeleydb_t::~berkeleydb_t()
 {
+   //
+   // If the database wasn't closed properly, destroying a running trickle thread
+   // will throw an exception, which will terminate the process. Make sure the
+   // thread is stoppped, but don't attempt to close the database because we don't
+   // know what state it is in.
+   //
+   if(!config.is_db_path_empty() && trickle)
+      stop_trickle_thread();
+
    config.release();
 }
 
@@ -1109,17 +1118,8 @@ berkeleydb_t::status_t berkeleydb_t::close(void)
    int error = 0;
    status_t status;
 
-   if(!config.is_db_path_empty() && trickle) {
-      // tell trickle thread to stop
-      trickle_mtx.lock();
-      trickle_thread_stop = true;
-      trickle_cv.notify_one();
-      trickle_mtx.unlock();
-
-      // if the trickle thread was started, wait for it to stop
-      if(trickle_thread.joinable())
-         trickle_thread.join();
-   }
+   if(!config.is_db_path_empty() && trickle)
+      stop_trickle_thread();
 
    // close all table databases
    for(size_t i = 0; i < tables.size(); i++) {
@@ -1194,6 +1194,21 @@ berkeleydb_t::status_t berkeleydb_t::flush(void)
    }
 
    return status;
+}
+
+void berkeleydb_t::stop_trickle_thread(void)
+{
+   // make sure the trickle thread is or was running
+   if(trickle_thread.joinable()) {
+      // signal the thread to stop
+      trickle_mtx.lock();
+      trickle_thread_stop = true;
+      trickle_cv.notify_one();
+      trickle_mtx.unlock();
+
+      // and wait for it
+      trickle_thread.join();
+   }
 }
 
 void berkeleydb_t::trickle_thread_proc(void)

@@ -583,6 +583,8 @@ class berkeleydb_t {
 
       void trickle_thread_proc(void);
 
+      void stop_trickle_thread(void);
+
       //
       // If BDB is linked against another version of CRT, deleting 
       // BDB objects may end up using the wrong memory manager. For
