@@ -529,11 +529,11 @@ bool state_t::initialize(void)
             throw exception_t(0, "Cannot truncate an incremental database for a non-incremental run");
 
          //
-         // Truncate the database for 
+         // If the database has any data, truncate it for 
          //   a) a non-incremental run or
          //   b) an incremental run following a non-incremental one
          //
-         if(!config.incremental || !sysnode.incremental) {
+         if(sysnode.appver_last && !config.incremental || !sysnode.incremental) {
             database_t::status_t status;
             if(!(status = database.truncate()).success())
                throw exception_t(0, string_t::_format("Cannot truncate the database (%s)\n", status.err_msg().c_str()));
