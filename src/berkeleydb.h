@@ -18,10 +18,10 @@
 #include "char_buffer_stack.h"
 #include "storable.h"
 
-#include "event.h"
 #include "thread.h"
 
 #include <db_cxx.h>
+
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -29,8 +29,7 @@
 
 /// Unit test classes that need access to private members.
 namespace sswtest {
-   class BerkeleyDBTest_OpenDatabase_Test;
-   class BerkeleyDBTest_StoreAgentNodes_Test;
+   class BerkeleyDBTest;
 }
 
 ///
@@ -44,8 +43,7 @@ namespace sswtest {
 /// customizable keys.
 /// 
 class berkeleydb_t {
-   friend class sswtest::BerkeleyDBTest_OpenDatabase_Test;
-   friend class sswtest::BerkeleyDBTest_StoreAgentNodes_Test;
+   friend class sswtest::BerkeleyDBTest;
 
    protected:
       //
