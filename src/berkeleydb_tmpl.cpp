@@ -1070,9 +1070,11 @@ berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcn
          tables[i]->set_threaded(true);
    }
 
-   // set the temporary directory
-   if(!(status = dbenv.set_tmp_dir(config.get_tmp_path())).success())
-      return status;
+   // set the temporary directory if requested
+   if(!config.get_tmp_path().isempty()) {
+      if(!(status = dbenv.set_tmp_dir(config.get_tmp_path())).success())
+         return status;
+   }
 
    // if configured cache size is non-zero,
    if(config.get_db_cache_size()) {
