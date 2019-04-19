@@ -544,7 +544,7 @@ Db *berkeleydb_t::table_t::secondary_db(const char *dbname) const
    return desc->scdb;
 }
 
-int berkeleydb_t::table_t::open_sequence(const char *colname, int32_t cachesize)
+int berkeleydb_t::table_t::open_sequence(const char *colname, int32_t cachesize, db_seq_t ini_seq_id)
 {
    u_int32_t flags = DB_CREATE;
    int error;
@@ -556,7 +556,7 @@ int berkeleydb_t::table_t::open_sequence(const char *colname, int32_t cachesize)
    if(!sequence)
       sequence = new_db_sequence(seqdb, 0);
 
-   if((error = sequence->initial_value(1)) != 0)
+   if((error = sequence->initial_value(ini_seq_id)) != 0)
       return error;
 
    if((error = sequence->set_cachesize(cachesize)) != 0)

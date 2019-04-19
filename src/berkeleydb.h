@@ -459,7 +459,7 @@ class berkeleydb_t {
             Db *values_db(void) const {return values;}
 
             /// opens a sequence within a sequence database
-            int open_sequence(const char *colname, int32_t cachesize);
+            int open_sequence(const char *colname, int32_t cachesize, db_seq_t ini_seq_id = 1);
 
             /// gets the next ID from the sequence for this table
             db_seq_t get_seq_id(int32_t delta = 1);
