@@ -67,9 +67,6 @@ class system_database_t : public berkeleydb_t {
       /// Opens the database with just the system table open.
       status_t open(void);
 
-      /// Returns `true` if there is system node in the database.
-      bool is_sysnode(void) const;
-
       /// Saves the system node in the database.
       bool put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info);
 

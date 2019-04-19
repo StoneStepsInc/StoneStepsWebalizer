@@ -61,11 +61,6 @@ berkeleydb_t::status_t system_database_t::open(void)
    return system.open("system", &bt_compare_cb<sysnode_t::s_compare_key>);
 }
 
-bool system_database_t::is_sysnode(void) const
-{
-   return system.count() ? true : false;
-}
-
 bool system_database_t::put_sysnode(const sysnode_t& sysnode, storage_info_t& strg_info)
 {
    return system.put_node(sysnode, strg_info);

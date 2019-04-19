@@ -457,10 +457,7 @@ bool state_t::initialize(void)
       // If there is a system node, check if we have anything to do, given state of 
       // the database and current run parameters.
       //
-      if(sysdb.is_sysnode()) {
-         if(!sysdb.get_sysnode_by_id(sysnode, NULL, NULL))
-            throw exception_t(0, "Cannot read the system node from the database");
-
+      if(sysdb.get_sysnode_by_id(sysnode, NULL, NULL)) {
          // cannot read any data if byte order isn't the same
          if(!sysnode.check_byte_order())
             throw exception_t(0, "Incompatible database format (byte order)");
