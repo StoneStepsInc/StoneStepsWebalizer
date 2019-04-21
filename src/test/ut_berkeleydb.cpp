@@ -160,34 +160,17 @@ TEST_F(BerkeleyDBTest, LookUpAgentNodes)
 
    PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, false);
 
-   // look up a few agent nodes with IDs we just inserted
+   // look up agent nodes with IDs we just inserted
    storable_t<anode_t> anode;
 
-   anode.nodeid = 12;
-   ASSERT_TRUE(agents.get_node_by_id(anode, nullptr, nullptr)) << "A look-up should find an agent 12";
-   ASSERT_EQ(120, anode.count) << "Agent 12 should have 120 hits";
-   ASSERT_STREQ("Agent 12", anode.string) << "Agent 12 name should match";
+   for(uint64_t i = 1; i <= 100; i++) {
+      anode.nodeid = i;
+      ASSERT_TRUE(agents.get_node_by_id(anode, nullptr, nullptr)) << "A look-up should find any agent from 1 to 100";
+      ASSERT_EQ(i * 10, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
+      ASSERT_STREQ(("Agent " + std::to_string(i)).c_str(), anode.string) << "Agent name should match its node ID";
 
-   anode.reset();
-
-   anode.nodeid = 75;
-   ASSERT_TRUE(agents.get_node_by_id(anode, nullptr, nullptr)) << "A look-up should find an agent 75";
-   ASSERT_EQ(750, anode.count) << "Agent 75 should have 750 hits";
-   ASSERT_STREQ("Agent 75", anode.string) << "Agent 75 name should match";
-
-   anode.reset();
-
-   anode.string = "Agent 45";
-   ASSERT_TRUE(agents.get_node_by_value(anode, nullptr, nullptr)) << "A look-up should find an agent 45";
-   ASSERT_EQ(450, anode.count) << "Agent 45 should have 450 hits";
-   ASSERT_STREQ("Agent 45", anode.string) << "Agent 45 name should match";
-
-   anode.reset();
-
-   anode.string = "Agent 82";
-   ASSERT_TRUE(agents.get_node_by_value(anode, nullptr, nullptr)) << "A look-up should find an agent 82";
-   ASSERT_EQ(820, anode.count) << "Agent 82 should have 450 hits";
-   ASSERT_STREQ("Agent 82", anode.string) << "Agent 82 name should match";
+      anode.reset();
+   }
 }
 
 ///
@@ -206,31 +189,14 @@ TEST_F(BerkeleyDBTest, LookUpHostNodes)
    // look up a few agent nodes with IDs we just inserted
    storable_t<hnode_t> hnode;
 
-   hnode.nodeid = 250;
-   ASSERT_TRUE(hosts.get_node_by_id(hnode, nullptr, nullptr)) << "A look-up should find a host 250";
-   ASSERT_EQ(2500, hnode.count) << "Host 250 should have 2500 hits";
-   ASSERT_STREQ("Host 250", hnode.string) << "Host 250 name should match";
+   for(uint64_t i = 200; i <= 400; i++) {
+      hnode.nodeid = i;
+      ASSERT_TRUE(hosts.get_node_by_id(hnode, nullptr, nullptr)) << "A look-up should find any host from 200 to 400";
+      ASSERT_EQ(i * 10, hnode.count) << "Host hit count should be a multiple of 10 of its node ID";
+      ASSERT_STREQ(("Host " + std::to_string(i)).c_str(), hnode.string) << "Host name should match its node ID";
 
-   hnode.reset();
-
-   hnode.nodeid = 375;
-   ASSERT_TRUE(hosts.get_node_by_id(hnode, nullptr, nullptr)) << "A look-up should find a host 375";
-   ASSERT_EQ(3750, hnode.count) << "Host 375 should have 3750 hits";
-   ASSERT_STREQ("Host 375", hnode.string) << "Host 375 name should match";
-
-   hnode.reset();
-
-   hnode.string = "Host 235";
-   ASSERT_TRUE(hosts.get_node_by_value(hnode, nullptr, nullptr)) << "A look-up should find a host 235";
-   ASSERT_EQ(2350, hnode.count) << "Host 235 should have 3750 hits";
-   ASSERT_STREQ("Host 235", hnode.string) << "Host 235 name should match";
-
-   hnode.reset();
-
-   hnode.string = "Host 353";
-   ASSERT_TRUE(hosts.get_node_by_value(hnode, nullptr, nullptr)) << "A look-up should find a host 353";
-   ASSERT_EQ(3530, hnode.count) << "Host 353 should have 3530 hits";
-   ASSERT_STREQ("Host 353", hnode.string) << "Host 353 name should match";
+      hnode.reset();
+   }
 }
 
 ///
