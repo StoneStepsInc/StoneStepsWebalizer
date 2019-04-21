@@ -335,6 +335,33 @@ TEST_F(BerkeleyDBTest, BuildNewIndex)
 
    ASSERT_FALSE(iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr)) << "There should be no more than 25 secondary index entries";
 }
+
+TEST_F(BerkeleyDBTest, AgentNodeReadCallback)
+{
+   berkeleydb_t::status_t status;
+
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, false);
+
+   // use the void pointer to pass in a node ID, so we don't have to instantiate read templates just for this test
+   auto read_agent_cb = [] (anode_t& anode, void *arg) -> void
+   {
+      uint64_t& nodeid = *(uint64_t*) arg;
+
+      ASSERT_EQ(nodeid * 10, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
+      ASSERT_STREQ(("Agent " + std::to_string(nodeid)).c_str(), anode.string) << "Agent name should match its node ID";
+   };
+
+   // look up agent nodes with IDs we just inserted
+   storable_t<anode_t> anode;
+
+   for(uint64_t i = 1; i <= 100; i++) {
+      anode.nodeid = i;
+      ASSERT_TRUE(agents.get_node_by_id(anode, read_agent_cb, &i)) << "A look-up should find any agent from 1 to 100";
+
+      anode.reset();
+   }
+}
+
 }
 
 #include "../berkeleydb_tmpl.cpp"
