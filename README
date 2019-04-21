@@ -130,7 +130,7 @@ following command:
    make
 
 Once the build has been completed, you will find the executable in the
-"build" subdirectory.
+`build` subdirectory.
 
 
 Running the Webalizer
@@ -215,7 +215,7 @@ o If no hostname was given, the program attempts to get the hostname
 o A history file is searched for.  This file keeps previous month
   totals used on the main index.html page.  The default file is
   named 'webalizer.hist', kept in the specified output directory,
-  however may be changed using the "HistoryName" configuration file
+  however may be changed using the `HistoryName` configuration file
   keyword.
 
 o A database file containing the internal state data of the program at 
@@ -422,7 +422,7 @@ set to 'yes' in the configuration file.
 
 Transfer amounts are reported since v4.2 with a unit suffix, such as 
 12.3 GB, or as a number kilobytes. This behavior may be changed by 
-setting ClassicKBytes to "yes". One kilobyte is counted as either 1024 
+setting ClassicKBytes to `yes`. One kilobyte is counted as either 1024 
 or 1000 bytes, depending on the value of the DecimalKBytes configuration 
 variable.
 
@@ -529,7 +529,7 @@ General Options
           location.  If a hostname is not specified, either on the
           command line or in a configuration file, The Webalizer attempts
           to determine the hostname using a 'uname' system call.  If this
-          fails, "localhost" will be used as the hostname.
+          fails, `localhost` will be used as the hostname.
           Config file keyword: SiteName
 
 -o dir    This options specifies the output directory for the reports.
@@ -696,7 +696,7 @@ the argument and not in the middle. That is, this argument is invalid:
 
 For Example:
 
-Given the string "yourmama/was/here", the arguments "was", "*here" and
+Given the string "yourmama/was/here", the arguments `was`, "*here" and
 "your*" will all produce a match.
 
 
@@ -709,7 +709,7 @@ Given the string "yourmama/was/here", the arguments "was", "*here" and
           You must have a web server that includes user agents in it's
           log files for this option to be of any use.  In addition, it
           is also useless if you disable the user agent table in the
-          report (see the -A command line option or "TopAgents"
+          report (see the -A command line option or `TopAgents`
           configuration file keyword). You can specify as many of these
           as you want on the command line.  The wildcard character '*'
           can be used either in front of or at the end of the string.
@@ -726,7 +726,7 @@ Given the string "yourmama/was/here", the arguments "was", "*here" and
           You must have a web server that includes referrer information
           in the log files for this option to be of any use.  In addition,
           it is also useless if you disable the referrers table in the
-          report (see the -R command line option or "TopReferrers"
+          report (see the -R command line option or `TopReferrers`
           configuration file keyword).  You can specify as many of these
           as you like on the command line.
           Config file keyword: HideReferrer
@@ -736,7 +736,7 @@ Given the string "yourmama/was/here", the arguments "was", "*here" and
           domain name from the report, as it usually is one of the top
           hosts to visit your web server.  This option is of no use if
           you disable the top hosts table in the report (see the -S
-          command line option or "TopSites" configuration file option).
+          command line option or `TopSites` configuration file option).
           Config file keyword: HideSite
 
 -X        This causes all individual hosts to be hidden, which results
@@ -748,7 +748,7 @@ Given the string "yourmama/was/here", the arguments "was", "*here" and
           audio files and other objects your web server dishes out that
           would otherwise clutter up the table.  This option is of no
           use if you disable the top URL's table in the report (see the
-          -U command line option or "TopURLs" configuration file keyword).
+          -U command line option or `TopURLs` configuration file keyword).
           Config file keyword: HideURL
 
 -I name   This option allows you to specify additional index.html aliases.
@@ -972,7 +972,7 @@ SiteName      This defines the site hostname. The hostname is used in the
               on the local machine, and allows clicking on the URL to
               go to the right place.  If not specified, The Webalizer
               attempts to get the hostname via a 'uname' system call,
-              and if that fails, will default to "localhost".
+              and if that fails, will default to `localhost`.
               Command line argument: -n
 
 SiteAlias     Specifies an alternative site host name. Multiple SiteAlias
@@ -1012,7 +1012,7 @@ Quiet         This allows you to enable or disable informational messages
 TimeMe        This allows you to display timing information regardless of
               any "quiet mode" specified.  Useful only if you did in fact
               tell the webalizer to be quiet either by using the -q command
-              line option or the "Quiet" keyword, otherwise timing stats
+              line option or the `Quiet` keyword, otherwise timing stats
               are normally displayed anyway.  Values may be either 'yes'
               or 'no', with the default being 'no'.
               Command line argument: -T
@@ -1031,7 +1031,7 @@ UTCOffset     Specifies the difference between the local time and UTC time,
               the UTCOffset value for EST would be -5h. UTCOffset is only 
               applied when the log time zone type doesn't match the UTCTime 
               value. In other words, log time in Apache and CLF logs will 
-              not be adjusted by UTCOffset if UTCTime is set to "no", but 
+              not be adjusted by UTCOffset if UTCTime is set to `no`, but 
               IIS logs will be in the same configuration. 
               Default value: 0
 
@@ -1107,8 +1107,8 @@ PageEntryURL  HTTP requests are logged at the end of the request processing
               resources it references, such as images or style sheets. In
               this case, an entry URL may be an image or some other file,
               which is not very informative. When PageEntryURL is set to 
-              "yes", Stone Steps Webalizer will ignore non-pages when 
-              collecting data for entry URL. If set to "no", any successful 
+              `yes`, Stone Steps Webalizer will ignore non-pages when 
+              collecting data for entry URL. If set to `no`, any successful 
               first request in a visit will be reported as an entry URL,
               regardless of its type. 
               
@@ -1277,7 +1277,7 @@ SearchEngine  This keyword allows specification of search engines and
               to parse the search string from.  The line is formatted
               as:  "SearchEngine engine-string query-string"  where
               'engine-string' is a substring for matching the search
-              engine with, such as "yahoo.com" or "altavista".  The
+              engine with, such as "yahoo.com" or `altavista`.  The
               'query-string' is the unique query string that is added
               to the URL for the search engine, such as "search=" or
               "MT=" with the actual search strings appended to the
@@ -1439,7 +1439,7 @@ GroupAgentArgs
               
               Note that if the pattern contains spaces (e.g. Windows NT 5.1), 
               there must be a tab character between the pattern and the alias 
-              and EnablePhraseValues must be set to "yes". Otherwise, the 
+              and EnablePhraseValues must be set to `yes`. Otherwise, the 
               first space will end the pattern (in this example, the pattern 
               will end after the first word Windows).
 
@@ -1533,7 +1533,7 @@ TargetURL     Visitors who browse a website and then purchase, download
               
 TargetDownload
               If downloads are being tracked using DownloadPath, setting
-              TargetDownload to "yes" will instruct Stone Steps Webalizer
+              TargetDownload to `yes` will instruct Stone Steps Webalizer
               to treat those requests that matched DownloadPath as if they
               had a corresponding TargetURL entry. This improves overall
               performance by reducing the number of target URL entries and
@@ -1545,7 +1545,7 @@ ClassicKBytes
               Starting with v4.2, Stone Steps Webalizer shows transfer amounts in 
               reports and charts as numbers with a unit suffix, such as KB, MB, GB, 
               etc., as opposed to the traditional numbers of kilobytes. If you would 
-              like to revert to the previous behavior, set ClassicKBytes to "yes" in 
+              like to revert to the previous behavior, set ClassicKBytes to `yes` in 
               the configuration. You will also need to change the word Transfer to 
               KBytes in the language file, so report titles look the same as before 
               v4.2.
@@ -1554,7 +1554,7 @@ ClassicKBytes
 
 DecimalKBytes
               Traditionally, the Webalizer interpreted one kilobyte as 1024 bytes. 
-              You can set DecimalKBytes to "yes" to compute transfer amounts in 
+              You can set DecimalKBytes to `yes` to compute transfer amounts in 
               multiples of 1000 bytes.
 
               Default value: no
@@ -1588,9 +1588,9 @@ GeoIPDBPath   This configuration parameter is expected to be a fully-
               Stone Steps Webalizer will use domain name suffixes, 
               such as .ca or .jp, to generate the country report.
 
-GeoIPCity     Value "yes" will instruct Stone Steps Webalizer to look up
+GeoIPCity     Value `yes` will instruct Stone Steps Webalizer to look up
               country and city names in the GeoIP database, while value
-              "no" will disable city look-ups. Note that you need GeoIP
+              `no` will disable city look-ups. Note that you need GeoIP
               City database for this parameter to have any effect.
               Default value: yes
 
@@ -2015,7 +2015,7 @@ HideUser      This allows you to hide Usernames from the "Top Usernames"
               table.  Usernames are only available if you use http based
               authentication on your web server.
 
-HideRobots    If set to "yes", this option allows you to hide all robots 
+HideRobots    If set to `yes`, this option allows you to hide all robots 
               from the Top Hosts and Top Agents reports. Robot groups, if
               there are any, will still be displayed in the Top Agents 
               report. Use the Robot configuration parameter to identify
@@ -2084,9 +2084,9 @@ GroupHost     This keywords allows grouping Sites.  Most used for
               for local dial-ups, etc...
 
 GroupAgent    Groups User Agents.  A handy example of how you could use
-              this one is to use "Mozilla" and "MSIE" as the values for
+              this one is to use `Mozilla` and `MSIE` as the values for
               GroupAgent and HideAgent keywords.  Make sure you put the
-              "MSIE" one first.
+              `MSIE` one first.
 
 GroupDomains  Allows automatic grouping of domains.  The numeric value
               represents the level of grouping, and can be thought of
@@ -2107,9 +2107,9 @@ GroupShading  Allows shading of table rows for groups.  Value can be
 GroupHighlight Allows bolding of table rows for groups.  Value can be
                'yes' or 'no', with the default being 'yes'.
 
-GroupRobots   If set to "yes", will instruct Stone Steps Webalizer to
+GroupRobots   If set to `yes`, will instruct Stone Steps Webalizer to
               group automated user agents (robots) in the Top Agents
-              report. Each group will be assigned a CSS class "robot"
+              report. Each group will be assigned a CSS class `robot`
               to distinguish them from non-robot user agents.  Use the 
               Robot configuration parameter to identify robots. 
               Default value: no
@@ -2222,7 +2222,7 @@ IncludeUser   Force the record to be processed based on username.
               authentication on your server.  This takes precedence over
               the Ignore* keywords.
 
-IgnoreRobots  If set to "yes", forces all records submitted by a robot
+IgnoreRobots  If set to `yes`, forces all records submitted by a robot
               user agent to be completely ignored. Use the Robot 
               configuration parameter to identify robots. 
               Default value: no
@@ -2248,7 +2248,7 @@ DumpPath      Specifies an alternate location for the dump files.  The
               relative to the output directory location.
 
 DumpExtension Allows the dump filename extensions to be specified. The
-              default extension is "tab", however may be changed with
+              default extension is `tab`, however may be changed with
               this option.
 
 DumpHeader    Allows a header record to be written as the first record
@@ -2493,7 +2493,7 @@ a bookmark, there won't be any information in the referrer field and will
 take the form "-".
 
 In order to handle all these variations, The Webalizer parses the referrer
-field in a certain way.  First, if the referrer string begins with "http",
+field in a certain way.  First, if the referrer string begins with `http`,
 it assumes it is a normal referral and converts the "http://" and following
 hostname to lowercase in order to simplify hiding if desired.  For example,
 the referrer "HTTP://WWW.MyHost.Com/This/Is/A/HTML/Document.html" will become
