@@ -84,28 +84,34 @@ class BerkeleyDBTest : public ::testing::Test {
          ASSERT_EQ(0, status.err_num()) << "A database should close without an error";
       }
 
-      /// Default hit count generator for `PopulateTable`.
-      static uint64_t HitCountValue(uint64_t i) 
+      /// Returns node hit count value as a node ID multiplied by ten.
+      static uint64_t HitCountValueX10(uint64_t nodeid, uint64_t minid, uint64_t maxid) 
       {
-         return i * 10;
+         return nodeid * 10;
+      }
+
+      /// Returns node hit count value as a difference between the max node ID and `nodeid` multiplied by `10` and divided by `4`.
+      static uint64_t HitCountValueDescX10Div4(uint64_t nodeid, uint64_t minid, uint64_t maxid) 
+      {
+         return ((maxid + minid - nodeid) * 10) / 4;
       }
 
       ///
       /// @brief  Opens `table` and populates it with sequential data.
       ///
+      /// @tparam node_t   Node type to construct to populate the table.
       /// @tparam param_t  Parameyers for `node_t` constructor.
       ///
       /// @note   The table must be registered with the database in `SetUp`.
       ///
-      /// All nodes will have their hit counts set to the value of node ID multiplied by ten.
+      /// All nodes will have their hit counts set to the value of node ID multiplied by ten,
+      /// unless a non-NULL `hit_count_value` value generator is provided, in which case its
+      /// return value will be used.
       ///
       template <typename node_t, typename ... param_t>
-      void PopulateTable(const char *table_name, berkeleydb_t::table_t& table, const char *key_prefix, uint64_t seq_id_first, uint64_t seq_id_last, uint64_t (*hit_count_value)(uint64_t) = nullptr, param_t ... arg)
+      void PopulateTable(const char *table_name, berkeleydb_t::table_t& table, const char *key_prefix, uint64_t seq_id_first, uint64_t seq_id_last, uint64_t (*hit_count_value)(uint64_t, uint64_t, uint64_t), param_t ... arg)
       {
          berkeleydb_t::status_t status;
-
-         if(!hit_count_value)
-            hit_count_value = HitCountValue;
 
          // configure the sequence database
          ASSERT_NO_THROW((status = table.open_sequence(string_t(table_name) + ".seq", 10, (db_seq_t) seq_id_first))) << "Table sequence should open without throwing any exceptions";
@@ -138,7 +144,7 @@ class BerkeleyDBTest : public ::testing::Test {
 
             // insert a new record with the loop counter node ID and a few data bits to verify later
             node.nodeid = i;
-            node.count = hit_count_value(i);
+            node.count = hit_count_value(i, seq_id_first, seq_id_last);
             ASSERT_TRUE(table.put_node<node_t>(node, node.storage_info)) << "Data node should be stored without an error";
          }
       }
@@ -152,7 +158,7 @@ TEST_F(BerkeleyDBTest, LookUpAgentNodes)
 {
    berkeleydb_t::status_t status;
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, nullptr, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, false);
 
    // look up a few agent nodes with IDs we just inserted
    storable_t<anode_t> anode;
@@ -195,7 +201,7 @@ TEST_F(BerkeleyDBTest, LookUpHostNodes)
 {
    berkeleydb_t::status_t status;
 
-   PopulateTable<hnode_t>("hosts", hosts, "Host ", 200, 400);
+   PopulateTable<hnode_t>("hosts", hosts, "Host ", 200, 400, HitCountValueX10);
 
    // look up a few agent nodes with IDs we just inserted
    storable_t<hnode_t> hnode;
@@ -229,6 +235,38 @@ TEST_F(BerkeleyDBTest, LookUpHostNodes)
 
 ///
 /// @brief  Populates a table and traverses its records by a secondary index
+///         in ascending order.
+///
+TEST_F(BerkeleyDBTest, ForwardIndexTraversal)
+{
+   berkeleydb_t::status_t status;
+
+   // create an index with an extract callback, so it will be associated immediately when the table is opened
+   ASSERT_NO_THROW((status = agents.associate("agents.hits", 
+               &bt_compare_cb<anode_t::s_compare_hits>, 
+               &bt_compare_cb<anode_t::s_compare_key>, 
+               &sc_extract_cb<anode_t::s_field_hits>))) << "A table index should associate without throwing any exceptions";
+   ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
+
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
+
+   storable_t<anode_t> anode;
+
+   // traverse all nodes in ascending order of hits (node IDs are in reverse order)
+   berkeleydb_t::iterator<anode_t> iter = agents.begin<anode_t>("agents.hits");
+
+   for(uint64_t i = 1; iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+      ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be node ID * 10 / 4";
+      ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID";
+
+      anode.reset();
+   }
+
+   ASSERT_FALSE(iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr)) << "There should be no more than 100 secondary index entries";
+}
+
+///
+/// @brief  Populates a table and traverses its records by a secondary index
 ///         in descending order.
 ///
 TEST_F(BerkeleyDBTest, ReverseIndexTraversal)
@@ -242,16 +280,16 @@ TEST_F(BerkeleyDBTest, ReverseIndexTraversal)
                &sc_extract_cb<anode_t::s_field_hits>))) << "A table index should associate without throwing any exceptions";
    ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, nullptr, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
 
    storable_t<anode_t> anode;
 
-   // traverse all nodes in descending order of hits
+   // traverse all nodes in descending order of hits (node IDs are in reverse order)
    berkeleydb_t::reverse_iterator<anode_t> iter = agents.rbegin<anode_t>("agents.hits");
 
-   for(uint64_t i = 100; i && iter.prev(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i--) {
-      ASSERT_EQ(i * 10, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
-      ASSERT_STREQ(("Agent " + std::to_string(i)).c_str(), anode.string) << "Agent name should match the node ID in reverse order";
+   for(uint64_t i = 100; iter.prev(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i--) {
+      ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be node ID * 10 / 4";
+      ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID";
 
       anode.reset();
    }
@@ -275,7 +313,7 @@ TEST_F(BerkeleyDBTest, BuildNewIndex)
    ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
 
    // populate the table with data without an index and assign 25 distinct hit counts in the order reverse to node IDs
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, [] (uint64_t i) {return ((101 - i) * 10) / 4;}, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
 
    // build a new index against the table we just populated
    ASSERT_NO_THROW((status = agents.associate("agents.hits", 
@@ -288,7 +326,7 @@ TEST_F(BerkeleyDBTest, BuildNewIndex)
    berkeleydb_t::iterator<anode_t> iter = agents.begin<anode_t>("agents.hits");
 
    // hit counts will be increasing (2, 5, 7, ...) and node values will be sequential and in reverse order (`Agent 100`, Agent 99`, ...)
-   for(uint64_t i = 1; i <= 100 && iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+   for(uint64_t i = 1; iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
       ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
       ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID in reverse order";
 
