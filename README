@@ -45,26 +45,29 @@ Installing the Webalizer
   o Windows
 
 Create a directory where you intend to keep Stone Steps Webalizer 
-files (e.g. c:\tools\webalizer) and extract the content of the 
-webalizer_win.zip file into this directory.
+files (e.g. `c:\tools\webalizer`) and extract the content of the 
+The Webalizer ZIP file into this directory.
 
 Create a text file in the installation directory and save the file as 
-webalizer.conf. This will be your default configuration file.
+`webalizer.conf`. This will be your default configuration file.
 
 In order to run Stone Steps Webalizer you need to know three 
-directories - a) the installation directory (e.g. c:\tools\webalizer); 
-b) the directory where web server log files are located (e.g. 
-c:\winnt\system32\logfiles\w3svc1); c) the directory where you would 
-like to keep generated report files (e.g. c:\inetpub\reports\). The 
-sample command below shows how to process a single IIS log file (line 
-breaks are shown for display purposes only):
+directories:
 
+  a) the installation directory (e.g. `c:\tools\webalizer`); 
+  b) the directory where web server log files are located (e.g. 
+     `c:\winnt\system32\logfiles\w3svc1`);
+  c) the directory where you would like to keep generated report
+     files (e.g. `c:\inetpub\reports\`). The sample command below
+	 shows how to process a single IIS log file (line breaks are
+	 shown for display purposes only):
+```
 c:\tools\webalizer\webalizer -F iis -n your-domain-name
         -o c:\inetpub\reports
            c:\winnt\system32\logfiles\w3svc\ex050301.log
-
-The -F option specifies the log file type. The -n option specifies the 
-domain name of your website. The -o option specifies the directory 
+```
+The `-F` option specifies the log file type. The `-n` option specifies the 
+domain name of your website. The `-o` option specifies the directory 
 where Stone Steps Webalizer will generate reports.
 
   o  Linux
@@ -102,20 +105,23 @@ CustomLog in this document for details on how to configure Apache log
 file processing. 
 
 In order to run Stone Steps Webalizer you need to know three 
-directories - a) the installation directory (e.g. 
-/usr/local/webalizer); b) the directory where web server log files are 
-located (e.g. /usr/local/apache2/logs); c) the directory where you 
-would like to keep generated report files (e.g. 
-/usr/local/apache2/reports). The sample command below shows how to 
-process a single Apache log file (line breaks at are shown for display 
-purposes only): 
+directories:
 
+  a) the installation directory (e.g. `/usr/local/webalizer`);
+  b) the directory where web server log files are located (e.g. `
+     `/usr/local/apache2/logs`);
+  c) the directory where you would like to keep generated report files
+     (e.g. `/usr/local/apache2/reports`).
+	 
+The sample command below shows how to process a single Apache log file 
+(line breaks at are shown for display purposes only): 
+```
   webalizer -F apache -n your-domain-name
         -o /usr/local/apache2/reports
            /usr/local/apache2/logs/access_log
-
-The -F option specifies the log file type. The -n option specifies the 
-domain name of your website. The -o option specifies the directory 
+```
+The `-F` option specifies the log file type. The `-n` option specifies the 
+domain name of your website. The `-o` option specifies the directory 
 where Stone Steps Webalizer will generate reports.
 
   o Source
