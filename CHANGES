@@ -32,7 +32,7 @@
  * [BUG] Fixed a bug causing Ctrl-C to be ignored
  * [Windows] Changed Visual Studio projects to use Nuget packages for 3rd-party libraries
  * [Windows] Updated MaxMind DB, ZLib and berkeley DB to their latest versions
- * [JS Charts] Updated the Highcharts version from 4.2 to 6.0
+ * [JS Charts] Updated the Highcharts version from 4.2 to 7.0
  * [JS Charts][BUG] When mouse hovered over Transfer columns, transfer amount was not shown or was not in the human-readable format
 
 --------------------------------------------------------------------
