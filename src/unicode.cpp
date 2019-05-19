@@ -23,18 +23,3 @@ size_t ucs2utf8(const wchar_t *cp, size_t slen, char *out, size_t bsize)
    // return the size of the UTF-8 string, without the null character
    return op - out;
 }
-
-size_t ucs2utf8(const wchar_t *cp, char *out, size_t bsize)
-{
-   char *op = out;
-   
-   // convert one wide character at a time, up to the null character
-   while(*cp && bsize-(op-out) >= ucs2utf8size(*cp))
-      op += ucs2utf8(*cp++, op);
-   
-   // terminate the new string, but do not advance the pointer
-   *op = 0;
-   
-   // return the size of the UTF-8 string, not including the null character
-   return op - out;
-}

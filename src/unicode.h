@@ -173,6 +173,5 @@ inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 /// whether they contain a null character or not. 
 ///
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
-size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 
 #endif // UNICODE_H
