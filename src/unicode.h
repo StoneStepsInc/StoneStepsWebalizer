@@ -166,11 +166,7 @@ inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 }
 
 ///
-/// @brief  Converts a UCS-2 string to a UTF-8 string. 
-///
-/// Returns the size of the result, in bytes, not including the null character, if 
-/// one was inserted. If `slen` was provided, all `slen` characters will be converted, 
-/// whether they contain a null character or not. 
+/// @brief  Converts `slen` characters of a wide character string to a UTF-8 string.
 ///
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
 
