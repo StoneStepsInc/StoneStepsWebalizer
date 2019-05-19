@@ -135,6 +135,7 @@
     <ClCompile Include="ut_strcreate.cpp" />
     <ClCompile Include="ut_strsrch.cpp" />
     <ClCompile Include="ut_tstamp.cpp" />
+    <ClCompile Include="ut_unicode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\utsname.obj" />
