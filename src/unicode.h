@@ -81,7 +81,7 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
    // 4-byte sequence
    if((uint32_t) wchar <= 0x10FFFF) {
       *out++ = (char) ((wchar >> 18) | L'\xF0');
-      *out++ = (char) (((wchar >> 12) & L'\x3F') | L'\xE0');
+      *out++ = (char) (((wchar >> 12) & L'\x3F') | L'\x80');
       *out++ = (char) (((wchar >> 6) & L'\x3F') | L'\x80');
       *out = (char) ((wchar & L'\x3F') | L'\x80');
       return 4;
