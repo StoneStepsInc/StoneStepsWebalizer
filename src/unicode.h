@@ -175,10 +175,4 @@ inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 size_t ucs2utf8(const wchar_t *str, size_t slen, char *out, size_t bsize);
 size_t ucs2utf8(const wchar_t *str, char *out, size_t bsize);
 
-///
-/// @brief  Checks if str is a valid UTF-8 string.
-///
-bool isutf8str(const char *str);
-bool isutf8str(const char *str, size_t slen);
-
 #endif // UNICODE_H

@@ -38,39 +38,3 @@ size_t ucs2utf8(const wchar_t *cp, char *out, size_t bsize)
    // return the size of the UTF-8 string, not including the null character
    return op - out;
 }
-
-bool isutf8str(const char *str)
-{
-   const char *cp1 = str;
-   size_t csize;
-
-   // look for a null character and count characters
-   while(*cp1) {
-      if((csize = utf8size(cp1)) == 0)
-         return false;
-      cp1 += csize;
-   }
-
-   return true;
-}
-
-bool isutf8str(const char *str, size_t slen)
-{
-   const char *cp1 = str;
-   size_t csize;
-
-   // accept empty strings
-   if(!slen)
-      return true;
-
-   // walk UTF-8 characters up to slen
-   while(cp1-str < (std::ptrdiff_t) slen) {
-      if((csize = utf8size(cp1)) == 0)
-         return false;
-      cp1 += csize;
-   }
-
-   // slen may be less than the actual number of bytes we found
-   return cp1-str == (std::ptrdiff_t) slen;
-}
-
