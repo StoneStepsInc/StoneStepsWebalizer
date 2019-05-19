@@ -25,6 +25,17 @@
 /// zzzzyyyy yyxxxxxx             1110zzzz    10yyyyyy    10xxxxxx
 /// 000uuuuu zzzzyyyy yyxxxxxx    11110uuu    10uuzzzz    10yyyyyy    10xxxxxx
 /// ```
+///
+/// @note   Wide characters on Windows are encoded as UCS-2 and represent characters from the
+/// Basic Multilingual Plane of ISO-10646. However, other compilers may encode wide characters
+/// in other forms, some of which may not even work because this function relies on a wide
+/// character being represented either in UCS-2 or UCS-4 or UTF-32. If wide characters are
+/// represented as UTF-16, orphaned surrogate pairs will be converted to the replacement
+/// character (U+FFFD) because there is no way to know the other part of that surrogate pair.
+/// This restriction is not material for this application, but this function should not be used
+/// in applications that are intended to work with the full spectrum of some compiler-specific
+/// implementation of wide characters.
+///
 inline size_t ucs2utf8(wchar_t wchar, char *out)
 {
    if(!out)
@@ -41,6 +52,14 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
       *out++ = (char) ((wchar >> 6) | L'\xC0');
       *out++ = (char) ((wchar & L'\x3F') | L'\x80');
       return 2;
+   }
+
+   // convert orphaned high/low surrogate pairs to a replacement character (U+FFFD)
+   if(wchar >= L'\xD800' && wchar <= L'\xDBFF' || wchar >= L'\xDC00' && wchar <= L'\xDFFF') {
+      *out++ = '\xEF';
+      *out++ = '\xBF';
+      *out = '\xBD';
+      return 3;
    }
 
    // 3-byte sequence
@@ -79,7 +98,20 @@ inline size_t ucs2utf8(wchar_t wchar, char *out)
 ///
 inline size_t ucs2utf8size(wchar_t wchar)
 {
-   return (wchar <= L'\x7F') ? 1 : (wchar <= L'\x7FF') ? 2 : (wchar <= L'\xFFFF') ? 3 : 4;
+   if(wchar <= L'\x7F')
+      return 1;
+      
+   if(wchar <= L'\x7FF')
+      return 2;
+      
+   // orphaned surrogate pairs are reported as the replacement character (U+FFFD)
+   if(wchar >= L'\xD800' && wchar <= L'\xDBFF' || wchar >= L'\xDC00' && wchar <= L'\xDFFF')
+      return 3;
+
+   if(wchar <= L'\xFFFF')
+      return 3;
+      
+   return 4;
 }
 
 ///
