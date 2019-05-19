@@ -466,14 +466,14 @@ template <>
 char string_base<char>::tolower(char chr)
 {
    // convert only ASCII characters
-   return (isutf8char(chr) && isupper(chr)) ? 'a' + (chr - 'A') : chr;
+   return (utf8size(&chr, 1) == 1 && isupper(chr)) ? 'a' + (chr - 'A') : chr;
 }
 
 template <>
 char string_base<char>::toupper(char chr)
 {
    // convert only ASCII characters
-   return (isutf8char(chr) && islower(chr)) ? 'A' + (chr - 'a') : chr;
+   return (utf8size(&chr, 1) == 1 && islower(chr)) ? 'A' + (chr - 'a') : chr;
 }
 
 //

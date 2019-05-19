@@ -166,15 +166,6 @@ inline size_t utf8size(const char *cp, size_t maxcnt = 4)
 }
 
 ///
-/// @brief  Checks if the character is a valid one-byte UTF-8 character (i.e. control 
-///         and ASCII)
-///
-inline bool isutf8char(char chr)
-{
-   return in_range<'\x00', '\x7F'>(chr);
-}
-
-///
 /// @brief  Converts a UCS-2 string to a UTF-8 string. 
 ///
 /// Returns the size of the result, in bytes, not including the null character, if 
