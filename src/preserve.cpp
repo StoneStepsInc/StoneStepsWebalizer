@@ -182,13 +182,13 @@ void state_t::swap_out_node_cb<dlnode_t, &database_t::put_dlnode>(storable_t<dln
 ///
 /// @brief  Saves the current monthly state to the database.
 ///
-/// This method should report all errors to the standard error stream and return a 
-/// non-zero value to indicate an error. Historically, however, this method did not
-/// reporte errors to the standard error stream when it returned a non-zero value. 
-/// This eventually should be fixed, but in the meantime all new code in this method 
-/// should be written to report errors properly.
+/// This method may report progress messages to the standard output stream and will throw
+/// an instance of `exception_t` in case of an error. If an exception is thrown, the state
+/// will become corrupt and cannot be recovered because there is no transaction support in
+/// the current implementation and there is no way to rollback partially-saved data, even
+/// if Berkeley DB manages to save its state.
 ///
-int state_t::save_state(void)
+void state_t::save_state(void)
 {
    std::vector<uint64_t>::iterator iter;
    
@@ -223,18 +223,15 @@ int state_t::save_state(void)
    }
 
    if(!database.put_sysnode(sysnode, sysnode.storage_info)) {
-      fprintf(stderr, "Cannot write the system node to the database");
-      return 1;
+      throw exception_t(0, string_t::_format("%s (system node)", config.lang.msg_data_err));
    }
 
    // delete stale active visits
    iter = v_ended.begin();
    while(iter != v_ended.end()) {
       vnode.reset(*iter++);
-      if(!database.delete_visit(vnode)) {
-         fprintf(stderr, "Cannot delete an ended visit from the database (ID: %" PRIu64 ")", vnode.nodeid);
-         return 1;
-      }
+      if(!database.delete_visit(vnode))
+         throw exception_t(0, string_t::_format("%s (delete ended visit %" PRIu64 ")", config.lang.msg_data_err, vnode.nodeid));
    }
    v_ended.clear();
 
@@ -242,33 +239,31 @@ int state_t::save_state(void)
    iter = dl_ended.begin();
    while(iter != dl_ended.end()) {
       dlnode.reset(*iter++);
-      if(!database.delete_download(dlnode)) {
-         fprintf(stderr, "Cannot delete a finished download job from the database (ID: %" PRIu64 ")", dlnode.nodeid);
-         return 1;
-      }
+      if(!database.delete_download(dlnode))
+         throw exception_t(0, string_t::_format("%s (delete finished download %" PRIu64 ")", config.lang.msg_data_err, dlnode.nodeid));
    }
    dl_ended.clear();
 
    // save totals
    if(!database.put_tgnode(totals, totals.storage_info))
-      return 1;
+      throw exception_t(0, string_t::_format("%s (totals)", config.lang.msg_data_err));
 
    /* Monthly (by day) total array */
    for(i = 0; i < 31; i++) {
       if(!database.put_tdnode(t_daily[i], t_daily[i].storage_info))
-         return 1;
+         throw exception_t(0, string_t::_format("%s (daily totals)", config.lang.msg_data_err));
    }
 
    /* Daily (by hour) total array */
    for (i=0;i<24;i++) {
       if(!database.put_thnode(t_hourly[i], t_hourly[i].storage_info))
-         return 1;
+         throw exception_t(0, string_t::_format("%s (hourly totals)", config.lang.msg_data_err));
    }
 
    /* Response codes */
    for(i = 0; i < response.size(); i++) {
       if(!database.put_scnode(response[i], response[i].storage_info))
-         return 1;
+         throw exception_t(0, string_t::_format("%s (response codes)", config.lang.msg_data_err));
    }
 
    // country codes
@@ -278,7 +273,7 @@ int state_t::save_state(void)
       // save only those that have any activity
       if(ccptr && ccptr->count) {
          if(!database.put_ccnode(*ccptr, cc_iter.item()->storage_info))
-            return 22;
+            throw exception_t(0, string_t::_format("%s (country codes)", config.lang.msg_data_err));
       }
    }
 
@@ -287,7 +282,7 @@ int state_t::save_state(void)
    while(ct_iter.next()) {
       ctnode_t *ctnode = ct_iter.item();
       if(!database.put_ctnode(*ctnode, ct_iter.item()->storage_info))
-         return 23;
+         throw exception_t(0, string_t::_format("%s (cities)", config.lang.msg_data_err));
    }
 
    /* now we need to save our hash tables */
@@ -307,12 +302,12 @@ int state_t::save_state(void)
       if(dlptr->download && dlptr->download->storage_info.dirty) {
          // save first to keep referencial integrity in case of an error
          if(!database.put_danode(*dlptr->download, dlptr->download->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (active downloads)", config.lang.msg_data_err));
       }
 
       if(dlptr->storage_info.dirty) {
          if(!database.put_dlnode(*dlptr, dlptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (downloads)", config.lang.msg_data_err));
       }
    }
    dl_htab.clear();
@@ -324,12 +319,12 @@ int state_t::save_state(void)
       if(hptr->visit && hptr->visit->storage_info.dirty) {
          // save first to keep referencial integrity in case of an error
          if(!database.put_vnode(*hptr->visit, hptr->visit->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (visits)", config.lang.msg_data_err));
       }
 
       if(hptr->storage_info.dirty) {
          if(!database.put_hnode(*hptr, hptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (hosts)", config.lang.msg_data_err));
       }
    }
    hm_htab.clear();
@@ -340,7 +335,7 @@ int state_t::save_state(void)
       storable_t<unode_t> *uptr = u_iter.item();
       if(uptr->storage_info.dirty) {
          if(!database.put_unode(*uptr, uptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (urls)", config.lang.msg_data_err));
       }
    }
    um_htab.clear();
@@ -352,7 +347,7 @@ int state_t::save_state(void)
          storable_t<rnode_t> *rptr = r_iter.item();
          if(rptr->storage_info.dirty) {
             if(!database.put_rnode(*rptr, rptr->storage_info))
-               return 1;
+               throw exception_t(0, string_t::_format("%s (referrers)", config.lang.msg_data_err));
          }
       }
    }
@@ -365,7 +360,7 @@ int state_t::save_state(void)
          storable_t<anode_t> *aptr = a_iter.item();
          if(aptr->storage_info.dirty) {
             if(!database.put_anode(*aptr, aptr->storage_info))
-               return 1;
+               throw exception_t(0, string_t::_format("%s (user agents)", config.lang.msg_data_err));
          }
       }
    }
@@ -377,7 +372,7 @@ int state_t::save_state(void)
       storable_t<snode_t> *sptr = s_iter.item();
       if(sptr->storage_info.dirty) {
          if(!database.put_snode(*sptr, sptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (search)", config.lang.msg_data_err));
       }
    }
    sr_htab.clear();
@@ -388,7 +383,7 @@ int state_t::save_state(void)
       storable_t<inode_t> *iptr = i_iter.item();
       if(iptr->storage_info.dirty) {
          if(!database.put_inode(*iptr, iptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (users)", config.lang.msg_data_err));
       }
    }
    im_htab.clear();
@@ -399,7 +394,7 @@ int state_t::save_state(void)
       storable_t<rcnode_t> *rcptr = rc_iter.item();
       if(rcptr->storage_info.dirty) {
          if(!database.put_rcnode(*rcptr, rcptr->storage_info))
-            return 1;
+            throw exception_t(0, string_t::_format("%s (errors)", config.lang.msg_data_err));
       }
    }
    rc_htab.clear();
@@ -412,9 +407,7 @@ int state_t::save_state(void)
 
    // put_history will report the error
    if(!history.put_history())
-      return 1;
-
-   return 0;            /* successful, return with good return code      */
+      throw exception_t(0, string_t::_format("%s (history)", config.lang.msg_data_err));
 }
 
 ///
@@ -626,15 +619,12 @@ void state_t::database_info(void) const
 ///
 /// @brief  Restores the monthly database to the last run state.
 ///
-/// This method reports errors to the stderr stream and returns a non-zero value if 
-/// the monthly state could not be initialized. Unlike other initialization methods, 
-/// this method may just return a non-zero value other than `1` if some particular 
-/// state value could not be initialized and the caller will report the returned value 
-/// to the standard error stream within some error message. The return value `1` 
-/// indicates a generic failure and must be accompanied by an error message reported 
-/// to the standar error stream. 
+/// This method may report progress to the standard output stream and will throw an instance
+/// of `exception_t` in case of an error. If an exception is thrown, the state object will
+/// become invalid, but the database will remain in the same state as it was before this method
+/// was called.
 ///
-int state_t::restore_state(void)
+void state_t::restore_state(void)
 {
    u_int i;
 
@@ -642,7 +632,7 @@ int state_t::restore_state(void)
    if(!config.ignore_hist) {
       // the error is reported inside get_history, so just return
       if(!history.get_history())
-         return 1;
+         throw exception_t(0, string_t::_format("%s (history)\n", config.lang.msg_bad_data));
    }
    else {
       if(config.verbose>1) 
@@ -651,35 +641,35 @@ int state_t::restore_state(void)
 
    // sysnode is not populated if the databases is new or has been truncated
    if(!sysnode.appver)
-      return 0;
+      return;
 
    // cannot read any data nodes from old databases
    if(config.db_info && sysnode.appver_last < MIN_APP_DB_VERSION)
-      return 0;
+      throw exception_t(0, string_t::_format("%s (incompatible database)\n", config.lang.msg_bad_data));
 
    // restore current totals
    if(!database.get_tgnode_by_id(totals, NULL, NULL))
-      return 3;
+      throw exception_t(0, string_t::_format("%s (totals)\n", config.lang.msg_bad_data));
 
    // keep the serial time stamp to avoid doing math in every put_node call
    int64_t htab_tstamp = totals.cur_tstamp.mktime();
 
    // no need to restore the rest if we just need database information
    if(config.db_info)
-      return 0;
+      return;
    
    // get daily totals
    for(i = 0; i < 31; i++) {
       // nodeid has already been set in init_counters
       if(!database.get_tdnode_by_id(t_daily[i], NULL, NULL))
-         return 5;
+         throw exception_t(0, string_t::_format("%s (daily totals)\n", config.lang.msg_bad_data));
    }
 
    // get hourly totals
    for(i = 0; i < 24; i++) {
       // nodeid has already been set in init_counters
       if(!database.get_thnode_by_id(t_hourly[i], NULL, NULL))
-         return 6;
+         throw exception_t(0, string_t::_format("%s (hourly totals)\n", config.lang.msg_bad_data));
    }
    
    //
@@ -724,7 +714,7 @@ int state_t::restore_state(void)
    // No need to restore the rest in the report-only mode
    //
    if(config.prep_report)
-      return 0;
+      return;
 
    {// restore active visits and the associated host and URL nodes
    storable_t<vnode_t> vnode;
@@ -768,7 +758,7 @@ int state_t::restore_state(void)
    while(iter.next(danode, unpack_danode_cb, this, dlnode, hnode)) {
       // the host must be in the hosts table because active downloads are a subset of active visits
       if((hptr = hm_htab.find_node(hnode.string, OBJ_REG, htab_tstamp)) == nullptr)
-         throw std::runtime_error(string_t::_format("Cannot find the host (%s) for the download (ID: %" PRIu64 ")", hnode.string.c_str(), dlnode.nodeid));
+         throw std::runtime_error(string_t::_format("%s (no host %s for download %" PRIu64 ")", config.lang.msg_bad_data, hnode.string.c_str(), dlnode.nodeid));
 
       // make a copy of the active download and link it to the kdownload node
       dlnode.download = new storable_t<danode_t>(danode);
@@ -783,8 +773,6 @@ int state_t::restore_state(void)
       danode.reset();
       hnode.reset();
    }}
-
-   return 0;
 }
 
 ///

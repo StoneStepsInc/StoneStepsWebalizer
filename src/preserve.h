@@ -122,9 +122,9 @@ class state_t {
 
       void cleanup(void);
 
-      int save_state(void);
+      void save_state(void);
 
-      int restore_state(void);
+      void restore_state(void);
 
       static void upgrade_database(storable_t<sysnode_t>& sysnode, system_database_t& sysdb);
 

@@ -89,7 +89,6 @@ webalizer_t::~webalizer_t(void)
 ///
 void webalizer_t::initialize(void)
 {
-   u_int i;
    init_seq_guard_t init_seq_guard;
 
    // check if the output directory has write access
@@ -146,10 +145,7 @@ void webalizer_t::initialize(void)
    // restore state, if required
    //
    if(config.prep_report || config.end_month || config.incremental || config.db_info) {
-      if((i=state.restore_state()) != 0) {
-         /* Error: Unable to restore run data (error num) */
-         throw exception_t(0, string_t::_format("%s (%d)\n", config.lang.msg_bad_data, i));
-      }
+      state.restore_state();
    }
 
    init_seq_guard.disengage();
@@ -862,11 +858,7 @@ int webalizer_t::end_month(void)
    
    state.update_hourly_stats();
    
-   if (state.save_state()) {
-      /* Error: Unable to save current run data */
-      fprintf(stderr,"%s\n",config.lang.msg_data_err);
-      return 1;
-   }
+   state.save_state();
    
    state.clear_month();
 
@@ -1413,12 +1405,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
                // save run data for the report generator
                stime = msecs();
-               if (state.save_state()) {
-                  /* Error: Unable to save current run data */
-                  fprintf(stderr,"%s\n",config.lang.msg_data_err);
-                  // report generator uses saved state data
-                  return 1;
-               }
+               state.save_state();
                ptms.mnt_time += elapsed(stime, msecs());
 
                // generate monthly reports if not in batch mode
@@ -1884,10 +1871,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          // save run data for the report generator
          stime = msecs();
-         if (state.save_state()) {
-            /* Error: Unable to save current run data */
-            fprintf(stderr,"%s\n",config.lang.msg_data_err);
-         }
+         state.save_state();
          ptms.mnt_time += elapsed(stime, msecs());
 
          // do not generate reports or roll over the state database if Ctrl-C was pressed
