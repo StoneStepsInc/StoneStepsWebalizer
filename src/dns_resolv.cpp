@@ -176,6 +176,7 @@ size_t dns_db_record_t::s_data_size(void) const
    return s_size_of(version) +
             s_size_of(tstamp) +
             hnode_t::ccode_size + 
+            s_size_of(city) +
             s_size_of(hostname) + 
             s_size_of(spammer) + 
             s_size_of(geoip_tstamp) + 
