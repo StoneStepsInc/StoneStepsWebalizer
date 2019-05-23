@@ -1163,7 +1163,7 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
    if(!dns_db || !dnode)
       return;
 
-   dnsrec.version = DNS_DB_REC_V5;
+   dnsrec.version = DNS_DB_REC_V6;
    dnsrec.tstamp = runtime;
 
    // record contents must come from dnode_t
