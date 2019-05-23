@@ -327,7 +327,7 @@ int berkeleydb_t::table_t::open(const char *dbname, bt_compare_cb_t btcb)
             return error;
       }
 
-      if((error = indexes[index].scdb->open(NULL, config.get_db_path_ptr(), indexes[index].dbname, DB_BTREE, flags, FILEMASK)) != 0)
+      if((error = indexes[index].scdb->open(NULL, config.get_db_name_ptr(), indexes[index].dbname, DB_BTREE, flags, FILEMASK)) != 0)
          return error;
    }
 
@@ -345,7 +345,7 @@ int berkeleydb_t::table_t::open(const char *dbname, bt_compare_cb_t btcb)
          return error;
    }
 
-   if((error = table->open(NULL, config.get_db_path_ptr(), dbname, DB_BTREE, flags, FILEMASK)) != 0)
+   if((error = table->open(NULL, config.get_db_name_ptr(), dbname, DB_BTREE, flags, FILEMASK)) != 0)
       return error;
 
    // associate all secondary databases with a non-NULL data extraction callback
@@ -1093,7 +1093,7 @@ berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcn
    }
 
    // open the DB environment
-   if(!(status = dbenv.open(config.get_db_path_ptr(), envflags, FILEMASK)).success())
+   if(!(status = dbenv.open(config.get_db_dir_ptr(), envflags, FILEMASK)).success())
       return status;
 
    if(config.is_db_path_empty()) {
@@ -1104,7 +1104,7 @@ berkeleydb_t::status_t berkeleydb_t::open(table_t * const tblist[], size_t tblcn
    //
    // create the sequences database (unique node IDs)
    //
-   if(!(status = sequences.open(NULL, config.get_db_path_ptr(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
+   if(!(status = sequences.open(NULL, config.get_db_name_ptr(), "sequences", DB_HASH, dbflags, FILEMASK)).success())
       return status;
 
    // hold onto all the tables for subsequent operations

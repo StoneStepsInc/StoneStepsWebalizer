@@ -1676,13 +1676,14 @@ uint32_t config_t::get_db_cache_size(const char *value) const
    return cachesize < DB_MIN_CACHE_SIZE ? DB_MIN_CACHE_SIZE : cachesize;
 }
 
-///
-/// @brief  Concatenates all path components to the state database and returns the
-///         combined state database path.
-///
 string_t config_t::get_db_path(void) const
 {
    return make_path(db_path, (is_default_db()) ? db_fname : report_db_name) + '.' + db_fname_ext;
+}
+
+string_t config_t::get_db_name(void) const
+{
+   return (is_default_db() ? db_fname : report_db_name) + '.' + db_fname_ext;
 }
 
 ///

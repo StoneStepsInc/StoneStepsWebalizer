@@ -33,6 +33,10 @@ class test_config_t : public berkeleydb_t::config_t {
 
       const string_t& get_db_path(void) const override {return empty_path;}
 
+      const string_t& get_db_dir(void) const override {return empty_path;}
+
+      const string_t& get_db_name(void) const override {return empty_path;}
+
       const string_t& get_tmp_path(void) const override {return empty_path;}
 
       uint32_t get_db_cache_size(void) const override {return 0;}

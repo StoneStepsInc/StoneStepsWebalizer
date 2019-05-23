@@ -25,17 +25,25 @@
 ///
 class db_config_t : public berkeleydb_t::config_t {
    private:
-      const ::config_t& config;
-      string_t          db_path;
+      const ::config_t& config;        /// Application configuration.
+      string_t          db_path;       /// Full database path, including the file name.
+      string_t          db_name;       /// Database full file name, including extension.
 
    public:
-      db_config_t(const ::config_t& config) : config(config), db_path(config.get_db_path()) {}
+      db_config_t(const ::config_t& config) :
+            config(config), db_path(config.get_db_path()), db_name(config.get_db_name())
+      {
+      }
 
       const db_config_t& clone(void) const {return *new db_config_t(config);}
 
       void release(void) const {delete this;}
 
       const string_t& get_db_path(void) const {return db_path;}
+
+      const string_t& get_db_dir(void) const override {return config.db_path;}
+
+      const string_t& get_db_name(void) const override {return db_name;}
 
       const string_t& get_tmp_path(void) const {return config.db_path;}
 

@@ -218,8 +218,20 @@ class berkeleydb_t {
             /// Returns a database file path, including the file name.
             virtual const string_t& get_db_path(void) const = 0;
 
-            /// Returns a character pointer to the database path. May be NULL if it is empty.
+            /// Returns a database directory path, not including the file name.
+            virtual const string_t& get_db_dir(void) const = 0;
+
+            /// Returns just the database file name.
+            virtual const string_t& get_db_name(void) const = 0;
+
+            /// Returns a character pointer to the full database path. May be `NULL` if it is empty.
             const char *get_db_path_ptr(void) const {return !get_db_path().isempty() ? get_db_path().c_str() : nullptr;}
+
+            /// Returns a character pointer to the database directory path. May be `NULL` if it is empty.
+            const char *get_db_dir_ptr(void) const {return !get_db_dir().isempty() ? get_db_dir().c_str() : nullptr;}
+
+            /// Returns a character pointer to the database file name. May be `NULL` if it is empty.
+            const char *get_db_name_ptr(void) const {return !get_db_name().isempty() ? get_db_name().c_str() : nullptr;}
 
             /// Returns `true` if the database path is empty, `false` otherwise.
             bool is_db_path_empty(void) const {return get_db_path().isempty();}

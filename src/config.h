@@ -391,7 +391,11 @@ class config_t {
       
       bool is_secure_url(u_char urltype) const;
 
+      /// Concatenates all state database path and file components and returns the combined path.
       string_t get_db_path(void) const;
+
+      /// Concatenates the current state database file name and extension and returns the combined database name.
+      string_t get_db_name(void) const;
 
       bool is_default_db(void) const;
 
