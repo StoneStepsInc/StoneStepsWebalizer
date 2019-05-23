@@ -69,7 +69,7 @@ class dns_resolver_t {
    private:
       const config_t& config;
 
-      MMDB_s *geoip_db;                      // GeoIP database
+      std::unique_ptr<MMDB_s> geoip_db;      // GeoIP database
 
       DbEnv *dns_db_env;
       std::vector<wrk_ctx_t> wrk_ctxs;       // DNS cache database

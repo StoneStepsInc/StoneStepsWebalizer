@@ -364,13 +364,13 @@ void dns_resolver_t::dnode_t::remove_host_node(void)
 // DNS resolver
 //
 
-dns_resolver_t::dns_resolver_t(const config_t& config) : config(config)
+dns_resolver_t::dns_resolver_t(const config_t& config) :
+      config(config),
+      geoip_db(new MMDB_s())
 {
    dnode_list = dnode_end = NULL;
 
    dns_done_event = NULL;
-
-   geoip_db = new MMDB_s();
 
    dns_db_env = NULL;
 
@@ -411,8 +411,8 @@ dns_resolver_t::~dns_resolver_t(void)
       }
 
       if(geoip_db) {
-         MMDB_close(geoip_db);
-         delete geoip_db;
+         MMDB_close(geoip_db.get());
+         geoip_db.reset();
       }
 
       event_destroy(dns_done_event);
@@ -676,7 +676,7 @@ void dns_resolver_t::dns_init(void)
    // open the GeoIP database
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
-      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, geoip_db)) != MMDB_SUCCESS) {
+      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, geoip_db.get())) != MMDB_SUCCESS) {
          throw exception_t(0, string_t::_format("%s %s (%d - %s)", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error)));
       }
 
@@ -763,9 +763,8 @@ void dns_resolver_t::dns_clean_up(void)
 
    // close the GeoIP database and clean-up its structures
    if(geoip_db) {
-      MMDB_close(geoip_db);
-      delete geoip_db;
-      geoip_db = NULL;
+      MMDB_close(geoip_db.get());
+      geoip_db.reset();
    }
 
    event_destroy(dns_done_event);
@@ -1005,7 +1004,7 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    geoname_id = 0;
 
    // look up the IP address
-   result = MMDB_lookup_sockaddr(geoip_db, &ipaddr, &mmdb_error);
+   result = MMDB_lookup_sockaddr(geoip_db.get(), &ipaddr, &mmdb_error);
 
    if(mmdb_error != MMDB_SUCCESS) {
       if(config.debug_mode)
