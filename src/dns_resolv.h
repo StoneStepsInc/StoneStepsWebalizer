@@ -71,7 +71,7 @@ class dns_resolver_t {
 
       std::unique_ptr<MMDB_s> geoip_db;      // GeoIP database
 
-      DbEnv *dns_db_env;
+      std::unique_ptr<DbEnv> dns_db_env;     // DNS cache Berkeley DB environment
       std::vector<wrk_ctx_t> wrk_ctxs;       // DNS cache database
 
       tstamp_t runtime;

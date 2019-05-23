@@ -372,8 +372,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) :
 
    dns_done_event = NULL;
 
-   dns_db_env = NULL;
-
    dns_thread_stop = false;
 
    dns_live_workers = 0;
@@ -407,7 +405,7 @@ dns_resolver_t::~dns_resolver_t(void)
 
       if(dns_db_env) {
          dns_db_env->close(0);
-         delete dns_db_env;
+         dns_db_env.reset();
       }
 
       if(geoip_db) {
@@ -635,7 +633,7 @@ void dns_resolver_t::dns_init(void)
 
    // open the DNS cache database
    if(!config.dns_cache.isempty()) {
-      dns_db_env = new DbEnv((u_int32_t) 0);
+      dns_db_env.reset(new DbEnv((u_int32_t) 0));
 
       //
       // Initialize Berkeley DB for concurrent access (DB_INIT_CDB), which allows multiple
@@ -753,8 +751,7 @@ void dns_resolver_t::dns_clean_up(void)
    // delete the BDB environment, if we have one
    if(dns_db_env) {
       dns_db_env->close(0);
-      delete dns_db_env;
-      dns_db_env = NULL;
+      dns_db_env.reset();
    }
 
    // don't leave dangling pointers behind
@@ -1236,7 +1233,7 @@ std::unique_ptr<Db> dns_resolver_t::dns_db_open(void)
    }
   
    try {
-      std::unique_ptr<Db> dns_db(new Db(dns_db_env, 0));
+      std::unique_ptr<Db> dns_db(new Db(dns_db_env.get(), 0));
       int status = 0;
 
       //
