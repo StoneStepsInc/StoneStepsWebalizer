@@ -1,5 +1,10 @@
 --------------------------------------------------------------------
-5.0.0.x [xx-Jan-2019] -- Stone Steps Inc. (www.stonesteps.ca)
+5.0.1 [24-May-2019] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+ * BB-21: Fixed a bug causing DNS cache hit ratio always being zero
+
+--------------------------------------------------------------------
+5.0.0 [23-Apr-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * [BB-15] Implemented HideGroupedItems for selective item grouping/hiding
  * [BB-11] Added a top N cities report and a tab-delimited list of cities
