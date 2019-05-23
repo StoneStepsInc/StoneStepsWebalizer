@@ -104,9 +104,7 @@ class BerkeleyDBTest : public ::testing::Test {
       ///
       /// @note   The table must be registered with the database in `SetUp`.
       ///
-      /// All nodes will have their hit counts set to the value of node ID multiplied by ten,
-      /// unless a non-NULL `hit_count_value` value generator is provided, in which case its
-      /// return value will be used.
+      /// All nodes will have their hit counts set to the value returned from `hit_count_value`.
       ///
       template <typename node_t, typename ... param_t>
       void PopulateTable(const char *table_name, berkeleydb_t::table_t& table, const char *key_prefix, uint64_t seq_id_first, uint64_t seq_id_last, uint64_t (*hit_count_value)(uint64_t, uint64_t, uint64_t), param_t ... arg)
