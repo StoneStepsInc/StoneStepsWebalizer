@@ -28,6 +28,7 @@
 #include "util_ipaddr.h"
 #include "serialize.h"
 #include "tstamp.h"
+#include "exception.h"
 
 extern "C" {
 #include <maxminddb.h>
@@ -399,7 +400,7 @@ dns_resolver_t::~dns_resolver_t(void)
    if(!wrk_ctxs.empty() && !get_live_workers()) {
       for(size_t index = 0; index < wrk_ctxs.size(); index++) {
          if(wrk_ctxs[index].dns_db)
-            dns_db_close(wrk_ctxs[index].dns_db);
+            dns_db_close(std::move(wrk_ctxs[index].dns_db));
       }
 
       wrk_ctxs.clear();
@@ -416,7 +417,7 @@ dns_resolver_t::~dns_resolver_t(void)
 
       event_destroy(dns_done_event);
    }
-}
+ }
 
 ///
 /// @brief   Queues the host node for a DNS database look-up
@@ -601,15 +602,14 @@ funcexit:
 ///
 /// @brief   Initializes the DNS resolver
 ///
-/// This method reports all errors to the standard error stream and returns `false` if 
+/// This method reports progress to the standard output stream and throws an exception if
 /// the DNS resolver could not be initialized.
 ///
-bool dns_resolver_t::dns_init(void)
+void dns_resolver_t::dns_init(void)
 {
    // dns_init shouldn't be called if there are no workers configured
    if(!config.dns_children) {
-      fprintf(stderr, "The number of DNS workers cannot be zero");
-      return false;
+      throw exception_t(0, string_t::_format("%s (zero DNS workers)", config.lang.msg_dns_init));
    }
 
    dns_cache_ttl = config.dns_cache_ttl;
@@ -620,15 +620,13 @@ bool dns_resolver_t::dns_init(void)
    WSADATA wsdata;
 
    if(WSAStartup(MAKEWORD(2, 2), &wsdata) == -1) {
-      fprintf(stderr, "Cannot initialize Windows sockets\n");
-      return false;
+      throw exception_t(0, string_t::_format("%s (Windows sockets)", config.lang.msg_dns_init));
    }
 #endif
 
    // initialize synchronization primitives
    if((dns_done_event = event_create(true, true)) == NULL) {
-      fprintf(stderr, "Cannot initialize DNS event\n");
-      return false;
+      throw exception_t(0, string_t::_format("%s (event object)", config.lang.msg_dns_init));
    }
 
    // initialize a context for each worker thread
@@ -647,8 +645,7 @@ bool dns_resolver_t::dns_init(void)
       u_int32_t dbenv_flags = DB_CREATE | DB_INIT_CDB | DB_THREAD | DB_INIT_MPOOL | DB_PRIVATE;
 
       if(dns_db_env->open(config.dns_db_path, dbenv_flags, DBFILEMASK)) {
-         fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, config.dns_cache.c_str());
-         return false;
+         throw exception_t(0, string_t::_format("%s %s", config.lang.msg_dns_nodb, config.dns_cache.c_str()));
       }
       
       //
@@ -667,9 +664,7 @@ bool dns_resolver_t::dns_init(void)
       // multiple DNS worker threads.
       //
       for(size_t index = 0; index < wrk_ctxs.size(); index++) {
-         // dns_db_open will report errors
-         if((wrk_ctxs[index].dns_db = dns_db_open(config.dns_db_fname)) == NULL)
-            return false;
+         wrk_ctxs[index].dns_db = dns_db_open();
       }
 
       if (config.verbose > 1) {
@@ -682,8 +677,7 @@ bool dns_resolver_t::dns_init(void)
    if(!config.geoip_db_path.isempty()) {
       int mmdb_error;
       if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, geoip_db)) != MMDB_SUCCESS) {
-         fprintf(stderr, "%s %s (%d - %s)\n", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
-         return false;
+         throw exception_t(0, string_t::_format("%s %s (%d - %s)", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error)));
       }
 
       if (config.verbose > 1) 
@@ -731,8 +725,6 @@ bool dns_resolver_t::dns_init(void)
       /* DNS Lookup (#children): */
       printf("%s (%d)\n",config.lang.msg_dns_rslv, config.dns_children);
    }
-
-   return true;
 }
 
 ///
@@ -754,7 +746,7 @@ void dns_resolver_t::dns_clean_up(void)
       // free all resources (buffers are deleted in the thread)
       for(index = 0; index < wrk_ctxs.size(); index++) { 
          workers[index].join();
-         dns_db_close(wrk_ctxs[index].dns_db);
+         dns_db_close(std::move(wrk_ctxs[index].dns_db));
       }
    }
 
@@ -978,16 +970,14 @@ int dns_resolver_t::get_live_workers(void)
 void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
 {
    wrk_ctx_t& wrk_ctx = *wrk_ctx_ptr;
-   wrk_ctx.buffer = new u_char[DBBUFSIZE];
-   wrk_ctx.bufsize = DBBUFSIZE;
+   wrk_ctx.buffer.resize(DBBUFSIZE, 0);
 
    while(!dns_thread_stop) {
-      if(process_node(wrk_ctx.dns_db, wrk_ctx.buffer, wrk_ctx.bufsize) == false)
+      if(process_node(wrk_ctx.dns_db.get(), wrk_ctx.buffer, wrk_ctx.buffer.capacity()) == false)
          msleep(200);
    }
 
-   delete [] wrk_ctx.buffer;
-   wrk_ctx.buffer = NULL;
+   wrk_ctx.buffer.reset();
 
    dec_live_workers();
 }
@@ -1210,58 +1200,66 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
    }
 }
 
-Db *dns_resolver_t::dns_db_open(const string_t& dns_cache)
+///
+/// @brief  Opens a DNS cache file within the Berkeley DB environment.
+///
+/// An exception is thrown if the DNS database cannot be opened for any reason. Berkeley DB
+/// exceptions are translated into application exceptions.
+///
+/// If this function returns, the returned unique pointer will never be empty and the database
+/// instance inside the unique pointer will be opened.
+///
+std::unique_ptr<Db> dns_resolver_t::dns_db_open(void)
 {
-   struct stat  dbStat;
-   int major, minor, patch;
-   Db *dns_db = NULL;
+   struct stat dbStat = {};
+   int major = 0, minor = 0, patch = 0;
 
    /* double check filename was specified */
-   if(dns_cache.isempty())
-      return NULL; 
+   if(config.dns_cache.isempty())
+      throw exception_t(0, string_t::_format("%s (empty file name)", config.lang.msg_dns_nodb));
 
    db_version(&major, &minor, &patch);
 
    if(major < 4 || major == 4 && minor < 4) {
-      fprintf(stderr, "Berkeley DB must be v4.4 or newer (found v%d.%d.%d).\n", major, minor, patch);
-      return NULL;
+      throw exception_t(0, string_t::_format("%s. Berkeley DB must be v4.4 or newer (found v%d.%d.%d)", config.lang.msg_dns_nodb, major, minor, patch));
    }
 
    /* minimal sanity check on it */
-   if(stat(dns_cache, &dbStat) < 0) {
+   if(stat(config.dns_cache, &dbStat) < 0) {
       if(errno != ENOENT) 
-         return NULL;
+         throw exception_t(0, string_t::_format("%s %s (%d)", config.lang.msg_dns_nodb, config.dns_cache.c_str(), errno));
    }
    else {
       if(!dbStat.st_size)  /* bogus file, probably from a crash */
       {
-         unlink(dns_cache);  /* remove it so we can recreate... */
+         unlink(config.dns_cache);  /* remove it so we can recreate... */
       }
    }
   
-   dns_db = new Db(dns_db_env, 0);
+   try {
+      std::unique_ptr<Db> dns_db(new Db(dns_db_env, 0));
+      int status = 0;
 
-   /* open cache file */
-   if(dns_db->open(NULL, dns_cache, NULL, DB_HASH, DB_CREATE | DB_THREAD, DBFILEMASK))
-   {
-      /* Error: Unable to open DNS cache file <filename> */
-      if (config.verbose) fprintf(stderr,"%s %s\n",config.lang.msg_dns_nodb, dns_cache.c_str());
+      //
+      // Berkeley DB environment was opened with the DNS cache database directory, so
+      // we can use just the database file name to open the database because relative
+      // database paths are appended to the environment path.
+      //
+      if((status = dns_db->open(NULL, config.dns_db_fname, NULL, DB_HASH, DB_CREATE | DB_THREAD, DBFILEMASK)) != 0)
+         throw exception_t(0, string_t::_format("%s %s (%s)", config.lang.msg_dns_nodb, config.dns_cache.c_str(), db_strerror(status)));
 
-      delete dns_db;
-      dns_db = NULL;
-
-      return NULL;
+      return dns_db;
    }
-
-   return dns_db;
+   catch (const DbException& err) {
+      throw exception_t(0, string_t::_format("%s %s (%s)", config.lang.msg_dns_nodb, config.dns_cache.c_str(), err.what()));
+   }
 }
 
-void dns_resolver_t::dns_db_close(Db *dns_db)
+void dns_resolver_t::dns_db_close(std::unique_ptr<Db> dns_db)
 {
    if(dns_db) {
       dns_db->close(0);
-
-      delete dns_db;
+      dns_db.reset();
    }
 }
 

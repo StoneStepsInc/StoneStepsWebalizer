@@ -28,6 +28,7 @@
 
 #include <thread>
 #include <mutex>
+#include <memory>
 
 struct hnode_t;
 struct MMDB_s;
@@ -52,10 +53,9 @@ class dns_resolver_t {
 
       // worker thread context
       struct wrk_ctx_t {
-         dns_resolver_t&   dns_resolver;
-         Db                *dns_db = NULL;
-         u_char            *buffer = NULL;
-         size_t            bufsize = 0;
+         dns_resolver_t&      dns_resolver;
+         std::unique_ptr<Db>  dns_db;
+         buffer_t             buffer;
 
          wrk_ctx_t(dns_resolver_t& dns_resolver) : dns_resolver(dns_resolver)
          {
@@ -109,9 +109,9 @@ class dns_resolver_t {
 
       void dns_db_put(const dnode_t *dnode, Db *dns_db, void *buffer, size_t bufsize);
 
-      Db *dns_db_open(const string_t& dns_cache);
+      std::unique_ptr<Db> dns_db_open(void);
 
-      void dns_db_close(Db *dns_db);
+      void dns_db_close(std::unique_ptr<Db> dns_db);
 
       bool process_node(Db *dns_db, void *buffer, size_t bufsize);
 
@@ -128,7 +128,7 @@ class dns_resolver_t {
 
       ~dns_resolver_t(void);
 
-      bool dns_init(void);
+      void dns_init(void);
       void dns_clean_up(void);
       void dns_wait(void);
 

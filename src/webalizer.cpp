@@ -107,8 +107,7 @@ void webalizer_t::initialize(void)
    if(!config.is_maintenance()) {
       // initialize DNS resolver if the number of workers is set to a non-zero value
       if(config.is_dns_enabled()) {
-         if(!dns_resolver.dns_init())
-            throw exception_t(0, config.lang.msg_dns_init);
+         dns_resolver.dns_init();
 
          init_seq_guard.add_cleanup(dns_resolver, &dns_resolver_t::dns_clean_up);
       }
