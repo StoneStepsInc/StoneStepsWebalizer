@@ -269,7 +269,6 @@ const struct database_t::index_desc_t {
 // -----------------------------------------------------------------------
 
 database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(config)),
-      //config(config),
       system(make_table()),
       urls(make_table()),
       hosts(make_table()),
