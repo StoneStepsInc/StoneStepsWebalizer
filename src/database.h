@@ -35,23 +35,23 @@ class db_config_t : public berkeleydb_t::config_t {
       {
       }
 
-      const db_config_t& clone(void) const {return *new db_config_t(config);}
+      const db_config_t& clone(void) const override {return *new db_config_t(config);}
 
-      void release(void) const {delete this;}
+      void release(void) const override {delete this;}
 
-      const string_t& get_db_path(void) const {return db_path;}
+      const string_t& get_db_path(void) const override {return db_path;}
 
       const string_t& get_db_dir(void) const override {return config.db_path;}
 
       const string_t& get_db_name(void) const override {return db_name;}
 
-      const string_t& get_tmp_path(void) const {return config.db_path;}
+      const string_t& get_tmp_path(void) const override {return config.db_path;}
 
-      uint32_t get_db_cache_size(void) const {return config.db_cache_size;}
+      uint32_t get_db_cache_size(void) const override {return config.db_cache_size;}
 
-      uint32_t get_db_seq_cache_size(void) const {return config.db_seq_cache_size;}
+      uint32_t get_db_seq_cache_size(void) const override {return config.db_seq_cache_size;}
 
-      bool get_db_direct(void) const {return config.db_direct;}
+      bool get_db_direct(void) const override {return config.db_direct;}
 };
 
 ///
