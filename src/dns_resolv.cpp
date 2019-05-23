@@ -1145,6 +1145,7 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
                dnode->geoip_tstamp = dnsrec.geoip_tstamp;
                dnode->latitude = dnsrec.latitude;
                dnode->longitude = dnsrec.longitude;
+               dnode->geoname_id = dnsrec.geoname_id;
                retval = true;
             }
 
@@ -1190,6 +1191,7 @@ void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, 
 
    dnsrec.latitude = dnode->latitude;
    dnsrec.longitude = dnode->longitude;
+   dnsrec.geoname_id = dnode->geoname_id;
 
    memcpy(dnsrec.ccode, dnode->ccode.c_str(), hnode_t::ccode_size);
 
