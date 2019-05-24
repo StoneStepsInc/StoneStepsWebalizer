@@ -421,10 +421,12 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       //
       // Host nodes saved in the state database prior to introducing a city table
       // will have a city name, but not a GeoName ID, which would create bad data
-      // if it wouldn't be caught in get_ctnode, which throws an excepktion in
-      // this case.
+      // if it wouldn't be caught in get_ctnode. Allow consistent combinations of
+      // GeoName ID and city name through, so we can report unknown cities within
+      // their countries and group all counters for an unknown city and country
+      // under one entry.
       //
-      if(hnode.geoname_id) {
+      if(!hnode.geoname_id == hnode.city.isempty()) {
          ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, hnode.get_ccode(), 0);
 
          ctnode.hits += vnode.hits;

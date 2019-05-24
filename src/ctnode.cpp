@@ -152,8 +152,12 @@ ct_hash_table::ct_hash_table(void) : hash_table<storable_t<ctnode_t>>(SMAXHASH)
 
 ///
 /// A GeoName ID with the value of zero indicates an unknown city and must have
-/// its city name empty. Use `ctnode_t::unknown` to localize this city name in
-/// the reports.
+/// its city name empty.
+///
+/// An empty country code is allowed, as long as it is accompanied by an empty
+/// city name. This entry is maintained under a key with an asterisk, the same
+/// way as the country code hash table does, and can be reported as an unknown
+/// country with an empty city name to indicate an unknown city.
 ///
 ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, const string_t& ccode, int64_t tstamp) 
 {
