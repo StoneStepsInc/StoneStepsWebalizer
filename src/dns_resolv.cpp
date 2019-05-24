@@ -44,20 +44,22 @@ extern "C" {
 #include <algorithm>
 #include <sys/stat.h>
 
-//
-//
-//
-#define DNS_DB_REC_V1      ((u_int) 1)          // dns_db_record
-#define DNS_DB_REC_V2      ((u_int) 2)          // dns_db_record
-#define DNS_DB_REC_V3      ((u_int) 3)          // initial version of serialized dnode_t
-#define DNS_DB_REC_V4      ((u_int) 4)          // added GeoIP database build time 
-#define DNS_DB_REC_V5      ((u_int) 5)          // added GeoIP latitude and longitude
-#define DNS_DB_REC_V6      ((u_int) 6)          // added geoname_id
-#define DNS_DB_REC_VER_MAX ((u_int) 250)        // maximum valid record version
+///
+/// @name   DNS database record versions
+///
+/// @{
+constexpr u_int DNS_DB_REC_V1 = 1;              ///< `dns_db_record`
+constexpr u_int DNS_DB_REC_V2 = 2;              ///< `dns_db_record`
+constexpr u_int DNS_DB_REC_V3 = 3;              ///< Initial version of serialized `dnode_t`.
+constexpr u_int DNS_DB_REC_V4 = 4;              ///< Added GeoIP database build time.
+constexpr u_int DNS_DB_REC_V5 = 5;              ///< Added GeoIP latitude and longitude.
+constexpr u_int DNS_DB_REC_V6 = 6;              ///< Added `geoname_id`.
+constexpr u_int DNS_DB_REC_VER_MAX = 250;       ///< Maximum valid record version.
+/// @}
 
-#define DBBUFSIZE          ((size_t) 8192)      // database buffer size
+constexpr size_t DBBUFSIZE = 8192;              ///< Database buffer size.
 
-#define DBFILEMASK         ((int) 0664)         ///< DNS cache database file mask (rw-rw-r--)
+constexpr int DBFILEMASK = 0664;                ///< DNS cache database file mask (rw-rw-r--).
 
 ///
 /// @struct dns_db_record
