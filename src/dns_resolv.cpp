@@ -20,7 +20,6 @@
 #endif
 
 #include "lang.h"                              /* language declares        */
-#include "hashtab.h"                           /* hash table functions     */
 #include "dns_resolv.h"                        /* our header               */
 
 #include "event.h"

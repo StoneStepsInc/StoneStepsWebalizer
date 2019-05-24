@@ -13,10 +13,8 @@
 #define DNS_RESOLV_H
 
 #include "tstring.h"
-#include "hashtab.h"
 #include "config.h"
 
-#include "hashtab.h"
 #include "event.h"
 #include "thread.h"
 #include "queue.h"
