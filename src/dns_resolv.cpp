@@ -89,23 +89,27 @@ struct dns_db_record {
 /// database. 
 ///
 struct dns_db_record_t {
-   u_int       version;                         // structure version
-   char        ccode[hnode_t::ccode_size];      // two-character country code
-   bool        spammer;                         // caught spamming?
-   tstamp_t    tstamp;                          // time when the address was resolved
-   string_t    city;                            // city name
-   string_t    hostname;                        // host name
-   uint64_t    geoip_tstamp;                    // GeoIP build time
-   double      latitude;                        // IP address latitude
-   double      longitude;                       // IP address longitude
-   uint32_t    geoname_id;                      // The geoname_id from the GeoIP database
+   char        ccode[hnode_t::ccode_size];      ///< Two-character country code (no null character)
+   bool        spammer;                         ///< Caught spamming?
+   tstamp_t    tstamp;                          ///< Time stamp when the address was resolved
+   string_t    city;                            ///< City name
+   string_t    hostname;                        ///< Host name
+   uint64_t    geoip_tstamp;                    ///< GeoIP build time (`time_t`)
+   double      latitude;                        ///< IP address latitude
+   double      longitude;                       ///< IP address longitude
+   uint32_t    geoname_id;                      ///< The geoname_id from the GeoIP database
 
    public:
-      dns_db_record_t(void) : version(0), spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0)
+      /// Constructs an empty DNS cache record instance.
+      dns_db_record_t(void) : spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0)
       {
          memset(ccode, 0, hnode_t::ccode_size);
       }
 
+      /// Constructs a DNS cache record by moving resources from anoher instance.
+      dns_db_record_t(dns_db_record_t&& other);
+
+      /// Serialized size of this instance, in bytes.
       size_t s_data_size(void) const;
       
       /// Serializes instance data members into the buffer.
@@ -171,6 +175,13 @@ class dns_resolver_t::dnode_t {
 
       ~dnode_t(void);
 
+      /// Assigns this instance data members by moving resources from a DNS cache record.
+      dnode_t& operator = (dns_db_record_t&& dnsrec);
+
+      /// Constructs a DNS cache record out of data within this instance.
+      dns_db_record_t get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db) const;
+
+      /// Returns an IP address for this instance.
       const string_t& key(void) const {return hnode ? hnode->string : hostaddr;}
 
       /// Populates one of the `sockaddr` entries based on the IP address family.
@@ -181,9 +192,22 @@ class dns_resolver_t::dnode_t {
 // DNS DB record
 //
 
+dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) :
+   spammer(other.spammer),
+   tstamp(other.tstamp),
+   city(std::move(other.city)),
+   hostname(std::move(other.hostname)),
+   geoip_tstamp(other.geoip_tstamp),
+   latitude(other.latitude),
+   longitude(other.longitude),
+   geoname_id(other.geoname_id)
+{
+   memcpy(ccode, other.ccode, hnode_t::ccode_size);
+}
+
 size_t dns_db_record_t::s_data_size(void) const
 {
-   return s_size_of(version) +
+   return sizeof(u_int) +                 // version
             s_size_of(tstamp) +
             hnode_t::ccode_size + 
             s_size_of(city) +
@@ -203,8 +227,10 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    if(s_data_size() > bufsize)
       return 0;
 
+   // always save the latest version
+   ptr = serialize(ptr, DNS_DB_REC_V6);
+
    // serialize all data members
-   ptr = serialize(ptr, version);
    ptr = serialize(ptr, tstamp);
    ptr = serialize(ptr, ccode, hnode_t::ccode_size);
    ptr = serialize(ptr, city);
@@ -334,16 +360,57 @@ dns_resolver_t::dnode_t::~dnode_t(void)
 {
 }
 
-//
-// Converts the IP address string from the host node into a sockaddr of 
-// the appropriate type. 
-// 
-// Note that while we could do this in the constructor, having a separate 
-// method with a return value makes this operation more straightforward 
-// than handling exceptions thrown from the constructor or having to check 
-// some state data member that would indicate whether sockaddr is valid or 
-// not.
-//
+dns_resolver_t::dnode_t& dns_resolver_t::dnode_t::operator = (dns_db_record_t&& dnsrec)
+{
+   ccode.assign(dnsrec.ccode, hnode_t::ccode_size);
+
+   hostname = std::move(dnsrec.hostname);
+   city = std::move(dnsrec.city);
+
+   spammer = dnsrec.spammer;
+
+   geoip_tstamp = dnsrec.geoip_tstamp;
+
+   latitude = dnsrec.latitude;
+   longitude = dnsrec.longitude;
+
+   geoname_id = dnsrec.geoname_id;
+
+   return *this;
+}
+
+dns_db_record_t dns_resolver_t::dnode_t::get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db) const
+{
+   dns_db_record_t dnsrec;
+
+   dnsrec.tstamp = ts_runtime;
+
+   memcpy(dnsrec.ccode, ccode.c_str(), hnode_t::ccode_size);
+
+   dnsrec.hostname = hostname;
+   dnsrec.city = city;
+
+   dnsrec.spammer = spammer;
+
+   dnsrec.geoip_tstamp = ts_geoip_db;
+
+   dnsrec.latitude = latitude;
+   dnsrec.longitude = longitude;
+   dnsrec.geoname_id = geoname_id;
+
+   return dnsrec;
+}
+
+///
+/// Converts the IP address string from the host node into a sockaddr of 
+/// the appropriate type. 
+/// 
+/// Note that while we could do this in the constructor, having a separate 
+/// method with a return value makes this operation more straightforward 
+/// than handling exceptions thrown from the constructor or having to check 
+/// some state data member that would indicate whether sockaddr is valid or 
+/// not.
+///
 bool dns_resolver_t::dnode_t::fill_sockaddr(void)
 {
    // this method may only be called if we have a host node
@@ -881,11 +948,11 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 
    // check if we just need to update a DNS record
    if(!nptr->hnode)
-      dns_db_put(nptr, dns_db, buffer, bufsize);
+      dns_db_put(*nptr, dns_db, buffer, bufsize);
    else {
       // if we have a host node, look it up in the database and if not found, resolve it
       lookup = true;
-      if(dns_db && dns_db_get(nptr, dns_db, buffer, bufsize)) 
+      if(dns_db && dns_db_get(*nptr, dns_db, buffer, bufsize)) 
          cached = true;
 
       //
@@ -910,7 +977,7 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 
          // update the database if it's a new IP address or if we found a country code for an existing one
          if(dns_db && (!cached || goodcc))
-            dns_db_put(nptr, dns_db, buffer, bufsize);
+            dns_db_put(*nptr, dns_db, buffer, bufsize);
       }
    }
 
@@ -1102,29 +1169,28 @@ bool dns_resolver_t::dns_derive_ccode(const string_t& name, string_t& ccode)
 ///
 /// @brief  Looks up the IP address in the DNS resolver database
 ///
-bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
+bool dns_resolver_t::dns_db_get(dnode_t& dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    bool retval = false;
    int dberror;
    Dbt key, recdata;
-   dns_db_record_t dnsrec;
 
    /* ensure we have a dns db */
-   if (!dns_db || !dnode) 
+   if (!dns_db) 
       return false;
 
    memset(&key, 0, sizeof(key));
    memset(&recdata, 0, sizeof(recdata));
 
-   key.set_data((void*) dnode->hnode->string.c_str());
-   key.set_size((u_int32_t) dnode->hnode->string.length());
+   key.set_data((void*) dnode.hnode->string.c_str());
+   key.set_size((u_int32_t) dnode.hnode->string.length());
 
    // point the record to the internal buffer
    recdata.set_flags(DB_DBT_USERMEM);
    recdata.set_ulen((u_int32_t) bufsize);
    recdata.set_data(buffer);
 
-   if (config.debug_mode) fprintf(stderr,"[%04lx] Checking DNS cache for %s...\n", thread_id(), dnode->hnode->string.c_str());
+   if (config.debug_mode) fprintf(stderr,"[%04lx] Checking DNS cache for %s...\n", thread_id(), dnode.hnode->string.c_str());
 
    switch((dberror = dns_db->get(NULL, &key, &recdata, 0)))
    {
@@ -1132,22 +1198,18 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
          if (config.debug_mode) 
             fprintf(stderr,"[%04lx] ... not found\n", thread_id());
          break;
-      case  0:
+      case  0: {
+         dns_db_record_t dnsrec;
+
          if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
             if(runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
-               dnode->hostname = dnsrec.hostname;
-               dnode->ccode.assign(dnsrec.ccode, hnode_t::ccode_size);
-               dnode->city = dnsrec.city;
-               dnode->spammer = dnsrec.spammer;
-               dnode->geoip_tstamp = dnsrec.geoip_tstamp;
-               dnode->latitude = dnsrec.latitude;
-               dnode->longitude = dnsrec.longitude;
-               dnode->geoname_id = dnsrec.geoname_id;
+               dnode = std::move(dnsrec);
                retval = true;
             }
 
             if (retval && config.debug_mode)
-               fprintf(stderr,"[%04lx] ... found: %s (age: %0.2f days)\n", thread_id(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
+               fprintf(stderr,"[%04lx] ... found: %s (age: %0.2f days)\n", thread_id(), dnode.hostname.isempty() ? "NXDOMAIN" : dnode.hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
+         }
          }
 
          break;
@@ -1164,41 +1226,24 @@ bool dns_resolver_t::dns_db_get(dnode_t* dnode, Db *dns_db, void *buffer, size_t
 ///
 /// @brief  Stores a dnode_t instance in the DNS resolver database
 ///
-void dns_resolver_t::dns_db_put(const dnode_t* dnode, Db *dns_db, void *buffer, size_t bufsize)
+void dns_resolver_t::dns_db_put(const dnode_t& dnode, Db *dns_db, void *buffer, size_t bufsize)
 {
    Dbt k, v;
    size_t recSize;
    int dberror;
-   dns_db_record_t dnsrec;
 
-   if(!dns_db || !dnode)
+   if(!dns_db)
       return;
 
-   dnsrec.version = DNS_DB_REC_V6;
-   dnsrec.tstamp = runtime;
-
-   // record contents must come from dnode_t
-   dnsrec.city = dnode->city;
-   dnsrec.hostname = dnode->hostname;
-   dnsrec.spammer = dnode->spammer;
-
-   // if we have a GeoIP database, hold onto its build time
-   if(geoip_db)
-      dnsrec.geoip_tstamp = geoip_db->metadata.build_epoch;
-
-   dnsrec.latitude = dnode->latitude;
-   dnsrec.longitude = dnode->longitude;
-   dnsrec.geoname_id = dnode->geoname_id;
-
-   memcpy(dnsrec.ccode, dnode->ccode.c_str(), hnode_t::ccode_size);
+   dns_db_record_t dnsrec = dnode.get_db_record(runtime, geoip_db ? geoip_db->metadata.build_epoch : 0);
 
    recSize = dnsrec.s_pack_data(buffer, bufsize);
 
    if(recSize == 0)
       return;
 
-   k.set_data((void*) dnode->key().c_str());
-   k.set_size((u_int32_t) dnode->key().length());
+   k.set_data((void*) dnode.key().c_str());
+   k.set_size((u_int32_t) dnode.key().length());
 
    v.set_data(buffer);
    v.set_size((u_int32_t) recSize);

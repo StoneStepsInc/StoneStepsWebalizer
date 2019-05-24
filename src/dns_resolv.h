@@ -101,9 +101,9 @@ class dns_resolver_t {
 
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city, double& latitude, double& longitude, uint32_t& geoname_id);
 
-      bool dns_db_get(dnode_t *dnode, Db *dns_db, void *buffer, size_t bufsize);
+      bool dns_db_get(dnode_t& dnode, Db *dns_db, void *buffer, size_t bufsize);
 
-      void dns_db_put(const dnode_t *dnode, Db *dns_db, void *buffer, size_t bufsize);
+      void dns_db_put(const dnode_t& dnode, Db *dns_db, void *buffer, size_t bufsize);
 
       std::unique_ptr<Db> dns_db_open(void);
 
