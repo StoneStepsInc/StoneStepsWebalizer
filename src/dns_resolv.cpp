@@ -29,6 +29,8 @@
 #include "tstamp.h"
 #include "exception.h"
 
+#include "hnode.h"
+
 extern "C" {
 #include <maxminddb.h>
 }

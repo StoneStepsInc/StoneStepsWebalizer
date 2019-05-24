@@ -20,8 +20,6 @@
 #include "queue.h"
 #include "tstamp.h"
 
-#include "hnode.h"
-
 #include <db_cxx.h>
 
 #include <thread>
