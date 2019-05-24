@@ -74,16 +74,19 @@ constexpr int DBFILEMASK = 0664;                ///< DNS cache database file mas
 /// database.
 ///
 struct dns_db_record {
-   u_int    version;                            // structure version (v1 or v2)
-   time_t   tstamp;                             // time when the address was resolved
-   char     ccode[2];                           // two-character country code
-   char     hostname[1];                        // host name (variable length)
+   u_int    version;                            ///< Structure version (v1 or v2)
+   time_t   tstamp;                             ///< Time when the address was resolved
+   char     ccode[2];                           ///< Two-character country code
+   char     hostname[1];                        ///< Host name (variable length)
 };
 
 ///
 /// @struct dns_db_record_t
 ///
-/// @brief  A new serializable DNS DB record
+/// @brief  A serializable DNS cache database record
+///
+/// An instance of this class contains only serializable data saved in the DNS cache
+/// database. 
 ///
 struct dns_db_record_t {
    u_int       version;                         // structure version
@@ -105,8 +108,10 @@ struct dns_db_record_t {
 
       size_t s_data_size(void) const;
       
+      /// Serializes instance data members into the buffer.
       size_t s_pack_data(void *buffer, size_t bufsize) const;
 
+      /// Reads serialized data from the buffer and assigns its data members.
       size_t s_unpack_data(const void *buffer, size_t bufsize);
 };
 
@@ -138,18 +143,18 @@ class dns_resolver_t::dnode_t {
 
       string_t       hostaddr;            ///< An IP address that is populated only when `hnode` is NULL.
 
-      string_t       hostname;
-      string_t       ccode;
-      string_t       city;
+      string_t       hostname;            ///< Host name (populated only if DNS look-ups are enabled).
+      string_t       ccode;               ///< Two-character country code
+      string_t       city;                ///< City name.
 
-      bool           spammer;
+      bool           spammer;             ///< Caught spamming?
 
-      uint64_t       geoip_tstamp;
+      uint64_t       geoip_tstamp;        ///< GeoIP build time (`time_t`)
 
-      double         latitude;
-      double         longitude;
+      double         latitude;            ///< IP address latitude
+      double         longitude;           ///< IP address longitude
 
-      uint32_t       geoname_id;
+      uint32_t       geoname_id;          ///< The geoname_id from the GeoIP database
 
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
@@ -161,12 +166,14 @@ class dns_resolver_t::dnode_t {
       void remove_host_node(void);
 
    public:
+      /// Constructs an instance from a host IP address and an address family identifier.
       dnode_t(hnode_t& hnode, unsigned short sa_family);
 
       ~dnode_t(void);
 
       const string_t& key(void) const {return hnode ? hnode->string : hostaddr;}
 
+      /// Populates one of the `sockaddr` entries based on the IP address family.
       bool fill_sockaddr(void);
 };
 
