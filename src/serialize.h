@@ -283,6 +283,8 @@ inline size_t s_size_of<string_t>(const void *ptr)
 template <> 
 size_t s_size_of<tstamp_t>(const void *ptr);
 
+/// @}
+
 ///
 /// @name   Skip functions
 ///
