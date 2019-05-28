@@ -458,8 +458,6 @@ dns_resolver_t::dns_resolver_t(const config_t& config) :
    
    accept_host_names = false;
 
-   dns_live_workers = 0;
-
    dns_unresolved = 0;
    dns_resolved = 0;
    dns_cached = 0;
