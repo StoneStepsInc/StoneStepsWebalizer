@@ -16,6 +16,7 @@
 #include "types.h"
 
 #include <cstddef>
+#include <limits>
 
 ///
 /// @brief  A class that handles all data serialization and deserialization operations.

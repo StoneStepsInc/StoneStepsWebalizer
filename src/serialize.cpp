@@ -348,27 +348,52 @@ const void *serializer_t::deserialize(const void *ptr, bool& value) const
 //
 // Instantiate template functinos defined in this file
 //
-enum nodetype_t;
+
+// TODO: This is temporary, to bring in nodetype_t
+#include "hashtab.h"
 
 template size_t serializer_t::s_size_of<u_short>(const void *ptr) const;
 template size_t serializer_t::s_size_of<u_int>(const void *ptr) const;
+template size_t serializer_t::s_size_of<uint64_t>(const void *ptr) const;
+template size_t serializer_t::s_size_of<double>(const void *ptr) const;
 template size_t serializer_t::s_size_of<string_t>(const void *ptr) const;
 template size_t serializer_t::s_size_of<tstamp_t>(const void *ptr) const;
 
+template size_t serializer_t::s_size_of<u_short>(void);
+template size_t serializer_t::s_size_of<u_int>(void);
+template size_t serializer_t::s_size_of<uint64_t>(void);
+template size_t serializer_t::s_size_of<double>(void);
+
+template size_t serializer_t::s_size_of(u_short value);
+template size_t serializer_t::s_size_of(u_int value);
+template size_t serializer_t::s_size_of(uint64_t value);
+template size_t serializer_t::s_size_of(double value);
+
 template const void *serializer_t::s_skip_field<char(&)[2]>(const void *ptr) const;
+template const void *serializer_t::s_skip_field<u_char>(const void *ptr) const;
+template const void *serializer_t::s_skip_field<u_short>(const void *ptr) const;
 template const void *serializer_t::s_skip_field<u_int>(const void *ptr) const;
 template const void *serializer_t::s_skip_field<uint64_t>(const void *ptr) const;
 
 template void *serializer_t::serialize<u_char, nodetype_t>(void *ptr, nodetype_t value) const;
+template void *serializer_t::serialize<short, int>(void *ptr, int value) const;
+template void *serializer_t::serialize<u_short, u_int>(void *ptr, u_int value) const;
 template void *serializer_t::serialize<u_int, uint64_t>(void *ptr, uint64_t value) const;
+
 template void *serializer_t::serialize(void *ptr, const char (&chars)[2]) const;
-template void *serializer_t::serialize(void *ptr, unsigned int value) const;
+template void *serializer_t::serialize(void *ptr, u_char value) const;
+template void *serializer_t::serialize(void *ptr, u_short value) const;
+template void *serializer_t::serialize(void *ptr, u_int value) const;
 template void *serializer_t::serialize(void *ptr, uint64_t value) const;
 template void *serializer_t::serialize(void *ptr, double value) const;
 
 template const void *serializer_t::deserialize<u_char, nodetype_t>(const void *ptr, nodetype_t& value) const;
+template const void *serializer_t::deserialize<short, int>(const void *ptr, int& value) const;
+template const void *serializer_t::deserialize<u_short, u_int>(const void *ptr, u_int& value) const;
 template const void *serializer_t::deserialize<u_int, uint64_t>(const void *ptr, uint64_t& value) const;
+
 template const void *serializer_t::deserialize(const void *ptr, char (&chars)[2]) const;
-template const void *serializer_t::deserialize(const void *ptr, unsigned int& value) const;
+template const void *serializer_t::deserialize(const void *ptr, u_short& value) const;
+template const void *serializer_t::deserialize(const void *ptr, u_int& value) const;
 template const void *serializer_t::deserialize(const void *ptr, uint64_t& value) const;
 template const void *serializer_t::deserialize(const void *ptr, double& value) const;
