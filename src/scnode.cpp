@@ -96,27 +96,22 @@ size_t scnode_t::s_data_size(void) const
 
 size_t scnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   datasize = s_data_size();
+   size_t basesize = datanode_t<scnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize(ptr, count);
+   ptr = sr.serialize(ptr, v2pad);
 
-   datanode_t<scnode_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + datanode_t<scnode_t>::s_data_size();
-
-   ptr = serialize(ptr, count);
-   ptr = serialize(ptr, v2pad);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t scnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   size_t datasize;
+   serializer_t sr(buffer, bufsize);
+
    u_short version;
    const void *ptr;
 
@@ -124,30 +119,19 @@ size_t scnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    if(bufsize == sizeof(u_short) + sizeof(uint64_t)) {
       version = 1;
       ptr = buffer;
-      datasize = bufsize;
    }
    else {
+      size_t basesize = datanode_t<scnode_t>::s_unpack_data(buffer, bufsize);
+      ptr = (u_char*) buffer + basesize;
       version = s_node_ver(buffer);
-      ptr = (u_char*) buffer + datanode_t<scnode_t>::s_data_size(buffer);
-      datasize = s_data_size(buffer);
    }
 
-   if(bufsize < datasize)
-      return 0;
-
-   ptr = deserialize(ptr, count);
+   ptr = sr.deserialize(ptr, count);
 
    if(version >= 2)
-      ptr = deserialize(ptr, v2pad);
+      ptr = sr.deserialize(ptr, v2pad);
    
-   return datasize;
-}
-
-size_t scnode_t::s_data_size(const void *buffer)
-{
-   return datanode_t<scnode_t>::s_data_size(buffer) + 
-            sizeof(uint64_t) +         // count
-            sizeof(u_char);            // v2pad
+   return sr.data_size(ptr);
 }
 
 //

@@ -157,108 +157,73 @@ size_t unode_t::s_data_size(void) const
 
 size_t unode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<unode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = base_node<unode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize(ptr, false);
+   ptr = sr.serialize(ptr, urltype);
+   ptr = sr.serialize(ptr, pathlen);
+   ptr = sr.serialize(ptr, count);
+   ptr = sr.serialize(ptr, files);
+   ptr = sr.serialize(ptr, entry);
+   ptr = sr.serialize(ptr, exit);
+   ptr = sr.serialize(ptr, xfer);
+   ptr = sr.serialize(ptr, avgtime);
 
-   base_node<unode_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
+   ptr = sr.serialize(ptr, s_hash_value());
+   ptr = sr.serialize(ptr, maxtime);
+   ptr = sr.serialize(ptr, target);
 
-   ptr = serialize(ptr, false);
-   ptr = serialize(ptr, urltype);
-   ptr = serialize(ptr, pathlen);
-   ptr = serialize(ptr, count);
-   ptr = serialize(ptr, files);
-   ptr = serialize(ptr, entry);
-   ptr = serialize(ptr, exit);
-   ptr = serialize(ptr, xfer);
-   ptr = serialize(ptr, avgtime);
-
-   ptr = serialize(ptr, s_hash_value());
-   ptr = serialize(ptr, maxtime);
-   ptr = serialize(ptr, target);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t unode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
+   serializer_t sr(buffer, bufsize);
+
    bool tmp;
-   u_short version;
-   size_t datasize, basesize;
-   const void *ptr;
-
-   basesize = base_node<unode_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
-
-   if(bufsize < datasize)
-      return 0;
-
-   version = s_node_ver(buffer);
    
-   base_node<unode_t>::s_unpack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
+   size_t basesize = base_node<unode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   ptr = s_skip_field<bool>(ptr);         // hexenc
+   u_short version = s_node_ver(buffer);
 
-   ptr = deserialize(ptr, urltype);
-   ptr = deserialize(ptr, pathlen);
-   ptr = deserialize(ptr, count);
-   ptr = deserialize(ptr, files);
-   ptr = deserialize(ptr, entry);
-   ptr = deserialize(ptr, exit);
-   ptr = deserialize(ptr, xfer);
-   ptr = deserialize(ptr, avgtime);
+   ptr = sr.s_skip_field<bool>(ptr);         // hexenc
 
-   ptr = s_skip_field<uint64_t>(ptr);      // value hash
+   ptr = sr.deserialize(ptr, urltype);
+   ptr = sr.deserialize(ptr, pathlen);
+   ptr = sr.deserialize(ptr, count);
+   ptr = sr.deserialize(ptr, files);
+   ptr = sr.deserialize(ptr, entry);
+   ptr = sr.deserialize(ptr, exit);
+   ptr = sr.deserialize(ptr, xfer);
+   ptr = sr.deserialize(ptr, avgtime);
+
+   ptr = sr.s_skip_field<uint64_t>(ptr);      // value hash
 
    if(version >= 2)
-      ptr = deserialize(ptr, maxtime);
+      ptr = sr.deserialize(ptr, maxtime);
    else
       maxtime = 0;
 
    if(version >= 3)
-      ptr = deserialize(ptr, tmp), target = tmp;
+      ptr = sr.deserialize(ptr, tmp), target = tmp;
    else
       target = false;
 
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t unode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = base_node<unode_t>::s_data_size(buffer) + 
-            sizeof(u_char) * 2 +       // hexenc, urltype 
-            sizeof(u_short) +          // pathlen
-            sizeof(uint64_t) * 5 +     // count, files, entry, exit, value hash
-            sizeof(double) +           // avgtime, maxtime
-            sizeof(uint64_t);          // xfer
-
-   if(version < 2)
-      return datasize;
-
-   datasize += sizeof(double);         // maxtime
-   
-   if(version < 3)
-      return datasize;
-      
-   return datasize + sizeof(u_char);    // target
+   return sr.data_size(ptr);
 }
 
 const void *unode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
+   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + 
             sizeof(u_char) * 2 + 
             sizeof(u_short) + 
             sizeof(uint64_t) * 4 + 
@@ -269,7 +234,7 @@ const void *unode_t::s_field_value_hash(const void *buffer, size_t bufsize, size
 const void *unode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + 
+   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + 
             sizeof(u_char) * 2 + 
             sizeof(u_short) + 
             sizeof(uint64_t) * 4;
@@ -278,19 +243,19 @@ const void *unode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& da
 const void *unode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short);
+   return (u_char*) buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) * 2 + sizeof(u_short);
 }
 
 const void *unode_t::s_field_entry(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 2;
+   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 2;
 }
 
 const void *unode_t::s_field_exit(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 3;
+   return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 3;
 }
 
 int64_t unode_t::s_compare_xfer(const void *buf1, const void *buf2)

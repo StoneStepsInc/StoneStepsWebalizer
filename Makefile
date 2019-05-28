@@ -116,7 +116,7 @@ TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
 	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp \
 	ut_config.cpp ut_strcreate.cpp ut_hashtab.cpp ut_initseqguard.cpp \
-	ut_berkeleydb.cpp ut_unicode.cpp
+	ut_berkeleydb.cpp ut_unicode.cpp ut_serialize.cpp
 
 TEST_LIBS     := stdc++ pthread db_cxx gtest
 

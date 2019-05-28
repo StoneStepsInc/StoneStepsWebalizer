@@ -23,83 +23,57 @@ size_t snode_t::s_data_size(void) const
 
 size_t snode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<snode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = base_node<snode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize(ptr, termcnt);
+   ptr = sr.serialize(ptr, count);
 
-   base_node<snode_t>::s_pack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
+   ptr = sr.serialize(ptr, s_hash_value());
 
-   ptr = serialize(ptr, termcnt);
-   ptr = serialize(ptr, count);
+   ptr = sr.serialize(ptr, visits);
 
-   ptr = serialize(ptr, s_hash_value());
-
-   ptr = serialize(ptr, visits);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t snode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   size_t datasize, basesize;
-   u_short version;
-   const void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<snode_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
+   size_t basesize = base_node<snode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   version = s_node_ver(buffer);
+   ptr = sr.deserialize(ptr, termcnt);
+   ptr = sr.deserialize(ptr, count);
 
-   base_node<snode_t>::s_unpack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
-
-   ptr = deserialize(ptr, termcnt);
-   ptr = deserialize(ptr, count);
-
-   ptr = s_skip_field<uint64_t>(ptr);      // value hash
+   ptr = sr.s_skip_field<uint64_t>(ptr);      // value hash
 
    if(version >= 2)
-      ptr = deserialize(ptr, visits);
+      ptr = sr.deserialize(ptr, visits);
    else
       visits = 0;
 
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t snode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = base_node<snode_t>::s_data_size(buffer) + sizeof(u_short) + sizeof(uint64_t) * 2;
-   
-   if(version < 2)
-      return datasize;
-      
-   return datasize + sizeof(uint64_t);   // visits
+   return sr.data_size(ptr);
 }
 
 const void *snode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<snode_t>::s_data_size(buffer) + sizeof(u_short) + sizeof(uint64_t);
+   return (u_char*) buffer + base_node<snode_t>::s_data_size(buffer, bufsize) + sizeof(u_short) + sizeof(uint64_t);
 }
 
 const void *snode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return &((u_char*)buffer)[base_node<snode_t>::s_data_size(buffer)] + sizeof(u_short);
+   return &((u_char*)buffer)[base_node<snode_t>::s_data_size(buffer, bufsize)] + sizeof(u_short);
 }
 
 int64_t snode_t::s_compare_hits(const void *buf1, const void *buf2)

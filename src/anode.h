@@ -45,8 +45,6 @@ struct anode_t : public base_node<anode_t> {
          template <typename ... param_t>
          size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
-         static size_t s_data_size(const void *buffer);
-
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_visits(const void *buffer, size_t bufsize, size_t& datasize);

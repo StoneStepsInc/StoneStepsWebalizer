@@ -83,9 +83,6 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
 
       template <typename ... param_t>
       size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
-
-      /// Returns the size of serialized data in the buffer.
-      static size_t s_data_size(const void *buffer);
 };
 
 #endif // SYSNODE_H

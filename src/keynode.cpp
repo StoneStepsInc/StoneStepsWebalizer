@@ -41,39 +41,27 @@ void keynode_t<type_t>::reset(type_t _nodeid)
 template <typename type_t>
 size_t keynode_t<type_t>::s_key_size(void) const
 {
-   return s_size_of(nodeid);
+   return serializer_t::s_size_of(nodeid);
 }
 
 template <typename type_t>
 size_t keynode_t<type_t>::s_pack_key(void *buffer, size_t bufsize) const
 {
-   size_t datasize = s_key_size();
+   serializer_t sr(buffer, bufsize);
 
-   if(bufsize < datasize)
-      return 0;
+   void *ptr = sr.serialize(buffer, nodeid);
 
-   serialize(buffer, nodeid);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename type_t>
 size_t keynode_t<type_t>::s_unpack_key(const void *buffer, size_t bufsize)
 {
-   size_t datasize = s_key_size();
+   serializer_t sr(buffer, bufsize);
 
-   if(bufsize < datasize)
-      return 0;
+   const void *ptr = sr.deserialize(buffer, nodeid);
 
-   deserialize(buffer, nodeid);
-
-   return datasize;
-}
-
-template <typename type_t>
-size_t keynode_t<type_t>::s_key_size(const void *buffer)
-{
-   return s_size_of<type_t>(buffer);
+   return sr.data_size(ptr);
 }
 
 template <typename type_t>

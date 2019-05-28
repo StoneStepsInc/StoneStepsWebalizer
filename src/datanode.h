@@ -23,7 +23,9 @@
 ///
 /// The version is stored in the database, but not in a node instance in memory. 
 /// Instead, the version is made available when unpacking data, so the node could 
-/// read the buffer according to the stored version of serialized data.
+/// read the buffer according to the stored version of serialized data. This way
+/// we don't waste two bytes in each node instance on a misleading version that
+/// becomes obsolete the moment it was read from the database.
 ///
 /// New data is always written according to the latest version.
 ///
@@ -46,7 +48,7 @@ class datanode_t {
 
       size_t s_unpack_data(const void *buffer, size_t bufsize);
 
-      static size_t s_data_size(const void *buffer);
+      static size_t s_data_size(const void *buffer, size_t bufsize);
 
       static u_short s_node_ver(const void *buffer);
 };

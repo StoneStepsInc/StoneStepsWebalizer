@@ -64,7 +64,7 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
 
          int64_t s_compare_value(const void *buffer, size_t bufsize) const;
 
-         static size_t s_data_size(const void *buffer);
+         static size_t s_data_size(const void *buffer, size_t bufsize);
 
          static const void *s_field_value(const void *buffer, size_t bufsize, size_t& datasize);
 

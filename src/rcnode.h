@@ -75,8 +75,6 @@ struct rcnode_t : public base_node<rcnode_t> {
 
          int64_t s_compare_value(const void *buffer, size_t bufsize) const;
 
-         static size_t s_data_size(const void *buffer);
-
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize);

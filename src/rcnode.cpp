@@ -50,78 +50,51 @@ size_t rcnode_t::s_data_size(void) const
                sizeof(u_char) +              // hexenc
                sizeof(u_short) +             // respcode
                sizeof(uint64_t) * 2 +        // count, value hash
-               s_size_of(method);            // method
+               serializer_t::s_size_of(method); // method
 }
 
 size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t basesize, datasize;
-   void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<rcnode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = base_node<rcnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = &((u_char*)buffer)[basesize];
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize(ptr, false);              // hexenc
+   ptr = sr.serialize(ptr, respcode);
+   ptr = sr.serialize(ptr, count);
+   ptr = sr.serialize(ptr, method);
 
-   base_node<rcnode_t>::s_pack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
+   ptr = sr.serialize(ptr, s_hash_value());
 
-   ptr = serialize(ptr, false);              // hexenc
-   ptr = serialize(ptr, respcode);
-   ptr = serialize(ptr, count);
-   ptr = serialize(ptr, method);
-
-   ptr = serialize(ptr, s_hash_value());
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   size_t basesize, datasize;
-   const void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<rcnode_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
+   size_t basesize = base_node<rcnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.s_skip_field<bool>(ptr);            // hexenc
 
-   base_node<rcnode_t>::s_unpack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
+   ptr = sr.deserialize(ptr, respcode);
+   ptr = sr.deserialize(ptr, count);
+   ptr = sr.deserialize(ptr, method);
 
-   ptr = s_skip_field<bool>(ptr);            // hexenc
-
-   ptr = deserialize(ptr, respcode);
-   ptr = deserialize(ptr, count);
-   ptr = deserialize(ptr, method);
-
-   ptr = s_skip_field<uint64_t>(ptr);        // value hash
+   ptr = sr.s_skip_field<uint64_t>(ptr);        // value hash
    
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 uint64_t rcnode_t::s_hash_value(void) const
 {
    return hash_str(hash_num(base_node<rcnode_t>::s_hash_value(), respcode), method, method.length());
-}
-
-size_t rcnode_t::s_data_size(const void *buffer)
-{
-   size_t datasize = base_node<rcnode_t>::s_data_size(buffer) +
-         sizeof(u_char) +              // hexenc
-         sizeof(u_short) +             // respcode
-         sizeof(uint64_t);             // count
-
-   // method
-   datasize += s_size_of<string_t>((const u_char*) buffer + datasize);
-
-   return datasize + sizeof(uint64_t); // value hash;
 }
 
 const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize)
@@ -131,45 +104,46 @@ const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, s
 
 const void *rcnode_t::s_field_value_mp_method(const void *buffer, size_t bufsize, size_t& datasize)
 {
-   const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
-   datasize = s_size_of<string_t>(ptr);
+   const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
+
+   datasize = serializer_t(buffer, bufsize).s_size_of<string_t>(ptr);
+
    return ptr;
 }
 
 const void *rcnode_t::s_field_value_mp_respcode(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(u_short);
-   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char);
+   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char);
 }
 
 const void *rcnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    const void *ptr;
    datasize = sizeof(uint64_t);
-   ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
-   return (u_char*) ptr + s_size_of<string_t>(ptr);
+   ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
+   return (u_char*) ptr + serializer_t(buffer, bufsize).s_size_of<string_t>(ptr);
 }
 
 int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 {
+   serializer_t sr(buffer, bufsize);
+
    size_t datasize;
    string_t tstr;
    u_short tcode;
    int64_t diff;
 
-   if(bufsize < s_data_size(buffer))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %d; expected: %d)", typeid(*this).name(), bufsize, s_data_size()));
-
    if((diff = base_node<rcnode_t>::s_compare_value(buffer, bufsize)) != 0)
       return diff;
 
-   deserialize(s_field_value_mp_respcode(buffer, bufsize, datasize), tcode);
+   sr.deserialize(s_field_value_mp_respcode(buffer, bufsize, datasize), tcode);
 
    // tcode and respcode are both u_short (no overflow)
    if((diff = tcode - respcode) != 0)
       return diff;
 
-   deserialize(s_field_value_mp_method(buffer, bufsize, datasize), tstr);
+   sr.deserialize(s_field_value_mp_method(buffer, bufsize, datasize), tstr);
 
    return method.compare(tstr);
 }
@@ -177,7 +151,7 @@ int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 const void *rcnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(u_short);
+   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short);
 }
 
 int64_t rcnode_t::s_compare_hits(const void *buf1, const void *buf2)

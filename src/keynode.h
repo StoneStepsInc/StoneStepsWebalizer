@@ -48,8 +48,6 @@ struct keynode_t {
          size_t s_pack_key(void *buffer, size_t bufsize) const;
          size_t s_unpack_key(const void *buffer, size_t bufsize);
 
-         static size_t s_key_size(const void *buffer);
-
          static int64_t s_compare_key(const void *buf1, const void *buf2);
 };
 

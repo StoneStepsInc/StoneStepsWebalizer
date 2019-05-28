@@ -128,8 +128,6 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
 
       template <typename ... param_t>
       size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
-
-      static size_t s_data_size(const void *buffer);
 };
 
 #endif // TOTALS_H

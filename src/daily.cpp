@@ -53,89 +53,70 @@ size_t daily_t::s_data_size(void) const
 
 size_t daily_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   datasize = s_data_size();
-
-   if(bufsize < datasize)
-      return 0;
-
-   datanode_t<daily_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + datanode_t<daily_t>::s_data_size();
+   size_t basesize = datanode_t<daily_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
       
-   ptr = serialize(ptr, tm_hits);
-   ptr = serialize(ptr, tm_files);
-   ptr = serialize(ptr, tm_pages);
-   ptr = serialize(ptr, tm_hosts);
-   ptr = serialize(ptr, tm_visits);
-   ptr = serialize(ptr, tm_xfer);
+   ptr = sr.serialize(ptr, tm_hits);
+   ptr = sr.serialize(ptr, tm_files);
+   ptr = sr.serialize(ptr, tm_pages);
+   ptr = sr.serialize(ptr, tm_hosts);
+   ptr = sr.serialize(ptr, tm_visits);
+   ptr = sr.serialize(ptr, tm_xfer);
    
-   ptr = serialize(ptr, h_hits_max);
-   ptr = serialize(ptr, h_files_max);
-   ptr = serialize(ptr, h_pages_max);
-   ptr = serialize(ptr, h_xfer_max);
-   ptr = serialize(ptr, h_visits_max);
-   ptr = serialize(ptr, h_hosts_max);
+   ptr = sr.serialize(ptr, h_hits_max);
+   ptr = sr.serialize(ptr, h_files_max);
+   ptr = sr.serialize(ptr, h_pages_max);
+   ptr = sr.serialize(ptr, h_xfer_max);
+   ptr = sr.serialize(ptr, h_visits_max);
+   ptr = sr.serialize(ptr, h_hosts_max);
    
-   ptr = serialize(ptr, h_hits_avg);
-   ptr = serialize(ptr, h_files_avg);
-   ptr = serialize(ptr, h_pages_avg);
-   ptr = serialize(ptr, h_xfer_avg);
-   ptr = serialize(ptr, h_visits_avg);
-   ptr = serialize(ptr, h_hosts_avg);
+   ptr = sr.serialize(ptr, h_hits_avg);
+   ptr = sr.serialize(ptr, h_files_avg);
+   ptr = sr.serialize(ptr, h_pages_avg);
+   ptr = sr.serialize(ptr, h_xfer_avg);
+   ptr = sr.serialize(ptr, h_visits_avg);
+   ptr = sr.serialize(ptr, h_hosts_avg);
    
-         serialize(ptr, td_hours);
+   ptr = sr.serialize(ptr, td_hours);
 
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t daily_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   bool fixver = (intptr_t) arg == -1;
-   u_short version;
-   size_t datasize;
-   const void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   datasize = s_data_size(buffer, fixver);
+   size_t basesize = datanode_t<daily_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   // see the comment in state_t::upgrade_database
-   if(fixver) {
-      version = 1;
-      ptr = (u_char*) buffer;
-   }
-   else {
-      version = s_node_ver(buffer);
-      ptr = (u_char*) buffer + datanode_t<daily_t>::s_data_size(buffer);
-   }
-
-   ptr = deserialize(ptr, tm_hits);
-   ptr = deserialize(ptr, tm_files);
-   ptr = deserialize(ptr, tm_pages);
-   ptr = deserialize(ptr, tm_hosts);
-   ptr = deserialize(ptr, tm_visits);
-   ptr = deserialize(ptr, tm_xfer);
+   ptr = sr.deserialize(ptr, tm_hits);
+   ptr = sr.deserialize(ptr, tm_files);
+   ptr = sr.deserialize(ptr, tm_pages);
+   ptr = sr.deserialize(ptr, tm_hosts);
+   ptr = sr.deserialize(ptr, tm_visits);
+   ptr = sr.deserialize(ptr, tm_xfer);
 
    if(version >= 2) {
-      ptr = deserialize(ptr, h_hits_max);
-      ptr = deserialize(ptr, h_files_max);
-      ptr = deserialize(ptr, h_pages_max);
-      ptr = deserialize(ptr, h_xfer_max);
-      ptr = deserialize(ptr, h_visits_max);
-      ptr = deserialize(ptr, h_hosts_max);
+      ptr = sr.deserialize(ptr, h_hits_max);
+      ptr = sr.deserialize(ptr, h_files_max);
+      ptr = sr.deserialize(ptr, h_pages_max);
+      ptr = sr.deserialize(ptr, h_xfer_max);
+      ptr = sr.deserialize(ptr, h_visits_max);
+      ptr = sr.deserialize(ptr, h_hosts_max);
       
-      ptr = deserialize(ptr, h_hits_avg);
-      ptr = deserialize(ptr, h_files_avg);
-      ptr = deserialize(ptr, h_pages_avg);
-      ptr = deserialize(ptr, h_xfer_avg);
-      ptr = deserialize(ptr, h_visits_avg);
-      ptr = deserialize(ptr, h_hosts_avg);
+      ptr = sr.deserialize(ptr, h_hits_avg);
+      ptr = sr.deserialize(ptr, h_files_avg);
+      ptr = sr.deserialize(ptr, h_pages_avg);
+      ptr = sr.deserialize(ptr, h_xfer_avg);
+      ptr = sr.deserialize(ptr, h_visits_avg);
+      ptr = sr.deserialize(ptr, h_hosts_avg);
 
-            deserialize(ptr, td_hours);
+      ptr = sr.deserialize(ptr, td_hours);
    }
    else {
       h_hits_max = h_files_max = h_pages_max = h_visits_max = 0;
@@ -147,24 +128,7 @@ size_t daily_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
    
-   return datasize;
-}
-
-size_t daily_t::s_data_size(const void *buffer, bool fixver)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = datanode_t<daily_t>::s_data_size(buffer) + 
-            sizeof(uint64_t) * 5 + 
-            sizeof(uint64_t);       // tm_xfer
-   
-   if(fixver || version < 2)
-      return datasize;
-      
-   return datasize + 
-            sizeof(u_short)      +  // td_hours 
-            sizeof(uint64_t) * 5 +  // h_hits_max, h_files_max, h_pages_max, h_visits_max, h_hosts_max
-            sizeof(double) * 6   +  // h_hits_avg, h_files_avg, h_pages_avg, h_visits_avg, h_hosts_avg, hxfer_avg
-            sizeof(uint64_t);       // h_xfer_max
+   return sr.data_size(ptr);
 }
 
 //

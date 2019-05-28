@@ -102,7 +102,7 @@ size_t sysnode_t::s_data_size(void) const
             sizeof(u_char)       +     // batch mode?
             sizeof(u_char)       +     // fixed_dhv
             sizeof(uint32_t)     +     // filepos
-            s_size_of(logformat) +     // logformat
+            serializer_t::s_size_of(logformat) +   // logformat
             sizeof(u_short) * 5  +     // sizeof char, short, int, long and double
             sizeof(u_int)        +     // byte_order
             sizeof(u_int)        +     // appvar_last
@@ -114,87 +114,73 @@ size_t sysnode_t::s_data_size(void) const
 
 size_t sysnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<sysnode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = datanode_t<sysnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < s_data_size())
-      return 0;
+   ptr = sr.serialize(ptr, appver);
+   ptr = sr.serialize(ptr, incremental);
+   ptr = sr.serialize(ptr, batch);
+   ptr = sr.serialize(ptr, filepos);
+   ptr = sr.serialize(ptr, logformat);
+   ptr = sr.serialize(ptr, fixed_dhv);
 
-   datanode_t<sysnode_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
+   ptr = sr.serialize(ptr, sizeof_char);
+   ptr = sr.serialize(ptr, sizeof_short);
+   ptr = sr.serialize(ptr, sizeof_int);
+   ptr = sr.serialize(ptr, sizeof_long);
+   ptr = sr.serialize(ptr, sizeof_double);
 
-   ptr = serialize(ptr, appver);
-   ptr = serialize(ptr, incremental);
-   ptr = serialize(ptr, batch);
-   ptr = serialize(ptr, filepos);
-   ptr = serialize(ptr, logformat);
-   ptr = serialize(ptr, fixed_dhv);
-
-   ptr = serialize(ptr, sizeof_char);
-   ptr = serialize(ptr, sizeof_short);
-   ptr = serialize(ptr, sizeof_int);
-   ptr = serialize(ptr, sizeof_long);
-   ptr = serialize(ptr, sizeof_double);
-
-   ptr = serialize(ptr, byte_order);
+   ptr = sr.serialize(ptr, byte_order);
    
-   ptr = serialize(ptr, appver_last);
+   ptr = sr.serialize(ptr, appver_last);
 
-   ptr = serialize(ptr, utc_time);
-   ptr = serialize<short, int>(ptr, utc_offset);
+   ptr = sr.serialize(ptr, utc_time);
+   ptr = sr.serialize<short, int>(ptr, utc_offset);
 
-   ptr = serialize(ptr, sizeof_longlong);
-   ptr = serialize(ptr, byte_order_x64);
+   ptr = sr.serialize(ptr, sizeof_longlong);
+   ptr = sr.serialize(ptr, byte_order_x64);
 
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   u_short version;
-   size_t datasize, basesize;
-   const void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<sysnode_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
+   size_t basesize = datanode_t<sysnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   version = s_node_ver(buffer);
-   datanode_t<sysnode_t>::s_unpack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = deserialize(ptr, appver);
-   ptr = deserialize(ptr, incremental);
+   ptr = sr.deserialize(ptr, appver);
+   ptr = sr.deserialize(ptr, incremental);
 
    if(version >= 2)
-      ptr = deserialize(ptr, batch);
+      ptr = sr.deserialize(ptr, batch);
    else
       batch = false;
 
-   ptr = s_skip_field<uint32_t>(ptr);       // filepos
-   ptr = s_skip_field<string_t>(ptr);       // logformat
+   ptr = sr.s_skip_field<uint32_t>(ptr);       // filepos
+   ptr = sr.s_skip_field<string_t>(ptr);       // logformat
 
    if(version >= 3)
-      ptr = deserialize(ptr, fixed_dhv);
+      ptr = sr.deserialize(ptr, fixed_dhv);
    else
       fixed_dhv = false;
 
    if(version >= 4) {
-      ptr = deserialize(ptr, sizeof_char);
-      ptr = deserialize(ptr, sizeof_short);
-      ptr = deserialize(ptr, sizeof_int);
-      ptr = deserialize(ptr, sizeof_long);
-      ptr = deserialize(ptr, sizeof_double);
+      ptr = sr.deserialize(ptr, sizeof_char);
+      ptr = sr.deserialize(ptr, sizeof_short);
+      ptr = sr.deserialize(ptr, sizeof_int);
+      ptr = sr.deserialize(ptr, sizeof_long);
+      ptr = sr.deserialize(ptr, sizeof_double);
       
-      ptr = deserialize(ptr, byte_order);
+      ptr = sr.deserialize(ptr, byte_order);
       
-      ptr = deserialize(ptr, appver_last);
+      ptr = sr.deserialize(ptr, appver_last);
    }
    else {
       sizeof_char = sizeof(char);
@@ -213,13 +199,13 @@ size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_
    // settings in the configuration file. 
    //
    if(version >= 5) {
-      ptr = deserialize(ptr, utc_time);
-      ptr = deserialize<short>(ptr, utc_offset);
+      ptr = sr.deserialize(ptr, utc_time);
+      ptr = sr.deserialize<short>(ptr, utc_offset);
    }
 
    if(version >= 6) {
-      ptr = deserialize(ptr, sizeof_longlong);
-      ptr = deserialize(ptr, byte_order_x64);
+      ptr = sr.deserialize(ptr, sizeof_longlong);
+      ptr = sr.deserialize(ptr, byte_order_x64);
    }
    else {
       sizeof_longlong = sizeof(long long);
@@ -229,50 +215,7 @@ size_t sysnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t sysnode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize;
-
-   datasize = datanode_t<sysnode_t>::s_data_size(buffer) + 
-            sizeof(u_int)        +        // appver
-            sizeof(u_char);               // incremental
-
-   if(version >= 2)
-      datasize += sizeof(u_char);         // batch mode
-   
-   // batch_mode was inserted between filepos and logformat in v2   
-   datasize += sizeof(uint32_t);          // filepos
-   datasize += s_size_of<string_t>((u_char*) buffer + datasize);    // logformat
-   
-   if(version < 3)
-      return datasize;
-      
-   datasize += sizeof(u_char);            // fixed_dhv
-   
-   if(version < 4)
-      return datasize;
-      
-   datasize += 
-      sizeof(u_short) * 5  +  // sizeof char, short, int, long and double 
-      sizeof(u_int) * 2;      // byte_order, appver_last
-
-   if(version < 5)
-      return datasize;
-
-   datasize +=
-            sizeof(u_char)       +        // utc_time
-            sizeof(short);                // utc_offset
-
-   if(version < 6)
-      return datasize;
-
-   return datasize +
-            sizeof(u_short)      +        // sizeof_longlong
-            sizeof(uint64_t);             // byte_order_x64
+   return sr.data_size(ptr);
 }
 
 //

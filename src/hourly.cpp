@@ -40,64 +40,36 @@ size_t hourly_t::s_data_size(void) const
 
 size_t hourly_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   datasize = s_data_size();
+   size_t basesize = datanode_t<hourly_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < s_data_size())
-      return 0;
+   ptr = sr.serialize(ptr, th_hits);
+   ptr = sr.serialize(ptr, th_files);
+   ptr = sr.serialize(ptr, th_pages);
+   ptr = sr.serialize(ptr, th_xfer);
 
-   datanode_t<hourly_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + datanode_t<hourly_t>::s_data_size();
-
-   ptr = serialize(ptr, th_hits);
-   ptr = serialize(ptr, th_files);
-   ptr = serialize(ptr, th_pages);
-   ptr = serialize(ptr, th_xfer);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t hourly_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   bool fixver = (intptr_t) arg == -1;
-   u_short version;
-   size_t datasize;
-   const void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   datasize = s_data_size(buffer, fixver);
+   size_t basesize = datanode_t<hourly_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;   
 
-   if(bufsize < datasize)
-      return 0;
-
-   // see the comment in state_t::upgrade_database
-   if(fixver) {
-      version = 1;
-      ptr = (u_char*) buffer;
-   }
-   else {
-      version = s_node_ver(buffer);
-      ptr = (u_char*) buffer + datanode_t<hourly_t>::s_data_size(buffer);
-   }
-
-   ptr = deserialize(ptr, th_hits);
-   ptr = deserialize(ptr, th_files);
-   ptr = deserialize(ptr, th_pages);
-   ptr = deserialize(ptr, th_xfer);
+   ptr = sr.deserialize(ptr, th_hits);
+   ptr = sr.deserialize(ptr, th_files);
+   ptr = sr.deserialize(ptr, th_pages);
+   ptr = sr.deserialize(ptr, th_xfer);
    
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t hourly_t::s_data_size(const void *buffer, bool fixver)
-{
-   return datanode_t<hourly_t>::s_data_size(buffer) + 
-            sizeof(uint64_t) * 3 + 
-            sizeof(uint64_t);          // th_xfer
+   return sr.data_size(ptr);
 }
 
 //

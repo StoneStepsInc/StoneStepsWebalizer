@@ -88,131 +88,87 @@ size_t vnode_t::s_data_size(void) const
    return datanode_t<vnode_t>::s_data_size() + 
             sizeof(u_char)  * 3 +   // entry_url, robot, converted
             sizeof(uint64_t) * 3 +  // hits, files, pages
-            s_size_of(start)    +   // start
-            s_size_of(end)      +   // end
+            serializer_t::s_size_of(start) +    // start
+            serializer_t::s_size_of(end) +      // end
             sizeof(uint64_t)    +   // xfer 
             sizeof(uint64_t);       // lasturl->nodeid
 }
 
 size_t vnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<vnode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = datanode_t<vnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < s_data_size())
-      return 0;
-
-   datanode_t<vnode_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = serialize(ptr, entry_url);
-   ptr = serialize(ptr, start);
-   ptr = serialize(ptr, end);
-   ptr = serialize(ptr, hits);
-   ptr = serialize(ptr, files);
-   ptr = serialize(ptr, pages);
-   ptr = serialize(ptr, xfer);
+   ptr = sr.serialize(ptr, entry_url);
+   ptr = sr.serialize(ptr, start);
+   ptr = sr.serialize(ptr, end);
+   ptr = sr.serialize(ptr, hits);
+   ptr = sr.serialize(ptr, files);
+   ptr = sr.serialize(ptr, pages);
+   ptr = sr.serialize(ptr, xfer);
 
    if(lasturl)
-      ptr = serialize(ptr, lasturl->nodeid);
+      ptr = sr.serialize(ptr, lasturl->nodeid);
    else
-      ptr = serialize(ptr, (uint64_t) 0);
+      ptr = sr.serialize(ptr, (uint64_t) 0);
 
-   ptr = serialize(ptr, robot);
-   ptr = serialize(ptr, converted);
+   ptr = sr.serialize(ptr, robot);
+   ptr = sr.serialize(ptr, converted);
 
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t vnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
+   serializer_t sr(buffer, bufsize);
+
    bool tmp;
    uint64_t urlid;
-   size_t datasize, basesize;
-   u_short version;
-   const void *ptr;
 
-   basesize = datanode_t<vnode_t>::s_data_size();
-   datasize = s_data_size(buffer);
+   size_t basesize = datanode_t<vnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   version = s_node_ver(buffer);
-   datanode_t<vnode_t>::s_unpack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = deserialize(ptr, tmp); entry_url = tmp;
+   ptr = sr.deserialize(ptr, tmp); entry_url = tmp;
 
    if(version >= 4) {
-      ptr = deserialize(ptr, start);
-      ptr = deserialize(ptr, end);
+      ptr = sr.deserialize(ptr, start);
+      ptr = sr.deserialize(ptr, end);
    }
    else {
       uint64_t tmp;
 
-      ptr = deserialize(ptr, tmp); 
+      ptr = sr.deserialize(ptr, tmp); 
       start.reset((time_t) tmp);
 
-      ptr = deserialize(ptr, tmp);
+      ptr = sr.deserialize(ptr, tmp);
       end.reset((time_t) tmp);
    }
 
-   ptr = deserialize(ptr, hits);
-   ptr = deserialize(ptr, files);
-   ptr = deserialize(ptr, pages);
-   ptr = deserialize(ptr, xfer);
-   ptr = deserialize(ptr, urlid);
+   ptr = sr.deserialize(ptr, hits);
+   ptr = sr.deserialize(ptr, files);
+   ptr = sr.deserialize(ptr, pages);
+   ptr = sr.deserialize(ptr, xfer);
+   ptr = sr.deserialize(ptr, urlid);
 
    if(version >= 2)
-      ptr = deserialize(ptr, tmp), robot = tmp;
+      ptr = sr.deserialize(ptr, tmp), robot = tmp;
    else
       robot = false;
 
    if(version >= 3)
-      ptr = deserialize(ptr, tmp), converted = tmp;
+      ptr = sr.deserialize(ptr, tmp), converted = tmp;
    else
       converted = false;
    
    if(upcb)
       upcb(*this, urlid, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t vnode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = datanode_t<vnode_t>::s_data_size(buffer) + 
-            sizeof(u_char);         // entry_url
-
-   if(version < 4)
-      datasize += sizeof(uint64_t) * 2;  // start, end
-   else {
-      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // start
-      datasize += s_size_of<tstamp_t>((u_char*) buffer + datasize);  // end
-   }
-    
-   datasize +=
-            sizeof(uint64_t) * 3 +    // hits, files, pages
-            sizeof(uint64_t)     +    // xfer
-            sizeof(uint64_t);         // urlid (last URL)
-
-   if(version < 2)
-      return datasize;
-
-   datasize += sizeof(u_char);      // robot
-   
-   if(version < 3)
-      return datasize;
-   
-   datasize += sizeof(u_char);      // converted   
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 //

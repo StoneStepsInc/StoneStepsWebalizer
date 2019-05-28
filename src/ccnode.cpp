@@ -99,90 +99,55 @@ size_t ccnode_t::s_data_size(void) const
             sizeof(uint64_t) * 3 +     // count, files, visits
             sizeof(uint64_t) +         // xfer 
             sizeof(uint64_t) +         // pages
-            s_size_of(ccode);
+            serializer_t::s_size_of(ccode);
 }
 
 size_t ccnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr = buffer;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<ccnode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = datanode_t<ccnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < s_data_size())
-      return 0;
+   ptr = sr.serialize(ptr, count);
+   ptr = sr.serialize(ptr, files);
+   ptr = sr.serialize(ptr, xfer);
+   ptr = sr.serialize(ptr, visits);
+   ptr = sr.serialize(ptr, ccode);
+   ptr = sr.serialize(ptr, pages);
 
-   datanode_t<ccnode_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = serialize(ptr, count);
-   ptr = serialize(ptr, files);
-   ptr = serialize(ptr, xfer);
-   ptr = serialize(ptr, visits);
-   ptr = serialize(ptr, ccode);
-         serialize(ptr, pages);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   u_short version;
-   size_t datasize, basesize;
-   const void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<ccnode_t>::s_data_size();
-   datasize = s_data_size(buffer);
+   size_t basesize = datanode_t<ccnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   version = s_node_ver(buffer);
-
-   datanode_t<ccnode_t>::s_unpack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = deserialize(ptr, count);
-   ptr = deserialize(ptr, files);
-   ptr = deserialize(ptr, xfer);
-   ptr = deserialize(ptr, visits);
+   ptr = sr.deserialize(ptr, count);
+   ptr = sr.deserialize(ptr, files);
+   ptr = sr.deserialize(ptr, xfer);
+   ptr = sr.deserialize(ptr, visits);
    
    if(version >= 2)
-      ptr = deserialize(ptr, ccode);
+      ptr = sr.deserialize(ptr, ccode);
    else
       ccode = idx_ctry(nodeid);
    
    if(version >= 3)
-      deserialize(ptr, pages);
+      ptr = sr.deserialize(ptr, pages);
    else
       pages = 0;
 
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t ccnode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = datanode_t<ccnode_t>::s_data_size(buffer) + 
-            sizeof(uint64_t) * 3 +     // count, files, visits
-            sizeof(uint64_t);          // xfer
-   
-   if(version < 2)
-      return datasize;
-
-   datasize += s_size_of<string_t>((u_char*) buffer + datasize);  // country code
-
-   if(version < 3)
-      return datasize;
-
-   datasize += sizeof(uint64_t);       // pages
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 int64_t ccnode_t::s_compare_visits(const void *buf1, const void *buf2)
@@ -193,7 +158,7 @@ int64_t ccnode_t::s_compare_visits(const void *buf1, const void *buf2)
 const void *ccnode_t::s_field_visits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + datanode_t<ccnode_t>::s_data_size(buffer) + 
+   return (u_char*) buffer + datanode_t<ccnode_t>::s_data_size(buffer, bufsize) + 
             sizeof(uint64_t) * 3;      // hits, pages, files
 }
 

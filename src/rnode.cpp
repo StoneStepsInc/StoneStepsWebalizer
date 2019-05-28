@@ -36,86 +36,58 @@ size_t rnode_t::s_data_size(void) const
 
 size_t rnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
-   size_t datasize, basesize;
-   void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<rnode_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = base_node<rnode_t>::s_pack_data(buffer, bufsize);
+   void *ptr = &((u_char*)buffer)[basesize];
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize(ptr, false);
+   ptr = sr.serialize(ptr, count);
 
-   base_node<rnode_t>::s_pack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
-
-   ptr = serialize(ptr, false);
-   ptr = serialize(ptr, count);
-
-   ptr = serialize(ptr, s_hash_value());
+   ptr = sr.serialize(ptr, s_hash_value());
    
-   ptr = serialize(ptr, visits);
+   ptr = sr.serialize(ptr, visits);
 
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename ... param_t>
 size_t rnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
 {
-   size_t datasize, basesize;
-   u_short version;
-   const void *ptr;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = base_node<rnode_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
+   size_t basesize = base_node<rnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   u_short version = s_node_ver(buffer);
 
-   version = s_node_ver(buffer);
+   ptr = sr.s_skip_field<bool>(ptr);            // hexenc
 
-   base_node<rnode_t>::s_unpack_data(buffer, bufsize);
-   ptr = &((u_char*)buffer)[basesize];
+   ptr = sr.deserialize(ptr, count);
 
-   ptr = s_skip_field<bool>(ptr);            // hexenc
-
-   ptr = deserialize(ptr, count);
-
-   ptr = s_skip_field<uint64_t>(ptr);      // value hash
+   ptr = sr.s_skip_field<uint64_t>(ptr);      // value hash
    
    if(version >= 2)
-      ptr = deserialize(ptr, visits);
+      ptr = sr.deserialize(ptr, visits);
    else
       visits = 0;
 
    if(upcb)
       upcb(*this, arg, std::forward<param_t>(param) ...);
 
-   return datasize;
-}
-
-size_t rnode_t::s_data_size(const void *buffer)
-{
-   u_short version = s_node_ver(buffer);
-   size_t datasize = base_node<rnode_t>::s_data_size(buffer) + 
-         sizeof(u_char) +                 // hexenc
-         sizeof(uint64_t) * 2;            // count, value hash
-
-   if(version < 2)
-      return datasize;
-
-   return datasize + sizeof(uint64_t);   // visits
+   return sr.data_size(ptr);
 }
 
 const void *rnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<rnode_t>::s_data_size(buffer) + sizeof(u_char) + sizeof(uint64_t);
+   return (u_char*) buffer + base_node<rnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(uint64_t);
 }
 
 const void *rnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
    datasize = sizeof(uint64_t);
-   return &((u_char*)buffer)[base_node<rnode_t>::s_data_size(buffer)];
+   return &((u_char*)buffer)[base_node<rnode_t>::s_data_size(buffer, bufsize)];
 }
 
 int64_t rnode_t::s_compare_hits(const void *buf1, const void *buf2)

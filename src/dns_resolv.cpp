@@ -109,7 +109,7 @@ struct dns_db_record_t {
       /// Constructs a DNS cache record by moving resources from anoher instance.
       dns_db_record_t(dns_db_record_t&& other);
 
-      /// Serialized size of this instance, in bytes.
+      /// Returns a serialized size of this instance, in bytes.
       size_t s_data_size(void) const;
       
       /// Serializes instance data members into the buffer.
@@ -208,15 +208,15 @@ dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) :
 size_t dns_db_record_t::s_data_size(void) const
 {
    return sizeof(u_int) +                 // version
-            s_size_of(tstamp) +
+            serializer_t::s_size_of(tstamp) +
             hnode_t::ccode_size + 
-            s_size_of(city) +
-            s_size_of(hostname) + 
-            s_size_of(spammer) + 
-            s_size_of(geoip_tstamp) + 
-            s_size_of(latitude) + 
-            s_size_of(longitude) + 
-            s_size_of(geoname_id);
+            serializer_t::s_size_of(city) +
+            serializer_t::s_size_of(hostname) + 
+            serializer_t::s_size_of(spammer) + 
+            serializer_t::s_size_of(geoip_tstamp) + 
+            serializer_t::s_size_of(latitude) + 
+            serializer_t::s_size_of(longitude) + 
+            serializer_t::s_size_of(geoname_id);
 }
 
 size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -227,19 +227,21 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    if(s_data_size() > bufsize)
       return 0;
 
-   // always save the latest version
-   ptr = serialize(ptr, DNS_DB_REC_V6);
+   serializer_t sr(buffer, bufsize);
 
-   // serialize all data members
-   ptr = serialize(ptr, tstamp);
-   ptr = serialize(ptr, ccode, hnode_t::ccode_size);
-   ptr = serialize(ptr, city);
-   ptr = serialize(ptr, hostname);
-   ptr = serialize(ptr, spammer);
-   ptr = serialize(ptr, geoip_tstamp);
-   ptr = serialize(ptr, latitude);
-   ptr = serialize(ptr, longitude);
-   ptr = serialize(ptr, geoname_id);
+   // always save the latest version
+   ptr = sr.serialize(ptr, DNS_DB_REC_V6);
+
+   // sr.serialize all data members
+   ptr = sr.serialize(ptr, tstamp);
+   ptr = sr.serialize(ptr, ccode);
+   ptr = sr.serialize(ptr, city);
+   ptr = sr.serialize(ptr, hostname);
+   ptr = sr.serialize(ptr, spammer);
+   ptr = sr.serialize(ptr, geoip_tstamp);
+   ptr = sr.serialize(ptr, latitude);
+   ptr = sr.serialize(ptr, longitude);
+   ptr = sr.serialize(ptr, geoname_id);
 
    // return the size of the serialized data
    return (char*) ptr - (const char*) buffer;
@@ -250,10 +252,9 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
    u_int version = 0;
    const void *ptr = buffer;
 
-   if(bufsize < s_size_of(version))
-      return 0;
+   serializer_t sr(buffer, bufsize);
 
-   ptr = deserialize(ptr, version);
+   ptr = sr.deserialize(ptr, version);
 
    //
    // DNS record version must be checked against the exact version number or against 
@@ -306,24 +307,24 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
    }
 
    // read the rest of the record from the buffer
-   ptr = deserialize(ptr, tstamp);
+   ptr = sr.deserialize(ptr, tstamp);
 
-   ptr = deserialize(ptr, ccode, hnode_t::ccode_size);
+   ptr = sr.deserialize(ptr, ccode);
 
-   ptr = deserialize(ptr, city);
-   ptr = deserialize(ptr, hostname);
-   ptr = deserialize(ptr, spammer);
+   ptr = sr.deserialize(ptr, city);
+   ptr = sr.deserialize(ptr, hostname);
+   ptr = sr.deserialize(ptr, spammer);
 
    if(version >= DNS_DB_REC_V4)
-      ptr = deserialize(ptr, geoip_tstamp);
+      ptr = sr.deserialize(ptr, geoip_tstamp);
 
    if(version >= DNS_DB_REC_V5) {
-      ptr = deserialize(ptr, latitude);
-      ptr = deserialize(ptr, longitude);
+      ptr = sr.deserialize(ptr, latitude);
+      ptr = sr.deserialize(ptr, longitude);
    }
 
    if(version >= DNS_DB_REC_V6)
-      ptr = deserialize(ptr, geoname_id);
+      ptr = sr.deserialize(ptr, geoname_id);
 
    return (const char*) ptr - (char*) buffer;
 }

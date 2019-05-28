@@ -130,6 +130,7 @@
     <ClCompile Include="ut_linklist.cpp" />
     <ClCompile Include="ut_normurl.cpp" />
     <ClCompile Include="ut_poolalloc.cpp" />
+    <ClCompile Include="ut_serialize.cpp" />
     <ClCompile Include="ut_strcmp.cpp" />
     <ClCompile Include="ut_strfmt.cpp" />
     <ClCompile Include="ut_strcreate.cpp" />

@@ -34,33 +34,38 @@ size_t datanode_t<node_t>::s_data_size(void) const
 template <typename node_t> 
 size_t datanode_t<node_t>::s_pack_data(void *buffer, size_t bufsize) const
 {
-   if(bufsize < s_data_size())
-      return 0;
+   serializer_t sr(buffer, bufsize);
 
-   serialize(buffer, __version);
+   const void *ptr = sr.serialize(buffer, __version);
 
-   return s_data_size();
+   return sr.data_size(ptr);
 }
 
 template <typename node_t> 
 size_t datanode_t<node_t>::s_unpack_data(const void *buffer, size_t bufsize)
 {
-   if(bufsize < s_data_size(buffer))
-      return 0;
+   serializer_t sr(buffer, bufsize);
 
-   return s_data_size(buffer);
+   // just make sure we have enough bytes for a version in the buffer, so s_node_ver can read it safely
+   return sr.data_size(sr.s_skip_field<u_short>(buffer));
 }
 
 template <typename node_t> 
-size_t datanode_t<node_t>::s_data_size(const void *buffer)
+size_t datanode_t<node_t>::s_data_size(const void *buffer, size_t bufsize)
 {
-   return sizeof(__version);
+   serializer_t sr(buffer, bufsize);
+
+   return sr.data_size(sr.s_skip_field<u_short>(buffer));
 }
 
 template <typename node_t>
 u_short datanode_t<node_t>::s_node_ver(const void *buffer)
 {
-   u_short nodever;
-   deserialize(buffer, nodever);
+   u_short nodever = 0;
+
+   serializer_t sr(buffer, serializer_t::s_size_of(nodever));
+
+   sr.deserialize(buffer, nodever);
+
    return nodever;
 }

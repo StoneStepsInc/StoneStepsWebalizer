@@ -50,49 +50,36 @@ size_t base_node<node_t>::s_data_size(void) const
 {
    return datanode_t<node_t>::s_data_size()  + 
             sizeof(u_char)                   +     // flag 
-            s_size_of(string);                     // string
+            serializer_t::s_size_of(string);       // string
 }
 
 template <typename node_t> 
 size_t base_node<node_t>::s_pack_data(void *buffer, size_t bufsize) const
 {
-   void *ptr = buffer;
-   size_t datasize, basesize;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<node_t>::s_data_size();
-   datasize = s_data_size();
+   size_t basesize = datanode_t<node_t>::s_pack_data(buffer, bufsize);
+   void *ptr = (u_char*) buffer + basesize;
 
-   if(bufsize < datasize)
-      return 0;
+   ptr = sr.serialize<u_char, nodetype_t>(ptr, flag);
+   ptr = sr.serialize(ptr, string);
 
-   datanode_t<node_t>::s_pack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
-
-   ptr = serialize<u_char, nodetype_t>(ptr, flag);
-   ptr = serialize(ptr, string);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename node_t> 
 size_t base_node<node_t>::s_unpack_data(const void *buffer, size_t bufsize)
 {
-   const void *ptr = buffer;
-   size_t datasize, basesize;
+   serializer_t sr(buffer, bufsize);
 
-   basesize = datanode_t<node_t>::s_data_size(buffer);
-   datasize = s_data_size(buffer);
+   size_t basesize = datanode_t<node_t>::s_unpack_data(buffer, bufsize);
 
-   if(bufsize < datasize)
-      return 0;
+   const void *ptr = (u_char*) buffer + basesize;
 
-   datanode_t<node_t>::s_unpack_data(buffer, bufsize);
-   ptr = (u_char*) buffer + basesize;
+   ptr = sr.deserialize<u_char>(ptr, flag);
+   ptr = sr.deserialize(ptr, string);
 
-   ptr = deserialize<u_char>(ptr, flag);
-   ptr = deserialize(ptr, string);
-
-   return datasize;
+   return sr.data_size(ptr);
 }
 
 template <typename node_t> 
@@ -104,35 +91,43 @@ uint64_t base_node<node_t>::s_hash_value(void) const
 template <typename node_t>
 int64_t base_node<node_t>::s_compare_value(const void *buffer, size_t bufsize) const
 {
+   serializer_t sr(buffer, bufsize);
+
    size_t datasize;
    string_t tstr;
 
-   if(bufsize < s_data_size(buffer))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %zu; expected: %zu)", typeid(*this).name(), bufsize, s_data_size(buffer)));
+   if(bufsize < s_data_size(buffer, bufsize))
+      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %zu; expected: %zu)", typeid(*this).name(), bufsize, s_data_size(buffer, bufsize)));
 
-   deserialize(s_field_value(buffer, bufsize, datasize), tstr);
+   sr.deserialize(s_field_value(buffer, bufsize, datasize), tstr);
 
    return string.compare(tstr);
 }
 
 template <typename node_t> 
-size_t base_node<node_t>::s_data_size(const void *buffer)
+size_t base_node<node_t>::s_data_size(const void *buffer, size_t bufsize)
 {
-   size_t datasize = datanode_t<node_t>::s_data_size(buffer)    +
+   size_t datasize = datanode_t<node_t>::s_data_size(buffer, bufsize)    +
             sizeof(u_char);                                             // flag
+
+   serializer_t sr(buffer, bufsize);
+
+   const void *ptr = sr.s_skip_field<string_t>((u_char*) buffer + datasize);  // string
    
-   return datasize + 
-            s_size_of<string_t>((u_char*) buffer + datasize);           // string
+   return sr.data_size(ptr);
 }
 
 template <typename node_t> 
 const void *base_node<node_t>::s_field_value(const void *buffer, size_t bufsize, size_t& datasize)
 {
    const void *ptr = (u_char*) buffer                          + 
-            datanode_t<node_t>::s_data_size(buffer)            + 
+            datanode_t<node_t>::s_data_size(buffer, bufsize)   + 
             sizeof(u_char);                                             // flag
 
-   datasize = s_size_of<string_t>(ptr);
+   serializer_t sr(buffer, bufsize);
+
+   datasize = sr.s_size_of<string_t>(ptr);
+
    return ptr;
 }
 
@@ -145,9 +140,9 @@ int64_t base_node<node_t>::s_compare_value_hash(const void *buf1, const void *bu
 template <typename node_t> 
 bool base_node<node_t>::s_is_group(const void *buffer, size_t bufsize)
 {
-   if(!buffer && bufsize < s_data_size(buffer))
+   if(!buffer && bufsize < s_data_size(buffer, bufsize))
       return false;
 
-   return (*((u_char*) buffer + datanode_t<node_t>::s_data_size(buffer)) == OBJ_GRP) ? true : false;
+   return (*((u_char*) buffer + datanode_t<node_t>::s_data_size(buffer, bufsize)) == OBJ_GRP) ? true : false;
 }
 
