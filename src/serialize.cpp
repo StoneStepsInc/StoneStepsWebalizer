@@ -173,7 +173,7 @@ void *serializer_t::serialize(void *ptr, const char (&chars)[2]) const
 }
 
 template <typename type_t>
-inline void *serializer_t::serialize(void *ptr, type_t value) const
+void *serializer_t::serialize(void *ptr, type_t value) const
 {
    if(buffer_space(ptr) < s_size_of(value))
       throw std::invalid_argument(string_t::_format("Buffer is too small (%s)", typeid(value).name()));
@@ -198,7 +198,7 @@ inline void *serializer_t::serialize(void *ptr, type_t value) const
 /// ```
 ///
 template <typename storage_t, typename runtime_t>
-inline void *serializer_t::serialize(void *ptr, runtime_t value) const
+void *serializer_t::serialize(void *ptr, runtime_t value) const
 {
    return serialize(ptr, (storage_t) value);
 }
@@ -242,7 +242,7 @@ void *serializer_t::serialize(void *ptr, const tstamp_t& tstamp) const
    return ptr;
 }
 
-inline void *serializer_t::serialize(void *ptr, bool value) const
+void *serializer_t::serialize(void *ptr, bool value) const
 {
    return serialize<u_char, bool>(ptr, value);
 }

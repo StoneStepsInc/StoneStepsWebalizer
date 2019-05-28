@@ -129,11 +129,11 @@ class serializer_t {
 
       /// Serializes a numeric value and returns the position after the serialized field.
       template <typename type_t>
-      inline void *serialize(void *ptr, type_t value) const;
+      void *serialize(void *ptr, type_t value) const;
 
       /// Serializes a numeric value with different storage and runtime types and returns the position after the serialized field.
       template <typename storage_t, typename runtime_t>
-      inline void *serialize(void *ptr, runtime_t value) const;
+      void *serialize(void *ptr, runtime_t value) const;
 
       /// Serializes a `string_t` value and returns the position after the serialized field.
       void *serialize(void *ptr, const string_t& value) const;
@@ -142,7 +142,7 @@ class serializer_t {
       void *serialize(void *ptr, const tstamp_t& tstamp) const;
 
       /// Serializes a `bool` value and returns the position after the serialized field.
-      inline void *serialize(void *ptr, bool value) const;
+      void *serialize(void *ptr, bool value) const;
 
       /// @}
 
@@ -157,7 +157,7 @@ class serializer_t {
 
       /// Deserializes a numeric value and returns the position after the field that was just read.
       template <typename type_t>
-      inline const void *deserialize(const void *ptr, type_t& value) const;
+      const void *deserialize(const void *ptr, type_t& value) const;
 
       /// Deserializes a numeric value with different storage and runtime types and returns the position after the field that was just read.
       template <typename storage_t, typename runtime_t>
