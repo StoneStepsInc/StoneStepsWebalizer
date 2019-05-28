@@ -1041,12 +1041,38 @@ int dns_resolver_t::get_live_workers(void)
 ///
 void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
 {
+   set_os_ex_translator();
+
    wrk_ctx_t& wrk_ctx = *wrk_ctx_ptr;
    wrk_ctx.buffer.resize(DBBUFSIZE, 0);
 
    while(!dns_thread_stop) {
-      if(process_node(wrk_ctx.dns_db.get(), wrk_ctx.buffer, wrk_ctx.buffer.capacity()) == false)
-         msleep(200);
+      try {
+         if(process_node(wrk_ctx.dns_db.get(), wrk_ctx.buffer, wrk_ctx.buffer.capacity()) == false)
+            msleep(200);
+      }
+      catch(const os_ex_t& err) {
+         //
+         // TODO: Main thread should detect when there are no DNS workers running
+         // and should shut down gracefully. Until then, if all DNS worker threads
+         // exit with an exception, the main thread will block while waiting for
+         // DNS to process all queued IP addresses.
+         //
+         fprintf(stderr, "%s\n", err.desc().c_str());
+         break;
+      }
+      catch (const DbException &err) {
+         fprintf(stderr, "[%d] %s\n", err.get_errno(), err.what());
+         break;
+      }
+      catch (const exception_t &err) {
+         fprintf(stderr, "%s\n", err.desc().c_str());
+         break;
+      }
+      catch (const std::exception &err) {
+         fprintf(stderr, "%s\n", err.what());
+         break;
+      }
    }
 
    wrk_ctx.buffer.reset();
