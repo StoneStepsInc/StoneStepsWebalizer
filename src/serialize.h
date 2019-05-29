@@ -233,19 +233,6 @@ typedef int64_t (*s_compare_cb_t)(const void *buf1, size_t buf1size, const void 
 typedef const void *(*s_field_cb_t)(const void *buffer, size_t bufsize, size_t& datasize);
 
 ///
-/// @typedef   s_mp_compare_cb_t
-///
-/// @brief  Compares the specified part of a serialized multi-part field.
-///
-/// `buf1` and `buf2` should point to the first part of two multipart values being 
-/// compared. Zero-based `partid` indicates which part should be evaluated. Function 
-/// behavior is undefined if `partid` is greater than the maximum valid value. When 
-/// the last part of the value is evaluated, `lastpart` will be set by the function 
-/// to `true`.
-///
-typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int partid, bool& lastpart);
-
-///
 /// @name   Comparison functions (buffer)
 ///
 /// @{
