@@ -46,14 +46,14 @@ const size_t DBBUFSIZE = 32768;                 // shared buffer for key and dat
 template <s_compare_cb_t compare>
 int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
 {
-   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt1->get_size(), dbt2->get_data(), dbt2->get_size());
    return diff < 0ll ? -1 : diff > 0ll ? 1 : 0;
 }
 
 template <s_compare_cb_t compare>
 int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
-   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt1->get_size(), dbt2->get_data(), dbt2->get_size());
    return diff < 0ll ? -1 : diff > 0ll ? 1 : 0;
 }
 
@@ -63,14 +63,14 @@ int bt_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2, size_t *locp)
 {
-   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt1->get_size(), dbt2->get_data(), dbt2->get_size());
    return diff < 0ll ? 1 : diff > 0ll ? -1 : 0;
 }
 
 template <s_compare_cb_t compare>
 int bt_reverse_compare_cb(Db *db, const Dbt *dbt1, const Dbt *dbt2)
 {
-   int64_t diff = compare(dbt1->get_data(), dbt2->get_data());
+   int64_t diff = compare(dbt1->get_data(), dbt1->get_size(), dbt2->get_data(), dbt2->get_size());
    return diff < 0ll ? 1 : diff > 0ll ? -1 : 0;
 }
 

@@ -65,9 +65,9 @@ size_t keynode_t<type_t>::s_unpack_key(const void *buffer, size_t bufsize)
 }
 
 template <typename type_t>
-int64_t keynode_t<type_t>::s_compare_key(const void *buf1, const void *buf2)
+int64_t keynode_t<type_t>::s_compare_key(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<type_t>(buf1, buf2);
+   return s_compare<type_t>(buf1, buf1size, buf2, buf2size);
 }
 
 //

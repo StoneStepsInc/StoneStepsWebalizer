@@ -235,9 +235,9 @@ const void *dlnode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& d
    return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer, bufsize) + sizeof(uint64_t) * 2;
 }
 
-int64_t dlnode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t dlnode_t::s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
 //

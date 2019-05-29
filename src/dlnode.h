@@ -121,7 +121,7 @@ struct dlnode_t : public base_node<dlnode_t> {
          static const void *s_field_value_mp_dlname(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_value_mp_hostid(const void *buffer, size_t bufsize, size_t& datasize);
 
-         static int64_t s_compare_xfer(const void *buf1, const void *buf2);
+         static int64_t s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 };
 
 //

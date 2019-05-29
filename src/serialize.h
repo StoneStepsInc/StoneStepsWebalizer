@@ -101,6 +101,9 @@ class serializer_t {
       ///
       /// @name   Serialized data size methods
       ///
+      /// These methods, including their specializations, check if the buffer has enough data
+      /// to accommodate a field of `type_t` type.
+      ///
       /// @{
 
       /// Returns the size of `type_t` stored in the buffer.
@@ -217,7 +220,7 @@ template <> const void *serializer_t::deserialize(const void *ptr, char (&chars)
 /// `buf1` and `buf2` should point to the beginning of two values being compared, 
 /// as returned by one of the field extractor/pointer functions.
 ///
-typedef int64_t (*s_compare_cb_t)(const void *buf1, const void *buf2);
+typedef int64_t (*s_compare_cb_t)(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 
 ///
 /// @typedef   s_field_cb_t
@@ -254,27 +257,36 @@ typedef int64_t (*s_mp_compare_cb_t)(const void *buf1, const void *buf2, u_int p
 /// @tparam type_t   Field value data type.
 ///
 template <typename type_t>
-inline int64_t s_compare(const void *buf1, const void *buf2)
+inline int64_t s_compare(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return *(type_t*) buf1 == *(type_t*) buf2 ? 0 : *(type_t*) buf1 > *(type_t*) buf2 ? 1 : -1;
+   serializer_t sr1(buf1, buf1size);
+   serializer_t sr2(buf2, buf2size);
+
+   type_t val1, val2;
+
+   sr1.deserialize(buf1, val1);
+   sr2.deserialize(buf2, val2);
+
+   return val1 == val2 ? 0 : val1 > val2 ? 1 : -1;
 }
 
 ///
 /// @brief  Compares two strings in their buffers.
 ///
 template <>
-inline int64_t s_compare<string_t>(const void *buf1, const void *buf2)
+inline int64_t s_compare<string_t>(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   // $$$ temporary, until s_compare_cb_t is changed to take buffer sizes
-   serializer_t sr1(buf1, std::numeric_limits<size_t>::max());
-   serializer_t sr2(buf2, std::numeric_limits<size_t>::max());
+   serializer_t sr1(buf1, buf1size);
+   serializer_t sr2(buf2, buf2size);
 
    const char *cp1, *cp2;
    u_int slen1, slen2;
 
+   // avoid copying strings and instead get their lengths
    cp1 = (const char*) sr1.deserialize(buf1, slen1);
    cp2 = (const char*) sr2.deserialize(buf2, slen2);
 
+   // and compare strings right in the buffer
    return strncmp_ex(cp1, slen1, cp2, slen2);
 }
 

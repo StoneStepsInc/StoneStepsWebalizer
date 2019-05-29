@@ -346,14 +346,14 @@ const void *hnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& da
             sizeof(u_char);            // spammer
 }
 
-int64_t hnode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t hnode_t::s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
-int64_t hnode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t hnode_t::s_compare_hits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
 //

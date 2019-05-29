@@ -68,7 +68,7 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
 
          static const void *s_field_value(const void *buffer, size_t bufsize, size_t& datasize);
 
-         static int64_t s_compare_value_hash(const void *buf1, const void *buf2);
+         static int64_t s_compare_value_hash(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 
          static bool s_is_group(const void *buffer, size_t bufsize);
 };

@@ -48,7 +48,7 @@ struct keynode_t {
          size_t s_pack_key(void *buffer, size_t bufsize) const;
          size_t s_unpack_key(const void *buffer, size_t bufsize);
 
-         static int64_t s_compare_key(const void *buf1, const void *buf2);
+         static int64_t s_compare_key(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 };
 
 #endif // __KEYNODE_H

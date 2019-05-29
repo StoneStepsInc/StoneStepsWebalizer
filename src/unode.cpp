@@ -258,24 +258,24 @@ const void *unode_t::s_field_exit(const void *buffer, size_t bufsize, size_t& da
    return (u_char*)buffer + base_node<unode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) * 2 + sizeof(u_short) + sizeof(uint64_t) * 3;
 }
 
-int64_t unode_t::s_compare_xfer(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
-int64_t unode_t::s_compare_hits(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_hits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
-int64_t unode_t::s_compare_entry(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_entry(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
-int64_t unode_t::s_compare_exit(const void *buf1, const void *buf2)
+int64_t unode_t::s_compare_exit(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
 {
-   return s_compare<uint64_t>(buf1, buf2);
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
 //

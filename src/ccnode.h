@@ -69,7 +69,7 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       template <typename ... param_t>
       size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
-      static int64_t s_compare_visits(const void *buf1, const void *buf2);
+      static int64_t s_compare_visits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 
       static const void *s_field_visits(const void *buffer, size_t bufsize, size_t& datasize);
       /// @}
