@@ -11,6 +11,8 @@
 
 #include "../fmt_impl.h"
 #include "../formatter.h"
+#include "../encoder.h"
+#include "../exception.h"
 
 #include <locale>
 
@@ -124,6 +126,9 @@ TEST_F(FormatterTest, VSPrintF)
    EXPECT_STREQ("abc=xyz", fmt_printf("abc=%s", "xyz"));
 }
 
+///
+/// @brief  Tests a formatter scope with an append mode.
+///
 TEST_F(FormatterTest, FormatterScope)
 {
    // a formatting function that converts two first characters of the input to upper case and discards the rest
@@ -167,6 +172,126 @@ TEST_F(FormatterTest, FormatterScope)
    formatter.format(to_upper, "xyz");
 
    EXPECT_STREQ(buffer, "XY") << "The original overwrite mode should be restored after the scoped formatter is destroyed";
+}
+
+///
+/// @brief  Tests an HTML encoder formatter.
+///
+TEST_F(FormatterTest, FormatterEncodeHTML)
+{
+   formatter.format(encode_string<encode_char_html>, "<>&\"'");
+
+   EXPECT_STREQ("&lt;&gt;&amp;&quot;&#x27;", buffer) << "All HTML special characters must be encoded";
+
+   formatter.format(encode_string<encode_char_html>, "123<abc>456");
+
+   EXPECT_STREQ("123&lt;abc&gt;456", buffer) << "Characters that are not HTML-special should not be changed";
+
+   //
+   // The encoder expects to have enough room at the end of the buffer for the maximum encoded
+   // sequence length for the last character, which is 6 for HTML encoding, plus the null character.
+   // For a 32-byte buffer that means we can output 26 characters (i.e. 25 characters, plus the last
+   // one that will be checked for 6 bytes, plus the null character: 25 + 6 + 1 = 32), even though
+   // it leaves 5 bytes empty.
+   //
+
+   // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_html>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
+
+   ASSERT_THROW(formatter.format(encode_string<encode_char_html>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
+
+   // a single quote will expand to the end of the buffer, minus the null character
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_html>, "1234567890123456789012345'")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+
+   // one more character leaves no room for the null character
+   ASSERT_THROW(formatter.format(encode_string<encode_char_html>, "12345678901234567890123456'"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+}
+
+///
+/// @brief  Tests an XML encoder formatter.
+///
+TEST_F(FormatterTest, FormatterEncodeXML)
+{
+   formatter.format(encode_string<encode_char_xml>, "<>&\"'");
+
+   EXPECT_STREQ("&lt;&gt;&amp;&quot;&apos;", buffer) << "All XML special characters must be encoded";
+
+   formatter.format(encode_string<encode_char_xml>, "123<abc>456");
+
+   EXPECT_STREQ("123&lt;abc&gt;456", buffer) << "Characters that are not XML-special should not be changed";
+
+   //
+   // See the comment in the HTML formatter
+   //
+
+   // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_xml>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
+
+   ASSERT_THROW(formatter.format(encode_string<encode_char_xml>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
+
+   // a single quote will expand to the end of the buffer, minus the null character
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_xml>, "1234567890123456789012345'")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+
+   // one more character leaves no room for the null character
+   ASSERT_THROW(formatter.format(encode_string<encode_char_xml>, "12345678901234567890123456'"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+}
+
+///
+/// @brief  Tests a JavaScript encoder formatter.
+///
+TEST_F(FormatterTest, FormatterEncodeJavaScript)
+{
+   // use hex representation for UTF-8 bytes to make the transformation more visible
+   formatter.format(encode_string<encode_char_js>, "\"'\r\n\xE2\x80\xA8\xE2\x80\xA9");
+
+   EXPECT_STREQ(R"==(\"\'\r\n\u2028\u2029)==", buffer) << "All JavaScript special characters must be encoded";
+
+   formatter.format(encode_string<encode_char_js>, R"==(123"abc"456)==");
+
+   EXPECT_STREQ(R"==(123\"abc\"456)==", buffer) << "Characters that are not JavaScript-special should not be changed";
+
+   //
+   // See the comment in the HTML formatter
+   //
+
+   // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_js>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
+
+   ASSERT_THROW(formatter.format(encode_string<encode_char_js>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
+
+   // a single quote will expand to the end of the buffer, minus the null character
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_js>, "1234567890123456789012345\xE2\x80\xA8")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+
+   // one more character leaves no room for the null character
+   ASSERT_THROW(formatter.format(encode_string<encode_char_js>, "12345678901234567890123456\xE2\x80\xA8"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+}
+
+///
+/// @brief  Tests that control characters are converted into Unicode private-range characters.
+///
+TEST_F(FormatterTest, FormatterEncodeCtrlChars)
+{
+   char ctlchr[2] = {};
+   char utf8[5] = {};
+
+   for(char chr = '\x1'; chr < '\x20'; chr++) {
+      // skip acceptable characters
+      if(!strchr("\t\r\n", chr)) {
+         *ctlchr = chr;
+
+         // all control characters are encoded the same way, so we can use any encoding function
+         formatter.format(encode_string<encode_char_html>, ctlchr);
+
+         ucs2utf8(u'\uE000' + (char16_t) chr, utf8);
+
+         ASSERT_STREQ(utf8, buffer) << "A control character should be converted to Unicode private range character";
+      }
+   }
+
+   *ctlchr = '\x7f';
+   formatter.format(encode_string<encode_char_html>, ctlchr);
+   ASSERT_STREQ(u8"\uE07F", buffer);
+
 }
 
 }
