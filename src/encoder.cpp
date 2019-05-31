@@ -131,8 +131,20 @@ char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc)
 /// The function does not change the size of the buffer and just checks that the
 /// encoded string fits in the buffer.
 ///
+/// It is expected that the buffer always has room for one longest encoded sequence,
+/// even if it is not going to be used. This simplifies the conversion by not having
+/// to perform a test conversions for each character to see if its encoded sequence
+/// fits into the buffer.
+///
+/// For example, the longest encoded sequence for HTML is siz bytes (i.e. `&#x27;`),
+/// so in a 7-byte buffer a single character `A` will be placed in the first byte,
+/// the null character will be placed in the second byte and the remaining 5 bytes
+/// will not be used. If, on the other hand, a single quote character is encoded in
+/// the same buffer, the first six bytes will contain the sequence `&#x27;` and the
+/// last byte will contain the null character.
+///
 /// The function returns the number of bytes the encoded string occupies within 
-/// the buffer.
+/// the buffer, including the null character.
 ///
 template <encode_char_t encode_char>
 size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
