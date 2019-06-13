@@ -175,7 +175,7 @@ ifdef CPUARCH
 CCFLAGS  += -march=$(CPUARCH)
 endif
 
-# flags passed to the linker through $(CC)
+# flags passed to the linker through $(CXX)
 CC_LDFLAGS := 
 
 # ------------------------------------------------------------------------
@@ -191,14 +191,14 @@ all: $(BLDDIR)/$(WEBALIZER)
 # build/webalizer
 #
 $(BLDDIR)/$(WEBALIZER): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
-	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
+	$(CXX) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
 # build/test
 #
 $(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
-	$(CC) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
+	$(CXX) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
 
 #
@@ -266,33 +266,33 @@ package: $(BLDDIR)/$(WEBALIZER)
 #
 $(BLDDIR)/%.d : $(SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
+	set -e; $(CXX) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
 
 $(BLDDIR)/%.d : $(TEST_SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CC) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
+	set -e; $(CXX) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
 
 #
 # Rules to compile source file
 #
 $(BLDDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+	$(CXX) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 $(BLDDIR)/%.o : $(TEST_SRCDIR)/%.cpp
-	$(CC) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@	
+	$(CXX) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@	
 
 #
 # Build the precompiled header file
 #
 $(BLDDIR)/$(PCHOUT) : $(SRCDIR)/$(PCHHDR) $(SRCDIR)/$(PCHSRC)
 	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+	$(CXX) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 $(BLDDIR)/$(TEST_PCHOUT) : $(TEST_SRCDIR)/$(TEST_PCHHDR) $(TEST_SRCDIR)/$(TEST_PCHSRC)
 	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
-	$(CC) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+	$(CXX) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 # ------------------------------------------------------------------------
 #
