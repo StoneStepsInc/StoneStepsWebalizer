@@ -88,6 +88,9 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
          return hash_num(0, make_nodeid(geoname_id, ccode));
       }
 
+      /// Returns `true` for usable combinations of GeoName ID, city name and country code, `false` otherwise.
+      static bool is_usable_city(uint32_t geoname_id, const string_t& city, const string_t& ccode);
+
       ///
       /// @name   Hash table interface
       ///

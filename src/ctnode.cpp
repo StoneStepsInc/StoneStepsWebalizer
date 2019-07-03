@@ -53,6 +53,35 @@ uint64_t ctnode_t::make_nodeid(uint32_t geoname_id, const char *ccode)
    return (uint64_t) (u_char) *ccode << 48 | (uint64_t) (u_char) *(ccode + 1) << 32 | geoname_id;
 }
 
+///
+/// Older city data in the resolver database may contain city names without
+/// GeoName IDs, which cannot be stored in the city database because we need
+/// all three values to be in sync, with these valid combinations:
+///
+/// * Zero GeoName ID, empty city name, empty country code
+/// * Zero GeoName ID, empty city name, non-empty country code
+/// * Non-zero GeoName ID, non-empty city name, non-empty country code
+///
+/// Everything else is considered unusable for the purposes of storing city
+/// information in the database.
+///
+/// If this method returns `true`, then `ct_hash_table::get_ctnode` will
+/// return a usable `ctnode_t` instance.
+///
+/// Note that the GeoName ID is only associated with the city name and not
+/// with the country code, so the latter should not be checked against the
+/// GeoName ID.
+///
+bool ctnode_t::is_usable_city(uint32_t geoname_id, const string_t& city, const string_t& ccode)
+{
+   // cannot have a city in an unknown country
+   if(!city.isempty() && ccode.isempty())
+      return false;
+
+   // cannot have empty city name with a non-zero GeoName ID or vice versa
+   return !geoname_id == city.isempty();
+}
+
 size_t ctnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
    serializer_t sr(buffer, bufsize);
@@ -137,7 +166,7 @@ ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, c
    ctnode_t *ctnode;
 
    // we should never see empty city names with a valid GeoName and vice versa
-   if(!geoname_id != city.isempty())
+   if(!ctnode_t::is_usable_city(geoname_id, city, ccode))
       throw std::logic_error("GeoName ID must match city name in whether it contains data or not");
 
    if((ctnode = find_node(hashval, &pb, OBJ_REG, tstamp)) != nullptr)

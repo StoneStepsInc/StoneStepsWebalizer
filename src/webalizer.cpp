@@ -426,7 +426,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
       // their countries and group all counters for an unknown city and country
       // under one entry.
       //
-      if(!hnode.geoname_id == hnode.city.isempty()) {
+      if(ctnode_t::is_usable_city(hnode.geoname_id, hnode.city, hnode.get_ccode())) {
          ctnode_t& ctnode = state.ct_htab.get_ctnode(hnode.geoname_id, hnode.city, hnode.get_ccode(), 0);
 
          ctnode.hits += vnode.hits;
