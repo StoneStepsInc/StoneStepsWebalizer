@@ -18,7 +18,7 @@
 ///
 /// @struct anode_t
 ///
-/// @brief  User agent node
+/// @brief  A user agent node
 ///
 struct anode_t : public base_node<anode_t> {
       uint64_t count;                  ///< Request count
@@ -29,33 +29,55 @@ struct anode_t : public base_node<anode_t> {
       bool     robot : 1;              ///< Matches the robot pattern?
 
       public:
+         ///
+         /// @brief  An alias template for a callback function that will be called
+         ///         after the node has been deserialized.
+         ///
          template <typename ... param_t>
          using s_unpack_cb_t = void (*)(anode_t& anode, void *arg, param_t ... param);
 
       public:
+         /// Constructs an empty instance of a user agent node.
          anode_t(void);
+
+         /// Constructs an instance of a user agent node with the `agent` string.
          anode_t(const string_t& agent, bool robot);
 
-         //
-         // serialization
-         //
+         ///
+         /// @name   Serialization
+         ///
+         /// @{
+
+         /// Returns a serialized size of this user agent node instance.
          size_t s_data_size(void) const;
+
+         /// Serializes this user agent node into the specified buffer and returns a serialized size.
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
+         /// Deserializes a user agent node instance from the specified buffer and returns a deserialized size.
          template <typename ... param_t>
          size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
 
+         /// Returns a pointer to the value hash within a serialized user agent node data.
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
+
+         /// Returns a pointer to the hit count value within a serialized user agent node data.
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);
+
+         /// Returns a pointer to the visit count value within a serialized user agent node data.
          static const void *s_field_visits(const void *buffer, size_t bufsize, size_t& datasize);
 
+         /// Compares two serialized hit count values.
          static int64_t s_compare_hits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
+
+         /// Compares two serialized visit count values.
          static int64_t s_compare_visits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
+         /// @}
 };
 
-//
-// User Agents
-//
+///
+/// @brief  A hash table to store user agent nodes.
+///
 class a_hash_table : public hash_table<storable_t<anode_t>> {
 };
 
