@@ -84,16 +84,19 @@ template<typename char_t> const char string_base<char_t>::ex_bad_utf8_char[] = "
 //
 //
 template <typename char_t>
-string_base<char_t>::string_base(const char_t *str) 
+string_base<char_t>::string_base(const char_t *str) :
+   string_base()
 {
-   init();
-   
    if(str && *str) 
       assign(str, strlen_(str));
 }
 
 template <typename char_t>
-string_base<char_t>::string_base(string_base&& other) : string(other.string), slen(other.slen), bufsize(other.bufsize), holder(other.holder)
+string_base<char_t>::string_base(string_base&& other) noexcept :
+   string(other.string),
+   slen(other.slen),
+   bufsize(other.bufsize),
+   holder(other.holder)
 {
    other.init();
 }
