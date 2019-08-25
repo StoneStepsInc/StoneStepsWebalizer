@@ -14,14 +14,31 @@
 
 #include <cctype>
 
-tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of)
+tstamp_t::tstamp_t(void) :
+      year(0), month(0), day(0),
+      hour(0), min(0), sec(0),
+      offset(0),
+      utc(false),
+      null(true)
 {
-   reset(y, mo, d, h, mi, s, of);
 }
 
-tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s)
+tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of) :
+      year(y), month(mo), day(d),
+      hour(h), min(mi), sec(s),
+      offset(of),
+      utc(false),
+      null(false)
 {
-   reset(y, mo, d, h, mi, s);
+}
+
+tstamp_t::tstamp_t(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s) :
+      year(y), month(mo), day(d),
+      hour(h), min(mi), sec(s),
+      offset(0),
+      utc(true),
+      null(false)
+{
 }
 
 void tstamp_t::reset(u_int y, u_int mo, u_int d, u_int h, u_int mi, u_int s, int of)

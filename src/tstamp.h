@@ -110,7 +110,7 @@ struct tstamp_t {
       static intime_t mkintime(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec);
 
    public:
-      tstamp_t(void) {reset();}
+      tstamp_t(void);
       tstamp_t(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec, int offset);
       tstamp_t(u_int year, u_int month, u_int day, u_int hour, u_int min, u_int sec);
       explicit tstamp_t(time_t time) {reset(time);}
