@@ -113,7 +113,8 @@ class string_base {
       static const char ex_bad_utf8_char[];
 
    private:
-      void init(void);
+      /// Abandons the string buffer and makes this instance an empty string.
+      void make_empty(void);
 
       void realloc_buffer(size_t len);
 
@@ -135,20 +136,29 @@ class string_base {
       template <typename slct_char_t>
       static slct_char_t select_char_literal(char ch, wchar_t wch) = delete;
 
+      /// Returns buffer size, in characters, needed to store a string of `char_count` length.
+      static constexpr size_t bufsize_for_length(size_t char_count)
+      {
+         // multiples of 4, including the null character
+         return ((char_count + 1) + 3) & ~0x3;
+      }
+
    public:
       static const size_t npos;
 
    public:
       string_base(void) : string(empty_string), bufsize(0), slen(0), holder(false) {}
 
-      string_base(const string_base& str) : string_base() {assign(str);}
+      string_base(const string_base& str);
+
       string_base(string_base&& str) noexcept;
 
       /// Prevents copy constructor from picking up `const string_t` instance wrapped in `std::move`.
       string_base(const string_base&& str) = delete;
 
       explicit string_base(const char_t *str);
-      string_base(const char_t *str, size_t len) : string_base() {assign(str, len);}
+
+      string_base(const char_t *str, size_t len);
 
       string_base(char_buffer_t&& char_buffer, size_t len) : string_base() {attach(std::move(char_buffer), len);}
 

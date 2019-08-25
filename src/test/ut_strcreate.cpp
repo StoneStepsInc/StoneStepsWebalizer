@@ -122,4 +122,50 @@ TEST(StringConstruct, ReadOnlyString)
    EXPECT_THROW(str8.append("X"), std::runtime_error) << "A read-only string cannot be modified";
 }
 
+///
+/// @brief  Tests the size of the allocated string buffer.
+///
+TEST(StringConstruct, StringBufferSize)
+{
+   // string buffer should be allocated in multiples of 4 (plus 1 for the null character)
+   EXPECT_EQ(3, string_t("1").capacity());
+   EXPECT_EQ(3, string_t("12").capacity());
+   EXPECT_EQ(3, string_t("123").capacity());
+   EXPECT_EQ(7, string_t("1234").capacity());
+   EXPECT_EQ(7, string_t("12345").capacity());
+   EXPECT_EQ(7, string_t("123456").capacity());
+   EXPECT_EQ(7, string_t("1234567").capacity());
+   EXPECT_EQ(11, string_t("12345678").capacity());
+   EXPECT_EQ(31, string_t("1234567890123456789012345678901").capacity());
+   EXPECT_EQ(35, string_t("12345678901234567890123456789012").capacity());
+}
+
+///
+/// @brief  Tests a copy-constructed string.
+///
+TEST(StringConstruct, StringCopy)
+{
+   string_t src("12345678901234567890123456789012");
+
+   EXPECT_EQ(35, src.capacity());
+
+   src = "ABC";
+
+   EXPECT_EQ(35, src.capacity()) << "Assigning a smaller string should not change string capacity";
+
+   EXPECT_EQ(3, string_t(src).capacity()) << "Buffer capacity is not copied for copy-constructed strings";
+}
+
+///
+/// @brief  Tests a string copy-constructed from a read-only string.
+///
+TEST(StringConstruct, ReadOnlyStringCopy)
+{
+   const string_t& ro_src = string_t::hold("1234567");
+
+   EXPECT_EQ(0, ro_src.capacity()) << "A read-only string has no capacity";
+
+   EXPECT_EQ(7, string_t(ro_src).capacity()) << "A copy of a read-only string maintains its own buffer";
+}
+
 }

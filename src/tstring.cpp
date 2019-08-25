@@ -83,12 +83,39 @@ template<typename char_t> const char string_base<char_t>::ex_bad_utf8_char[] = "
 //
 //
 //
+
+template <typename char_t>
+string_base<char_t>::string_base(const string_base& str) :
+   string_base(str.c_str(), str.length())
+{
+}
+
+
 template <typename char_t>
 string_base<char_t>::string_base(const char_t *str) :
-   string_base()
+   string_base(str, str && *str ? strlen_(str) : 0)
 {
-   if(str && *str) 
-      assign(str, strlen_(str));
+}
+
+template <typename char_t>
+string_base<char_t>::string_base(const char_t *str, size_t len)
+{
+   if(!str || !*str || !len) {
+      string = empty_string;
+      bufsize = slen = 0;
+      holder = false;
+   }
+   else {
+      bufsize = bufsize_for_length(len);
+      string = char_buffer_t::alloc(bufsize);
+
+      // copy the source and null-terminate the string
+      memcpy(string, str, len);
+      string[len] = '\x0';
+
+      slen = len;
+      holder = false;
+   }
 }
 
 template <typename char_t>
@@ -98,7 +125,7 @@ string_base<char_t>::string_base(string_base&& other) noexcept :
    bufsize(other.bufsize),
    holder(other.holder)
 {
-   other.init();
+   other.make_empty();
 }
 
 template <typename char_t>
@@ -146,19 +173,13 @@ string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
    bufsize = other.bufsize;
    holder = other.holder;
 
-   other.init();
+   other.make_empty();
 
    return *this;
 }
 
-//
-// This method must not evaluate data members in any way because data may be not 
-// initialized if it's called from a constructor or we may need to reset original 
-// data members when moving objects in the move constructor or move assignment 
-// operator.
-//
 template <typename char_t>
-void string_base<char_t>::init(void)
+void string_base<char_t>::make_empty(void)
 {
    string = empty_string;
    bufsize = slen = 0;
@@ -242,7 +263,7 @@ void string_base<char_t>::realloc_buffer(size_t len)
    // bufsize includes the null terminator and len does not
    if(len >= bufsize) {
       // allocate storage in multiples of four, plus one for the null terminator
-      bufsize = (((len >> 2) + 1) << 2) + 1;
+      bufsize = bufsize_for_length(len);
 
       if(string != empty_string)
          string = char_buffer_t::alloc(string, bufsize, slen + 1);
@@ -679,7 +700,7 @@ typename string_base<char_t>::char_buffer_t string_base<char_t>::detach(void)
    if(string != empty_string)
       string_buffer.attach(string, bufsize, holder);
 
-   init();
+   make_empty();
 
    return string_buffer;
 }
