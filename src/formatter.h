@@ -92,7 +92,7 @@ class buffer_formatter_t {
             {
             }
 
-            scope_t(scope_t&& other) : formatter(other.formatter), scopeid(other.scopeid)
+            scope_t(scope_t&& other) noexcept : formatter(other.formatter), scopeid(other.scopeid)
             {
                // leave scopeid in the other formatter for troubleshooting
                other.formatter = NULL;
@@ -104,7 +104,7 @@ class buffer_formatter_t {
                   formatter->pop_scope(scopeid);
             }
 
-            scope_t& operator = (scope_t&& other)
+            scope_t& operator = (scope_t&& other) noexcept
             {
                formatter = other.formatter;
                scopeid = other.scopeid;
