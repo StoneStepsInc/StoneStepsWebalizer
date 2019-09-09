@@ -23,25 +23,25 @@
     <ProjectGuid>{8636582C-4001-4F40-82A1-8157B6A19404}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -185,15 +185,15 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
     <Import Project="..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets" Condition="Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" />
+    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
     <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props'))" />
     <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
   </Target>
 </Project>
