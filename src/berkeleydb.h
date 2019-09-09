@@ -153,14 +153,14 @@ class berkeleydb_t {
             }
 
             /// Constructs the status object by moving data from another instance.
-            status_t(status_t&& other) :
+            status_t(status_t&& other) noexcept :
                error(other.error),
                message(std::move(other.message))
             {
             }
 
             /// Moves the status object data from another instance.
-            status_t& operator = (status_t&& other)
+            status_t& operator = (status_t&& other) noexcept
             {
                error = other.error;
                message = std::move(other.message);
@@ -418,7 +418,7 @@ class berkeleydb_t {
          public:
             table_t(const config_t& config, DbEnv& env, Db& seqdb, buffer_allocator_t& buffer_allocator);
 
-            table_t(table_t&& other);
+            table_t(table_t&& other) noexcept;
 
             table_t(const table_t& other) = delete;
 
@@ -426,7 +426,7 @@ class berkeleydb_t {
 
             table_t& operator = (const table_t& other) = delete;
 
-            table_t& operator = (table_t&& other);
+            table_t& operator = (table_t&& other) noexcept;
 
             /// initializes Berkeley DB for multi-thread calls
             void set_threaded(bool value) {threaded = value;}

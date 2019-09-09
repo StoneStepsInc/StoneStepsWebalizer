@@ -198,7 +198,7 @@ berkeleydb_t::table_t::table_t(const config_t& config, DbEnv& dbenv, Db& seqdb, 
 {
 }
 
-berkeleydb_t::table_t::table_t(table_t&& other) :
+berkeleydb_t::table_t::table_t(table_t&& other) noexcept :
       config(other.config),
       dbenv(other.dbenv),
       table(other.table),
@@ -231,7 +231,7 @@ berkeleydb_t::table_t::~table_t(void)
       delete_db(table);
 }
 
-berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other)
+berkeleydb_t::table_t& berkeleydb_t::table_t::operator = (table_t&& other) noexcept
 {
    dbenv = other.dbenv;
    table = other.table;
