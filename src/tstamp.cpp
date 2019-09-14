@@ -13,6 +13,8 @@
 #include "util_string.h"
 
 #include <cctype>
+#include <memory>
+#include <new>
 
 tstamp_t::tstamp_t(void) :
       year(0), month(0), day(0),
@@ -253,14 +255,18 @@ void tstamp_t::tolocal(int of)
 
 int64_t tstamp_t::compare(const tstamp_t& other, int mode) const
 {
-   tstamp_t temp(uninitialized);
-   const tstamp_t& tstamp = (utc == other.utc && (utc || offset == other.offset)) ? other : temp;
+   static auto temp_deleter = [] (tstamp_t *temp) {temp->tstamp_t::~tstamp_t();};
+   char tmpbuf[sizeof(tstamp_t)];
+   std::unique_ptr<tstamp_t, decltype(temp_deleter)> temp(nullptr, temp_deleter);
 
    // need to convert the time zone of the other time stamp if the UTC flags or offsets mismatch
-   if(&tstamp == &temp) {
-      temp = other;
-      utc ? temp.toutc() : temp.tolocal(offset);
+   if(utc != other.utc || (!utc && offset != other.offset)) {
+      // create a temporary time stamp with the same utc/offset attributes
+      temp.reset(new (tmpbuf) tstamp_t(other));
+      utc ? temp->toutc() : temp->tolocal(offset);
    }
+
+   const tstamp_t& tstamp = temp ? *temp : other;
 
    //
    // Compare the selected components of both time stamps. Make sure to cast each 

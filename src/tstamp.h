@@ -101,8 +101,6 @@ struct tstamp_t {
       typedef u_int jdn_t;
 
    private:
-      tstamp_t(uninitialized_t) {}
-
       u_int reset_time(intime_t time);
       void reset_date(jdn_t jdn);
       bool parse_tstamp(const char *str);

@@ -442,5 +442,55 @@ TEST_F(TimeStampTest, ResetTimeStamp_time_t_WithOffset)
    EXPECT_EQ(tz_offset_sum, time_t_ts.offset);
 }
 
+TEST_F(TimeStampTest, CompareSameTimeDiffTimeZones)
+{
+   // same time stamps, different time zones
+   const tstamp_t tstamp_lcl_neg5hrs(2018, 4, 26, 15, 10, 25, -300);
+   const tstamp_t tstamp_lcl_pos2hrs(2018, 4, 26, 22, 10, 25, 120);
+   const tstamp_t tstamp_utc(2018, 4, 26, 20, 10, 25);
+
+   tstamp_t tstamp;
+   
+   tstamp.reset(2018, 4, 26, 15, 10, 25, -300);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_EQ(tstamp_utc, tstamp);
+
+   tstamp.reset(2018, 4, 26, 22, 10, 25, 120);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_EQ(tstamp_utc, tstamp);
+
+   tstamp.reset(2018, 4, 26, 20, 10, 25);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_EQ(tstamp_utc, tstamp);
+}
+
+TEST_F(TimeStampTest, CompareSameComponentsDiffTimeZones)
+{
+   // same time stamp components, different time zones
+   const tstamp_t tstamp_lcl_neg5hrs(2018, 4, 26, 15, 10, 25, -300);
+   const tstamp_t tstamp_lcl_pos2hrs(2018, 4, 26, 15, 10, 25, 120);
+   const tstamp_t tstamp_utc(2018, 4, 26, 15, 10, 25);
+
+   tstamp_t tstamp;
+   
+   tstamp.reset(2018, 4, 26, 15, 10, 25, -300);
+   EXPECT_EQ(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_LT(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_LT(tstamp_utc, tstamp);
+
+   tstamp.reset(2018, 4, 26, 15, 10, 25, 120);
+   EXPECT_GT(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_EQ(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_GT(tstamp_utc, tstamp);
+
+   tstamp.reset(2018, 4, 26, 15, 10, 25);
+   EXPECT_GT(tstamp_lcl_neg5hrs, tstamp);
+   EXPECT_LT(tstamp_lcl_pos2hrs, tstamp);
+   EXPECT_EQ(tstamp_utc, tstamp);
+}
+
 }
 
