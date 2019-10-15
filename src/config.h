@@ -235,7 +235,8 @@ class config_t {
       string_t dump_ext;                        ///< Dump file prefix         
       string_t out_dir;                         ///< Output directory         
       string_t cur_dir;                         ///< Current directory
-      string_t geoip_db_path;                   ///< GeoIP database path
+      string_t geoip_db_path;                   ///< MaxMind GeoIP database path
+      string_t asn_db_path;                     ///< MaxMind ASN database path
       string_t dump_path;                       ///< Path for dump files      
       string_t html_css_path;                   ///< URL path webalizer.css for reports
       string_t html_js_path;                    ///< URL path webalizer.js for reports

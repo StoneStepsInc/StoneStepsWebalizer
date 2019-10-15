@@ -54,6 +54,7 @@ constexpr u_int DNS_DB_REC_V3 = 3;              ///< Initial version of serializ
 constexpr u_int DNS_DB_REC_V4 = 4;              ///< Added GeoIP database build time.
 constexpr u_int DNS_DB_REC_V5 = 5;              ///< Added GeoIP latitude and longitude.
 constexpr u_int DNS_DB_REC_V6 = 6;              ///< Added `geoname_id`.
+constexpr u_int DNS_DB_REC_V7 = 7;              ///< Added ASN number and organization.
 constexpr u_int DNS_DB_REC_VER_MAX = 250;       ///< Maximum valid record version.
 /// @}
 
@@ -99,9 +100,13 @@ struct dns_db_record_t {
    double      longitude;                       ///< IP address longitude
    uint32_t    geoname_id;                      ///< The geoname_id from the GeoIP database
 
+   uint64_t    asn_tstamp;                      ///< ASN database build time (`time_t`).
+   uint32_t    asn_number;                      ///< Autonomous system number.
+   string_t    asn_org;                         ///< Organization name.
+
    public:
       /// Constructs an empty DNS cache record instance.
-      dns_db_record_t(void) : spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0)
+      dns_db_record_t(void) : spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0), asn_tstamp(0), asn_number(0)
       {
          memset(ccode, 0, hnode_t::ccode_size);
       }
@@ -160,6 +165,10 @@ class dns_resolver_t::dnode_t {
 
       uint32_t       geoname_id;          ///< The geoname_id from the GeoIP database
 
+      uint64_t       asn_tstamp;          ///< ASN database build time (`time_t`).
+      uint32_t       asn_number;          ///< Autonomous system number.
+      string_t       asn_org;             ///< Autonomous system organization name.
+
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
          sockaddr_in    s_addr_ipv4;      // IPv4 socket address
@@ -179,7 +188,7 @@ class dns_resolver_t::dnode_t {
       dnode_t& operator = (dns_db_record_t&& dnsrec);
 
       /// Constructs a DNS cache record out of data within this instance.
-      dns_db_record_t get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db) const;
+      dns_db_record_t get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db, uint64_t ts_asn_db) const;
 
       /// Returns an IP address for this instance.
       const string_t& key(void) const {return hnode ? hnode->string : hostaddr;}
@@ -200,7 +209,10 @@ dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) :
    geoip_tstamp(other.geoip_tstamp),
    latitude(other.latitude),
    longitude(other.longitude),
-   geoname_id(other.geoname_id)
+   geoname_id(other.geoname_id),
+   asn_tstamp(other.asn_tstamp),
+   asn_number(other.asn_number),
+   asn_org(other.asn_org)
 {
    memcpy(ccode, other.ccode, hnode_t::ccode_size);
 }
@@ -216,7 +228,10 @@ size_t dns_db_record_t::s_data_size(void) const
             serializer_t::s_size_of(geoip_tstamp) + 
             serializer_t::s_size_of(latitude) + 
             serializer_t::s_size_of(longitude) + 
-            serializer_t::s_size_of(geoname_id);
+            serializer_t::s_size_of(geoname_id) + 
+            serializer_t::s_size_of(asn_tstamp) +
+            serializer_t::s_size_of(asn_number) +
+            serializer_t::s_size_of(asn_org);
 }
 
 size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -242,6 +257,9 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = sr.serialize(ptr, latitude);
    ptr = sr.serialize(ptr, longitude);
    ptr = sr.serialize(ptr, geoname_id);
+   ptr = sr.serialize(ptr, asn_tstamp);
+   ptr = sr.serialize(ptr, asn_number);
+   ptr = sr.serialize(ptr, asn_org);
 
    // return the size of the serialized data
    return (char*) ptr - (const char*) buffer;
@@ -326,6 +344,12 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
    if(version >= DNS_DB_REC_V6)
       ptr = sr.deserialize(ptr, geoname_id);
 
+   if(version >= DNS_DB_REC_V7) {
+      ptr = sr.deserialize(ptr, asn_tstamp);
+      ptr = sr.deserialize(ptr, asn_number);
+      ptr = sr.deserialize(ptr, asn_org);
+   }
+
    return (const char*) ptr - (char*) buffer;
 }
 
@@ -341,7 +365,9 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       geoip_tstamp(0),
       latitude(0.),
       longitude(0.),
-      geoname_id(0)
+      geoname_id(0),
+      asn_tstamp(0),
+      asn_number(0)
 {
    memset(&s_addr_ip, 0, std::max(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
@@ -377,10 +403,14 @@ dns_resolver_t::dnode_t& dns_resolver_t::dnode_t::operator = (dns_db_record_t&& 
 
    geoname_id = dnsrec.geoname_id;
 
+   asn_tstamp = dnsrec.asn_tstamp;
+   asn_number = dnsrec.asn_number;
+   asn_org = dnsrec.asn_org;
+
    return *this;
 }
 
-dns_db_record_t dns_resolver_t::dnode_t::get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db) const
+dns_db_record_t dns_resolver_t::dnode_t::get_db_record(const tstamp_t& ts_runtime, uint64_t ts_geoip_db, uint64_t ts_asn_db) const
 {
    dns_db_record_t dnsrec;
 
@@ -398,6 +428,10 @@ dns_db_record_t dns_resolver_t::dnode_t::get_db_record(const tstamp_t& ts_runtim
    dnsrec.latitude = latitude;
    dnsrec.longitude = longitude;
    dnsrec.geoname_id = geoname_id;
+
+   dnsrec.asn_tstamp = asn_tstamp;
+   dnsrec.asn_number = asn_number;
+   dnsrec.asn_org = asn_org;
 
    return dnsrec;
 }
@@ -445,7 +479,8 @@ void dns_resolver_t::dnode_t::remove_host_node(void)
 
 dns_resolver_t::dns_resolver_t(const config_t& config) :
       config(config),
-      geoip_db(new MMDB_s())
+      geoip_db(new MMDB_s()),
+      asn_db(new MMDB_s())
 {
    dnode_list = dnode_end = NULL;
 
@@ -488,6 +523,11 @@ dns_resolver_t::~dns_resolver_t(void)
       if(geoip_db) {
          MMDB_close(geoip_db.get());
          geoip_db.reset();
+      }
+
+      if(asn_db) {
+         MMDB_close(asn_db.get());
+         asn_db.reset();
       }
 
       event_destroy(dns_done_event);
@@ -675,6 +715,48 @@ funcexit:
 }
 
 ///
+/// @brief  Opens the specified MaxMind database.
+///
+/// Returns a language identifier that most closely matches the one in
+/// our configuration.
+///
+string_t dns_resolver_t::open_mmdb(MMDB_s& mmdb, const string_t& db_path, const char *goodmsg, const char *errmsg) const
+{
+   string_t lang;
+   int mmdb_error;
+
+   if((mmdb_error = MMDB_open(db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS)
+      throw exception_t(0, string_t::_format("%s %s (%d - %s)", errmsg, db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error)));
+
+   if (config.verbose > 1) 
+      printf("%s %s\n", goodmsg, db_path.c_str());
+
+   //
+   // Find out if there is a suitable language in the list of languages provided in the 
+   // MMDB database. Stop looking if we found an exact match (e.g. pt-br or en). If a 
+   // partial match is found (e.g. zh in zh-cn), hold onto the MMDB language code and 
+   // keep looking. Every subsequent partial match is taken only if it's shorter than 
+   // the previous match. In other words, the first of equal-length matches (e.g. en-us 
+   // out of en-us, en-uk) or the first shorter partial match (e.g. en out of en-us, en, 
+   // en-uk) wins. If we didn't find a matching language, but there is English available, 
+   // use it.
+   //
+   for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
+      if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code)) {
+         lang.assign(mmdb.metadata.languages.names[i]);
+         break;
+      }
+      else if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code, 2) &&
+               (!lang_t::check_language(lang, config.lang.language_code, 2) || strlen(mmdb.metadata.languages.names[i]) < lang.length()))
+         lang.assign(mmdb.metadata.languages.names[i]);
+      else if(lang.isempty() && lang_t::check_language(mmdb.metadata.languages.names[i], "en"))
+         lang.assign("en", 2);
+   }
+
+   return lang;
+}
+
+///
 /// @brief   Initializes the DNS resolver
 ///
 /// This method reports progress to the standard output stream and throws an exception if
@@ -749,37 +831,12 @@ void dns_resolver_t::dns_init(void)
    }
 
    // open the GeoIP database
-   if(!config.geoip_db_path.isempty()) {
-      int mmdb_error;
-      if((mmdb_error = MMDB_open(config.geoip_db_path, MMDB_MODE_MMAP, geoip_db.get())) != MMDB_SUCCESS) {
-         throw exception_t(0, string_t::_format("%s %s (%d - %s)", config.lang.msg_dns_geoe, config.geoip_db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error)));
-      }
+   if(!config.geoip_db_path.isempty())
+      geoip_language = open_mmdb(*geoip_db, config.geoip_db_path, config.lang.msg_dns_useg, config.lang.msg_dns_geoe);
 
-      if (config.verbose > 1) 
-         printf("%s %s\n", config.lang.msg_dns_useg, config.geoip_db_path.c_str());
-
-      //
-      // Find out if there is a suitable language in the list of languages provided in the 
-      // GeoIP database. Stop looking if we found an exact match (e.g. pt-br or en). If a 
-      // partial match is found (e.g. zh in zh-cn), hold onto the GeoIP language code and 
-      // keep looking. Every subsequent partial match is taken only if it's shorter than 
-      // the previous match. In other words, the first of equal-length matches (e.g. en-us 
-      // out of en-us, en-uk) or the first shorter partial match (e.g. en out of en-us, en, 
-      // en-uk) wins. If we didn't find a matching language, but there is English available, 
-      // use it.
-      //
-      for(size_t i = 0; i < geoip_db->metadata.languages.count; i++) {
-         if(lang_t::check_language(geoip_db->metadata.languages.names[i], config.lang.language_code)) {
-            geoip_language.assign(geoip_db->metadata.languages.names[i]);
-            break;
-         }
-         else if(lang_t::check_language(geoip_db->metadata.languages.names[i], config.lang.language_code, 2) &&
-                  (!lang_t::check_language(geoip_language, config.lang.language_code, 2) || strlen(geoip_db->metadata.languages.names[i]) < geoip_language.length()))
-            geoip_language.assign(geoip_db->metadata.languages.names[i]);
-         else if(geoip_language.isempty() && lang_t::check_language(geoip_db->metadata.languages.names[i], "en"))
-            geoip_language.assign("en", 2);
-      }
-   }
+   // open the ASN database
+   if(!config.asn_db_path.isempty())
+      asn_language = open_mmdb(*asn_db, config.asn_db_path, config.lang.msg_dns_usea, config.lang.msg_dns_asne);
 
    // get the current time once to avoid doing it for every host
    runtime.reset(time(NULL));
@@ -839,6 +896,12 @@ void dns_resolver_t::dns_clean_up(void)
    if(geoip_db) {
       MMDB_close(geoip_db.get());
       geoip_db.reset();
+   }
+
+   // same for ASN database
+   if(asn_db) {
+      MMDB_close(asn_db.get());
+      asn_db.reset();
    }
 
    event_destroy(dns_done_event);
@@ -954,14 +1017,14 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
       if(dns_db && dns_db_get(*nptr, dns_db, buffer, bufsize)) 
          cached = true;
 
+      bool goodcc = false, goodasn = false;
+
       //
       // Resolve the address if it's not cached and/or look up the country code if it's 
       // empty and the GeoIP database is newer than the one we used when we saved the 
       // address in the DNS database. 
       //
       if(!cached || geoip_db && nptr->ccode.isempty() && geoip_db->metadata.build_epoch > nptr->geoip_tstamp) {
-         bool goodcc = false;
-         
          // look up country code in the GeoIP database if there is a GeoIP database
          if(geoip_db)
             goodcc = geoip_get_ccode(nptr->hnode->string, nptr->s_addr_ip, nptr->ccode, nptr->city, nptr->latitude, nptr->longitude, nptr->geoname_id);
@@ -973,11 +1036,17 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
                dns_derive_ccode(nptr->hostname, nptr->ccode);
             }
          }
-
-         // update the database if it's a new IP address or if we found a country code for an existing one
-         if(dns_db && (!cached || goodcc))
-            dns_db_put(*nptr, dns_db, buffer, bufsize);
       }
+
+      if(!cached || asn_db && !nptr->asn_number && asn_db->metadata.build_epoch > nptr->asn_tstamp) {
+         // look up an assigned system number in the ASN database if there is one
+         if(asn_db)
+            goodasn = asn_get_info(nptr->hnode->string, nptr->s_addr_ip, nptr->asn_number, nptr->asn_org);
+      }
+
+      // update the database if it's a new IP address or if we found either a country code or an ASN entry for an existing one
+      if(dns_db && (!cached || goodcc || goodasn))
+         dns_db_put(*nptr, dns_db, buffer, bufsize);
    }
 
    dnode_mutex.lock();
@@ -1120,7 +1189,7 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
 
    // get the country code first and make sure it fits the storage in hnode_t
    if(MMDB_aget_value(&result.entry, &entry_data, ccode_path) == MMDB_SUCCESS) {
-      if(entry_data.has_data) {
+      if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UTF8_STRING) {
          if(entry_data.data_size != 2)
             return false;
 
@@ -1133,25 +1202,25 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    if(config.geoip_city) {
       if(!geoip_language.isempty()) {
          if(MMDB_aget_value(&result.entry, &entry_data, city_path) == MMDB_SUCCESS) {
-            if(entry_data.has_data)
+            if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UTF8_STRING)
                city.assign(entry_data.utf8_string, entry_data.data_size);
          }
       }
 
       // get the geoname identifier for this city
       if(MMDB_aget_value(&result.entry, &entry_data, city_geoname_id) == MMDB_SUCCESS) {
-         if(entry_data.has_data)
+         if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UINT32)
             geoname_id = entry_data.uint32;
       }
 
       // check if we have the coordinates in the entry
       if(MMDB_aget_value(&result.entry, &entry_data, loc_lat_path) == MMDB_SUCCESS) {
-         if(entry_data.has_data) {
+         if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_DOUBLE) {
             // hold onto the latitude until we are sure we have the longitude
             double lat = entry_data.double_value;
 
             if(MMDB_aget_value(&result.entry, &entry_data, loc_lon_path) == MMDB_SUCCESS) {
-               if(entry_data.has_data) {
+               if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_DOUBLE) {
                   longitude = entry_data.double_value;
                   latitude = lat;
                }
@@ -1167,6 +1236,49 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    // look-up succeeds. Return true only if we found a country code for this IP address.
    //
    return !ccode.isempty();
+}
+
+bool dns_resolver_t::asn_get_info(const string_t& hostaddr, const sockaddr& ipaddr, uint32_t& asn_number, string_t& asn_org)
+{
+   static const char *asn_number_path[] = {"autonomous_system_number", nullptr};
+   static const char *asn_org_path[] = {"autonomous_system_organization", nullptr};
+
+   int mmdb_error;
+   MMDB_lookup_result_s result = {};
+   MMDB_entry_data_s entry_data = {};
+
+   if(!asn_db)
+      throw std::runtime_error("ASN database is not open");
+
+   // look up the IP address
+   result = MMDB_lookup_sockaddr(asn_db.get(), &ipaddr, &mmdb_error);
+
+   if(mmdb_error != MMDB_SUCCESS) {
+      if(config.debug_mode)
+         fprintf(stderr, "Cannot lookup IP address %s (%d - %s)\n", hostaddr.c_str(), mmdb_error, MMDB_strerror(mmdb_error));
+      return false;
+   }
+   
+   if(!result.found_entry) {
+      if(config.debug_mode)
+         fprintf(stderr, "Cannot find IP address %s\n", hostaddr.c_str());
+      return false;
+   }
+
+   // get the assigned system number first
+   if(MMDB_aget_value(&result.entry, &entry_data, asn_number_path) == MMDB_SUCCESS) {
+      if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UINT32)
+         asn_number = entry_data.uint32;
+   }
+
+   // get the organization registered for this system number
+   if(MMDB_aget_value(&result.entry, &entry_data, asn_org_path) == MMDB_SUCCESS) {
+      if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UTF8_STRING)
+         asn_org.assign(entry_data.utf8_string, entry_data.data_size);
+   }
+
+   // see the comment above return in geoip_get_ccode
+   return asn_number != 0;
 }
 
 ///
@@ -1260,7 +1372,9 @@ void dns_resolver_t::dns_db_put(const dnode_t& dnode, Db *dns_db, void *buffer, 
    if(!dns_db)
       return;
 
-   dns_db_record_t dnsrec = dnode.get_db_record(runtime, geoip_db ? geoip_db->metadata.build_epoch : 0);
+   dns_db_record_t dnsrec = dnode.get_db_record(runtime,
+                                 geoip_db ? geoip_db->metadata.build_epoch : 0, 
+                                 asn_db ? asn_db->metadata.build_epoch : 0);
 
    recSize = dnsrec.s_pack_data(buffer, bufsize);
 

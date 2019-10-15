@@ -67,8 +67,10 @@ class dns_resolver_t {
 
       std::unique_ptr<MMDB_s> geoip_db;      // GeoIP database
 
+      std::unique_ptr<MMDB_s> asn_db;        // ASN database
+
       std::unique_ptr<DbEnv> dns_db_env;     // DNS cache Berkeley DB environment
-      std::vector<wrk_ctx_t> wrk_ctxs;       // DNS cache database
+      std::vector<wrk_ctx_t> wrk_ctxs;       // DNS worker contexts
 
       tstamp_t runtime;
       
@@ -91,6 +93,7 @@ class dns_resolver_t {
       queue_t<dnode_t>  hqueue;              // resolved host node queue
 
       string_t geoip_language;
+      string_t asn_language;
 
    private:
       void inc_live_workers(void);
@@ -100,6 +103,8 @@ class dns_resolver_t {
       int get_live_workers(void);
 
       bool geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city, double& latitude, double& longitude, uint32_t& geoname_id);
+
+      bool asn_get_info(const string_t& hostaddr, const sockaddr& ipaddr, uint32_t& asn_number, string_t& asn_org);
 
       bool dns_db_get(dnode_t& dnode, Db *dns_db, void *buffer, size_t bufsize);
 
@@ -116,6 +121,8 @@ class dns_resolver_t {
       bool resolve_domain_name(dnode_t *dnode);
 
       void queue_dnode(dnode_t *dnode);
+
+      string_t open_mmdb(MMDB_s& mmdb, const string_t& dbpath, const char *goodmsg, const char *errmsg) const;
 
       static bool dns_derive_ccode(const string_t& name, string_t& ccode);
 

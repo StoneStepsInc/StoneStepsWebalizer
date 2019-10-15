@@ -718,7 +718,9 @@ lang_t::lang_t(void) :
    msg_dns_init= "Error: Cannot initialize DNS resolver";
    msg_dns_htrt= "DNS cache hit ratio";
    msg_dns_geoe= "Cannot open GeoIP database";
+   msg_dns_asne= "Cannot open ASN database";
    msg_dns_useg= "Using GeoIP database";
+   msg_dns_usea= "Using ASN database";
 
    h_usage1 = "Usage";
    h_usage2 = "[options] [log file [[ log file] ...] | report database]";
@@ -833,7 +835,9 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace(string_t("msg_dns_init"), &msg_dns_init);
    ln_htab.emplace(string_t("msg_dns_htrt"), &msg_dns_htrt);
    ln_htab.emplace(string_t("msg_dns_geoe"), &msg_dns_geoe);
+   ln_htab.emplace(string_t("msg_dns_asne"), &msg_dns_asne);
    ln_htab.emplace(string_t("msg_dns_useg"), &msg_dns_useg);
+   ln_htab.emplace(string_t("msg_dns_usea"), &msg_dns_usea);
 
    ln_htab.emplace(string_t("msg_big_rec"), &msg_big_rec);
    ln_htab.emplace(string_t("msg_big_host"), &msg_big_host);

@@ -841,7 +841,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots: 154 
+                     // max key: 191; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -854,6 +854,7 @@ void config_t::get_config(const char *fname)
                      {"AllURLs",             65},           // List all URLs?
                      {"AllUsers",            69},           // List all Users?
                      {"ApacheLogFormat",     95},           // Apache LogFormat Directive
+                     {"ASNDBPath",           154},          // MaxMind DB path
                      {"Batch",               156},          // Batch processing?
                      {"BatchProcessing",     156},          // Batch processing?
                      {"BundleGroups",        91},           // Bundle groups together?
@@ -1269,6 +1270,7 @@ void config_t::get_config(const char *fname)
          case 151: dump_countries = (string_t::tolower(value[0])=='y'); break;
          case 152: hide_grp_items = (string_t::tolower(value[0]) == 'y'); break;
          case 153: db_direct = (string_t::tolower(value[0]) == 'y') ? true : false; break;
+         case 154: asn_db_path = value; break;
          case 155: robots.add_glist(value); break;
          case 156: batch = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 157: hide_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;

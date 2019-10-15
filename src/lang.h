@@ -147,7 +147,9 @@ class lang_t {
       const char *msg_dns_init;
       const char *msg_dns_htrt;
       const char *msg_dns_geoe;
+      const char *msg_dns_asne;
       const char *msg_dns_useg;
+      const char *msg_dns_usea;
 
       const char *h_usage1;
       const char *h_usage2;
