@@ -29,7 +29,7 @@ struct rnode_t : public base_node<rnode_t> {
          using s_unpack_cb_t = void (*)(rnode_t& rnode, void *arg, param_t ... param);
 
       public:
-         rnode_t(void) : base_node<rnode_t>() {count = 0;}
+         rnode_t(void) : count(0), visits(0) {}
          rnode_t(const string_t& ref);
 
          //
