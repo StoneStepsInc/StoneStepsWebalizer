@@ -542,7 +542,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       return;
 
    // if any log files were added via the command line, remove those from earlier
-   if(logcnt < log_fnames.size()) {
+   if(logcnt && logcnt < log_fnames.size()) {
       log_fnames.erase(log_fnames.begin(), log_fnames.begin() + logcnt);
       logcnt = log_fnames.size();
    }
@@ -552,7 +552,7 @@ void config_t::initialize(const string_t& basepath, int argc, const char * const
       proc_stdin_log_files();
 
    // similarly, if any log files were added via stdin, remove those from earlier
-   if(logcnt < log_fnames.size())
+   if(logcnt && logcnt < log_fnames.size())
       log_fnames.erase(log_fnames.begin(), log_fnames.begin() + logcnt);
 
    prep_and_validate();
