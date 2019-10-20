@@ -221,6 +221,7 @@ class config_t {
       uint32_t ntop_users;                      ///< top n users to display   
       uint32_t ntop_errors;                     ///< top n HTTP errors        
       uint32_t ntop_downloads;                  ///< top n downlaods
+      uint32_t ntop_asn;                        ///< Top ASN entries.
 
       double font_size_small;                   ///< PNG graph small font size, in points
       double font_size_medium;                  ///< PNG graph medium font size, in points

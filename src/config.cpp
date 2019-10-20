@@ -178,6 +178,7 @@ config_t::config_t(void)
    ntop_agents = 15;                          /* top n user agents ""     */
    ntop_ctrys = 30;                           /* top n countries   ""     */
    ntop_cities = 30;                          // top n cities
+   ntop_asn = 30;
    ntop_search = 20;                          /* top n search strings     */
    ntop_users = 20;                           /* top n users to display   */
    ntop_errors = 20;                          /* top n HTTP result codes  */
@@ -759,6 +760,10 @@ void config_t::prep_and_validate(void)
          ntop_ctrys = (uint32_t) lang.ctry.size();
    }
 
+   // disable ASN output if there is no ASN database
+   if(asn_db_path.isempty())
+      ntop_asn = 0;
+
    if (graph_lines> 20)       graph_lines= 20;         /* keep graphs sane! */
 
    /* ensure entry/exits don't exceed urls */
@@ -841,7 +846,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 191; empty slots:
+                     // max key: 192; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -1025,6 +1030,7 @@ void config_t::get_config(const char *fname)
                      {"TargetURL",           168},          // Target URL pattern
                      {"TimeMe",              7},            // Produce timing results
                      {"TopAgents",           14},           // Top User Agents
+                     {"TopASN",              192},          // Top ASN entries
                      {"TopCities",           147},          // Top Cities
                      {"TopCountries",        15},           // Top Countries
                      {"TopDownloads",        122},          // Top downloads
@@ -1308,6 +1314,7 @@ void config_t::get_config(const char *fname)
          case 189: js_charts_paths.push_back(value); break;
          case 190: dns_lookups =  (string_t::tolower(value[0]) == 'y'); break;
          case 191: ext_map_url = value; break;
+         case 192: ntop_asn = atoi(value); break;
       }
    }
 
