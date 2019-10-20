@@ -639,6 +639,8 @@ hnode_t *dns_resolver_t::get_hnode(void)
    hnode->latitude = dnode->latitude;
    hnode->longitude = dnode->longitude;
    hnode->geoname_id = dnode->geoname_id;
+   hnode->asn_number = dnode->asn_number;
+   hnode->asn_org = std::move(dnode->asn_org);
 
    //
    // If the spammer flag is the same in both nodes, we are done. However, if neither
@@ -660,6 +662,12 @@ hnode_t *dns_resolver_t::get_hnode(void)
       delete dnode;
    }
    else if(hnode->spammer && !dnode->spammer) {
+      //
+      // Need to make a copy of the data we moved above so we don't update
+      // the DNS record with empty values. This update should happen quite
+      // rarely to justify this extra step.
+      //
+      dnode->asn_org = hnode->asn_org;
       dnode->remove_host_node();
       queue_dnode(dnode);
    }

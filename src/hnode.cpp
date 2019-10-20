@@ -19,7 +19,8 @@
 // -----------------------------------------------------------------------
 
 hnode_t::hnode_t(void) : base_node<hnode_t>(),
-      geoname_id(0)
+      geoname_id(0),
+      asn_number(0)
 {
    count = files = pages = visits = visits_conv = 0;
    visit_avg = .0;
@@ -37,10 +38,12 @@ hnode_t::hnode_t(void) : base_node<hnode_t>(),
    latitude = longitude = 0.;
 }
 
-hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
+hnode_t::hnode_t(hnode_t&& hnode) noexcept : base_node<hnode_t>(std::move(hnode)),
       name(std::move(hnode.name)),
       city(std::move(hnode.city)),
-      geoname_id(hnode.geoname_id)
+      geoname_id(hnode.geoname_id),
+      asn_number(hnode.asn_number),
+      asn_org(std::move(hnode.asn_org))
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
@@ -82,7 +85,8 @@ hnode_t::hnode_t(hnode_t&& hnode) : base_node<hnode_t>(std::move(hnode)),
 }
 
 hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr),
-      geoname_id(0)
+      geoname_id(0),
+      asn_number(0)
 {
    spammer = false;
    robot = false;
@@ -198,7 +202,9 @@ size_t hnode_t::s_data_size(void) const
                ccode_size         +             // country code
                serializer_t::s_size_of(city) +  // city
                sizeof(double) * 2 +             // latitude, longitude
-               sizeof(uint32_t);                // geoname_id
+               sizeof(uint32_t) +               // geoname_id
+               serializer_t::s_size_of(asn_number) +  // asn_number
+               serializer_t::s_size_of(asn_org);      // asn_org
 }
 
 size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -236,6 +242,9 @@ size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = sr.serialize(ptr, longitude);
 
    ptr = sr.serialize(ptr, geoname_id);
+
+   ptr = sr.serialize(ptr, asn_number);
+   ptr = sr.serialize(ptr, asn_org);
 
    return sr.data_size(ptr);
 }
@@ -307,6 +316,15 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
       ptr = sr.deserialize(ptr, geoname_id);
    else
       geoname_id = 0;
+
+   if(version >= 9) {
+      ptr = sr.deserialize(ptr, asn_number);
+      ptr = sr.deserialize(ptr, asn_org);
+   }
+   else {
+      asn_number = 0;
+      asn_org.reset();
+   }
 
    visit = NULL;
 

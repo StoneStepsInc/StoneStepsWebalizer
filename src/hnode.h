@@ -95,13 +95,16 @@ struct hnode_t : public base_node<hnode_t> {
 
       uint32_t geoname_id;           ///< Geoname identifier (see `ctnode_t`)
 
+      uint32_t asn_number;          ///< Autonomous system number.
+      string_t asn_org;             ///< Autonomous system organization.
+
       public:
          template <typename ... param_t>
          using s_unpack_cb_t = void (*)(hnode_t& hnode, bool active, void *arg, param_t ... param);
 
       public:
          hnode_t(void);
-         hnode_t(hnode_t&& tmp);
+         hnode_t(hnode_t&& tmp) noexcept;
          hnode_t(const string_t& ipaddr);
 
          ~hnode_t(void);
