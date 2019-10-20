@@ -380,6 +380,8 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       ccode.assign(hnode.ccode, hnode_t::ccode_size);
       city = hnode.city;
       geoname_id = hnode.geoname_id;
+      asn_number = hnode.asn_number;
+      asn_org = hnode.asn_org;
    }
 }
 
