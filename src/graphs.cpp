@@ -111,7 +111,11 @@ static char uppercase_x[] = "X";
 graph_t::graph_t(const config_t& config) : 
       config(config), 
       xfer_fmt_buf(128), 
-      buffer_formatter(xfer_fmt_buf, xfer_fmt_buf.capacity(), buffer_formatter_t::overwrite)
+      buffer_formatter(xfer_fmt_buf, xfer_fmt_buf.capacity(), buffer_formatter_t::overwrite),
+      black(0), white(0), dkgrey(0), red(0), blue(0), orange(0), green(0),
+      cyan(0), yellow(0), purple(0), ltpurple(0), ltgreen(0), brown(0),
+      c_shadow(0), c_background(0), c_gridline(0), c_hits(0), c_files(0), c_hosts(0),
+      c_pages(0), c_visits(0), c_xfer(0), c_outline(0), c_legend(0), c_weekend(0)
 {
    out = NULL;
    im = NULL;
