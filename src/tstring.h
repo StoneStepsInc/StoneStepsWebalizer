@@ -111,6 +111,7 @@ class string_base {
       static const char ex_not_implemented[];
       static const char ex_fmt_error[];
       static const char ex_bad_utf8_char[];
+      static const char ex_bad_self_assign[];
 
    private:
       /// Abandons the string buffer and makes this instance an empty string.
@@ -181,8 +182,8 @@ class string_base {
 
       bool isempty(void) const {return slen == 0;}
 
-      string_base& operator = (const string_base& str) {return assign(str.string, str.slen);}
-      string_base& operator = (string_base&& str);
+      string_base& operator = (const string_base& str) noexcept(false);
+      string_base& operator = (string_base&& str) noexcept(false);
       string_base& operator = (const char_t *str) {return assign(str);}
       string_base& operator = (char_t chr) {return assign(&chr, 1);}
 

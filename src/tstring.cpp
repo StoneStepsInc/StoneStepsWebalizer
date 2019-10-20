@@ -79,6 +79,8 @@ template<typename char_t> const char string_base<char_t>::ex_holder_resize[] = "
 template<typename char_t> const char string_base<char_t>::ex_not_implemented[] = "Not implemented";
 template<typename char_t> const char string_base<char_t>::ex_fmt_error[] = "Cannot format a string";
 template<typename char_t> const char string_base<char_t>::ex_bad_utf8_char[] = "A bad UTF-8 character is encountered";
+template<typename char_t> const char string_base<char_t>::ex_bad_self_assign[] = "A string should not be copied or moved into itself";
+
 
 //
 //
@@ -158,8 +160,22 @@ string_base<char_t>::~string_base(void)
 }
 
 template <typename char_t>
-string_base<char_t>& string_base<char_t>::operator = (string_base&& other)
+string_base<char_t>& string_base<char_t>::operator = (const string_base& other) noexcept(false)
 {
+   // report bad same-instance copy
+   if(&other == this)
+      throw std::logic_error(ex_bad_self_assign);
+
+   return assign(other.string, other.slen);
+}
+
+template <typename char_t>
+string_base<char_t>& string_base<char_t>::operator = (string_base&& other) noexcept(false)
+{
+   // report bad same-instance move
+   if(&other == this)
+      throw std::logic_error(ex_bad_self_assign);
+
    if(holder && !bufsize)
       throw std::runtime_error(ex_readonly_string);
 

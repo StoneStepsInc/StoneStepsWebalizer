@@ -168,4 +168,24 @@ TEST(StringConstruct, ReadOnlyStringCopy)
    EXPECT_EQ(7, string_t(ro_src).capacity()) << "A copy of a read-only string maintains its own buffer";
 }
 
+///
+/// @brief  Tests that a self-copy-assignment throws an exception.
+///
+TEST(StringConstruct, StringSelfCopy)
+{
+   string_t src("12345678901234567890123456789012");
+
+   EXPECT_THROW(src = src, std::logic_error);
+}
+
+///
+/// @brief  Tests that a self-move-assignment throws an exception.
+///
+TEST(StringConstruct, StringSelfMove)
+{
+   string_t src("12345678901234567890123456789012");
+
+   EXPECT_THROW(src = std::move(src), std::logic_error);
+}
+
 }
