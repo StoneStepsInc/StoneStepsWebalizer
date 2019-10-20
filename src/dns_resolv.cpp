@@ -361,7 +361,7 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       hnode(hnode.resolved ? NULL : &hnode), 
       m_hnode(hnode.resolved ? NULL : &hnode), 
       llist(NULL), 
-      spammer(hnode.spammer),
+      spammer(false),
       geoip_tstamp(0),
       latitude(0.),
       longitude(0.),
@@ -373,12 +373,22 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
 
    s_addr_ip.sa_family = sa_family;
 
-   // if the node has been resolved, then it's an update and we copy all values from the host node
+   //
+   // A resolved host node can be queued for an update, which currently just means
+   // that their spammer flag has been set. While technically an existing DNS record
+   // can be updated via an offset to the spammer field, doing so across multiple
+   // DNS record versions is non-trivial and given that these updates happen not
+   // very frequently, just copy all fields into this dnode_t instance and update
+   // the entire DNS record to the latest version.
+   //
    if(hnode.resolved) {
       hostaddr = hnode.string;
       hostname = hnode.name;
+      spammer = hnode.spammer;
       ccode.assign(hnode.ccode, hnode_t::ccode_size);
       city = hnode.city;
+      latitude = hnode.latitude;
+      longitude = hnode.longitude;
       geoname_id = hnode.geoname_id;
       asn_number = hnode.asn_number;
       asn_org = hnode.asn_org;
