@@ -139,7 +139,7 @@ void dump_output_t::dump_all_hosts()
       if (hnode.flag != OBJ_GRP)
       {
          fprintf(out_fp,
-         "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t%.0f\t%" PRIu64 "\t%.2f\t%.2f\t%s\t%s\t%s\t%c%.6lf\t%.6lf\t%" PRIu32 "\t%s\t%s\t%s\n",
+         "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t%.0f\t%" PRIu64 "\t%.2f\t%.2f\t%s\t%s\t%s\t%c\t%.6lf\t%.6lf\t%" PRIu32 "\t%s\t%s\t%s\n",
             hnode.count, hnode.files, hnode.pages, hnode.xfer/1024.,
             hnode.visits, hnode.visit_avg/60., hnode.visit_max/60.,
             hnode.ccode,
