@@ -167,7 +167,7 @@ TEST_F(BerkeleyDBTest, LookUpAgentNodes)
 
    for(uint64_t i = 1; i <= 100; i++) {
       anode.nodeid = i;
-      ASSERT_TRUE(agents.get_node_by_id(anode, nullptr, nullptr)) << "A look-up should find any agent from 1 to 100";
+      ASSERT_TRUE(agents.get_node_by_id(anode)) << "A look-up should find any agent from 1 to 100";
       ASSERT_EQ(i * 10, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
       ASSERT_STREQ(("Agent " + std::to_string(i)).c_str(), anode.string) << "Agent name should match its node ID";
 
@@ -193,7 +193,7 @@ TEST_F(BerkeleyDBTest, LookUpHostNodes)
 
    for(uint64_t i = 200; i <= 400; i++) {
       hnode.nodeid = i;
-      ASSERT_TRUE(hosts.get_node_by_id(hnode, nullptr, nullptr)) << "A look-up should find any host from 200 to 400";
+      ASSERT_TRUE(hosts.get_node_by_id(hnode)) << "A look-up should find any host from 200 to 400";
       ASSERT_EQ(i * 10, hnode.count) << "Host hit count should be a multiple of 10 of its node ID";
       ASSERT_STREQ(("Host " + std::to_string(i)).c_str(), hnode.string) << "Host name should match its node ID";
 
@@ -223,14 +223,14 @@ TEST_F(BerkeleyDBTest, ForwardIndexTraversal)
    // traverse all nodes in ascending order of hits (node IDs are in reverse order)
    berkeleydb_t::iterator<anode_t> iter = agents.begin<anode_t>("agents.hits");
 
-   for(uint64_t i = 1; iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+   for(uint64_t i = 1; iter.next(anode); i++) {
       ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be node ID * 10 / 4";
       ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID";
 
       anode.reset();
    }
 
-   ASSERT_FALSE(iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr)) << "There should be no more than 100 secondary index entries";
+   ASSERT_FALSE(iter.next(anode)) << "There should be no more than 100 secondary index entries";
 }
 
 ///
@@ -255,14 +255,14 @@ TEST_F(BerkeleyDBTest, ReverseIndexTraversal)
    // traverse all nodes in descending order of hits (node IDs are in reverse order)
    berkeleydb_t::reverse_iterator<anode_t> iter = agents.rbegin<anode_t>("agents.hits");
 
-   for(uint64_t i = 100; iter.prev(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i--) {
+   for(uint64_t i = 100; iter.prev(anode); i--) {
       ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be node ID * 10 / 4";
       ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID";
 
       anode.reset();
    }
 
-   ASSERT_FALSE(iter.prev(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr)) << "There should be no more than 100 secondary index entries";
+   ASSERT_FALSE(iter.prev(anode)) << "There should be no more than 100 secondary index entries";
 }
 
 ///
@@ -294,14 +294,14 @@ TEST_F(BerkeleyDBTest, BuildNewIndex)
    berkeleydb_t::iterator<anode_t> iter = agents.begin<anode_t>("agents.hits");
 
    // hit counts will be increasing (2, 5, 7, ...) and node values will be sequential and in reverse order (`Agent 100`, Agent 99`, ...)
-   for(uint64_t i = 1; iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr); i++) {
+   for(uint64_t i = 1; iter.next(anode); i++) {
       ASSERT_EQ((i * 10) / 4, anode.count) << "Agent hit count should be a multiple of 10 of its node ID";
       ASSERT_STREQ(("Agent " + std::to_string(101 - i)).c_str(), anode.string) << "Agent name should match the node ID in reverse order";
 
       anode.reset();
    }
 
-   ASSERT_FALSE(iter.next(anode, (anode_t::s_unpack_cb_t<>) nullptr, nullptr)) << "There should be no more than 25 secondary index entries";
+   ASSERT_FALSE(iter.next(anode)) << "There should be no more than 25 secondary index entries";
 }
 
 TEST_F(BerkeleyDBTest, AgentNodeReadCallback)

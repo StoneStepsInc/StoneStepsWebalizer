@@ -682,13 +682,13 @@ void state_t::restore_state(void)
    //
    for(i = 0; i < response.size(); i++) {
       // ignore look-up errors for new status codes (other errors will be thrown as exceptions)
-      database.get_scnode_by_id(response[i], nullptr, nullptr);
+      database.get_scnode_by_id(response[i]);
    }
 
    // restore country code data
    {database_t::iterator<ccnode_t> iter = database.begin_countries(nullptr);
    storable_t<ccnode_t> ccnode;
-   while(iter.next(ccnode, (ccnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+   while(iter.next(ccnode)) {
       cc_htab.update_ccnode(ccnode, 0);
    }
    iter.close();
@@ -697,7 +697,7 @@ void state_t::restore_state(void)
    // restore city data
    {database_t::iterator<ctnode_t> iter = database.begin_cities(nullptr);
    storable_t<ctnode_t> ctnode;
-   while(iter.next(ctnode, (ctnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+   while(iter.next(ctnode)) {
       ct_htab.put_node(new storable_t<ctnode_t>(std::move(ctnode)), 0);
    }
    iter.close();
@@ -1075,7 +1075,7 @@ void state_t::unpack_dlnode_and_host_cb(dlnode_t& dlnode, uint64_t hostid, bool 
 
    // look up the host node in the database and ignore a possible active visit
    hnode.nodeid = hostid;
-   if(!_this->database.get_hnode_by_id(hnode, (hnode_t::s_unpack_cb_t<>) nullptr, nullptr))
+   if(!_this->database.get_hnode_by_id(hnode))
       throw std::runtime_error(string_t::_format("Cannot find the host node (ID: %" PRIu64 ") for the download (ID: %" PRIu64 ")", hostid, dlnode.nodeid));
 }
 
@@ -1117,7 +1117,7 @@ void state_t::unpack_vnode_cb(vnode_t& vnode, uint64_t urlid, void *arg, storabl
       unode.nodeid = urlid;
 
       // look up a URL node in the database
-      if(!_this->database.get_unode_by_id(unode, nullptr, nullptr))
+      if(!_this->database.get_unode_by_id(unode))
          throw std::runtime_error(string_t::_format("Cannot find the last URL (ID: %d) of an active visit (ID: %" PRIu64 ")", urlid, vnode.nodeid));
    }
 

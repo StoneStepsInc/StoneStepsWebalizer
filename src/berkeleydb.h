@@ -486,14 +486,14 @@ class berkeleydb_t {
 
             /// retrieves a node by its unique ID
             template <typename node_t, typename ... param_t>
-            bool get_node_by_id(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param) const;
+            bool get_node_by_id(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, void *arg = nullptr, param_t&& ... param) const;
 
             /// deletes a node by its key
             bool delete_node(const keynode_t<uint64_t>& node);
 
             /// retrieves a node by its value
             template <typename node_t, typename ... param_t>
-            bool get_node_by_value(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param) const;
+            bool get_node_by_value(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, void *arg = nullptr, param_t&& ... param) const;
 
             /// returns a forward table iterator
             template <typename node_t>
@@ -565,7 +565,7 @@ class berkeleydb_t {
             iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             template <typename ... param_t>
-            bool next(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+            bool next(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, void *arg = nullptr, param_t&& ... param);
       };
 
       ///
@@ -594,7 +594,7 @@ class berkeleydb_t {
             reverse_iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             template <typename ... param_t>
-            bool prev(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+            bool prev(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, void *arg = nullptr, param_t&& ... param);
       };
 
    private:
