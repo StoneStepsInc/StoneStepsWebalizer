@@ -14,9 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pchtest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ut_caseconv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,11 +77,9 @@
     <ClCompile Include="ut_ctnode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="pchtest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj">
@@ -210,5 +205,10 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

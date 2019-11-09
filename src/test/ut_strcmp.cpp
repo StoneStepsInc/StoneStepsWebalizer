@@ -7,7 +7,7 @@
    
    ut_strcmp.cpp
 */
-#include "pchtest.h"
+#include "pch.h"
 
 #include "../tstring.h"
 

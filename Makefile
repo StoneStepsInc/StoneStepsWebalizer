@@ -2,7 +2,7 @@
 #
 #   Makefile
 # 	 
-#   Copyright (c) 2004-2015, Stone Steps Inc. (www.stonesteps.ca)
+#   Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)
 #
 #   See COPYING and Copyright files for additional licensing and copyright information 
 # 
@@ -16,7 +16,6 @@ SHELL := /bin/bash
 #           make -f makefile.gnu clean
 #
 #   Parameters:
-#     CPUARCH={i686|prescott|nocona|...}
 #     ETCDIR=/etc
 #     MYCCFLAGS=-g
 # ------------------------------------------------------------------------
@@ -37,6 +36,13 @@ WEBALIZER   := webalizer
 #
 # Precompiled header file names.
 #
+# Precompiled headers are always generated from a pch.h/pch.cpp pair of files
+# located in the main source directory or sub-directories, such as src/pch.cpp
+# or src/test/pch.cpp. These files are expected at the top level of their
+# build target source tree (e.g. src/test/pch.cpp) and are included explicitly
+# when source files from that tree are compiled (see implicit rules at the end
+# of this file).
+#
 PCHHDR	 := pch.h
 PCHSRC	 := $(PCHHDR:.h=.cpp)
 PCHOUT	 := $(PCHHDR:.h=.h.gch)
@@ -56,7 +62,7 @@ BLDDIR   := build
 INCDIRS  := 
 LIBDIRS  := 
 
-# list of source files (precompiled header file must be first in the list)
+# list of source files (the src/ prefix is assumed in build rules)
 SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	output.cpp graphs.cpp preserve.cpp lang.cpp \
 	parser.cpp logrec.cpp tstamp.cpp \
@@ -78,47 +84,39 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	util_time.cpp util_url.cpp
 
 # list all libraries we use
-LIBS     := stdc++ dl pthread db_cxx gd z maxminddb
+LIBS     := dl pthread db_cxx gd z maxminddb
 
-# generate a list of object files
-OBJS := $(SRCS:.cpp=.o)
-OBJS := $(OBJS:.c=.o)
+# generate a list of object files for .c and .cpp source files
+OBJS := $(patsubst %.c,%.o,$(filter %.c,$(SRCS))) \
+	$(patsubst %.cpp,%.o,$(filter %.cpp,$(SRCS)))
 
-# and a list oof dependency make files
+# and a list of dependency make files
 DEPS := $(OBJS:.o=.d)
 
-# and a list of template repository files
-RPOS := $(OBJS:.o=.rpo)
-
 # ------------------------------------------------------------------------
+#
 # Unit tests
 #
-# Unit test object files share the build directory with the rest of the 
-# project and should always be named to avoid name collisions.
 # ------------------------------------------------------------------------
-TEST     := test
 
-# precompiled header file names
-TEST_PCHHDR	 := pchtest.h
-TEST_PCHSRC	 := $(TEST_PCHHDR:.h=.cpp)
-TEST_PCHOUT	 := $(TEST_PCHHDR:.h=.h.gch)
-TEST_PCHOBJ	 := $(TEST_PCHHDR:.h=.o)
-
-# unit test source directory
-TEST_SRCDIR := src/test
+# pick a name that won't conflict with build/test/
+TEST     := utest
 
 # Bitbucket unit test results location
 TEST_RSLT_DIR := test-results
 TEST_RPT_FILE := test-report.xml
 
-# unit tests source files
-TEST_SRC := $(TEST_PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
+# unit tests source files (the test/ prefix is added right after this assignment)
+TEST_SRC := $(PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
 	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp \
 	ut_config.cpp ut_strcreate.cpp ut_hashtab.cpp ut_initseqguard.cpp \
 	ut_berkeleydb.cpp ut_unicode.cpp ut_serialize.cpp ut_ctnode.cpp
 
-TEST_LIBS     := stdc++ pthread db_cxx gtest
+# add the test/ prefix (will be combined with src/ in build rules)
+TEST_SRC := $(addprefix test/,$(TEST_SRC))
+
+TEST_LIBS := $(LIBS) gtest
 
 #
 # List unit test object files and some from the main project to link against. 
@@ -126,7 +124,7 @@ TEST_LIBS     := stdc++ pthread db_cxx gtest
 # any main project files, so we don't need to place them into their own build
 # directory.
 #
-TEST_OBJS := $(TEST_SRC:.cpp=.o) \
+TEST_OBJS := $(TEST_SRC:.cpp=.o)  \
 	char_buffer.o char_buffer_stack.o cp1252.o cp1252_ucs2.o \
 	encoder.o formatter.o hashtab.o hckdel.o lang.o linklist.o \
 	pch.o serialize.o tstamp.o tstring.o unicode.o fmt_impl.o \
@@ -158,21 +156,30 @@ PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french
 # Define compiler options
 #
 # ------------------------------------------------------------------------
-CCFLAGS  = -DHAVE_CXX_STDHEADERS \
-     -DETCDIR=\"$(ETCDIR)\" \
-     -fexceptions \
-     -Wno-multichar -Winvalid-pch \
-     -std=c++17 \
-     $(MYCCFLAGS)
+
+# compiler options shared between C and C++ source
+CCFLAGS_COMMON := -Werror -pedantic
+
+CFLAGS := -std=gnu99 \
+	$(CCFLAGS_COMMON) \
+	$(MYCCFLAGS)
+
+CXXFLAGS := -std=c++17 \
+	$(CCFLAGS_COMMON) \
+	-DHAVE_CXX_STDHEADERS \
+	-DETCDIR=\"$(ETCDIR)\" \
+	-fexceptions \
+	-Wno-multichar \
+	-Winvalid-pch \
+	$(MYCCFLAGS)
 
 # turn on optimization for non-debug builds
-ifeq ($(findstring -g,$(CCFLAGS)),)
-CCFLAGS  += -O3
+ifeq ($(findstring -g,$(CXXFLAGS)),)
+CXXFLAGS += -O3
 endif
 
-# use the specified CPU architecture if one is defined
-ifdef CPUARCH
-CCFLAGS  += -march=$(CPUARCH)
+ifeq ($(findstring -g,$(CFLAGS)),)
+CFLAGS += -O3
 endif
 
 # flags passed to the linker through $(CXX)
@@ -195,14 +202,14 @@ $(BLDDIR)/$(WEBALIZER): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS))
 		$(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
-# build/test
+# build/utest
 #
-$(BLDDIR)/$(TEST): $(BLDDIR)/$(TEST_PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
+$(BLDDIR)/$(TEST): $(BLDDIR)/test/$(PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
 	$(CXX) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
 
 #
-# run unit tests and generate an XML results file in buikd/test-results/
+# run unit tests and generate an XML results file in build/test-results/
 #
 test: $(BLDDIR)/$(TEST)
 	$(BLDDIR)/$(TEST) --gtest_output=xml:$(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE)
@@ -214,17 +221,11 @@ install:
 
 clean:
 	@echo "Removing object files..."
-	@for obj in $(OBJS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
-	@for obj in $(TEST_OBJS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@find $(BLDDIR)/ -name '*.o' -type f -delete
 	@echo "Removing dependency files..."
-	@for obj in $(DEPS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
-	@for obj in $(TEST_DEPS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@find $(BLDDIR)/ -name '*.d' -type f -delete
 	@echo "Removing the precompiled header..."
-	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
-	@echo "Removing template repository files..."
-	@for obj in $(RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
-	@for obj in $(TEST_RPOS); do if [[ -e $(BLDDIR)/$$obj ]]; then rm $(BLDDIR)/$$obj; fi; done
+	@find $(BLDDIR)/ -name '$(PCHOUT)' -type f -delete
 	@echo "Removing executables..."
 	@if [[ -e $(BLDDIR)/$(WEBALIZER) ]]; then rm $(BLDDIR)/$(WEBALIZER); fi
 	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
@@ -250,49 +251,57 @@ package: $(BLDDIR)/$(WEBALIZER)
 # ------------------------------------------------------------------------
 
 #
-# Dependency rules build .d files in the build directory. One of these 
-# rules will be executed for each .d file included at the bottom of this 
-# file. 
+# Dependency rules generate .d files in the build directory, which are
+# included at the bottom of this file.
 #
-# GCC is used to generate lists of includes in each source file:
+# GCC -MM strips the path from the input file, so we need to put it back
+# into the dependency targets. For example, this command:
 #
 #  gcc -MM src/webalizer.cpp
 #
-# , which is then piped into sed to insert the .d file in the list of 
-# targets of the generated dependency file, so the final result looks 
-# like this:
+# , produces this dependency list:
 #
-#  webalizer.o webalizer.d: webalizer.cpp version.h config.h ...
+#   webalizer.o: src/webalizer.cpp src/webalizer.h ...
 #
-$(BLDDIR)/%.d : $(SRCDIR)/%.cpp
+# , so we need to inject source paths back in and add the dependency
+# files as well, so they are rebuilt when any headers change:
+#
+#   src/webalizer.o src/webalizer.d: src/webalizer.cpp src/webalizer.h ...
+#
+$(BLDDIR)/%.d : src/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CXX) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
-
-$(BLDDIR)/%.d : $(TEST_SRCDIR)/%.cpp
-	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
-	set -e; $(CXX) -MM $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's/^[ \t]*\($(subst /,\/,$*)\)\.o/$(BLDDIR)\/\1.o $(BLDDIR)\/\1.d/g' > $@
+	set -e; $(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
+	sed 's/^[ \t]*$(*F)\.o/$(BLDDIR)\/$(subst /,\/,$*).o $(BLDDIR)\/$(subst /,\/,$*).d/g' > $@
 
 #
 # Rules to compile source file
 #
-$(BLDDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CXX) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-$(BLDDIR)/%.o : $(TEST_SRCDIR)/%.cpp
-	$(CXX) -c $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@	
+# include the unit test precompiled header in all unit test source files
+$(BLDDIR)/test/%.o : src/test/%.cpp
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -include $(BLDDIR)/test/$(PCHHDR) $(addprefix -I,$(INCDIRS)) $< -o $@
+
+# no precompiled header for C source
+$(BLDDIR)/%.o : src/%.c
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+
+# include the main precompiled header in all source files (unit test is handled above)
+$(BLDDIR)/%.o : src/%.cpp
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -include $(BLDDIR)/$(PCHHDR) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 #
 # Build the precompiled header file
 #
-$(BLDDIR)/$(PCHOUT) : $(SRCDIR)/$(PCHHDR) $(SRCDIR)/$(PCHSRC)
-	@if [[ -e $(BLDDIR)/$(PCHOUT) ]]; then rm $(BLDDIR)/$(PCHOUT); fi
-	$(CXX) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-$(BLDDIR)/$(TEST_PCHOUT) : $(TEST_SRCDIR)/$(TEST_PCHHDR) $(TEST_SRCDIR)/$(TEST_PCHSRC)
-	@if [[ -e $(BLDDIR)/$(TEST_PCHOUT) ]]; then rm $(BLDDIR)/$(TEST_PCHOUT); fi
-	$(CXX) -c -x c++-header $(CCFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+# a rule for /src/pch.h.gch, which produces an empty stem (i.e. build//pch.cpp) and is ignored by src/%/pch.h.gch
+$(BLDDIR)/$(PCHOUT) : src/$(PCHSRC)
+	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); elif [[ -e $@ ]]; then rm $@; fi
+	$(CXX) -c -x c++-header $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
+
+# a rule for any pch.h.gch located anywhere else in the source tree
+$(BLDDIR)/%/$(PCHOUT) : src/%/$(PCHSRC)
+	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); elif [[ -e $@ ]]; then rm $@; fi
+	$(CXX) -c -x c++-header $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 # ------------------------------------------------------------------------
 #

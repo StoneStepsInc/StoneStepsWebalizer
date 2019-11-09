@@ -7,7 +7,7 @@
    
    ut_strsrch.cpp
 */
-#include "pchtest.h"
+#include "pch.h"
 
 #include "../tstring.h"
 

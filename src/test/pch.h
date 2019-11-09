@@ -5,7 +5,7 @@
 
    See COPYING and Copyright files for additional licensing and copyright information 
    
-   pchtest.h
+   pch.h
 */
 #ifndef PCHTEST_H
 #define PCHTEST_H
