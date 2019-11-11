@@ -31,7 +31,7 @@ struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(danode_t& vnode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(danode_t& vnode, param_t ... param);
 
       public:
          danode_t(uint64_t _nodeid = 0);
@@ -45,7 +45,7 @@ struct danode_t : public keynode_t<uint64_t>, public datanode_t<danode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t...> upcb, param_t ... param);
 };
 
 

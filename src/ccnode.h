@@ -37,7 +37,7 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
 
    public:
       template <typename ... param_t>
-      using s_unpack_cb_t = void (*)(ccnode_t& vnode, void *arg, param_t ... param);
+      using s_unpack_cb_t = void (*)(ccnode_t& vnode, param_t ... param);
 
    private:
       static uint64_t ctry_idx(const char *ccode);
@@ -67,7 +67,7 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       size_t s_pack_data(void *buffer, size_t bufsize) const;
 
       template <typename ... param_t>
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
       static int64_t s_compare_visits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 

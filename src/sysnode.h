@@ -51,7 +51,7 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
 
    public:
       template <typename ... param_t>
-      using s_unpack_cb_t = void (*)(sysnode_t& sysnode, void *arg, param_t ... param);
+      using s_unpack_cb_t = void (*)(sysnode_t& sysnode, param_t ... param);
 
    public:
       /// Constructs a default instance without the configuration object
@@ -82,7 +82,7 @@ struct sysnode_t : public keynode_t<uint32_t>, datanode_t<sysnode_t> {
       /// Populates current node with deserialized data from the buffer.
 
       template <typename ... param_t>
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 };
 
 #endif // SYSNODE_H

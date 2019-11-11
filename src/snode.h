@@ -36,7 +36,7 @@ struct snode_t : public base_node<snode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(snode_t& snode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(snode_t& snode, param_t ... param);
 
       public:
          snode_t(void) : base_node<snode_t>() {count = 0; termcnt = 0; visits = 0;}
@@ -49,7 +49,7 @@ struct snode_t : public base_node<snode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);

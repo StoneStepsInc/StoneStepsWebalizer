@@ -272,7 +272,7 @@ size_t totals_t::s_pack_data(void *buffer, size_t bufsize) const
 }
 
 template <typename ... param_t>
-size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
+size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param)
 {
    serializer_t sr(buffer, bufsize);
 
@@ -429,7 +429,7 @@ size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    }
 
    if(upcb)
-      upcb(*this, arg, std::forward<param_t>(param) ...);
+      upcb(*this, std::forward<param_t>(param) ...);
    
    return sr.data_size(ptr);
 }
@@ -437,4 +437,4 @@ size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
 //
 // Instantiate all template callbacks
 //
-template size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, totals_t::s_unpack_cb_t<> upcb, void *arg);
+template size_t totals_t::s_unpack_data(const void *buffer, size_t bufsize, totals_t::s_unpack_cb_t<> upcb);

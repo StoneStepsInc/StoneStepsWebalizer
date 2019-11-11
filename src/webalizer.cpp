@@ -2338,7 +2338,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
-      if(!state.database.get_hnode_by_value(*cptr, &unpack_inactive_hnode_cb, this)) {
+      if(!state.database.get_hnode_by_value<void*>(*cptr, &unpack_inactive_hnode_cb, this)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
 
@@ -2451,7 +2451,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP, htab_tstamp)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
-      if(!state.database.get_hnode_by_value(*cptr, (hnode_t::s_unpack_cb_t<>) nullptr, nullptr)) {
+      if(!state.database.get_hnode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
 
@@ -2508,7 +2508,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, int64_t htab_tstamp, nodety
    if((nptr = state.rm_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rnode_t>(str);
-      if(!state.database.get_rnode_by_value(*nptr, NULL, NULL)) {
+      if(!state.database.get_rnode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_rnode_id();
          nptr->flag  = type;
          nptr->count = count;
@@ -2637,7 +2637,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
       /* not hashed */
       nptr = new storable_t<rcnode_t>(method, url, respcode);
 
-      if(!state.database.get_rcnode_by_value(*nptr, NULL, NULL)) {
+      if(!state.database.get_rcnode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_rcnode_id();
          nptr->flag = OBJ_REG;
          nptr->count = count;
@@ -2859,7 +2859,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    //
    if((nptr = state.dl_htab.find_node(hashval, &params, OBJ_REG, htab_tstamp)) == NULL) {
       nptr = new storable_t<dlnode_t>(name, hnode);
-      if(!state.database.get_dlnode_by_value(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
+      if(!state.database.get_dlnode_by_value<void *, const storable_t<hnode_t>&>(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
 
          nptr->nodeid = state.database.get_dlnode_id();

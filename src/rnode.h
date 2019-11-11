@@ -26,7 +26,7 @@ struct rnode_t : public base_node<rnode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(rnode_t& rnode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(rnode_t& rnode, param_t ... param);
 
       public:
          rnode_t(void) : count(0), visits(0) {}
@@ -39,7 +39,7 @@ struct rnode_t : public base_node<rnode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_hits(const void *buffer, size_t bufsize, size_t& datasize);

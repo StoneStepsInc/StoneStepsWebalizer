@@ -324,7 +324,7 @@ TEST_F(BerkeleyDBTest, AgentNodeReadCallback)
 
    for(uint64_t i = 1; i <= 100; i++) {
       anode.nodeid = i;
-      ASSERT_TRUE(agents.get_node_by_id(anode, read_agent_cb, &i)) << "A look-up should find any agent from 1 to 100";
+      ASSERT_TRUE((agents.get_node_by_id<anode_t, void*>(anode, read_agent_cb, &i))) << "A look-up should find any agent from 1 to 100";
 
       anode.reset();
    }

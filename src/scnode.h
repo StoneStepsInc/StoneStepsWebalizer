@@ -33,7 +33,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 
    public:
       template <typename ... param_t>
-      using s_unpack_cb_t = void (*)(scnode_t& scnode, void *arg, param_t ... param);
+      using s_unpack_cb_t = void (*)(scnode_t& scnode, param_t ... param);
 
    public:
       scnode_t(u_int code) : keynode_t<u_int>(code), v2pad(0) {count = 0;}
@@ -47,7 +47,7 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
       size_t s_pack_data(void *buffer, size_t bufsize) const;
 
       template <typename ... param_t>
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 };
 
 ///

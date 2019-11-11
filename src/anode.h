@@ -34,7 +34,7 @@ struct anode_t : public base_node<anode_t> {
          ///         after the node has been deserialized.
          ///
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(anode_t& anode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(anode_t& anode, param_t ... param);
 
       public:
          /// Constructs an empty instance of a user agent node.
@@ -56,7 +56,7 @@ struct anode_t : public base_node<anode_t> {
 
          /// Deserializes a user agent node instance from the specified buffer and returns a deserialized size.
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          /// Returns a pointer to the value hash within a serialized user agent node data.
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);

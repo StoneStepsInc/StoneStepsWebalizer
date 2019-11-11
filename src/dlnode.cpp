@@ -151,7 +151,7 @@ size_t dlnode_t::s_pack_data(void *buffer, size_t bufsize) const
 }
 
 template <typename ... param_t>
-size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
+size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param)
 {
    serializer_t sr(buffer, bufsize);
 
@@ -175,7 +175,7 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    download = NULL;
 
    if(upcb)
-      upcb(*this, hostid, active, arg, std::forward<param_t>(param) ...);
+      upcb(*this, hostid, active, std::forward<param_t>(param) ...);
 
    return sr.data_size(ptr);
 }
@@ -243,6 +243,7 @@ int64_t dlnode_t::s_compare_xfer(const void *buf1, size_t buf1size, const void *
 //
 // Instantiate all template callbacks
 //
-template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<> upcb, void *arg);
-template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<const storable_t<hnode_t>&> upcb, void *arg, const storable_t<hnode_t>& hnode);
-template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<storable_t<hnode_t>&> upcb, void *arg, storable_t<hnode_t>& hnode);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<> upcb);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<void*, const storable_t<hnode_t>&> upcb, void *arg, const storable_t<hnode_t>& hnode);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<storable_t<hnode_t>&> upcb, storable_t<hnode_t>& hnode);
+template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<void*, storable_t<hnode_t>&> upcb, void *arg, storable_t<hnode_t>& hnode);

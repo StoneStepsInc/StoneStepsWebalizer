@@ -71,7 +71,7 @@ size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
 }
 
 template <typename ... param_t>
-size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param)
+size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param)
 {
    serializer_t sr(buffer, bufsize);
 
@@ -87,7 +87,7 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    ptr = sr.s_skip_field<uint64_t>(ptr);        // value hash
    
    if(upcb)
-      upcb(*this, arg, std::forward<param_t>(param) ...);
+      upcb(*this, std::forward<param_t>(param) ...);
 
    return sr.data_size(ptr);
 }
@@ -162,4 +162,4 @@ int64_t rcnode_t::s_compare_hits(const void *buf1, size_t buf1size, const void *
 //
 // Instantiate all template callbacks
 //
-template size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, rcnode_t::s_unpack_cb_t<> upcb, void *arg);
+template size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, rcnode_t::s_unpack_cb_t<> upcb);

@@ -72,7 +72,7 @@ struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(vnode_t& vnode, uint64_t urlid, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(vnode_t& vnode, uint64_t urlid, param_t ... param);
 
       public:
          vnode_t(uint64_t nodeid = 0);
@@ -91,7 +91,7 @@ struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 };
 
 #endif // VNODE_H

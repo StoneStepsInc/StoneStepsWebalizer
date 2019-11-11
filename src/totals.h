@@ -113,7 +113,7 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
 
    public:
       template <typename ... param_t>
-      using s_unpack_cb_t = void (*)(totals_t& state, void *arg, param_t ... param);
+      using s_unpack_cb_t = void (*)(totals_t& state, param_t ... param);
 
    public:
       totals_t(void);
@@ -127,7 +127,7 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       size_t s_pack_data(void *buffer, size_t bufsize) const;
 
       template <typename ... param_t>
-      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+      size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 };
 
 #endif // TOTALS_H

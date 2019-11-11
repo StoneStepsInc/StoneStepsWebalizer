@@ -2034,7 +2034,7 @@ void html_output_t::top_dl_table(void)
    database_t::reverse_iterator<dlnode_t> iter = state.database.rbegin_downloads("downloads.xfer");
 
    for(i = 0; i < tot_num; i++) {
-      if(!iter.prev(dl_array[i], state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), h_array[i]))
+      if(!iter.prev<void *, storable_t<hnode_t>&>(dl_array[i], state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), h_array[i]))
          break;
    }
 
@@ -2184,7 +2184,7 @@ int html_output_t::all_downloads_page(void)
    }
    fputs("  -------------------------------\n\n", out_fp);
 
-   while(iter.prev(dlnode, state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode)) {
+   while(iter.prev<void *, storable_t<hnode_t>&>(dlnode, state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode)) {
       dlnode.set_host(&hnode);
 
       nptr = &dlnode;

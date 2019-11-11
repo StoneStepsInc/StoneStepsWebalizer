@@ -265,7 +265,7 @@ void dump_output_t::dump_all_downloads(void)
 
    /* dump 'em */
    storable_t<hnode_t> hnode;
-   while(iter.prev(dlnode, state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode)) {
+   while(iter.prev<void *, storable_t<hnode_t>&>(dlnode, &state_t::unpack_dlnode_and_host_cb, const_cast<state_t*>(&state), hnode)) {
       dlnode.set_host(&hnode);
 
       nptr = &dlnode;

@@ -59,7 +59,7 @@ struct unode_t : public base_node<unode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(unode_t& unode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(unode_t& unode, param_t ... param);
 
       public:
          unode_t(uint64_t nodeid = 0);
@@ -93,7 +93,7 @@ struct unode_t : public base_node<unode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize);

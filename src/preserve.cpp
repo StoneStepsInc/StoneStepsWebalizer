@@ -450,7 +450,7 @@ bool state_t::initialize(void)
       // If there is a system node, check if we have anything to do, given state of 
       // the database and current run parameters.
       //
-      if(sysdb.get_sysnode_by_id(sysnode, NULL, NULL)) {
+      if(sysdb.get_sysnode_by_id(sysnode, nullptr)) {
          // cannot read any data if byte order isn't the same
          if(!sysnode.check_byte_order())
             throw exception_t(0, "Incompatible database format (byte order)");
@@ -648,7 +648,7 @@ void state_t::restore_state(void)
       throw exception_t(0, string_t::_format("%s (incompatible database)\n", config.lang.msg_bad_data));
 
    // restore current totals
-   if(!database.get_tgnode_by_id(totals, NULL, NULL))
+   if(!database.get_tgnode_by_id(totals))
       throw exception_t(0, string_t::_format("%s (totals)\n", config.lang.msg_bad_data));
 
    // keep the serial time stamp to avoid doing math in every put_node call
@@ -661,14 +661,14 @@ void state_t::restore_state(void)
    // get daily totals
    for(i = 0; i < 31; i++) {
       // nodeid has already been set in init_counters
-      if(!database.get_tdnode_by_id(t_daily[i], NULL, NULL))
+      if(!database.get_tdnode_by_id(t_daily[i]))
          throw exception_t(0, string_t::_format("%s (daily totals)\n", config.lang.msg_bad_data));
    }
 
    // get hourly totals
    for(i = 0; i < 24; i++) {
       // nodeid has already been set in init_counters
-      if(!database.get_thnode_by_id(t_hourly[i], NULL, NULL))
+      if(!database.get_thnode_by_id(t_hourly[i]))
          throw exception_t(0, string_t::_format("%s (hourly totals)\n", config.lang.msg_bad_data));
    }
    
@@ -722,7 +722,7 @@ void state_t::restore_state(void)
    storable_t<hnode_t> hnode;
    storable_t<unode_t> unode, *uptr;
    hnode_t *hptr;
-   while(iter.next(vnode, unpack_vnode_cb, this, hnode, unode)) {
+   while(iter.next<void *, storable_t<hnode_t>&, storable_t<unode_t>&>(vnode, unpack_vnode_cb, this, hnode, unode)) {
       // check if the visit has a reference to the last visited URL
       if(unode.nodeid) {
          //
@@ -755,7 +755,7 @@ void state_t::restore_state(void)
    storable_t<dlnode_t> dlnode;
    storable_t<hnode_t> hnode;
    hnode_t *hptr;
-   while(iter.next(danode, unpack_danode_cb, this, dlnode, hnode)) {
+   while(iter.next<void *, storable_t<dlnode_t>&, storable_t<hnode_t>&>(danode, unpack_danode_cb, this, dlnode, hnode)) {
       // the host must be in the hosts table because active downloads are a subset of active visits
       if((hptr = hm_htab.find_node(hnode.string, OBJ_REG, htab_tstamp)) == nullptr)
          throw std::runtime_error(string_t::_format("%s (no host %s for download %" PRIu64 ")", config.lang.msg_bad_data, hnode.string.c_str(), dlnode.nodeid));
@@ -1098,7 +1098,7 @@ void state_t::unpack_danode_cb(danode_t& danode, void *arg, storable_t<dlnode_t>
 
    // read the download and the host from the database
    dlnode.nodeid = danode.nodeid;
-   if(!_this->database.get_dlnode_by_id(dlnode, unpack_dlnode_and_host_cb, arg, hnode))
+   if(!_this->database.get_dlnode_by_id<void *, storable_t<hnode_t>&>(dlnode, unpack_dlnode_and_host_cb, arg, hnode))
       throw std::runtime_error(string_t::_format("Cannot find the download node (ID: %" PRIu64 ")", dlnode.nodeid));
 }
 

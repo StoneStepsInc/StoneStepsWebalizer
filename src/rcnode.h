@@ -39,7 +39,7 @@ struct rcnode_t : public base_node<rcnode_t> {
 
       public:
          template <typename ... param_t>
-         using s_unpack_cb_t = void (*)(rcnode_t& rcnode, void *arg, param_t ... param);
+         using s_unpack_cb_t = void (*)(rcnode_t& rcnode, param_t ... param);
 
       public:
          rcnode_t(void) : base_node<rcnode_t>() {count = 0; respcode = 0;}
@@ -69,7 +69,7 @@ struct rcnode_t : public base_node<rcnode_t> {
          size_t s_pack_data(void *buffer, size_t bufsize) const;
 
          template <typename ... param_t>
-         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, void *arg, param_t&& ... param);
+         size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          uint64_t s_hash_value(void) const;
 
