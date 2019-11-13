@@ -46,7 +46,12 @@ class berkeleydb_t {
    friend class sswtest::BerkeleyDBTest;
 
    private:
-      static const size_t DBBUFSIZE = 32768;
+      static const size_t        DBBUFSIZE = 32768;
+
+      static const u_int32_t     DBFLAGS = 0;            ///< Berkeley DB database flags.
+      static const u_int32_t     DBENVFLAGS = 0;         ///< Berkeley DB environment flags.
+
+      static const int           FILEMASK = 0664;        ///< Database file access mask (rw-rw-r--).
 
    protected:
       //

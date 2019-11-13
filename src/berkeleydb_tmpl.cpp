@@ -27,11 +27,6 @@
 #include <utility>
 #include <algorithm>
 
-#define DBFLAGS               ((u_int32_t) 0)
-#define DBENVFLAGS            ((u_int32_t) 0)
-
-#define FILEMASK              0664              // database file access mask (rw-rw-r--)
-
 //
 // B-Tree comparison function template for BDB v6 and up (top) and for prior versions 
 // (bottom). Only one will be used in any build, but it's cleaner without having to 
