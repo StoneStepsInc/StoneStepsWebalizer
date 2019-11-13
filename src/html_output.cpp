@@ -1145,8 +1145,12 @@ void html_output_t::top_hosts_table(int flag)
    if((a_ctr = state.totals.t_hosts + state.totals.t_grp_hosts) == 0)
       return;
 
-   // number of columns in the report
-   u_int colspan = config.ntop_asn?17:config.ntop_ctrys?config.geoip_city?16:15:14;
+   // number of columns in the report - start with GeoIP columns
+   u_int colspan = config.ntop_ctrys?config.geoip_city?16:15:14;
+
+   // add one for ASN, if configured
+   if(config.ntop_asn)
+      colspan++;
 
    /* get max to do... */
    ntop_num = (flag) ? config.ntop_hostsK : config.ntop_hosts;
