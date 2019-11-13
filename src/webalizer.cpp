@@ -3402,3 +3402,4 @@ int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen
    return parse_code;
 }
 
+#include "database_tmpl.cpp"

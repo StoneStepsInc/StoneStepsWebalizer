@@ -199,6 +199,9 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rnode.obj">
       <Filter>obj</Filter>
     </Object>
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\berkeleydb.obj">
+      <Filter>obj</Filter>
+    </Object>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

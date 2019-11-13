@@ -74,7 +74,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	hashtab_nodes.cpp config.cpp serialize.cpp \
 	html_output.cpp dump_output.cpp \
-	database.cpp logfile.cpp cp1252_ucs2.cpp \
+	berkeleydb.cpp database.cpp logfile.cpp cp1252_ucs2.cpp \
 	char_buffer.cpp unicode.cpp formatter.cpp \
 	platform/exception_linux.cpp platform/event_pthread.cpp \
 	platform/thread_pthread.cpp platform/console_linux.cpp \
@@ -131,7 +131,7 @@ TEST_OBJS := $(TEST_SRC:.cpp=.o)  \
 	util_http.o util_ipaddr.o util_path.o util_string.o util_time.o \
 	util_url.o tmranges.o config.o anode.o dlnode.o ccnode.o hnode.o \
 	rcnode.o vnode.o unode.o snode.o inode.o rnode.o ctnode.o \
-	keynode.o hashtab_nodes.o
+	keynode.o hashtab_nodes.o berkeleydb.o
 
 TEST_DEPS := $(TEST_OBJS:.o=.d)
 TEST_RPOS := $(TEST_OBJS:.o=.rpo)

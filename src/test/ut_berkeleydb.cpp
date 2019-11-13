@@ -332,4 +332,4 @@ TEST_F(BerkeleyDBTest, AgentNodeReadCallback)
 
 }
 
-#include "../berkeleydb_tmpl.cpp"
+#include "../database_tmpl.cpp"

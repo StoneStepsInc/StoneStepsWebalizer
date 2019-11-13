@@ -179,6 +179,7 @@
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\inode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\snode.obj" />
     <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rnode.obj" />
+    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\berkeleydb.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

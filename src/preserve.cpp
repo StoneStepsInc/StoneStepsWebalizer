@@ -1160,3 +1160,5 @@ string_t state_t::get_version(u_int version)
 //
 template void state_t::update_avg_max<uint64_t>(double& avgval, uint64_t& maxval, uint64_t value, uint64_t newcnt) const;
 template void state_t::update_avg_max<double>(double& avgval, double& maxval, double value, uint64_t newcnt) const;
+
+#include "database_tmpl.cpp"

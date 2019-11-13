@@ -3428,3 +3428,4 @@ bool html_output_t::is_safe_url(const string_t& url)
 // Include templates
 //
 #include "formatter_tmpl.cpp"
+#include "database_tmpl.cpp"

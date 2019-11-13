@@ -525,3 +525,5 @@ void dump_output_t::dump_all_countries()
 
    fclose(out_fp);
 }
+
+#include "database_tmpl.cpp"

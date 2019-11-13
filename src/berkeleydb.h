@@ -45,6 +45,9 @@ namespace sswtest {
 class berkeleydb_t {
    friend class sswtest::BerkeleyDBTest;
 
+   private:
+      static const size_t DBBUFSIZE = 32768;
+
    protected:
       //
       // Define BDB callback types (bt_compare_fcn_type, etc are deprecated)
