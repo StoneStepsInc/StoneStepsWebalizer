@@ -1239,7 +1239,7 @@ void html_output_t::top_hosts_table(int flag)
    }
 
    if(config.ntop_asn)
-      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn);
+      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
@@ -1367,7 +1367,7 @@ int html_output_t::all_hosts_page(void)
    }
 
    if(config.ntop_asn)
-      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn);
+      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
       
    fprintf(out_fp, "   %s\n", config.lang.msg_h_host);
 
@@ -2083,7 +2083,7 @@ void html_output_t::top_dl_table(void)
    }
 
    if(config.ntop_asn)
-      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn);
+      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
@@ -2199,7 +2199,7 @@ int html_output_t::all_downloads_page(void)
    }
 
    if(config.ntop_asn)
-      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn);
+      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
       
    fprintf(out_fp,"  %s\n", config.lang.msg_h_host);
 

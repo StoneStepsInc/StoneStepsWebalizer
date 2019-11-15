@@ -128,7 +128,7 @@ void dump_output_t::dump_all_hosts()
             config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration, 
             config.lang.msg_h_duration, config.lang.msg_h_ccode, config.lang.msg_h_ctry, config.lang.msg_h_city, 
             config.lang.msg_h_type, config.lang.msg_h_latitude, config.lang.msg_h_longitude,
-            config.lang.msg_h_asn, config.lang.msg_h_asn_org,
+            config.lang.msg_h_asn_num, config.lang.msg_h_asn_org,
             config.lang.msg_h_ipaddr, config.lang.msg_h_hname);
    }
 
