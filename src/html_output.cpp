@@ -561,6 +561,12 @@ void html_output_t::write_city_report(void)
       top_city_table();
 }
 
+void html_output_t::write_asn_report(void)
+{
+   if(!config.asn_db_path.isempty() && config.ntop_asn) 
+      top_asn_table();
+}
+
 /*********************************************/
 /* WRITE_MONTH_HTML - does what it says...   */
 /*********************************************/
@@ -667,6 +673,7 @@ int html_output_t::write_monthly_report()
    write_download_report();
    write_error_report();
    write_host_report();
+   write_asn_report();
    write_referrer_report();
 
    if(config.log_type != LOG_SQUID)
@@ -709,6 +716,8 @@ void html_output_t::month_links()
       fprintf(out_fp,"<td><a href=\"#errors\">%s</a></td>\n", config.lang.msg_hlnk_err);
    if (config.ntop_hosts || config.ntop_hostsK)
       fprintf(out_fp,"<td><a href=\"#hosts\">%s</a></td>\n", config.lang.msg_hlnk_s);
+   if (!config.asn_db_path.isempty() && config.ntop_asn)
+      fprintf(out_fp,"<td><a href=\"#asn\">%s</a></td>\n", config.lang.msg_hlnk_asn);
    if (config.ntop_refs && state.totals.t_ref)
       fprintf(out_fp,"<td><a href=\"#referrers\">%s</a></td>\n", config.lang.msg_hlnk_r);
    if(config.log_type != LOG_SQUID && config.ntop_search && state.totals.t_srchits)
@@ -1149,7 +1158,7 @@ void html_output_t::top_hosts_table(int flag)
    u_int colspan = config.ntop_ctrys?config.geoip_city?16:15:14;
 
    // add one for ASN, if configured
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       colspan++;
 
    /* get max to do... */
@@ -1238,7 +1247,7 @@ void html_output_t::top_hosts_table(int flag)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
 
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
@@ -1293,10 +1302,10 @@ void html_output_t::top_hosts_table(int flag)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>\n", html_encode(hptr->city.c_str()));
       }
 
-      if(config.ntop_asn) {
+      if(!config.asn_db_path.isempty()) {
          fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(hptr->asn_org.c_str()));
          if(hptr->asn_number)
-            fprintf(out_fp, "%d", hptr->asn_number);
+            fprintf(out_fp, "%" PRIu32 "", hptr->asn_number);
          fputs("</td>\n", out_fp);
       }
 
@@ -1366,7 +1375,7 @@ int html_output_t::all_hosts_page(void)
          fprintf(out_fp, "   %-22s", config.lang.msg_h_city);
    }
 
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
       
    fprintf(out_fp, "   %s\n", config.lang.msg_h_host);
@@ -1377,7 +1386,7 @@ int html_output_t::all_hosts_page(void)
       if(config.geoip_city)
          fputs("  ----------------------", out_fp);   // city
    }
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fputs("  --------", out_fp);                    // ASN
    fputs("   --------------------\n\n", out_fp);
 
@@ -1407,7 +1416,7 @@ int html_output_t::all_hosts_page(void)
                   fprintf(out_fp, "  %22c", ' ');  // city
             }
 
-            if(config.ntop_asn)
+            if(!config.asn_db_path.isempty())
                fprintf(out_fp, "  %10c", ' ');     // ASN
 
             fprintf(out_fp, "   %s\n", hnode.string.c_str());
@@ -1448,7 +1457,7 @@ int html_output_t::all_hosts_page(void)
                   fprintf(out_fp, "  %-22s", html_encode(hnode.city.c_str()));
             }
 
-            if(config.ntop_asn) {
+            if(!config.asn_db_path.isempty()) {
                if(!hnode.asn_number)
                   fprintf(out_fp, "  %8c", ' ');
                else {
@@ -2031,7 +2040,7 @@ void html_output_t::top_dl_table(void)
    u_int colspan = config.ntop_ctrys?config.geoip_city?12:11:10;
 
    // add one for ASN, if configured
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       colspan++;
 
    /* get max to do... */
@@ -2082,7 +2091,7 @@ void html_output_t::top_dl_table(void)
          fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_city);
    }
 
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
@@ -2123,7 +2132,7 @@ void html_output_t::top_dl_table(void)
             fprintf(out_fp, "<td class=\"stats_data_item_td\">%s</td>", html_encode(nptr->hnode->city.c_str()));
       }
 
-      if(config.ntop_asn) {
+      if(!config.asn_db_path.isempty()) {
          fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(nptr->hnode->asn_org.c_str()));
          if(nptr->hnode->asn_number)
             fprintf(out_fp, "%d", nptr->hnode->asn_number);
@@ -2198,7 +2207,7 @@ int html_output_t::all_downloads_page(void)
          fprintf(out_fp," %-22s", config.lang.msg_h_city);
    }
 
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
       
    fprintf(out_fp,"  %s\n", config.lang.msg_h_host);
@@ -2209,7 +2218,7 @@ int html_output_t::all_downloads_page(void)
       if(config.geoip_city)
          fputs("  ----------------------", out_fp);
    }
-   if(config.ntop_asn)
+   if(!config.asn_db_path.isempty())
       fputs("  --------", out_fp);
    fputs("  -------------------------------\n\n", out_fp);
 
@@ -2234,7 +2243,7 @@ int html_output_t::all_downloads_page(void)
             fprintf(out_fp, "  %-22s", html_encode(nptr->hnode->city.c_str()));
       }
       
-      if(config.ntop_asn) {
+      if(!config.asn_db_path.isempty()) {
          if(!nptr->hnode->asn_number)
             fprintf(out_fp, "  %8c", ' ');
          else {
@@ -3262,6 +3271,81 @@ void html_output_t::top_city_table()
               html_encode(state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str()),
               ctnode.geoname_id(),
               html_encode(ctnode.unknown_city() ? "" : ctnode.city.c_str()));
+      }
+   }
+   iter.close();
+
+   fputs("</tbody>\n", out_fp);
+   fputs("</table>\n", out_fp);
+
+   // output a note that robot activity is not included in this report 
+   if(state.totals.t_rhits)
+      fprintf(out_fp,"<p class=\"note_p\">%s</p>", config.lang.msg_misc_robots);
+
+   fputs("</div>\n", out_fp);
+}
+
+void html_output_t::top_asn_table()
+{
+   // state.as_htab is always loaded into memory, so we can use its size
+   u_int tot_num = state.as_htab.size() > config.ntop_asn ? config.ntop_asn : (u_int) state.as_htab.size();
+
+   fputs("\n<!-- Top Cities Table -->\n", out_fp);
+   fputs("<div id=\"top_cities_report\">\n", out_fp);
+   fputs("<a name=\"asn\"></a>\n", out_fp);
+
+   fputs("<table id=\"city_usage_table\" class=\"report_table stats_table\" data-version=\"1\">\n", out_fp);
+   fputs("<thead>\n", out_fp);
+   fprintf(out_fp,"<tr class=\"table_title_tr\"><th colspan=\"13\">%s %u %s %u %s</th></tr>\n", config.lang.msg_top_top, tot_num, config.lang.msg_top_of, (u_int) state.as_htab.size(), config.lang.msg_top_asn);
+   fputs("<tr><th class=\"counter_th\">#</th>\n", out_fp);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"hits_th\">%s</th>\n", config.lang.msg_h_hits);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"files_th\">%s</th>\n", config.lang.msg_h_files);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
+   fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_asn_num);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th></tr>\n", config.lang.msg_h_asn_org);
+
+   fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+
+   storable_t<asnode_t> asnode;
+   database_t::reverse_iterator<asnode_t> iter = state.database.rbegin_asn("asn.visits");
+
+   for(u_int i = 0; i < tot_num && iter.prev(asnode); i++) {
+      
+      if(asnode.hits != 0) {
+         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
+         fprintf(out_fp,"<tr>"
+              "<th>%u</th>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n"
+              "<td>%" PRIu64 "</td>\n"
+              "<td class=\"data_percent_td\">%3.02f%%</td>\n",
+              i+1, asnode.hits,
+              (state.totals.t_hit==0)?0:((double)asnode.hits/state.totals.t_hit)*100.0,
+              asnode.files,
+              (state.totals.t_file==0)?0:((double)asnode.files/state.totals.t_file)*100.0,
+              asnode.pages,
+              (state.totals.t_page==0)?0:((double)asnode.pages/state.totals.t_page)*100.0,
+              asnode.xfer, fmt_xfer(asnode.xfer),
+              (state.totals.t_xfer==0)?0:(asnode.xfer/state.totals.t_xfer)*100.0,
+              asnode.visits,
+              (state.totals.t_visits==0)?0:(asnode.visits/state.totals.t_visits)*100.0);
+
+         fputs("<td class=\"stats_data_item_td\">", out_fp);
+         if(asnode.nodeid)
+            fprintf(out_fp, "%" PRIu32, asnode.nodeid);
+         fputs("</td>\n", out_fp);
+
+         fprintf(out_fp,
+               "<td class=\"stats_data_item_td\">%s</td></tr>\n",
+               html_encode(asnode.as_org.c_str()));
       }
    }
    iter.close();

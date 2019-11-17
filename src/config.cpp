@@ -142,6 +142,7 @@ config_t::config_t(void)
    dump_downloads = false;                    // Downloads
    dump_countries = false;
    dump_cities = false;
+   dump_asn = false;
 
    db_cache_size = DB_DEF_CACHE_SIZE;
    db_seq_cache_size = 100;
@@ -703,13 +704,13 @@ void config_t::prep_and_validate(void)
    if(output_formats.isinlist(string_t("tsv"))) {
       dump_hosts = dump_urls = dump_refs = dump_agents = true;
       dump_users = dump_search = dump_errors = dump_downloads = true;
-      dump_countries = dump_cities = true;
+      dump_countries = dump_cities = dump_asn = true;
    }
    else {
       // otherwise, add a TSV format if there is at least one DumpX property set
       if(dump_hosts || dump_urls || dump_refs || dump_agents ||
             dump_users || dump_search || dump_errors || dump_downloads ||
-            dump_countries || dump_cities) {
+            dump_countries || dump_cities || dump_asn) {
          add_output_format(string_t("tsv"));
       }
    }
@@ -846,7 +847,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 192; empty slots:
+                     // max key: 193; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -886,6 +887,7 @@ void config_t::get_config(const char *fname)
                      {"DSTOffset",           163},          // Daylight saving offset
                      {"DSTStart",            161},          // Daylight saving start date/time
                      {"DumpAgents",          81},           // Dump user agents tab file
+                     {"DumpASN",             193},          // Dump Autonomous System tab file?
                      {"DumpCities",          150},          // Dump city information
                      {"DumpCountries",       151},          // Dump country information
                      {"DumpDownloads",       121},          // Dump downloads?
@@ -1312,9 +1314,10 @@ void config_t::get_config(const char *fname)
          case 187: max_visit_length = get_interval(value, errors); break;
          case 188: local_utc_offset =  (string_t::tolower(value[0]) == 'y'); break;
          case 189: js_charts_paths.push_back(value); break;
-         case 190: dns_lookups =  (string_t::tolower(value[0]) == 'y'); break;
+         case 190: dns_lookups = (string_t::tolower(value[0]) == 'y'); break;
          case 191: ext_map_url = value; break;
          case 192: ntop_asn = atoi(value); break;
+         case 193: dump_asn = (string_t::tolower(value[0]) == 'y'); break;
       }
    }
 

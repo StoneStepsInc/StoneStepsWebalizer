@@ -161,6 +161,7 @@ class config_t {
       bool dump_downloads;                      ///< Dump tab delimited downloads?
       bool dump_countries;                      ///< Dump tab-delimited countries?
       bool dump_cities;                         ///< Dump tab-delimited cities?
+      bool dump_asn;                            ///< Dump tab-delimited Autonomous System entries?
       
       bool use_classic_mangler;                 ///< Use the original Webalizer user agent mangling algorithm?
       bool target_downloads;                    ///< Consider downloads as visit targets?

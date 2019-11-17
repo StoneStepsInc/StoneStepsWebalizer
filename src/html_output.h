@@ -66,6 +66,7 @@ class html_output_t : public output_t {
       void write_user_agent_report(void);
       void write_country_report(void);
       void write_city_report(void);
+      void write_asn_report(void);
 
       void month_links(void);
       void month_total_table(void);
@@ -83,6 +84,7 @@ class html_output_t : public output_t {
       void top_users_table(void);
       void top_ctry_table(void);
       void top_city_table(void);
+      void top_asn_table(void);
 
       int all_errors_page(void);
       int all_refs_page(void);

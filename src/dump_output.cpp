@@ -100,6 +100,9 @@ int dump_output_t::write_monthly_report(void)
    if(config.dump_cities)
       dump_all_cities();
       
+   if(config.dump_asn)
+      dump_all_asn();
+
    return 0;
 }
 
@@ -475,6 +478,51 @@ void dump_output_t::dump_all_cities()
          ctnode.xfer/1024., ctnode.visits, 
          ctnode.ccode.c_str(), state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str(),
          ctnode.geoname_id(), ctnode.city.c_str());
+   }
+   iter.close();
+
+   fclose(out_fp);
+}
+
+void dump_output_t::dump_all_asn()
+{
+   storable_t<asnode_t> asnode;
+   FILE *out_fp;
+   char filename[FILENAME_MAX];
+
+   // generate a file name
+   if(snprintf(filename, sizeof(filename), "%s/asn_%04d%02d.%s",
+         !config.dump_path.isempty() ? config.dump_path.c_str() : config.out_dir.c_str(), 
+         state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, config.dump_ext.c_str()) >= sizeof(filename)) {
+      throw std::runtime_error("DumpPath is too long");
+   }
+
+   // open the file
+   if((out_fp = open_out_file(filename)) == nullptr) {
+      fprintf(stderr,"%s %s!\n",config.lang.msg_no_open, filename);
+      return;
+   }
+
+   // check if we need a header
+   if (config.dump_header) {
+      // GeoNameID is not localized on purpose because it's a fixed name for a feature on www.geonames.org
+      fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+            config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, 
+            config.lang.msg_h_xfer, config.lang.msg_h_visits, 
+            config.lang.msg_h_asn_num, config.lang.msg_h_asn_org);
+   }
+
+   // output rows ordered by visit counts, in descending order
+   database_t::reverse_iterator<asnode_t> iter = state.database.rbegin_asn("asn.visits");
+
+   while(iter.prev(asnode)) {
+      fprintf(out_fp,
+      "%" PRIu64 "\t%" PRIu64 "\t%" PRIu64 "\t"
+      "%.0f\t%" PRIu64 "\t"
+      "%" PRIu32 "\t%s\n",
+         asnode.hits, asnode.files, asnode.pages, 
+         asnode.xfer/1024., asnode.visits, 
+         asnode.nodeid, asnode.as_org.c_str());
    }
    iter.close();
 

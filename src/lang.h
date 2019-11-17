@@ -298,6 +298,7 @@ class lang_t {
       const char *msg_hlnk_hs ;
       const char *msg_hlnk_u  ;
       const char *msg_hlnk_s  ;
+      const char *msg_hlnk_asn;
       const char *msg_hlnk_a  ;
       const char *msg_hlnk_c  ;
       const char *msg_hlnk_ct ;
@@ -362,6 +363,7 @@ class lang_t {
       const char *msg_top_a   ;
       const char *msg_top_c   ;
       const char *msg_top_ct  ;
+      const char *msg_top_asn ;
       const char *msg_top_en  ;
       const char *msg_top_ex  ;
       const char *msg_top_sr  ;

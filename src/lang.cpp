@@ -612,6 +612,7 @@ lang_t::lang_t(void) :
    msg_hlnk_hs = "Hourly Statistics";
    msg_hlnk_u  = "URLs";
    msg_hlnk_s  = "Hosts";
+   msg_hlnk_asn  = "ASN";
    msg_hlnk_a  = "Agents";
    msg_hlnk_c  = "Countries";
    msg_hlnk_ct  = "Cities";
@@ -682,6 +683,7 @@ lang_t::lang_t(void) :
    msg_top_a   = "Total User Agents";
    msg_top_c   = "Total Countries";
    msg_top_ct = "Total Cities";
+   msg_top_asn = "Total ASN";
    msg_top_en  = "Total Entry Pages";
    msg_top_ex  = "Total Exit Pages";
    msg_top_sr  = "Total Search Strings";
@@ -922,6 +924,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace(string_t("msg_hlnk_hs"), &msg_hlnk_hs);
    ln_htab.emplace(string_t("msg_hlnk_u"), &msg_hlnk_u);
    ln_htab.emplace(string_t("msg_hlnk_s"), &msg_hlnk_s);
+   ln_htab.emplace(string_t("msg_hlnk_asn"), &msg_hlnk_asn);
    ln_htab.emplace(string_t("msg_hlnk_a"), &msg_hlnk_a);
    ln_htab.emplace(string_t("msg_hlnk_c"), &msg_hlnk_c);
    ln_htab.emplace(string_t("msg_hlnk_ct"), &msg_hlnk_ct);
@@ -989,6 +992,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace(string_t("msg_top_a"), &msg_top_a);
    ln_htab.emplace(string_t("msg_top_c"), &msg_top_c);
    ln_htab.emplace(string_t("msg_top_ct"), &msg_top_ct);
+   ln_htab.emplace(string_t("msg_top_asn"), &msg_top_asn);
    ln_htab.emplace(string_t("msg_top_en"), &msg_top_en);
    ln_htab.emplace(string_t("msg_top_ex"), &msg_top_ex);
    ln_htab.emplace(string_t("msg_top_sr"), &msg_top_sr);

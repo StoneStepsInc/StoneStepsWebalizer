@@ -41,6 +41,7 @@ class dump_output_t : public output_t {
       void dump_all_search(void);
       void dump_all_cities(void);
       void dump_all_countries(void);
+      void dump_all_asn(void);
 
    public:
       dump_output_t(const config_t& config, const state_t& state);
