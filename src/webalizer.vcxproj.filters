@@ -271,6 +271,9 @@
     <ClCompile Include="berkeleydb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="asnode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -457,6 +460,9 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="ctnode.h">
+      <Filter>Header Files\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="asnode.h">
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
   </ItemGroup>

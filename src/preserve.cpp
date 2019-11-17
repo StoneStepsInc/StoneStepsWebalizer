@@ -285,7 +285,13 @@ void state_t::save_state(void)
          throw exception_t(0, string_t::_format("%s (cities)", config.lang.msg_data_err));
    }
 
-   /* now we need to save our hash tables */
+   // autonomous system entries
+   {hash_table<storable_t<asnode_t>>::iterator as_iter = as_htab.begin();
+   while(as_iter.next()) {
+      asnode_t *asnode = as_iter.item();
+      if(!database.put_asnode(*asnode, as_iter.item()->storage_info))
+         throw exception_t(0, string_t::_format("%s (asn)", config.lang.msg_data_err));
+   }}
 
    //
    // Nodes must be deleted in the left-to-right order, so we do not leave any 
@@ -699,6 +705,15 @@ void state_t::restore_state(void)
    storable_t<ctnode_t> ctnode;
    while(iter.next(ctnode)) {
       ct_htab.put_node(new storable_t<ctnode_t>(std::move(ctnode)), 0);
+   }
+   iter.close();
+   }
+
+   // restore ASN data
+   {database_t::iterator<asnode_t> iter = database.begin_asn(nullptr);
+   storable_t<asnode_t> asnode;
+   while(iter.next(asnode)) {
+      as_htab.put_node(new storable_t<asnode_t>(std::move(asnode)), 0);
    }
    iter.close();
    }

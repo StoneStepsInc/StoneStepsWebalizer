@@ -180,7 +180,9 @@ const struct database_t::table_desc_t {
    {&database_t::countries, "countries", 
          &bt_compare_cb<ccnode_t::s_compare_key>},
    {&database_t::cities, "cities", 
-         &bt_compare_cb<ctnode_t::s_compare_key>}
+         &bt_compare_cb<ctnode_t::s_compare_key>},
+   {&database_t::asn, "asn", 
+         &bt_compare_cb<asnode_t::s_compare_key>}
 };
 
 ///
@@ -257,7 +259,10 @@ const struct database_t::index_desc_t {
          &bt_compare_cb<ccnode_t::s_compare_visits>, &bt_reverse_compare_cb<ccnode_t::s_compare_key>, &sc_extract_cb<ccnode_t::s_field_visits>},
    // cities
    {&database_t::cities, "cities.visits", 
-         &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_reverse_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>}
+         &bt_compare_cb<ctnode_t::s_compare_visits>, &bt_reverse_compare_cb<ctnode_t::s_compare_key>, &sc_extract_cb<ctnode_t::s_field_visits>},
+   // asn
+   {&database_t::asn, "asn.visits", 
+         &bt_compare_cb<asnode_t::s_compare_visits>, &bt_reverse_compare_cb<asnode_t::s_compare_key>, &sc_extract_cb<asnode_t::s_field_visits>}
 };
 
 /// @}
@@ -285,7 +290,8 @@ database_t::database_t(const ::config_t& config) : berkeleydb_t(db_config_t(conf
       hourly(make_table()),
       totals(make_table()),
       countries(make_table()),
-      cities(make_table())
+      cities(make_table()),
+      asn(make_table())
 {
 }
 
@@ -314,7 +320,7 @@ berkeleydb_t::status_t database_t::open(void)
    std::initializer_list<table_t*> tblist = {&system,
                &urls, &hosts, &visits, &downloads, &active_downloads, &agents,
                &referrers, &search, &users, &errors, &scodes, &daily, &hourly,
-               &totals, &countries, &cities};
+               &totals, &countries, &cities, &asn};
 
    if(!(status = berkeleydb_t::open(tblist)).success())
       return status;
@@ -636,6 +642,21 @@ bool database_t::put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info)
 bool database_t::get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb) const
 {
    return cities.get_node_by_id(ctnode, upcb);
+}
+
+// -----------------------------------------------------------------------
+//
+// asn
+//
+// -----------------------------------------------------------------------
+bool database_t::put_asnode(const asnode_t& asnode, storage_info_t& strg_info)
+{
+   return asn.put_node<asnode_t>(asnode, strg_info);
+}
+
+bool database_t::get_asnode_by_id(storable_t<asnode_t>& asnode, asnode_t::s_unpack_cb_t<> upcb) const
+{
+   return asn.get_node_by_id(asnode, upcb);
 }
 
 // -----------------------------------------------------------------------

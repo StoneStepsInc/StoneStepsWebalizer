@@ -111,6 +111,7 @@ class database_t : public berkeleydb_t {
       table_t           totals;
       table_t           countries;
       table_t           cities;
+      table_t           asn;
 
    public:
       database_t(const ::config_t& config);
@@ -316,6 +317,17 @@ class database_t : public berkeleydb_t {
       bool put_ctnode(const ctnode_t& ctnode, storage_info_t& strg_info);
 
       bool get_ctnode_by_id(storable_t<ctnode_t>& ctnode, ctnode_t::s_unpack_cb_t<> upcb = nullptr) const;
+
+      //
+      // autonomous system
+      //
+      iterator<asnode_t> begin_asn(const char *dbname) const {return asn.begin<asnode_t>(dbname);}
+
+      reverse_iterator<asnode_t> rbegin_asn(const char *dbname) const {return asn.rbegin<asnode_t>(dbname);}
+
+      bool put_asnode(const asnode_t& asnode, storage_info_t& strg_info);
+
+      bool get_asnode_by_id(storable_t<asnode_t>& asnode, asnode_t::s_unpack_cb_t<> upcb = nullptr) const;
 
       ///
       /// @name   System

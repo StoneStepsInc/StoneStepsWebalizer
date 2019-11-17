@@ -63,7 +63,7 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
 
    public:
       template <typename ... param_t>
-      using s_unpack_cb_t = void (*)(ctnode_t& vnode, param_t ... param);
+      using s_unpack_cb_t = void (*)(ctnode_t& ctnode, param_t ... param);
 
    private:
       /// Combines a 32-bit GeoName ID and a country code to form a unique 64-bit `ctnode_t` identifier.

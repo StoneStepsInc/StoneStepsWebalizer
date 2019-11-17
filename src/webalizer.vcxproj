@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="asnode.cpp" />
     <ClCompile Include="basenode_tmpl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -299,6 +300,7 @@
     <ClCompile Include="tstring.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asnode.h" />
     <ClInclude Include="berkeleydb.h" />
     <ClInclude Include="char_buffer.h" />
     <ClInclude Include="char_buffer_stack.h" />

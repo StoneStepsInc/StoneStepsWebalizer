@@ -69,7 +69,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	webalizer.cpp dns_resolv.cpp history.cpp tmranges.cpp \
 	anode.cpp ccnode.cpp dlnode.cpp hnode.cpp \
 	inode.cpp rcnode.cpp rnode.cpp snode.cpp \
-	unode.cpp vnode.cpp ctnode.cpp \
+	unode.cpp vnode.cpp ctnode.cpp asnode.cpp \
 	danode.cpp keynode.cpp scnode.cpp sysnode.cpp \
 	daily.cpp hourly.cpp totals.cpp queue_nodes.cpp \
 	hashtab_nodes.cpp config.cpp serialize.cpp \
@@ -130,7 +130,7 @@ TEST_OBJS := $(TEST_SRC:.cpp=.o)  \
 	pch.o serialize.o tstamp.o tstring.o unicode.o fmt_impl.o \
 	util_http.o util_ipaddr.o util_path.o util_string.o util_time.o \
 	util_url.o tmranges.o config.o anode.o dlnode.o ccnode.o hnode.o \
-	rcnode.o vnode.o unode.o snode.o inode.o rnode.o ctnode.o \
+	rcnode.o vnode.o unode.o snode.o inode.o rnode.o ctnode.o asnode.o \
 	keynode.o hashtab_nodes.o berkeleydb.o
 
 TEST_DEPS := $(TEST_OBJS:.o=.d)

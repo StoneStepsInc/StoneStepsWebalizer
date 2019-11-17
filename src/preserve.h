@@ -66,6 +66,8 @@ class state_t {
       cc_hash_table cc_htab;                     // countries
       ct_hash_table ct_htab;                     ///< City hash table
 
+      as_hash_table as_htab;                     ///< Autonomous system table.
+
       std::vector<uint64_t> v_ended;             // ended active visit node IDs
       std::vector<uint64_t> dl_ended;            // ended active download node IDs
 

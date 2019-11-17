@@ -13,6 +13,7 @@
 #include "anode.h"
 #include "ccnode.h"
 #include "ctnode.h"
+#include "asnode.h"
 #include "dlnode.h"
 #include "hnode.h"
 #include "inode.h"
