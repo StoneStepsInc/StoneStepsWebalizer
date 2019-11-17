@@ -20,7 +20,7 @@
 
 hnode_t::hnode_t(void) : base_node<hnode_t>(),
       geoname_id(0),
-      asn_number(0)
+      as_num(0)
 {
    count = files = pages = visits = visits_conv = 0;
    visit_avg = .0;
@@ -42,8 +42,8 @@ hnode_t::hnode_t(hnode_t&& hnode) noexcept : base_node<hnode_t>(std::move(hnode)
       name(std::move(hnode.name)),
       city(std::move(hnode.city)),
       geoname_id(hnode.geoname_id),
-      asn_number(hnode.asn_number),
-      asn_org(std::move(hnode.asn_org))
+      as_num(hnode.as_num),
+      as_org(std::move(hnode.as_org))
 {
    spammer = hnode.spammer;
    robot = hnode.robot;
@@ -86,7 +86,7 @@ hnode_t::hnode_t(hnode_t&& hnode) noexcept : base_node<hnode_t>(std::move(hnode)
 
 hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr),
       geoname_id(0),
-      asn_number(0)
+      as_num(0)
 {
    spammer = false;
    robot = false;
@@ -203,8 +203,8 @@ size_t hnode_t::s_data_size(void) const
                serializer_t::s_size_of(city) +  // city
                sizeof(double) * 2 +             // latitude, longitude
                sizeof(uint32_t) +               // geoname_id
-               serializer_t::s_size_of(asn_number) +  // asn_number
-               serializer_t::s_size_of(asn_org);      // asn_org
+               serializer_t::s_size_of(as_num) +      // as_num
+               serializer_t::s_size_of(as_org);       // as_org
 }
 
 size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -243,8 +243,8 @@ size_t hnode_t::s_pack_data(void *buffer, size_t bufsize) const
 
    ptr = sr.serialize(ptr, geoname_id);
 
-   ptr = sr.serialize(ptr, asn_number);
-   ptr = sr.serialize(ptr, asn_org);
+   ptr = sr.serialize(ptr, as_num);
+   ptr = sr.serialize(ptr, as_org);
 
    return sr.data_size(ptr);
 }
@@ -318,12 +318,12 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
       geoname_id = 0;
 
    if(version >= 9) {
-      ptr = sr.deserialize(ptr, asn_number);
-      ptr = sr.deserialize(ptr, asn_org);
+      ptr = sr.deserialize(ptr, as_num);
+      ptr = sr.deserialize(ptr, as_org);
    }
    else {
-      asn_number = 0;
-      asn_org.reset();
+      as_num = 0;
+      as_org.reset();
    }
 
    visit = NULL;

@@ -436,7 +436,7 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
          ctnode.visits++;
       }
 
-      asnode_t& asnode = state.as_htab.get_asnode(hnode.asn_number, hnode.asn_org, 0);
+      asnode_t& asnode = state.as_htab.get_asnode(hnode.as_num, hnode.as_org, 0);
 
       asnode.hits += vnode.hits;
       asnode.files += vnode.files;

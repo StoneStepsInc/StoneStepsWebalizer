@@ -95,8 +95,8 @@ struct hnode_t : public base_node<hnode_t> {
 
       uint32_t geoname_id;           ///< Geoname identifier (see `ctnode_t`)
 
-      uint32_t asn_number;          ///< Autonomous system number.
-      string_t asn_org;             ///< Autonomous system organization.
+      uint32_t as_num;              ///< Autonomous system number.
+      string_t as_org;              ///< Autonomous system organization.
 
       public:
          template <typename ... param_t>

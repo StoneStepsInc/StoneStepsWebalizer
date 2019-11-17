@@ -101,12 +101,12 @@ struct dns_db_record_t {
    uint32_t    geoname_id;                      ///< The geoname_id from the GeoIP database
 
    uint64_t    asn_tstamp;                      ///< ASN database build time (`time_t`).
-   uint32_t    asn_number;                      ///< Autonomous system number.
-   string_t    asn_org;                         ///< Organization name.
+   uint32_t    as_num;                          ///< Autonomous system number.
+   string_t    as_org;                          ///< Autonomous system organization.
 
    public:
       /// Constructs an empty DNS cache record instance.
-      dns_db_record_t(void) : spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0), asn_tstamp(0), asn_number(0)
+      dns_db_record_t(void) : spammer(false), geoip_tstamp(0), latitude(0.), longitude(0.), geoname_id(0), asn_tstamp(0), as_num(0)
       {
          memset(ccode, 0, hnode_t::ccode_size);
       }
@@ -166,8 +166,8 @@ class dns_resolver_t::dnode_t {
       uint32_t       geoname_id;          ///< The geoname_id from the GeoIP database
 
       uint64_t       asn_tstamp;          ///< ASN database build time (`time_t`).
-      uint32_t       asn_number;          ///< Autonomous system number.
-      string_t       asn_org;             ///< Autonomous system organization name.
+      uint32_t       as_num;              ///< Autonomous system number.
+      string_t       as_org;              ///< Autonomous system organization name.
 
       union {
          sockaddr       s_addr_ip;        // s_addr would be better, but wisock2 defines it as a macro
@@ -211,8 +211,8 @@ dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) :
    longitude(other.longitude),
    geoname_id(other.geoname_id),
    asn_tstamp(other.asn_tstamp),
-   asn_number(other.asn_number),
-   asn_org(other.asn_org)
+   as_num(other.as_num),
+   as_org(other.as_org)
 {
    memcpy(ccode, other.ccode, hnode_t::ccode_size);
 }
@@ -230,8 +230,8 @@ size_t dns_db_record_t::s_data_size(void) const
             serializer_t::s_size_of(longitude) + 
             serializer_t::s_size_of(geoname_id) + 
             serializer_t::s_size_of(asn_tstamp) +
-            serializer_t::s_size_of(asn_number) +
-            serializer_t::s_size_of(asn_org);
+            serializer_t::s_size_of(as_num) +
+            serializer_t::s_size_of(as_org);
 }
 
 size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
@@ -258,8 +258,8 @@ size_t dns_db_record_t::s_pack_data(void *buffer, size_t bufsize) const
    ptr = sr.serialize(ptr, longitude);
    ptr = sr.serialize(ptr, geoname_id);
    ptr = sr.serialize(ptr, asn_tstamp);
-   ptr = sr.serialize(ptr, asn_number);
-   ptr = sr.serialize(ptr, asn_org);
+   ptr = sr.serialize(ptr, as_num);
+   ptr = sr.serialize(ptr, as_org);
 
    // return the size of the serialized data
    return (char*) ptr - (const char*) buffer;
@@ -346,8 +346,8 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
 
    if(version >= DNS_DB_REC_V7) {
       ptr = sr.deserialize(ptr, asn_tstamp);
-      ptr = sr.deserialize(ptr, asn_number);
-      ptr = sr.deserialize(ptr, asn_org);
+      ptr = sr.deserialize(ptr, as_num);
+      ptr = sr.deserialize(ptr, as_org);
    }
 
    return (const char*) ptr - (char*) buffer;
@@ -367,7 +367,7 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       longitude(0.),
       geoname_id(0),
       asn_tstamp(0),
-      asn_number(0)
+      as_num(0)
 {
    memset(&s_addr_ip, 0, std::max(sizeof(s_addr_ipv4), sizeof(s_addr_ipv6)));
 
@@ -390,8 +390,8 @@ dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) :
       latitude = hnode.latitude;
       longitude = hnode.longitude;
       geoname_id = hnode.geoname_id;
-      asn_number = hnode.asn_number;
-      asn_org = hnode.asn_org;
+      as_num = hnode.as_num;
+      as_org = hnode.as_org;
    }
 }
 
@@ -416,8 +416,8 @@ dns_resolver_t::dnode_t& dns_resolver_t::dnode_t::operator = (dns_db_record_t&& 
    geoname_id = dnsrec.geoname_id;
 
    asn_tstamp = dnsrec.asn_tstamp;
-   asn_number = dnsrec.asn_number;
-   asn_org = dnsrec.asn_org;
+   as_num = dnsrec.as_num;
+   as_org = dnsrec.as_org;
 
    return *this;
 }
@@ -442,8 +442,8 @@ dns_db_record_t dns_resolver_t::dnode_t::get_db_record(const tstamp_t& ts_runtim
    dnsrec.geoname_id = geoname_id;
 
    dnsrec.asn_tstamp = asn_tstamp;
-   dnsrec.asn_number = asn_number;
-   dnsrec.asn_org = asn_org;
+   dnsrec.as_num = as_num;
+   dnsrec.as_org = as_org;
 
    return dnsrec;
 }
@@ -651,8 +651,8 @@ hnode_t *dns_resolver_t::get_hnode(void)
    hnode->latitude = dnode->latitude;
    hnode->longitude = dnode->longitude;
    hnode->geoname_id = dnode->geoname_id;
-   hnode->asn_number = dnode->asn_number;
-   hnode->asn_org = std::move(dnode->asn_org);
+   hnode->as_num = dnode->as_num;
+   hnode->as_org = std::move(dnode->as_org);
 
    //
    // If the spammer flag is the same in both nodes, we are done. However, if neither
@@ -679,7 +679,7 @@ hnode_t *dns_resolver_t::get_hnode(void)
       // the DNS record with empty values. This update should happen quite
       // rarely to justify this extra step.
       //
-      dnode->asn_org = hnode->asn_org;
+      dnode->as_org = hnode->as_org;
       dnode->remove_host_node();
       queue_dnode(dnode);
    }
@@ -1058,10 +1058,10 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
          }
       }
 
-      if(!cached || asn_db && !nptr->asn_number && asn_db->metadata.build_epoch > nptr->asn_tstamp) {
+      if(!cached || asn_db && !nptr->as_num && asn_db->metadata.build_epoch > nptr->asn_tstamp) {
          // look up an assigned system number in the ASN database if there is one
          if(asn_db)
-            goodasn = asn_get_info(nptr->hnode->string, nptr->s_addr_ip, nptr->asn_number, nptr->asn_org);
+            goodasn = asn_get_info(nptr->hnode->string, nptr->s_addr_ip, nptr->as_num, nptr->as_org);
       }
 
       // update the database if it's a new IP address or if we found either a country code or an ASN entry for an existing one
@@ -1258,10 +1258,10 @@ bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& i
    return !ccode.isempty();
 }
 
-bool dns_resolver_t::asn_get_info(const string_t& hostaddr, const sockaddr& ipaddr, uint32_t& asn_number, string_t& asn_org)
+bool dns_resolver_t::asn_get_info(const string_t& hostaddr, const sockaddr& ipaddr, uint32_t& as_num, string_t& as_org)
 {
-   static const char *asn_number_path[] = {"autonomous_system_number", nullptr};
-   static const char *asn_org_path[] = {"autonomous_system_organization", nullptr};
+   static const char *as_num_path[] = {"autonomous_system_number", nullptr};
+   static const char *as_org_path[] = {"autonomous_system_organization", nullptr};
 
    int mmdb_error;
    MMDB_lookup_result_s result = {};
@@ -1286,19 +1286,19 @@ bool dns_resolver_t::asn_get_info(const string_t& hostaddr, const sockaddr& ipad
    }
 
    // get the assigned system number first
-   if(MMDB_aget_value(&result.entry, &entry_data, asn_number_path) == MMDB_SUCCESS) {
+   if(MMDB_aget_value(&result.entry, &entry_data, as_num_path) == MMDB_SUCCESS) {
       if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UINT32)
-         asn_number = entry_data.uint32;
+         as_num = entry_data.uint32;
    }
 
    // get the organization registered for this system number
-   if(MMDB_aget_value(&result.entry, &entry_data, asn_org_path) == MMDB_SUCCESS) {
+   if(MMDB_aget_value(&result.entry, &entry_data, as_org_path) == MMDB_SUCCESS) {
       if(entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UTF8_STRING)
-         asn_org.assign(entry_data.utf8_string, entry_data.data_size);
+         as_org.assign(entry_data.utf8_string, entry_data.data_size);
    }
 
    // see the comment above return in geoip_get_ccode
-   return asn_number != 0;
+   return as_num != 0;
 }
 
 ///

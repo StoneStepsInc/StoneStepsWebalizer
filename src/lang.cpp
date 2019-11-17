@@ -603,8 +603,8 @@ lang_t::lang_t(void) :
    msg_h_spammer = "Spammer";
    msg_h_latitude = "Latitude";
    msg_h_longitude = "Longitude";
-   msg_h_asn_num = "AS Number";
-   msg_h_asn_org = "AS Organization";
+   msg_h_as_num = "AS Number";
+   msg_h_as_org = "AS Organization";
 
    /* links along top of page */
    msg_hlnk_sum= "Summary";
@@ -916,8 +916,8 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace(string_t("msg_h_cvisits"), &msg_h_cvisits);
    ln_htab.emplace(string_t("msg_h_latitude"), &msg_h_latitude);
    ln_htab.emplace(string_t("msg_h_longitude"), &msg_h_longitude);
-   ln_htab.emplace(string_t("msg_h_asn_num"), &msg_h_asn_num);
-   ln_htab.emplace(string_t("msg_h_asn_org"), &msg_h_asn_org);
+   ln_htab.emplace(string_t("msg_h_as_num"), &msg_h_as_num);
+   ln_htab.emplace(string_t("msg_h_as_org"), &msg_h_as_org);
 
    ln_htab.emplace(string_t("msg_hlnk_sum"), &msg_hlnk_sum);
    ln_htab.emplace(string_t("msg_hlnk_ds"), &msg_hlnk_ds);

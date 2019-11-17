@@ -131,7 +131,7 @@ void dump_output_t::dump_all_hosts()
             config.lang.msg_h_xfer, config.lang.msg_h_visits, config.lang.msg_h_duration, 
             config.lang.msg_h_duration, config.lang.msg_h_ccode, config.lang.msg_h_ctry, config.lang.msg_h_city, 
             config.lang.msg_h_type, config.lang.msg_h_latitude, config.lang.msg_h_longitude,
-            config.lang.msg_h_asn_num, config.lang.msg_h_asn_org,
+            config.lang.msg_h_as_num, config.lang.msg_h_as_org,
             config.lang.msg_h_ipaddr, config.lang.msg_h_hname);
    }
 
@@ -150,7 +150,7 @@ void dump_output_t::dump_all_hosts()
             hnode.city.c_str(),
             hnode.spammer?'*':hnode.robot?'#':' ', 
             hnode.latitude, hnode.longitude,
-            hnode.asn_number,hnode.asn_org.c_str(),
+            hnode.as_num, hnode.as_org.c_str(),
             hnode.string.c_str(), hnode.hostname().c_str());
       }
    }
@@ -509,7 +509,7 @@ void dump_output_t::dump_all_asn()
       fprintf(out_fp,"%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
             config.lang.msg_h_hits, config.lang.msg_h_files, config.lang.msg_h_pages, 
             config.lang.msg_h_xfer, config.lang.msg_h_visits, 
-            config.lang.msg_h_asn_num, config.lang.msg_h_asn_org);
+            config.lang.msg_h_as_num, config.lang.msg_h_as_org);
    }
 
    // output rows ordered by visit counts, in descending order

@@ -1248,7 +1248,7 @@ void html_output_t::top_hosts_table(int flag)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
+      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_as_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
@@ -1303,9 +1303,9 @@ void html_output_t::top_hosts_table(int flag)
       }
 
       if(!config.asn_db_path.isempty()) {
-         fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(hptr->asn_org.c_str()));
-         if(hptr->asn_number)
-            fprintf(out_fp, "%" PRIu32 "", hptr->asn_number);
+         fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(hptr->as_org.c_str()));
+         if(hptr->as_num)
+            fprintf(out_fp, "%" PRIu32 "", hptr->as_num);
          fputs("</td>\n", out_fp);
       }
 
@@ -1376,7 +1376,7 @@ int html_output_t::all_hosts_page(void)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
+      fprintf(out_fp, "   %-10s", config.lang.msg_h_as_num);
       
    fprintf(out_fp, "   %s\n", config.lang.msg_h_host);
 
@@ -1458,11 +1458,11 @@ int html_output_t::all_hosts_page(void)
             }
 
             if(!config.asn_db_path.isempty()) {
-               if(!hnode.asn_number)
+               if(!hnode.as_num)
                   fprintf(out_fp, "  %8c", ' ');
                else {
                   fprintf(out_fp, "  <span title=\"%s\">%8" PRIu32 "</span>",
-                     html_encode(hnode.asn_org.c_str()), hnode.asn_number);
+                     html_encode(hnode.as_org.c_str()), hnode.as_num);
                }
             }
 
@@ -2092,7 +2092,7 @@ void html_output_t::top_dl_table(void)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_asn_num);
+      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_as_num);
 
    fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
@@ -2133,9 +2133,9 @@ void html_output_t::top_dl_table(void)
       }
 
       if(!config.asn_db_path.isempty()) {
-         fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(nptr->hnode->asn_org.c_str()));
-         if(nptr->hnode->asn_number)
-            fprintf(out_fp, "%d", nptr->hnode->asn_number);
+         fprintf(out_fp, "<td class=\"stats_data_num_td\" title=\"%s\">", html_encode(nptr->hnode->as_org.c_str()));
+         if(nptr->hnode->as_num)
+            fprintf(out_fp, "%d", nptr->hnode->as_num);
          fputs("</td>\n", out_fp);
       }
 
@@ -2208,7 +2208,7 @@ int html_output_t::all_downloads_page(void)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp, "   %-10s", config.lang.msg_h_asn_num);
+      fprintf(out_fp, "   %-10s", config.lang.msg_h_as_num);
       
    fprintf(out_fp,"  %s\n", config.lang.msg_h_host);
 
@@ -2244,11 +2244,11 @@ int html_output_t::all_downloads_page(void)
       }
       
       if(!config.asn_db_path.isempty()) {
-         if(!nptr->hnode->asn_number)
+         if(!nptr->hnode->as_num)
             fprintf(out_fp, "  %8c", ' ');
          else {
             fprintf(out_fp, "  <span title=\"%s\">%8" PRIu32 "</span>",
-               html_encode(nptr->hnode->asn_org.c_str()), nptr->hnode->asn_number);
+               html_encode(nptr->hnode->as_org.c_str()), nptr->hnode->as_num);
          }
       }
 
@@ -3303,8 +3303,8 @@ void html_output_t::top_asn_table()
    fprintf(out_fp,"<th colspan=\"2\" class=\"pages_th\">%s</th>\n", config.lang.msg_h_pages);
    fprintf(out_fp,"<th colspan=\"2\" class=\"kbytes_th\">%s</th>\n", config.lang.msg_h_xfer);
    fprintf(out_fp,"<th colspan=\"2\" class=\"visits_th\">%s</th>\n", config.lang.msg_h_visits);
-   fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_asn_num);
-   fprintf(out_fp,"<th class=\"country_th\">%s</th></tr>\n", config.lang.msg_h_asn_org);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_as_num);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th></tr>\n", config.lang.msg_h_as_org);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
