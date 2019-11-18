@@ -122,7 +122,7 @@ class dns_resolver_t {
 
       void queue_dnode(dnode_t *dnode);
 
-      string_t open_mmdb(MMDB_s& mmdb, const string_t& dbpath, const char *goodmsg, const char *errmsg) const;
+      std::unique_ptr<MMDB_s> open_mmdb(const string_t& db_path, string_t& lang, const char *goodmsg, const char *errmsg) const;
 
       static bool dns_derive_ccode(const string_t& name, string_t& ccode);
 

@@ -490,9 +490,7 @@ void dns_resolver_t::dnode_t::remove_host_node(void)
 //
 
 dns_resolver_t::dns_resolver_t(const config_t& config) :
-      config(config),
-      geoip_db(new MMDB_s()),
-      asn_db(new MMDB_s())
+      config(config)
 {
    dnode_list = dnode_end = NULL;
 
@@ -544,7 +542,7 @@ dns_resolver_t::~dns_resolver_t(void)
 
       event_destroy(dns_done_event);
    }
- }
+}
 
 ///
 /// @brief   Queues the host node for a DNS database look-up
@@ -737,15 +735,20 @@ funcexit:
 ///
 /// @brief  Opens the specified MaxMind database.
 ///
-/// Returns a language identifier that most closely matches the one in
-/// our configuration.
+/// Returns a pointer to a `MMDB_s` structure if the database was successfully
+/// opened or throws an exceptino otherwise. The caller must close the database
+/// via `MMDB_close`.
 ///
-string_t dns_resolver_t::open_mmdb(MMDB_s& mmdb, const string_t& db_path, const char *goodmsg, const char *errmsg) const
+/// A database language identifier that most closely matches the one in our
+/// configuration is returned in `lang`.
+///
+std::unique_ptr<MMDB_s> dns_resolver_t::open_mmdb(const string_t& db_path, string_t& lang, const char *goodmsg, const char *errmsg) const
 {
-   string_t lang;
    int mmdb_error;
 
-   if((mmdb_error = MMDB_open(db_path, MMDB_MODE_MMAP, &mmdb)) != MMDB_SUCCESS)
+   std::unique_ptr<MMDB_s> mmdb(new MMDB_s());
+
+   if((mmdb_error = MMDB_open(db_path, MMDB_MODE_MMAP, mmdb.get())) != MMDB_SUCCESS)
       throw exception_t(0, string_t::_format("%s %s (%d - %s)", errmsg, db_path.c_str(), mmdb_error, MMDB_strerror(mmdb_error)));
 
    if (config.verbose > 1) 
@@ -761,19 +764,19 @@ string_t dns_resolver_t::open_mmdb(MMDB_s& mmdb, const string_t& db_path, const 
    // en-uk) wins. If we didn't find a matching language, but there is English available, 
    // use it.
    //
-   for(size_t i = 0; i < mmdb.metadata.languages.count; i++) {
-      if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code)) {
-         lang.assign(mmdb.metadata.languages.names[i]);
+   for(size_t i = 0; i < mmdb->metadata.languages.count; i++) {
+      if(lang_t::check_language(mmdb->metadata.languages.names[i], config.lang.language_code)) {
+         lang.assign(mmdb->metadata.languages.names[i]);
          break;
       }
-      else if(lang_t::check_language(mmdb.metadata.languages.names[i], config.lang.language_code, 2) &&
-               (!lang_t::check_language(lang, config.lang.language_code, 2) || strlen(mmdb.metadata.languages.names[i]) < lang.length()))
-         lang.assign(mmdb.metadata.languages.names[i]);
-      else if(lang.isempty() && lang_t::check_language(mmdb.metadata.languages.names[i], "en"))
+      else if(lang_t::check_language(mmdb->metadata.languages.names[i], config.lang.language_code, 2) &&
+               (!lang_t::check_language(lang, config.lang.language_code, 2) || strlen(mmdb->metadata.languages.names[i]) < lang.length()))
+         lang.assign(mmdb->metadata.languages.names[i]);
+      else if(lang.isempty() && lang_t::check_language(mmdb->metadata.languages.names[i], "en"))
          lang.assign("en", 2);
    }
 
-   return lang;
+   return mmdb;
 }
 
 ///
@@ -852,11 +855,11 @@ void dns_resolver_t::dns_init(void)
 
    // open the GeoIP database
    if(!config.geoip_db_path.isempty())
-      geoip_language = open_mmdb(*geoip_db, config.geoip_db_path, config.lang.msg_dns_useg, config.lang.msg_dns_geoe);
+      geoip_db = open_mmdb(config.geoip_db_path, geoip_language, config.lang.msg_dns_useg, config.lang.msg_dns_geoe);
 
    // open the ASN database
    if(!config.asn_db_path.isempty())
-      asn_language = open_mmdb(*asn_db, config.asn_db_path, config.lang.msg_dns_usea, config.lang.msg_dns_asne);
+      asn_db = open_mmdb(config.asn_db_path, asn_language, config.lang.msg_dns_usea, config.lang.msg_dns_asne);
 
    // get the current time once to avoid doing it for every host
    runtime.reset(time(NULL));
