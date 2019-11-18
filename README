@@ -1575,6 +1575,19 @@ DNSCache      Specifies the DNS cache filename.  This name is relative
               still be created to lookup country codes during log file 
               processing.
 
+ASNDBPath     A fully-qualified path to a MaxMind's Autonomous System
+              numbers (ASN) database. A free ASN database may be downloaded
+              from this location:
+
+              https://dev.maxmind.com/geoip/geoip2/geolite2/
+
+              When ASN database is configured, ASN columns will be added
+              to the Hosts and Downloads reports and an additional Top ASN
+              report will be generated, as well as a tab-separated file
+              containing ASN entries. Use TopASN and DumpASP configuration
+              parameters to control whether to generate a top ASN report
+              and to generate a tab-separated ASN file.
+
 GeoIPDBPath   This configuration parameter is expected to be a fully-
               qualified path to the MaxMind's GeoIP Country or GeoIP
               City database file in the binary format. The database may 
@@ -1963,6 +1976,9 @@ TopErrors      Defines the maximum number of lines in the HTTP error
               value, the rest of the errors will either be discarded or 
               generated as a separate HTTP error report, depending on the 
               value of AllErrors. Default value: 20     
+
+TopASN        Defines the maximum number of rows in the top Autonomous
+              System report. Default value: 30
     
 
 Hide Object Keywords
@@ -2311,6 +2327,10 @@ DumpCountries Generate a tab-delimited data file for all countries. The
 
 DumpCities    Generate a tab-delimited data file for all cities. The file
               name will be city_YYYYMM.tab.
+              Default value: no
+
+DumpASN       Generates a tab-delimited data file for all ASN entries.
+              The file will be named asn_YYYYMM.tab.
               Default value: no
 
 HTML Generation Keywords
