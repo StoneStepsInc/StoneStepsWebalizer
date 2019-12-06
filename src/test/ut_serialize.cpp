@@ -105,6 +105,8 @@ TEST(Serialization, FieldWriteReadTest)
    const void *rptr = buffer.get_buffer();
 
    string_t v_str, v_empty;
+   const char *v_sptr = nullptr;
+   size_t v_slen = 0;
    tstamp_t v_utc_ts, v_lcl_ts, v_null_ts;
    u_short v_shv;
    uint64_t v_ui64v, v_ui64v_i;
@@ -117,6 +119,10 @@ TEST(Serialization, FieldWriteReadTest)
    rptr = sr.deserialize(rptr, v_null_ts);
    ASSERT_EQ(null_ts, v_null_ts);
 
+   // do not advance the read pointer, so we can read the string again
+   sr.deserialize(rptr, v_sptr, v_slen);
+   ASSERT_STREQ(str.c_str(), string_t::hold(v_sptr, v_slen));
+
    rptr = sr.deserialize(rptr, v_str);
    ASSERT_STREQ(str.c_str(), v_str.c_str());
 
@@ -125,6 +131,10 @@ TEST(Serialization, FieldWriteReadTest)
 
    rptr = sr.deserialize(rptr, v_ui64v);
    ASSERT_EQ(ui64v, v_ui64v);
+
+   // do not advance the read pointer, so we can read the string again
+   sr.deserialize(rptr, v_sptr, v_slen);
+   ASSERT_EQ(0, v_slen);
 
    rptr = sr.deserialize(rptr, v_empty);
    ASSERT_TRUE(v_empty.isempty());

@@ -2638,7 +2638,7 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
    param.method = method;
 
    // respcode, method, url
-   hashval = rcnode_t::hash(respcode, method, url);
+   hashval = rcnode_t::hash_key(respcode, method, url);
 
    /* check if hashed */
    if((nptr = state.rc_htab.find_node(hashval, &param, OBJ_REG, htab_tstamp)) == NULL) {
@@ -2647,7 +2647,6 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
 
       if(!state.database.get_rcnode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_rcnode_id();
-         nptr->flag = OBJ_REG;
          nptr->count = count;
          if(newnode) *newnode = true;
          found = false;

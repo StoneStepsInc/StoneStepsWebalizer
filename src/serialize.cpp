@@ -307,6 +307,17 @@ const void *serializer_t::deserialize(const void *ptr, string_t& value) const
    return ptr;
 }
 
+const void *serializer_t::deserialize(const void *ptr, const char *&value, size_t& slen) const
+{
+   value = (const char*) deserialize<u_int, size_t>(ptr, slen);
+
+   // returned value shouldn't be used if slen is zero - make it easier to track if it was
+   if(!slen)
+      value = nullptr;
+
+   return s_skip_field<string_t>(ptr);
+}
+
 const void *serializer_t::deserialize(const void *ptr, tstamp_t& tstamp) const
 {
    bool null, utc;

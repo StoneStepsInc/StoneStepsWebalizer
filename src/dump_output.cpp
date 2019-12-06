@@ -315,7 +315,7 @@ void dump_output_t::dump_all_errors(void)
    /* dump 'em */
    while(iter.prev<>(rcnode))
    {
-      fprintf(out_fp,"%" PRIu64 "\t%d\t%s\t%s\n",rcnode.count, rcnode.respcode, rcnode.method.c_str(), rcnode.string.c_str());
+      fprintf(out_fp,"%" PRIu64 "\t%d\t%s\t%s\n",rcnode.count, rcnode.respcode, rcnode.method.c_str(), rcnode.url.c_str());
    }
 
    iter.close();

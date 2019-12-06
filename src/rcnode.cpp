@@ -19,11 +19,20 @@
 //
 //
 
-rcnode_t::rcnode_t(const string_t& _method, const string_t& url, u_short _respcode) : base_node<rcnode_t>(url) 
+rcnode_t::rcnode_t(void) :
+      keynode_t<uint64_t>(0),
+      count(0),
+      respcode(0)
 {
-   count = 0; 
-   method = _method;
-   respcode = _respcode;
+}
+
+rcnode_t::rcnode_t(const string_t& method, const string_t& url, u_short respcode) :
+      keynode_t<uint64_t>(0),
+      url(url),
+      respcode(respcode),
+      count(0),
+      method(method)
+{
 }
 
 bool rcnode_t::match_key_ex(const rcnode_t::param_block *pb) const
@@ -37,7 +46,7 @@ bool rcnode_t::match_key_ex(const rcnode_t::param_block *pb) const
       return false;
 
    // finally, compare URLs
-   return !strcmp(string, pb->url);
+   return !strcmp(url, pb->url);
 }
 
 //
@@ -46,19 +55,25 @@ bool rcnode_t::match_key_ex(const rcnode_t::param_block *pb) const
 
 size_t rcnode_t::s_data_size(void) const
 {
-   return base_node<rcnode_t>::s_data_size() + 
-               sizeof(u_char) +              // hexenc
-               sizeof(u_short) +             // respcode
-               sizeof(uint64_t) * 2 +        // count, value hash
-               serializer_t::s_size_of(method); // method
+   return datanode_t<rcnode_t>::s_data_size() +
+               sizeof(u_char) +                       // node type
+               serializer_t::s_size_of(url) +         // url
+               sizeof(u_char) +                       // hexenc
+               sizeof(u_short) +                      // respcode
+               sizeof(uint64_t) * 2 +                 // count, value hash
+               serializer_t::s_size_of(method);       // method
 }
 
 size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
    serializer_t sr(buffer, bufsize);
 
-   size_t basesize = base_node<rcnode_t>::s_pack_data(buffer, bufsize);
+   size_t basesize = datanode_t<rcnode_t>::s_pack_data(buffer, bufsize);
    void *ptr = &((u_char*)buffer)[basesize];
+
+   // used to be in basenode and should be written first
+   ptr = sr.serialize<u_char, nodetype_t>(ptr, OBJ_REG);
+   ptr = sr.serialize(ptr, url);
 
    ptr = sr.serialize(ptr, false);              // hexenc
    ptr = sr.serialize(ptr, respcode);
@@ -75,8 +90,12 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
 {
    serializer_t sr(buffer, bufsize);
 
-   size_t basesize = base_node<rcnode_t>::s_unpack_data(buffer, bufsize);
+   size_t basesize = datanode_t<rcnode_t>::s_unpack_data(buffer, bufsize);
    const void *ptr = (u_char*) buffer + basesize;
+
+   // used to be in basenode; skip node type - errors cannot be grouped
+   ptr = sr.s_skip_field<u_char>(ptr);
+   ptr = sr.deserialize(ptr, url);
 
    ptr = sr.s_skip_field<bool>(ptr);            // hexenc
 
@@ -94,64 +113,84 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
 
 uint64_t rcnode_t::s_hash_value(void) const
 {
-   return hash_str(hash_num(base_node<rcnode_t>::s_hash_value(), respcode), method, method.length());
-}
-
-const void *rcnode_t::s_field_value_mp_url(const void *buffer, size_t bufsize, size_t& datasize)
-{
-   return base_node<rcnode_t>::s_field_value(buffer, bufsize, datasize);
-}
-
-const void *rcnode_t::s_field_value_mp_method(const void *buffer, size_t bufsize, size_t& datasize)
-{
-   const void *ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
-
-   datasize = serializer_t(buffer, bufsize).s_size_of<string_t>(ptr);
-
-   return ptr;
-}
-
-const void *rcnode_t::s_field_value_mp_respcode(const void *buffer, size_t bufsize, size_t& datasize)
-{
-   datasize = sizeof(u_short);
-   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char);
+   return hash_key(respcode, method, url);
 }
 
 const void *rcnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
-   const void *ptr;
+   serializer_t sr(buffer, bufsize);
+
    datasize = sizeof(uint64_t);
-   ptr = (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short) + sizeof(uint64_t);
-   return (u_char*) ptr + serializer_t(buffer, bufsize).s_size_of<string_t>(ptr);
+
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<rcnode_t>::s_data_size(buffer, bufsize);
+
+   // $$$ basenode_t -- comment
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+   ptr = sr.s_skip_field<string_t>(ptr);     // url
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // hexenc
+   ptr = sr.s_skip_field<u_short>(ptr);      // respcode
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // count
+
+   return sr.s_skip_field<string_t>(ptr);    // method
 }
 
 int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 {
    serializer_t sr(buffer, bufsize);
 
-   size_t datasize;
-   string_t tstr;
+   const char *str;
+   size_t slen;
    u_short tcode;
    int64_t diff;
 
-   if((diff = base_node<rcnode_t>::s_compare_value(buffer, bufsize)) != 0)
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<rcnode_t>::s_data_size(buffer, bufsize);
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+
+   ptr = sr.deserialize(ptr, str, slen);     // url
+
+   // basenode compared buffer URL on the right-hand side
+   if((diff = (int64_t) url.compare(string_t::hold(str, slen))) != 0)
       return diff;
 
-   sr.deserialize(s_field_value_mp_respcode(buffer, bufsize, datasize), tcode);
+   ptr = sr.deserialize(ptr, tcode);         // respcode
 
-   // tcode and respcode are both u_short (no overflow)
-   if((diff = tcode - respcode) != 0)
+   if((diff = (int64_t) (tcode - respcode)) != 0)
       return diff;
 
-   sr.deserialize(s_field_value_mp_method(buffer, bufsize, datasize), tstr);
+   ptr = sr.s_skip_field<u_char>(ptr);       // hexenc
+   ptr = sr.s_skip_field<u_short>(ptr);      // respcode
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // count
 
-   return method.compare(tstr);
+   sr.deserialize(ptr, str, slen);           // method
+
+   return method.compare(string_t::hold(str, slen));
 }
 
 const void *rcnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)
 {
+   serializer_t sr(buffer, bufsize);
+
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<rcnode_t>::s_data_size(buffer, bufsize) + sizeof(u_char) + sizeof(u_short);
+
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<rcnode_t>::s_data_size(buffer, bufsize);
+
+   // $$$ basenode_t -- comment
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+   ptr = sr.s_skip_field<string_t>(ptr);     // url
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // hexenc
+
+   return sr.s_skip_field<u_short>(ptr);     // respcode
+}
+
+int64_t rcnode_t::s_compare_value_hash(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
+{
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
 int64_t rcnode_t::s_compare_hits(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)

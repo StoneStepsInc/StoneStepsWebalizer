@@ -2317,7 +2317,7 @@ void html_output_t::top_err_table(void)
           (state.totals.t_hit == 0) ? 0: ((double)rptr->count/state.totals.t_hit)*100.0,
           config.lang.get_resp_code(rptr->respcode).desc, rptr->respcode, html_encode(rptr->method));
 
-      fprintf(out_fp,"%s", html_encode(rptr->string));
+      fprintf(out_fp,"%s", html_encode(rptr->url));
 
       fputs("</td></tr>\n", out_fp);
    }
@@ -2377,7 +2377,7 @@ int html_output_t::all_errors_page(void)
          (state.totals.t_hit==0)?0:((double)rptr->count/state.totals.t_hit)*100.0,
          rptr->respcode,
          html_encode(rptr->method),
-         html_encode(rptr->string));
+         html_encode(rptr->url));
    }
 
    iter.close();

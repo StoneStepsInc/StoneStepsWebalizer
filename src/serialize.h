@@ -166,6 +166,9 @@ class serializer_t {
       template <typename storage_t, typename runtime_t>
       const void *deserialize(const void *buf, runtime_t& value) const;
 
+      /// Deserializes a string pointer and length. The pointer is within the buffer for non-zero length values.
+      const void *deserialize(const void *ptr, const char *&value, size_t& slen) const;
+
       /// Deserializes a `string_t` value and returns the position after the field that was just read.
       const void *deserialize(const void *ptr, string_t& value) const;
 
@@ -264,6 +267,10 @@ inline int64_t s_compare<string_t>(const void *buf1, size_t buf1size, const void
 {
    serializer_t sr1(buf1, buf1size);
    serializer_t sr2(buf2, buf2size);
+
+   // make sure both strings are within their buffer sizes
+   sr1.s_skip_field<string_t>(buf1);
+   sr2.s_skip_field<string_t>(buf2);
 
    const char *cp1, *cp2;
    u_int slen1, slen2;
