@@ -35,18 +35,18 @@ rcnode_t::rcnode_t(const string_t& method, const string_t& url, u_short respcode
 {
 }
 
-bool rcnode_t::match_key_ex(const rcnode_t::param_block *pb) const
+bool rcnode_t::match_key(u_short respcode, const string_t& method, const string_t& url) const
 {
    // compare HTTP response codes first
-   if(respcode != pb->respcode)
+   if(this->respcode != respcode)
       return false;
 
    // then HTTP method names
-   if(strcmp(method, pb->method))
+   if(this->method != method)
       return false;
 
    // finally, compare URLs
-   return !strcmp(url, pb->url);
+   return this->url == url;
 }
 
 //
@@ -71,7 +71,7 @@ size_t rcnode_t::s_pack_data(void *buffer, size_t bufsize) const
    size_t basesize = datanode_t<rcnode_t>::s_pack_data(buffer, bufsize);
    void *ptr = &((u_char*)buffer)[basesize];
 
-   // used to be in basenode and should be written first
+   // used to be in base_node and should be written first
    ptr = sr.serialize<u_char, nodetype_t>(ptr, OBJ_REG);
    ptr = sr.serialize(ptr, url);
 
@@ -93,7 +93,7 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    size_t basesize = datanode_t<rcnode_t>::s_unpack_data(buffer, bufsize);
    const void *ptr = (const u_char*) buffer + basesize;
 
-   // used to be in basenode; skip node type - errors cannot be grouped
+   // used to be in base_node; skip node type - errors cannot be grouped
    ptr = sr.s_skip_field<u_char>(ptr);
    ptr = sr.deserialize(ptr, url);
 
@@ -125,7 +125,7 @@ const void *rcnode_t::s_field_value_hash(const void *buffer, size_t bufsize, siz
    const void *ptr = (const u_char*) buffer + 
          datanode_t<rcnode_t>::s_data_size(buffer, bufsize);
 
-   // $$$ basenode_t -- comment
+   // used to be in base_node
    ptr = sr.s_skip_field<u_char>(ptr);       // node type
    ptr = sr.s_skip_field<string_t>(ptr);     // url
 
@@ -152,20 +152,20 @@ int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 
    ptr = sr.deserialize(ptr, str, slen);     // url
 
-   // basenode compared buffer URL on the right-hand side
+   // base_node compared buffer URL on the right-hand side
    if((diff = (int64_t) url.compare(string_t::hold(str, slen))) != 0)
       return diff;
+
+   ptr = sr.s_skip_field<bool>(ptr);         // hexenc
 
    ptr = sr.deserialize(ptr, tcode);         // respcode
 
    if((diff = (int64_t) (tcode - respcode)) != 0)
       return diff;
 
-   ptr = sr.s_skip_field<u_char>(ptr);       // hexenc
-   ptr = sr.s_skip_field<u_short>(ptr);      // respcode
    ptr = sr.s_skip_field<uint64_t>(ptr);     // count
 
-   sr.deserialize(ptr, str, slen);           // method
+   ptr = sr.deserialize(ptr, str, slen);     // method
 
    return method.compare(string_t::hold(str, slen));
 }

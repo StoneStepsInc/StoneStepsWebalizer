@@ -54,17 +54,7 @@ struct hnode_t;
 /// should call `set_host` to link both nodes and should arrange that the download
 /// node is destroyed first.
 ///
-struct dlnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<dlnode_t> {
-      ///
-      /// @struct param_block
-      ///
-      /// @brief  A compound key structure for a download node.
-      ///
-      struct param_block {
-         const char  *name;            ///< Download name
-         const char  *ipaddr;          ///< IP address
-      };
-
+struct dlnode_t : public htab_obj_t<const string_t&, const string_t&>, public keynode_t<uint64_t>, public datanode_t<dlnode_t> {
       // combined download job data
       string_t    name;                ///< Download job name.
       uint64_t    count;               ///< Number of times this download was performed.
@@ -94,12 +84,7 @@ struct dlnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
 
          void reset(uint64_t nodeid = 0);
 
-         bool match_key_ex(const dlnode_t::param_block *pb) const;
-
-         virtual bool match_key(const string_t& key) const override
-         {
-            throw std::logic_error("This node only supports searches with a compound key");
-         }
+         bool match_key(const string_t& ipaddr, const string_t& dlname) const override;
 
          static uint64_t hash_key(const string_t& ipaddr, const string_t& dlname) 
          {

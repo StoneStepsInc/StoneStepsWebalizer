@@ -23,18 +23,7 @@
 /// 
 /// 1. `rcnode_t` tracks URLs that resulted in an HTTP error
 ///
-struct rcnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<rcnode_t> { 
-      ///
-      /// @struct param_block
-      ///
-      /// @brief  A compound key structure for an HTP response code node.
-      ///
-      struct param_block {
-         u_int       respcode;         ///< HTTP status code
-         const char  *url;             ///< Request URL
-         const char  *method;          ///< HTTP method
-      };
-
+struct rcnode_t : public htab_obj_t<u_short, const string_t&, const string_t&>, public keynode_t<uint64_t>, public datanode_t<rcnode_t> { 
       string_t       url;              ///< Requested URL.
       u_short        respcode;         ///< HTTP status code
       uint64_t       count;            ///< Request count
@@ -50,12 +39,7 @@ struct rcnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
 
          nodetype_t get_type(void) const override {return OBJ_REG;}
 
-         bool match_key_ex(const rcnode_t::param_block *pb) const;
-
-         virtual bool match_key(const string_t& key) const override 
-         {
-            throw std::logic_error("This node only supports searches with a compound key");
-         }
+         bool match_key(u_short respcode, const string_t& method, const string_t& url) const;
 
          static uint64_t hash_key(u_short respcode, const string_t& method, const string_t& url) 
          {

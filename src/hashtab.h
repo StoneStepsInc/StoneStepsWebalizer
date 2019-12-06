@@ -18,9 +18,9 @@
 #include <list>
 #include <stdexcept>
 
-#define LMAXHASH     1048576ul
-#define MAXHASH      16384ul
-#define SMAXHASH     1024ul
+const unsigned long LMAXHASH = 1048576ul;
+const unsigned long MAXHASH = 16384ul;
+const unsigned long SMAXHASH = 1024ul;
 
 ///
 /// Hash tables may contain primary objects, such as user agents or URLs, and 
@@ -79,47 +79,36 @@ template <typename node_t> using node_list_t = std::list<htab_node_t<node_t>*>;
 /// this project. Consequently, all objects within a hash table were called nodes 
 /// (e.g. `hnode_t` for a host object or a `unode_t` for a URL object). Later on, 
 /// the hash table node object was split onto the base object for hash table content 
-/// objects (`htab_obj_t`) and the hash table node object that maintains content 
-/// objects within a hash table (`htab_node_t`).
+/// objects (`htab_obj_t`) and the hash table node object (`htab_node_t`) maintains
+/// content objects within a hash table.
 ///
-/// Hash table nodes may be identified by a simple string key or by a compound key 
-/// via node-specific `param_block`. Note that `match_key_ex` is not a virtual method
-/// and is called in template methods using node types that define `param_block` 
-/// appropriate for each node type.
+/// Hash table nodes may be identified by an arbitrary key defined by `K` template
+/// parameters. Derived classes must also define a static member function matching
+/// this signature:
+/// ```
+///   static uint64_t hash_key_ex(K ... kp);
+/// ```
+/// This key defined via this interface is enforced via virtual functions declared
+/// in this class, but the hash table interface is not limited to just that key.
+/// Additional key component combinations may be defined as long as derived classes
+/// provide matching `match_key` and `hash_key` methods for new key components.
+/// Note, however, that `hash_key` must produce the exact same hash value for all
+/// `hash_key` overloads, which in turn must be the same as the one returned
+/// from `get_hash`. See `unode_t` for an example.
 ///
+template <typename ... K>
 struct htab_obj_t {
-      ///
-      /// @struct param_block
-      ///
-      /// @brief  A special compound key structure containing a simple string key.
-      ///
-      struct param_block {
-         const char *key;           ///< A pointer to a node-specific key string
-      };
+   public:
+      virtual ~htab_obj_t(void) {}
 
-      public:
-         virtual ~htab_obj_t(void) {}
+      /// Returns `true` if key components match the node key, `false` otherwise.
+      virtual bool match_key(K ... kp) const = 0;
 
-         ///
-         /// @brief  Returns `true` if the key in `param_block` is equal to the node 
-         ///         key, `false` otherwise.
-         ///
-         /// `match_key_ex` is not a virtual method and must be overriden for those 
-         /// node types that make use of compound keys.
-         ///
-         bool match_key_ex(const param_block *pb) const 
-         {
-            return match_key(string_t::hold(pb->key));
-         }
+      /// Returns a type of this node.
+      virtual nodetype_t get_type(void) const = 0;
 
-         /// Returns `true` if `key` is equal to the node key.
-         virtual bool match_key(const string_t& key) const = 0;
-
-         /// Returns a type of this node
-         virtual nodetype_t get_type(void) const = 0;
-
-         /// Returns a hash value for this node
-         virtual uint64_t get_hash(void) const = 0;
+      /// Returns a hash value for this node.
+      virtual uint64_t get_hash(void) const = 0;
 };
 
 ///
@@ -461,10 +450,6 @@ class hash_table : public hash_table_base {
       /// Moves the specified node to the beginning of the bucket list.
       void move_to_front(bucket_t& bucket, htab_node_t<node_t> *nptr) const;
 
-      /// Implements `find_node` methods that look up nodes with a hash value and a key and move the node to the end of the time stamp list.
-      template <typename ... param_t>
-      node_t *find_node_ex(uint64_t hashval, nodetype_t type, int64_t tstamp, bool (node_t::*match_key)(param_t ... args) const, param_t ... param);
-
    public:
       /// Constructs a hash table with the specified number of buckets.
       hash_table(size_t maxhash = MAXHASH, swap_cb_t swapcb = nullptr, void *cbarg = nullptr, eval_cb_t evalcb = nullptr);
@@ -515,16 +500,16 @@ class hash_table : public hash_table_base {
       void clear(void);
 
       /// Looks for a node with a string key and does not move the node to the end of the time stamp list.
-      const node_t *find_node(const string_t& key, nodetype_t type) const;
+      template <typename ... K>
+      const node_t *find_node(nodetype_t type, K&& ... kp) const;
 
-      /// Looks for a node with a string key and, if found, moves it to the end of the time stamp list.
-      node_t *find_node(const string_t& key, nodetype_t type, int64_t tstamp) {return find_node(hash_ex(0, key), key, type, tstamp);}
+      /// Look up a node with a hash value and a key and, if found, moves the node to the end of the time stamp list.
+      template <typename ... K>
+      node_t *find_node(nodetype_t type, int64_t tstamp, K&& ... kp);
 
-      /// Looks for a node with a hash value and a string key and, if found, moves it to the end of the time stamp list.
-      node_t *find_node(uint64_t hashval, const string_t& str, nodetype_t type, int64_t tstamp);
-
-      /// Looks for a node with a hash value and a compound key and, if found, moves it to the end of the time stamp list.
-      node_t *find_node(uint64_t hashval, const typename node_t::param_block *params, nodetype_t type, int64_t tstamp);
+      /// Look up a node with a hash value and a key and, if found, moves the node to the end of the time stamp list.
+      template <typename ... K>
+      node_t *find_node(uint64_t hashval, nodetype_t type, int64_t tstamp, K&& ... kp);
 
       /// Obtains a hash value from `nptr` and inserts it into the corresponding bucket.
       node_t *put_node(node_t *nptr, int64_t tstamp);

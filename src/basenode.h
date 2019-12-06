@@ -23,7 +23,7 @@
 /// @tparam node_t   Hash table node type
 ///
 template <typename node_t> 
-struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<node_t> {
+struct base_node : public htab_obj_t<const string_t&>, public keynode_t<uint64_t>, public datanode_t<node_t> {
       string_t string;              ///< Node value (URL, user agent, etc)
       nodetype_t flag;              ///< Object type (REG, GRP)
 
@@ -37,11 +37,11 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
 
          void reset(uint64_t nodeid = 0);
 
-         virtual bool match_key(const string_t& key) const override {return string == key;}
+         bool match_key(const string_t& key) const override {return string == key;}
 
          nodetype_t get_type(void) const override {return flag;}
 
-         static uint64_t hash(const string_t& key) {return hash_ex(0, key);}
+         static uint64_t hash_key(const string_t& key) {return hash_ex(0, key);}
 
          virtual uint64_t get_hash(void) const override {return hash_ex(0, string);}
 

@@ -104,17 +104,17 @@ void dlnode_t::set_host(hnode_t *nptr)
       hnode->dlref++;
 }
 
-bool dlnode_t::match_key_ex(const dlnode_t::param_block *pb) const
+bool dlnode_t::match_key(const string_t& ipaddr, const string_t& dlname) const
 {
    if(!hnode)
       return false;
 
    // compare IP addresses first
-   if(strcmp(hnode->string, pb->ipaddr)) 
+   if(strcmp(hnode->string, ipaddr)) 
       return false;
 
    // and then download names
-   return !strcmp(name, pb->name);
+   return !strcmp(name, dlname);
 }
 
 uint64_t dlnode_t::get_hash(void) const
@@ -307,3 +307,5 @@ template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlno
 template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<void*, const storable_t<hnode_t>&> upcb, void *arg, const storable_t<hnode_t>& hnode);
 template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<storable_t<hnode_t>&> upcb, storable_t<hnode_t>& hnode);
 template size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, dlnode_t::s_unpack_cb_t<void*, storable_t<hnode_t>&> upcb, void *arg, storable_t<hnode_t>& hnode);
+
+#include "hashtab_tmpl.cpp"

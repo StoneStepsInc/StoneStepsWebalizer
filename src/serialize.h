@@ -272,6 +272,14 @@ inline int64_t s_compare<string_t>(const void *buf1, size_t buf1size, const void
    sr1.s_skip_field<string_t>(buf1);
    sr2.s_skip_field<string_t>(buf2);
 
+   // make sure both strings are within their buffer sizes
+   sr1.s_skip_field<string_t>(buf1);
+   sr2.s_skip_field<string_t>(buf2);
+
+   // make sure both strings are within their buffer sizes
+   sr1.s_skip_field<string_t>(buf1);
+   sr2.s_skip_field<string_t>(buf2);
+
    const char *cp1, *cp2;
    u_int slen1, slen2;
 

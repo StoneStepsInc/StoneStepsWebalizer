@@ -385,6 +385,7 @@ template const void *serializer_t::s_skip_field<u_char>(const void *ptr) const;
 template const void *serializer_t::s_skip_field<u_short>(const void *ptr) const;
 template const void *serializer_t::s_skip_field<u_int>(const void *ptr) const;
 template const void *serializer_t::s_skip_field<uint64_t>(const void *ptr) const;
+template const void *serializer_t::s_skip_field<double>(const void *ptr) const;
 
 template void *serializer_t::serialize<u_char, nodetype_t>(void *ptr, nodetype_t value) const;
 template void *serializer_t::serialize<short, int>(void *ptr, int value) const;

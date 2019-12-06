@@ -22,14 +22,7 @@
 /// integers. This number is used as a node key. The name of the organization
 /// associated with each AS number is stored as data and is never looked up.
 ///
-struct asnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<asnode_t> {
-   ///
-   /// @brief  An autonomous system number used as a hash table key.
-   ///
-   struct param_block {
-      uint32_t    as_num;              ///< A city GeoName ID
-   };
-
+struct asnode_t : htab_obj_t<uint32_t>, keynode_t<uint32_t>, datanode_t<asnode_t> {
    string_t    as_org;                 ///< Autonomous system organization name.
 
    uint64_t    hits;                   ///< Request count
@@ -54,14 +47,14 @@ struct asnode_t : htab_obj_t, keynode_t<uint32_t>, datanode_t<asnode_t> {
       ///
       /// @{
 
-      bool match_key_ex(const asnode_t::param_block *pb) const 
+      bool match_key(uint32_t as_num) const override
       {
-         return pb && pb->as_num == nodeid;
+         return as_num == nodeid;
       }
 
-      virtual bool match_key(const string_t& key) const override
+      static uint64_t hash_key(uint32_t as_num)
       {
-         throw std::logic_error("This node only supports searches with a numeric key");
+         return hash_num(0, as_num);
       }
 
       nodetype_t get_type(void) const override {return OBJ_REG;}

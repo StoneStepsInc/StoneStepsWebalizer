@@ -744,7 +744,7 @@ void state_t::restore_state(void)
          // The visit doesn't own the URL node, so we need to find a URL node in the 
          // hash table or insert a new one, so it's deleted properly. 
          //
-         if((uptr = um_htab.find_node(unode.string, OBJ_REG, htab_tstamp)) != NULL)
+         if((uptr = um_htab.find_node(OBJ_REG, htab_tstamp, unode.string)) != NULL)
             vnode.set_lasturl(uptr);
          else
             vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode)), htab_tstamp));
@@ -772,7 +772,7 @@ void state_t::restore_state(void)
    hnode_t *hptr;
    while(iter.next<void *, storable_t<dlnode_t>&, storable_t<hnode_t>&>(danode, unpack_danode_cb, this, dlnode, hnode)) {
       // the host must be in the hosts table because active downloads are a subset of active visits
-      if((hptr = hm_htab.find_node(hnode.string, OBJ_REG, htab_tstamp)) == nullptr)
+      if((hptr = hm_htab.find_node(OBJ_REG, htab_tstamp, hnode.string)) == nullptr)
          throw std::runtime_error(string_t::_format("%s (no host %s for download %" PRIu64 ")", config.lang.msg_bad_data, hnode.string.c_str(), dlnode.nodeid));
 
       // make a copy of the active download and link it to the kdownload node
@@ -1177,3 +1177,4 @@ template void state_t::update_avg_max<uint64_t>(double& avgval, uint64_t& maxval
 template void state_t::update_avg_max<double>(double& avgval, double& maxval, double value, uint64_t newcnt) const;
 
 #include "database_tmpl.cpp"
+#include "hashtab_tmpl.cpp"

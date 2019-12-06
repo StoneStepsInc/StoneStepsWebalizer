@@ -161,15 +161,14 @@ ct_hash_table::ct_hash_table(void) : hash_table<storable_t<ctnode_t>>(SMAXHASH)
 ///
 ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, const string_t& ccode, int64_t tstamp) 
 {
-   ctnode_t::param_block pb = {geoname_id, ccode.c_str()};
-   uint64_t hashval = ctnode_t::get_hash(geoname_id, ccode);
-   ctnode_t *ctnode;
-
    // we should never see empty city names with a valid GeoName and vice versa
    if(!ctnode_t::is_usable_city(geoname_id, city, ccode))
       throw std::logic_error("GeoName ID must match city name in whether it contains data or not");
 
-   if((ctnode = find_node(hashval, &pb, OBJ_REG, tstamp)) != nullptr)
+   uint64_t hashval = ctnode_t::hash_key(geoname_id, ccode);
+   ctnode_t *ctnode;
+
+   if((ctnode = find_node(hashval, OBJ_REG, tstamp, geoname_id, ccode)) != nullptr)
       return *ctnode;
 
    return *put_node(hashval, new storable_t<ctnode_t>(geoname_id, city, ccode), tstamp);
@@ -179,3 +178,5 @@ ctnode_t& ct_hash_table::get_ctnode(uint32_t geoname_id, const string_t& city, c
 // Instantiate all template callbacks
 //
 template size_t ctnode_t::s_unpack_data(const void *buffer, size_t bufsize, ctnode_t::s_unpack_cb_t<> upcb);
+
+#include "hashtab_tmpl.cpp"

@@ -2340,10 +2340,10 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
 
    newnode = newvisit = newthost = newspammer = false;
 
-   hashval = hnode_t::hash(ipaddr);
+   hashval = hnode_t::hash_key(ipaddr);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, ipaddr, OBJ_REG, htab_tstamp)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, OBJ_REG, htab_tstamp, ipaddr)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
       if(!state.database.get_hnode_by_value<void*>(*cptr, &unpack_inactive_hnode_cb, this)) {
@@ -2453,10 +2453,10 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
 
    newnode = false;
 
-   hashval = hnode_t::hash(grpname);
+   hashval = hnode_t::hash_key(grpname);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, grpname, OBJ_GRP, htab_tstamp)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, OBJ_GRP, htab_tstamp, grpname)) == NULL) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
       if(!state.database.get_hnode_by_value(*cptr)) {
@@ -2510,10 +2510,10 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, int64_t htab_tstamp, nodety
 
    newnode = false;
 
-   hashval = rnode_t::hash(str);
+   hashval = rnode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.rm_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
+   if((nptr = state.rm_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rnode_t>(str);
       if(!state.database.get_rnode_by_value(*nptr)) {
@@ -2555,17 +2555,13 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, int64_t htab_ts
    bool found = true;
    uint64_t hashval;
    storable_t<unode_t> *cptr;
-   unode_t::param_block param;
 
    newnode = false;
 
-   param.url = &str;
-   param.srchargs = !srchargs.isempty() ? &srchargs : NULL;
-
-   hashval = unode_t::hash(str, srchargs);
+   hashval = unode_t::hash_key(str, srchargs);
 
    /* check if hashed */
-   if((cptr = state.um_htab.find_node(hashval, &param, type, htab_tstamp)) == NULL) {
+   if((cptr = state.um_htab.find_node(hashval, type, htab_tstamp, str, srchargs)) == NULL) {
       /* not hashed */
       cptr = new storable_t<unode_t>(str, srchargs);
       // check if in the database
@@ -2624,7 +2620,6 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
    bool found = true;
    storable_t<rcnode_t> *nptr;
    uint64_t hashval;
-   rcnode_t::param_block param;
 
    if(newnode)
       *newnode = false;
@@ -2632,15 +2627,10 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
    if(method.isempty() || url.isempty())
       return NULL;
 
-   param.respcode = respcode;
-   param.url = url;
-   param.method = method;
-
-   // respcode, method, url
    hashval = rcnode_t::hash_key(respcode, method, url);
 
    /* check if hashed */
-   if((nptr = state.rc_htab.find_node(hashval, &param, OBJ_REG, htab_tstamp)) == NULL) {
+   if((nptr = state.rc_htab.find_node(hashval, OBJ_REG, htab_tstamp, respcode, method, url)) == NULL) {
       /* not hashed */
       nptr = new storable_t<rcnode_t>(method, url, respcode);
 
@@ -2675,10 +2665,10 @@ anode_t *webalizer_t::put_anode(const string_t& str, int64_t htab_tstamp, nodety
 
    newnode = false;
       
-   hashval = anode_t::hash(str);
+   hashval = anode_t::hash_key(str);
 
    /* check if hashed */
-   if((cptr = state.am_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
+   if((cptr = state.am_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
       /* not hashed */
       cptr = new storable_t<anode_t>(str, robot);
       if(!state.database.get_anode_by_value(*cptr)) {
@@ -2726,10 +2716,10 @@ snode_t *webalizer_t::put_snode(const string_t& str, int64_t htab_tstamp, u_shor
    if(str.isempty())     /* skip bad search strs */
       return NULL;
 
-   hashval = snode_t::hash(str);
+   hashval = snode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.sr_htab.find_node(hashval, str, OBJ_REG, htab_tstamp)) == NULL) {
+   if((nptr = state.sr_htab.find_node(hashval, OBJ_REG, htab_tstamp, str)) == NULL) {
       /* not hashed */
       nptr = new storable_t<snode_t>(str);
       if(!state.database.get_snode_by_value(*nptr)) {
@@ -2782,10 +2772,10 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    
    if(str.isempty()) return NULL;  /* skip if no username */
 
-   hashval = inode_t::hash(str);
+   hashval = inode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.im_htab.find_node(hashval, str, type, htab_tstamp)) == NULL) {
+   if((nptr = state.im_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
       /* not hashed */
       nptr = new storable_t<inode_t>(str);
       if(!state.database.get_inode_by_value(*nptr)) {
@@ -2836,7 +2826,6 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    uint64_t hashval;
    storable_t<danode_t> *download;
    storable_t<dlnode_t> *nptr;
-   dlnode_t::param_block params;
 
    newnode = false;
 
@@ -2845,9 +2834,6 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
 
    if(respcode != RC_OK && respcode != RC_PARTIALCONTENT)
       return NULL;
-
-   params.name = name;
-   params.ipaddr = hnode.string;
 
    hashval = dlnode_t::hash_key(hnode.string, name);
 
@@ -2863,7 +2849,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    // 12:36:43 GET /.../webalizer_win.zip Download+Master                   206 530125 360 436546
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
-   if((nptr = state.dl_htab.find_node(hashval, &params, OBJ_REG, htab_tstamp)) == NULL) {
+   if((nptr = state.dl_htab.find_node(hashval, OBJ_REG, htab_tstamp, hnode.string, name)) == NULL) {
       nptr = new storable_t<dlnode_t>(name, hnode);
       if(!state.database.get_dlnode_by_value<void *, const storable_t<hnode_t>&>(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
@@ -3409,3 +3395,4 @@ int webalizer_t::parse_log_record(string_t::char_buffer_t& buffer, size_t reclen
 }
 
 #include "database_tmpl.cpp"
+#include "hashtab_tmpl.cpp"

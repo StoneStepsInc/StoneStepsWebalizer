@@ -107,11 +107,10 @@ as_hash_table::as_hash_table(void) : hash_table<storable_t<asnode_t>>(SMAXHASH)
 
 asnode_t& as_hash_table::get_asnode(uint32_t as_num, const string_t& as_org, int64_t tstamp)
 {
-   asnode_t::param_block pb = {as_num};
-   uint64_t hashval = hash_num(0, as_num);
+   uint64_t hashval = asnode_t::hash_key(as_num);
    asnode_t *asnode;
 
-   if((asnode = find_node(hashval, &pb, OBJ_REG, tstamp)) != nullptr)
+   if((asnode = find_node(hashval, OBJ_REG, tstamp, as_num)) != nullptr)
       return *asnode;
 
    return *put_node(hashval, new storable_t<asnode_t>(as_num, as_org), tstamp);
@@ -121,3 +120,5 @@ asnode_t& as_hash_table::get_asnode(uint32_t as_num, const string_t& as_org, int
 // Instantiate all template callbacks
 //
 template size_t asnode_t::s_unpack_data(const void *buffer, size_t bufsize, asnode_t::s_unpack_cb_t<> upcb);
+
+#include "hashtab_tmpl.cpp"

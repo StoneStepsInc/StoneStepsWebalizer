@@ -166,14 +166,19 @@ const void *ccnode_t::s_field_visits(const void *buffer, size_t bufsize, size_t&
 // hash table
 //
 
+cc_hash_table::cc_hash_table(void) :
+      hash_table<storable_t<ccnode_t>>(SMAXHASH) 
+{
+}
+
 const ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode) const
 {
    const ccnode_t *cptr;
 
-   if((cptr = find_node(ccode, OBJ_REG)) != NULL)
+   if((cptr = find_node(OBJ_REG, ccode)) != NULL)
       return *cptr;
 
-   if((cptr = find_node(string_t("*"), OBJ_REG)) != NULL)
+   if((cptr = find_node(OBJ_REG, string_t::hold("*"))) != NULL)
       return *cptr;
 
    return empty;
@@ -184,11 +189,11 @@ ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode, int64_t tstamp)
    ccnode_t *cptr;
 
    if(!ccode.isempty()) {
-      if((cptr = find_node(ccode, OBJ_REG, tstamp)) != NULL)
+      if((cptr = find_node(OBJ_REG, tstamp, ccode)) != NULL)
          return *cptr;
    }
 
-   if((cptr = find_node(string_t::hold("*", 1), OBJ_REG, tstamp)) != NULL)
+   if((cptr = find_node(OBJ_REG, tstamp, string_t("*"))) != NULL)
       return *cptr;
 
    throw std::runtime_error(string_t::_format("Country code list must include '*' (%s)", ccode.c_str()));
@@ -209,3 +214,5 @@ void cc_hash_table::reset(void)
 // Instantiate all template callbacks
 //
 template size_t ccnode_t::s_unpack_data(const void *buffer, size_t bufsize, ccnode_t::s_unpack_cb_t<> upcb);
+
+#include "hashtab_tmpl.cpp"

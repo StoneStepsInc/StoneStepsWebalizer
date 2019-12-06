@@ -21,12 +21,12 @@
 /// @brief  Country node
 ///
 /// 1. Country code nodes are identified by an index value returned by
-/// ctry_idx. 
+/// `ctry_idx`.
 ///
 /// 2. Country code and description strings are not stored in the database,
 /// but instead are set up from the language file on start-up.
 ///
-struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
+struct ccnode_t : public htab_obj_t<const string_t&>, public keynode_t<uint64_t>, public datanode_t<ccnode_t> {
    string_t    ccode;                  ///< Country code
    string_t    cdesc;                  ///< Country name
    uint64_t    count;                  ///< Request count
@@ -49,6 +49,8 @@ struct ccnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode
       ccnode_t(const char *cc, const char *desc);
 
       bool match_key(const string_t& key) const override {return ccode == key;}
+
+      static uint64_t hash_key(const string_t& ccode) {return hash_ex(0, ccode);}
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
 
@@ -79,7 +81,7 @@ class cc_hash_table : public hash_table<storable_t<ccnode_t>> {
    ccnode_t empty;
 
    public:
-      cc_hash_table(void) : hash_table<storable_t<ccnode_t>>(SMAXHASH) {}
+      cc_hash_table(void);
 
       void reset(void);
       

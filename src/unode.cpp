@@ -107,32 +107,32 @@ char unode_t::get_url_type_ind(void) const
             (urltype & URL_TYPE_OTHER) ? '+' : ' ';
 }
 
-bool unode_t::match_key_ex(const unode_t::param_block *pb) const
+bool unode_t::match_key(const string_t& url, const string_t& srchargs) const
 {
    const char *eopath;
 
    // compare URL lengths
-   if(pb->url->length() != pathlen)
+   if(url.length() != pathlen)
       return false;
 
    eopath = &string[pathlen];
 
    // check if either one has search arguments and the other one doesn't
-   if(!*eopath && pb->srchargs || *eopath && !pb->srchargs) 
+   if(!*eopath && !srchargs.isempty() || *eopath && srchargs.isempty()) 
       return false;
 
    // if lengths match, compare the URLs
-   if(strncmp(string, pb->url->c_str(), pathlen)) 
+   if(strncmp(string, url.c_str(), pathlen)) 
       return false;
 
    // check if both URLs have search arguments
-   if(*eopath && pb->srchargs) {
+   if(*eopath && srchargs) {
       // compare search argument lengths
-      if(string.length() - pathlen - 1 != pb->srchargs->length())
+      if(string.length() - pathlen - 1 != srchargs.length())
          return false;
 
       // if lengths match, compare search arguments
-      if(strcmp(&eopath[1], pb->srchargs->c_str()))
+      if(strcmp(&eopath[1], srchargs.c_str()))
          return false;
    }
 

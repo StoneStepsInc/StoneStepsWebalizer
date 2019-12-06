@@ -13,6 +13,7 @@
 #include "../dlnode.h"
 #include "../ccnode.h"
 #include "../hnode.h"
+#include "../unode.h"
 
 #include <string>
 #include <list>
@@ -40,10 +41,10 @@ TEST(HashTableTest, NodeTimeStampOrder)
       EXPECT_THROW(htab.put_node(anode, 5), std::logic_error) << "Cannot insert a node with an earlier time stamp";
    }
 
-   ASSERT_THROW(htab.find_node(string_t::hold("Agent 2"), OBJ_REG, 5), std::logic_error) << "Cannot insert a node with an earlier time stamp";
+   ASSERT_THROW(htab.find_node(OBJ_REG, (int64_t) 5, string_t::hold("Agent 2")), std::logic_error) << "Cannot insert a node with an earlier time stamp";
 
-   EXPECT_NO_THROW(htab.find_node(string_t::hold("Agent 2"), OBJ_REG, 10)) << "A look-up for an existing key using the same time stamp should not throw an exception";
-   EXPECT_NO_THROW(htab.find_node(string_t::hold("Agent 2"), OBJ_REG, 20)) << "A look-up for an existing key using a greater time stamp should not throw an exception";
+   EXPECT_NO_THROW(htab.find_node(OBJ_REG, (int64_t) 10, string_t::hold("Agent 2"))) << "A look-up for an existing key using the same time stamp should not throw an exception";
+   EXPECT_NO_THROW(htab.find_node(OBJ_REG, (int64_t) 20, string_t::hold("Agent 2"))) << "A look-up for an existing key using a greater time stamp should not throw an exception";
 }
 
 ///
@@ -54,13 +55,13 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithKey)
 {
    hash_table<storable_t<anode_t>> htab(10);  // use 10 buckets to test bucket lists
 
-   for(int i = 0; i < 100; i++) {
-      int tstamp = i - i % 2;
+   for(int64_t i = 0; i < 100; i++) {
+      int64_t tstamp = i - i % 2;
       std::string agent = "Agent " + std::to_string(tstamp);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
       // use a non-const look-up with a time stamp 
-      anode_t *anode = htab.find_node(agent_key, OBJ_REG, tstamp);
+      anode_t *anode = htab.find_node(OBJ_REG, tstamp, agent_key);
 
       // alternate finding and not finding the node in the hash table
       if(i % 2)
@@ -77,7 +78,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithKey)
       }
 
       // use a const version of a node look-up to test the insert without changing the hash table
-      const anode_t *canode = htab.find_node(agent_key, OBJ_REG);
+      const anode_t *canode = htab.find_node(OBJ_REG, agent_key);
 
       ASSERT_TRUE(canode != nullptr) << "A newly inserted node cannot be NULL when looked up via the const interface";
 
@@ -95,13 +96,13 @@ TEST(HashTableTest, NodeInsertStorableWithKey)
 {
    hash_table<storable_t<ccnode_t>> htab(10);  // use 10 buckets to test bucket lists
 
-   for(int i = 0; i < 100; i++) {
-      int tstamp = i - i % 2;
+   for(int64_t i = 0; i < 100; i++) {
+      int64_t tstamp = i - i % 2;
       std::string ccode = "cc" + std::to_string(tstamp);
       string_t ccode_key(string_t::hold(ccode.c_str(), ccode.length()));
 
       // use a non-const look-up with a time stamp 
-      ccnode_t *ccnode = htab.find_node(ccode_key, OBJ_REG, tstamp);
+      ccnode_t *ccnode = htab.find_node(OBJ_REG, tstamp, ccode_key);
 
       // alternate finding and not finding the node in the hash table
       if(i % 2)
@@ -118,7 +119,7 @@ TEST(HashTableTest, NodeInsertStorableWithKey)
       }
 
       // use a const version of a node look-up to test the insert without changing the hash table
-      const ccnode_t *cccnode = htab.find_node(ccode_key, OBJ_REG);
+      const ccnode_t *cccnode = htab.find_node(OBJ_REG, ccode_key);
 
       ASSERT_TRUE(cccnode != nullptr) << "A newly inserted node cannot be NULL when looked up via the const interface";
 
@@ -145,38 +146,35 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
 
       hnode_t *host = hosts.insert(hosts.end(), std::make_unique<hnode_t>(string_t::hold(ipaddr.c_str(), ipaddr.length())))->get();
 
-      // compound download job key
-      dlnode_t::param_block dlnode_key = {download.c_str(), ipaddr.c_str()};
-
       uint64_t hashval = dlnode_t::hash_key(string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
       // use a non-const look-up with a time stamp 
-      storable_t<dlnode_t> *dlnode = htab.find_node(hashval, &dlnode_key, OBJ_REG, tstamp);
+      storable_t<dlnode_t> *dlnode = htab.find_node(hashval, OBJ_REG, tstamp, string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
       // alternate finding and not finding the node in the hash table
       if(i % 2) {
-         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Every odd number should be found in the hash table (name)";
-         EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Every odd number should be found in the hash table (IP address)";
+         EXPECT_STREQ(download.c_str(), dlnode->name.c_str()) << "Every odd number should be found in the hash table (name)";
+         EXPECT_STREQ(ipaddr.c_str(), dlnode->hnode->string.c_str()) << "Every odd number should be found in the hash table (IP address)";
       }
       else {
          ASSERT_EQ(nullptr, dlnode) << "Every even number should not be found in the hash table";
 
          // insert a new node and test equal and greater-than time stamps
-         ASSERT_NO_THROW((dlnode = htab.put_node(new storable_t<dlnode_t>(string_t::hold(dlnode_key.name), *host), tstamp)));
+         ASSERT_NO_THROW((dlnode = htab.put_node(new storable_t<dlnode_t>(string_t::hold(download.c_str()), *host), tstamp)));
 
          ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
 
-         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
-         EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
+         EXPECT_STREQ(string_t::hold(download.c_str()), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
+         EXPECT_STREQ(string_t::hold(ipaddr.c_str()), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
       }
 
       // there is no const interface for compound key nodes
-      dlnode = htab.find_node(hashval, &dlnode_key, OBJ_REG, tstamp);
+      dlnode = htab.find_node(hashval, OBJ_REG, tstamp, string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
       ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
 
-      EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
-      EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
+      EXPECT_STREQ(string_t::hold(download.c_str()), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
+      EXPECT_STREQ(string_t::hold(ipaddr.c_str()), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
    }
 
    EXPECT_EQ(50, htab.size()) << "50 hash table nodes should be inserted";
@@ -261,19 +259,19 @@ TEST(HashTableTest, SwapOut)
    for(int i = 100; i < 140; i++) {
       std::string agent = "Agent " + std::to_string(i);
 
-      ASSERT_EQ(nullptr, htab.find_node(string_t::hold(agent.c_str(), agent.length()), OBJ_REG)) << "Swapped out keys should not be found";
+      ASSERT_EQ(nullptr, htab.find_node(OBJ_REG, string_t::hold(agent.c_str(), agent.length()))) << "Swapped out keys should not be found";
    }
 
    // and all remaining regular and group keys are still there
    for(int i = 140; i < 200; i++) {
       std::string agent = "Agent " + std::to_string(i);
 
-      ASSERT_TRUE(htab.find_node(string_t::hold(agent.c_str(), agent.length()), OBJ_REG) != nullptr) << "We sould be able to find every remaining regular object key";
+      ASSERT_TRUE(htab.find_node(OBJ_REG, string_t::hold(agent.c_str(), agent.length())) != nullptr) << "We sould be able to find every remaining regular object key";
 
       if(i % 10 == 0) {
          std::string agent_group = "Agent Group " + std::to_string(i);
 
-         ASSERT_TRUE(htab.find_node(string_t::hold(agent_group.c_str(), agent_group.length()), OBJ_GRP) != nullptr) << "We sould be able to find every group object key";
+         ASSERT_TRUE(htab.find_node(OBJ_GRP, string_t::hold(agent_group.c_str(), agent_group.length())) != nullptr) << "We sould be able to find every group object key";
       }
    }
 
@@ -382,7 +380,7 @@ TEST(HashTableTest, MultipleLookUps)
 
       anode_t *anode;
 
-      ASSERT_NO_THROW((anode = htab.find_node(agent_key, OBJ_REG, 0)));
+      ASSERT_NO_THROW((anode = htab.find_node(OBJ_REG, (int64_t) 0, agent_key)));
 
       ASSERT_TRUE(anode != nullptr) << "A node must exist in the hash table";
 
@@ -396,7 +394,7 @@ TEST(HashTableTest, MultipleLookUps)
 
       anode_t *anode;
 
-      ASSERT_NO_THROW((anode = htab.find_node(agent_key, OBJ_REG, 0)));
+      ASSERT_NO_THROW((anode = htab.find_node(OBJ_REG, (int64_t) 0, agent_key)));
 
       ASSERT_TRUE(anode != nullptr) << "A node must exist in the hash table";
 
@@ -550,4 +548,39 @@ TEST(HashTableTest, IteratorEmpty)
    ASSERT_EQ(nullptr, iter.item()) << "Current node of an empty hash map iterator should be NULL";
 }
 
+///
+/// @brief  Tests that `unode_t` key methods produce expected results.
+///
+TEST(HashTableTest, URLMultiKey)
+{
+   string_t urlpath("/some/path/");
+   string_t srchargs("n1=v1&n2=v2");
+
+   string_t url_psa(urlpath + '?' + srchargs);     // URL path + search args
+   string_t url_p(urlpath);                        // URL path without search args
+
+   unode_t unode_psa(urlpath, srchargs);
+   unode_t unode_p(urlpath, string_t());
+
+   ASSERT_TRUE(unode_psa.match_key(urlpath, srchargs)) << "Separate URL key components must match for non-empty search args";
+   ASSERT_TRUE(unode_psa.match_key(url_psa)) << "Single URL key must match for non-empty search args";
+
+   ASSERT_TRUE(unode_p.match_key(urlpath, string_t())) << "Separate URL key components must match for empty search args";
+   ASSERT_TRUE(unode_p.match_key(url_p)) << "Single URL key must match for empty search args";
+
+   // both hash_key methods must yield the same hash as get_hash for non-empty search args
+   ASSERT_EQ(unode_psa.get_hash(), unode_t::hash_key(urlpath, srchargs));
+   ASSERT_EQ(unode_psa.get_hash(), unode_t::hash_key(url_psa));
+
+   // both hash_key methods must yield the same hash as get_hash for empty search args
+   ASSERT_EQ(unode_p.get_hash(), unode_t::hash_key(urlpath, string_t()));
+   ASSERT_EQ(unode_p.get_hash(), unode_t::hash_key(url_p));
+
+   // same as above, but compare hash_key methods directly
+   ASSERT_EQ(unode_t::hash_key(url_psa), unode_t::hash_key(urlpath, srchargs));
+   ASSERT_EQ(unode_t::hash_key(url_p), unode_t::hash_key(urlpath, string_t()));
 }
+
+}
+
+#include "../hashtab_tmpl.cpp"

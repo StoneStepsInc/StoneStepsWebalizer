@@ -31,17 +31,6 @@
 /// by `pathlen`.
 ///
 struct unode_t : public base_node<unode_t> {
-      ///
-      /// @struct param_block
-      ///
-      /// @brief  A compound key for URL hash table searches with URL path and 
-      ///         the search argumets string being two separate key components.
-      ///
-      struct param_block {
-         const string_t *url;       ///< URL path
-         const string_t *srchargs;  ///< URL search argments
-      };
-
       bool     target : 1;          ///< Target URL?
       u_char   urltype;             ///< URL type (e.g. URL_TYPE_HTTP)
       u_short  pathlen;             ///< URL path length
@@ -71,17 +60,19 @@ struct unode_t : public base_node<unode_t> {
 
          char get_url_type_ind(void) const;
 
-         bool match_key_ex(const unode_t::param_block *pb) const;
+         // make the single-string match_key visible for full URL look-ups
+         using base_node<unode_t>::match_key;
 
-         virtual bool match_key(const string_t& key) const override 
-         {
-            // `key` must include the query string, if there is one
-            return string == key;
-         }
+         /// Alternative key matching method that doesn't require concatenating URL components into a single key.
+         bool match_key(const string_t& url, const string_t& srchargs) const;
 
-         static uint64_t hash(const string_t& url, const string_t& srchargs) 
+         // make the single-string hash_key visible for hashing a full URL key
+         using base_node<unode_t>::hash_key;
+
+         /// Alternative key hashing method that doesn't require concatenating URL components into a single key.
+         static uint64_t hash_key(const string_t& url, const string_t& srchargs) 
          {
-            // hash pieces as if the entire URL was hashed
+            // hash pieces as if the entire URL was hashed (must yield same hash as base_node<unode_t>::hash_key)
             return (srchargs.isempty()) ? hash_ex(0, url) : hash_ex(hash_byte(hash_ex(0, url), '?'), srchargs);
          }
 

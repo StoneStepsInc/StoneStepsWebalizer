@@ -36,21 +36,7 @@
 /// if more precise databases may list city coordinates, latitude and longitude may
 /// be added to `ctnode_t`.
 ///
-struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
-   ///
-   /// @struct param_block
-   ///
-   /// @brief  A compound key for a city node.
-   ///
-   /// Each pair of a GeoName ID for the city and the country code identify a city
-   /// within its country. Note that city GeoName ID is unique on its own, but for
-   /// cities that are not present in the GeoIP database, it will be zero.
-   ///
-   struct param_block {
-      uint32_t    geoname_id;          ///< A city GeoName ID
-      const char  *ccode;              ///< Country code (empty is interpreted as a single asterisk)
-   };
-
+struct ctnode_t : htab_obj_t<uint32_t, const string_t&>, keynode_t<uint64_t>, datanode_t<ctnode_t> {
    string_t    ccode;                  ///< Country code
    string_t    city;                   ///< A localized city name, as reported by GeoIP
                                        ///< for the current language.
@@ -83,7 +69,7 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
       bool unknown_city(void) const {return geoname_id() == 0;}
 
       /// Returns a hash value for a GeoName ID and a country code.
-      static uint64_t get_hash(uint32_t geoname_id, const char *ccode)
+      static uint64_t hash_key(uint32_t geoname_id, const string_t& ccode)
       {
          return hash_num(0, make_nodeid(geoname_id, ccode));
       }
@@ -96,14 +82,9 @@ struct ctnode_t : htab_obj_t, keynode_t<uint64_t>, datanode_t<ctnode_t> {
       ///
       /// @{
 
-      bool match_key_ex(const ctnode_t::param_block *pb) const 
+      bool match_key(uint32_t geoname_id, const string_t& ccode) const override
       {
-         return pb && make_nodeid(pb->geoname_id, pb->ccode) == nodeid;
-      }
-
-      virtual bool match_key(const string_t& key) const override
-      {
-         throw std::logic_error("This node only supports searches with a compound key");
+         return make_nodeid(geoname_id, ccode) == nodeid;
       }
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
