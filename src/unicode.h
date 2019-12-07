@@ -115,13 +115,20 @@ inline size_t ucs2utf8size(wchar_t wchar)
 }
 
 ///
-/// @brief  Converts `char` to `unsigned char` and checks if the argument is 
-///         within the range defined by the template arguments.
+/// @brief  Returns `true` if the argument is  within the range defined by
+///         the template arguments and `false` otherwise.
 ///
-template <unsigned char lo, unsigned char hi>
-inline bool in_range(unsigned char ch) 
+/// This funciton used to have `unsigned char` template and function parameters,
+/// but GCC v9.2 converts `char` template arguments to a sign-extended `int`
+/// and only then checks against `unsigned char` template parameter type, which
+/// causes value narrowing errors. Use `char` types for parameters and convert
+/// to `unsigned char` when comparing instead.
+///
+template <char lo, char hi>
+inline bool in_range(char ch) 
 {
-   return ch >= lo && ch <= hi;
+   return static_cast<unsigned char>(ch) >= static_cast<unsigned char>(lo) &&
+            static_cast<unsigned char>(ch) <= static_cast<unsigned char>(hi);
 }
 
 ///
