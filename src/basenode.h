@@ -17,11 +17,10 @@
 #include "datanode.h"
 
 ///
-/// @struct base_node
+/// @brief  A base node class for hash table nodes with a single string
+///         key and a node type.
 ///
 /// @tparam node_t   Hash table node type
-///
-/// @brief  A base node class for all hash table node classes
 ///
 template <typename node_t> 
 struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<node_t> {
@@ -30,7 +29,7 @@ struct base_node : public htab_obj_t, public keynode_t<uint64_t>, public datanod
 
       public:
          base_node(uint64_t nodeid = 0);
-         base_node(const base_node& node);
+         base_node(const base_node& node) = delete;
          base_node(base_node&& node);
          base_node(const string_t& str);
 
