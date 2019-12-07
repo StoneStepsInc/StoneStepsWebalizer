@@ -57,7 +57,7 @@ class char_buffer_base {
       // copying character buffers would be inefficient (see #3 above)
       char_buffer_base(const char_buffer_base& other) = delete;
 
-      char_buffer_base(char_buffer_base&& other);
+      char_buffer_base(char_buffer_base&& other) noexcept;
 
       char_buffer_base(char_t *buffer, size_t bufsize, bool holder = false);
 
@@ -68,7 +68,7 @@ class char_buffer_base {
       // copying character buffers would be inefficient (see #3 above)
       char_buffer_base& operator = (const char_buffer_base& other) = delete;
 
-      char_buffer_base& operator = (char_buffer_base&& other);
+      char_buffer_base& operator = (char_buffer_base&& other) noexcept;
 
       void reset(void);
 

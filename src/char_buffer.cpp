@@ -20,7 +20,7 @@ char_buffer_base<char_t>::char_buffer_base(void) : buffer(NULL), bufsize(0), hol
 }
 
 template <typename char_t>
-char_buffer_base<char_t>::char_buffer_base(char_buffer_base&& other)
+char_buffer_base<char_t>::char_buffer_base(char_buffer_base&& other) noexcept
 {
    buffer = other.detach(&bufsize, &holder);
 }
@@ -51,7 +51,7 @@ char_buffer_base<char_t>::~char_buffer_base(void)
 }
 
 template <typename char_t>
-char_buffer_base<char_t>& char_buffer_base<char_t>::operator = (char_buffer_base<char_t>&& other)
+char_buffer_base<char_t>& char_buffer_base<char_t>::operator = (char_buffer_base<char_t>&& other) noexcept
 {
    buffer = other.detach(&bufsize, &holder);
 
