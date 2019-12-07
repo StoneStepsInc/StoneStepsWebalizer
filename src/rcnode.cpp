@@ -152,8 +152,11 @@ int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 
    ptr = sr.deserialize(ptr, str, slen);     // url
 
+   if((diff = (int64_t) (url.length() - slen)) != 0)
+      return diff;
+   
    // base_node compared buffer URL on the right-hand side
-   if((diff = (int64_t) url.compare(string_t::hold(str, slen))) != 0)
+   if((diff = (int64_t) strncmp(url.c_str(), str, slen)) != 0)
       return diff;
 
    ptr = sr.s_skip_field<bool>(ptr);         // hexenc
@@ -167,7 +170,10 @@ int64_t rcnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 
    ptr = sr.deserialize(ptr, str, slen);     // method
 
-   return method.compare(string_t::hold(str, slen));
+   if((diff = (int64_t) (method.length() - slen)) != 0)
+      return diff;
+
+   return (int64_t) strncmp(method.c_str(), str, slen);
 }
 
 const void *rcnode_t::s_field_hits(const void *buffer, size_t bufsize, size_t& datasize)

@@ -226,7 +226,10 @@ int64_t dlnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 
    ptr = sr.deserialize(ptr, str, slen);     // name
 
-   if((diff = (int64_t) name.compare(string_t::hold(str, slen))) != 0)
+   if((diff = (int64_t) (name.length() - slen)) != 0)
+      return diff;
+
+   if((diff = (int64_t) strncmp(name.c_str(), str, slen)) != 0)
       return diff;
 
    ptr = sr.s_skip_field<uint64_t>(ptr);     // count
