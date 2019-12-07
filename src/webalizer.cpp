@@ -2559,7 +2559,6 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, int64_t htab_ts
 
    newnode = false;
 
-   param.type = type;
    param.url = &str;
    param.srchargs = !srchargs.isempty() ? &srchargs : NULL;
 

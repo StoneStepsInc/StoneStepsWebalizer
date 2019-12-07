@@ -111,9 +111,6 @@ bool unode_t::match_key_ex(const unode_t::param_block *pb) const
 {
    const char *eopath;
 
-   if(pb->type != flag && (pb->type == OBJ_GRP || flag == OBJ_GRP))
-      return false;
-
    // compare URL lengths
    if(pb->url->length() != pathlen)
       return false;
