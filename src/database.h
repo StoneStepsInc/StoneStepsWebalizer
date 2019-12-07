@@ -81,8 +81,6 @@ class system_database_t : public berkeleydb_t {
 };
 
 ///
-/// @class  database_t
-///
 /// @brief  Application-specific database management class
 ///
 class database_t : public berkeleydb_t {

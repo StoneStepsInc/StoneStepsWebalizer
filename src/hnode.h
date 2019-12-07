@@ -147,8 +147,6 @@ struct hnode_t : public base_node<hnode_t> {
 };
 
 ///
-/// @class  h_hash_table
-///
 /// @brief  A hash table containing all IP addresses for the current month.
 ///
 class h_hash_table : public hash_table<storable_t<hnode_t>> {

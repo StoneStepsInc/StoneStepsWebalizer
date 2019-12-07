@@ -25,8 +25,6 @@ namespace sswtest {
 }
 
 ///
-/// @class  lang_t
-///
 /// @brief  A class that reads a specific language file and makes all language strings 
 ///         available to the application
 ///

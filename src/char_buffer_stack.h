@@ -16,8 +16,6 @@
 #include <vector>
 
 ///
-/// @class  char_buffer_stack_tmpl
-///
 /// @brief  A class that maintains a stack of cached character buffers
 ///
 /// @tparam chart_t  Character type (char or wchar_t)

@@ -139,8 +139,6 @@ struct htab_node_t {
 };
 
 ///
-/// @class  hash_table_base
-///
 /// @brief  A non-template hash table base class.
 ///
 /// This non-template class is intended for definitions that can be passed between
@@ -183,8 +181,6 @@ class hash_table_base {
       virtual void swap_out(int64_t tstamp, size_t maxsize = 0) = 0;
 };
 
-///
-/// @class  hash_table
 ///
 /// @tparam node_t   Hash table node type
 ///

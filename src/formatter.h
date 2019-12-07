@@ -18,8 +18,6 @@ formatter.h
 #include <vector>
 
 ///
-/// @class  buffer_formatter_t
-///
 /// @brief  A generic formatter class that uses the spefcied formatting function to 
 ///         render one or more strings within the specified buffer
 ///

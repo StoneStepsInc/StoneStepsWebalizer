@@ -17,8 +17,6 @@
 #include <climits>
 
 ///
-/// @class  memory_pool_t
-///
 /// @brief  A memory block pool that caches memory blocks of frequently used 
 ///         sizes
 ///
@@ -173,8 +171,6 @@ class memory_pool_t {
       }
 };
 
-///
-/// @class  pool_allocator_t
 ///
 /// @brief  A memory allocator that caches memory blocks of frequently used 
 ///         sizes

@@ -14,8 +14,6 @@
 #include <cstddef>
 
 ///
-/// @class  char_buffer_base
-///
 /// @brief  A generic character buffer object
 ///
 /// @tparam chart_t  Character type (char or wchar_t)
@@ -122,8 +120,6 @@ class char_buffer_base {
 typedef char_buffer_base<unsigned char> buffer_t;
 
 ///
-/// @class  fixed_char_buffer_t
-///
 /// @brief  A fixed-size character buffer
 ///
 /// @tparam char_t   Character type (char or wchar_t)
@@ -153,8 +149,6 @@ class fixed_char_buffer_t : public char_buffer_base<char_t> {
 };
 
 ///
-/// @class  char_buffer_allocator_tmpl
-///
 /// @brief  A base class for a generic character buffer allocator
 ///
 /// @tparam char_t            Character type (char or wchar_t)
@@ -174,8 +168,6 @@ class char_buffer_allocator_tmpl {
       virtual void release_buffer(char_buffer_base<char_t>&& buffer) = 0;
 };
 
-///
-/// @class  char_buffer_holder_tmpl
 ///
 /// @brief  A buffer holder maintains a buffer within some scope
 ///

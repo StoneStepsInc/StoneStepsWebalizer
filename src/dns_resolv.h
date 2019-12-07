@@ -31,8 +31,6 @@ struct MMDB_s;
 struct sockaddr;
 
 ///
-/// @class  dns_resolver_t
-///
 /// @brief  Provides GeoIP and DNS database services
 ///
 /// DNS resolver accepts IP addresses via put_hnode and queues them for GeoIP and/or DNS 

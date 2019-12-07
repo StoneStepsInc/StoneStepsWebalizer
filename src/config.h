@@ -39,8 +39,6 @@ namespace sswtest {
 }
       
 ///
-/// @class  config_t
-///
 /// @brief  A configuration object that reads application configuration files
 ///         and is accessible from any other application component.
 ///

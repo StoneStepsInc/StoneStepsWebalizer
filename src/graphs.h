@@ -29,8 +29,6 @@
 class history_t;
 
 ///
-/// @class  graph_t
-///
 /// @brief  A PNG chart generator class
 ///
 class graph_t {

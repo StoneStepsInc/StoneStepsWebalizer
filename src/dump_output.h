@@ -22,8 +22,6 @@ class history_t;
 class database_t;
 
 ///
-/// @class  dump_output_t
-///
 /// @brief  A tab-separated report generated class
 ///
 class dump_output_t : public output_t {

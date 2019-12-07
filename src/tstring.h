@@ -27,8 +27,6 @@
 #define CHLT(c) select_char_literal<char_t>(c, L ## c)
 
 ///
-/// @class  string_base
-///
 /// @brief  A genric character string object
 ///
 /// @tparam chart_t  Character type (char or wchar_t)

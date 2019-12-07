@@ -17,8 +17,6 @@
 #include "version.h"
 
 ///
-/// @class  totals_t
-///
 /// @brief  Monthly totals node
 ///
 /// 1. Only robot visits may be identified reliably from the start of the 

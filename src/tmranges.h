@@ -19,8 +19,6 @@
 #include <vector>
 
 ///
-/// @class  tm_ranges_t
-///
 /// @brief  An ordered collection of time ranges
 ///
 class tm_ranges_t {

@@ -29,8 +29,6 @@ class config_t;
 class lang_t;
 
 ///
-/// @class  state_t
-///
 /// @brief  Keeps the entire processing state for the current month
 ///
 /// The state consists of all time totals (total hits, files, etc), daily and hourly 

@@ -109,8 +109,6 @@ class base_list {
 typedef base_list_node_t nnode_t;
 
 ///
-/// @class  nlist
-///
 /// @brief  An ordered linked list for ignore, include and hide list items
 ///
 /// Order of items in `nlist` is important. For example, if asingle asterisk is at the
@@ -153,8 +151,6 @@ struct gnode_t : public base_list_node_t {
       gnode_t(const string_t& str) : base_list_node_t(str) {noname = true;}
 };
 
-///
-/// @class  glist
 ///
 /// @brief  An ordered linked list for grouping list items
 ///

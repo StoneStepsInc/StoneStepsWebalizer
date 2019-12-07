@@ -14,8 +14,6 @@
 #include "tstring.h"
 
 ///
-/// @class  exception_t
-///
 /// @brief  Generic exception class that is good for most simple cases where only
 ///         a code and some text is required.
 ///
@@ -34,8 +32,6 @@ class exception_t {
       const string_t& desc(void) const {return errdesc;}
 };
 
-///
-/// @class  os_ex_t
 ///
 /// @brief  OS-specific exception class (e.g. Win32 structured exception)
 ///

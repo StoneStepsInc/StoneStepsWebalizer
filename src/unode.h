@@ -96,8 +96,6 @@ struct unode_t : public base_node<unode_t> {
 };
 
 ///
-/// @class  u_hash_table
-///
 /// @brief  A hash table containing all URLs for the current month.
 ///
 class u_hash_table : public hash_table<storable_t<unode_t>> {

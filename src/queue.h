@@ -14,8 +14,6 @@
 #include <cstddef>
 
 ///
-/// @class  queue_t
-///
 /// @tparam type_t   The type of individual items in the queue
 ///
 /// @brief  A generic FIFO queue that is optimized to keep a few empty nodes to minimize

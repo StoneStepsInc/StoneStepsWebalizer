@@ -17,8 +17,6 @@
 #include "types.h"
 
 ///
-/// @class  logfile_t
-///
 /// @brief  A class that opens and reads a log file line by line
 ///
 class logfile_t {

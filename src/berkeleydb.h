@@ -33,8 +33,6 @@ namespace sswtest {
 }
 
 ///
-/// @class  berkeleydb_t
-///
 /// @brief  A base class of a Berkeley DB interface wrapper
 ///
 /// The `berkeleydb_t` class wraps various Berkeley DB interfaces, such as primary and 

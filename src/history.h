@@ -40,8 +40,6 @@ struct hist_month_t {
 };
 
 ///
-/// @class  history_t
-///
 /// @brief  A class that maintains monthly history data
 ///
 class history_t {

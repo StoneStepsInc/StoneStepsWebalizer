@@ -30,8 +30,6 @@ struct log_struct;
 struct field_desc;
 
 ///
-/// @class  parser_t
-///
 /// @brief  A log file parser class
 ///
 class parser_t {
