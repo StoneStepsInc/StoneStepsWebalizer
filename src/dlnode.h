@@ -13,7 +13,9 @@
 #include "hashtab.h"
 #include "types.h"
 #include "tstring.h"
-#include "basenode.h"
+#include "hashtab.h"
+#include "keynode.h"
+#include "datanode.h"
 #include "danode.h"
 #include "storable.h"
 
@@ -52,7 +54,7 @@ struct hnode_t;
 /// should call `set_host` to link both nodes and should arrange that the download
 /// node is destroyed first.
 ///
-struct dlnode_t : public base_node<dlnode_t> {
+struct dlnode_t : public htab_obj_t, public keynode_t<uint64_t>, public datanode_t<dlnode_t> {
       ///
       /// @struct param_block
       ///
@@ -64,6 +66,7 @@ struct dlnode_t : public base_node<dlnode_t> {
       };
 
       // combined download job data
+      string_t    name;                ///< Download job name.
       uint64_t    count;               ///< Number of times this download was performed.
       uint64_t    sumhits;             ///< Total number of requests.
       uint64_t    sumxfer;             ///< Total transfer size.
@@ -85,6 +88,8 @@ struct dlnode_t : public base_node<dlnode_t> {
 
          ~dlnode_t(void);
 
+         nodetype_t get_type(void) const override {return OBJ_REG;}
+
          void set_host(hnode_t *hnode);
 
          void reset(uint64_t nodeid = 0);
@@ -96,7 +101,7 @@ struct dlnode_t : public base_node<dlnode_t> {
             throw std::logic_error("This node only supports searches with a compound key");
          }
 
-         static uint64_t hash(const string_t& ipaddr, const string_t& dlname) 
+         static uint64_t hash_key(const string_t& ipaddr, const string_t& dlname) 
          {
             return hash_ex(hash_ex(0, ipaddr), dlname);
          }
@@ -113,14 +118,14 @@ struct dlnode_t : public base_node<dlnode_t> {
          size_t s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<param_t ...> upcb, param_t ... param);
 
          uint64_t s_hash_value(void) const;
+         size_t s_hash_value_size(void) const {return sizeof(uint64_t);}
 
          int64_t s_compare_value(const void *buffer, size_t bufsize) const;
 
          static const void *s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize);
          static const void *s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize);
-         static const void *s_field_value_mp_dlname(const void *buffer, size_t bufsize, size_t& datasize);
-         static const void *s_field_value_mp_hostid(const void *buffer, size_t bufsize, size_t& datasize);
 
+         static int64_t s_compare_value_hash(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
          static int64_t s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size);
 };
 

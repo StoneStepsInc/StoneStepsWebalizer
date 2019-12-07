@@ -20,7 +20,8 @@
 // Download Jobs
 //
 
-dlnode_t::dlnode_t(void) : base_node<dlnode_t>() 
+dlnode_t::dlnode_t(void) :
+      keynode_t<uint64_t>(0)
 {
    count = 0;
    sumhits = 0;
@@ -32,7 +33,9 @@ dlnode_t::dlnode_t(void) : base_node<dlnode_t>()
    hnode = NULL;
 }
 
-dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) : base_node<dlnode_t>(name) 
+dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) :
+      keynode_t<uint64_t>(0),
+      name(name)
 {
    count = 0;
    sumhits = 0;
@@ -46,7 +49,9 @@ dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) : base_node<dlnode_t>(na
    hnode->dlref++;
 }
 
-dlnode_t::dlnode_t(dlnode_t&& tmp) : base_node<dlnode_t>(std::move(tmp))
+dlnode_t::dlnode_t(dlnode_t&& tmp) :
+      keynode_t<uint64_t>(std::move(tmp)),
+      name(std::move(tmp.name))
 {
    count = tmp.count;
    sumhits = tmp.sumhits;
@@ -72,7 +77,9 @@ dlnode_t::~dlnode_t(void)
 
 void dlnode_t::reset(uint64_t nodeid)
 {
-   base_node<dlnode_t>::reset(nodeid);
+   keynode_t<uint64_t>::reset(nodeid);
+
+   name.clear();
 
    count = 0;
    sumhits = 0;
@@ -107,12 +114,12 @@ bool dlnode_t::match_key_ex(const dlnode_t::param_block *pb) const
       return false;
 
    // and then download names
-   return !strcmp(string, pb->name);
+   return !strcmp(name, pb->name);
 }
 
 uint64_t dlnode_t::get_hash(void) const
 {
-   return hash_ex(hash_ex(0, hnode ? hnode->string : string_t()), string);
+   return hash_ex(hash_ex(0, hnode ? hnode->string : string_t()), name);
 }
 
 //
@@ -121,21 +128,27 @@ uint64_t dlnode_t::get_hash(void) const
 
 size_t dlnode_t::s_data_size(void) const
 {
-   return base_node<dlnode_t>::s_data_size() + 
-            sizeof(uint64_t) * 2 +
-            sizeof(double) * 3 +
-            sizeof(uint64_t) +        // sumxfer
-            sizeof(uint64_t)     +
-            sizeof(u_char)     +
-            sizeof(uint64_t);         // host name
+   return datanode_t<dlnode_t>::s_data_size() +
+            sizeof(u_char) +                       // node type
+            serializer_t::s_size_of(name) +        // url
+            sizeof(uint64_t) * 2 +                 // count, sumhits
+            sizeof(double) * 3 +                   // avgxfer, avgtime, sumtime
+            sizeof(uint64_t) +                     // sumxfer
+            sizeof(uint64_t) +                     // hash value
+            sizeof(u_char) +                       // active download
+            sizeof(uint64_t);                      // host node ID
 }
 
 size_t dlnode_t::s_pack_data(void *buffer, size_t bufsize) const
 {
    serializer_t sr(buffer, bufsize);
 
-   size_t basesize = base_node<dlnode_t>::s_pack_data(buffer, bufsize);
+   size_t basesize = datanode_t<dlnode_t>::s_pack_data(buffer, bufsize);
    void *ptr = (u_char*) buffer + basesize;
+
+   // used to be in basenode and should be written first
+   ptr = sr.serialize<u_char, nodetype_t>(ptr, OBJ_REG);
+   ptr = sr.serialize(ptr, name);
 
    ptr = sr.serialize(ptr, count);
    ptr = sr.serialize(ptr, sumhits);
@@ -158,8 +171,12 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    uint64_t hostid;
    bool active;
 
-   size_t basesize = base_node<dlnode_t>::s_unpack_data(buffer, bufsize);
-   const void *ptr = (u_char*) buffer + basesize;
+   size_t basesize = datanode_t<dlnode_t>::s_unpack_data(buffer, bufsize);
+   const void *ptr = (const u_char*) buffer + basesize;
+
+   // used to be in basenode; skip node type - download jobs cannot be grouped
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+   ptr = sr.deserialize(ptr, name);
 
    ptr = sr.deserialize(ptr, count);
    ptr = sr.deserialize(ptr, sumhits);
@@ -182,57 +199,100 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
 
 uint64_t dlnode_t::s_hash_value(void) const
 {
-   return hash_num(base_node<dlnode_t>::s_hash_value(), hnode ? hnode->nodeid : 0);
+   //
+   // Stored hash is different from the one used in the hash table because
+   // we don't want to look up host name in the database when just walking
+   // the downloads table. See more in s_compare_value.
+   //
+   return hash_num(hash_ex(0, name), hnode ? hnode->nodeid : 0);
 }
 
 int64_t dlnode_t::s_compare_value(const void *buffer, size_t bufsize) const
 {
    serializer_t sr(buffer, bufsize);
 
+   const char *str;
+   size_t slen;
    uint64_t hostid;
-   size_t datasize;
    int64_t diff;
 
    if(!hnode)
       return -1;
 
-   if((diff = base_node<dlnode_t>::s_compare_value(buffer, bufsize)) != 0)
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<dlnode_t>::s_data_size(buffer, bufsize);
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+
+   ptr = sr.deserialize(ptr, str, slen);     // name
+
+   if((diff = (int64_t) name.compare(string_t::hold(str, slen))) != 0)
       return diff;
 
-   sr.deserialize(s_field_value_mp_hostid(buffer, bufsize, datasize), hostid);
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // count
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // sumhits
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // sumxfer
+   ptr = sr.s_skip_field<double>(ptr);       // avgxfer
+   ptr = sr.s_skip_field<double>(ptr);       // avgtime
+   ptr = sr.s_skip_field<double>(ptr);       // sumtime
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // value hash
+   ptr = sr.s_skip_field<bool>(ptr);         // active download
 
+   ptr = sr.deserialize(ptr, hostid);
+
+   //
+   // This function is called against the download record in the database,
+   // so there is no host name available at this point and we compare to
+   // the next best thing - the host ID. This means that duplicate download
+   // names will be ordered by their numeric host node ID, which will seem
+   // like random ordering, since the host ID value is just a sequential
+   // value incremented as new host nodes are added. Storing host name
+   // in the download node sounds like a good idea, but host names may
+   // change as DNS is enabled/disabled or refreshed, so some more complex
+   // way of doing this might be required. For now, node ID keeps these
+   // records unique, even though it fails for sorting.
+   //
    return hnode->nodeid == hostid ? 0 : hnode->nodeid > hostid ? 1 : -1;
-}
-
-const void *dlnode_t::s_field_value_mp_dlname(const void *buffer, size_t bufsize, size_t& datasize)
-{
-   return base_node<dlnode_t>::s_field_value(buffer, bufsize, datasize);
-}
-
-const void *dlnode_t::s_field_value_mp_hostid(const void *buffer, size_t bufsize, size_t& datasize)
-{
-   datasize = sizeof(uint64_t);
-   return (u_char*)buffer + base_node<dlnode_t>::s_data_size(buffer, bufsize) + 
-            sizeof(uint64_t) * 2 + 
-            sizeof(double) * 3 + 
-            sizeof(uint64_t) +         // sumxfer
-            sizeof(uint64_t) + 
-            sizeof(u_char);
 }
 
 const void *dlnode_t::s_field_value_hash(const void *buffer, size_t bufsize, size_t& datasize)
 {
+   serializer_t sr(buffer, bufsize);
+
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer, bufsize) + 
-            sizeof(uint64_t) * 2 + 
-            sizeof(double) * 3 + 
-            sizeof(uint64_t);          // sumxfer
+
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<dlnode_t>::s_data_size(buffer, bufsize);
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+   ptr = sr.s_skip_field<string_t>(ptr);     // name
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // count
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // sumhits
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // sumxfer
+   ptr = sr.s_skip_field<double>(ptr);       // avgxfer
+   ptr = sr.s_skip_field<double>(ptr);       // avgtime
+
+   return sr.s_skip_field<double>(ptr);      // sumtime
 }
 
 const void *dlnode_t::s_field_xfer(const void *buffer, size_t bufsize, size_t& datasize)
 {
+   serializer_t sr(buffer, bufsize);
+
    datasize = sizeof(uint64_t);
-   return (u_char*) buffer + base_node<dlnode_t>::s_data_size(buffer, bufsize) + sizeof(uint64_t) * 2;
+
+   const void *ptr = (const u_char*) buffer + 
+         datanode_t<dlnode_t>::s_data_size(buffer, bufsize);
+
+   ptr = sr.s_skip_field<u_char>(ptr);       // node type
+   ptr = sr.s_skip_field<string_t>(ptr);     // name
+   ptr = sr.s_skip_field<uint64_t>(ptr);     // count
+   return sr.s_skip_field<uint64_t>(ptr);    // sumhits
+}
+
+int64_t dlnode_t::s_compare_value_hash(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)
+{
+   return s_compare<uint64_t>(buf1, buf1size, buf2, buf2size);
 }
 
 int64_t dlnode_t::s_compare_xfer(const void *buf1, size_t buf1size, const void *buf2, size_t buf2size)

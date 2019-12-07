@@ -277,7 +277,7 @@ void dump_output_t::dump_all_downloads(void)
          nptr->sumhits, nptr->sumxfer/1024., 
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
-         nptr->string.c_str(),
+         nptr->name.c_str(),
          hnode.ccode, 
          state.cc_htab.get_ccnode(hnode.get_ccode()).cdesc.c_str(),
          hnode.city.c_str(),

@@ -10,7 +10,9 @@
 #ifndef RCNODE_H
 #define RCNODE_H
 
-#include "basenode.h"
+#include "hashtab.h"
+#include "keynode.h"
+#include "datanode.h"
 #include "types.h"
 #include "storable.h"
 

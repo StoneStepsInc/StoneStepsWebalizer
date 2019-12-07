@@ -148,14 +148,14 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
       // compound download job key
       dlnode_t::param_block dlnode_key = {download.c_str(), ipaddr.c_str()};
 
-      uint64_t hashval = dlnode_t::hash(string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
+      uint64_t hashval = dlnode_t::hash_key(string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
       // use a non-const look-up with a time stamp 
       storable_t<dlnode_t> *dlnode = htab.find_node(hashval, &dlnode_key, OBJ_REG, tstamp);
 
       // alternate finding and not finding the node in the hash table
       if(i % 2) {
-         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->string.c_str()) << "Every odd number should be found in the hash table (name)";
+         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Every odd number should be found in the hash table (name)";
          EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Every odd number should be found in the hash table (IP address)";
       }
       else {
@@ -166,7 +166,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
 
          ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
 
-         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->string.c_str()) << "Newly inserted node must have the correct key";
+         EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
          EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
       }
 
@@ -175,7 +175,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
 
       ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
 
-      EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->string.c_str()) << "Newly inserted node must have the correct key";
+      EXPECT_STREQ(string_t::hold(dlnode_key.name), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
       EXPECT_STREQ(string_t::hold(dlnode_key.ipaddr), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
    }
 

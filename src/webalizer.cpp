@@ -2850,7 +2850,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    params.name = name;
    params.ipaddr = hnode.string;
 
-   hashval = dlnode_t::hash(hnode.string, name);
+   hashval = dlnode_t::hash_key(hnode.string, name);
 
    //
    // Sometimes download requests may come in severely shuffled. For example, 
@@ -3114,7 +3114,7 @@ storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode,
 {
    storable_t<danode_t> *download;
 
-   if(!dlnode || dlnode->flag == OBJ_GRP || tstamp.null)
+   if(!dlnode || tstamp.null)
       return NULL;
 
    if((download = dlnode->download) == NULL)

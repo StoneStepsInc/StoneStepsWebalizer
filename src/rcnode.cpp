@@ -91,7 +91,7 @@ size_t rcnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
    serializer_t sr(buffer, bufsize);
 
    size_t basesize = datanode_t<rcnode_t>::s_unpack_data(buffer, bufsize);
-   const void *ptr = (u_char*) buffer + basesize;
+   const void *ptr = (const u_char*) buffer + basesize;
 
    // used to be in basenode; skip node type - errors cannot be grouped
    ptr = sr.s_skip_field<u_char>(ptr);

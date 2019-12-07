@@ -2122,7 +2122,7 @@ void html_output_t::top_dl_table(void)
           (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
           nptr->avgtime, nptr->sumtime, 
           nptr->count,
-          html_encode(nptr->string.c_str()));
+          html_encode(nptr->name.c_str()));
 
       if(config.ntop_ctrys) { 
          fprintf(out_fp, "<td class=\"stats_data_item_td%s\" data-ccode=\"%s\" data-lat=\"%.6lg\" data-lon=\"%.6lg\">%s</td>", 
@@ -2234,7 +2234,7 @@ int html_output_t::all_downloads_page(void)
          (state.totals.t_xfer == 0) ? .0 : PCENT(nptr->sumxfer, state.totals.t_xfer),
          nptr->avgtime, nptr->sumtime, 
          nptr->count,
-         html_encode(nptr->string.c_str()));
+         html_encode(nptr->name.c_str()));
 
       if(config.ntop_ctrys) {
          fprintf(out_fp, "  <span data-lat=\"%.6lg\" data-lon=\"%.6lg\">%-22s</span>", 
