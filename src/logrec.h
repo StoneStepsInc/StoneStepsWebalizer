@@ -27,8 +27,6 @@ enum log_type_t {
 };
 
 ///
-/// @struct log_struct
-///
 /// @brief  A collection of fields extracted from a single log file line
 ///
 /// 1. URL strings can only contain ASCII characters. Non-ASCII characters must be 

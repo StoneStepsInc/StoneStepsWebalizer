@@ -16,8 +16,6 @@
 #include "storable.h"
 
 ///
-/// @struct snode_t
-///
 /// @brief  Search engine search terms node
 ///
 /// 1. Search strings are length-encoded and include the type of the search and 

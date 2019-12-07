@@ -16,8 +16,6 @@
 #include "storable.h"
 
 ///
-/// @struct anode_t
-///
 /// @brief  A user agent node
 ///
 struct anode_t : public base_node<anode_t> {

@@ -16,8 +16,6 @@
 #include "storable.h"
 
 ///
-/// @struct unode_t
-///
 /// @brief  URL node
 ///
 /// 1. `vstref` is not a generic reference count, but rather an app-level indicator 

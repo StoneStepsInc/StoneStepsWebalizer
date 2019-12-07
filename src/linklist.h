@@ -19,8 +19,6 @@
 #include <list>
 
 ///
-/// @struct base_list_node_t
-///
 /// @brief  A list node with a string pattern for matching beginning or ending of a
 ///         string or a substring of a string
 ///
@@ -105,8 +103,6 @@ class base_list {
       const node_t *find_node(const string_t& str, typename std::list<node_t>::const_iterator& iter, bool next = false, bool nocase = false) const;
 };
 
-///
-/// @struct nnode_t
 ///
 /// @brief  A list node for IGNORE and HIDE list items
 ///

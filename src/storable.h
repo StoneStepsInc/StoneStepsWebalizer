@@ -14,8 +14,6 @@
 #include <stdexcept>
 
 ///
-/// @struct storage_info_t
-///
 /// @brief  Represents the storage state of a data object and indicates whether the
 ///         object came from storage and whether it has been modified since it was
 ///         read from storage.
@@ -84,8 +82,6 @@ struct storage_info_t {
 #pragma warning(disable: 4521)  // multiple copy constructors specified
 #endif
 
-///
-/// @struct storable_t
 ///
 /// @brief  Maintains storage flags on behalf of the underlying data object.
 ///

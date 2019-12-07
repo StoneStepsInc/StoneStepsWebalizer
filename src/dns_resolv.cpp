@@ -63,8 +63,6 @@ constexpr size_t DBBUFSIZE = 8192;              ///< Database buffer size.
 constexpr int DBFILEMASK = 0664;                ///< DNS cache database file mask (rw-rw-r--).
 
 ///
-/// @struct dns_db_record
-///
 /// @brief  A compatibility DNS DB record
 ///
 /// The compatibility DNS DB record structure is saved to the database as a block of 
@@ -81,8 +79,6 @@ struct dns_db_record {
    char     hostname[1];                        ///< Host name (variable length)
 };
 
-///
-/// @struct dns_db_record_t
 ///
 /// @brief  A serializable DNS cache database record
 ///

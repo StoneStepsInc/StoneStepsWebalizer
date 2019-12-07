@@ -20,8 +20,6 @@
 #include "storable.h"
 
 ///
-/// @struct hnode_t
-///
 /// @brief  Host node
 ///
 /// 1. Host node cannot delete active visit until visit data is factored 

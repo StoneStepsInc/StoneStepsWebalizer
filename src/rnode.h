@@ -16,8 +16,6 @@
 #include "storable.h"
 
 ///
-/// @struct rnode_t
-///
 /// @brief  Referrer node
 ///
 struct rnode_t : public base_node<rnode_t> {   

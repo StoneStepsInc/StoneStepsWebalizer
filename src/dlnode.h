@@ -22,8 +22,6 @@
 struct hnode_t;
 
 ///
-/// @struct dlnode_t
-///
 /// @brief  A download job node.
 ///
 /// A download job is a download name tracked for a specific visitor identified

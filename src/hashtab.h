@@ -52,8 +52,6 @@ inline uint64_t hash_ex(uint64_t hashval, u_int data) {return hash_num(hashval, 
 /// @}
 
 ///
-/// @struct hash_string
-///
 /// @brief  A hash function for `std::unordered_map` with a `string_t` key.
 ///
 struct hash_string {
@@ -111,8 +109,6 @@ struct htab_obj_t {
       virtual uint64_t get_hash(void) const = 0;
 };
 
-///
-/// @struct htab_node_t
 ///
 /// @brief  A hash table node that contains a single object of `node_t` type and
 ///         is linked to other `htab_node_t` nodes with the same key hash value.

@@ -20,8 +20,6 @@
 struct unode_t;
 
 ///
-/// @struct vnode_t
-///
 /// @brief  Visit node
 ///
 /// 1. A visit node shares the node ID with the host node that owns it. 

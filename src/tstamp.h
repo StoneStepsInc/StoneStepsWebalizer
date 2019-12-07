@@ -16,8 +16,6 @@
 #include "types.h"
 #include "tstring.h"
 
-/// @struct tstamp_t
-///
 /// @brief  A time stamp structure that maintains and manipulates either local or UTC time
 ///
 /// Date and time components may be stored in local time or UTC and are converted to the internal 

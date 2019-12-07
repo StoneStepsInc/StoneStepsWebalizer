@@ -15,8 +15,6 @@
 #include "datanode.h"
 
 ///
-/// @struct daily_t
-///
 /// @brief  Daily counters node 
 ///
 ///

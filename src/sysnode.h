@@ -16,8 +16,6 @@
 #include "config.h"
 
 ///
-/// @struct sysnode_t
-///
 /// @brief  Application node
 ///
 /// 1. System node contains application-specific data to be stored in the

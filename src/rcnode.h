@@ -17,8 +17,6 @@
 #include "storable.h"
 
 ///
-/// @struct rcnode_t
-///
 /// @brief  URL request method and status code for HTTP errors node
 /// 
 /// 1. `rcnode_t` tracks URLs that resulted in an HTTP error

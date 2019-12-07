@@ -18,8 +18,6 @@
 #include <vector>
 
 ///
-/// @struct scnode_t
-///
 /// @brief  HTTP status code node
 ///
 /// Prior to v2 this node was missing the version value in serialized data and the 

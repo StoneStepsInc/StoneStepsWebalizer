@@ -17,8 +17,6 @@
 #include <vector>
 
 ///
-/// @struct hist_month_t
-///
 /// @brief  A class that keeps historical data for one month
 ///
 struct hist_month_t {

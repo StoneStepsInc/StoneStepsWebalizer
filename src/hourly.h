@@ -15,8 +15,6 @@
 #include "datanode.h"
 
 ///
-/// @struct hourly_t
-///
 /// @brief  Hourly counters node
 ///
 struct hourly_t : public keynode_t<uint32_t>, public datanode_t<hourly_t> {

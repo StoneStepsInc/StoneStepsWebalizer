@@ -16,8 +16,6 @@
 #include "datanode.h"
 
 ///
-/// @struct ccnode_t
-///
 /// @brief  Country node
 ///
 /// 1. Country code nodes are identified by an index value returned by

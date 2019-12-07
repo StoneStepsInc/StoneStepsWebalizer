@@ -55,8 +55,6 @@ static const uint32_t DB_DEF_CACHE_SIZE = 50 * 1024 * 1024;
 static const uint32_t DB_MIN_CACHE_SIZE = 1 * 1024 * 1024;
 
 ///
-/// @struct kwinfo
-///
 /// @brief  Maps a configuration variable name to a numeric key
 ///
 struct kwinfo {

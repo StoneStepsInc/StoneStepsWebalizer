@@ -16,8 +16,6 @@
 #include "types.h"
 
 ///
-/// @struct danode_t
-///
 /// @brief  Active download job node
 ///
 /// 1. An active download node shares the node ID with the download job

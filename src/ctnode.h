@@ -16,8 +16,6 @@
 #include "types.h"
 
 ///
-/// @struct ctnode_t
-///
 /// @brief  A city node
 ///
 /// Each city is identified by a GeoName identifier, as reported by the GeoIP library,

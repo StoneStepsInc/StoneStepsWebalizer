@@ -17,8 +17,6 @@
 #include "storable.h"
 
 ///
-/// @struct inode_t
-///
 /// @brief  User node
 ///
 struct inode_t : public base_node<inode_t> {
