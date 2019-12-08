@@ -1248,9 +1248,9 @@ void html_output_t::top_hosts_table(int flag)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp,"<th class=\"item_th\">%s</th>\n", config.lang.msg_h_as_num);
+      fprintf(out_fp,"<th class=\"country_th\">%s</th>\n", config.lang.msg_h_as_num);
 
-   fprintf(out_fp,"<th class=\"item_th\">%s</th></tr>\n", config.lang.msg_h_host);
+   fprintf(out_fp,"<th class=\"country_th\">%s</th></tr>\n", config.lang.msg_h_host);
    fputs("</thead>\n", out_fp);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
