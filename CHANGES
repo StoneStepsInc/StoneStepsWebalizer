@@ -1,4 +1,11 @@
 --------------------------------------------------------------------
+6.0.0 [xx-Dec-2019] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * [BB-20] Added Autonomous System columns to relevant reports and added a top AS organizations report
+ * [BUG][BB-22]: Fixed unknown cities and countries not appearing in the city report
+
+--------------------------------------------------------------------
 5.0.1 [24-May-2019] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
  * BB-21: Fixed a bug causing DNS cache hit ratio always being zero
