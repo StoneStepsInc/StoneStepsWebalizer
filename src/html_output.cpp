@@ -1607,10 +1607,7 @@ void html_output_t::top_urls_table(int flag)
 
       if (uptr->flag==OBJ_GRP)
       {
-         if (config.hlite_groups)
-            fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
-         else 
-            fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
+         fprintf(out_fp,"%s</td></tr>\n", html_encode(uptr->string.c_str()));
       }
       else {
          const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
