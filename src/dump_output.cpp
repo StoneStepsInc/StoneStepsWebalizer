@@ -121,7 +121,7 @@ void dump_output_t::dump_all_hosts()
       (!config.dump_path.isempty())? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -175,7 +175,7 @@ void dump_output_t::dump_all_urls()
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -217,7 +217,7 @@ void dump_output_t::dump_all_refs()
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -251,7 +251,7 @@ void dump_output_t::dump_all_downloads(void)
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -301,7 +301,7 @@ void dump_output_t::dump_all_errors(void)
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -338,7 +338,7 @@ void dump_output_t::dump_all_agents()
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -374,7 +374,7 @@ void dump_output_t::dump_all_users()
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)
@@ -416,7 +416,7 @@ void dump_output_t::dump_all_search()
       (!config.dump_path.isempty()) ? config.dump_path.c_str() : ".", state.totals.cur_tstamp.year,state.totals.cur_tstamp.month,config.dump_ext.c_str());
 
    /* open file */
-   if ( (out_fp=open_out_file(filename))==NULL ) return;
+   if ( (out_fp=open_out_file(filename))==nullptr ) return;
 
    /* need a header? */
    if (config.dump_header)

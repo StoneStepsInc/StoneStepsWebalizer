@@ -42,7 +42,7 @@ void reset_ctrl_c_handler(void)
 {
    // remove the handler if we set it before
    if(ctrl_c_handler) {
-      SetConsoleCtrlHandler(NULL, FALSE);
-      ctrl_c_handler = NULL;
+      SetConsoleCtrlHandler(nullptr, FALSE);
+      ctrl_c_handler = nullptr;
    }
 }

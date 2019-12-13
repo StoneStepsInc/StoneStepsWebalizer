@@ -148,20 +148,20 @@ TEST(StringCompareTest, CompareStringsSortOrderNoCase)
 }
 
 ///
-/// @brief  Compare a NULL pointer to a string or two NULL pointers
+/// @brief  Compare a nullptr pointer to a string or two nullptr pointers
 ///
 TEST(StringCompareTest, CompareStringsNullPtr)
 {
-   EXPECT_TRUE(string_t::compare(nullptr, "ABC") < 0) << "A NULL pointer is less than any non-empty string";
-   EXPECT_TRUE(string_t::compare("ABC", nullptr) > 0) << "Any non-empty string is greater than a NULL pointer";
-   EXPECT_TRUE(string_t::compare(nullptr, nullptr) == 0) << "Two NULL pointers are equal";
-   EXPECT_TRUE(string_t::compare("", nullptr) == 0) << "An empty string is equal to a NULL pointer";
-   EXPECT_TRUE(string_t::compare(nullptr, "") == 0) << "A NULL pointer is equal to an empty string";
+   EXPECT_TRUE(string_t::compare(nullptr, "ABC") < 0) << "A nullptr pointer is less than any non-empty string";
+   EXPECT_TRUE(string_t::compare("ABC", nullptr) > 0) << "Any non-empty string is greater than a nullptr pointer";
+   EXPECT_TRUE(string_t::compare(nullptr, nullptr) == 0) << "Two nullptr pointers are equal";
+   EXPECT_TRUE(string_t::compare("", nullptr) == 0) << "An empty string is equal to a nullptr pointer";
+   EXPECT_TRUE(string_t::compare(nullptr, "") == 0) << "A nullptr pointer is equal to an empty string";
 
-   EXPECT_TRUE(string_t::compare_ci(nullptr, "ABC") < 0) << "A NULL pointer is less than any non-empty string";
-   EXPECT_TRUE(string_t::compare_ci("ABC", nullptr) > 0) << "Any non-empty string is greater than a NULL pointer";
-   EXPECT_TRUE(string_t::compare_ci(nullptr, nullptr) == 0) << "Two NULL pointers are equal";
-   EXPECT_TRUE(string_t::compare_ci("", nullptr) == 0) << "An empty string is equal to a NULL pointer";
-   EXPECT_TRUE(string_t::compare_ci(nullptr, "") == 0) << "A NULL pointer is equal to an empty string";
+   EXPECT_TRUE(string_t::compare_ci(nullptr, "ABC") < 0) << "A nullptr pointer is less than any non-empty string";
+   EXPECT_TRUE(string_t::compare_ci("ABC", nullptr) > 0) << "Any non-empty string is greater than a nullptr pointer";
+   EXPECT_TRUE(string_t::compare_ci(nullptr, nullptr) == 0) << "Two nullptr pointers are equal";
+   EXPECT_TRUE(string_t::compare_ci("", nullptr) == 0) << "An empty string is equal to a nullptr pointer";
+   EXPECT_TRUE(string_t::compare_ci(nullptr, "") == 0) << "A nullptr pointer is equal to an empty string";
 }
 }

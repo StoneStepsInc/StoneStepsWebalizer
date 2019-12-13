@@ -73,7 +73,7 @@ class berkeleydb_t {
       // a template function. May be that's what's causing this error when
       // compiling expressions like this one:
       //
-      //    func(cond ? tmpl_func<fptr> : NULL)
+      //    func(cond ? tmpl_func<fptr> : nullptr)
       //
       // If &tmpl_func<fptr> is used, bug 11407 triggers another error. The
       // work-around below converts a pointer to a template function to a
@@ -230,13 +230,13 @@ class berkeleydb_t {
             /// Returns just the database file name.
             virtual const string_t& get_db_name(void) const = 0;
 
-            /// Returns a character pointer to the full database path. May be `NULL` if it is empty.
+            /// Returns a character pointer to the full database path. May be `nullptr` if it is empty.
             const char *get_db_path_ptr(void) const {return !get_db_path().isempty() ? get_db_path().c_str() : nullptr;}
 
-            /// Returns a character pointer to the database directory path. May be `NULL` if it is empty.
+            /// Returns a character pointer to the database directory path. May be `nullptr` if it is empty.
             const char *get_db_dir_ptr(void) const {return !get_db_dir().isempty() ? get_db_dir().c_str() : nullptr;}
 
-            /// Returns a character pointer to the database file name. May be `NULL` if it is empty.
+            /// Returns a character pointer to the database file name. May be `nullptr` if it is empty.
             const char *get_db_name_ptr(void) const {return !get_db_name().isempty() ? get_db_name().c_str() : nullptr;}
 
             /// Returns `true` if the database path is empty, `false` otherwise.
@@ -373,7 +373,7 @@ class berkeleydb_t {
       ///
       /// 2. Berkeley databases cannot be copied, so `table_t` instances only use
       /// move semantics, which requires all non-copyable data members maintained 
-      /// as pointers. These pointers can only be NULL for objects that are near
+      /// as pointers. These pointers can only be nullptr for objects that are near
       /// their lifetime. Calling any methods for these objects will result in
       /// undefined behavior.
       ///
@@ -451,7 +451,7 @@ class berkeleydb_t {
             int close(void);
 
             /// erases all data in the table
-            int truncate(u_int32_t *count = NULL);
+            int truncate(u_int32_t *count = nullptr);
 
             /// rearranges data pages on disk to minimize unused space
             int compact(u_int& bytes);
@@ -484,7 +484,7 @@ class berkeleydb_t {
             db_seq_t query_seq_id(void);
 
             /// Returns the number of unique keys in the primary or a named secondary database.
-            uint64_t count(const char *dbname = NULL) const;
+            uint64_t count(const char *dbname = nullptr) const;
 
             /// inserts a new node or updates the existing node in the primary database
             template <typename node_t>

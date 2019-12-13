@@ -198,7 +198,7 @@ class hash_table_base {
 ///
 ///   * Obtain the hash value for the node object
 ///   * Call `find_node` with this hash value and the node key
-///   * If `find_node` returns NULL, look up the key in the external storage
+///   * If `find_node` returns nullptr, look up the key in the external storage
 ///   * If the key was not found in the external storage, call `put_node` with
 ///     the hash value to insert a new node in the hash table. Otherwise, insert
 ///     the node found in the external storage.
@@ -307,7 +307,7 @@ class hash_table : public hash_table_base {
             /// Returns the current combined list item, if there is one, or `nullptr` otherwise.
             node_t *item(void) 
             {
-               // return a NULL if we have not started iterating
+               // return a nullptr if we have not started iterating
                if(pre)
                   return nullptr;
 
@@ -342,7 +342,7 @@ class hash_table : public hash_table_base {
                   if(tmnode != tmend)
                      return (*tmnode)->node;
 
-                  // both lists are empty, return NULL
+                  // both lists are empty, return nullptr
                   return nullptr;
                }
 

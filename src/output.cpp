@@ -31,7 +31,7 @@
 output_t::output_t(const config_t& config, const state_t& state) : state(state), config(config)
 {
    makeimgs = false;
-   graphinfo = NULL;
+   graphinfo = nullptr;
 }
 
 output_t::~output_t(void)
@@ -49,10 +49,10 @@ FILE *output_t::open_out_file(const char *filename) const
    FILE *out_fp;
 
    /* open the file... */
-   if ( (out_fp=fopen(make_path(config.out_dir, filename),"w")) == NULL)
+   if ( (out_fp=fopen(make_path(config.out_dir, filename),"w")) == nullptr)
    {
       fprintf(stderr,"%s %s!\n",config.lang.msg_no_open,filename);
-      return NULL;
+      return nullptr;
    }
    return out_fp;
 }

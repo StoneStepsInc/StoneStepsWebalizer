@@ -151,13 +151,13 @@ class database_t : public berkeleydb_t {
       // visits
       bool put_vnode(const vnode_t& vnode, storage_info_t& strg_info);
 
-      iterator<vnode_t> begin_visits(void) const {return visits.begin<vnode_t>(NULL);}
+      iterator<vnode_t> begin_visits(void) const {return visits.begin<vnode_t>(nullptr);}
 
       bool get_vnode_by_id(storable_t<vnode_t>& vnode, vnode_t::s_unpack_cb_t<storable_t<unode_t>&> upcb, storable_t<unode_t>& unode) const;
 
       bool delete_visit(const keynode_t<uint64_t>& vnode);
 
-      uint64_t get_vcount(const char *dbname = NULL) const {return visits.count(dbname);}
+      uint64_t get_vcount(const char *dbname = nullptr) const {return visits.count(dbname);}
 
       //
       // downloads
@@ -183,11 +183,11 @@ class database_t : public berkeleydb_t {
       //
       bool put_danode(const danode_t& danode, storage_info_t& strg_info);
 
-      iterator<danode_t> begin_active_downloads(void) const {return active_downloads.begin<danode_t>(NULL);}
+      iterator<danode_t> begin_active_downloads(void) const {return active_downloads.begin<danode_t>(nullptr);}
 
       bool get_danode_by_id(storable_t<danode_t>& danode, danode_t::s_unpack_cb_t<> upcb = nullptr) const;
 
-      uint64_t get_dacount(const char *dbname = NULL) const {return active_downloads.count(dbname);}
+      uint64_t get_dacount(const char *dbname = nullptr) const {return active_downloads.count(dbname);}
 
       //
       // agents
@@ -264,7 +264,7 @@ class database_t : public berkeleydb_t {
 
       bool get_rcnode_by_value(storable_t<rcnode_t>& rcnode, rcnode_t::s_unpack_cb_t<> upcb = nullptr) const;
 
-      uint64_t get_errcount(const char *dbname = NULL) const {return errors.count(dbname);}
+      uint64_t get_errcount(const char *dbname = nullptr) const {return errors.count(dbname);}
 
       //
       // status codes

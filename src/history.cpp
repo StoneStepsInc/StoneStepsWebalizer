@@ -147,14 +147,14 @@ const hist_month_t *history_t::find_month(u_int year, u_int month) const
          return hptr;
    }
 
-   return NULL;
+   return nullptr;
 }
 
 bool history_t::update(const hist_month_t *month)
 {
    int i;
 
-   if(month == NULL)
+   if(month == nullptr)
       return false;
 
    // if the history is empty, just add a new month/year pair
@@ -232,7 +232,7 @@ bool history_t::get_history(void)
    // be considered as an error. Report the missing history file to the standard 
    // output, and return success.
    //
-   if((hist_fp=fopen(fpath,"r")) == NULL) {
+   if((hist_fp=fopen(fpath,"r")) == nullptr) {
       if (config.verbose>1) 
          printf("%s\n", config.lang.msg_no_hist);
       return true;
@@ -243,7 +243,7 @@ bool history_t::get_history(void)
    if (config.verbose>1) 
       printf("%s %s\n", config.lang.msg_get_hist, fpath.c_str());
 
-   while ((fgets(buffer,BUFSIZE,hist_fp)) != NULL)
+   while ((fgets(buffer,BUFSIZE,hist_fp)) != nullptr)
    {
       /* month# year# requests files sites xfer firstday lastday visits */
       numfields = sscanf(buffer,"%d %d %" SCNu64 " %" SCNu64 " %" SCNu64 " %" SCNu64 " %d %d %" SCNu64 " %" SCNu64 "",
@@ -313,7 +313,7 @@ bool history_t::put_history(void)
 
    fpath = make_path(config.out_dir, config.hist_fname);
 
-   if((hist_fp = fopen(fpath,"w")) == NULL) {
+   if((hist_fp = fopen(fpath,"w")) == nullptr) {
       fprintf(stderr,"%s %s\n", config.lang.msg_hist_err, fpath.c_str());
       return false;
    }

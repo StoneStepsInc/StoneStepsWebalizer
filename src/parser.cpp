@@ -44,7 +44,7 @@ struct field_desc {
    public:
       field_desc(void)
       {
-         field = NULL;
+         field = nullptr;
          length = 0;
       }
 };
@@ -62,7 +62,7 @@ const char *parser_t::log_month[12] = { "jan", "feb", "mar", "apr", "may", "jun"
 
 parser_t::parser_t(const config_t& _config) : config(_config)
 {
-   fields = NULL;
+   fields = nullptr;
 }
 
 parser_t::~parser_t(void)
@@ -103,7 +103,7 @@ void parser_t::cleanup_parser(void)
 {
    if(fields)
       delete [] fields;
-   fields = NULL;
+   fields = nullptr;
 }
 
 //
@@ -213,7 +213,7 @@ bool parser_t::parse_clf_tstamp(const char *dt, tstamp_t& ts)
    int offset; // UTC offset (+/-hhmm)
    int month;
 
-   if(dt == NULL || *dt == 0)
+   if(dt == nullptr || *dt == 0)
       return false;
 
    if(dt[0] != '[' || dt[27] != ']' || dt[28] != 0)
@@ -246,8 +246,8 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
 {
    const char *cptr;
 
-   if(cp1 == NULL)
-      return NULL;
+   if(cp1 == nullptr)
+      return nullptr;
 
    //
    // "GET / HTTP/1.0"
@@ -263,14 +263,14 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
    
    // if there's no method, return
    if(cp1-cptr == 0)
-      return NULL;
+      return nullptr;
    
    // copy the method   
    log_rec.method.assign(cptr, cp1-cptr);
 
    // check if there is no first space
    if(*cp1 != ' ')
-      return NULL;
+      return nullptr;
 
    // skip spaces 
    while(*cp1 && *cp1 == ' ') cp1++;
@@ -283,7 +283,7 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
       cp1++;
    }
    if(cp1 <= cptr)
-      return NULL;
+      return nullptr;
    log_rec.url.assign(cptr, cp1-cptr);
 
    // check for query strings
@@ -297,7 +297,7 @@ const char *parser_t::parse_http_req_line(const char *cp1, log_struct& log_rec)
 
    // check if there is no second space
    if(*cp1 != ' ')
-      return NULL;
+      return nullptr;
 
    // skip to the next field
    while(*cp1) cp1++;
@@ -460,7 +460,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    //
    // HTTP request
    //
-   if((cp1 = (char*) parse_http_req_line(cp1, log_rec)) == NULL)
+   if((cp1 = (char*) parse_http_req_line(cp1, log_rec)) == nullptr)
       return PARSE_CODE_ERROR;
    if(++cp1 >= eob) return PARSE_CODE_ERROR;
 
@@ -473,7 +473,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    if(*cp1 < '0' || *cp1 > '9') 
       log_rec.xfer_size=0;
    else 
-      log_rec.xfer_size = strtoul(cp1, NULL, 10);
+      log_rec.xfer_size = strtoul(cp1, nullptr, 10);
    while(*cp1 && cp1 < eob) cp1++;
 
    /* done with CLF record */
@@ -524,18 +524,18 @@ bool parser_t::parse_apache_log_format(const char *format)
 
    if(fields)
       delete [] fields;
-   fields = NULL;
+   fields = nullptr;
 
    log_rec_fields.clear();
 
-   if(format == NULL || *format == 0)
+   if(format == nullptr || *format == 0)
       return false;
 
    while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
 
    while(*cptr) {
       paramlen = 0;
-      param = NULL;
+      param = nullptr;
 
       while(*cptr && (*cptr != '%')) cptr++;
 
@@ -671,12 +671,12 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
    size_t fldindex = 0, fieldcnt;
    const char *cp1, *cp2;
 
-   if(buffer == NULL || *buffer == 0)
+   if(buffer == nullptr || *buffer == 0)
       return PARSE_CODE_ERROR;
 
    fieldcnt = log_rec_fields.size();
 
-   if(fields == NULL || fieldcnt == 0)
+   if(fields == nullptr || fieldcnt == 0)
       return PARSE_CODE_ERROR;
 
    if(!fmt_logrec(buffer, false, false, true, fieldcnt))
@@ -709,7 +709,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             break;
 
          case eHttpRequestLine:
-            if((cp1 = parse_http_req_line(cp1, log_rec)) == NULL)
+            if((cp1 = parse_http_req_line(cp1, log_rec)) == nullptr)
                return PARSE_CODE_ERROR;
 
             break;
@@ -721,17 +721,17 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 
          case eBytesReceived:
             if(config.upstream_traffic)
-               log_rec.xfer_size += strtoul(cp1,NULL,10);
+               log_rec.xfer_size += strtoul(cp1,nullptr,10);
             break;
 
          case eBytesSent:
             /* xfer size */
-            log_rec.xfer_size += strtoul(cp1,NULL,10);
+            log_rec.xfer_size += strtoul(cp1,nullptr,10);
             break;
 
          case eReferrer:
             if(slen && (slen > 1 || *cp1 != '-')) {
-               if((cp2 = strchr(cp1, '?')) != NULL) {
+               if((cp2 = strchr(cp1, '?')) != nullptr) {
                   log_rec.refer.assign(cp1, cp2-cp1); cp2++;
                   log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
                }
@@ -769,11 +769,11 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
             break;
 
          case eProcTimeMcS:
-            log_rec.proc_time = usec2msec(strtoul(cp1, NULL, 10));
+            log_rec.proc_time = usec2msec(strtoul(cp1, nullptr, 10));
             break;
 
          case eProcTimeS:
-            log_rec.proc_time = strtoul(cp1, NULL, 10) * 1000;
+            log_rec.proc_time = strtoul(cp1, nullptr, 10) * 1000;
             break;
 
          default:
@@ -796,7 +796,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
 //
 int parser_t::parse_w3c_log_directive(const char *buffer)
 {
-   const char *cptr = buffer, *cp2 = NULL;
+   const char *cptr = buffer, *cp2 = nullptr;
    size_t slen, i;
    size_t bytes_i = SIZE_MAX, cs_bytes_i = SIZE_MAX, sc_bytes_i = SIZE_MAX;
    
@@ -828,7 +828,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
    // initialize to indicate that neither is found
    bytes_i = cs_bytes_i = sc_bytes_i = SIZE_MAX;
 
-   if(buffer == NULL || *buffer == 0)
+   if(buffer == nullptr || *buffer == 0)
       return PARSE_CODE_ERROR;
 
    if(*cptr++ != '#')
@@ -852,7 +852,7 @@ int parser_t::parse_w3c_log_directive(const char *buffer)
 
    if(fields)
       delete [] fields;
-   fields = NULL;
+   fields = nullptr;
 
    log_rec_fields.clear();
    
@@ -957,7 +957,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
    bool tsdate = false, tstime = false;
    u_int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
-   if(buffer == NULL || *buffer == 0)
+   if(buffer == nullptr || *buffer == 0)
       return PARSE_CODE_ERROR;
 
    //
@@ -968,7 +968,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 
    fieldcnt = log_rec_fields.size();
 
-   if(fields == NULL || fieldcnt == 0)
+   if(fields == nullptr || fieldcnt == 0)
       return PARSE_CODE_ERROR;
 
    if(!fmt_logrec(buffer, true, true, false, fieldcnt))
@@ -1041,14 +1041,14 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
          case eBytesReceived:
          case eBytesSent:
          case eBytesTotal:
-            log_rec.xfer_size += strtoul(cp1, NULL, 10);
+            log_rec.xfer_size += strtoul(cp1, nullptr, 10);
             break;
 
          case eTimeTaken:
             if(iis) 
-               log_rec.proc_time = strtoul(cp1, NULL, 10);                    // IIS logs time in milliseconds
+               log_rec.proc_time = strtoul(cp1, nullptr, 10);                    // IIS logs time in milliseconds
             else
-               log_rec.proc_time = (uint64_t) (strtod(cp1, NULL) * 1000. + .5); // W3C requires time logged in seconds
+               log_rec.proc_time = (uint64_t) (strtod(cp1, nullptr) * 1000. + .5); // W3C requires time logged in seconds
             break;
 
          case eUserAgent:
@@ -1060,7 +1060,7 @@ int parser_t::parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec,
 
          case eReferrer:
             if(slen && (slen > 1 || *cp1 != '-')) {
-               if((cp2 = strchr(cp1, '?')) != NULL) {
+               if((cp2 = strchr(cp1, '?')) != nullptr) {
                   log_rec.refer.assign(cp1, cp2-cp1); cp2++;
                   log_rec.xsrchstr.assign(cp2, slen - (cp2-cp1));
                }
@@ -1102,7 +1102,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    time_t i;
    const char *cp1, *cpx, *eob;
 
-   if(fields == NULL)
+   if(fields == nullptr)
       return PARSE_CODE_ERROR;
 
    // calculate end of buffer
@@ -1121,7 +1121,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
 
    /* processing time */
    cp1 = fields[++fldindex].field;
-   log_rec.proc_time = strtoul(cp1, NULL, 10);
+   log_rec.proc_time = strtoul(cp1, nullptr, 10);
 
    /* HOSTNAME */
    fldindex++;
@@ -1138,7 +1138,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    /* xfer size */
    cp1 = fields[++fldindex].field;
    if (*cp1<'0'||*cp1>'9') log_rec.xfer_size=0;
-   else log_rec.xfer_size = strtoul(cp1,NULL,10);
+   else log_rec.xfer_size = strtoul(cp1,nullptr,10);
 
    // HTTP request type
    cp1 = fields[++fldindex].field;

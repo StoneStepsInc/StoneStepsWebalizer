@@ -744,7 +744,7 @@ void state_t::restore_state(void)
          // The visit doesn't own the URL node, so we need to find a URL node in the 
          // hash table or insert a new one, so it's deleted properly. 
          //
-         if((uptr = um_htab.find_node(OBJ_REG, htab_tstamp, unode.string)) != NULL)
+         if((uptr = um_htab.find_node(OBJ_REG, htab_tstamp, unode.string)) != nullptr)
             vnode.set_lasturl(uptr);
          else
             vnode.set_lasturl(um_htab.put_node(new storable_t<unode_t>(std::move(unode)), htab_tstamp));

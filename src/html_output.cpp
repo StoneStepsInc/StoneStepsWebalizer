@@ -588,7 +588,7 @@ int html_output_t::write_monthly_report()
 
    /* now do html stuff... */
    /* first, open the file */
-   if ( (out_fp=open_out_file(html_fname_lang))==NULL ) return 1;
+   if ( (out_fp=open_out_file(html_fname_lang))==nullptr ) return 1;
 
    const char *report_title = fmt_printf("%s %d", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year);
    write_html_head(report_title, out_fp, page_usage);
@@ -989,7 +989,7 @@ void html_output_t::daily_total_table()
    int i;
    const hist_month_t *hptr;
 
-   if((hptr = state.history.find_month(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month)) == NULL)
+   if((hptr = state.history.find_month(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month)) == nullptr)
       return;
       
    wday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
@@ -1144,7 +1144,7 @@ void html_output_t::top_hosts_table(int flag)
    u_int i;
    uint32_t tot_num, ntop_num;
    const storable_t<hnode_t> *hptr;
-   const char *cdesc = NULL;
+   const char *cdesc = nullptr;
    storable_t<hnode_t> *h_array;
 
    // return if nothing to process
@@ -1361,7 +1361,7 @@ int html_output_t::all_hosts_page(void)
       site_fname = site_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(site_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(site_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_hosts);
    write_html_head(report_title, out_fp, page_all_items);
@@ -1624,7 +1624,7 @@ void html_output_t::top_urls_table(int flag)
             const char *href = html_encode(url_encode(uptr->string, str));
 
             /* check for a service prefix (ie: http://) */
-            if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
+            if (strstr_ex(uptr->string, "://", 10, 3)!=nullptr) {
                fprintf(out_fp,"<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
             }
             else {
@@ -1679,7 +1679,7 @@ int html_output_t::all_urls_page(void)
       url_fname = url_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(url_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(url_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_url);
    write_html_head(report_title, out_fp, page_all_items);
@@ -1842,7 +1842,7 @@ void html_output_t::top_entry_table(int flag)
          href = html_encode(url_encode(uptr->string, str));
 
          /* check for a service prefix (ie: http://) */
-         if (strstr_ex(uptr->string, "://", 10, 3)!=NULL)
+         if (strstr_ex(uptr->string, "://", 10, 3)!=nullptr)
             fprintf(out_fp, "<a href=\"%s\">%s</a></td></tr>\n", href, dispurl);
          else
          {
@@ -2199,7 +2199,7 @@ int html_output_t::all_downloads_page(void)
       dl_fname = dl_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(dl_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(dl_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_download);
    write_html_head(report_title, out_fp, page_all_items);
@@ -2362,7 +2362,7 @@ int html_output_t::all_errors_page(void)
       err_fname = err_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(err_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(err_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_status);
    write_html_head(report_title, out_fp, page_all_items);
@@ -2413,7 +2413,7 @@ int html_output_t::all_refs_page(void)
       ref_fname = ref_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(ref_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(ref_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_ref);
    write_html_head(report_title, out_fp, page_all_items);
@@ -2633,7 +2633,7 @@ int html_output_t::all_agents_page(void)
       agent_fname = agent_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(agent_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(agent_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_agent);
    write_html_head(report_title, out_fp, page_all_items);
@@ -2759,7 +2759,7 @@ void html_output_t::top_search_table(void)
       if(sptr->termcnt) {
          termidx = 0;
          fputs("<td class=\"stats_data_item_td\">", out_fp);
-         while((cp1 = cstr2str(cp1, type)) != NULL && (cp1 = cstr2str(cp1, str)) != NULL) {
+         while((cp1 = cstr2str(cp1, type)) != nullptr && (cp1 = cstr2str(cp1, str)) != nullptr) {
             if(termidx)
                fputc(' ', out_fp);
             if(!type.isempty())
@@ -2818,7 +2818,7 @@ int html_output_t::all_search_page(void)
       search_fname = search_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(search_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(search_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_search);
    write_html_head(report_title, out_fp, page_all_items);
@@ -2841,7 +2841,7 @@ int html_output_t::all_search_page(void)
       cp1 = sptr->string;
       if(sptr->termcnt) {
          termidx = 0;
-         while((cp1 = cstr2str(cp1, type)) != NULL && (cp1 = cstr2str(cp1, str)) != NULL) {
+         while((cp1 = cstr2str(cp1, type)) != nullptr && (cp1 = cstr2str(cp1, str)) != nullptr) {
             if(termidx)
                fputc(' ', out_fp);
             if(!type.isempty())
@@ -3020,7 +3020,7 @@ int html_output_t::all_users_page(void)
       user_fname = user_fname + '.' + config.lang.language_code;
 
    /* open file */
-   if ( (out_fp=open_out_file(user_fname))==NULL ) return 0;
+   if ( (out_fp=open_out_file(user_fname))==nullptr ) return 0;
 
    const char *report_title = fmt_printf("%s %d - %s", config.lang.l_month[state.totals.cur_tstamp.month-1],state.totals.cur_tstamp.year,config.lang.msg_h_uname);
    write_html_head(report_title, out_fp, page_all_items);
@@ -3392,7 +3392,7 @@ int html_output_t::write_main_index()
    if(config.html_ext_lang)
       index_fname = index_fname + '.' + config.lang.language_code;
 
-   if ( (out_fp=fopen(make_path(config.out_dir, index_fname),"w")) == NULL)
+   if ( (out_fp=fopen(make_path(config.out_dir, index_fname),"w")) == nullptr)
    {
       fprintf(stderr,"%s %s!\n",config.lang.msg_no_open,index_fname.c_str());
       return 1;

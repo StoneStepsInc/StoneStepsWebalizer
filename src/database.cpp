@@ -333,7 +333,7 @@ berkeleydb_t::status_t database_t::open(void)
    // Secondary databases used for indexes must be initialized first because some 
    // of the callbacks, such as the duplicate compare callback, must be called 
    // before the database is opened. Otherwise BDB gets confused and crashes on a 
-   // NULL pointer when indexes are attached later, after all logs are processed.
+   // `nullptr` when indexes are attached later, after all logs are processed.
    //
    for(size_t i = 0; i < sizeof(index_desc)/sizeof(index_desc[0]); i++) {
       if(!(status = (this->*index_desc[i].table).associate(

@@ -32,9 +32,9 @@ hnode_t::hnode_t(void) : base_node<hnode_t>(),
    robot = false;
    resolved = false;
    ccode[0] = ccode[1] = ccode[2] = 0;
-   visit = NULL;
+   visit = nullptr;
    dlref = 0;
-   grp_visit = NULL;
+   grp_visit = nullptr;
    latitude = longitude = 0.;
 }
 
@@ -99,9 +99,9 @@ hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr),
    max_v_hits = max_v_files = max_v_pages = 0;
    max_v_xfer = 0;
    ccode[0] = ccode[1] = ccode[2] = 0;
-   visit = NULL;
+   visit = nullptr;
    dlref = 0;
-   grp_visit = NULL;
+   grp_visit = nullptr;
    latitude = longitude = 0.;
 }
 
@@ -114,7 +114,7 @@ hnode_t::~hnode_t(void)
          delete visit;
    }
 
-   // if grp_visit isn't NULL, something went wrong
+   // if grp_visit isn't nullptr, something went wrong
    while(grp_visit) {
       vptr = grp_visit;
       grp_visit = grp_visit->next;
@@ -130,7 +130,7 @@ void hnode_t::set_visit(storable_t<vnode_t> *vnode)
    if(visit)
       visit->hostref--;
 
-   if((visit = vnode) != NULL)
+   if((visit = vnode) != nullptr)
       visit->hostref++;
 }
 
@@ -168,7 +168,7 @@ void hnode_t::reset(uint64_t nodeid)
    dlref = 0;
    tstamp.reset();
 
-   set_visit(NULL);
+   set_visit(nullptr);
 }
 
 void hnode_t::set_ccode(const char _ccode[2])
@@ -326,7 +326,7 @@ size_t hnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t<
       as_org.reset();
    }
 
-   visit = NULL;
+   visit = nullptr;
 
    // all hosts in the state database are assumed to be resolved
    resolved = true;

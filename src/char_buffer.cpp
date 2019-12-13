@@ -15,7 +15,7 @@
 #include <algorithm>
 
 template <typename char_t>
-char_buffer_base<char_t>::char_buffer_base(void) : buffer(NULL), bufsize(0), holder(false)
+char_buffer_base<char_t>::char_buffer_base(void) : buffer(nullptr), bufsize(0), holder(false)
 {
 }
 
@@ -64,7 +64,7 @@ void char_buffer_base<char_t>::reset(void)
    if(!holder && buffer)
       free(buffer);
 
-   buffer = NULL;
+   buffer = nullptr;
    bufsize = 0;
    holder = false;
 }
@@ -93,7 +93,7 @@ char_t *char_buffer_base<char_t>::detach(size_t *bsize, bool *hold)
    if(hold)
       *hold = holder;
 
-   buffer = NULL;
+   buffer = nullptr;
    bufsize = 0;
    holder = false;
 

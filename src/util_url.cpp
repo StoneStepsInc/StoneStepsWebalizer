@@ -24,7 +24,7 @@ static char from_hex(char c);
 char *to_hex(unsigned char cp, char *out)
 {
    if(!out)
-      throw std::invalid_argument("Output argument of to_hex cannot be NULL");
+      throw std::invalid_argument("Output argument of to_hex cannot be nullptr");
 
    if(!cp)
       throw std::invalid_argument("A null character argument is not allowed in to_hex");
@@ -38,7 +38,7 @@ char *to_hex(unsigned char cp, char *out)
 const char *from_hex(const char *cp1, char *cp2)
 {
    if(!cp1 || !cp2)
-      throw std::invalid_argument("Neither argument of from_hex can be NULL");
+      throw std::invalid_argument("Neither argument of from_hex can be nullptr");
 
    // convert the hex number to an octet
    *cp2 = from_hex(*cp1++) << 4;
@@ -287,7 +287,7 @@ string_t& url_encode(const string_t& str, string_t& out)
 ///
 string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
 {
-   const char *cp1 = url, *cp2, *atp = NULL, *colp = NULL;
+   const char *cp1 = url, *cp2, *atp = nullptr, *colp = nullptr;
 
    if(!cp1 || !*cp1 || !slen)
       return string_t::const_char_buffer_t();
@@ -326,7 +326,7 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
       else if(*cp2 == '@') {
          atp = cp2;
          // if we saw a colon, it was a password separator
-         colp = NULL;
+         colp = nullptr;
       }
    }
 
@@ -334,7 +334,7 @@ string_t::const_char_buffer_t get_url_host(const char *url, size_t slen)
    if(atp)
       cp1 = atp + 1;
 
-   // a non-NULL colon pointer points is a port delimiter
+   // a non-nullptr colon pointer points is a port delimiter
    if(colp)
       cp2 = colp;
 
@@ -371,12 +371,12 @@ const char *get_domain(const char *str, size_t labelcnt)
    const char *cp;
    size_t i = labelcnt + 1;
 
-   if(str == NULL || *str == 0)
-      return NULL;
+   if(str == nullptr || *str == 0)
+      return nullptr;
 
    cp = &str[strlen(str)-1];
 
-   if (string_t::isdigit(*cp)) return NULL;   /* ignore IP addresses */
+   if (string_t::isdigit(*cp)) return nullptr;   /* ignore IP addresses */
 
    while(cp != str) {
       if(*cp == '.')

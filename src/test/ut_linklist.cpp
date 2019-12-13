@@ -210,7 +210,7 @@ TEST(GListTest, GListDuplicateValues)
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
-      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
+      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the nullptr entry of the expected names array";
       EXPECT_STREQ(names[nameidx], node->name.c_str()) << "A name for a duplicate entry should match the extected name";
 
       nameidx++;
@@ -247,7 +247,7 @@ TEST(GListTest, GListDuplicateSearchValues)
          
    // iterate over duplicate entries and make sure we got the right ones
    while((node = list.find_node(string_t("value-c"), iter, (node != nullptr), false)) != nullptr) {
-      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the NULL entry of the expected names array";
+      EXPECT_NE((const char*) nullptr, names[nameidx]) << "Should not reach the nullptr entry of the expected names array";
       EXPECT_STREQ(names[nameidx], node->name.c_str()) << "A name for a duplicate entry should match the extected name";
       EXPECT_STREQ(qualifiers[nameidx], node->qualifier.c_str()) << "A search qualifier for a duplicate entry should match the extected qualifier";
 
@@ -264,7 +264,7 @@ TEST(GListTest, GListDuplicateSearchValues)
 TEST(GListNodeTest, ConstructGNodeWithName)
 {
    gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
-   EXPECT_TRUE(gn1.name.isempty()) << "A NULL name pointer should yield an empty node name";
+   EXPECT_TRUE(gn1.name.isempty()) << "A nullptr name pointer should yield an empty node name";
    EXPECT_TRUE(gn1.noname);
    
    gnode_t gn2("", 0, nullptr, 0, nullptr, 0);
@@ -286,7 +286,7 @@ TEST(GListNodeTest, ConstructGNodeWithName)
 TEST(GListNodeTest, ConstructGNodeWithValue)
 {
    gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
-   EXPECT_TRUE(gn1.string.isempty()) << "A NULL value pointer should yield an empty node name";
+   EXPECT_TRUE(gn1.string.isempty()) << "A nullptr value pointer should yield an empty node name";
    EXPECT_TRUE(gn1.noname);
    
    gnode_t gn2(nullptr, 0, "", 0, nullptr, 0);
@@ -310,7 +310,7 @@ TEST(GListNodeTest, ConstructGNodeWithValue)
 TEST(GListNodeTest, ConstructGNodeWithQualifier)
 {
    gnode_t gn1(nullptr, 0, nullptr, 0, nullptr, 0);
-   EXPECT_TRUE(gn1.string.isempty()) << "A NULL qualifier pointer should yield an empty node name";
+   EXPECT_TRUE(gn1.string.isempty()) << "A nullptr qualifier pointer should yield an empty node name";
    
    gnode_t gn2(nullptr, 0, "", 0, nullptr, 0);
    EXPECT_TRUE(gn2.string.isempty()) << "An empty qualifier pointer should yield an empty node name";

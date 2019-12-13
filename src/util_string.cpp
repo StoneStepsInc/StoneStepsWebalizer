@@ -32,7 +32,7 @@ void bmh_delta_table::reset(const string_t& str)
 
    if(deltas)
       delete [] deltas;
-   deltas = NULL;
+   deltas = nullptr;
 
    if(str.isempty())
       return;
@@ -75,7 +75,7 @@ size_t strncpy_ex(char *dest, size_t destsize, const char *src, size_t srclen)
    const char *cp1;
    char *cp2;
 
-   if(dest == NULL || src == NULL || destsize == 0)
+   if(dest == nullptr || src == nullptr || destsize == 0)
       return 0;
 
    if(srclen) {
@@ -127,13 +127,13 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
    const char *cp1, *cp2, *cptr;
    char lastch;
 
-   // empty and NULL strings never match
+   // empty and nullptr strings never match
    if(!str1 || !*str1 || !str2 || !*str2 || !l1 || !l2)
-      return NULL;
+      return nullptr;
 
-   // return NULL if the sub-string is longer then the string
+   // return nullptr if the sub-string is longer then the string
    if(l2 > l1) 
-      return NULL;
+      return nullptr;
 
    // if a delta table is available, use it
    if(delta && delta->isvalid()) {
@@ -147,7 +147,7 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
          // string character and pick the case conversion function that changes its case
          // to the opposite.
          //
-         char (*flipcase)(char) = nocase ? string_t::islower(str1[i1]) ? (char (*)(char)) string_t::toupper : (char (*)(char)) string_t::tolower : NULL;
+         char (*flipcase)(char) = nocase ? string_t::islower(str1[i1]) ? (char (*)(char)) string_t::toupper : (char (*)(char)) string_t::tolower : nullptr;
 
          // check if the last character of the pattern matches the string character
          if(str1[i1] == lastch || nocase && flipcase(str1[i1]) == lastch) {
@@ -199,7 +199,7 @@ const char *strstr_ex(const char *str1, const char *str2, size_t l1, size_t l2, 
       }
    }
 
-   return NULL;
+   return nullptr;
 }
 
 const char *strstr_ex(const char *str1, const char *str2, size_t l1, const bmh_delta_table *delta, bool nocase)
@@ -244,18 +244,18 @@ int strncmp_ex(const char *str1, size_t slen1, const char *str2, size_t slen2)
 //
 const char *cstr2str(const char *cp, string_t& str)
 {
-   char *ecp = NULL;
+   char *ecp = nullptr;
    size_t slen;
 
    str.reset();
 
-   if(cp == NULL || *cp != '[')
-      return NULL;
+   if(cp == nullptr || *cp != '[')
+      return nullptr;
 
    slen = strtol(++cp, &ecp, 10);
 
    if(*ecp != ']')
-      return NULL;
+      return nullptr;
 
    cp = ++ecp;
 
@@ -275,7 +275,7 @@ size_t ul2str(uint64_t value, char *str)
 {
    char *cp1, *cp2, *cp3, tmp;
 
-   if(str == NULL)
+   if(str == nullptr)
       return 0;
 
    cp1 = cp2 = str;
@@ -302,9 +302,9 @@ uint64_t str2ul(const char *str, const char **eptr, size_t len)
    uint64_t value;
 
    if(eptr)
-      *eptr = NULL;
+      *eptr = nullptr;
 
-   if(str == NULL || *str == 0 || len == 0 || !string_t::isdigit(*cp))
+   if(str == nullptr || *str == 0 || len == 0 || !string_t::isdigit(*cp))
       return 0;
 
    value = *cp++ - '0';
@@ -326,7 +326,7 @@ int64_t str2l(const char *str, const char **eptr, size_t len)
    uint64_t value;
    bool neg = false;
 
-   if(str == NULL)
+   if(str == nullptr)
       return 0;
 
    // check for +/-
@@ -394,7 +394,7 @@ bool isinstrex(const char *str, const char *cp, size_t slen, size_t cplen, bool 
 
    if(substr && *cp1 != '*') {
       /* if no leading/trailing wildcard, just strstr */
-      return (strstr_ex(str, cp, slen, cplen, deltas, nocase) != NULL);
+      return (strstr_ex(str, cp, slen, cplen, deltas, nocase) != nullptr);
    }
 
    if(*cp1 == '*') {

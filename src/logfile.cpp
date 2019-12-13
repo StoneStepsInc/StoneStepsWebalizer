@@ -18,8 +18,8 @@
 
 logfile_t::logfile_t(const string_t& fname) : log_fname(fname), id(0)
 {
-   log_fp = NULL;
-   gzlog_fp = NULL;
+   log_fp = nullptr;
+   gzlog_fp = nullptr;
    
    reopen_offset = 0;
 
@@ -42,7 +42,7 @@ int logfile_t::open(void)
          return errno;
    }
    else {
-      if(!log_fp && (log_fp = fopen(log_fname,"r")) == NULL)
+      if(!log_fp && (log_fp = fopen(log_fname,"r")) == nullptr)
          return errno;
    }
    
@@ -71,11 +71,11 @@ int logfile_t::close(void)
    
    if(gz_log && gzlog_fp) {
       errnum = gzclose(gzlog_fp);
-      gzlog_fp = NULL;
+      gzlog_fp = nullptr;
    }
    else if(log_fp) { 
       errnum = fclose(log_fp);
-      log_fp = NULL;
+      log_fp = nullptr;
    }
       
    return errnum;
@@ -109,7 +109,7 @@ int logfile_t::get_line(char *buffer, u_int bufsize, int *errnum) const
       }
    }
    else {
-      if(log_fp && fgets(buffer, bufsize, log_fp) == NULL) {
+      if(log_fp && fgets(buffer, bufsize, log_fp) == nullptr) {
          if(errnum)
             *errnum = errno;
          return feof(log_fp) ? 0 : -1;

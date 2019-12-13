@@ -52,7 +52,7 @@ class logfile_t {
       
       bool is_gzip(void) const {return gz_log;}
       
-      int get_line(char *buffer, u_int bufsize, int *errnum = NULL) const;
+      int get_line(char *buffer, u_int bufsize, int *errnum = nullptr) const;
       
       bool is_readable(void) const;
       

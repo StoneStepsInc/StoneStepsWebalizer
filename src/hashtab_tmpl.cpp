@@ -113,7 +113,7 @@ template <typename node_t>
 node_t *hash_table<node_t>::put_node(node_t *nptr, int64_t tstamp)
 {
    if(!nptr)
-      return NULL;
+      return nullptr;
 
    return put_node(nptr->get_hash(), nptr, tstamp);
 }
@@ -138,7 +138,7 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node, int64_t tst
    std::unique_ptr<node_t> objptr(node);
 
    if(!node)
-      throw std::logic_error("Cannot insert a NULL node pointer");
+      throw std::logic_error("Cannot insert a nullptr node pointer");
 
    if(node->get_type() != OBJ_REG) {
       // ignore the time stamp because group nodes don't participate in time stamp ordering
@@ -151,7 +151,7 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node, int64_t tst
          throw std::logic_error("Nodes must be linserted in the ascending time stamp order");
 
       //
-      // Insert a new list node with a NULL value at the end of the list and allocate 
+      // Insert a new list node with a nullptr value at the end of the list and allocate 
       // a new hash table node with the object node and the list iterator pointing to 
       // the list node we just inserted.
       //

@@ -115,7 +115,7 @@ berkeleydb_t::iterator<node_t>::iterator(buffer_allocator_t& buffer_allocator, c
       iterator_base<node_t>(buffer_allocator, cursor),
       cursor(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
-   primdb = (dbname == NULL);
+   primdb = (dbname == nullptr);
 }
 
 template <typename node_t>
@@ -136,7 +136,7 @@ bool berkeleydb_t::iterator<node_t>::next(storable_t<node_t>& node, typename nod
    if(!primdb)
       set_dbt_buffer(pkey, buffer + DBBUFSIZE*2, DBBUFSIZE);
 
-   if(!cursor.next(key, data, primdb ? NULL : &pkey))
+   if(!cursor.next(key, data, primdb ? nullptr : &pkey))
       return false;
 
    if(primdb) {
@@ -167,7 +167,7 @@ berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(buffer_allocator_t& buf
       iterator_base<node_t>(buffer_allocator, cursor), 
       cursor(dbname ? table.secondary_db(dbname) : table.primary_db())
 {
-   primdb = (dbname == NULL);
+   primdb = (dbname == nullptr);
 }
 
 template <typename node_t>
@@ -188,7 +188,7 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(storable_t<node_t>& node, type
    if(!primdb)
       set_dbt_buffer(pkey, buffer + DBBUFSIZE*2, DBBUFSIZE);
 
-   if(!cursor.prev(key, data, primdb ? NULL : &pkey))
+   if(!cursor.prev(key, data, primdb ? nullptr : &pkey))
       return false;
 
    if(primdb) {
@@ -237,7 +237,7 @@ bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage
    data.set_data(buffer+keysize);
    data.set_size((u_int32_t) datasize);
 
-   if(table->put(NULL, &key, &data, 0)) 
+   if(table->put(nullptr, &key, &data, 0)) 
       return false;
 
    // indicate that the node came from the database
@@ -269,7 +269,7 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
    data.set_ulen((u_int32_t) (DBBUFSIZE-keysize));
    data.set_flags(DB_DBT_USERMEM);
 
-   if(table->get(NULL, &key, &data, 0))
+   if(table->get(nullptr, &key, &data, 0))
       return false;
 
    if(node.template s_unpack_data<param_t...>(data.get_data(), data.get_size(), upcb, std::forward<param_t>(param) ...) != data.get_size())
@@ -292,7 +292,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
    if(buffer.capacity() < keysize+DBBUFSIZE)
       buffer.resize(keysize+DBBUFSIZE, 0);
 
-   if(values == NULL)
+   if(values == nullptr)
       return false;
 
    // make a value key

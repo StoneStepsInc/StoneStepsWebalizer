@@ -29,8 +29,8 @@ dlnode_t::dlnode_t(void) :
    avgxfer = 0.;
    avgtime = sumtime = 0;
 
-   download = NULL;
-   hnode = NULL;
+   download = nullptr;
+   hnode = nullptr;
 }
 
 dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) :
@@ -43,7 +43,7 @@ dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) :
    avgxfer = 0.;
    avgtime = sumtime = 0;
 
-   download = NULL;
+   download = nullptr;
 
    hnode = &nptr;
    hnode->dlref++;
@@ -69,7 +69,7 @@ dlnode_t::dlnode_t(dlnode_t&& tmp) :
 
 dlnode_t::~dlnode_t(void)
 {
-   set_host(NULL);
+   set_host(nullptr);
 
    if(download)
       delete download;
@@ -87,9 +87,9 @@ void dlnode_t::reset(uint64_t nodeid)
    avgxfer = 0.;
    avgtime = sumtime = 0;
 
-   download = NULL;
+   download = nullptr;
 
-   set_host(NULL);
+   set_host(nullptr);
 }
 
 void dlnode_t::set_host(hnode_t *nptr)
@@ -100,7 +100,7 @@ void dlnode_t::set_host(hnode_t *nptr)
    if(hnode)
       hnode->dlref--;
 
-   if((hnode = nptr) != NULL)
+   if((hnode = nptr) != nullptr)
       hnode->dlref++;
 }
 
@@ -189,7 +189,7 @@ size_t dlnode_t::s_unpack_data(const void *buffer, size_t bufsize, s_unpack_cb_t
 
    ptr = sr.deserialize(ptr, hostid);
 
-   download = NULL;
+   download = nullptr;
 
    if(upcb)
       upcb(*this, hostid, active, std::forward<param_t>(param) ...);

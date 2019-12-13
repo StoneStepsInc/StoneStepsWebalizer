@@ -133,7 +133,7 @@ string_base<char_t>::string_base(string_base&& other) noexcept :
 template <typename char_t>
 string_base<char_t>::string_base(const_char_buffer_t&& char_buffer, size_t len) : bufsize(0), holder(true)
 {
-   // cannot hold a NULL pointer
+   // cannot hold a nullptr pointer
    if(!char_buffer)
       throw std::runtime_error(ex_bad_char_buffer);
 
@@ -146,7 +146,7 @@ string_base<char_t>::string_base(const_char_buffer_t&& char_buffer, size_t len) 
       throw std::runtime_error(ex_bad_char_buffer);
 
    // move the string out of the buffer
-   c_string = char_buffer.detach(NULL, NULL);
+   c_string = char_buffer.detach(nullptr, nullptr);
 
    // set the string length
    slen = len;
@@ -345,7 +345,7 @@ int string_base<char_t>::compare(const char_t *str1, const char_t *str2)
 template <typename char_t>
 int string_base<char_t>::compare(const char_t *str1, const char_t *str2, size_t count)
 {
-   // if either of the strings is NULL, consider it an empty string
+   // if either of the strings is nullptr, consider it an empty string
    if(!str1)
       str1 = empty_string;
 
@@ -378,7 +378,7 @@ int string_base<char_t>::compare_ci(const char_t *str1, const char_t *str2, size
    size_t chsz1, chsz2;
    const char_t *cp1, *cp2;
 
-   // if either of the strings is NULL, consider it an empty string
+   // if either of the strings is nullptr, consider it an empty string
    cp1 = str1 ? str1 : empty_string;
    cp2 = str2 ? str2 : empty_string;
 
@@ -398,7 +398,7 @@ int string_base<char>::compare_ci(const char *str1, const char *str2, size_t cou
    size_t chsz1, chsz2;
    const char *cp1, *cp2;
 
-   // if either of the strings is NULL, consider it an empty string
+   // if either of the strings is nullptr, consider it an empty string
    cp1 = str1 ? str1 : empty_string;
    cp2 = str2 ? str2 : empty_string;
 
@@ -566,7 +566,7 @@ size_t string_base<char_t>::find(char_t chr, size_t start) const
 {
    const char_t *cptr;
 
-   return (start < slen && (cptr = strchr_(&string[start], chr)) != NULL) ? cptr-string : npos;
+   return (start < slen && (cptr = strchr_(&string[start], chr)) != nullptr) ? cptr-string : npos;
 }
 
 template <typename char_t>
@@ -728,7 +728,7 @@ string_base<char_t>& string_base<char_t>::attach(char_buffer_t&& char_buffer, si
    if(holder && !bufsize)
       throw std::runtime_error(ex_readonly_string);
 
-   // cannot attach a NULL pointer
+   // cannot attach a nullptr pointer
    if(!char_buffer)
       throw std::runtime_error(ex_bad_char_buffer);
 
@@ -745,7 +745,7 @@ string_base<char_t>& string_base<char_t>::attach(char_buffer_t&& char_buffer, si
    holder = char_buffer.isholder();
 
    // and attach the buffer supplied by the caller
-   string = char_buffer.detach(NULL, NULL);
+   string = char_buffer.detach(nullptr, nullptr);
 
    // set the string length
    slen = len;
@@ -766,7 +766,7 @@ string_base<char_t> string_base<char_t>::hold(const char_t *str)
 template <typename char_t>
 string_base<char_t> string_base<char_t>::hold(const char_t *str, size_t len) 
 {
-   // cannot hold a NULL pointer
+   // cannot hold a nullptr pointer
    if(!str)
       throw std::runtime_error(ex_bad_hold_string);
 

@@ -71,7 +71,7 @@ struct hnode_t : public base_node<hnode_t> {
       
       tstamp_t tstamp;               ///< Last request timestamp
 
-      storable_t<vnode_t> *visit;      ///< Current visit (NULL if none)
+      storable_t<vnode_t> *visit;      ///< Current visit (nullptr if none)
       storable_t<vnode_t> *grp_visit;  ///< Visits queued for name grouping
 
       string_t name;                 ///< Host name

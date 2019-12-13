@@ -743,12 +743,12 @@ bool lang_t::read_lang_file(const char *fname, std::vector<string_t>& errors)
    size_t lang_len;
    FILE *lang_file = nullptr;
 
-   if(fname == NULL || *fname == 0) {
+   if(fname == nullptr || *fname == 0) {
       errors.emplace_back("The name of the language file name is not valid.");
       return false;
    }
 
-   if((lang_file = fopen(fname, "r")) == NULL)
+   if((lang_file = fopen(fname, "r")) == nullptr)
       goto errexit;
 
    if(fseek(lang_file, 0, SEEK_END) == -1 || (filelen = ftell(lang_file)) == -1L)

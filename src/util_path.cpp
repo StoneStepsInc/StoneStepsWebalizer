@@ -22,7 +22,7 @@
 
 bool is_abs_path(const char *path)
 {
-   if(path == NULL || *path == 0)
+   if(path == nullptr || *path == 0)
       return false;
 
    if(*path == '/')
@@ -60,11 +60,11 @@ string_t make_path(const char *base, const char *path)
    string_t result;
 
    // if there's no path, return base
-   if(path == NULL || *path == 0)
+   if(path == nullptr || *path == 0)
       return result = base;
 
    // if there's no base, return path
-   if(base == NULL || *base == 0)
+   if(base == nullptr || *base == 0)
       return result = path;
 
    // if path is an absolute path, return it 

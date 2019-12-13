@@ -22,9 +22,9 @@
 /// `encode_string` uses `encode_char_t` to encode a single valid UTF-8 character.
 /// This function should not evaluate any bytes beyond the size of the character.
 ///
-/// If `cp` is `NULL`, the function should return the length of the longest encoded
+/// If `cp` is `nullptr`, the function should return the length of the longest encoded
 /// character sequence in `obc`. In this case the input character size (`cbc`) and
-/// the output character pointer (`op`) are not evaluated and may be zero and `NULL`.
+/// the output character pointer (`op`) are not evaluated and may be zero and `nullptr`.
 ///
 /// The size of the output buffer pointed to by `op` must be large enough to
 /// accommodate the largest encoded sequence.

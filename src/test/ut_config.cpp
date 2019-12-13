@@ -115,9 +115,9 @@ TEST_F(ConfigTest, GetInterval)
 {
    std::vector<string_t> errors;
 
-   // NULL string pointer
+   // nullptr string pointer
    EXPECT_EQ(0, config.get_interval(nullptr, errors));
-   ASSERT_TRUE(errors.empty()) << "A NULL pointer should not generate any errors";
+   ASSERT_TRUE(errors.empty()) << "A nullptr pointer should not generate any errors";
    
    // empty string
    EXPECT_EQ(0, config.get_interval("", errors));

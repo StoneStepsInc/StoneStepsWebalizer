@@ -15,7 +15,7 @@ template <typename type_t> const u_int queue_t<type_t>::max_ecount = 100;
 template <typename type_t>
 queue_t<type_t>::queue_t(void)
 {
-   head = tail = empty = NULL;
+   head = tail = empty = nullptr;
    count = ecount = 0;
 }
 
@@ -59,7 +59,7 @@ void queue_t<type_t>::delete_node(typename queue_t<type_t>::q_node_t *node)
    }   
 
    // otherwise, save the node to reduce allocations
-   node->data = NULL;
+   node->data = nullptr;
    node->next = empty;
    empty = node;
    ecount++;
@@ -87,12 +87,12 @@ type_t *queue_t<type_t>::remove(void)
    type_t *data;
 
    if(!head)
-      return NULL;
+      return nullptr;
 
    node = head;
 
    if(!--count)
-      head = tail = NULL;
+      head = tail = nullptr;
    else
       head = head->next;
 

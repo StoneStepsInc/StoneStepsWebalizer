@@ -248,7 +248,7 @@ void config_t::validate_custom_html(void)
 
    // HTMLPre should be used for custom scripts and not to misidentify the type of HTML used in reports
    for(iter = html_pre.begin(); iter != html_pre.end(); iter++) {
-      if(strstr_ex(iter->string, "<!DOCTYPE", NULL, true)) {
+      if(strstr_ex(iter->string, "<!DOCTYPE", nullptr, true)) {
          errors.emplace_back("The <!DOCTYPE> tag is not allowed in HTMLPre");
          break;
       }
@@ -256,14 +256,14 @@ void config_t::validate_custom_html(void)
 
    // disallow a custom <body> tag because we need our JavaScript initialization to run
    for(iter = html_body.begin(); iter != html_body.end(); iter++) {
-      if(strstr_ex(iter->string, "<body", NULL, true)) {
+      if(strstr_ex(iter->string, "<body", nullptr, true)) {
          errors.emplace_back("The start <body> tag is not allowed in HTMLBody");
          break;
       }
    }
 
    for(iter = html_end.begin(); iter != html_end.end(); iter++) {
-      if(strstr_ex(iter->string, "</body", NULL, true)) {
+      if(strstr_ex(iter->string, "</body", nullptr, true)) {
          errors.emplace_back("The end </body> tag is not allowed in HTMLEnd");
          break;
       }
@@ -584,7 +584,7 @@ void config_t::prep_and_validate(void)
    //
    if(local_utc_offset) {
       // get current UTC time
-      time_t now = time(NULL);
+      time_t now = time(nullptr);
       struct tm *utctm = gmtime(&now);
 
       //
@@ -1060,12 +1060,12 @@ void config_t::get_config(const char *fname)
    string_t keyword, value;
    const char *cp1, *cp2;
    u_int num_kwords = sizeof(kwords)/sizeof(kwords[0]);
-   kwinfo *kptr, key = {NULL, 0};
+   kwinfo *kptr, key = {nullptr, 0};
    string_t::char_buffer_t buffer;
 
    config_fnames.push_back(string_t(fname));
 
-   if ( (fp=fopen(fname,"r")) == NULL)
+   if ( (fp=fopen(fname,"r")) == nullptr)
    {
       errors.push_back(string_t::_format("%s %s\n", lang.msg_bad_conf, fname));
       return;
@@ -1073,7 +1073,7 @@ void config_t::get_config(const char *fname)
 
    buffer.resize(BUFSIZE, 0);
 
-   while ( (fgets(buffer,BUFSIZE,fp)) != NULL)
+   while ( (fgets(buffer,BUFSIZE,fp)) != nullptr)
    {
       cp1 = buffer;
 
@@ -1113,7 +1113,7 @@ void config_t::get_config(const char *fname)
       if(keyword.isempty() || value.isempty()) continue;
 
       key.keyword = keyword;
-      if((kptr = (kwinfo*) bsearch(&key, kwords, num_kwords, sizeof(kwords[0]), cmp_conf_kw)) == NULL) {
+      if((kptr = (kwinfo*) bsearch(&key, kwords, num_kwords, sizeof(kwords[0]), cmp_conf_kw)) == nullptr) {
          /* Invalid keyword       */
          messages.push_back(string_t::_format("%s \"%s\" (%s)\n", lang.msg_bad_key, keyword.c_str(), fname));
          continue;
@@ -1284,8 +1284,8 @@ void config_t::get_config(const char *fname)
          case 158: ignore_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 159: group_robots = (string_t::tolower(value[0]) == 'y') ? true : false; break;
          case 160: utc_offset = get_interval(value, errors) / 60; break;  // in minutes
-         case 161: set_dst_range(value, NULL); break;
-         case 162: set_dst_range(NULL, value); break;
+         case 161: set_dst_range(value, nullptr); break;
+         case 162: set_dst_range(nullptr, value); break;
          case 163: dst_offset = get_interval(value, errors) / 60; break;  // in minutes
          case 164: excl_agent_args.add_nlist(value); break;
          case 165: incl_agent_args.add_nlist(value); break;
@@ -1341,7 +1341,7 @@ void config_t::add_output_format(const string_t& format)
 ///
 void config_t::get_config_cb(const char *fname, void *_this)
 {
-   if(_this != NULL)
+   if(_this != nullptr)
       ((config_t*)_this)->get_config(fname);
 }
 
@@ -1401,7 +1401,7 @@ string_t& config_t::set_url_path(const char *str, string_t& path) const
 {
    path.reset();
 
-   if(str == NULL || *str == 0)
+   if(str == nullptr || *str == 0)
       return path;
 
    path = str;
@@ -1447,7 +1447,7 @@ bool config_t::ispage(const string_t& url) const
    cp2++;
 
    // look up the file extension in the page extension list
-   return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != NULL;
+   return page_type.isinlist(string_t::hold(cp2, cp3-cp2)) != nullptr;
 }
 
 ///
@@ -1514,7 +1514,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
       if(argv[optind][1] == '-') {
          longopt = true;
          nptr =  &argv[optind][2];
-         if((vptr = strchr(nptr, ':')) != NULL || (vptr = strchr(nptr, '=')) != NULL)
+         if((vptr = strchr(nptr, ':')) != nullptr || (vptr = strchr(nptr, '=')) != nullptr)
             nlen = vptr++ - nptr;
          else
             nlen = strlen(nptr);
@@ -1526,7 +1526,7 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
 
          // check if it's an argument that takes a value
          if(!strchr("aAcCDeEFgIlmMnNoPrRsStuUx", *nptr))
-            vptr = NULL;
+            vptr = nullptr;
          else {
             vptr = argv[++optind];
 
@@ -1657,7 +1657,7 @@ uint32_t config_t::get_db_cache_size(const char *value) const
    uint32_t cachesize;
    char *cp1;
 
-   if(value == NULL)
+   if(value == nullptr)
       return DB_DEF_CACHE_SIZE;
 
    cachesize = strtoul(value, &cp1, 10);
@@ -1834,7 +1834,7 @@ bool config_t::is_dns_enabled(void) const
 ///         a daylight saving time (DST) range into the DST range vector.
 ///
 /// Start and end time stamps may be passed individually, leaving the other
-/// parameter `NULL`. When both are set in the last DST range, a new range
+/// parameter `nullptr`. When both are set in the last DST range, a new range
 /// is inserted into the DST range vector. 
 ///
 /// Passing the same parameter multiple times just overwrites the one that was 
@@ -1876,7 +1876,7 @@ void config_t::proc_stdin_log_files(void)
    char *cp1 = buffer, *cp2;
 
    // A single line must contain one file name
-   while ( (fgets(buffer, BUFSIZE, stdin)) != NULL) {
+   while ( (fgets(buffer, BUFSIZE, stdin)) != nullptr) {
       cp2 = cp1;
       
       // skip to the end of line 

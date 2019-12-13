@@ -90,16 +90,16 @@ class base_list {
       /// Removes all elements from the list.
       void clear(void) {list.clear();}
 
-      /// scan list values for str as substring and return the matching one, if found, or NULL otherwise
+      /// scan list values for str as substring and return the matching one, if found, or nullptr otherwise
       const string_t *isinlist(const string_t& str, bool nocase = false) const;
 
-      /// scan list values for str and return the matching one, if found, or NULL otherwise
+      /// scan list values for str and return the matching one, if found, or nullptr otherwise
       const string_t *isinlistex(const char *str, size_t slen, bool substr, bool nocase = false) const;
 
-      /// scan the list for str and return the node with a matching pattern or NULL otherwise
+      /// scan the list for str and return the node with a matching pattern or nullptr otherwise
       const node_t *find_node_ex(const char *str, size_t slen, bool substr, bool nocase = false) const;
 
-      /// scan the list for str as substring starting from the specified position and return the node with a matching pattern or NULL otherwise
+      /// scan the list for str as substring starting from the specified position and return the node with a matching pattern or nullptr otherwise
       const node_t *find_node(const string_t& str, typename std::list<node_t>::const_iterator& iter, bool next = false, bool nocase = false) const;
 };
 
@@ -180,14 +180,14 @@ class glist : public base_list<gnode_t> {
       /// parse a group configuration entry formatted as `pattern [<tab> name[=search quaifier]]` and add a group list item
       bool add_glist(const char *str, bool srch = false);
 
-      /// scan glist values case-sensitively for str as substring and return group name if found or NULL otherwise
+      /// scan glist values case-sensitively for str as substring and return group name if found or nullptr otherwise
       const string_t *isinglist(const string_t& str) const;
 
-      /// scan glist values case-sensitively for str as substring and return group name if found or NULL otherwise
+      /// scan glist values case-sensitively for str as substring and return group name if found or nullptr otherwise
       const string_t *isinglist(const char *str, size_t slen, bool substr) const;
 
       /// calls the callback function for each node with no name or a name (not pattern) matching str
-      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = NULL, bool nocase = false, bool delmatch = false);
+      void for_each(const char *str, void (*cb)(const char *, void*), void *ptr = nullptr, bool nocase = false, bool delmatch = false);
 
       /// enable or disable the phrase values mode, which allows values with spaces
       void set_enable_phrase_values(bool enable) {enable_phrase_values = enable;}

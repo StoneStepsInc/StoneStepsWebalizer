@@ -30,9 +30,9 @@ class queue_t {
          type_t      *data;
 
          public:
-            q_node_t(type_t *data) : data(data), next(NULL) {}
+            q_node_t(type_t *data) : data(data), next(nullptr) {}
 
-            q_node_t *reset(type_t *_data) {next = NULL; data = _data; return this;}
+            q_node_t *reset(type_t *_data) {next = nullptr; data = _data; return this;}
       };
 
    private:
@@ -54,9 +54,9 @@ class queue_t {
 
       inline u_int size(void) const {return count;}
 
-      inline const type_t *top(void) const {return head ? head->data : NULL;}
+      inline const type_t *top(void) const {return head ? head->data : nullptr;}
 
-      inline type_t *top(void) {return head ? head->data : NULL;}
+      inline type_t *top(void) {return head ? head->data : nullptr;}
 
       void add(type_t *data);
 

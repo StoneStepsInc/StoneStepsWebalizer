@@ -168,7 +168,7 @@ TEST(StringSearchTest, SubStrSearchNoCase)
 }
 
 ///
-/// @brief  Match empty or NULL strings and sub-strings
+/// @brief  Match empty or nullptr strings and sub-strings
 ///
 TEST(StringSearchTest, SubStrEmptyOrNull)
 {
@@ -178,8 +178,8 @@ TEST(StringSearchTest, SubStrEmptyOrNull)
    // all searches with empty strings must fail
    EXPECT_EQ(nullptr, strstr_ex(str, srch, 0, 0, nullptr)) << "Fail to match if the string and the sub-string are empty";
    EXPECT_EQ(nullptr, strstr_ex(str, srch, str.length(), 0, nullptr)) << "Fail to match if the sub-string is empty";
-   EXPECT_EQ(nullptr, strstr_ex(nullptr, nullptr, 0, 0, nullptr)) << "Fail to match if the string and the sub-string are NULL";
-   EXPECT_EQ(nullptr, strstr_ex(str, nullptr, str.length(), 0, nullptr)) << "Fail to match if the sub-string is NULL";
+   EXPECT_EQ(nullptr, strstr_ex(nullptr, nullptr, 0, 0, nullptr)) << "Fail to match if the string and the sub-string are nullptr";
+   EXPECT_EQ(nullptr, strstr_ex(str, nullptr, str.length(), 0, nullptr)) << "Fail to match if the sub-string is nullptr";
 }
 
 ///
@@ -203,10 +203,10 @@ TEST(StringSearchTest, StrPatternMatch)
    EXPECT_FALSE(isinstrex(nmstr, epat, str.length(), epat.length(), false, nullptr, false)) << "Fail to match the end of the string";
    EXPECT_FALSE(isinstrex(nmstr, spat, str.length(), spat.length(), true, nullptr, false)) << "Fail to match a sub-string within the string";
 
-   // fail to match when either of the arguments is NULL or zero
-   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, nullptr, false)) << "Fail to match if the pattern is NULL";
+   // fail to match when either of the arguments is nullptr or zero
+   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, nullptr, false)) << "Fail to match if the pattern is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, str.length(), 0, false, nullptr, false)) << "Fail to match if the pattern length is zero";
-   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, nullptr, false)) << "Fail to match if the string is NULL";
+   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, nullptr, false)) << "Fail to match if the string is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, 0, bpat.length(), false, nullptr, false)) << "Fail to match if the string length is zero";
 }
 
@@ -235,10 +235,10 @@ TEST(StringSearchTest, StrPatternMatchDelta)
    EXPECT_FALSE(isinstrex(nmstr, epat, str.length(), epat.length(), false, &edt, false)) << "Fail to match the end of the string";
    EXPECT_FALSE(isinstrex(nmstr, spat, str.length(), spat.length(), true, &sdt, false)) << "Fail to match a sub-string within the string";
 
-   // fail to match when either of the arguments is NULL or zero
-   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, &bdt, false)) << "Fail to match if the pattern is NULL";
+   // fail to match when either of the arguments is nullptr or zero
+   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, &bdt, false)) << "Fail to match if the pattern is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, str.length(), 0, false, &bdt, false)) << "Fail to match if the pattern length is zero";
-   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, &bdt, false)) << "Fail to match if the string is NULL";
+   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, &bdt, false)) << "Fail to match if the string is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, 0, bpat.length(), false, &bdt, false)) << "Fail to match if the string length is zero";
 }
 
@@ -263,10 +263,10 @@ TEST(StringSearchTest, StrPatternMatchNoCase)
    EXPECT_FALSE(isinstrex(nmstr, epat, str.length(), epat.length(), false, nullptr, true)) << "Fail to match the end of the string";
    EXPECT_FALSE(isinstrex(nmstr, spat, str.length(), spat.length(), true, nullptr, true)) << "Fail to match a sub-string within the string";
 
-   // fail to match when either of the arguments is NULL or zero
-   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, nullptr, true)) << "Fail to match if the pattern is NULL";
+   // fail to match when either of the arguments is nullptr or zero
+   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, nullptr, true)) << "Fail to match if the pattern is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, str.length(), 0, false, nullptr, true)) << "Fail to match if the pattern length is zero";
-   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, nullptr, true)) << "Fail to match if the string is NULL";
+   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, nullptr, true)) << "Fail to match if the string is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, 0, bpat.length(), false, nullptr, true)) << "Fail to match if the string length is zero";
 }
 
@@ -295,10 +295,10 @@ TEST(StringSearchTest, StrPatternMatchDeltaNoCase)
    EXPECT_FALSE(isinstrex(nmstr, epat, str.length(), epat.length(), false, &edt, true)) << "Fail to match the end of the string";
    EXPECT_FALSE(isinstrex(nmstr, spat, str.length(), spat.length(), true, &sdt, true)) << "Fail to match a sub-string within the string";
 
-   // fail to match when either of the arguments is NULL or zero
-   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, &bdt, true)) << "Fail to match if the pattern is NULL";
+   // fail to match when either of the arguments is nullptr or zero
+   EXPECT_FALSE(isinstrex(nmstr, nullptr, str.length(), bpat.length(), false, &bdt, true)) << "Fail to match if the pattern is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, str.length(), 0, false, &bdt, true)) << "Fail to match if the pattern length is zero";
-   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, &bdt, true)) << "Fail to match if the string is NULL";
+   EXPECT_FALSE(isinstrex(nullptr, bpat, str.length(), bpat.length(), false, &bdt, true)) << "Fail to match if the string is nullptr";
    EXPECT_FALSE(isinstrex(nmstr, bpat, 0, bpat.length(), false, &bdt, true)) << "Fail to match if the string length is zero";
 }
 }

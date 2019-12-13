@@ -28,7 +28,7 @@ char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *
       if(ucs2utf8size(CP1252_UCS2[(unsigned char) str[i]]) > bsize - (ucp - out)) {
          if(olen)
             *olen = 0;
-         return NULL;
+         return nullptr;
       } 
 
       // output the character
@@ -45,7 +45,7 @@ char *cp1252utf8(const char *str, size_t slen, char *out, size_t bsize, size_t *
    else {
       // can't use the result without a null character and output length
       if(!olen)
-         return NULL;
+         return nullptr;
    }
 
    return out;

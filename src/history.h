@@ -81,9 +81,9 @@ class history_t {
 
       size_t size(void) const {return months.size();}
 
-      const hist_month_t *first(void) const {return months.size() ? &months[0] : NULL;}
+      const hist_month_t *first(void) const {return months.size() ? &months[0] : nullptr;}
 
-      const hist_month_t *last(void) const {return months.size() ? &months[months.size()-1] : NULL;}
+      const hist_month_t *last(void) const {return months.size() ? &months[months.size()-1] : nullptr;}
 
       int month_index(u_int year, u_int month) const;
 

@@ -175,10 +175,10 @@ const ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode) const
 {
    const ccnode_t *cptr;
 
-   if((cptr = find_node(OBJ_REG, ccode)) != NULL)
+   if((cptr = find_node(OBJ_REG, ccode)) != nullptr)
       return *cptr;
 
-   if((cptr = find_node(OBJ_REG, string_t::hold("*"))) != NULL)
+   if((cptr = find_node(OBJ_REG, string_t::hold("*"))) != nullptr)
       return *cptr;
 
    return empty;
@@ -189,11 +189,11 @@ ccnode_t& cc_hash_table::get_ccnode(const string_t& ccode, int64_t tstamp)
    ccnode_t *cptr;
 
    if(!ccode.isempty()) {
-      if((cptr = find_node(OBJ_REG, tstamp, ccode)) != NULL)
+      if((cptr = find_node(OBJ_REG, tstamp, ccode)) != nullptr)
          return *cptr;
    }
 
-   if((cptr = find_node(OBJ_REG, tstamp, string_t("*"))) != NULL)
+   if((cptr = find_node(OBJ_REG, tstamp, string_t("*"))) != nullptr)
       return *cptr;
 
    throw std::runtime_error(string_t::_format("Country code list must include '*' (%s)", ccode.c_str()));
@@ -205,7 +205,7 @@ void cc_hash_table::reset(void)
    iterator iter = begin();
 
    while(iter.next()) {
-      if((cptr = iter.item()) != NULL)
+      if((cptr = iter.item()) != nullptr)
          cptr->reset();
    }
 }

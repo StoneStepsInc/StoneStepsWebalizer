@@ -28,7 +28,7 @@ extern "C" int uname(struct utsname *name)
    OSVERSIONINFO verinfo = {0};
    DWORD buffsize;
 
-   if(name == NULL)
+   if(name == nullptr)
       return EFAULT;
 
    buffsize = SYS_NMLN;

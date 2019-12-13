@@ -65,7 +65,7 @@ class webalizer_t {
       ///
       /// Pointers returned from `name` and `value` methods should not be used in pointer
       /// arithmetic because they may return pointer values outside of the query string 
-      /// range. Neither method ever returns a NULL pointer.
+      /// range. Neither method ever returns a nullptr pointer.
       ///
       struct arginfo_t {
          const char  *arg;             ///< Points to a search argument within the query string
@@ -73,7 +73,7 @@ class webalizer_t {
          size_t      arglen;           ///< Entire search argument length, including name and value
          
          /// Constructs an empty search argument descriptor.
-         arginfo_t(void) : arg(NULL), namelen(0), arglen(0) {}
+         arginfo_t(void) : arg(nullptr), namelen(0), arglen(0) {}
 
          /// Constructs a complete search argument descriptor
          arginfo_t(const char *arg, size_t namelen, size_t arglen) : arg(arg), namelen(namelen), arglen(arglen) {}
@@ -116,7 +116,7 @@ class webalizer_t {
          log_struct  *logrec;
          
          public:
-         lfp_state_t(void) : logfile(NULL), logrec(NULL) {} 
+         lfp_state_t(void) : logfile(nullptr), logrec(nullptr) {} 
          
          lfp_state_t(logfile_t *logfile, log_struct *logrec) : logfile(logfile), logrec(logrec) {}
          
@@ -124,7 +124,7 @@ class webalizer_t {
          
          lfp_state_t& operator = (const lfp_state_t& otherme) {logfile = otherme.logfile; logrec = otherme.logrec; return *this;}
          
-         void reset(void) {logfile = NULL; logrec = NULL;}
+         void reset(void) {logfile = nullptr; logrec = nullptr;}
       };
 
       typedef std::list<lfp_state_t, pool_allocator_t<lfp_state_t, FOPEN_MAX>> lfp_state_list_t;
@@ -154,7 +154,7 @@ class webalizer_t {
          size_t      arglen;     ///< Entire argument length (e.g. 10 for Opera/9.25)
          toktype_t   argtype;
          
-         ua_token_t(void) {start = NULL; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
+         ua_token_t(void) {start = nullptr; namelen = mjverlen = mnverlen = arglen = 0; argtype = strtok;}
          void reset(const char *str, toktype_t type) {start = str; namelen = mjverlen = mnverlen = arglen = 0; argtype = type;}
       };
 
@@ -248,7 +248,7 @@ class webalizer_t {
 
       inode_t *put_inode(const string_t& ident, int64_t relts, nodetype_t type, bool fileurl, uint64_t xfer, const tstamp_t& tstamp, double proctime, bool& newnode);
 
-      rcnode_t *put_rcnode(const string_t& method, int64_t relts, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode = NULL);
+      rcnode_t *put_rcnode(const string_t& method, int64_t relts, const string_t& url, u_short respcode, bool restore, uint64_t count, bool *newnode = nullptr);
 
       dlnode_t *put_dlnode(const string_t& name, int64_t relts, u_int respcode, const tstamp_t& tstamp, uint64_t proctime, uint64_t xfer, storable_t<hnode_t>& hnode, bool& newnode);
 

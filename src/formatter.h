@@ -93,7 +93,7 @@ class buffer_formatter_t {
             scope_t(scope_t&& other) noexcept : formatter(other.formatter), scopeid(other.scopeid)
             {
                // leave scopeid in the other formatter for troubleshooting
-               other.formatter = NULL;
+               other.formatter = nullptr;
             }
 
             ~scope_t(void) 
@@ -108,7 +108,7 @@ class buffer_formatter_t {
                scopeid = other.scopeid;
 
                // leave scopeid in the other formatter for troubleshooting
-               other.formatter = NULL;
+               other.formatter = nullptr;
 
                return *this;
             }

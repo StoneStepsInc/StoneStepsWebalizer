@@ -22,8 +22,8 @@ event_t event_create(bool manual, bool signalled)
 {
    HANDLE event_handle;
 
-   if((event_handle = CreateEvent(NULL, manual, signalled, NULL)) == NULL)
-      return NULL;
+   if((event_handle = CreateEvent(nullptr, manual, signalled, nullptr)) == nullptr)
+      return nullptr;
 
    return new event_handle_t(event_handle);
 }

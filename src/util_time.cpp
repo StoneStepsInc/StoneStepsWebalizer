@@ -32,7 +32,7 @@ string_t cur_time(bool local_time)
    time_t  now;
 
    /* get system time */
-   now = time(NULL);
+   now = time(nullptr);
    
    // format time stamp for the current locale
    if (local_time)

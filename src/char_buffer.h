@@ -72,7 +72,7 @@ class char_buffer_base {
 
       char_buffer_base& attach(char_t *buf, size_t bsize, bool hold);
 
-      char_t *detach(size_t *bsize = NULL, bool *hold = NULL);
+      char_t *detach(size_t *bsize = nullptr, bool *hold = nullptr);
 
       char_buffer_base& resize(size_t size, size_t datasize);
 
@@ -86,9 +86,9 @@ class char_buffer_base {
 
       bool operator == (const char_buffer_base& other) const {return buffer == other.buffer && holder == other.holder && bufsize == other.bufsize;}
 
-      char_t *operator + (size_t offset) {return offset < bufsize ? buffer + offset : NULL;}
+      char_t *operator + (size_t offset) {return offset < bufsize ? buffer + offset : nullptr;}
 
-      const char_t *operator + (size_t offset) const {return offset < bufsize ? buffer + offset : NULL;}
+      const char_t *operator + (size_t offset) const {return offset < bufsize ? buffer + offset : nullptr;}
 
       char_t *get_buffer(void) {return buffer;}
 
@@ -100,7 +100,7 @@ class char_buffer_base {
 
       bool isempty(void) const {return bufsize == 0;}
 
-      bool isnull(void) const {return buffer == NULL;}
+      bool isnull(void) const {return buffer == nullptr;}
 
       //
       // Buffer memory management functions

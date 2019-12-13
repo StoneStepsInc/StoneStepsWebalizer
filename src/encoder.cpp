@@ -18,7 +18,7 @@
 char *encode_char_html(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
-   if(cp == NULL) {
+   if(cp == nullptr) {
       obc = 6;
       return op;
    }
@@ -56,8 +56,8 @@ char *encode_char_html(const char *cp, size_t cbc, char *op, size_t& obc)
 char *encode_char_xml(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
-   if(cp == NULL) {
-      encode_char_html(NULL, cbc, op, obc);
+   if(cp == nullptr) {
+      encode_char_html(nullptr, cbc, op, obc);
       if(obc < 6)
          obc = 6;
       return op;
@@ -75,7 +75,7 @@ char *encode_char_xml(const char *cp, size_t cbc, char *op, size_t& obc)
 char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc)
 {
    // check if we need to return the length of the longest encoded sequence
-   if(cp == NULL) {
+   if(cp == nullptr) {
       obc = 6;
       return op;
    }
@@ -154,14 +154,14 @@ size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
    size_t cbc, ebc, mebc;  // character byte count, encoded byte count and maximum encoded byte count
 
    // hold onto the size of the longest encoded sequence
-   encode_char(NULL, 0, NULL, mebc);
+   encode_char(nullptr, 0, nullptr, mebc);
 
    while(*cptr) {
       // get the input character size in bytes (may be zero, if invalid)
       cbc = utf8size(cptr);
 
       // always require that any encoded sequence or any UTF-8 character fits in the buffer
-      if(buffer == NULL || (slen + std::max(cbc, mebc)) >= buffer.capacity())
+      if(buffer == nullptr || (slen + std::max(cbc, mebc)) >= buffer.capacity())
          throw exception_t(0, "Insufficient buffer capacity");
       
       // check for invalid UTF-8 sequences and control characters, except \t, \r and \n

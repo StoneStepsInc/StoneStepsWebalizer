@@ -117,8 +117,8 @@ graph_t::graph_t(const config_t& config) :
       c_shadow(0), c_background(0), c_gridline(0), c_hits(0), c_files(0), c_hosts(0),
       c_pages(0), c_visits(0), c_xfer(0), c_outline(0), c_legend(0), c_weekend(0)
 {
-   out = NULL;
-   im = NULL;
+   out = nullptr;
+   im = nullptr;
 
    *maxvaltxt = 0;
 
@@ -181,8 +181,8 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
    double ptsize = 0;
    int pxsize = 0, charpx = 0;
    size_t strsize;
-   gdFontPtr fontptr = NULL;
-   const char *fontfile = NULL;
+   gdFontPtr fontptr = nullptr;
+   const char *fontfile = nullptr;
    double angle = up ? PI/2 : 0.;
 
    switch (fonttype) {
@@ -210,7 +210,7 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
    }
 
    /* use raster fonts? */
-   if(fontfile == NULL || *fontfile == 0 || pxsize == 0) {
+   if(fontfile == nullptr || *fontfile == 0 || pxsize == 0) {
       strsize = strlen((const char*) str) * charpx;
       if(up) {
          if(!xyhead)
@@ -236,7 +236,7 @@ void graph_t::_gdImageStringEx(gdImagePtr im, int fonttype, int x, int y, u_char
    // If the string is right-aligned, compute the bounding box first
    */
    if(!xyhead) {
-      gdImageStringFT(NULL, brect, config.font_anti_aliasing ? color : -color, (char*) fontfile, ptsize, angle, x, y, (char*) str);
+      gdImageStringFT(nullptr, brect, config.font_anti_aliasing ? color : -color, (char*) fontfile, ptsize, angle, x, y, (char*) str);
       if(textsize)
          *textsize = (up) ? brect[1] - brect[3] : brect[2] - brect[0];
       if(up) y += (brect[1] - brect[3]); else x -= (brect[2] - brect[0]);
@@ -307,7 +307,7 @@ int graph_t::year_graph6x(const history_t& history,
    s_mth = history.first_month();
    for(i = 0; i < history.disp_length(); i++) {
       /* use language-specific array */
-      _gdImageString(im, GD_FONT_SMALL, ML+GBW+YSPL+(i*YSSW), 238, config.lang.s_month[s_mth-1], c_legend, true, NULL);
+      _gdImageString(im, GD_FONT_SMALL, ML+GBW+YSPL+(i*YSSW), 238, config.lang.s_month[s_mth-1], c_legend, true, nullptr);
       s_mth++;
       if (s_mth > 12) s_mth = 1;
    }
@@ -324,38 +324,38 @@ int graph_t::year_graph6x(const history_t& history,
    // y-axis legend
    if (maxval <= 0) maxval = 1;
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
-   _gdImageStringUp(im, GD_FONT_SMALL, ML-font_size_small_px-1, MT+GBW, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, ML-font_size_small_px-1, MT+GBW, maxvaltxt, c_legend, false, nullptr);
 
    if (config.graph_legend)                          /* print color coded legends? */
    {
       /* Kbytes Legend */
-      _gdImageString(im, GD_FONT_SMALL, msright+1, YGH-MB+2, config.lang.msg_h_xfer, c_shadow, false, NULL);
-      _gdImageString(im, GD_FONT_SMALL, msright, YGH-MB+1, config.lang.msg_h_xfer, c_xfer, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, msright+1, YGH-MB+2, config.lang.msg_h_xfer, c_shadow, false, nullptr);
+      _gdImageString(im, GD_FONT_SMALL, msright, YGH-MB+1, config.lang.msg_h_xfer, c_xfer, false, nullptr);
 
       /* Hosts/Visits Legend */
-      _gdImageString(im, GD_FONT_SMALL, msright+1, MT-font_size_small_px-2, config.lang.msg_h_hosts, c_shadow, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, msright+1, MT-font_size_small_px-2, config.lang.msg_h_hosts, c_shadow, false, nullptr);
       _gdImageString(im, GD_FONT_SMALL, msright, MT-font_size_small_px-3, config.lang.msg_h_hosts, c_hosts, false, &textsize);
       offset = textsize;
-      _gdImageString(im, GD_FONT_SMALL, msright-offset+1, MT-font_size_small_px-2, "/", c_shadow, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, msright-offset+1, MT-font_size_small_px-2, "/", c_shadow, false, nullptr);
       _gdImageString(im, GD_FONT_SMALL, msright-offset, MT-font_size_small_px-3, "/", c_legend, false, &textsize);
       offset += textsize;
-      _gdImageString(im, GD_FONT_SMALL, msright-offset+1, MT-font_size_small_px-2, config.lang.msg_h_visits, c_shadow, false, NULL);
-      _gdImageString(im, GD_FONT_SMALL, msright-offset, MT-font_size_small_px-3, config.lang.msg_h_visits, c_visits, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, msright-offset+1, MT-font_size_small_px-2, config.lang.msg_h_visits, c_shadow, false, nullptr);
+      _gdImageString(im, GD_FONT_SMALL, msright-offset, MT-font_size_small_px-3, config.lang.msg_h_visits, c_visits, false, nullptr);
 
       /* Hits/Files/Pages Legend */
-      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1, config.lang.msg_h_pages, c_shadow, true, NULL);
+      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1, config.lang.msg_h_pages, c_shadow, true, nullptr);
       _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-4, YGH-MB-GBW, config.lang.msg_h_pages, c_pages, true, &textsize);
       offset = textsize;
-      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, "/", c_shadow, true, NULL);
+      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, "/", c_shadow, true, nullptr);
       _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-4, YGH-MB-GBW-offset, "/", c_legend, true, &textsize);
       offset += textsize;
-      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, config.lang.msg_h_files, c_shadow, true, NULL);
+      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, config.lang.msg_h_files, c_shadow, true, nullptr);
       _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-4, YGH-MB-GBW-offset, config.lang.msg_h_files, c_files, true, &textsize);
       offset += textsize;
-      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, "/",c_shadow, true, NULL);
+      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, "/",c_shadow, true, nullptr);
       _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-4, YGH-MB-GBW-offset, "/",c_legend, true, &textsize);
       offset += textsize;
-      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, config.lang.msg_h_hits, c_shadow, true, NULL);
+      _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-3, YGH-MB-GBW+1-offset, config.lang.msg_h_hits, c_shadow, true, nullptr);
       _gdImageStringUp(im,GD_FONT_SMALL, ML-font_size_small_px-4, YGH-MB-GBW-offset, config.lang.msg_h_hits, c_hits, true, &textsize);
    }
 
@@ -410,7 +410,7 @@ int graph_t::year_graph6x(const history_t& history,
    }
    if (maxval <= 0) maxval = 1;
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
-   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, MT, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, MT, maxvaltxt, c_legend, false, nullptr);
 
    /* visits */
    iter = history.begin();
@@ -447,7 +447,7 @@ int graph_t::year_graph6x(const history_t& history,
       if(hptr->xfer > fmaxval) fmaxval = hptr->xfer;         /* get max val    */
    }
    if (fmaxval <= 0) fmaxval = 1;
-   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, YGHH, fmt_xfer(fmaxval), c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, graph_width-MR+1, YGHH, fmt_xfer(fmaxval), c_legend, false, nullptr);
 
    /* transfer */
    iter = history.begin();
@@ -464,7 +464,7 @@ int graph_t::year_graph6x(const history_t& history,
    }
 
    /* save png image */
-   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != NULL)
+   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != nullptr)
    {
       gdImagePng(im, out);
       fclose(out);
@@ -520,9 +520,9 @@ int graph_t::month_graph6(const char *fname,          // filename
    for (i=0;i<31;i++)
    {
       if((wday+i) % 7 == 6 || (wday+i) % 7 == 0)
-         _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_weekend, true, NULL);
+         _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_weekend, true, nullptr);
       else
-         _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_legend, true, NULL);
+         _gdImageString(im, GD_FONT_SMALL, 25+(i*15), 382, numchar[i+1], c_legend, true, nullptr);
    }
 
    /* y-axis legend */
@@ -534,38 +534,38 @@ int graph_t::month_graph6(const char *fname,          // filename
    }
    if (maxval <= 0) maxval = 1;
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, nullptr);
 
    if (config.graph_legend)                           /* Print color coded legends? */
    {
       /* Kbytes Legend */
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 376, config.lang.msg_h_xfer, c_shadow, true, NULL);
-      _gdImageStringUp(im, GD_FONT_SMALL, 493, 375, config.lang.msg_h_xfer, c_xfer, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 376, config.lang.msg_h_xfer, c_shadow, true, nullptr);
+      _gdImageStringUp(im, GD_FONT_SMALL, 493, 375, config.lang.msg_h_xfer, c_xfer, true, nullptr);
 
       /* Sites/Visits Legend */
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276, config.lang.msg_h_hosts, c_shadow, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276, config.lang.msg_h_hosts, c_shadow, true, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 275, config.lang.msg_h_hosts,c_hosts, true, &textsize);
       offset = textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276-offset, "/", c_shadow, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276-offset, "/", c_shadow, true, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 275-offset, "/", c_legend, true, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276-offset, config.lang.msg_h_visits, c_shadow, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 276-offset, config.lang.msg_h_visits, c_shadow, true, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 275-offset, config.lang.msg_h_visits, c_visits, true, &textsize);
 
       /* Pages/Files/Hits Legend */
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26, config.lang.msg_h_pages, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26, config.lang.msg_h_pages, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25, config.lang.msg_h_pages, c_pages, false, &textsize);
       offset = textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, "/", c_legend, false, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_files, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_files, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, config.lang.msg_h_files, c_files, false, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, "/", c_legend, false, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_hits, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_hits, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, config.lang.msg_h_hits, c_hits, false, &textsize);
    }
 
@@ -612,7 +612,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    }
    if (maxval <= 0) maxval = 1;
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 180, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 180, maxvaltxt, c_legend, false, nullptr);
    
    /* data 6 */
    for (i=0; i<31; i++)
@@ -641,7 +641,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    for (i=0; i<31; i++)
       if (daily[i].tm_xfer > fmaxval) fmaxval = daily[i].tm_xfer;
    if (fmaxval <= 0) fmaxval = 1;
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 280, fmt_xfer(fmaxval), c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 280, fmt_xfer(fmaxval), c_legend, false, nullptr);
    
    for (i=0; i<31; i++)
    {
@@ -654,7 +654,7 @@ int graph_t::month_graph6(const char *fname,          // filename
    }
 
    /* open file for writing */
-   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != NULL)
+   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != nullptr)
    {
       gdImagePng(im, out);
       fclose(out);
@@ -712,7 +712,7 @@ int graph_t::day_graph3(const char *fname,
    /* x-axis legend */
    for (i=0;i<24;i++)
    {
-      _gdImageString(im, GD_FONT_SMALL, ML+SBW+HGSW+8+(i*HGSW), 324, numchar[i], c_legend, false, NULL);
+      _gdImageString(im, GD_FONT_SMALL, ML+SBW+HGSW+8+(i*HGSW), 324, numchar[i], c_legend, false, nullptr);
       /* get max val    */
       if (hourly[i].th_hits > maxval) maxval = hourly[i].th_hits;
       if (hourly[i].th_files > maxval) maxval = hourly[i].th_files;
@@ -724,30 +724,30 @@ int graph_t::day_graph3(const char *fname,
    if (maxfer <= 0) maxfer = 1;
 
    sprintf(maxvaltxt, "%" PRIu64 "", maxval);
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 26, maxvaltxt, c_legend, false, nullptr);
    
-   _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, fmt_xfer(maxfer), c_legend, false, NULL);
+   _gdImageStringUp(im, GD_FONT_SMALL, 8, 222, fmt_xfer(maxfer), c_legend, false, nullptr);
 
    if (config.graph_legend)                          /* print color coded legends? */
    {
       /* Pages/Files/Hits Legend */
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26, config.lang.msg_h_pages, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26, config.lang.msg_h_pages, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25, config.lang.msg_h_pages, c_pages, false, &textsize);
       offset = textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, "/", c_legend, false, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_files, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_files, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, config.lang.msg_h_files, c_files, false, &textsize);
       offset += textsize;                       
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, "/", c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, "/", c_legend, false, &textsize);
       offset += textsize;
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_hits, c_shadow, false, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 26+offset, config.lang.msg_h_hits, c_shadow, false, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 25+offset, config.lang.msg_h_hits, c_hits, false, &textsize);
 
       // KBytes
-      _gdImageStringUp(im, GD_FONT_SMALL, 494, 316, config.lang.msg_h_xfer, c_shadow, true, NULL);
+      _gdImageStringUp(im, GD_FONT_SMALL, 494, 316, config.lang.msg_h_xfer, c_shadow, true, nullptr);
       _gdImageStringUp(im, GD_FONT_SMALL, 493, 315, config.lang.msg_h_xfer, c_xfer, true, &textsize);
       offset = textsize;
    }
@@ -776,7 +776,7 @@ int graph_t::day_graph3(const char *fname,
    }
 
    /* save as png file */
-   if ( (out = fopen(make_path(config.out_dir, fname), "wb")) != NULL)
+   if ( (out = fopen(make_path(config.out_dir, fname), "wb")) != nullptr)
    {
       gdImagePng(im, out);
       fclose(out);
@@ -843,8 +843,8 @@ int graph_t::pie_chart(const char *fname, const char *title, uint64_t t_val, con
 
       /* print the legend */
       str.format("%s (%.0f%%)",legend[i], percent);
-      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 481, y+1, str.c_str(), c_shadow, false, NULL);
-      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 480, y, str.c_str(), *pie_colors[i], false, NULL);
+      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 481, y+1, str.c_str(), c_shadow, false, nullptr);
+      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 480, y, str.c_str(), *pie_colors[i], false, nullptr);
 
       /* move y by two font heights */
       if(font_size_medium_bold_px)
@@ -865,8 +865,8 @@ int graph_t::pie_chart(const char *fname, const char *title, uint64_t t_val, con
       percent = 100. - t_percent;
 
       str.format("%s (%.*f%%)", config.lang.msg_h_other, (percent < 1 ? 2 : 0), percent);
-      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 481, y+1, str.c_str(), c_shadow, false, NULL);
-      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 480, y, str.c_str(), white, false, NULL);
+      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 481, y+1, str.c_str(), c_shadow, false, nullptr);
+      _gdImageString(im, GD_FONT_MEDIUM_BOLD, 480, y, str.c_str(), white, false, nullptr);
    }
    else if(i > 0 && !(i & 1)) {
       gdImageFilledArc(im, CX, CY, XRAD, YRAD, ps_arc, 360, gdAntiAliased, gdEdged | gdNoFill);
@@ -876,7 +876,7 @@ int graph_t::pie_chart(const char *fname, const char *title, uint64_t t_val, con
    gdImageArc(im, CX, CY, XRAD, YRAD, 0, 360, gdAntiAliased);
 
    /* save png image */
-   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != NULL)
+   if ((out = fopen(make_path(config.out_dir, fname), "wb")) != nullptr)
    {
       gdImagePng(im, out);
       fclose(out);
@@ -953,14 +953,14 @@ void graph_t::init_graph(const char *title, int xsize, int ysize)
    gdImageRectangle(im, 19, 24, xsize-22, ysize-22, white);
 
    /* display the graph title */
-   _gdImageString(im, GD_FONT_MEDIUM_BOLD, 20, 8, title, c_title, true, NULL);
+   _gdImageString(im, GD_FONT_MEDIUM_BOLD, 20, 8, title, c_title, true, nullptr);
 
    return;
 }
 
 uint32_t graph_t::make_color(const char *str)
 {
-   return (str && *str) ? strtoul(str, NULL, 16) : 0;
+   return (str && *str) ? strtoul(str, nullptr, 16) : 0;
 }
 
 //
@@ -991,20 +991,20 @@ void graph_t::init_graph_engine(bool makeimgs)
       gdFontPtr fontptr;
 
       // determine the size of X for each font 
-      if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_small, 0., 0, 0, uppercase_x))
+      if(!config.font_file_normal.isempty() && !gdImageStringFT(nullptr, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_small, 0., 0, 0, uppercase_x))
          font_size_small_px = brect[1] - brect[7];
       else
-         font_size_small_px = ((fontptr = gdFontGetSmall()) != NULL) ? fontptr->h-2 : 11;
+         font_size_small_px = ((fontptr = gdFontGetSmall()) != nullptr) ? fontptr->h-2 : 11;
 
-      if(!config.font_file_normal.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
+      if(!config.font_file_normal.isempty() && !gdImageStringFT(nullptr, brect, 0, (char*) config.font_file_normal.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
          font_size_medium_px = brect[1] - brect[7];
       else
-         font_size_medium_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
+         font_size_medium_px = ((fontptr = gdFontGetMediumBold()) != nullptr) ? fontptr->h-2 : 11;
 
-      if(!config.font_file_bold.isempty() && !gdImageStringFT(NULL, brect, 0, (char*) config.font_file_bold.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
+      if(!config.font_file_bold.isempty() && !gdImageStringFT(nullptr, brect, 0, (char*) config.font_file_bold.c_str(), config.font_size_medium, 0., 0, 0, uppercase_x))
          font_size_medium_bold_px = brect[1] - brect[7];
       else
-         font_size_medium_bold_px = ((fontptr = gdFontGetMediumBold()) != NULL) ? fontptr->h-2 : 11;
+         font_size_medium_bold_px = ((fontptr = gdFontGetMediumBold()) != nullptr) ? fontptr->h-2 : 11;
    }
 
    // assign configured colors

@@ -30,7 +30,7 @@ uint64_t hash_bin(uint64_t hashval, const u_char *buf, size_t blen)
 
 uint64_t hash_str(uint64_t hashval, const char *str, size_t slen)
 {
-   if(str == NULL)
+   if(str == nullptr)
       return hashval;
 
    if(slen) {

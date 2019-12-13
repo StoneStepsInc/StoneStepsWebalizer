@@ -72,7 +72,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithKey)
          // insert a new node and test equal and greater-than time stamps
          ASSERT_NO_THROW((anode = htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp)));
 
-         ASSERT_TRUE(anode != nullptr) << "A newly inserted node cannot be NULL";
+         ASSERT_TRUE(anode != nullptr) << "A newly inserted node cannot be nullptr";
 
          EXPECT_STREQ(agent_key.c_str(), anode->string.c_str()) << "Newly inserted node must have the correct key";
       }
@@ -80,7 +80,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithKey)
       // use a const version of a node look-up to test the insert without changing the hash table
       const anode_t *canode = htab.find_node(OBJ_REG, agent_key);
 
-      ASSERT_TRUE(canode != nullptr) << "A newly inserted node cannot be NULL when looked up via the const interface";
+      ASSERT_TRUE(canode != nullptr) << "A newly inserted node cannot be nullptr when looked up via the const interface";
 
       EXPECT_STREQ(agent_key.c_str(), canode->string.c_str()) << "Newly inserted node must have the correct key";
    }
@@ -113,7 +113,7 @@ TEST(HashTableTest, NodeInsertStorableWithKey)
          // insert a new node and test equal and greater-than time stamps
          ASSERT_NO_THROW((ccnode = htab.put_node(new storable_t<ccnode_t>(ccode_key, ("Country " + std::to_string(tstamp)).c_str()), tstamp)));
 
-         ASSERT_TRUE(ccnode != nullptr) << "A newly inserted node cannot be NULL";
+         ASSERT_TRUE(ccnode != nullptr) << "A newly inserted node cannot be nullptr";
 
          EXPECT_STREQ(ccode_key.c_str(), ccnode->ccode.c_str()) << "Newly inserted node must have the correct key";
       }
@@ -121,7 +121,7 @@ TEST(HashTableTest, NodeInsertStorableWithKey)
       // use a const version of a node look-up to test the insert without changing the hash table
       const ccnode_t *cccnode = htab.find_node(OBJ_REG, ccode_key);
 
-      ASSERT_TRUE(cccnode != nullptr) << "A newly inserted node cannot be NULL when looked up via the const interface";
+      ASSERT_TRUE(cccnode != nullptr) << "A newly inserted node cannot be nullptr when looked up via the const interface";
 
       EXPECT_STREQ(ccode_key.c_str(), cccnode->ccode.c_str()) << "Newly inserted node must have the correct key";
    }
@@ -162,7 +162,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
          // insert a new node and test equal and greater-than time stamps
          ASSERT_NO_THROW((dlnode = htab.put_node(new storable_t<dlnode_t>(string_t::hold(download.c_str()), *host), tstamp)));
 
-         ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
+         ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be nullptr";
 
          EXPECT_STREQ(string_t::hold(download.c_str()), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
          EXPECT_STREQ(string_t::hold(ipaddr.c_str()), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
@@ -171,7 +171,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
       // there is no const interface for compound key nodes
       dlnode = htab.find_node(hashval, OBJ_REG, tstamp, string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
-      ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be NULL";
+      ASSERT_TRUE(dlnode != nullptr) << "A newly inserted node cannot be nullptr";
 
       EXPECT_STREQ(string_t::hold(download.c_str()), dlnode->name.c_str()) << "Newly inserted node must have the correct key";
       EXPECT_STREQ(string_t::hold(ipaddr.c_str()), dlnode->hnode->string.c_str()) << "Newly inserted node must have the correct key";
@@ -434,7 +434,7 @@ TEST(HashTableTest, IteratorAllTypes)
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr before item() is called for the first time";
 
    while(iter.next()) {
       std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
@@ -449,7 +449,7 @@ TEST(HashTableTest, IteratorAllTypes)
       agent_node_names.erase(agent_name);
    }
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr from item() after the entire sequence has been traversed";
 
    EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
 }
@@ -474,7 +474,7 @@ TEST(HashTableTest, IteratorRegularObjects)
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr before item() is called for the first time";
 
    while(iter.next()) {
       std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
@@ -488,7 +488,7 @@ TEST(HashTableTest, IteratorRegularObjects)
       agent_node_names.erase(agent_name);
    }
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr from item() after the entire sequence has been traversed";
 
    EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
 }
@@ -516,7 +516,7 @@ TEST(HashTableTest, IteratorGroupObjects)
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL before item() is called for the first time";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr before item() is called for the first time";
 
    while(iter.next()) {
       std::set<string_t>::iterator agent_name = agent_node_names.find(iter.item()->string);
@@ -530,7 +530,7 @@ TEST(HashTableTest, IteratorGroupObjects)
       agent_node_names.erase(agent_name);
    }
 
-   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return NULL from item() after the entire sequence has been traversed";
+   ASSERT_EQ(nullptr, iter.item()) << "The iterator should return nullptr from item() after the entire sequence has been traversed";
 
    EXPECT_EQ(0, agent_node_names.size()) << "All agent node names must be iterated over";
 }
@@ -544,8 +544,8 @@ TEST(HashTableTest, IteratorEmpty)
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
 
-   ASSERT_EQ(nullptr, iter.next()) << "Next node of an empty hash map iterator should return NULL";
-   ASSERT_EQ(nullptr, iter.item()) << "Current node of an empty hash map iterator should be NULL";
+   ASSERT_EQ(nullptr, iter.next()) << "Next node of an empty hash map iterator should return nullptr";
+   ASSERT_EQ(nullptr, iter.item()) << "Current node of an empty hash map iterator should be nullptr";
 }
 
 ///

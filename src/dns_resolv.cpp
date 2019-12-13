@@ -131,7 +131,7 @@ struct dns_db_record_t {
 /// thread that queued the host node for resolution.
 ///
 /// A `dnode_t` instance may be queued for a database update after it has been resolved.
-/// In this case `hnode` will be NULL and `hostaddr` will be a non-empty sting. Such
+/// In this case `hnode` will be nullptr and `hostaddr` will be a non-empty sting. Such
 /// instances must be destroyed after the database was updated and should never be queued
 /// to be returned from `get_hnode`.
 ///
@@ -146,7 +146,7 @@ class dns_resolver_t::dnode_t {
       const hnode_t  *hnode;              ///< A read-only host node.
       class dnode_t  *llist;
 
-      string_t       hostaddr;            ///< An IP address that is populated only when `hnode` is NULL.
+      string_t       hostaddr;            ///< An IP address that is populated only when `hnode` is nullptr.
 
       string_t       hostname;            ///< Host name (populated only if DNS look-ups are enabled).
       string_t       ccode;               ///< Two-character country code
@@ -354,9 +354,9 @@ size_t dns_db_record_t::s_unpack_data(const void *buffer, size_t bufsize)
 //
 
 dns_resolver_t::dnode_t::dnode_t(hnode_t& hnode, unsigned short sa_family) : 
-      hnode(hnode.resolved ? NULL : &hnode), 
-      m_hnode(hnode.resolved ? NULL : &hnode), 
-      llist(NULL), 
+      hnode(hnode.resolved ? nullptr : &hnode), 
+      m_hnode(hnode.resolved ? nullptr : &hnode), 
+      llist(nullptr), 
       spammer(false),
       geoip_tstamp(0),
       latitude(0.),
@@ -476,8 +476,8 @@ void dns_resolver_t::dnode_t::remove_host_node(void)
 {
    if(hnode) {
       hostaddr = hnode->string;
-      hnode = NULL;
-      m_hnode = NULL;
+      hnode = nullptr;
+      m_hnode = nullptr;
    }
 }
 
@@ -488,9 +488,9 @@ void dns_resolver_t::dnode_t::remove_host_node(void)
 dns_resolver_t::dns_resolver_t(const config_t& config) :
       config(config)
 {
-   dnode_list = dnode_end = NULL;
+   dnode_list = dnode_end = nullptr;
 
-   dns_done_event = NULL;
+   dns_done_event = nullptr;
 
    dns_thread_stop = false;
 
@@ -602,7 +602,7 @@ void dns_resolver_t::queue_dnode(dnode_t *dnode)
 {
    dnode_mutex.lock();
    if(dnode) {
-      if(dnode_end == NULL)
+      if(dnode_end == nullptr)
          dnode_list = dnode;
       else
          dnode_end->llist = dnode;
@@ -631,7 +631,7 @@ hnode_t *dns_resolver_t::get_hnode(void)
 
    // return if there are no resolved nodes
    if(!dnode)
-      return NULL;
+      return nullptr;
 
    hnode = dnode->m_hnode;
 
@@ -700,16 +700,16 @@ bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 
    // remember the time if we need to report how long it took us to resolve this address later
    if(config.debug_mode)
-      stime = time(NULL);
+      stime = time(nullptr);
 
    *hostname = 0;
 
    if(dnode->s_addr_ip.sa_family == AF_INET) {
-      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
+      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv4), hostname, NI_MAXHOST, nullptr, 0, NI_NAMEREQD))
          goto funcexit;
    }
    else if(dnode->s_addr_ip.sa_family == AF_INET6) {
-      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, NULL, 0, NI_NAMEREQD))
+      if(getnameinfo(&dnode->s_addr_ip, sizeof(dnode->s_addr_ipv6), hostname, NI_MAXHOST, nullptr, 0, NI_NAMEREQD))
          goto funcexit;
    }
    else
@@ -723,7 +723,7 @@ bool dns_resolver_t::resolve_domain_name(dnode_t* dnode)
 
 funcexit:
    if(config.dns_lookups && config.debug_mode)
-      fprintf(stderr, "[%04lx] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(NULL), stime));
+      fprintf(stderr, "[%04lx] DNS lookup: %s: %s (%.0f sec)\n", thread_id(), dnode->hnode->string.c_str(), dnode->hostname.isempty() ? "NXDOMAIN" : dnode->hostname.c_str(), difftime(time(nullptr), stime));
 
    return !dnode->hostname.isempty();
 }
@@ -801,7 +801,7 @@ void dns_resolver_t::dns_init(void)
 #endif
 
    // initialize synchronization primitives
-   if((dns_done_event = event_create(true, true)) == NULL) {
+   if((dns_done_event = event_create(true, true)) == nullptr) {
       throw exception_t(0, string_t::_format("%s (event object)", config.lang.msg_dns_init));
    }
 
@@ -858,7 +858,7 @@ void dns_resolver_t::dns_init(void)
       asn_db = open_mmdb(config.asn_db_path, asn_language, config.lang.msg_dns_usea, config.lang.msg_dns_asne);
 
    // get the current time once to avoid doing it for every host
-   runtime.reset(time(NULL));
+   runtime.reset(time(nullptr));
 
    // create worker threads to handle DNS and GeoIP requests
    for(size_t index = 0; index < wrk_ctxs.size(); index++) {
@@ -1011,19 +1011,19 @@ bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)
 
    dnode_mutex.lock();
 
-   if(dnode_list == NULL)
+   if(dnode_list == nullptr)
       goto funcidle;
 
    // check the node at the start of the queue
-   if((nptr = dnode_list) == NULL)
+   if((nptr = dnode_list) == nullptr)
       goto funcidle;
 
-   // remove the node and set dnode_end to NULL if there no more nodes
-   if((dnode_list = dnode_list->llist) == NULL)
-      dnode_end = NULL;
+   // remove the node and set dnode_end to nullptr if there no more nodes
+   if((dnode_list = dnode_list->llist) == nullptr)
+      dnode_end = nullptr;
 
    // reset the pointer to the next node
-   nptr->llist = NULL;
+   nptr->llist = nullptr;
 
    dnode_mutex.unlock();
 
@@ -1171,11 +1171,11 @@ void dns_resolver_t::dns_worker_thread_proc(wrk_ctx_t *wrk_ctx_ptr)
 
 bool dns_resolver_t::geoip_get_ccode(const string_t& hostaddr, const sockaddr& ipaddr, string_t& ccode, string_t& city, double& latitude, double& longitude, uint32_t& geoname_id)
 {
-   static const char *ccode_path[] = {"country", "iso_code", NULL};
-   static const char *loc_lat_path[] = {"location", "latitude", NULL};
-   static const char *loc_lon_path[] = {"location", "longitude", NULL};
+   static const char *ccode_path[] = {"country", "iso_code", nullptr};
+   static const char *loc_lat_path[] = {"location", "latitude", nullptr};
+   static const char *loc_lon_path[] = {"location", "longitude", nullptr};
    static const char *city_geoname_id[] = {"city", "geoname_id", nullptr};
-   const char *city_path[] = {"city", "names", geoip_language.c_str(), NULL};
+   const char *city_path[] = {"city", "names", geoip_language.c_str(), nullptr};
 
    int mmdb_error;
    MMDB_lookup_result_s result = {};
@@ -1348,7 +1348,7 @@ bool dns_resolver_t::dns_db_get(dnode_t& dnode, Db *dns_db, void *buffer, size_t
 
    if (config.debug_mode) fprintf(stderr,"[%04lx] Checking DNS cache for %s...\n", thread_id(), dnode.hnode->string.c_str());
 
-   switch((dberror = dns_db->get(NULL, &key, &recdata, 0)))
+   switch((dberror = dns_db->get(nullptr, &key, &recdata, 0)))
    {
       case  DB_NOTFOUND: 
          if (config.debug_mode) 
@@ -1406,7 +1406,7 @@ void dns_resolver_t::dns_db_put(const dnode_t& dnode, Db *dns_db, void *buffer, 
    v.set_data(buffer);
    v.set_size((u_int32_t) recSize);
 
-   if((dberror = dns_db->put(NULL, &k, &v, 0)) < 0) {
+   if((dberror = dns_db->put(nullptr, &k, &v, 0)) < 0) {
       if(config.verbose)
          fprintf(stderr,"dns_db_put failed (%04x - %s)!\n", dberror, db_strerror(dberror));
    }
@@ -1457,7 +1457,7 @@ std::unique_ptr<Db> dns_resolver_t::dns_db_open(void)
       // we can use just the database file name to open the database because relative
       // database paths are appended to the environment path.
       //
-      if((status = dns_db->open(NULL, config.dns_db_fname, NULL, DB_HASH, DB_CREATE | DB_THREAD, DBFILEMASK)) != 0)
+      if((status = dns_db->open(nullptr, config.dns_db_fname, nullptr, DB_HASH, DB_CREATE | DB_THREAD, DBFILEMASK)) != 0)
          throw exception_t(0, string_t::_format("%s %s (%s)", config.lang.msg_dns_nodb, config.dns_cache.c_str(), db_strerror(status)));
 
       return dns_db;

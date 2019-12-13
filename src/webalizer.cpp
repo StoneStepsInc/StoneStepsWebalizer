@@ -186,7 +186,7 @@ void webalizer_t::cleanup(void)
 ///
 bool webalizer_t::init_output_engines(void)
 {
-   output_t::graphinfo_t *graphinfo = NULL;
+   output_t::graphinfo_t *graphinfo = nullptr;
    std::unique_ptr<output_t> optr;
    nlist::const_iterator iter = config.output_formats.begin();
    
@@ -387,8 +387,8 @@ void webalizer_t::group_host_by_name(const hnode_t& hnode, const vnode_t& vnode)
    //
    // Try grouping by IP address or host name first
    //
-   if(config.group_hosts.size() && ((hostname && (group = config.group_hosts.isinglist(*hostname)) != NULL) ||
-                                                ((group = config.group_hosts.isinglist(hnode.string)) != NULL))) {
+   if(config.group_hosts.size() && ((hostname && (group = config.group_hosts.isinglist(*hostname)) != nullptr) ||
+                                                ((group = config.group_hosts.isinglist(hnode.string)) != nullptr))) {
       put_hnode(*group, 0, vnode.hits, vnode.files, vnode.pages, vnode.xfer, vlen, newhgrp);
    }
    else
@@ -457,10 +457,10 @@ void webalizer_t::process_resolved_hosts(void)
    hnode_t *hptr;
 
    // go over all resolved host nodes
-   while((hptr = dns_resolver.get_hnode()) != NULL) {
+   while((hptr = dns_resolver.get_hnode()) != nullptr) {
    
       // factor host visits into host data
-      while((vptr = hptr->get_grp_visit()) != NULL) {
+      while((vptr = hptr->get_grp_visit()) != nullptr) {
          group_host_by_name(*hptr, *vptr);
          delete vptr;
       }
@@ -476,7 +476,7 @@ void webalizer_t::proc_index_alias(string_t& url)
 
    for(nlist::const_iterator lptr = config.index_alias.begin(); lptr != config.index_alias.end(); lptr++) {
       // use strstr becase index files can have search arguments (e.g. /index.html?n=v)
-      if ((cp1 = strstr(url, lptr->string)) != NULL) {
+      if ((cp1 = strstr(url, lptr->string)) != nullptr) {
          if(cp1 == url.c_str() || *(cp1-1) == '/') {
             url.truncate(cp1-url.c_str());
             if(url.isempty())
@@ -506,7 +506,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
    *cp2 = 0;
 
    cp1 = strstr(str,"ompatible"); /* check known fakers */
-   if (cp1!=NULL) {
+   if (cp1!=nullptr) {
       while (*cp1!=';'&&*cp1!='\0') cp1++;
       /* kludge for Mozilla/3.01 (compatible;) */
       if (*cp1++==';' && strcmp(cp1,")\"")) { /* success! */
@@ -530,7 +530,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
          if (config.mangle_agent<2) {
             /* Level 1 - try to get OS */
             cp1=strstr(str,")");
-            if (cp1!=NULL) {
+            if (cp1!=nullptr) {
                *cp2++=' ';
                *cp2++='(';
                while (*cp1!=';'&&*cp1!='('&&cp1!=str) cp1--;
@@ -546,7 +546,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
       }
    } else {
       cp1=strstr(str,"Opera");  /* Opera flavor         */
-      if (cp1!=NULL) {
+      if (cp1!=nullptr) {
          while (*cp1!='/'&&*cp1!=' '&&*cp1!='\0') *cp2++=*cp1++;
          while (*cp1!='.'&&*cp1!='\0') *cp2++=*cp1++;
          if (config.mangle_agent<5) {
@@ -563,7 +563,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
 
          if (config.mangle_agent<2) {
             cp1=strstr(str,"(");
-            if (cp1!=NULL) {
+            if (cp1!=nullptr) {
              cp1++;
              *cp2++=' ';
              *cp2++='(';
@@ -575,7 +575,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
          *cp2='\0';
       } else { 
          cp1=strstr(str,"Mozilla");  /* Netscape flavor      */
-         if (cp1!=NULL) {
+         if (cp1!=nullptr) {
             while (*cp1!='/'&&*cp1!=' '&&*cp1!='\0') *cp2++=*cp1++;
             if (*cp1==' ') {*cp2++='/'; cp1++;}
             while (*cp1!='.'&&*cp1!='\0') *cp2++=*cp1++;
@@ -596,7 +596,7 @@ void webalizer_t::mangle_user_agent(string_t& agent)
             if (config.mangle_agent<2) {
                /* Level 1 - Try to get OS */
                cp1=strstr(str,"(");
-               if (cp1!=NULL) {
+               if (cp1!=nullptr) {
                   cp1++;
                   *cp2++=' ';
                   *cp2++='(';
@@ -747,7 +747,7 @@ void webalizer_t::filter_user_agent(string_t& agent)
 
             // check if there's a matching group pattern for string tokens
             if(token.argtype == strtok && config.group_agent_args.size()) {
-               if((str = config.group_agent_args.isinglist(cp1, arglen, false)) != NULL) {
+               if((str = config.group_agent_args.isinglist(cp1, arglen, false)) != nullptr) {
                   // make sure there are no duplicates
                   for(size_t i = 0; i < ua_groups.size(); i++) {
                      // check if lengths are the same
@@ -1246,7 +1246,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
    bool newvisit, newhost, newthost, newurl, newagent, newuser, newerr, newref, newdl, newspammer;
    bool newrgrp, newugrp, newagrp, newigrp;
    bool pageurl, fileurl, httperr, robot = false, target, spammer = false, goodurl, entryurl, exiturl;
-   const string_t *sptr, empty, *ragent = NULL;
+   const string_t *sptr, empty, *ragent = nullptr;
    uint64_t stime;
    bool newsrch = false;
    u_short termcnt = 0;
@@ -1444,7 +1444,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
 
          // check non-proxy requests against the spam referrers list
          if(config.log_type != LOG_SQUID)
-            spammer = config.spam_refs.isinlist(log_rec.refer) != NULL;
+            spammer = config.spam_refs.isinlist(log_rec.refer) != nullptr;
 
          // reset search terms
          termcnt = 0;
@@ -1513,28 +1513,28 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             // check, so we avoid a look-up if matches some other ignore criteria.
             //
             if(config.ignore_robots)
-               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
+               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : nullptr;
          }
 
          //
          // Ignore/Include check
          //
 
-         if ( (config.include_hosts.isinlist(log_rec.hostname)==NULL) &&
-              (config.include_urls.isinlist(log_rec.url)==NULL)       &&
-              (config.include_refs.isinlist(log_rec.refer)==NULL)     &&
-              (config.include_agents.isinlist(log_rec.agent)==NULL)   &&
-              (config.include_users.isinlist(log_rec.ident)==NULL)    )
+         if ( (config.include_hosts.isinlist(log_rec.hostname)==nullptr) &&
+              (config.include_urls.isinlist(log_rec.url)==nullptr)       &&
+              (config.include_refs.isinlist(log_rec.refer)==nullptr)     &&
+              (config.include_agents.isinlist(log_rec.agent)==nullptr)   &&
+              (config.include_users.isinlist(log_rec.ident)==nullptr)    )
          {
             if(ragent && config.ignore_robots)
               { lrcnt.total_ignore++; continue; }
-            if (config.ignored_hosts.isinlist(log_rec.hostname) != NULL)
+            if (config.ignored_hosts.isinlist(log_rec.hostname) != nullptr)
               { lrcnt.total_ignore++; continue; }
-            if (config.ignored_agents.isinlist(log_rec.agent)!=NULL)
+            if (config.ignored_agents.isinlist(log_rec.agent)!=nullptr)
               { lrcnt.total_ignore++; continue; }
-            if (config.ignored_refs.isinlist(log_rec.refer)!=NULL)
+            if (config.ignored_refs.isinlist(log_rec.refer)!=nullptr)
               { lrcnt.total_ignore++; continue; }
-            if (config.ignored_users.isinlist(log_rec.ident)!=NULL)
+            if (config.ignored_users.isinlist(log_rec.ident)!=nullptr)
               { lrcnt.total_ignore++; continue; }
 
             // check the ignore URL filter, which may contain optional search argument names
@@ -1551,7 +1551,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          if(config.log_type != LOG_SQUID) {
             // if not ignored, check if a robot and set ragent (ignore spammers)
             if(!config.ignore_robots)
-               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : NULL;
+               ragent = (!spammer) ? config.robots.isinglist(log_rec.agent) : nullptr;
          }
 
          /* Do we need to mangle? */
@@ -1592,7 +1592,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // function.
          //
          hptr = put_hnode(log_rec.hostname, rec_tstamp, htab_tstamp, log_rec.xfer_size, fileurl, pageurl, 
-            spammer, ragent != NULL, target, newvisit, newhost, newthost, newspammer);
+            spammer, ragent != nullptr, target, newvisit, newhost, newthost, newspammer);
 
          // 
          // Host nodes need to be resolved before their visits can be attributed to various 
@@ -1647,7 +1647,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // Downloads
          //
          if(config.ntop_downloads || config.dump_downloads) {
-            if((sptr = config.downloads.isinglist(log_rec.url)) != NULL) {
+            if((sptr = config.downloads.isinglist(log_rec.url)) != nullptr) {
                if(log_rec.resp_code == RC_OK || log_rec.resp_code == RC_PARTIALCONTENT)
                   put_dlnode(*sptr, htab_tstamp, log_rec.resp_code, rec_tstamp, log_rec.proc_time, log_rec.xfer_size, *hptr, newdl);
             }
@@ -1768,7 +1768,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          /*********************************************/
 
          /* URL Grouping */
-         if((sptr = config.group_urls.isinglist(log_rec.url))!=NULL)
+         if((sptr = config.group_urls.isinglist(log_rec.url))!=nullptr)
             put_unode(*sptr, 0, empty, OBJ_GRP, log_rec.xfer_size, log_rec.proc_time/1000., 0, false, false, newugrp);
 
          // group URL domains for proxy requests
@@ -1780,11 +1780,11 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          }
 
          /* Referrer Grouping */
-         if((sptr = config.group_refs.isinglist(log_rec.refer))!=NULL)
+         if((sptr = config.group_refs.isinglist(log_rec.refer))!=nullptr)
             put_rnode(*sptr, 0, OBJ_GRP, 1ul, newvisit, newrgrp);
 
          /* User Agent Grouping */
-         if((sptr = config.group_agents.isinglist(log_rec.agent))!=NULL)
+         if((sptr = config.group_agents.isinglist(log_rec.agent))!=nullptr)
             put_anode(*sptr, 0, OBJ_GRP, log_rec.xfer_size, newvisit, false, newagrp);
 
          // group robots
@@ -1792,7 +1792,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             put_anode(*ragent, 0, OBJ_GRP, log_rec.xfer_size, newvisit, true, newagrp);
 
          /* Ident (username) Grouping */
-         if((sptr = config.group_users.isinglist(log_rec.ident))!=NULL)
+         if((sptr = config.group_users.isinglist(log_rec.ident))!=nullptr)
             put_inode(*sptr, 0, OBJ_GRP, fileurl, log_rec.xfer_size, rec_tstamp, log_rec.proc_time/1000., newigrp);
 
          // update group counts (host counts are updated in process_resolved_hosts)
@@ -1972,11 +1972,11 @@ int webalizer_t::qs_srcharg_cmp(const arginfo_t *e1, const arginfo_t *e2)
 bool webalizer_t::check_ignore_url_list(const string_t& url, const string_t& srchargs, std::vector<arginfo_t, srch_arg_alloc_t>& sr_args) const
 {
    // check the ignore URL filter, which may contain optional search argument names
-   const gnode_t *upat = NULL;
+   const gnode_t *upat = nullptr;
    glist::const_iterator upat_it = config.ignored_urls.begin();
 
    // find the first URL pattern and then loop through duplicates to see if we have a matching search argument name
-   while((upat = config.ignored_urls.find_node(url, upat_it, upat != NULL)) != NULL) {
+   while((upat = config.ignored_urls.find_node(url, upat_it, upat != nullptr)) != nullptr) {
       // if there is no search argument name in this URL pattern, then we found a match
       if(upat->noname || upat->name.isempty()) 
          return true;
@@ -2162,7 +2162,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
 {
    string_t::char_buffer_t&& buffer = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
    string_t::char_buffer_t&& termbuf = buffer_holder_t(buffer_allocator, BUFSIZE).buffer;
-   const gnode_t *nptr = NULL;
+   const gnode_t *nptr = nullptr;
    const char *cp1, *cp3;
    char *cp2, *bptr;
    int  sp_flg = 0;
@@ -2191,7 +2191,7 @@ bool webalizer_t::srch_string(const string_t& refer, const string_t& srchargs, u
    //
    // $$$ search_list will find the domain if it's mentioned anywhere in the URL !!!
    //
-   while((nptr = config.search_list.find_node(refer, iter, (nptr != NULL))) != NULL) {
+   while((nptr = config.search_list.find_node(refer, iter, (nptr != nullptr))) != nullptr) {
 
       // walk the query and look for the name we found for this domain
       cp1 = srchargs;
@@ -2343,7 +2343,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    hashval = hnode_t::hash_key(ipaddr);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, OBJ_REG, htab_tstamp, ipaddr)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, OBJ_REG, htab_tstamp, ipaddr)) == nullptr) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(ipaddr);
       if(!state.database.get_hnode_by_value<void*>(*cptr, &unpack_inactive_hnode_cb, this)) {
@@ -2377,7 +2377,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    if(found) {
       if(cptr->visit) {
          // check if the active visit has ended
-         if((visit = update_visit(cptr, tstamp)) != NULL) {
+         if((visit = update_visit(cptr, tstamp)) != nullptr) {
             newvisit = true;
 
             // reuse the visit node to minimize memory allocations
@@ -2456,7 +2456,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    hashval = hnode_t::hash_key(grpname);
 
    /* check if hashed */
-   if((cptr = state.hm_htab.find_node(hashval, OBJ_GRP, htab_tstamp, grpname)) == NULL) {
+   if((cptr = state.hm_htab.find_node(hashval, OBJ_GRP, htab_tstamp, grpname)) == nullptr) {
       /* not hashed */
       cptr = new storable_t<hnode_t>(grpname);
       if(!state.database.get_hnode_by_value(*cptr)) {
@@ -2513,7 +2513,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, int64_t htab_tstamp, nodety
    hashval = rnode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.rm_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
+   if((nptr = state.rm_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
       nptr = new storable_t<rnode_t>(str);
       if(!state.database.get_rnode_by_value(*nptr)) {
@@ -2561,7 +2561,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, int64_t htab_ts
    hashval = unode_t::hash_key(str, srchargs);
 
    /* check if hashed */
-   if((cptr = state.um_htab.find_node(hashval, type, htab_tstamp, str, srchargs)) == NULL) {
+   if((cptr = state.um_htab.find_node(hashval, type, htab_tstamp, str, srchargs)) == nullptr) {
       /* not hashed */
       cptr = new storable_t<unode_t>(str, srchargs);
       // check if in the database
@@ -2625,12 +2625,12 @@ rcnode_t *webalizer_t::put_rcnode(const string_t& method, int64_t htab_tstamp, c
       *newnode = false;
       
    if(method.isempty() || url.isempty())
-      return NULL;
+      return nullptr;
 
    hashval = rcnode_t::hash_key(respcode, method, url);
 
    /* check if hashed */
-   if((nptr = state.rc_htab.find_node(hashval, OBJ_REG, htab_tstamp, respcode, method, url)) == NULL) {
+   if((nptr = state.rc_htab.find_node(hashval, OBJ_REG, htab_tstamp, respcode, method, url)) == nullptr) {
       /* not hashed */
       nptr = new storable_t<rcnode_t>(method, url, respcode);
 
@@ -2668,7 +2668,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, int64_t htab_tstamp, nodety
    hashval = anode_t::hash_key(str);
 
    /* check if hashed */
-   if((cptr = state.am_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
+   if((cptr = state.am_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
       cptr = new storable_t<anode_t>(str, robot);
       if(!state.database.get_anode_by_value(*cptr)) {
@@ -2714,12 +2714,12 @@ snode_t *webalizer_t::put_snode(const string_t& str, int64_t htab_tstamp, u_shor
    newnode = false;
 
    if(str.isempty())     /* skip bad search strs */
-      return NULL;
+      return nullptr;
 
    hashval = snode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.sr_htab.find_node(hashval, OBJ_REG, htab_tstamp, str)) == NULL) {
+   if((nptr = state.sr_htab.find_node(hashval, OBJ_REG, htab_tstamp, str)) == nullptr) {
       /* not hashed */
       nptr = new storable_t<snode_t>(str);
       if(!state.database.get_snode_by_value(*nptr)) {
@@ -2770,12 +2770,12 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
 
    newnode = false;
    
-   if(str.isempty()) return NULL;  /* skip if no username */
+   if(str.isempty()) return nullptr;  /* skip if no username */
 
    hashval = inode_t::hash_key(str);
 
    /* check if hashed */
-   if((nptr = state.im_htab.find_node(hashval, type, htab_tstamp, str)) == NULL) {
+   if((nptr = state.im_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
       nptr = new storable_t<inode_t>(str);
       if(!state.database.get_inode_by_value(*nptr)) {
@@ -2830,10 +2830,10 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    newnode = false;
 
    if(name.isempty() || hnode.string.isempty())
-      return NULL;
+      return nullptr;
 
    if(respcode != RC_OK && respcode != RC_PARTIALCONTENT)
-      return NULL;
+      return nullptr;
 
    hashval = dlnode_t::hash_key(hnode.string, name);
 
@@ -2849,7 +2849,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    // 12:36:43 GET /.../webalizer_win.zip Download+Master                   206 530125 360 436546
    // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
    //
-   if((nptr = state.dl_htab.find_node(hashval, OBJ_REG, htab_tstamp, hnode.string, name)) == NULL) {
+   if((nptr = state.dl_htab.find_node(hashval, OBJ_REG, htab_tstamp, hnode.string, name)) == nullptr) {
       nptr = new storable_t<dlnode_t>(name, hnode);
       if(!state.database.get_dlnode_by_value<void *, const storable_t<hnode_t>&>(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
          nptr->set_host(&hnode);
@@ -2871,7 +2871,7 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
    
    if(found) {
       if(nptr->download) {
-         if((download = update_download(nptr, tstamp)) != NULL) {
+         if((download = update_download(nptr, tstamp)) != nullptr) {
             download->reset(nptr->nodeid);
             nptr->download = download;
          }
@@ -2910,10 +2910,10 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
    storable_t<vnode_t> *visit;
 
    if(!hptr || hptr->flag == OBJ_GRP || !hptr->visits)
-      return NULL;
+      return nullptr;
 
-   if((visit = hptr->visit) == NULL)
-      return NULL;
+   if((visit = hptr->visit) == nullptr)
+      return nullptr;
 
    // end the visit if tstamp is zero (e.g. end of month)
    if(!tstamp.null) {
@@ -2921,7 +2921,7 @@ storable_t<vnode_t> *webalizer_t::update_visit(storable_t<hnode_t> *hptr, const 
       if(tstamp.elapsed(visit->end) < config.visit_timeout) {
          // or visit length exceeds the allowed maximum (e.g. site pinging)
          if(!config.max_visit_length || visit->end.elapsed(visit->start) < config.max_visit_length)
-            return NULL;
+            return nullptr;
       }
    }
 
@@ -2945,7 +2945,7 @@ storable_t<vnode_t> *webalizer_t::end_visit(storable_t<hnode_t> *hptr)
       return nullptr;
 
    // detach the visit from the host
-   hptr->set_visit(NULL);
+   hptr->set_visit(nullptr);
 
    // indicate that the host node has been updated
    if(hptr->storage_info.storage)
@@ -3044,7 +3044,7 @@ storable_t<vnode_t> *webalizer_t::end_visit(storable_t<hnode_t> *hptr)
          if(visit->lasturl->storage_info.storage)
             visit->lasturl->storage_info.set_modified();
       }
-      visit->set_lasturl(NULL);
+      visit->set_lasturl(nullptr);
    }
 
    // if the visit node was read from the database, queue it for deletion
@@ -3085,7 +3085,7 @@ void webalizer_t::update_visits(const tstamp_t& tstamp)
    hash_table<storable_t<hnode_t>>::iterator h_iter = state.hm_htab.begin();
    
    while(h_iter.next()) {
-      if((visit = update_visit(h_iter.item(), tstamp)) != NULL)
+      if((visit = update_visit(h_iter.item(), tstamp)) != nullptr)
          delete visit;
    }
 }
@@ -3100,14 +3100,14 @@ storable_t<danode_t> *webalizer_t::update_download(storable_t<dlnode_t> *dlnode,
    storable_t<danode_t> *download;
 
    if(!dlnode || tstamp.null)
-      return NULL;
+      return nullptr;
 
-   if((download = dlnode->download) == NULL)
-      return NULL;
+   if((download = dlnode->download) == nullptr)
+      return nullptr;
 
    // the elapsed time is always positive, so usual arithmetic conversions work
    if(tstamp.elapsed(download->tstamp) < config.download_timeout)
-      return NULL;
+      return nullptr;
 
    return end_download(dlnode);
 }
@@ -3129,7 +3129,7 @@ storable_t<danode_t> *webalizer_t::end_download(storable_t<dlnode_t> *dlnode)
    if((download = dlnode->download) == nullptr)
       return nullptr;
 
-   dlnode->download = NULL;
+   dlnode->download = nullptr;
    if(dlnode->storage_info.storage)
       dlnode->storage_info.set_modified();
 
@@ -3175,8 +3175,8 @@ void webalizer_t::update_downloads(const tstamp_t& tstamp)
    storable_t<dlnode_t> *nptr;
    dl_hash_table::iterator iter = state.dl_htab.begin();
 
-   while((nptr = iter.next()) != NULL) {
-      if((download = update_download(nptr, tstamp)) != NULL)
+   while((nptr = iter.next()) != nullptr) {
+      if((download = update_download(nptr, tstamp)) != nullptr)
          delete download;
    }
 }

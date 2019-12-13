@@ -24,21 +24,21 @@ template <typename node_t>
 const string_t *base_list<node_t>::isinlist(const string_t& str, bool nocase) const
 {
    const node_t *lptr;
-   return ((lptr = find_node_ex(str.c_str(), str.length(), true, nocase)) != NULL) ? &lptr->string : NULL;
+   return ((lptr = find_node_ex(str.c_str(), str.length(), true, nocase)) != nullptr) ? &lptr->string : nullptr;
 }
 
 template <typename node_t>
 const string_t *base_list<node_t>::isinlistex(const char *str, size_t slen, bool substr, bool nocase) const
 {
    const node_t *lptr;
-   return ((lptr = find_node_ex(str, slen, substr, nocase)) != NULL) ? &lptr->string : NULL;
+   return ((lptr = find_node_ex(str, slen, substr, nocase)) != nullptr) ? &lptr->string : nullptr;
 }
 
 template <typename node_t>
 const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool substr, bool nocase) const
 {
-   if(str == NULL || *str == 0 || slen == 0 || list.empty())
-      return NULL;
+   if(str == nullptr || *str == 0 || slen == 0 || list.empty())
+      return nullptr;
 
    for(typename std::list<node_t>::const_iterator lptr = list.begin(); lptr != list.end(); lptr++) {
       if(lptr->string.isempty())
@@ -48,14 +48,14 @@ const node_t *base_list<node_t>::find_node_ex(const char *str, size_t slen, bool
          return &(*lptr);
    }
 
-   return NULL;
+   return nullptr;
 }
 
 template <typename node_t>
 const node_t *base_list<node_t>::find_node(const string_t& str, typename std::list<node_t>::const_iterator& lptr, bool next, bool nocase) const
 {
    if(str.isempty())
-      return NULL;
+      return nullptr;
 
    while(lptr != list.end()) {
       if(isinstrex(str, lptr->key(), str.length(), lptr->key().length(), true, &lptr->delta_table, nocase))
@@ -67,7 +67,7 @@ const node_t *base_list<node_t>::find_node(const string_t& str, typename std::li
          break;
    }
 
-   return NULL;
+   return nullptr;
 }
 
 /*********************************************/
@@ -96,7 +96,7 @@ bool nlist::iswildcard(void) const
 gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, const char *qualifier, size_t qlen) :
       base_list_node_t(value ? value : "", vlen ? vlen : value && *value? strlen(value) : 0)
 {
-   if(name == NULL || *name == 0) {
+   if(name == nullptr || *name == 0) {
       nlen = vlen ? vlen : value && *value ? strlen(value) : 0;
       name = value;
    }
@@ -118,10 +118,10 @@ gnode_t::gnode_t(const char *name, size_t nlen, const char *value, size_t vlen, 
 
 bool glist::add_glist(const char *str, bool srcheng)
 {
-   const char *cp1, *cp2, *cp3 = NULL;
+   const char *cp1, *cp2, *cp3 = nullptr;
    size_t nlen, vlen, qlen;
 
-   if(str == NULL)
+   if(str == nullptr)
       return false;
 
    //
@@ -145,7 +145,7 @@ bool glist::add_glist(const char *str, bool srcheng)
    while(*cp2 && (string_t::isspace(*cp2))) cp2++;
 
    // if a search engine entry, locate the entry qualifier
-   if(srcheng && (cp3 = strchr(cp2, '=')) != NULL) {
+   if(srcheng && (cp3 = strchr(cp2, '=')) != nullptr) {
       nlen = ++cp3 - cp2;
       qlen = (*cp3) ? strlen(cp3) : 0;
    }
@@ -170,13 +170,13 @@ const string_t *glist::isinglist(const string_t& str) const
 {
    const gnode_t *lptr;
    glist::const_iterator iter = list.begin();
-   return ((lptr = find_node(str, iter, false)) != NULL) ? &lptr->name : NULL;
+   return ((lptr = find_node(str, iter, false)) != nullptr) ? &lptr->name : nullptr;
 }
 
 const string_t *glist::isinglist(const char *str, size_t slen, bool substr) const
 {
    const gnode_t *lptr;
-   return ((lptr = find_node_ex(str, slen, substr)) != NULL) ? &lptr->name : NULL;
+   return ((lptr = find_node_ex(str, slen, substr)) != nullptr) ? &lptr->name : nullptr;
 }
 
 void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr, bool nocase, bool delmatch)
@@ -187,7 +187,7 @@ void glist::for_each(const char *str, void (*cb)(const char *, void*), void *ptr
 
    std::list<gnode_t>::iterator nptr = list.begin();
    while(nptr != list.end()) {
-      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, NULL, nocase))) {
+      if(nptr->noname || (slen && isinstrex(str, nptr->name, slen, nptr->name.length(), false, nullptr, nocase))) {
          cb(nptr->string, ptr);
          if(delmatch)
             nptr = list.erase(nptr);

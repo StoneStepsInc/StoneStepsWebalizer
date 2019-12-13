@@ -145,7 +145,7 @@ bool tstamp_t::parse_tstamp(const char *str)
    static const struct {
       bool status;            // parse status 
       const char *delim;      // valid delimiters
-   } desc[] = {{false, "-/"}, {false, "-/"}, {true, " T"}, {false, ":"}, {true, ":"}, {true, NULL}};
+   } desc[] = {{false, "-/"}, {false, "-/"}, {true, " T"}, {false, ":"}, {true, ":"}, {true, nullptr}};
 
    const char *cp1, *cp2;
    u_int i = 0;

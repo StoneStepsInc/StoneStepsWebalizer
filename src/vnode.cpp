@@ -14,14 +14,14 @@
 #include "serialize.h"
 
 vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid),
-   next(NULL)
+   next(nullptr)
 {
    entry_url = false;
    robot = false;
    converted = false;
    hits = files = pages = 0; 
    xfer = 0;
-   lasturl = NULL;
+   lasturl = nullptr;
    hostref = 0;
 }
 
@@ -49,7 +49,7 @@ vnode_t::vnode_t(vnode_t&& vnode) : keynode_t<uint64_t>(std::move(vnode)),
 
 vnode_t::~vnode_t(void)
 {
-   set_lasturl(NULL);
+   set_lasturl(nullptr);
 }
 
 void vnode_t::reset(uint64_t nodeid)
@@ -64,7 +64,7 @@ void vnode_t::reset(uint64_t nodeid)
    end.reset();
    hits = files = pages = 0; 
    xfer = 0;
-   set_lasturl(NULL);
+   set_lasturl(nullptr);
 }
 
 void vnode_t::set_lasturl(storable_t<unode_t> *unode)
@@ -75,7 +75,7 @@ void vnode_t::set_lasturl(storable_t<unode_t> *unode)
    if(lasturl)
       lasturl->vstref--;
 
-   if((lasturl = unode) != NULL)
+   if((lasturl = unode) != nullptr)
       lasturl->vstref++;
 }
 
