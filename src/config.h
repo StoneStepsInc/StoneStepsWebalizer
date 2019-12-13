@@ -331,6 +331,8 @@ class config_t {
 
       nlist site_aliases;                       ///< Web site domain name aliases
 
+      glist page_titles;                        ///< URL patterns and matching page titles.
+
       tm_ranges_t dst_ranges;                   ///< DST time ranges
       int dst_offset;                           ///< DST offset in minutes
       int utc_offset;                           ///< UTC offset in minutes, not including DST

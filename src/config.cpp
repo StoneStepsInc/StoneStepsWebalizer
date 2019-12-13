@@ -845,7 +845,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 193; empty slots:
+                     // max key: 194; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -1016,6 +1016,7 @@ void config_t::get_config(const char *fname)
                      {"OutputDir",           1},            // Output directory
                      {"OutputFormat",        171},          // Output format
                      {"PageEntryURL",        170},          // Show only pages in the entry report?
+                     {"PageTitle",           194},          // URL patterns and matching page titles.
                      {"PageType",            49},           // Page Type (pageview)
                      {"Quiet",               6},            // Run in quiet mode
                      {"ReallyQuiet",         29},           // Dont display ANY messages
@@ -1316,6 +1317,7 @@ void config_t::get_config(const char *fname)
          case 191: ext_map_url = value; break;
          case 192: ntop_asn = atoi(value); break;
          case 193: dump_asn = (string_t::tolower(value[0]) == 'y'); break;
+         case 194: page_titles.add_glist(value); break;
       }
    }
 

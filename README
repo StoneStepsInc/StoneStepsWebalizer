@@ -1564,6 +1564,41 @@ DecimalKBytes
               multiples of 1000 bytes.
 
               Default value: no
+
+PageTitle     Associates a page title with a URL pattern. If a URL in the
+              Top N URLs report matches some pattern, the pattern name will
+              be rendered instead of the URL. For example, blog pages might
+              be set up like this:
+
+              PageTitle     /post/12*   Wild Life Photography
+              PageTitle     /post/34*   Action Photography
+
+              The pattern syntax is the same as for hide/ignore options and
+              if one is specified without an asterisk, it will match any
+              text within the URL. Trailing asterisk, like that shown above,
+              will match URLs from the beginning. Note, however, that the
+              order of entries matches and longer ones should be listed
+              first. For example, an entry with an ID `1` and a trailing
+              asterisk would mask the following ID `18` and the latter
+              would never appear in the report:
+
+              PageTitle     /post/1*    Wild Life Photography
+              PageTitle     /post/18*   Action Photography
+
+              Reordering `18*` before `1*` will assign correct titles in
+              the report.
+
+              Note that without an asterisk the pattern will be match any
+              emedded text, such as `/post/1` in a URL `/?ref=/post/123`.
+
+              URL patterns are matched against normalized URLs, so if you
+              want to match some non-ASCII character, use the actual
+              character and not a URL-encoded sequence for that character.
+              See the URL Normalization section for details.
+
+              Page titles can be styled in `webalizer.css`. By default
+              report table cells containing page titles are styled to
+              insert a Unicode page character before title text.
               
 DNS Resolution Configuration Options
 ------------------------------------              

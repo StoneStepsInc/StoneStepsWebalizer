@@ -151,7 +151,7 @@ table.totals_table tbody.totals_data_tbody td {text-align: right; font-weight: b
 table.totals_table tbody.totals_data_tbody td.data_percent_td {font-size: 7pt; font-weight: normal;}
 
 /*
- * Stats Table
+ * Stats Table (all top N tables)
  */
 table.stats_table {width: 510px;}
 table.stats_table tbody.stats_data_tbody td {text-align: right; font-weight: bold;}
@@ -164,6 +164,8 @@ table.stats_table tbody.all_items_tbody {display: none;}
 table.stats_table tbody.stats_data_tbody tr.group_shade_tr td.stats_data_item_td {font-weight: bold;}
 table.stats_table tbody.stats_data_tbody tr.group_shade_tr td.stats_data_num_td {font-weight: bold; text-align: right}
 table.stats_table tbody.stats_data_tbody td.ext_map_url {cursor: pointer}
-
+table.stats_table tbody.stats_data_tbody td.page_title {}
+/* one trailing space after a Unicode code point is a part of the escape sequence */
+table.stats_table tbody.stats_data_tbody td.page_title::before {font-weight: bold; content: "\01F5CF  "}
 
 

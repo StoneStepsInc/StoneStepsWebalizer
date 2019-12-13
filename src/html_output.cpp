@@ -1493,6 +1493,7 @@ void html_output_t::top_urls_table(int flag)
    const storable_t<unode_t> *uptr;
    storable_t<unode_t> *u_array;
    string_t str;
+   const string_t *page_title = nullptr;
 
    // return if nothing to process
    if (state.totals.t_url == 0) return;
@@ -1574,6 +1575,13 @@ void html_output_t::top_urls_table(int flag)
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
+      // if we have page titles configured, check if this URL matches any
+      if(config.page_titles.size()) {
+         if(uptr->flag == OBJ_REG)
+            page_title = config.page_titles.isinglist(uptr->string.c_str(), uptr->string.length(), false);
+         else if(page_title)
+            page_title = nullptr;
+      }
 
       /* shade grouping? */
       if (config.shade_groups && (uptr->flag==OBJ_GRP))
@@ -1588,12 +1596,13 @@ void html_output_t::top_urls_table(int flag)
          "<td data-xfer=\"%" PRIu64 "\">%s</td>\n"
          "<td class=\"data_percent_td\">%3.02f%%</td>\n"
          "<td>%0.3f</td><td>%0.3f</td>\n"
-         "<td class=\"stats_data_item_td%s\">", i+1, uptr->count, 
+         "<td class=\"stats_data_item_td%s%s\">", i+1, uptr->count, 
          (state.totals.t_hit==0)?0:((double)uptr->count/(double)state.totals.t_hit)*100.0,
          uptr->xfer, fmt_xfer(uptr->xfer),
          (state.totals.t_xfer==0)?0:((double)uptr->xfer/(double)state.totals.t_xfer)*100.0,
          uptr->avgtime, uptr->maxtime,
-         uptr->target ? " target" : ""
+         uptr->target ? " target" : "",
+         page_title ? " page_title" : ""
          );
 
       if (uptr->flag==OBJ_GRP)
@@ -1611,10 +1620,11 @@ void html_output_t::top_urls_table(int flag)
             fprintf(out_fp, "%s\n", html_encode(uptr->string));
          }
          else {
-            const char *href, *dispurl;
+            // show a page title if there is one, otherwise a human-readable URL
+            const char *dispurl = html_encode(page_title ? *page_title : uptr->string);
 
-            dispurl = html_encode(uptr->string);
-            href = html_encode(url_encode(uptr->string, str));
+            // URL-encode non-ASCII, space and control characters for the HTML href attribute
+            const char *href = html_encode(url_encode(uptr->string, str));
 
             /* check for a service prefix (ie: http://) */
             if (strstr_ex(uptr->string, "://", 10, 3)!=NULL) {
