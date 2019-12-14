@@ -429,11 +429,10 @@ void config_t::add_def_srch_list(void)
    search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
    search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
    search_list.add_glist("www.google.\t   as_filetype=File Type", true);
-   search_list.add_glist("search.yahoo.\t p=");
-   search_list.add_glist("search.yahoo.\t vf=File Type",          true);
+   search_list.add_glist("duckduckgo.com\t q=");
    search_list.add_glist("www.bing.\t     q=");
+   search_list.add_glist("search.yahoo.\t p=");
    search_list.add_glist("ask.com\t       q=");
-   search_list.add_glist("about.com\t     terms=");
 }
 
 ///
