@@ -397,7 +397,6 @@ void config_t::add_def_ua_filters(void)
       excl_agent_args.add_nlist("Windows*");       // Windows flavors
       excl_agent_args.add_nlist("WOW64");          // 32-bit IE running on a 64-bit Windows
       excl_agent_args.add_nlist("Media Center PC*");//
-      excl_agent_args.add_nlist("Zune*");          //
       excl_agent_args.add_nlist("Tablet PC*");     //
 
 
