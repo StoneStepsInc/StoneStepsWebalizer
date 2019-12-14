@@ -30,6 +30,10 @@ td.spammer, span.spammer {color: red;}
 td.robot, span.robot {color: green;}
 td.converted, span.converted {color: inherit;}
 td.target, span.target {color: inherit;}
+span.page_title {}
+/* one trailing space after a Unicode code point is a part of the escape sequence */
+span.page_title::before {font-weight: bold; content: "\01F5CF  "}
+span.page_title:hover {color: red}
 
 /*
  * PNG image charts

@@ -1493,7 +1493,6 @@ void html_output_t::top_urls_table(int flag)
    const storable_t<unode_t> *uptr;
    storable_t<unode_t> *u_array;
    string_t str;
-   const string_t *page_title = nullptr;
 
    // return if nothing to process
    if (state.totals.t_url == 0) return;
@@ -1572,6 +1571,8 @@ void html_output_t::top_urls_table(int flag)
    fputs("</thead>\n", out_fp);
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
+
+   const string_t *page_title = nullptr;
 
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
@@ -1712,7 +1713,9 @@ int html_output_t::all_urls_page(void)
       fputs("\n", out_fp);
    }
 
-   /* now do invididual sites (if any) */
+   const string_t *page_title = nullptr;
+
+   /* now do invididual URLs (if any) */
    database_t::reverse_iterator<unode_t> iter = state.database.rbegin_urls("urls.hits");
 
    while (iter.prev(unode)) {
@@ -1720,16 +1723,33 @@ int html_output_t::all_urls_page(void)
          if(config.hidden_urls.isinlistex(unode.string, unode.pathlen, true))
             continue;
 
-         buffer_formatter.set_scope_mode(buffer_formatter_t::append),
-         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f %c <span%s>%s</span>\n",
+         const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
+
+         // if we have page titles configured, check if this URL matches any
+         if(config.page_titles.size())
+            page_title = config.page_titles.isinglist(unode.string.c_str(), unode.string.length(), false);
+
+         fprintf(out_fp,"%-8" PRIu64 " %6.02f%%  <span data-xfer=\"%" PRIu64 "\">%9s</span> %6.02f%%  %12.3f  %12.3f %c <span",
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
             unode.xfer, fmt_xfer(unode.xfer, true),
             (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
             unode.avgtime, unode.maxtime,
-            unode.get_url_type_ind(),
-            unode.target ? " class=\"target\"" : "",
-            html_encode(unode.string));
+            unode.get_url_type_ind());
+
+         // add the class attribute if needed
+         if(unode.target || page_title) {
+            fprintf(out_fp, " class=\"%s%s\"",
+               unode.target ? "target" : "",
+               page_title ? " page_title" : "");
+         }
+
+         // add the title attribute if there is a page title
+         if(page_title)
+            fprintf(out_fp, " title=\"%s\"", html_encode(*page_title));
+
+         // finish the span element
+         fprintf(out_fp, ">%s</span>\n", html_encode(unode.string));
       }
    }
    iter.close();
@@ -1813,9 +1833,19 @@ void html_output_t::top_entry_table(int flag)
 
    fputs("<tbody class=\"stats_data_tbody\">\n", out_fp);
 
+   const string_t *page_title = nullptr;
+
    uptr = &u_array[0];
    for(i = 0; i < tot_num; i++) {
       const buffer_formatter_t::scope_t& fmt_scope = buffer_formatter.set_scope_mode(buffer_formatter_t::append);
+
+      // if we have page titles configured, check if this URL matches any
+      if(config.page_titles.size()) {
+         if(uptr->flag == OBJ_REG)
+            page_title = config.page_titles.isinglist(uptr->string.c_str(), uptr->string.length(), false);
+         else if(page_title)
+            page_title = nullptr;
+      }
 
       fputs("<tr>\n", out_fp);
       fprintf(out_fp,
@@ -1824,22 +1854,24 @@ void html_output_t::top_entry_table(int flag)
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
           "<td>%" PRIu64 "</td>\n"
           "<td class=\"data_percent_td\">%3.02f%%</td>\n"
-          "<td class=\"stats_data_item_td\">",
+          "<td class=\"stats_data_item_td%s\">",
           i+1,uptr->count,
           (state.totals.t_hit==0)?0:((double)uptr->count/state.totals.t_hit)*100.0,
           (flag)?uptr->exit:uptr->entry,
           (flag)?((state.totals.t_exit==0)?0:((double)uptr->exit/state.totals.t_exit)*100.0)
-                :((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0));
+                :((state.totals.t_entry==0)?0:((double)uptr->entry/state.totals.t_entry)*100.0),
+          page_title ? " page_title" : "");
 
       if(!is_safe_url(uptr->string)) {
          // output unsafe URLs without a link and leave multibyte characters URL-unencoded
          fprintf(out_fp, "%s\n", html_encode(uptr->string));
       }
       else {      
-         const char *href, *dispurl;
+         // show a page title if there is one, otherwise a human-readable URL
+         const char *dispurl = html_encode(page_title ? *page_title : uptr->string);
 
-         dispurl = html_encode(uptr->string);
-         href = html_encode(url_encode(uptr->string, str));
+         // URL-encode non-ASCII, space and control characters for the HTML href attribute
+         const char *href = html_encode(url_encode(uptr->string, str));
 
          /* check for a service prefix (ie: http://) */
          if (strstr_ex(uptr->string, "://", 10, 3)!=nullptr)
