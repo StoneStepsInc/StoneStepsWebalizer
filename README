@@ -2140,10 +2140,11 @@ GroupHost     This keywords allows grouping Sites.  Most used for
               grouping top level domains and unresolved IP address
               for local dial-ups, etc...
 
-GroupAgent    Groups User Agents.  A handy example of how you could use
-              this one is to use `Mozilla` and `MSIE` as the values for
-              GroupAgent and HideAgent keywords.  Make sure you put the
-              `MSIE` one first.
+GroupAgent    Groups User Agents.  You could use `Firefox`, `Chrome`
+              and `Edge` as the values for `GroupAgent` and `HideAgent`
+              keywords.  Make sure you put `Edge` first because it is
+              based on Chrome and also lists `Chrome` in its user agent
+              string.
 
 GroupDomains  Allows automatic grouping of domains.  The numeric value
               represents the level of grouping, and can be thought of
