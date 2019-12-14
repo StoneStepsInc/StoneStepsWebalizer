@@ -1376,9 +1376,9 @@ int html_output_t::all_hosts_page(void)
    }
 
    if(!config.asn_db_path.isempty())
-      fprintf(out_fp, "   %-10s", config.lang.msg_h_as_num);
+      fprintf(out_fp, "%10s", config.lang.msg_h_as_num);
       
-   fprintf(out_fp, "   %s\n", config.lang.msg_h_host);
+   fprintf(out_fp, "    %s\n", config.lang.msg_h_host);
 
    fputs("----------------  ----------------  ----------------  -----------------  ----------------  ---------------", out_fp);
    if(config.ntop_ctrys) {
@@ -1387,7 +1387,7 @@ int html_output_t::all_hosts_page(void)
          fputs("  ----------------------", out_fp);   // city
    }
    if(!config.asn_db_path.isempty())
-      fputs("  --------", out_fp);                    // ASN
+      fputs("  ----------", out_fp);                  // ASN
    fputs("   --------------------\n\n", out_fp);
 
    if(state.totals.t_grp_hosts) {
@@ -1417,7 +1417,7 @@ int html_output_t::all_hosts_page(void)
             }
 
             if(!config.asn_db_path.isempty())
-               fprintf(out_fp, "  %10c", ' ');     // ASN
+               fprintf(out_fp, "  %12c", ' ');     // ASN
 
             fprintf(out_fp, "   %s\n", hnode.string.c_str());
          }
@@ -1459,9 +1459,9 @@ int html_output_t::all_hosts_page(void)
 
             if(!config.asn_db_path.isempty()) {
                if(!hnode.as_num)
-                  fprintf(out_fp, "  %8c", ' ');
+                  fprintf(out_fp, "  %10c", ' ');
                else {
-                  fprintf(out_fp, "  <span title=\"%s\">%8" PRIu32 "</span>",
+                  fprintf(out_fp, "  <span title=\"%s\">%10" PRIu32 "</span>",
                      html_encode(hnode.as_org.c_str()), hnode.as_num);
                }
             }
