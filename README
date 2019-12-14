@@ -1566,12 +1566,19 @@ DecimalKBytes
               Default value: no
 
 PageTitle     Associates a page title with a URL pattern. If a URL in the
-              Top N URLs report matches some pattern, the pattern name will
-              be rendered instead of the URL. For example, blog pages might
-              be set up like this:
+              Top N URLs and Entry/Exit URL reports match some pattern,
+              the pattern name will be rendered instead of the URL. For
+              example, blog pages might be set up like this:
 
               PageTitle     /post/12*   Wild Life Photography
               PageTitle     /post/34*   Action Photography
+
+              In the All URLs report the matching pattern name will not
+              be rendered instead of the URL text, but instead will be
+              added as a URL title, so hovering over that entry will show
+              the title. This way URLs are shown more consistently in
+              a tabular report with a lot of other URLs that are not
+              titled.
 
               The pattern syntax is the same as for hide/ignore options and
               if one is specified without an asterisk, it will match any
@@ -1586,7 +1593,13 @@ PageTitle     Associates a page title with a URL pattern. If a URL in the
               PageTitle     /post/18*   Action Photography
 
               Reordering `18*` before `1*` will assign correct titles in
-              the report.
+              the report, but will `1*` will still match other sequences
+              starting with `1` if they are not explicitly listed as page
+              titles (e.g. `/post/19`). Alternatively, you can use a leading
+              asterisk, which will work for cases above, but may misfire
+              for unrelated URLs ending with the same sequence, such as
+              login redirects (e.g. `/login/?ref=/post/19` will be titled
+              with the pattern `*/post/19`).
 
               Note that without an asterisk the pattern will be match any
               emedded text, such as `/post/1` in a URL `/?ref=/post/123`.
