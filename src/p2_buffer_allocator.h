@@ -16,8 +16,6 @@
 #include <stack>
 
 ///
-/// @class  p2_buffer_allocator_tmpl
-///
 /// @brief  A character buffer allocator that maintains a few power-of-two sized 
 ///         char_buffer_base objects
 ///

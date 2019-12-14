@@ -99,8 +99,6 @@ class berkeleydb_t {
       template <typename node_t> class reverse_iterator;
 
       ///
-      /// @class  status_t
-      ///
       /// @brief  Combines a Berkeley DB error and an application error message in one
       ///         class that is returned from `berkeleydb_t` methods.
       ///
@@ -195,8 +193,6 @@ class berkeleydb_t {
       };
 
       ///
-      /// @class  config_t
-      ///
       /// @brief  Defines an interface for a configuration necessary to construct a
       ///         `berkeleydb_t` instance.
       ///
@@ -257,8 +253,6 @@ class berkeleydb_t {
 
    private:
       ///
-      /// @class  cursor_iterator_base
-      ///
       /// @brief  A base class that wraps Berkeley DB cursors to traverse primary and
       ///         secondary databases
       ///
@@ -300,8 +294,6 @@ class berkeleydb_t {
       };
 
       ///
-      /// @class  cursor_iterator
-      ///
       /// @brief  A forward Berkeley DB cursor iterator
       ///
       class cursor_iterator : public cursor_iterator_base {
@@ -311,8 +303,6 @@ class berkeleydb_t {
             bool next(Dbt& key, Dbt& data, Dbt *pkey);
       };
 
-      ///
-      /// @class  cursor_reverse_iterator
       ///
       /// @brief  A reverse Berkeley DB cursor iterator
       ///
@@ -324,8 +314,6 @@ class berkeleydb_t {
       };
 
    protected:
-      ///
-      /// @class  table_t
       ///
       /// @brief  A table object stores data along with accompanying indexes
       ///
@@ -383,8 +371,6 @@ class berkeleydb_t {
       ///
       class table_t {
          private:
-            ///
-            /// @struct db_desc_t
             ///
             /// @brief  A secondary database descriptor
             ///
@@ -512,8 +498,6 @@ class berkeleydb_t {
 
    public:
       ///
-      /// @class  iterator_base
-      ///
       /// @brief  A public cursor iterator base class to traverse primary and secondary 
       ///         databases
       ///
@@ -546,8 +530,6 @@ class berkeleydb_t {
       };
 
       ///
-      /// @class  iterator
-      ///
       /// @brief  A forward cursor iterator base class to traverse primary and secondary 
       ///         databases
       ///
@@ -574,8 +556,6 @@ class berkeleydb_t {
             bool next(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, param_t ... param);
       };
 
-      ///
-      /// @class  iterator
       ///
       /// @brief  A reverse cursor iterator base class to traverse primary and secondary 
       ///         databases

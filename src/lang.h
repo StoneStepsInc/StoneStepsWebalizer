@@ -43,8 +43,6 @@ class lang_t {
 
    public:
       ///
-      /// @struct resp_code_t
-      ///
       /// #brief  A localized HTTP response code and its description
       ///
       struct resp_code_t {
@@ -52,8 +50,6 @@ class lang_t {
          const char    *desc;
       };
 
-      ///
-      /// @struct country_t
       ///
       /// @brief  A localized country code and name
       ///
@@ -73,8 +69,6 @@ class lang_t {
          LANG_VAR_CCARR                   ///< Array of country codes and names (country_code[])
       };
 
-      ///
-      /// @struct lang_node_t
       ///
       /// @brief  A localized language entry node
       ///

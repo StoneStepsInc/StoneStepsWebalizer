@@ -121,8 +121,6 @@ struct dns_db_record_t {
 };
 
 ///
-/// @class  dns_resolver_t::dnode_t
-///
 /// @brief  An internal DNS resolver node associated with each host node being processed
 ///
 /// DNS resolver cannot modify const host nodes in the context of its own threads and 

@@ -27,8 +27,6 @@ class tm_ranges_t {
       
    private:
       ///
-      /// @struct tm_range_t
-      ///
       /// @brief  A time range descriptor
       ///
       struct tm_range_t {

@@ -55,8 +55,6 @@ struct base_list_node_t {
 };
 
 ///
-/// @class   base_list
-///
 /// @brief  An ordered linked list of nodes containing string patterns
 ///
 /// The parameter `substr` changes how non-asterisk patterns are matched. If it is `true`,
@@ -128,8 +126,6 @@ class nlist : public base_list<nnode_t> {
       bool iswildcard(void) const;
 };
 
-///
-/// @struct  gnode_t
 ///
 /// @brief  An ordered list node for GROUP items
 ///

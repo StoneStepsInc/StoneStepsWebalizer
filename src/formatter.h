@@ -64,8 +64,6 @@ class buffer_formatter_t {
       };
 
       ///
-      /// @class  scope_t
-      ///
       /// @brief  A class that keeps track of the previous formatter for each C++ scope
       ///
       /// `scope_t` keeps track of the current formatter state in the associated C++ scope.
@@ -115,8 +113,6 @@ class buffer_formatter_t {
       };
 
    private:
-      ///
-      /// @struct fmt_state_t
       ///
       /// @brief  Keeps track of states for all formatters in outer C++ scopes
       ///

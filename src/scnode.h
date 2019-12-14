@@ -49,8 +49,6 @@ struct scnode_t : public keynode_t<u_int>, public datanode_t<scnode_t> {
 };
 
 ///
-/// @class   sc_table
-///
 /// @brief  Maintains a table of HTTP status code nodes.
 ///
 /// The first element is reserved for the unknown code, which is 

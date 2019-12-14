@@ -40,8 +40,6 @@ class memory_pool_t {
 
    private:
       ///
-      /// @class  bucket_t
-      ///
       /// A bucket maintains a stack of memory blocks up to BUCKETSIZE and a 
       /// point in a life time counter that is updated every time a block of 
       /// memory is allocated or deallocated to track the age of each bucket,

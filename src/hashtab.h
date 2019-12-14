@@ -69,8 +69,6 @@ template <typename node_t> struct htab_node_t;
 template <typename node_t> using node_list_t = std::list<htab_node_t<node_t>*>;
 
 ///
-/// @struct struct htab_obj_t
-///
 /// @brief  A generic hash table object interface.
 ///
 /// Hash table node and objects historically were combined in a single object in 
@@ -153,8 +151,6 @@ struct htab_node_t {
 class hash_table_base {
    public:
       ///
-      /// @struct tm_range_t
-      ///
       /// @brief  Represents a range of time stamps between the last and the first 
       ///         nodes in the time stamp list.
       ///
@@ -215,8 +211,6 @@ template <typename node_t>
 class hash_table : public hash_table_base {
    private:
       ///
-      /// @struct bucket_t
-      ///
       /// @brief  A collection of hash table nodes whose keys yield the same hash value
       ///
       struct bucket_t {
@@ -231,8 +225,6 @@ class hash_table : public hash_table_base {
 
    public:
       ///
-      /// @struct inner_node
-      ///
       /// @brief  A primary class template to define a type of hash table nodes 
       ///         that are not storable objects.
       ///
@@ -241,8 +233,6 @@ class hash_table : public hash_table_base {
          typedef T type;
       };
 
-      ///
-      /// @struct inner_node<storable_t<T>>
       ///
       /// @brief  A specialization of the `inner_node` template to define a type
       ///         of a data node at the base of a storable object.
@@ -267,8 +257,6 @@ class hash_table : public hash_table_base {
       typedef void (*swap_cb_t)(node_t *node, void *arg);
 
    public:
-      ///
-      /// @class  iterator_base
       ///
       /// @tparam list_iter_t    Either `std::list::iterator` or `std::list::const_iterator`.
       ///
@@ -377,8 +365,6 @@ class hash_table : public hash_table_base {
       };
 
       ///
-      /// @class  iterator
-      ///
       /// @brief  A hash table iterator.
       ///
       class iterator : public iterator_base<typename node_list_t<node_t>::iterator> {
@@ -394,8 +380,6 @@ class hash_table : public hash_table_base {
             }
       };
 
-      ///
-      /// @class  const_iterator
       ///
       /// @brief  A hash table iterator to iterate over `const` nodes.
       ///

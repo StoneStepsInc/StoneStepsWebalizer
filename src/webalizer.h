@@ -43,8 +43,6 @@
 #endif
 
 /// 
-/// @class   webalizer_t
-///
 /// @brief  Main application class that processes logs, generates reports and 
 ///         performs maintenance tasks.
 ///
@@ -54,8 +52,6 @@ class webalizer_t {
       typedef p2_buffer_allocator_tmpl<string_t::char_type> buffer_allocator_t;
       typedef char_buffer_holder_tmpl<string_t::char_type, size_t> buffer_holder_t;
       
-      ///
-      /// @struct arginfo_t
       ///
       /// @brief  A URL search argument descriptor
       ///
@@ -102,8 +98,6 @@ class webalizer_t {
       typedef pool_allocator_t<arginfo_t, 8> srch_arg_alloc_t;
       
       ///
-      /// @struct lfp_state_t
-      ///
       /// @brief  Log file parser state descriptor
       ///
       /// A log file parser state descriptor maintains a log file object and a current log 
@@ -135,8 +129,6 @@ class webalizer_t {
       enum toktype_t {vertok, urltok, strtok};
 
       ///
-      /// @struct ua_token_t
-      ///
       /// @brief  A user agent token descriptor
       ///
       /// A user agent string contains multiple tokens that describe various aspects of 
@@ -163,8 +155,6 @@ class webalizer_t {
       typedef pool_allocator_t<size_t, 8> ua_grp_idx_alloc_t;
 
       ///
-      /// @struct proc_times_t
-      ///
       /// @brief  Various processing times collected across multiple application calls
       ///
       struct proc_times_t {
@@ -173,8 +163,6 @@ class webalizer_t {
          uint64_t rpt_time = 0;                    ///< report time
       };
 
-      ///
-      /// @struct logrec_counts_t
       ///
       /// @brief  Run time log record counts
       ///
