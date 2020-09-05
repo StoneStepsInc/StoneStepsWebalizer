@@ -3,7 +3,9 @@ trigger:
 - master
 
 pool:
-  vmImage: stonesteps/webalizer:debian-stretch
+  vmImage: ubuntu-latest
+
+container: stonesteps/webalizer:debian-stretch
 
 steps:
 - script: make
