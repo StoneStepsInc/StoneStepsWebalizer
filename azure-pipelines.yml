@@ -1,0 +1,13 @@
+# Debian 9.4 (based on stretch-slim) image with all dependencies installed
+trigger:
+- master
+
+pool:
+  vmImage: stonesteps/webalizer:debian-stretch
+
+steps:
+- script: make
+  displayName: Build
+  
+- script: make test
+  displayName: Test  
