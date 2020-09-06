@@ -9,6 +9,12 @@ stages:
     pool:
       vmImage: windows-2019
     steps:
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: 'src/webalizer.sln'
+        feedsToUse: 'select'
+        vstsFeed: 'https://api.nuget.org/v3/index.json'
     - task: MSBuild@1
       inputs:
         solution: 'src\package.vcxproj'
