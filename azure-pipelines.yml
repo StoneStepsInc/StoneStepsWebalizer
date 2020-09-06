@@ -5,6 +5,18 @@ stages:
 - stage: Build_packages
   displayName: Build packages
   jobs:
+  - job: Windows
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: MSBuild@1
+      inputs:
+        solution: 'src\package.vcxproj'
+        msbuildArchitecture: 'x64'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArguments: '/property:OutDir=..\build\x64\'
+        restoreNugetPackages: true
   - job: Debian
     pool:
       vmImage: ubuntu-latest
