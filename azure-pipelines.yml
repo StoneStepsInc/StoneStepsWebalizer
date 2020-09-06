@@ -24,13 +24,15 @@ stages:
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\x64\'
     - task: MSBuild@1
-      displayName: Test
+      displayName: Build Test
       inputs:
         solution: 'src\test\test.vcxproj'
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\test\x64\'
+    - script: '..\build\test\x64\test.exe'
+      displayName: Run Test
     - task: MSBuild@1
       displayName: Package
       inputs:
