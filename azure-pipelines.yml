@@ -22,7 +22,6 @@ stages:
         platform: 'x64'
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\x64\'
-        restoreNugetPackages: true
   - job: Debian
     pool:
       vmImage: ubuntu-latest
