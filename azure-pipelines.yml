@@ -31,7 +31,7 @@ stages:
         platform: 'x64'
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\test\x64\'
-    - script: '..\build\test\x64\test.exe'
+    - script: '$(Build.SourcesDirectory)\build\test\x64\test.exe'
       displayName: Run Test
     - task: MSBuild@1
       displayName: Package
