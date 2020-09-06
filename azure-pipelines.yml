@@ -16,6 +16,23 @@ stages:
         feedsToUse: 'select'
         vstsFeed: 'https://api.nuget.org/v3/index.json'
     - task: MSBuild@1
+      displayName: Build
+      inputs:
+        solution: 'src\webalizer.vcxproj'
+        msbuildArchitecture: 'x64'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArguments: '/property:OutDir=..\build\x64\'
+    - task: MSBuild@1
+      displayName: Test
+      inputs:
+        solution: 'src\test\test.vcxproj'
+        msbuildArchitecture: 'x64'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArguments: '/property:OutDir=..\build\test\x64\'
+    - task: MSBuild@1
+      displayName: Package
       inputs:
         solution: 'src\package.vcxproj'
         msbuildArchitecture: 'x64'
