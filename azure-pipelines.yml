@@ -1,15 +1,29 @@
-# Debian 9.4 (based on stretch-slim) image with all dependencies installed
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+- stage: Build packages
+  jobs:
+  - job: Debian
+    pool:
+      vmImage: ubuntu-latest
+    container: stonesteps/webalizer-debian:latest
+    steps:
+    - script: make
+      displayName: Build
+    - script: make test
+      displayName: Test  
+    - script: make package
+      displayName: Package  
 
-container: stonesteps/webalizer:debian-stretch
-
-steps:
-- script: make
-  displayName: Build
-  
-- script: make test
-  displayName: Test  
+  - job: Ubuntu
+    pool:
+      vmImage: ubuntu-latest
+    container: stonesteps/webalizer-ubuntu:latest
+    steps:
+    - script: make
+      displayName: Build
+    - script: make test
+      displayName: Test  
+    - script: make package
+      displayName: Package  
