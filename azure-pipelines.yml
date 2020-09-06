@@ -30,9 +30,17 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=..\build\test\x64\'
-    - script: '$(Build.SourcesDirectory)\build\test\x64\test.exe'
+        msbuildArguments: '/property:OutDir=..\..\build\test\x64\'
+        
+    - script: |
+        $(Build.SourcesDirectory)\build\test\x64\test.exe --gtest_output=xml:$(Common.TestResultsDirectory)/webalizer_test.xml
       displayName: Run Test
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: "webalizer_test.xml"
+        searchFolder: "$(Common.TestResultsDirectory)"
+
     - task: MSBuild@1
       displayName: Package
       inputs:
