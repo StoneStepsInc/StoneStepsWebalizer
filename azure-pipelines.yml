@@ -105,7 +105,7 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-deb-x64-*.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-deb-x64-6-0-0-7.tar.gz'
       artifact: Debian package
 
     #
@@ -132,7 +132,7 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-ubu-x64-*.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-ubu-x64-6-0-0-7.tar.gz'
       artifact: Ubuntu package
 
     #
@@ -159,5 +159,5 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-fed-x64-*.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-fed-x64-6-0-0-7.tar.gz'
       artifact: Fedora package
