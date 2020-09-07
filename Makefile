@@ -18,11 +18,16 @@ SHELL := /bin/bash
 #           make clean
 #
 #   Parameters:
-#     build:
+#     all targets:
 #       BLDDIR=/path/to/build/directory (default ./build)
+#
+#     build:
 #       ETCDIR=/etc
 #       MYCCFLAGS=-g
 #
+#     test:
+#       TEST_RSLT_DIR=/path/to/test/results/directory (default BLDDIR)
+#       TEST_RSLT_FILE=test-results-file-name (default utest.xml)
 # ------------------------------------------------------------------------
 
 #
@@ -111,9 +116,15 @@ DEPS := $(OBJS:.o=.d)
 # pick a name that won't conflict with build/test/
 TEST     := utest
 
-# Bitbucket unit test results location
-TEST_RSLT_DIR := test-results
-TEST_RPT_FILE := test-report.xml
+# output test results in the build directory unless asked otherwise
+ifeq ($(strip $(TEST_RSLT_DIR)),)
+TEST_RSLT_DIR := $(BLDDIR)
+endif
+
+# use the name of the unit test executable, unless asked otherwise
+ifeq ($(strip $(TEST_RSLT_FILE)),)
+TEST_RSLT_FILE := $(TEST).xml
+endif
 
 # unit tests source files (the test/ prefix is added right after this assignment)
 TEST_SRC := $(PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
@@ -221,7 +232,7 @@ $(BLDDIR)/$(TEST): $(BLDDIR)/test/$(PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $
 # run unit tests and generate an XML results file in build/test-results/
 #
 test: $(BLDDIR)/$(TEST)
-	$(BLDDIR)/$(TEST) --gtest_output=xml:$(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE)
+	$(BLDDIR)/$(TEST) --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
 
 install:
 	@echo
@@ -239,7 +250,7 @@ clean:
 	@if [[ -e $(BLDDIR)/$(WEBALIZER) ]]; then rm $(BLDDIR)/$(WEBALIZER); fi
 	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
 	@echo "Removing test results..."
-	@if [[ -e $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE) ]]; then rm $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RPT_FILE); fi
+	@if [[ -e $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE) ]]; then rm $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE); fi
 	@echo "Done"
 
 package: $(BLDDIR)/$(WEBALIZER)
@@ -283,7 +294,7 @@ $(BLDDIR)/%.d : src/%.cpp
 	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$(subst /,/,$*).o $(BLDDIR)/$(subst /,/,$*).d|g' > $@
 
 #
-# Rules to compile source file
+# Rules to compile source files
 #
 
 # include the unit test precompiled header in all unit test source files
