@@ -1,5 +1,35 @@
-trigger:
-- master
+#
+#
+#
+# Azure DevOps agent's workspace directory:
+#
+#   $(Pipeline.Workspace)
+#
+# Directories inside the agent's workspace:
+#
+#   $(Build.SourcesDirectory)             - checkout directory
+#   $(Build.ArtifactStagingDirectory)     - artifacts staging directory (cleaned automatically before a build)
+#   $(Build.BinariesDirectory)            - build directory (not cleaned, unless explicitly requested)
+#   $(Common.TestResultsDirectory)        - test results directory
+#
+# Build.BinariesDirectory contains not only compiled binaries, but also all
+# intermediate object files, so if the job happens to run on the same agent,
+# it will build incrementally, unless the build directory is explicitly
+# cleaned like this:
+#
+#   - job: X
+#     workspace:
+#       clean: outputs
+#
+variables:
+  BLDDIR: '$(Build.BinariesDirectory)'
+
+  TEST_RSLT_DIR: $(Common.TestResultsDirectory)
+
+  TEST_RSLT_FILE_WIN: webalizer_windows_test.xml
+  TEST_RSLT_FILE_DEB: webalizer_debian_test.xml
+  TEST_RSLT_FILE_UBU: webalizer_ubuntu_test.xml
+  TEST_RSLT_FILE_FED: webalizer_fedora_test.xml
 
 stages:
 - stage: Build_packages
@@ -23,6 +53,7 @@ stages:
         platform: 'x64'
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\x64\'
+
     - task: MSBuild@1
       displayName: Build Test
       inputs:
@@ -33,13 +64,13 @@ stages:
         msbuildArguments: '/property:OutDir=..\..\build\test\x64\'
         
     - script: |
-        $(Build.SourcesDirectory)\build\test\x64\test.exe --gtest_output=xml:$(Common.TestResultsDirectory)/webalizer_test.xml
+        $(Build.SourcesDirectory)\build\test\x64\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE_WIN)
       displayName: Run Test
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: "JUnit"
-        testResultsFiles: "webalizer_test.xml"
-        searchFolder: "$(Common.TestResultsDirectory)"
+        testResultsFiles: '$(TEST_RSLT_FILE_WIN)'
+        searchFolder: '$(TEST_RSLT_DIR)'
 
     - task: MSBuild@1
       displayName: Package
@@ -49,38 +80,78 @@ stages:
         platform: 'x64'
         configuration: 'Release'
         msbuildArguments: '/property:OutDir=..\build\x64\'
+
+    #
+    # Debian
+    #
   - job: Debian
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-debian:latest
     steps:
-    - script: make
+    - script: |
+        make BLDDIR=$(BLDDIR)
       displayName: Build
-    - script: make test
+
+    - script: |
+        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_DEB) test
       displayName: Test  
-    - script: make package
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: '$(TEST_RSLT_FILE_DEB)'
+        searchFolder: '$(TEST_RSLT_DIR)'
+
+    - script: |
+        make BLDDIR=$(BLDDIR) package
       displayName: Package
 
+    #
+    # Ubuntu
+    #
   - job: Ubuntu
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-ubuntu:latest
     steps:
-    - script: make
+    - script: |
+        make BLDDIR=$(BLDDIR)
       displayName: Build
-    - script: make test
+
+    - script: |
+        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_UBU) test
       displayName: Test  
-    - script: make package
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: '$(TEST_RSLT_FILE_UBU)'
+        searchFolder: '$(TEST_RSLT_DIR)'
+
+    - script: |
+        make BLDDIR=$(BLDDIR) package
       displayName: Package
 
+    #
+    # Fedora
+    #
   - job: Fedora
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-fedora:latest
     steps:
-    - script: make
+    - script: |
+        make BLDDIR=$(BLDDIR)
       displayName: Build
-    - script: make test
+
+    - script: |
+        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_FED) test
       displayName: Test  
-    - script: make package
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: "JUnit"
+        testResultsFiles: '$(TEST_RSLT_FILE_FED)'
+        searchFolder: '$(TEST_RSLT_DIR)'
+
+    - script: |
+        make BLDDIR=$(BLDDIR) package
       displayName: Package
