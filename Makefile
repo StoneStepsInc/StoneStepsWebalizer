@@ -2,7 +2,7 @@
 #
 #   Makefile
 # 	 
-#   Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)
+#   Copyright (c) 2004-2020, Stone Steps Inc. (www.stonesteps.ca)
 #
 #   See COPYING and Copyright files for additional licensing and copyright information 
 # 
@@ -12,12 +12,17 @@ SHELL := /bin/bash
 
 # ------------------------------------------------------------------------
 #
-#   Usage:  make -f makefile.gnu [[name=value] ...]
-#           make -f makefile.gnu clean
+#   Usage:  make [[name=value] ...]
+#           make test
+#           make package
+#           make clean
 #
 #   Parameters:
-#     ETCDIR=/etc
-#     MYCCFLAGS=-g
+#     build:
+#       BLDDIR=/path/to/build/directory (default ./build)
+#       ETCDIR=/etc
+#       MYCCFLAGS=-g
+#
 # ------------------------------------------------------------------------
 
 #
@@ -56,7 +61,11 @@ endif
 
 # source and build directories
 SRCDIR   := src
+
+# build all output in ./build, unless asked otherwise
+ifeq ($(strip $(BLDDIR)),)
 BLDDIR   := build
+endif
 
 # include and library search paths
 INCDIRS  := 
@@ -141,7 +150,7 @@ TEST_RPOS := $(TEST_OBJS:.o=.rpo)
 # Package variables
 #
 # ------------------------------------------------------------------------
-PKG_NAME  := webalizer-$$(build/webalizer -v -Q | sed -e s/\\./-/g).tar
+PKG_NAME  := webalizer-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
 PKG_OWNER := --owner=root --group=root
 PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
 	src/webalizer.js README CHANGES COPYING Copyright
@@ -235,13 +244,13 @@ clean:
 
 package: $(BLDDIR)/$(WEBALIZER)
 	@echo "Adding Webalizer files..." 
-	@strip --strip-debug build/webalizer
-	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
-	@tar $(PKG_OWNER) -rf $(PKG_NAME) $(PKG_FILES) 
+	@strip --strip-debug $(BLDDIR)/$(WEBALIZER)
+	@tar $(PKG_OWNER) -cf $(BLDDIR)/$(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
+	@tar $(PKG_OWNER) -rf $(BLDDIR)/$(PKG_NAME) $(PKG_FILES) 
 	@echo "Adding language files..."
-	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
+	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(BLDDIR)/$(PKG_NAME) lang/webalizer_lang.$$lang; done
 	@echo "Compressing..."
-	@gzip $(PKG_NAME)
+	@gzip $(BLDDIR)/$(PKG_NAME)
 	@echo "Done"
 
 # ------------------------------------------------------------------------
@@ -271,7 +280,7 @@ package: $(BLDDIR)/$(WEBALIZER)
 $(BLDDIR)/%.d : src/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's/^[ \t]*$(*F)\.o/$(BLDDIR)\/$(subst /,\/,$*).o $(BLDDIR)\/$(subst /,\/,$*).d/g' > $@
+	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$(subst /,/,$*).o $(BLDDIR)/$(subst /,/,$*).d|g' > $@
 
 #
 # Rules to compile source file
