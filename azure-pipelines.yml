@@ -59,7 +59,7 @@ stages:
     - script: make test
       displayName: Test  
     - script: make package
-      displayName: Package  
+      displayName: Package
 
   - job: Ubuntu
     pool:
@@ -71,4 +71,16 @@ stages:
     - script: make test
       displayName: Test  
     - script: make package
-      displayName: Package  
+      displayName: Package
+
+  - job: Fedora
+    pool:
+      vmImage: ubuntu-latest
+    container: stonesteps/webalizer-fedora:latest
+    steps:
+    - script: make
+      displayName: Build
+    - script: make test
+      displayName: Test  
+    - script: make package
+      displayName: Package
