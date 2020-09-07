@@ -28,6 +28,10 @@ SHELL := /bin/bash
 #     test:
 #       TEST_RSLT_DIR=/path/to/test/results/directory (default BLDDIR)
 #       TEST_RSLT_FILE=test-results-file-name (default utest.xml)
+#
+#     package:
+#       PKG_OS_ABBR=OS-name (default linux)
+#       PKG_ARCH_ABBR=cpu-architecture (default $(uname -p))
 # ------------------------------------------------------------------------
 
 #
@@ -161,7 +165,16 @@ TEST_RPOS := $(TEST_OBJS:.o=.rpo)
 # Package variables
 #
 # ------------------------------------------------------------------------
-PKG_NAME  := webalizer-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
+
+ifeq ($(strip $(PKG_OS_ABBR)),)
+PKG_OS_ABBR   := linux
+endif
+
+ifeq ($(strip $(PKG_ARCH_ABBR)),)
+PKG_ARCH_ABBR := $$(uname -p)
+endif
+
+PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
 PKG_OWNER := --owner=root --group=root
 PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
 	src/webalizer.js README CHANGES COPYING Copyright
