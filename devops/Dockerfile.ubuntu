@@ -1,0 +1,26 @@
+#
+# docker build --network=host \
+#               --tag=stonesteps/webalizer-ubuntu:latest \
+#               --file=/path/to/Dockerfile.ubuntu \
+#                   /path/to/context
+#
+FROM ubuntu
+
+WORKDIR /root
+
+#
+# If the time zone is not set, `apt-get` installs `tzdata`, which asks
+# to select the time zone when dependencies are installed.
+#
+ENV TZ=UTC
+RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+#
+# Need to update apt repositories or none of the packages will be found.
+#
+RUN apt-get update -y
+
+#
+# Install dependencies
+#
+RUN apt-get install -y g++ make libdb++-dev zlib1g-dev libmaxminddb-dev libgd-dev libgtest-dev

@@ -1,0 +1,19 @@
+#
+# docker build --network=host \
+#               --tag=stonesteps/webalizer-debian:latest \
+#               --file=/path/to/Dockerfile.debian \
+#                   /path/to/context
+#
+FROM debian
+
+WORKDIR /root
+
+#
+# Need to update apt repositories or none of the packages will be found.
+#
+RUN apt-get update -y
+
+#
+# Install dependencies
+#
+RUN apt-get install -y g++ make libdb++-dev zlib1g-dev libmaxminddb-dev libgd-dev libgtest-dev

@@ -1,0 +1,17 @@
+#
+# docker build --network=host \
+#               --tag=stonesteps/webalizer-fedora:latest \
+#               --file=/path/to/Dockerfile.fedora \
+#                   /path/to/context
+#
+FROM fedora
+
+WORKDIR /root
+
+#
+# Dependencies
+#
+# `findutils` are for `find` used in `make clean`
+#
+RUN dnf install -y findutils gcc-c++ make libdb-cxx-devel zlib libmaxminddb-devel gd-devel gtest-devel
+
