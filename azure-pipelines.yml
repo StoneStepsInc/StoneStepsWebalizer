@@ -89,7 +89,7 @@ stages:
         testResultsFiles: '$(TEST_RSLT_FILE_WIN)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
-    -script: |
+    - script: |
         mkdir $(BLDDIR)\x64\$(VERSION_LABEL)
         mkdir $(BLDDIR)\x64\$(VERSION_LABEL)\lang
       displayName: Create Package Directories
