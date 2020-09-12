@@ -213,7 +213,7 @@ CXXFLAGS += -O3
 endif
 
 # if CI pipeline build number is provided, add it to the build
-ifeq ($(strip $(AZP_BUILD_NUMBER)),)
+ifdef AZP_BUILD_NUMBER
 CXXFLAGS += -DBUILD_NUMBER=$(AZP_BUILD_NUMBER)
 endif
 
