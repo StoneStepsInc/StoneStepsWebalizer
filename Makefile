@@ -24,6 +24,7 @@ SHELL := /bin/bash
 #     build:
 #       ETCDIR=/etc
 #       MYCCFLAGS=-g
+#       AZP_BUILD_NUMBER=auto-incremented-build-number
 #
 #     test:
 #       TEST_RSLT_DIR=/path/to/test/results/directory (default BLDDIR)
@@ -209,6 +210,11 @@ CXXFLAGS := -std=c++17 \
 # turn on optimization for non-debug builds
 ifeq ($(findstring -g,$(CXXFLAGS)),)
 CXXFLAGS += -O3
+endif
+
+# if CI pipeline build number is provided, add it to the build
+ifeq ($(strip $(AZP_BUILD_NUMBER)),)
+CXXFLAGS += -DBUILD_NUMBER=$(AZP_BUILD_NUMBER)
 endif
 
 ifeq ($(findstring -g,$(CFLAGS)),)

@@ -1,5 +1,21 @@
-#
-#
+variables:
+  #
+  # Intended future app version on this branch. Once a dot-zero version
+  # is released, this version should be updated towards the next release.
+  #
+  # For example, after 6.1.0 is released and a v6-1 branch is created,
+  # pipeline YAML on that branch should be changed to use version 6.1.1
+  # for bug fixes and version on master should be changed to 6.2.0 or
+  # 7.0.0, whichever is planned. Once 6.1.1 is released, pipeline YAML
+  # on branch v6-1 should be changed to use version 6.1.2, and so on.
+  #
+  VERSION: 6.1.0
+  BUILD_NUMBER: $[counter(variables.VERSION, 1)]
+  VERSION_BUILD: $(VERSION).$(BUILD_NUMBER)
+  VERSION_LABEL: $[replace(variables.VERSION_FULL, '.', '-')]
+
+  name: $(VERSION_LABEL)
+
 #
 # Azure DevOps agent's workspace directory:
 #
@@ -21,7 +37,6 @@
 #     workspace:
 #       clean: outputs
 #
-variables:
   BLDDIR: '$(Build.BinariesDirectory)'
 
   TEST_RSLT_DIR: $(Common.TestResultsDirectory)
@@ -52,7 +67,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=..\build\x64\'
+        msbuildArguments: '/property:OutDir=$(BLDDIR);AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
 
     - task: MSBuild@1
       displayName: Build Test
@@ -61,10 +76,10 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=..\..\build\test\x64\'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)'
         
     - script: |
-        $(Build.SourcesDirectory)\build\test\x64\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE_WIN)
+        $(BLDDIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE_WIN)
       displayName: Run Test
     - task: PublishTestResults@2
       inputs:
@@ -79,7 +94,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=..\build\x64\'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)'
 
     #
     # Debian
@@ -90,7 +105,7 @@ stages:
     container: stonesteps/webalizer-debian:latest
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR)
+        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
@@ -105,7 +120,7 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-deb-x64-6-0-0-7.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
       artifact: Debian package
 
     #
@@ -117,7 +132,7 @@ stages:
     container: stonesteps/webalizer-ubuntu:latest
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR)
+        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
@@ -132,7 +147,7 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-ubu-x64-6-0-0-7.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
       artifact: Ubuntu package
 
     #
@@ -144,7 +159,7 @@ stages:
     container: stonesteps/webalizer-fedora:latest
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR)
+        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
@@ -159,5 +174,5 @@ stages:
     - script: |
         make BLDDIR=$(BLDDIR) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-fed-x64-6-0-0-7.tar.gz'
+    - publish: '$(BLDDIR)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
       artifact: Fedora package

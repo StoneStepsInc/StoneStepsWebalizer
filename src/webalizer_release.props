@@ -1,11 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
   </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <AZP_BUILD_NUMBER>0</AZP_BUILD_NUMBER>
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <ItemGroup>
+    <BuildMacro Include="AZP_BUILD_NUMBER">
+      <Value>$(AZP_BUILD_NUMBER)</Value>
+    </BuildMacro>
+  </ItemGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <Optimization>Full</Optimization>
@@ -14,7 +22,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_NUMBER=$(AZP_BUILD_NUMBER);NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FloatingPointModel>Precise</FloatingPointModel>
