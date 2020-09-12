@@ -67,7 +67,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR);AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)\;AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
 
     - task: MSBuild@1
       displayName: Build Test
@@ -76,7 +76,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)\'
         
     - script: |
         $(BLDDIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE_WIN)
@@ -94,7 +94,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)\'
 
     #
     # Debian
