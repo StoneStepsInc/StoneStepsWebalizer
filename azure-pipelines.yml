@@ -4,39 +4,36 @@ variables:
   # is released, this version should be updated towards the next release.
   #
   # For example, after 6.1.0 is released and a v6-1 branch is created,
-  # pipeline YAML on that branch should be changed to use version 6.1.1
-  # for bug fixes and version on master should be changed to 6.2.0 or
-  # 7.0.0, whichever is planned. Once 6.1.1 is released, pipeline YAML
-  # on branch v6-1 should be changed to use version 6.1.2, and so on.
+  # pipeline YAML on that branch should be changed to use version 6-1-1
+  # for bug fixes and version on master should be changed to 6-2-0 or
+  # 7-0-0, whichever is planned. Once 6.1.1 is released, pipeline YAML
+  # on branch v6-1 should be changed to use version 6-1-2, and so on.
   #
-  VERSION: 6.1.0
+  VERSION: 6-1-0
   BUILD_NUMBER: $[counter(variables.VERSION, 1)]
-  VERSION_BUILD: $(VERSION).$(BUILD_NUMBER)
-  VERSION_LABEL: $[replace(variables.VERSION_FULL, '.', '-')]
+  VERSION_LABEL: $(VERSION)-$(BUILD_NUMBER)
 
-  name: $(VERSION_LABEL)
-
-#
-# Azure DevOps agent's workspace directory:
-#
-#   $(Pipeline.Workspace)
-#
-# Directories inside the agent's workspace:
-#
-#   $(Build.SourcesDirectory)             - checkout directory
-#   $(Build.ArtifactStagingDirectory)     - artifacts staging directory (cleaned automatically before a build)
-#   $(Build.BinariesDirectory)            - build directory (not cleaned, unless explicitly requested)
-#   $(Common.TestResultsDirectory)        - test results directory
-#
-# Build.BinariesDirectory contains not only compiled binaries, but also all
-# intermediate object files, so if the job happens to run on the same agent,
-# it will build incrementally, unless the build directory is explicitly
-# cleaned like this:
-#
-#   - job: X
-#     workspace:
-#       clean: outputs
-#
+  #
+  # Azure DevOps agent's workspace directory:
+  #
+  #   $(Pipeline.Workspace)
+  #
+  # Directories inside the agent's workspace:
+  #
+  #   $(Build.SourcesDirectory)             - checkout directory
+  #   $(Build.ArtifactStagingDirectory)     - artifacts staging directory (cleaned automatically before a build)
+  #   $(Build.BinariesDirectory)            - build directory (not cleaned, unless explicitly requested)
+  #   $(Common.TestResultsDirectory)        - test results directory
+  #
+  # Build.BinariesDirectory contains not only compiled binaries, but also all
+  # intermediate object files, so if the job happens to run on the same agent,
+  # it will build incrementally, unless the build directory is explicitly
+  # cleaned like this:
+  #
+  #   - job: X
+  #     workspace:
+  #       clean: outputs
+  #
   BLDDIR: '$(Build.BinariesDirectory)'
 
   TEST_RSLT_DIR: $(Common.TestResultsDirectory)
@@ -45,6 +42,9 @@ variables:
   TEST_RSLT_FILE_DEB: webalizer_debian_test.xml
   TEST_RSLT_FILE_UBU: webalizer_ubuntu_test.xml
   TEST_RSLT_FILE_FED: webalizer_fedora_test.xml
+
+# pipeline run label
+name: $(VERSION_LABEL)
 
 stages:
 - stage: Build_packages
