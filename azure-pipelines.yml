@@ -106,7 +106,7 @@ stages:
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(BLDDIR)\x64\$(VERSION_LABEL)'
-        includeRootFolder: true
+        includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/webalizer-win-x64-$(VERSION_LABEL).zip'
         replaceExistingArchive: true
