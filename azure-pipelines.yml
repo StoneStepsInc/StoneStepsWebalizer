@@ -136,9 +136,9 @@ stages:
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
       artifact: Debian package
 
     #
@@ -163,9 +163,9 @@ stages:
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
       artifact: Ubuntu package
 
     #
@@ -190,7 +190,7 @@ stages:
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(BLDDIR)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
       artifact: Fedora package

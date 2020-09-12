@@ -31,6 +31,7 @@ SHELL := /bin/bash
 #       TEST_RSLT_FILE=test-results-file-name (default utest.xml)
 #
 #     package:
+#       PKG_DIR=/path/to/package/directory
 #       PKG_OS_ABBR=OS-name (default linux)
 #       PKG_ARCH_ABBR=cpu-architecture (default $(uname -p))
 # ------------------------------------------------------------------------
@@ -167,6 +168,10 @@ TEST_RPOS := $(TEST_OBJS:.o=.rpo)
 #
 # ------------------------------------------------------------------------
 
+ifeq ($(strip $(PKG_DIR)),)
+PKG_DIR       := $(BLDDIR)
+endif
+
 ifeq ($(strip $(PKG_OS_ABBR)),)
 PKG_OS_ABBR   := linux
 endif
@@ -275,12 +280,12 @@ clean:
 package: $(BLDDIR)/$(WEBALIZER)
 	@echo "Adding Webalizer files..." 
 	@strip --strip-debug $(BLDDIR)/$(WEBALIZER)
-	@tar $(PKG_OWNER) -cf $(BLDDIR)/$(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
-	@tar $(PKG_OWNER) -rf $(BLDDIR)/$(PKG_NAME) $(PKG_FILES) 
+	@tar $(PKG_OWNER) -cf $(PKG_DIR)/$(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
+	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_FILES) 
 	@echo "Adding language files..."
-	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(BLDDIR)/$(PKG_NAME) lang/webalizer_lang.$$lang; done
+	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) lang/webalizer_lang.$$lang; done
 	@echo "Compressing..."
-	@gzip $(BLDDIR)/$(PKG_NAME)
+	@gzip $(PKG_DIR)/$(PKG_NAME)
 	@echo "Done"
 
 # ------------------------------------------------------------------------
