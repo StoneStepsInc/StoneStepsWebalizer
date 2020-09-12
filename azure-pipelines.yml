@@ -11,7 +11,9 @@ variables:
   #
   VERSION: 6-1-0
   BUILD_NUMBER: $[counter(variables.VERSION, 1)]
-  VERSION_LABEL: $(VERSION)-$(BUILD_NUMBER)
+  
+  # without `format` pipeline name is reported as unevaluated variable names
+  VERSION_LABEL: $[format('{0}-{1}', variables.VERSION, variables.BUILD_NUMBER)]
 
   #
   # Azure DevOps agent's workspace directory:
@@ -87,6 +89,11 @@ stages:
         testResultsFiles: '$(TEST_RSLT_FILE_WIN)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
+    -script: |
+        mkdir $(BLDDIR)\x64\$(VERSION_LABEL)
+        mkdir $(BLDDIR)\x64\$(VERSION_LABEL)\lang
+      displayName: Create Package Directories
+
     - task: MSBuild@1
       displayName: Package
       inputs:
@@ -94,7 +101,18 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)\'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)\x64\$(VERSION_LABEL)'
+
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(BLDDIR)\x64\$(VERSION_LABEL)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/webalizer-win-x64-$(VERSION_LABEL).zip'
+        replaceExistingArchive: true
+
+    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-win-x64-$(VERSION_LABEL).zip'
+      artifact: Windows package
 
     #
     # Debian
