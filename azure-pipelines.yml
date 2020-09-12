@@ -101,7 +101,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)\x64\$(VERSION_LABEL)'
+        msbuildArguments: '/property:OutDir=$(BLDDIR)\x64\$(VERSION_LABEL)\'
 
     - task: ArchiveFiles@2
       inputs:
