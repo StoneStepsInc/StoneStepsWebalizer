@@ -98,10 +98,9 @@ if %runnable% == 1 (
 )
 
 rem
-rem Create the directory structure for the final package
+rem Create the directory for the final package
 rem
 if not exist build\%platform%\%version% mkdir build\%platform%\%version%
-if not exist build\%platform%\%version%\lang mkdir build\%platform%\%version%\lang
 
 rem
 rem Copy all binaries into the versioned package directory we just created

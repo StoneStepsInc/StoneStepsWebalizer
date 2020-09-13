@@ -1,6 +1,6 @@
 variables:
   #
-  # Intended future app version on this branch. Once a dot-zero version
+  # Intended upcoming app version on this branch. Once a dot-zero version
   # is released, this version should be updated towards the next release.
   #
   # For example, after 6.1.0 is released and a v6-1 branch is created,
@@ -12,40 +12,45 @@ variables:
   VERSION: 6-1-0
   BUILD_NUMBER: $[counter(variables.VERSION, 1)]
   
-  # without `format` pipeline name is reported as unevaluated variable names
+  # without `format` pipeline run label is reported as unevaluated variable names
   VERSION_LABEL: $[format('{0}-{1}', variables.VERSION, variables.BUILD_NUMBER)]
 
   #
-  # Azure DevOps agent's workspace directory:
+  # All directories are within Azure DevOps agent's workspace directory:
   #
   #   $(Pipeline.Workspace)
   #
-  # Directories inside the agent's workspace:
+
+  # source checkout directory
+  SRC_DIR: $(Build.SourcesDirectory)
+
   #
-  #   $(Build.SourcesDirectory)             - checkout directory
-  #   $(Build.ArtifactStagingDirectory)     - artifacts staging directory (cleaned automatically before a build)
-  #   $(Build.BinariesDirectory)            - build directory (not cleaned, unless explicitly requested)
-  #   $(Common.TestResultsDirectory)        - test results directory
+  # Output directory for compiled binaries and intermediate object files.
   #
-  # Build.BinariesDirectory contains not only compiled binaries, but also all
-  # intermediate object files, so if the job happens to run on the same agent,
-  # it will build incrementally, unless the build directory is explicitly
-  # cleaned like this:
+  # Build.BinariesDirectory is not cleaned before a build, unless explicitly
+  # requested. For self-hosted agents this could be used to build incrementally,
+  # but for MS-hosted agents chances of this are slim. Nevertheless, scripts in
+  # this pipeline should treat this directory as if it may contain files from
+  # previous builds, unless it is explicitly cleaned like this:
   #
   #   - job: X
   #     workspace:
   #       clean: outputs
   #
-  BLDDIR: '$(Build.BinariesDirectory)'
+  BUILD_DIR: $(Build.BinariesDirectory)
 
+  # artifacts staging directory (cleaned automatically before a build)
+  ARTIFACT_DIR: $(Build.ArtifactStagingDirectory)
+
+  # test results directory
   TEST_RSLT_DIR: $(Common.TestResultsDirectory)
 
-  TEST_RSLT_FILE_WIN: webalizer_windows_test.xml
-  TEST_RSLT_FILE_DEB: webalizer_debian_test.xml
-  TEST_RSLT_FILE_UBU: webalizer_ubuntu_test.xml
-  TEST_RSLT_FILE_FED: webalizer_fedora_test.xml
+  # a directory for temporary files (cleaned automatically after each job)
+  TMP_DIR: $(Agent.TempDirectory)
 
-# pipeline run label
+#
+# Pipeline run label (used only for display purposes in this pipeline)
+#
 name: $(VERSION_LABEL)
 
 stages:
@@ -53,15 +58,21 @@ stages:
   displayName: Build packages
   jobs:
   - job: Windows
+    variables:
+      TEST_RSLT_FILE: webalizer_win_test.xml
+  
     pool:
       vmImage: windows-2019
+
     steps:
     - task: NuGetCommand@2
+      displayName: Restore Nuget Packages
       inputs:
         command: 'restore'
         restoreSolution: 'src/webalizer.sln'
         feedsToUse: 'select'
         vstsFeed: 'https://api.nuget.org/v3/index.json'
+
     - task: MSBuild@1
       displayName: Build
       inputs:
@@ -69,7 +80,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)\;AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
+        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\;AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
 
     - task: MSBuild@1
       displayName: Build Test
@@ -78,119 +89,132 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)\'
+        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\'
         
     - script: |
-        $(BLDDIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE_WIN)
+        $(BUILD_DIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
       displayName: Run Test
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE_WIN)'
+        testResultsFiles: '$(TEST_RSLT_FILE)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
+      # create output directory for the package
     - script: |
-        mkdir $(BLDDIR)\x64\$(VERSION_LABEL)
-        mkdir $(BLDDIR)\x64\$(VERSION_LABEL)\lang
+        mkdir $(BUILD_DIR)\x64\$(VERSION_LABEL)
       displayName: Create Package Directories
 
     - task: MSBuild@1
-      displayName: Package
+      displayName: Collect Package Files
       inputs:
         solution: 'src\package.vcxproj'
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BLDDIR)\x64\$(VERSION_LABEL)\'
+        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\x64\$(VERSION_LABEL)\'
 
     - task: ArchiveFiles@2
+      displayName: Make Package
       inputs:
-        rootFolderOrFile: '$(BLDDIR)\x64\$(VERSION_LABEL)'
+        rootFolderOrFile: '$(BUILD_DIR)\x64\$(VERSION_LABEL)'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/webalizer-win-x64-$(VERSION_LABEL).zip'
+        archiveFile: '$(ARTIFACT_DIR)/webalizer-win-x64-$(VERSION_LABEL).zip'
         replaceExistingArchive: true
 
-    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-win-x64-$(VERSION_LABEL).zip'
+    - publish: '$(ARTIFACT_DIR)/webalizer-win-x64-$(VERSION_LABEL).zip'
       artifact: Windows package
 
     #
     # Debian
     #
   - job: Debian
+    variables:
+      TEST_RSLT_FILE: webalizer_deb_test.xml
+
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-debian:latest
+
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
+        make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
-        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_DEB) test
+        make BLDDIR=$(BUILD_DIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE) test
       displayName: Test  
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE_DEB)'
+        testResultsFiles: '$(TEST_RSLT_FILE)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(ARTIFACT_DIR)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
       artifact: Debian package
 
     #
     # Ubuntu
     #
   - job: Ubuntu
+    variables:
+      TEST_RSLT_FILE: webalizer_ubu_test.xml
+
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-ubuntu:latest
+
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
+        make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
-        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_UBU) test
+        make BLDDIR=$(BUILD_DIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE) test
       displayName: Test  
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE_UBU)'
+        testResultsFiles: '$(TEST_RSLT_FILE)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(ARTIFACT_DIR)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
       artifact: Ubuntu package
 
     #
     # Fedora
     #
   - job: Fedora
+    variables:
+      TEST_RSLT_FILE: webalizer_fed_test.xml
+
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-fedora:latest
+
     steps:
     - script: |
-        make BLDDIR=$(BLDDIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
+        make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
     - script: |
-        make BLDDIR=$(BLDDIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE_FED) test
+        make BLDDIR=$(BUILD_DIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE) test
       displayName: Test  
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE_FED)'
+        testResultsFiles: '$(TEST_RSLT_FILE)'
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BLDDIR) PKG_DIR=$(Build.ArtifactStagingDirectory) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(Build.ArtifactStagingDirectory)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
+    - publish: '$(ARTIFACT_DIR)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
       artifact: Fedora package
