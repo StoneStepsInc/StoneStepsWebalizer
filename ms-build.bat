@@ -139,11 +139,11 @@ echo directory prior to launching ms-build.bat.
 echo.
 echo %VS140COMNTOOLS%
 echo.
-echo If you have Visual Studio 2017 installed, you need to use the toolset
+echo If you have Visual Studio 2019 installed, you need to use the toolset
 echo Visual Studio 2015 toolset. Run this command in this case (replace the
 echo platform and Visual Studio edition as needed):
 echo.
-echo "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.0 
+echo "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.0 
 echo. 
 
 goto :exit
