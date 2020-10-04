@@ -257,7 +257,7 @@ stages:
         rootFolderOrFile: '$(BUILD_DIR)/webalizer-doxygen'
         includeRootFolder: false
         archiveType: 'tar'
-        tarCompression: 'bz2'
+        tarCompression: 'gz'
         archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
         replaceExistingArchive: true
 
