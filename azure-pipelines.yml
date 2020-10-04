@@ -261,5 +261,5 @@ stages:
         archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).tar.gz'
         replaceExistingArchive: true
 
-    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
+    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).tar.gz'
       artifact: Doxygen docs
