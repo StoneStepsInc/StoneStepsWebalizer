@@ -258,7 +258,7 @@ stages:
         includeRootFolder: false
         archiveType: 'tar'
         tarCompression: 'gz'
-        archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
+        archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).tar.gz'
         replaceExistingArchive: true
 
     - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
