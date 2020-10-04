@@ -239,13 +239,26 @@ stages:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-fedora-doxygen:latest
 
+    # make sure there are no stale files in the build directory
+    workspace:
+      clean: outputs
+
     steps:
     - script: >
         DOXYGEN_BRANCH=$(Build.SourceBranchName)
         DOXYGEN_INPUT=$(SRC_DIR)/src
-        DOXYGEN_OUTPUT=$(ARTIFACT_DIR)/webalizer-doxygen
+        DOXYGEN_OUTPUT=$(BUILD_DIR)/webalizer-doxygen
         doxygen $(SRC_DIR)/devops/doxygen.conf
       displayName: Generate Doxygen docs
 
-    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen'
-      artifact: Webalizer Doxygen
+    - task: ArchiveFiles@2
+      displayName: Package Doxygen docs
+      inputs:
+        rootFolderOrFile: '$(BUILD_DIR)/webalizer-doxygen'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
+        replaceExistingArchive: true
+
+    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).zip'
+      artifact: Doxygen docs
