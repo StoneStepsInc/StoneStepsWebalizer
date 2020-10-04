@@ -1,0 +1,14 @@
+#
+# docker build --network=host \
+#               --tag=stonesteps/webalizer-fedora-doxygen:latest \
+#               --file=/path/to/Dockerfile.fedora-doxygen \
+#                   /path/to/context
+#
+FROM stonesteps/webalizer-fedora
+
+WORKDIR /root
+
+#
+# Add Doxygen and Graphviz to the Fedora image for Doxygen diagrams
+#
+RUN dnf install -y doxygen graphviz
