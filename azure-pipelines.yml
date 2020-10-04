@@ -139,6 +139,10 @@ stages:
 
     steps:
     - script: |
+        make clean-deps
+      displayName: Clean dependencies
+
+    - script: |
         make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
@@ -170,6 +174,10 @@ stages:
 
     steps:
     - script: |
+        make clean-deps
+      displayName: Clean dependencies
+
+    - script: |
         make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build
 
@@ -200,6 +208,10 @@ stages:
     container: stonesteps/webalizer-fedora:latest
 
     steps:
+    - script: |
+        make clean-deps
+      displayName: Clean dependencies
+
     - script: |
         make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
       displayName: Build

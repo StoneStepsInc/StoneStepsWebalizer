@@ -40,7 +40,7 @@ SHELL := /bin/bash
 # Remove all standard suffix rules and declare phony targets
 #
 .SUFFIXES:
-.PHONY: all clean install test package
+.PHONY: all clean clean-deps install test package
 
 # ------------------------------------------------------------------------
 #
@@ -82,7 +82,7 @@ endif
 INCDIRS  := 
 LIBDIRS  := 
 
-# list of source files (the src/ prefix is assumed in build rules)
+# webalizer source files, relative to $(SRCDIR)
 SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	output.cpp graphs.cpp preserve.cpp lang.cpp \
 	parser.cpp logrec.cpp tstamp.cpp \
@@ -103,14 +103,12 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
 	util_http.cpp util_ipaddr.cpp util_path.cpp util_string.cpp \
 	util_time.cpp util_url.cpp
 
-# list all libraries we use
+# webalizer libraries
 LIBS     := dl pthread db_cxx gd z maxminddb
 
-# generate a list of object files for .c and .cpp source files
 OBJS := $(patsubst %.c,%.o,$(filter %.c,$(SRCS))) \
 	$(patsubst %.cpp,%.o,$(filter %.cpp,$(SRCS)))
 
-# and a list of dependency make files
 DEPS := $(OBJS:.o=.d)
 
 # ------------------------------------------------------------------------
@@ -132,24 +130,19 @@ ifeq ($(strip $(TEST_RSLT_FILE)),)
 TEST_RSLT_FILE := $(TEST).xml
 endif
 
-# unit tests source files (the test/ prefix is added right after this assignment)
+# unit tests source files
 TEST_SRC := $(PCHSRC) main.cpp ut_caseconv.cpp ut_formatter.cpp ut_hostname.cpp \
 	ut_ipaddr.cpp ut_lang.cpp ut_linklist.cpp ut_normurl.cpp \
 	ut_strcmp.cpp ut_strfmt.cpp ut_strsrch.cpp ut_tstamp.cpp \
 	ut_config.cpp ut_strcreate.cpp ut_hashtab.cpp ut_initseqguard.cpp \
 	ut_berkeleydb.cpp ut_unicode.cpp ut_serialize.cpp ut_ctnode.cpp
 
-# add the test/ prefix (will be combined with src/ in build rules)
+# add the test/ prefix, which in turn is relative to $(SRCDIR)
 TEST_SRC := $(addprefix test/,$(TEST_SRC))
 
 TEST_LIBS := $(LIBS) gtest
 
-#
-# List unit test object files and some from the main project to link against. 
-# Note that unit test files are prefixed with ut_ and will not collide with
-# any main project files, so we don't need to place them into their own build
-# directory.
-#
+# unit test object files and some from the main project to link against
 TEST_OBJS := $(TEST_SRC:.cpp=.o)  \
 	char_buffer.o char_buffer_stack.o cp1252.o cp1252_ucs2.o \
 	encoder.o formatter.o hashtab.o hckdel.o lang.o linklist.o \
@@ -160,7 +153,6 @@ TEST_OBJS := $(TEST_SRC:.cpp=.o)  \
 	keynode.o hashtab_nodes.o berkeleydb.o
 
 TEST_DEPS := $(TEST_OBJS:.o=.d)
-TEST_RPOS := $(TEST_OBJS:.o=.rpo)
 
 # ------------------------------------------------------------------------
 #
@@ -182,8 +174,8 @@ endif
 
 PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
 PKG_OWNER := --owner=root --group=root
-PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
-	src/webalizer.js README CHANGES COPYING Copyright
+PKG_FILES := sample.conf $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css \
+	$(SRCDIR)/webalizer.js README CHANGES COPYING Copyright
 PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
 	galician german greek hungarian icelandic indonesian italian japanese \
 	korean latvian malay norwegian polish portuguese portuguese_brazilian \
@@ -241,16 +233,22 @@ all: $(BLDDIR)/$(WEBALIZER)
 #
 # build/webalizer
 #
-$(BLDDIR)/$(WEBALIZER): $(BLDDIR)/$(PCHOUT) $(addprefix $(BLDDIR)/,$(OBJS)) 
+$(BLDDIR)/$(WEBALIZER): $(addprefix $(BLDDIR)/,$(OBJS)) | $(BLDDIR) 
 	$(CXX) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(OBJS)) $(addprefix -l,$(LIBS)) 
 
 #
 # build/utest
 #
-$(BLDDIR)/$(TEST): $(BLDDIR)/test/$(PCHOUT) $(BLDDIR)/$(WEBALIZER) $(addprefix $(BLDDIR)/,$(TEST_OBJS))
+$(BLDDIR)/$(TEST): $(addprefix $(BLDDIR)/,$(TEST_OBJS)) | $(BLDDIR) 
 	$(CXX) -o $@ $(CC_LDFLAGS) $(addprefix -L,$(LIBDIRS)) \
 		$(addprefix $(BLDDIR)/,$(TEST_OBJS)) $(addprefix -l,$(TEST_LIBS))
+
+#
+# build directory
+#
+$(BLDDIR): 
+	@mkdir $(BLDDIR)
 
 #
 # run unit tests and generate an XML results file in build/test-results/
@@ -274,8 +272,19 @@ clean:
 	@if [[ -e $(BLDDIR)/$(WEBALIZER) ]]; then rm $(BLDDIR)/$(WEBALIZER); fi
 	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
 	@echo "Removing test results..."
-	@if [[ -e $(BLDDIR)/$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE) ]]; then rm $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE); fi
+	@if [[ -e $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE) ]]; then rm $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE); fi
 	@echo "Done"
+
+#
+# When a source file is moved or renamed, the next build may fail
+# because the previous dependency file may reference a stale source
+# file. This target allows us to rebuild just the dependencies
+# instead of having to make a full build.
+#
+clean-deps:
+	@echo 'Removing dependencies'
+	@rm -f $(addprefix $(BLDDIR)/,$(DEPS)) $(addprefix $(BLDDIR)/,$(TEST_DEPS))
+	@echo 'Done'
 
 package: $(BLDDIR)/$(WEBALIZER)
 	@echo "Adding Webalizer files..." 
@@ -310,40 +319,31 @@ package: $(BLDDIR)/$(WEBALIZER)
 # , so we need to inject source paths back in and add the dependency
 # files as well, so they are rebuilt when any headers change:
 #
-#   src/webalizer.o src/webalizer.d: src/webalizer.cpp src/webalizer.h ...
+#   build/webalizer.o build/webalizer.d: src/webalizer.cpp src/webalizer.h ...
 #
-$(BLDDIR)/%.d : src/%.cpp
+$(BLDDIR)/%.d : $(SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$(subst /,/,$*).o $(BLDDIR)/$(subst /,/,$*).d|g' > $@
 
 #
-# Rules to compile source files
+# Source files
 #
 
-# include the unit test precompiled header in all unit test source files
-$(BLDDIR)/test/%.o : src/test/%.cpp
+# compile unit test source with the unit test precompiled header
+$(BLDDIR)/test/%.o : $(SRCDIR)/test/%.cpp $(BLDDIR)/test/$(PCHOUT)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -include $(BLDDIR)/test/$(PCHHDR) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 # no precompiled header for C source
-$(BLDDIR)/%.o : src/%.c
+$(BLDDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-# include the main precompiled header in all source files (unit test is handled above)
-$(BLDDIR)/%.o : src/%.cpp
+# compile main source with its precompiled header
+$(BLDDIR)/%.o : $(SRCDIR)/%.cpp	$(BLDDIR)/$(PCHOUT)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -include $(BLDDIR)/$(PCHHDR) $(addprefix -I,$(INCDIRS)) $< -o $@
 
-#
-# Build the precompiled header file
-#
-
-# a rule for /src/pch.h.gch, which produces an empty stem (i.e. build//pch.cpp) and is ignored by src/%/pch.h.gch
-$(BLDDIR)/$(PCHOUT) : src/$(PCHSRC)
-	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); elif [[ -e $@ ]]; then rm $@; fi
-	$(CXX) -c -x c++-header $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
-
-# a rule for any pch.h.gch located anywhere else in the source tree
-$(BLDDIR)/%/$(PCHOUT) : src/%/$(PCHSRC)
+# webalizer and unit test precompiled header files
+$(BLDDIR)/$(PCHOUT) $(BLDDIR)/test/$(PCHOUT): $(BLDDIR)/%$(PCHOUT): $(SRCDIR)/%$(PCHSRC)
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); elif [[ -e $@ ]]; then rm $@; fi
 	$(CXX) -c -x c++-header $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
@@ -353,13 +353,16 @@ $(BLDDIR)/%/$(PCHOUT) : src/%/$(PCHSRC)
 #
 # ------------------------------------------------------------------------
 
-# 
-# Include the dependencies if there is no target specified explicitly (i.e.
-# the default target is being built) or if the specified target is not one 
-# of the maintenance targets.
-#
+# webalizer dependencies
 ifeq ($(MAKECMDGOALS),)
-include $(addprefix $(BLDDIR)/, $(DEPS)) $(addprefix $(BLDDIR)/, $(TEST_DEPS))
-else ifneq ($(filter-out clean install package,$(MAKECMDGOALS)),)
-include $(addprefix $(BLDDIR)/, $(DEPS)) $(addprefix $(BLDDIR)/, $(TEST_DEPS))
+include $(addprefix $(BLDDIR)/, $(DEPS))
+else ifneq ($(filter $(BLDDIR)/$(WEBALIZER),$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(DEPS))
+endif
+
+# unit test dependencies
+ifneq ($(filter test,$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(TEST_DEPS))
+else ifneq ($(filter $(BLDDIR)/$(TEST),$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(TEST_DEPS))
 endif
