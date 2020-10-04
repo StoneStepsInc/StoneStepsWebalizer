@@ -230,3 +230,22 @@ stages:
       displayName: Package
     - publish: '$(ARTIFACT_DIR)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
       artifact: Fedora package
+
+    #
+    # Doxygen docs
+    #
+  - job: Doxygen
+    pool:
+      vmImage: ubuntu-latest
+    container: stonesteps/webalizer-fedora-doxygen:latest
+
+    steps:
+    - script: >
+        DOXYGEN_BRANCH=$(Build.SourceBranchName)
+        DOXYGEN_INPUT=$(SRC_DIR)/src
+        DOXYGEN_OUTPUT=$(ARTIFACT_DIR)/webalizer-doxygen
+        doxygen $(SRC_DIR)/devops/doxygen.conf
+      displayName: Generate Doxygen docs
+
+    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen'
+      artifact: Webalizer Doxygen
