@@ -25,19 +25,19 @@ variables:
   SRC_DIR: $(Build.SourcesDirectory)
 
   #
-  # Output directory for compiled binaries and intermediate object files.
-  #
-  # Build.BinariesDirectory is not cleaned before a build, unless explicitly
-  # requested. For self-hosted agents this could be used to build incrementally,
-  # but for MS-hosted agents chances of this are slim. Nevertheless, scripts in
-  # this pipeline should treat this directory as if it may contain files from
-  # previous builds, unless it is explicitly cleaned like this:
+  # Makefile build directory for compiled binaries and intermediate object
+  # files. Build.BinariesDirectory is not cleaned before a build, unless
+  # explicitly requested, like this:
   #
   #   - job: X
   #     workspace:
   #       clean: outputs
   #
-  BUILD_DIR: $(Build.BinariesDirectory)
+  # Make sure different branches and different jobs don't reuse any build
+  # files. System.PhaseName is the job name that follows `job:` or `Job1`,
+  # `Job2`, etc. for nameless jobs.
+  #
+  BUILD_DIR: $(Build.BinariesDirectory)/webalizer/$(Build.SourceBranchName)/$(System.PhaseName)
 
   # artifacts staging directory (cleaned automatically before a build)
   ARTIFACT_DIR: $(Build.ArtifactStagingDirectory)
@@ -54,7 +54,7 @@ variables:
 name: $(VERSION_LABEL)
 
 stages:
-- stage: Build_packages
+- stage: BuildPackages
   displayName: Build packages
   jobs:
   - job: Windows
@@ -235,31 +235,40 @@ stages:
     # Doxygen docs
     #
   - job: Doxygen
+    variables:
+      # generate Doxygen docs in a unique folder per job attempt, which we will remove after archiving
+      DOCYGEN_OUTPUT: '$(Build.BinariesDirectory)/webalizer-doxygen/$(System.JobId)'
+
     pool:
       vmImage: ubuntu-latest
     container: stonesteps/webalizer-fedora-doxygen:latest
 
-    # make sure there are no stale files in the build directory
-    workspace:
-      clean: outputs
-
     steps:
+      # Doxygen can only create one missing directory segment
+    - script: >
+        mkdir -p $(DOCYGEN_OUTPUT)
+      displayName: Create Doxygen output directory
+
     - script: >
         DOXYGEN_BRANCH=$(Build.SourceBranchName)
         DOXYGEN_INPUT=$(SRC_DIR)/src
-        DOXYGEN_OUTPUT=$(BUILD_DIR)/webalizer-doxygen
+        DOXYGEN_OUTPUT=$(DOCYGEN_OUTPUT)
         doxygen $(SRC_DIR)/devops/doxygen.conf
       displayName: Generate Doxygen docs
 
     - task: ArchiveFiles@2
       displayName: Package Doxygen docs
       inputs:
-        rootFolderOrFile: '$(BUILD_DIR)/webalizer-doxygen'
+        rootFolderOrFile: '$(DOCYGEN_OUTPUT)'
         includeRootFolder: false
         archiveType: 'tar'
         tarCompression: 'gz'
         archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).tar.gz'
         replaceExistingArchive: true
+
+    - script: >
+        rm -rf $(DOCYGEN_OUTPUT)
+      displayName: Remove Doxygen output
 
     - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(VERSION_LABEL).tar.gz'
       artifact: Doxygen docs
