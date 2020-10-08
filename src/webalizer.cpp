@@ -1,7 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2020, Stone Steps Inc. (www.stonesteps.ca)
    Copyright (C) 1997-2001  Bradford L. Barrett (brad@mrunix.net)
 
    See COPYING and Copyright files for additional licensing and copyright information 
@@ -51,11 +51,26 @@
 #include <algorithm>
 #include <stdexcept>
 
+///
+/// @mainpage
+/// 
+/// Stone Steps Webalizer is a fast command line application for web server
+/// and web proxy log file analysis. It supports multiple log formats (Squid,
+/// IIS, CLF and Apache) and produces highly customizable HTML reports in
+/// many languages.
+/// 
+/// Stone Steps Webalizer is a fork of The Webalizer, originally developed
+/// by Bradford L. Barrett in 1997.
+/// 
+/// See COPYING and Copyright files for additional licensing and copyright
+/// information.
+/// 
+
 /*********************************************/
 /* GLOBAL VARIABLES                          */
 /*********************************************/
 
-static const char *copyright   = "Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)";
+static const char *copyright   = "Copyright (c) 2004-2020, Stone Steps Inc. (www.stonesteps.ca)";
 
 bool webalizer_t::abort_signal = false;   // true if Ctrl-C was pressed
 
