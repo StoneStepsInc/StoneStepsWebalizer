@@ -35,7 +35,9 @@ variables:
   #
   # Make sure different branches and different jobs don't reuse any build
   # files. System.PhaseName is the job name that follows `job:` or `Job1`,
-  # `Job2`, etc. for nameless jobs.
+  # `Job2`, etc. for nameless jobs. This pipeline is intended only for x64
+  # builds and x64 is not in any directory paths because we don't need to
+  # differenciate between x86 and x64.
   #
   BUILD_DIR: $(Build.BinariesDirectory)/webalizer/$(Build.SourceBranchName)/$(System.PhaseName)
 
@@ -60,6 +62,14 @@ stages:
   - job: Windows
     variables:
       TEST_RSLT_FILE: webalizer_win_test.xml
+
+      # build output for webalizer.exe and test.exe (MS Build requires paths end with a slash)
+      BIN_OUT_DIR: $(BUILD_DIR)\webalizer\
+      BIN_INT_DIR: $(BUILD_DIR)\webalizer\obj\
+
+      # package intermediate directory must be one level below BIN_OUT_DIR
+      PKG_OUT_DIR: $(BUILD_DIR)\package-$(VERSION_LABEL)\
+      PKG_INT_DIR: $(BIN_OUT_DIR)\package-tmp\
   
     pool:
       vmImage: windows-2019
@@ -80,7 +90,7 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\;AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
+        msbuildArguments: '/property:OutDir=$(BIN_OUT_DIR);IntDir=$(BIN_INT_DIR);AZP_BUILD_NUMBER=$(BUILD_NUMBER)'
 
     - task: MSBuild@1
       displayName: Build Test
@@ -89,10 +99,10 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\'
+        msbuildArguments: '/property:OutDir=$(BIN_OUT_DIR);IntDir=$(BIN_INT_DIR)'
         
     - script: |
-        $(BUILD_DIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
+        $(BIN_OUT_DIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
       displayName: Run Test
     - task: PublishTestResults@2
       inputs:
@@ -102,8 +112,8 @@ stages:
 
       # create output directory for the package
     - script: |
-        mkdir "$(BUILD_DIR)\x64\$(VERSION_LABEL)"
-      displayName: Create Package Directories
+        mkdir "$(PKG_OUT_DIR)"
+      displayName: Create Package Directory
 
     - task: MSBuild@1
       displayName: Collect Package Files
@@ -112,12 +122,12 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BUILD_DIR)\x64\$(VERSION_LABEL)\'
+        msbuildArguments: '/property:OutDir=$(PKG_OUT_DIR);IntDir=$(PKG_INT_DIR)'
 
     - task: ArchiveFiles@2
       displayName: Make Package
       inputs:
-        rootFolderOrFile: '$(BUILD_DIR)\x64\$(VERSION_LABEL)'
+        rootFolderOrFile: '$(PKG_OUT_DIR)'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(ARTIFACT_DIR)/webalizer-win-x64-$(VERSION_LABEL).zip'

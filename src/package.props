@@ -4,15 +4,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <ExtensionsToDeleteOnClean />
-    <IntDir>..\build\$(Platform)\$(Configuration)\package\</IntDir>
-    <OutDir>..\build\$(Platform)\package\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\package\</IntDir>
+    <OutDir>$(SolutionDir)..\build\$(Platform)\package\</OutDir>
     <TargetName />
     <TargetExt />
   </PropertyGroup>
   <ItemDefinitionGroup>
     <CustomBuildStep>
-      <Command>echo Copying binaries to $(OutDir)
-xcopy /Q /Y ..\build\$(Platform)\$(Configuration)\webalizer.exe "$(OutDir)" &gt; nul
+      <Command>rem
+rem IntDir must be pointing to a directory that is one level below OutDir configured
+rem for webalizer.vcxproj. This allows us to access build output via a parent path
+rem without having to define a user macro for build output from webalizer.vcxproj.
+rem Intermediate files generated during packaging will be stored in IntDir and may
+rem be discarded after a package is created.
+rem
+echo Copying binaries to $(OutDir)
+xcopy /Q /Y $(IntDir)..\webalizer.exe "$(OutDir)" &gt; nul
 xcopy /Q /Y "$(BDBBinDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul
 xcopy /Q /Y "$(GDBinDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
 
