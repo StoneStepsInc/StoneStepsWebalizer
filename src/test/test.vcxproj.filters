@@ -82,124 +82,127 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer.obj">
+    <Object Include="$(OutDir)..\obj\char_buffer.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\char_buffer_stack.obj">
+    <Object Include="$(OutDir)..\obj\char_buffer_stack.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252.obj">
+    <Object Include="$(OutDir)..\obj\cp1252.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\cp1252_ucs2.obj">
+    <Object Include="$(OutDir)..\obj\cp1252_ucs2.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\encoder.obj">
+    <Object Include="$(OutDir)..\obj\encoder.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\exception_win.obj">
+    <Object Include="$(OutDir)..\obj\exception_win.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\fmt_impl.obj">
+    <Object Include="$(OutDir)..\obj\fmt_impl.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\formatter.obj">
+    <Object Include="$(OutDir)..\obj\formatter.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab.obj">
+    <Object Include="$(OutDir)..\obj\hashtab.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hckdel.obj">
+    <Object Include="$(OutDir)..\obj\hckdel.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\lang.obj">
+    <Object Include="$(OutDir)..\obj\lang.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\linklist.obj">
+    <Object Include="$(OutDir)..\obj\linklist.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\pch.obj">
+    <Object Include="$(OutDir)..\obj\pch.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\serialize.obj">
+    <Object Include="$(OutDir)..\obj\serialize.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstamp.obj">
+    <Object Include="$(OutDir)..\obj\tstamp.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tstring.obj">
+    <Object Include="$(OutDir)..\obj\tstring.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unicode.obj">
+    <Object Include="$(OutDir)..\obj\unicode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_http.obj">
+    <Object Include="$(OutDir)..\obj\util_http.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_ipaddr.obj">
+    <Object Include="$(OutDir)..\obj\util_ipaddr.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_path.obj">
+    <Object Include="$(OutDir)..\obj\util_path.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_string.obj">
+    <Object Include="$(OutDir)..\obj\util_string.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_time.obj">
+    <Object Include="$(OutDir)..\obj\util_time.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\util_url.obj">
+    <Object Include="$(OutDir)..\obj\util_url.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\utsname.obj">
+    <Object Include="$(OutDir)..\obj\utsname.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\tmranges.obj">
+    <Object Include="$(OutDir)..\obj\tmranges.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\config.obj">
+    <Object Include="$(OutDir)..\obj\config.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\anode.obj">
+    <Object Include="$(OutDir)..\obj\anode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ccnode.obj">
+    <Object Include="$(OutDir)..\obj\ccnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\ctnode.obj">
+    <Object Include="$(OutDir)..\obj\ctnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hashtab_nodes.obj">
+    <Object Include="$(OutDir)..\obj\asnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\keynode.obj">
+    <Object Include="$(OutDir)..\obj\hashtab_nodes.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\unode.obj">
+    <Object Include="$(OutDir)..\obj\keynode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rcnode.obj">
+    <Object Include="$(OutDir)..\obj\unode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\dlnode.obj">
+    <Object Include="$(OutDir)..\obj\rcnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\hnode.obj">
+    <Object Include="$(OutDir)..\obj\dlnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\vnode.obj">
+    <Object Include="$(OutDir)..\obj\hnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\inode.obj">
+    <Object Include="$(OutDir)..\obj\vnode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\snode.obj">
+    <Object Include="$(OutDir)..\obj\inode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\rnode.obj">
+    <Object Include="$(OutDir)..\obj\snode.obj">
       <Filter>obj</Filter>
     </Object>
-    <Object Include="..\..\build\$(Platform)\$(Configuration)\obj\berkeleydb.obj">
+    <Object Include="$(OutDir)..\obj\rnode.obj">
+      <Filter>obj</Filter>
+    </Object>
+    <Object Include="$(OutDir)..\obj\berkeleydb.obj">
       <Filter>obj</Filter>
     </Object>
   </ItemGroup>

@@ -99,10 +99,10 @@ stages:
         msbuildArchitecture: 'x64'
         platform: 'x64'
         configuration: 'Release'
-        msbuildArguments: '/property:OutDir=$(BIN_OUT_DIR);IntDir=$(BIN_INT_DIR)'
+        msbuildArguments: '/property:OutDir=$(BIN_OUT_DIR)\test\;IntDir=$(BIN_INT_DIR)\test\obj\'
         
     - script: |
-        $(BIN_OUT_DIR)\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
+        $(BIN_OUT_DIR)\test\test.exe --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
       displayName: Run Test
     - task: PublishTestResults@2
       inputs:

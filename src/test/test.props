@@ -3,8 +3,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)..\build\test\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\build\test\$(Platform)\$(Configuration)\obj\</IntDir>
+    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\test\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\test\obj\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup>
