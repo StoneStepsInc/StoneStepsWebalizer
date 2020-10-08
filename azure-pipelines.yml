@@ -102,7 +102,7 @@ stages:
 
       # create output directory for the package
     - script: |
-        mkdir "$[replace('$(BUILD_DIR)\x64\$(VERSION_LABEL)','/','\')]"
+        mkdir "$(BUILD_DIR)\x64\$(VERSION_LABEL)"
       displayName: Create Package Directories
 
     - task: MSBuild@1
