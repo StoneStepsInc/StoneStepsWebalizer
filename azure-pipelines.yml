@@ -59,7 +59,8 @@ stages:
 - stage: BuildPackages
   displayName: Build packages
   jobs:
-  - job: Windows
+  - job: windows
+    displayName: Windows
     variables:
       TEST_RSLT_FILE: webalizer_win_test.xml
 
@@ -139,8 +140,9 @@ stages:
     #
     # Linux
     #
-  - job: Linux
-    # display name `System.PhaseName + ' ' + System.JobName`
+  - job: linux
+    displayName: Linux
+    # actual display name will be `System.JobDisplayName + ' ' + System.JobName`
     # System.JobName is Debian, Ubuntu, Fedora
     strategy:
       matrix:
@@ -190,7 +192,8 @@ stages:
     #
     # Doxygen docs
     #
-  - job: Doxygen
+  - job: doxygen
+    displayName: Doxygen
     variables:
       # generate Doxygen docs in a unique folder per job attempt, which we will remove after archiving
       DOCYGEN_OUTPUT: '$(Build.BinariesDirectory)/webalizer-doxygen/$(System.JobId)'
