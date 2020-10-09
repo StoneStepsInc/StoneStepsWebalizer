@@ -137,15 +137,28 @@ stages:
       artifact: Windows package
 
     #
-    # Debian
+    # Linux
     #
-  - job: Debian
+  - job: Linux
+    # display name `System.PhaseName + ' ' + System.JobName`
+    # System.JobName is Debian, Ubuntu, Fedora
+    strategy: matrix
+      Debian:
+        DIST_NAME: debian
+        DIST_ABBR: deb
+      Ubuntu:
+        DIST_NAME: ubuntu
+        DIST_ABBR: ubu
+      Fedora:
+        DIST_NAME: fedora
+        DIST_ABBR: fed
+
     variables:
-      TEST_RSLT_FILE: webalizer_deb_test.xml
+      TEST_RSLT_FILE: webalizer_$(DIST_ABBR)_test.xml
 
     pool:
       vmImage: ubuntu-latest
-    container: stonesteps/webalizer-debian:latest
+    container: stonesteps/webalizer-$(DIST_NAME):latest
 
     steps:
     - script: |
@@ -166,80 +179,10 @@ stages:
         searchFolder: '$(TEST_RSLT_DIR)'
 
     - script: |
-        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=deb PKG_ARCH_ABBR=x64 package
+        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=$(DIST_ABBR) PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(ARTIFACT_DIR)/webalizer-deb-x64-$(VERSION_LABEL).tar.gz'
-      artifact: Debian package
-
-    #
-    # Ubuntu
-    #
-  - job: Ubuntu
-    variables:
-      TEST_RSLT_FILE: webalizer_ubu_test.xml
-
-    pool:
-      vmImage: ubuntu-latest
-    container: stonesteps/webalizer-ubuntu:latest
-
-    steps:
-    - script: |
-        make clean-deps
-      displayName: Clean dependencies
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
-      displayName: Build
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE) test
-      displayName: Test  
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE)'
-        searchFolder: '$(TEST_RSLT_DIR)'
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=ubu PKG_ARCH_ABBR=x64 package
-      displayName: Package
-    - publish: '$(ARTIFACT_DIR)/webalizer-ubu-x64-$(VERSION_LABEL).tar.gz'
-      artifact: Ubuntu package
-
-    #
-    # Fedora
-    #
-  - job: Fedora
-    variables:
-      TEST_RSLT_FILE: webalizer_fed_test.xml
-
-    pool:
-      vmImage: ubuntu-latest
-    container: stonesteps/webalizer-fedora:latest
-
-    steps:
-    - script: |
-        make clean-deps
-      displayName: Clean dependencies
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) AZP_BUILD_NUMBER=$(BUILD_NUMBER)
-      displayName: Build
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) TEST_RSLT_DIR=$(TEST_RSLT_DIR) TEST_RSLT_FILE=$(TEST_RSLT_FILE) test
-      displayName: Test  
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: "JUnit"
-        testResultsFiles: '$(TEST_RSLT_FILE)'
-        searchFolder: '$(TEST_RSLT_DIR)'
-
-    - script: |
-        make BLDDIR=$(BUILD_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=fed PKG_ARCH_ABBR=x64 package
-      displayName: Package
-    - publish: '$(ARTIFACT_DIR)/webalizer-fed-x64-$(VERSION_LABEL).tar.gz'
-      artifact: Fedora package
+    - publish: '$(ARTIFACT_DIR)/webalizer-$(DIST_ABBR)-x64-$(VERSION_LABEL).tar.gz'
+      artifact: $(System.JobName) package
 
     #
     # Doxygen docs
