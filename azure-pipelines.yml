@@ -142,16 +142,17 @@ stages:
   - job: Linux
     # display name `System.PhaseName + ' ' + System.JobName`
     # System.JobName is Debian, Ubuntu, Fedora
-    strategy: matrix
-      Debian:
-        DIST_NAME: debian
-        DIST_ABBR: deb
-      Ubuntu:
-        DIST_NAME: ubuntu
-        DIST_ABBR: ubu
-      Fedora:
-        DIST_NAME: fedora
-        DIST_ABBR: fed
+    strategy:
+      matrix:
+        Debian:
+          DIST_NAME: debian
+          DIST_ABBR: deb
+        Ubuntu:
+          DIST_NAME: ubuntu
+          DIST_ABBR: ubu
+        Fedora:
+          DIST_NAME: fedora
+          DIST_ABBR: fed
 
     variables:
       TEST_RSLT_FILE: webalizer_$(DIST_ABBR)_test.xml
