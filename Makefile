@@ -324,7 +324,7 @@ package: $(BLDDIR)/$(WEBALIZER)
 $(BLDDIR)/%.d : $(SRCDIR)/%.cpp
 	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
 	set -e; $(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
-	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$(subst /,/,$*).o $(BLDDIR)/$(subst /,/,$*).d|g' > $@
+	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$*.o $(BLDDIR)/$*.d|g' > $@
 
 #
 # Source files
