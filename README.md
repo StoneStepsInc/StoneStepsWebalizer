@@ -41,100 +41,43 @@ In addition, the Webalizer also supports DNS and GeoIP lookup capabilities.
 
 ### Windows
 
-Create a directory where you intend to keep Stone Steps Webalizer
-files (e.g. `c:\tools\webalizer`) and extract the content of the
-The Webalizer ZIP file into this directory.
+Windows pre-built package contains all run-time dependencies and can
+be used as-is. Extract package contents to any directory, such as
+`c:\tools\webalizer\`, and run it from there.
 
-Create a text file in the installation directory and save the file as
-`webalizer.conf`. This will be your default configuration file.
-
-In order to run Stone Steps Webalizer you need to know three
-directories:
-
-  a) the installation directory (e.g. `c:\tools\webalizer`);
-  b) the directory where web server log files are located (e.g.
-     `c:\winnt\system32\logfiles\w3svc1`);
-  c) the directory where you would like to keep generated report
-     files (e.g. `c:\inetpub\reports\`). The sample command below
-	 shows how to process a single IIS log file (line breaks are
-	 shown for display purposes only):
-
-    c:\tools\webalizer\webalizer -F iis -n your-domain-name
-            -o c:\inetpub\reports
-               c:\winnt\system32\logfiles\w3svc\ex050301.log
-
-The `-F` option specifies the log file type. The `-n` option specifies the
-domain name of your website. The `-o` option specifies the directory
-where Stone Steps Webalizer will generate reports.
+If you intend to use just one configuration file, the installation
+directory is probably the best place for it. Otherwise, you can use
+the `-c` option to specify any configuration file.
 
 ### Linux
 
-Stone Steps Webalizer requires following libraries to be installed
-before the executable can be launched:
+Stone Steps Webalizer depends on the following packages:
 
   * GD Library v2 or newer
   * Berkeley DB v4.3 or newer
   * ZLIB v1 or newer
   * MaxMindDB v1.2 or newer
 
-Create a directory where you intend to keep Stone Steps Webalizer
-files (e.g. /usr/local/webalizer) and run the commands shown below to
-extract the files.
+You can see development package names for some common Linux flavors in
+`devops/Docker.*` files in the source repository to figure out binary
+packages.
 
-    cd /usr/local/webalizer
-    gunzip webalizer_linux.gz
-    tar -xvf webalizer_linux.tar
-
-Create a text file in the installation directory and save
-it as webalizer.conf. This will be your default configuration file.
-
-Run the following command in order to verify if all library references
-in the Stone Steps Webalizer executable file are resolved properly on
-your machine:
-
-    ldd /usr/local/webalizer/webalizer
-
-If you see "not found" in the output, then you cannot run Stone Steps
-Webalizer until you resolve these references.
-
-If you configured Apache to output custom log files, look for
-CustomLog in this document for details on how to configure Apache log
-file processing.
-
-In order to run Stone Steps Webalizer you need to know three
-directories:
-
-  a) the installation directory (e.g. `/usr/local/webalizer`);
-  b) the directory where web server log files are located (e.g.
-     `/usr/local/apache2/logs`);
-  c) the directory where you would like to keep generated report files
-     (e.g. `/usr/local/apache2/reports`).
-	
-The sample command below shows how to process a single Apache log file
-(line breaks at are shown for display purposes only):
-
-    webalizer -F apache -n your-domain-name
-            -o /usr/local/apache2/reports
-               /usr/local/apache2/logs/access_log
-
-The `-F` option specifies the log file type. The `-n` option specifies the
-domain name of your website. The `-o` option specifies the directory
-where Stone Steps Webalizer will generate reports.
+Extract contents of a pre-built Linux package to any directory, such
+as `/usr/local/bin/webalizer/`, and run it from there.
 
 ### Building from Source
 
-In order to build the executable from the source, you also will need
-development versions of the libraries listed in the Linux sub-section
-above, as well as GCC v4 or newer installed.
+Building from the source on Windows requires Visual Studio 2019 or newer.
+All source dependencies are configured as Nuget packages and should be
+pulled automatically during a build. Compiled binaries are generated in
+the `build` directory.
 
-Change to the directory where you extracted the source and type the
-following command:
+Building from the source on Linux requires development packages for
+all dependencies. See `devops/Docker.*` files for development package
+names for some common Linux flavors.
 
-    make
-
-Once the build has been completed, you will find the executable in the
-`build` subdirectory.
-
+Once all dependencies are installed, change to the source directory 
+and run `make`. Compiled binaries are generated in the `build` directory.
 
 ## Running the Webalizer
 
@@ -161,7 +104,7 @@ collected from three distinct sources:
 If a log file name is found in any of the sources above, the previous
 set of log file names is cleared, which prevents the possibility of
 the same log file name accepted for processing more than once. For
-example, if log files `A` and `B` are specified in webalizer.conf, and
+example, if log files `A` and `B` are specified in `webalizer.conf`, and
 log files `C` and  `D` are specified on the command line, then only `C`
 and `D` will be processed.
 
@@ -3452,38 +3395,37 @@ are updated. Country totals do not include robot activity.
 
  * Country Totals
 
-Stone Steps Webalizer computes country totals at
-when ending visits. Consequently, in the incremental mode active
-visit data is not included into country totals until the last log
-file for the month is processed. The net effect of this is that
-the pie chart of all intermediate reports will show the Others
-slice bigger than it really is, because visit totals used as a 100%
-when computing pie slices are those of started visits. All active
-visits are terminated at the end of the month, so that the final
-pie chart accurately depicts the percentage of other countries.
+    Stone Steps Webalizer computes country totals at
+    when ending visits. Consequently, in the incremental mode active
+    visit data is not included into country totals until the last log
+    file for the month is processed. The net effect of this is that
+    the pie chart of all intermediate reports will show the Others
+    slice bigger than it really is, because visit totals used as a 100%
+    when computing pie slices are those of started visits. All active
+    visits are terminated at the end of the month, so that the final
+    pie chart accurately depicts the percentage of other countries.
 
  * Memory Usage
 
-The Webalizer makes liberal use of memory for internal
-data structures during analysis.  Lack of real physical memory will
-noticeably degrade performance by doing lots of swapping between memory
-and disk.  One user who had a rather large log file noticed that The
-Webalizer took over 7 hours to run with only 16 Meg of memory.  Once
-memory was increased, the time was reduced to a few minutes.
+    The Webalizer makes liberal use of memory for internal
+    data structures during analysis.  Lack of real physical memory will
+    noticeably degrade performance by doing lots of swapping between memory
+    and disk.  One user who had a rather large log file noticed that The
+    Webalizer took over 7 hours to run with only 16 Meg of memory.  Once
+    memory was increased, the time was reduced to a few minutes.
 
 
  * Performance
 
-The `Hide*`, `Group*`, `Ignore*`, `Include*` and `IndexAlias`
-configuration options can cause a performance decrease if lots of
-them are used.  The reason for this is that every log record must
-be scanned for each item in each list.  For example, if you are
-Hiding 20 objects, Grouping 20 more, and Ignoring 5,  each record
-is scanned, at most, 46 times (20+20+5 + an `IndexAlias` scan).
-On really large log files, this can have a profound impact.  It
-is recommended that you use the least amount of these configuration
-options that you can, as it will greatly improve performance.
-
+    The `Hide*`, `Group*`, `Ignore*`, `Include*` and `IndexAlias`
+    configuration options can cause a performance decrease if lots of
+    them are used.  The reason for this is that every log record must
+    be scanned for each item in each list.  For example, if you are
+    Hiding 20 objects, Grouping 20 more, and Ignoring 5,  each record
+    is scanned, at most, 46 times (20+20+5 + an `IndexAlias` scan).
+    On really large log files, this can have a profound impact.  It
+    is recommended that you use the least amount of these configuration
+    options that you can, as it will greatly improve performance.
 
 ## Final Notes
 
