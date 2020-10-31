@@ -181,7 +181,7 @@
     <None Include="..\lang\webalizer_lang.swedish" />
     <None Include="..\lang\webalizer_lang.turkish" />
     <None Include="..\lang\webalizer_lang.ukrainian" />
-    <None Include="..\README" />
+    <None Include="..\README.md" />
     <None Include="..\sample.conf" />
     <None Include="packages.package.config" />
     <None Include="webalizer.css" />
