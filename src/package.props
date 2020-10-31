@@ -25,7 +25,7 @@ xcopy /Q /Y "$(GDBinDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
 
 echo Copying additional files to $(OutDir)
 xcopy /Q /Y ..\sample.conf "$(OutDir)" &gt; nul
-xcopy /Q /Y ..\README "$(OutDir)" &gt; nul
+xcopy /Q /Y ..\README.md "$(OutDir)" &gt; nul
 xcopy /Q /Y ..\CHANGES "$(OutDir)" &gt; nul
 xcopy /Q /Y ..\COPYING "$(OutDir)" &gt; nul
 xcopy /Q /Y ..\Copyright "$(OutDir)" &gt; nul

@@ -175,7 +175,7 @@ endif
 PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
 PKG_OWNER := --owner=root --group=root
 PKG_FILES := sample.conf $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css \
-	$(SRCDIR)/webalizer.js README CHANGES COPYING Copyright
+	$(SRCDIR)/webalizer.js README.md CHANGES COPYING Copyright
 PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
 	galician german greek hungarian icelandic indonesian italian japanese \
 	korean latvian malay norwegian polish portuguese portuguese_brazilian \
