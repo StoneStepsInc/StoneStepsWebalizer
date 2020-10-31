@@ -210,12 +210,14 @@ stamps.
 Some special precautions need to be taken when using the incremental
 run capability of The Webalizer.  Configuration options should not be
 changed between runs, as that could cause corruption of the internal
-stored data.  For example, changing the MangleAgents level will cause
-different representations of user agents to be stored, producing invalid
-results in the user agents section of the report.  If you need to change
+stored data.
+
+For example, changing the `MangleAgents` level will cause different
+representations of user agents to be stored, producing invalid results
+in the user agents section of the report.  If you need to change
 configuration options, do it at the end of the month after normal
-processing of the previous month and before processing the current month.
-You may also want to delete the database file as well.
+processing of the previous month and before processing the current
+month. You may also want to delete the database file as well.
 
 The Webalizer also attempts to prevent data duplication by keeping
 track of the timestamp of the last record processed.  This timestamp
@@ -785,10 +787,11 @@ Given the string `yourmama/was/here`, the arguments `was`, `*here` and
     really the same URL and should be treated as such.  This
     option allows you to specify _additional_ strings that are
     to be treated the same way.  Use with care, improper use
-    could cause unexpected results. For example, if you specify
-    the alias string of `home`, a URL such as
-    `/somedir/homepages/brad/home.html` would be converted
-    into just /somedir/ which probably isn't what was intended.
+    could cause unexpected results.
+
+    For example, if you specify the alias string of `home`, a URL
+    such as `/somedir/homepages/brad/home.html` would be converted
+    into just `/somedir/` which probably isn't what was intended.
 
     This option is useful if your web server uses a different default
     index page other than the standard `index.html` or `index.htm`,
@@ -880,17 +883,20 @@ configuration file will not be processed.
 
 In addition to the custom and default configuration files, other
 configuration files may be processed conditionally using the `Include`
-configuration parameter. For example, the following configuration
-parameter will instruct Stone Steps Webalizer to read the
-configuration file called `webalizer_hide.conf` located in the specified
-directory:
+configuration parameter.
+
+For example, the following configuration parameter will instruct
+Stone Steps Webalizer to read the configuration file called
+`webalizer_hide.conf` located in the specified directory:
 
     Include    c:\tools\webalizer\webalizer_hide.conf
 
 Configuration files may be included based on the domain name. That is,
 if a domain name is specified with the `-n` option, the domain name in
 the Include directive will be compared with the command line domain
-name. For example, given these two configuration lines
+name.
+
+For example, given these two configuration lines:
 
     Include c:\tools\webalizer\webalizer_hide-a.conf  www.a.com
     Include c:\tools\webalizer\webalizer_hide-b.conf  www.b.com
@@ -925,15 +931,20 @@ results. The evaluation order is as follows:
 
 If you specify a configuration file on the command line, you
 can override options in it by additional command line options which
-follow. For example, most users will most likely want to create the
-default file `/etc/webalizer.conf` and place options in it to specify
-the hostname, log file, table options, etc...  At the end of the month
-when a different log file is to be used (the end of month log), you
-can run The Webalizer as usual, but put the different filename on the
-end of the command line, which will override the log file specified in
-the configuration file. It should be noted that you cannot override
-some configuration file options by the use of command line arguments.
-For example, if you specify "Quiet yes" in a configuration file, you
+follow.
+
+For example, most users will most likely want to create the default
+file `/etc/webalizer.conf` and place options in it to specify the
+hostname, log file, table options, etc.
+
+At the end of the month when a different log file is to be used (the
+end of month log), you can run The Webalizer as usual, but put the
+different filename on the end of the command line, which will override
+the log file specified in the configuration file. It should be noted
+that you cannot override some configuration file options by the use
+of command line arguments.
+
+For example, if you specify `Quiet yes` in a configuration file, you
 cannot override this with a command line argument, as the command line
 option only _enables_ the feature (`-q` option).
 
@@ -1278,18 +1289,21 @@ will be used (which should be sufficient for most sites).
 
     This allows additional `index.html` aliases to be defined.
     Normally, The Webalizer scans for and strips the string
-"index." from URL's before processing them.  This turns a
+    "index." from URL's before processing them.  This turns a
     URL such as `/somedir/index.html` into just `/somedir/` which
     is really the same URL.  This keyword allows _additional_
     names to be treated in the same fashion for sites that use
     different default names, such as `home.html`.  The string
     is scanned for anywhere in the URL, so care should be used
-    if and when you define additional aliases.  For example,
-    if you were to use an alias such as `home`, the URL
-`/somedir/homepages/brad/home.html` would be turned into just
-`/somedir/` which probably isn't the intended result.  Instead,
-    you should have specified `home.htm` which would correctly
-    turn the URL into `/somedir/homepages/brad/` like intended.
+    if and when you define additional aliases.
+
+    For example, if you were to use an alias such as `home`, the
+    URL `/somedir/homepages/brad/home.html` would be turned into
+    just `/somedir/` which probably isn't the intended result.
+    Instead, you should have specified `home.htm` which would
+    correctly turn the URL into `/somedir/homepages/brad/` like
+    intended.
+
     It should also be noted that specified aliases are scanned
     for in EVERY log record... A bunch of aliases will noticeably
     degrade performance as each record has to be scanned for
@@ -1306,18 +1320,20 @@ will be used (which should be sufficient for most sites).
     Normally, The Webalizer will keep track of the user agent field
     verbatim. Unfortunately, there are a ton of different names that
     user agents go by, and the field also reports other items such as
-    machine type and OS used. For example, Netscape 4.03 running on
-    Windows 95 will report a different string than Netscape 4.03
-    running on Windows NT, so even though they are the same browser
-    type, they will be considered as two totally different browsers
-    by The Webalizer. For that matter, Netscape 4.0 running on Windows
-    NT will report different names if one is run on an Alpha and the
-    other on an Intel processor! Internet Exploder is even worse,
-    as it reports itself as if it were Netscape and you have to
-    search the given string a little deeper to discover that it is
-    really MSIE!  In order to consolidate generic browser types,
-    this option will cause The Webalizer to `mangle` the user agent
-    field, attempting to consolidate generic browser types.
+    machine type and OS used.
+
+    For example, Netscape 4.03 running on Windows 95 will report a
+    different string than Netscape 4.03 running on Windows NT, so
+    even though they are the same browser type, they will be considered
+    as two totally different browsers by The Webalizer. For that matter,
+    Netscape 4.0 running on Windows NT will report different names if
+    one is run on an Alpha and the other on an Intel processor!
+    Internet Exploder is even worse, as it reports itself as if it
+    were Netscape and you have to search the given string a little
+    deeper to discover that it is really MSIE! In order to consolidate
+    generic browser types, this option will cause The Webalizer to
+    "mangle" the user agent field, attempting to consolidate generic
+    browser types.
 
     Stone Steps Webalizer has two methods for mangling user agent
     names. One is the classic Webalizer method and one is a new
@@ -1414,10 +1430,11 @@ will be used (which should be sufficient for most sites).
     end.  There is no command line option for this keyword.
 
     This configuration parameter supports additional syntax
-    to be able to combine various search terms. For example,
-    somebody using Google to find pages that contain all
-    words and to be a certain file type (e.g. PDF) use
-    different search arguments compared to a usual search.
+    to be able to combine various search terms.
+
+    For example, somebody using Google to find pages that
+    contain all words and to be a certain file type (e.g. PDF)
+    use different search arguments compared to a usual search.
     Following configuration allows Stone Steps Webalizer to
     process such cases using this configuration:
 
@@ -1425,9 +1442,11 @@ will be used (which should be sufficient for most sites).
         SearchEngine    www.google.     as_filetype=File Type
 
     All matching search strings will be reported on one
-    line, separated by the term qualifier. For example, the
-    following line describes that somebody was looking fora
-    PDF file containing words `webalizer` and `apache`:
+    line, separated by the term qualifier.
+
+    For example, the following line describes that somebody
+    was looking for a PDF file containing words `webalizer`
+    and `apache`:
 
         [All Words] webalizer apache [File Type] pdf
 
@@ -1477,10 +1496,11 @@ will be used (which should be sufficient for most sites).
 * `DownloadPath`
 
     Lists a URL path that Stone Steps Webalizer will use to
-    detect file downloads for the downloads report. For example,
-    if you would like to track downloads of a file called
-    util.zip located in the `/downloads/` directory, add the
-    following entry to `webalizer.conf`:
+    detect file downloads for the downloads report.
+
+    For example, if you would like to track downloads of a file
+    called `util.zip` located in the `/downloads/` directory,
+    add the following entry to `webalizer.conf`:
 
         DownloadPath    /downloads/util.zip    Utility Download
 
@@ -1519,12 +1539,13 @@ will be used (which should be sufficient for most sites).
     qualified domain names. GroupURLDomains may be used to group
     these domains in the URL report. The value of this
     configuration parameter is the number of domain labels, past
-    the top-level one, to report. For example, if
-    `GroupURLDomains` is set to `1`, two labels will be reported
-    (e.g. `stonesteps.ca`); if this parameter is set to `2`, three
-    labels will be reported (e.g. `forums.stonesteps.ca`); and so
-    on. If `GroupURLDomains` is set to `0`, no this type of grouping
-    will not be performed.
+    the top-level one, to report.
+
+    For example, if `GroupURLDomains` is set to `1`, two labels will
+    be reported (e.g. `stonesteps.ca`); if this parameter is set to
+    `2`, three labels will be reported (e.g. `forums.stonesteps.ca`);
+    and so on. If `GroupURLDomains` is set to `0`, no this type of
+    grouping will not be performed.
 
     Default value: `0`
 
@@ -1556,9 +1577,11 @@ will be used (which should be sufficient for most sites).
     configuration file after the main configuration file has
     been processed. This parameter may optionally be followed by
     the domain name to make the include directive domain
-    specific. For example, the following include directive will
-    only be processed if the domain name specified with the `-n`
-    option is `www.a.com`.
+    specific.
+
+    For example, the following include directive will only be
+    processed if the domain name specified with the `-n` option
+    is `www.a.com`.
 
         Include   c:\tools\webalizer\a.conf    www.a.com
 
@@ -1627,10 +1650,11 @@ will be used (which should be sufficient for most sites).
     Many web servers make it possible to configure a default
     document for each directory. If a user requests a URL that
     is a directory (e.g. `http://127.0.0.1/books/`), the default
-    document from that directory will be served. For example,
-    IIS is usually configured with default.htm as a default
-    document; Apache, as well as many other Unix-originated web
-    servers, is configured to serve index.html as a default
+    document from that directory will be served.
+
+    For example, IIS is usually configured with default.htm as a
+    default document; Apache, as well as many other Unix-originated
+    web servers, is configured to serve index.html as a default
     document. Stone Steps Webalizer, by default, adds index. to
     the list of default documents. When processing a URL, Stone
     Steps Webalizer checks if the requested file matches any
@@ -1772,9 +1796,11 @@ will be used (which should be sufficient for most sites).
     text within the URL. Trailing asterisk, like that shown above,
     will match URLs from the beginning. Note, however, that the
     order of entries matches and longer ones should be listed
-    first. For example, an entry with an ID `1` and a trailing
-    asterisk would mask the following ID `18` and the latter
-    would never appear in the report:
+    first.
+
+    For example, an entry with an ID `1` and a trailing asterisk
+    would mask the following ID `18` and the latter would never
+    appear in the report:
 
         PageTitle     /post/1*    Wild Life Photography
         PageTitle     /post/18*   Action Photography
@@ -1925,8 +1951,7 @@ will be used (which should be sufficient for most sites).
 
     Default value: `0`
 
-* `GraphFontNormal`
-* `GraphFontBold`
+* `GraphFontNormal`, `GraphFontBold`
 
     Define fully-qualified paths to TrueType font files that
     Stone Steps Webalizer will use when creating graphs. If
@@ -2458,16 +2483,16 @@ length.
     agents will be reported in a group and individually, but
     Internet Explorer will be reported only as a group.
 
-    GroupAgent         Chrome
-    GroupAgent         Firefox
+        GroupAgent         Chrome
+        GroupAgent         Firefox
 
-    HideGroupedItems   yes
+        HideGroupedItems   yes
 
-    GroupAgent         MSIE        Internet Explorer
+        GroupAgent         MSIE        Internet Explorer
 
-    HideGroupedItems   no
+        HideGroupedItems   no
 
-    GroupAgent         Opera
+        GroupAgent         Opera
 
     Default value: `no`
 
@@ -2822,7 +2847,7 @@ or more lines.  There are no command line counterparts to these keywords.
 
     Allows code to be inserted at the very beginning of the
     HTML files. Be careful not to include any HTML here, as it
-    is inserted _before_ the `<HTML>` tag in the file.  Use it
+    is inserted _before_ the `<html>` tag in the file.  Use it
     for server-side scripting capabilities, such as php3, to
     insert scripting files and other directives.
 
@@ -2831,7 +2856,7 @@ or more lines.  There are no command line counterparts to these keywords.
 
 * `HTMLHead`
 
-    Allows you to insert HTML code between the `<HEAD></HEAD>`
+    Allows you to insert HTML code between the `<head></head>`
     block.  There is no default.  Useful for adding scripts
     to the HTML page, such as Javascript or php3, or even
     just for adding a few META tags to the document.
@@ -2852,7 +2877,7 @@ or more lines.  There are no command line counterparts to these keywords.
 
     This keyword defines HTML code that is placed after the
     title and "summary period/generated on" lines, just before
-    the initial horizontal rule `<HR>` tag.  Normally this keyword
+    the initial horizontal rule `<hr>` tag.  Normally this keyword
     isn't needed, but is provided in case you included a large
     graphic or some other weird formatting tag in the HTMLHead
     section that needs to be cleaned up or terminated before the
@@ -2905,9 +2930,10 @@ or more lines.  There are no command line counterparts to these keywords.
     Configures Stone Steps Webalizer to append the current
     language code to the generated HTML and image files, so
     Apache language extensions can be used to browse language-
-    specific reports. For example, if the current
-    language is Japanese, index.html will be named
-    `index.html.ja`.
+    specific reports. 
+
+    For example, if the current language is Japanese, `index.html`
+    will be named `index.html.ja`.
 
     Default value: `no`
 
@@ -2940,8 +2966,8 @@ the physical structure of the log file. Stone Steps Webalizer recognizes
 `#Fields` directives and dynamically reconfigures its parser to process log
 file entries following this directive in the matching order.
 
-IIS log format largely follows the W3C standard, with one excepion - it
-outputs request processing time (time-taken) in milliseconds instead of
+IIS log format mostly follows the W3C standard, with one excepion - it
+outputs request processing time (`time-taken`) in milliseconds instead of
 seconds.
 
 ### Apache 
@@ -2950,20 +2976,21 @@ Apache logs may be customized using LogFormat and CustomLog directives
 (these are Apache configuration keywords, not those used by Stone
 Steps Webalizer). Stone Steps Webalizer can parse the CustomLog
 directive, if it's specified anywhere in the configuration using the
-ApacheLogFormat configuration parameter. For example (the line is
-broken for display purposes; it would actually appear as a single line
-in the configuration file):
+ApacheLogFormat configuration parameter.
+
+For example (the line is broken for display purposes; it would actually
+appear as a single line in the configuration file):
 
     ApacheLogFormat
           %a %l \"%u\" %t %m "%U" \"%q\" %p %>s %b %D
           \"%{Referer}i\" \"%{User-Agent}i\"
 
-In the preceding example the user name field (%u) is enclosed in
-quotes because user names may contain spaces. The URL stem field (%U)
+In the preceding example the user name field (`%u`) is enclosed in
+quotes because user names may contain spaces. The URL stem field (`%U`)
 is quoted as well because Apache logs URL file paths decoded and URLs
-may contain spaces. The query string field (%q) is quoted because
+may contain spaces. The query string field (`%q`) is quoted because
 it may be reported as an empty string. Numeric fields, on the other
-hand, such as request processing time (%D), do not need to be quoted.
+hand, such as request processing time (`%D`), do not need to be quoted.
 
 It is important to understand that Apache log files do not contain log
 format information (unlike log files in W3C extended format) and
@@ -2978,24 +3005,25 @@ information in mixed formats and cannot be analyzed. We also recommend
 that you use the `%p` field (port number), as shown in the example
 above, to make it possible to distinguish HTTP and HTTPS requests.
 
+### Common Log Format (CLF)
+
 The Webalizer supports CLF log formats, which should work for just
 about everyone.  If you want User Agent or Referrer information, you
 need to make sure your web server supplies this information in it's
 log file, and in a format that the Webalizer can understand.  While
 The Webalizer will try to handle many of the subtle variations in
 log formats, some will not work at all.   Most web servers output
-CLF format logs by default.  For Apache, in order to produce the
-proper log format, add the following to the httpd.conf file:
+CLF format logs by default.
+
+For Apache, in order to produce the proper log format, add the following
+to the  httpd.conf   file:
 
     LogFormat "%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\""
 
 This instructs the Apache web server to produce a `combined` log
 that includes the referrer and user agent information on the end of
 each record, enclosed in quotes (This is the standard recommended
-by both Apache and NCSA).   Netscape and other web servers have
-similar capabilities to alter their log formats.  (note: the above
-works for apache servers up to V1.2.  V1.3 and higher now have additional
-ways to specify log formats... refer to included documentation).
+by both Apache and NCSA).
 
 ## Referrers
 
@@ -3031,13 +3059,20 @@ take the form `-`.
 In order to handle all these variations, The Webalizer parses the referrer
 field in a certain way.  First, if the referrer string begins with `http`,
 it assumes it is a normal referral and converts the `http://` and following
-hostname to lowercase in order to simplify hiding if desired.  For example,
-the referrer `HTTP://WWW.MyHost.Com/This/Is/A/HTML/Document.html` will become
-`http://www.myhost.com/This/Is/A/HTML/Document.html`.  Notice that only the
-`http://` and hostname are converted to lower case... The rest of the
-referrer field is left alone.  This follows standard convention, as the
-actual method (HTTP) and hostname are always case insensitive, while the
-document name portion is case sensitive.
+hostname to lowercase in order to simplify hiding if desired.
+
+For example, the referrer
+
+    HTTP://WWW.MyHost.Com/This/Is/A/HTML/Document.html
+
+will become
+
+    http://www.myhost.com/This/Is/A/HTML/Document.html
+
+Notice that only the `http://` and hostname are converted to lower case.
+The rest of the referrer field is left alone. This follows standard
+convention, as the actual method (HTTP) and hostname are always case
+insensitive, while the document name portion is case sensitive.
 
 Referrers that came from search engines, dynamic HTML documents, CGI
 scripts and other external programs usually tack on additional information
@@ -3061,11 +3096,11 @@ field, and if not turned into something unique, could not be hidden without
 possibly hiding other referrers that shouldn't be.
 
 Stone Steps Webalizer supports a configuration parameter,
-SpamReferrer, which lists referrer patterns considered as spam.
+`SpamReferrer`, which lists referrer patterns considered as spam.
 Visitors submitting these requests will be red-flagged and marked in
 the hosts report as spammers.
 
-Multiple SpamReferrer entries may be used to specify more than one
+Multiple `SpamReferrer` entries may be used to specify more than one
 pattern. For example, the first two entries below will red-flag all
 requests with the referrer URL containing words gambling or poker
 anywhere in the referrer URL. The third entry will match only if the
@@ -3115,11 +3150,12 @@ to reduce aliasing and improve report readability.
 IMPORTANT: A normalized URL is not a well-formed URL in the sense that it should not
 be used verbatim in HTML as a copy-and-paste href link, but it could be used in the
 URL field in a web browser because URL normalization does not change the meaning of
-existing URL components, but merely makes them more readable. For example, a normalized
-URL `/?q="abc"` is more readable than the equivalent well-formed URL `/?q=%22abc%22`, but
-if it is copy-pasted into an href attribute in HTML without proper HTML encoding, it
-will break that HTML because the double quotes in the URL will interfere with double
-quotes in the HTML attribute.
+existing URL components, but merely makes them more readable.
+
+For example, a normalized URL `/?q="abc"` is more readable than the equivalent
+well-formed URL `/?q=%22abc%22`, but if it is copy-pasted into an href attribute
+in HTML without proper HTML encoding, it will break that HTML because the double
+quotes in the URL will interfere with double quotes in the HTML attribute.
 
 URL normalization is performed before any other work is done against all URLs, which
 follows the rules described below, so all configuration filters should use normalized
@@ -3150,16 +3186,16 @@ characters in all ignore, hide and group URL patterns.
   * A percent character that is not a part of a percent-encoding sequence in a URL
     will be percent-encoded (e.g. `/a%b/` will become `/a%25b/`).
 
-If you intend to filter URLs with spaces, make sure to use EnablePhraseValues, so the
+If you intend to filter URLs with spaces, make sure to use `EnablePhraseValues`, so the
 space in the pattern wouldn't be misinterpreted as a pattern/value separator. In other
-words, if EnablePhraseValues is not enabled, the following pattern with a space will
+words, if `EnablePhraseValues` is not enabled, the following pattern with a space will
 be interpreted as as a URL `"*/ab"` with a search argument `"cd/"`, as in `"/ab/?cd/"`.
 
     IgnoreURL  */ab cd/
 
 Note that once some URL path pattern is found, only search arguments of the matching
 path pattern will be checked, but no further. This may produce unexpected results if
-broader URL path patterns (e.g. `*`) are placed first in the list of IgnoreURL filters.
+broader URL path patterns (e.g. `*`) are placed first in the list of `IgnoreURL` filters.
 Consider these filters:
 
     IgnoreURL   /abc/*
@@ -3218,20 +3254,24 @@ log files, and a myriad of other conditions, some of these numbers
 cannot, without absolute accuracy, be calculated.  In particular,
 Visits, Entry Pages and Exit Pages are suspect to random errors
 due to the above and other conditions.  The reason for this is
-twofold, 1) Log files are finite in size and time interval, and
-2) There is no way to distinguish multiple individual users apart
-given only an IP address.  Because log files are finite, they have
-a beginning and ending, which can be represented as a fixed time
-period.  There is no way of knowing what happened previous to this
-time period, nor is it possible to predict future events based on
-it.  Also, because it is impossible to distinguish individual users
-apart, multiple users that have the same IP address all appear to
-be a single user, and are treated as such.  This is most common where
-corporate users sit behind a proxy/firewall to the outside world,
-and all requests appear to come from the same location (the address
-of the proxy/firewall itself).  Dynamic IP assignment (used with
-dial-up internet accounts) also present a problem, since the same
-user will appear as to come from multiple places.
+twofold, 
+
+  1) Log files are finite in size and time interval, and
+  2) There is no way to distinguish multiple individual users apart
+     given only an IP address.
+
+Because log files are finite, they have a beginning and ending, which
+can be represented as a fixed time period. There is no way of knowing
+what happened previous to this time period, nor is it possible to
+predict future events based on it.  Also, because it is impossible
+to distinguish individual users apart, multiple users that have the
+same IP address all appear to be a single user, and are treated as
+such. This is most common where corporate users sit behind a
+proxy/firewall to the outside world, and all requests appear to come
+from the same location (the address of the proxy/firewall itself).
+ Dynamic IP assignment (used with dial-up internet accounts) also
+present a problem, since the same user will appear as to come from
+multiple places.
 
 For example, suppose two users visit your server from XYZ company,
 which has their network connected to the Internet by a proxy server
@@ -3329,15 +3369,17 @@ Language files must be saved in the UTF-8 character encoding.
 
 All existing language files have been converted to UTF-8. If you would
 like to convert some other character encoding to UTF-8, you can use the
-iconv utility. For example, the following command converts a Japanese
-language file from euc-jp to utf-8:
+iconv utility.
+
+For example, the following command converts a Japanese language file
+from euc-jp to utf-8:
 
     $ iconv -f euc-jp -t utf-8 -o webalizer_lang.utf-8.japanese webalizer_lang.japanese
 
 Stone Steps Webalizer may be configured to generate usage graphs using
 TrueType fonts and UTF-8 character sets. In order to configure Stone
-Steps Webalizer to use TrueType fonts, add GraphFontNormal and
-GraphFontBold directives to the webalizer.conf file. Each of these
+Steps Webalizer to use TrueType fonts, add `GraphFontNormal` and
+`GraphFontBold` directives to the webalizer.conf file. Each of these
 configuration variables must be a fully-qualified path to the selected
 TrueType font file(s).
 
@@ -3351,8 +3393,8 @@ Tahoma Bold for all graph titles:
 If GraphFontNormal and GraphFontBold are not specified, or if the
 associated font files cannot be found, Stone Steps Webalizer will use
 the default raster fonts to generate text for the graphs. Note that
-raster fonts may not have suitable character representation for non-
-Latin characters.
+raster fonts may not have suitable character representation for
+non-Latin characters.
 
 You can control the appearance of the generated text using three
 configuration variables shown below. The first two variables define
@@ -3365,9 +3407,11 @@ instructs Stone Steps Webalizer whether to smooth font edges or not.
 
 If you would like to use non-Latin UTF-8 characters in your language
 files, make sure that the TrueType font you selected contains the
-characters you need. For example, Lucida Console shipped with the
-English version of Windows does not have Japanese characters and if
-used to generate graphs will result in unusable graphs.
+characters you need.
+
+For example, Lucida Console shipped with the English version of
+Windows does not have Japanese characters and if used to generate
+graphs will result in unusable graphs.
 
 ## Robots
 
@@ -3375,10 +3419,10 @@ Robots are identified before user agents are mangled. Some robot related
 features, such as highlighting robots in the Top Agents report, may be
 disabled if agent mangling is active.
 
-Log records matching IgnoreRobot entries, are completely ignored and
+Log records matching `IgnoreRobot` entries, are completely ignored and
 none of the robot-related entries are updated in this case.
 
-Hosts are marked as robots when user agent matches one of the Robot
+Hosts are marked as robots when user agent matches one of the `Robot`
 entries and only when a host is seen for the first time (i.e. when a
 database host entry is created). If a human and a robot share the same
 IP address, this address will be marked as robot or non-robot depending
@@ -3386,7 +3430,7 @@ on which user agent was active when the first hit was logged by the
 web server.
 
 Active visits are marked as robot visits when user agents matches one
-of the Robot entries, regardless whether the corresponding hosts are
+of the `Robot` entries, regardless whether the corresponding hosts are
 marked as robots or not. Visit robot flag is used when user agents
 are classified as robots or not and when website and country totals
 are updated. Country totals do not include robot activity.
@@ -3420,9 +3464,12 @@ are updated. Country totals do not include robot activity.
     The `Hide*`, `Group*`, `Ignore*`, `Include*` and `IndexAlias`
     configuration options can cause a performance decrease if lots of
     them are used.  The reason for this is that every log record must
-    be scanned for each item in each list.  For example, if you are
-    Hiding 20 objects, Grouping 20 more, and Ignoring 5,  each record
-    is scanned, at most, 46 times (20+20+5 + an `IndexAlias` scan).
+    be scanned for each item in each list.
+
+    For example, if you are Hiding 20 objects, Grouping 20 more, and
+    Ignoring 5,  each record is scanned, at most, 46 times (`20+20+5+`
+    an `IndexAlias` scan).
+
     On really large log files, this can have a profound impact.  It
     is recommended that you use the least amount of these configuration
     options that you can, as it will greatly improve performance.
