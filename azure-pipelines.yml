@@ -68,8 +68,8 @@ stages:
       BIN_OUT_DIR: $(BUILD_DIR)\webalizer
       BIN_INT_DIR: $(BUILD_DIR)\webalizer\obj
 
-      # package intermediate directory must be one level below BIN_OUT_DIR
-      PKG_OUT_DIR: $(BUILD_DIR)\package-$(VERSION_LABEL)
+      # package directories must be one level below BIN_OUT_DIR for scripts to access build files via parent paths
+      PKG_OUT_DIR: $(BIN_OUT_DIR)\package-$(VERSION_LABEL)
       PKG_INT_DIR: $(BIN_OUT_DIR)\package-tmp
   
     pool:
