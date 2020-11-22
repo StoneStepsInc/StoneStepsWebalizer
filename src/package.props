@@ -19,7 +19,7 @@ rem Intermediate files generated during packaging will be stored in IntDir and m
 rem be discarded after a package is created.
 rem
 echo Copying binaries to $(OutDir)
-xcopy /Q /Y $(IntDir)..\webalizer.exe "$(OutDir)" &gt; nul
+xcopy /Q /Y "$(IntDir)..\webalizer.exe" "$(OutDir)" &gt; nul
 xcopy /Q /Y "$(BDBBinDir)$(BDBLibName).dll" "$(OutDir)" &gt; nul
 xcopy /Q /Y "$(GDBinDir)$(GDLibName).dll" "$(OutDir)" &gt; nul
 
