@@ -483,7 +483,7 @@ bool state_t::initialize(void)
             throw exception_t(0, "Incompatible database format (time settings)");
 
          // upgrade older databases to make them compatible with the latest version
-         if(sysnode.appver && sysnode.appver_last != VERSION)
+         if(sysnode.appver && sysnode.appver_last != VERSION && !config.db_info)
             upgrade_database(sysnode, sysdb);
       }
 
