@@ -472,6 +472,9 @@ bool state_t::initialize(void)
          if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
             throw exception_t(0, string_t::_format("Cannot open a database with a version prior to v%s", state_t::get_version(MIN_APP_DB_VERSION).c_str()));
          
+         if(sysnode.appver_last > VERSION && !config.db_info)
+             throw exception_t(0, string_t::_format("Cannot open a database with a greater version (%s)", state_t::get_version(sysnode.appver_last).c_str()));
+
          if(!sysnode.check_size_of())
             throw exception_t(0, "Incompatible database format (data type sizes)");
 
