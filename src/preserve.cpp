@@ -457,17 +457,20 @@ bool state_t::initialize(void)
       // the database and current run parameters.
       //
       if(sysdb.get_sysnode_by_id(sysnode, nullptr)) {
-         // cannot read any data if byte order isn't the same
+         // cannot read any data if byte order isn' t the same
          if(!sysnode.check_byte_order())
             throw exception_t(0, "Incompatible database format (byte order)");
 
          //
-         // Time stamps in the databases prior to v4 were saved without UTC offsets and
-         // cannot be interpreted without having to propagate current UTC offset from 
-         // the configuration to all the nodes, which would require a significant effort. 
-         // Instead, let's just cut off access to old databases here. In addition to this,
-         // all data counters in v4 were changed to 64-bit integers. Only continue if we
-         // need to read just the sysnode and query the database directly.
+         // Except for printing database information, cut off access to databases created
+         // prior to v4, which we cannot open because of these incompatibilities:
+         //
+         //  * Time stamps in those databases were saved without UTC offsets and cannot
+         //    be interpreted without having to propagate current UTC offset from the
+         //    configuration to all the data nodes.
+         //  * All data counters in v4 were changed to 64-bit integers and we would need
+         //    to double the amount of code in data node deserialization to read older
+         //    nodes with 32-bit data data counters.
          //
          if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
             throw exception_t(0, string_t::_format("Cannot open a database with a version prior to v%s", state_t::get_version(MIN_APP_DB_VERSION).c_str()));
@@ -593,24 +596,27 @@ void state_t::database_info(void) const
    printf("Created by      : %s\n", state_t::get_version(get_sysnode().appver).c_str());
    printf("Last updated by : %s\n", state_t::get_version(get_sysnode().appver_last).c_str());
    
-   // cannot read totals ifrom a database created prior to v4
+   // cannot read totals or data counters from a database created prior to v4
    if(sysnode.appver_last >= MIN_APP_DB_VERSION) {
       // output the first day of the month and the last timestamp
       printf("First day       : %04d/%02d/%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.f_day);
       printf("Log time        : %04d/%02d/%02d %02d:%02d:%02d\n", totals.cur_tstamp.year, totals.cur_tstamp.month, totals.cur_tstamp.day, totals.cur_tstamp.hour, totals.cur_tstamp.min, totals.cur_tstamp.sec);
-   }
 
-   // output active visits and downloads
-   printf("Active visits   : %" PRIu64 "\n", database.get_vcount());
-   printf("Active downloads: %" PRIu64 "\n", database.get_dacount());
+      // output active visits and downloads
+      printf("Active visits   : %" PRIu64 "\n", database.get_vcount());
+      printf("Active downloads: %" PRIu64 "\n", database.get_dacount());
+   }
 
    printf("Incremental     : %s\n", get_sysnode().incremental ? "yes" : "no");
    printf("Batch           : %s\n", get_sysnode().batch ? "yes" : "no");
 
-   printf("Local time      : %s\n", get_sysnode().utc_time ? "no" : "yes");
+   // cannot read time settings from a database created prior to v4
+   if(sysnode.appver_last >= MIN_APP_DB_VERSION) {
+      printf("Local time      : %s\n", get_sysnode().utc_time ? "no" : "yes");
 
-   if(!get_sysnode().utc_time)
-      printf("UTC offset      : %d min\n", get_sysnode().utc_offset);
+      if(!get_sysnode().utc_time)
+         printf("UTC offset      : %d min\n", get_sysnode().utc_offset);
+   }
 
    // output numeric storage sizes and byte order in debug mode
    if(config.debug_mode) {
@@ -648,14 +654,18 @@ void state_t::restore_state(void)
          printf("%s\n",config.lang.msg_ign_hist);
    }
 
-   // sysnode is not populated if the databases is new or has been truncated
+   // sysnode is not populated if the database is new or has been truncated
    if(!sysnode.appver)
       return;
 
    // cannot read any data nodes from old databases
-   if(config.db_info && sysnode.appver_last < MIN_APP_DB_VERSION)
+   if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
       throw exception_t(0, string_t::_format("%s (incompatible database)\n", config.lang.msg_bad_data));
 
+   // no need to restore the rest if we just need database information
+   if(config.db_info)
+      return;
+   
    // restore current totals
    if(!database.get_tgnode_by_id(totals))
       throw exception_t(0, string_t::_format("%s (totals)\n", config.lang.msg_bad_data));
@@ -663,10 +673,6 @@ void state_t::restore_state(void)
    // keep the serial time stamp to avoid doing math in every put_node call
    int64_t htab_tstamp = totals.cur_tstamp.mktime();
 
-   // no need to restore the rest if we just need database information
-   if(config.db_info)
-      return;
-   
    // get daily totals
    for(i = 0; i < 31; i++) {
       // nodeid has already been set in init_counters
