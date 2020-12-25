@@ -1171,12 +1171,12 @@ void state_t::unpack_active_hnode_cb(hnode_t& hnode, bool active, void *arg)
 
 string_t state_t::get_app_version(void)
 {
-   return string_t::_format("%u.%u.%u.%u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, BUILD_NUMBER);
+   return string_t::_format("%u.%u.%u-%u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, BUILD_NUMBER);
 }
 
 string_t state_t::get_version(u_int version)
 {
-   return string_t::_format("%u.%u.%u.%u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), VERSION_PATCH_EX(version), BUILD_NUMBER_EX(version));
+   return string_t::_format("%u.%u.%u-%u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), VERSION_PATCH_EX(version), BUILD_NUMBER_EX(version));
 }
 
 //

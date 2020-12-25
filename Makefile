@@ -172,7 +172,7 @@ ifeq ($(strip $(PKG_ARCH_ABBR)),)
 PKG_ARCH_ABBR := $$(uname -p)
 endif
 
-PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q | sed -e s/\\./-/g).tar
+PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q).tar
 PKG_OWNER := --owner=root --group=root
 PKG_FILES := sample.conf $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css \
 	$(SRCDIR)/webalizer.js README.md CHANGES COPYING Copyright
