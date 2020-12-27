@@ -62,8 +62,12 @@ You can see development package names for some common Linux flavors in
 `devops/Docker.*` files in the source repository to figure out binary
 packages.
 
-Extract contents of a pre-built Linux package to any directory, such
-as `/usr/local/bin/webalizer/`, and run it from there.
+Extract contents of a pre-built Linux package to any directory and run
+it from there.
+
+If you intend to use just one configuration file, `/etc` is the best place
+for it. Otherwise, you can use the `-c` option to specify any configuration
+file.
 
 ### Building from Source
 
