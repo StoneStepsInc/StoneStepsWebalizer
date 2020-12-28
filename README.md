@@ -273,7 +273,7 @@ user_YYYYMM.tab         | tab delimited usernames file
 search_YYYYMM.tab       | tab delimited search string file
 
 The yearly (index) report shows statistics for a number of months
-specified by the HistoryLength configuration parameter and links to
+specified by the `HistoryLength` configuration parameter and links to
 each month.  The monthly report has detailed statistics for that month
 with additional links to any URL's and referrers found.
 The various totals shown are explained below.
@@ -333,8 +333,8 @@ impossible to determine using just logs and the HTTP protocol
   Whenever a request is made to the server from a given IP address
 (host), the amount of time since a previous request by the address
 is calculated.  If the time difference is greater than a
-pre-configured `visit timeout` value (or has never made a request before),
-it is considered a `new visit`, and this total is incremented for the
+pre-configured _visit timeout_ value (or has never made a request before),
+it is considered a _new visit_, and this total is incremented for the
 host. The default timeout value is 30 minutes (can be changed), so if
 a user visits your site at 1:00 in the afternoon, and then returns at
 3:00, two visits would be  registered.
@@ -369,7 +369,7 @@ had, regardless of the web servers reporting quirks.
 By default, most servers only log outgoing amounts (i.e. response
 sizes). IIS and Apache may log incoming amounts as well (i.e.
 request sizes). Stone Steps Webalizer will include this type of
-traffic into the amount reported as Transfer if UpstreamTraffic is
+traffic into the amount reported as `Transfer` if `UpstreamTraffic` is
 set to `yes` in the configuration file.
 
 Transfer amounts are reported since v4.2 with a unit suffix, such as
@@ -604,7 +604,7 @@ and `-f` are different options.
 
 * `-M num`
 
-    Mangle user agent names. See MangleAgents entry below for
+    Mangle user agent names. See `MangleAgents` entry below for
     details about this option.
 
     Configuration file keyword: `MangleAgents`
@@ -621,7 +621,7 @@ and `-f` are different options.
 
 * `-D name`
 
-    This allows the specification of a DNS Cache file name.  This
+    This allows the specification of a DNS cache file name.  This
     filename MUST be specified if you have dns lookups enabled
     (using the `-N` command line switch or `DNSChildren` configuration
     keyword).  The filename is relative to the default output
@@ -698,8 +698,8 @@ and `-f` are different options.
 ### Hide Options
 
 The following options take a string argument to use as a comparison
-for matching.  Except for the IndexAlias, ExcludeSearchArg and
-IncludeSearchArg options, the string argument can be plain text, or
+for matching.  Except for the `IndexAlias`, `ExcludeSearchArg` and
+`IncludeSearchArg` options, the string argument can be plain text, or
 plain text that either starts or ends with the wildcard character `*`.
 
 A string argument without an asterisk will be interpreted as a
@@ -709,7 +709,7 @@ string starting with an asterisk will match the end of the string.
 
 Note that asterisks may be specified only at the beginning or end of
 the argument and not in the middle. That is, this argument is invalid:
-`some*text`. For Example:
+`some*text`. For example:
 
 Given the string `yourmama/was/here`, the arguments `was`, `*here` and
 `your*` will all produce a match.
@@ -975,15 +975,15 @@ will be used (which should be sufficient for most sites).
     directory and the directory identified with `LogDir` will be
     searched. If used more than one time, Stone Steps Webalizer
     will process log records from each file in their time stamp
-    order. If LogFile is not specified and none is provided through
+    order. If `LogFile` is not specified and none is provided through
     the command line, the logfile defaults to `STDIN`.
 
 * `LogDir`
 
     Defines an optional path to the log directory. If `LogDir` is not
-    empty and LogFile is not an absolute path (i.e. not starting with
+    empty and `LogFile` is not an absolute path (i.e. not starting with
     a drive letter or a path separator slash character), the complete
-    log file path will be derived by combining LogDir and LogFile.
+    log file path will be derived by combining `LogDir` and `LogFile`.
 
     Default value: none
 
@@ -1086,8 +1086,8 @@ will be used (which should be sufficient for most sites).
 
     This allows you to enable or disable informational messages
     while it is running.  The values for this keyword can be
-    either `yes` or `no`.  Using "Quiet yes" will suppress these
-    messages, while "Quiet no" will enable them.  The default
+    either `yes` or `no`.  Using `Quiet yes` will suppress these
+    messages, while `Quiet no` will enable them.  The default
     is `no` if not specified, which will allow The Webalizer
     to display informational messages.  It should be noted that
     this option has no effect on Warning or Error messages that
@@ -1369,10 +1369,10 @@ will be used (which should be sufficient for most sites).
 
     **User Agent Name Mangling Filters**
 
-    If `UseClassicMangleAgents` is set to `yes`, filter-based mangling
+    If `UseClassicMangleAgents` is set to `no`, filter-based mangling
     method will be used instead, in which case if exclude and group
     agent argument lists are empty and `MangleAgents` is set to a
-    non-zero value, pre-defined exclude and group filters will be
+    non-zero value, a few predefined exclude and group filters will be
     added for each of the 4 supported levels of `MangleAgents`.
 
     When user agent arguments are being processed, Stone Steps
@@ -1422,16 +1422,16 @@ will be used (which should be sufficient for most sites).
     their query strings.  Search strings are obtained from
     the referrer field in the record, and in order to work
     properly, the Webalizer needs to know what query strings
-    different search engines use.  The SearchEngine allows
+    different search engines use.  The `SearchEngine` allows
     you to specify the search engine and it's query string
     to parse the search string from.  The line is formatted
-    as:  "SearchEngine engine-string query-string"  where
+    as:  `SearchEngine engine-string query-string`  where
     `engine-string` is a substring for matching the search
-    engine with, such as "yahoo.com" or `altavista`.  The
+    engine with, such as `yahoo.com` or `altavista`.  The
     `query-string` is the unique query string that is added
     to the URL for the search engine, such as `search=` or
     `MT=` with the actual search strings appended to the
-    end.  There is no command line option for this keyword.
+    end. There is no command line option for this keyword.
 
     This configuration parameter supports additional syntax
     to be able to combine various search terms.
@@ -1474,7 +1474,7 @@ will be used (which should be sufficient for most sites).
     Defines the format Stone Steps Webalizer will use when
     parsing custom Apache log files. This configuration
     parameter will only be evaluated when the current log file
-    type is Apache. Search this document for CustomLog for more
+    type is Apache. Search this document for `CustomLog` for more
     details about Apache custom log format.
 
     Default value: none
@@ -1540,7 +1540,7 @@ will be used (which should be sufficient for most sites).
 * `GroupURLDomains`
 
     Squid log files contain absolute URLs, along with fully-
-    qualified domain names. GroupURLDomains may be used to group
+    qualified domain names. `GroupURLDomains` may be used to group
     these domains in the URL report. The value of this
     configuration parameter is the number of domain labels, past
     the top-level one, to report.
@@ -1602,8 +1602,8 @@ will be used (which should be sufficient for most sites).
     included or excluded. The include filter takes precedence
     over the exclude filter.
 
-    Unlike other include/ignore filters, non-wildcard Include-
-    and ExcludeSearchArg values are not treated as sub-strings
+    Unlike other include/ignore filters, non-wildcard `IncludeSearchArg`
+    and `ExcludeSearchArg` values are not treated as sub-strings
     and must match search argument names exactly in order for
     the corresponding filter to be activated.
 
@@ -1634,7 +1634,7 @@ will be used (which should be sufficient for most sites).
 
     Note that if the pattern contains spaces (e.g. Windows NT 5.1),
     there must be a tab character between the pattern and the alias
-    and EnablePhraseValues must be set to `yes`. Otherwise, the
+    and `EnablePhraseValues` must be set to `yes`. Otherwise, the
     first space will end the pattern (in this example, the pattern
     will end after the first word Windows).
 
@@ -1751,7 +1751,7 @@ will be used (which should be sufficient for most sites).
 
     If downloads are being tracked using `DownloadPath`, setting
     `TargetDownload` to `yes` will instruct Stone Steps Webalizer
-    to treat those requests that matched DownloadPath as if they
+    to treat those requests that matched `DownloadPath` as if they
     had a corresponding TargetURL entry. This improves overall
     performance by reducing the number of target URL entries and
     simplifies configuration.
@@ -2230,7 +2230,7 @@ will be used (which should be sufficient for most sites).
 
     Limits the number of cities listed in the Top Cities report.
     This report is generated only if GeoIP is configured and if
-    GeoIPCity is set to `yes`. Set TopCities to zero if you would
+    GeoIPCity is set to `yes`. Set `TopCities` to zero if you would
     like to disable the city report, but show city names in other
     reports.
 
@@ -2265,7 +2265,7 @@ will be used (which should be sufficient for most sites).
 
 * `TopKHosts`
 
-    Identical to TopSites, except for the `by KByte` table.
+    Identical to `TopSites`, except for the `by KByte` table.
     Default is 10.  No command line switch for this one.
 
 * `AllHosts`
@@ -2371,7 +2371,7 @@ will be used (which should be sufficient for most sites).
     If the number of actual downloads is greater than this
     value, the rest of the downloads will either be discarded or
     generated as a separate downloads report, depending on the
-    value of AllDownloads. 
+    value of `AllDownloads`. 
 
     Default value: `20`
 
@@ -2381,7 +2381,7 @@ will be used (which should be sufficient for most sites).
     report. If the number of actual errors is greater than this
     value, the rest of the errors will either be discarded or
     generated as a separate HTTP error report, depending on the
-    value of AllErrors. 
+    value of `AllErrors`. 
 
     Default value: `20`
 
@@ -2444,7 +2444,7 @@ length.
     This allows hiding all individual hosts from the display,
     which can be useful when a lot of groupings are being
     used (since grouped records cannot be hidden).  It is
-    particularly useful in conjunction with the GroupDomains
+    particularly useful in conjunction with the `GroupDomains`
     feature, however can be useful in other situations as well.
     Value can be either `yes` or `no`, with `no` the default.
 
@@ -2976,9 +2976,9 @@ seconds.
 
 ### Apache 
 
-Apache logs may be customized using LogFormat and CustomLog directives
+Apache logs may be customized using `LogFormat` and `CustomLog` directives
 (these are Apache configuration keywords, not those used by Stone
-Steps Webalizer). Stone Steps Webalizer can parse the CustomLog
+Steps Webalizer). Stone Steps Webalizer can parse the `CustomLog`
 directive, if it's specified anywhere in the configuration using the
 ApacheLogFormat configuration parameter.
 
@@ -3394,7 +3394,7 @@ Tahoma Bold for all graph titles:
     GraphFontNormal     c:\winnt\fonts\lucon.ttf
     GraphFontBold       c:\winnt\fonts\tahomabd.ttf
 
-If GraphFontNormal and GraphFontBold are not specified, or if the
+If `GraphFontNormal` and `GraphFontBold` are not specified, or if the
 associated font files cannot be found, Stone Steps Webalizer will use
 the default raster fonts to generate text for the graphs. Note that
 raster fonts may not have suitable character representation for
