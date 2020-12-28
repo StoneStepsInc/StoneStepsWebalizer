@@ -2852,18 +2852,6 @@ dlnode_t *webalizer_t::put_dlnode(const string_t& name, int64_t htab_tstamp, u_i
 
    hashval = dlnode_t::hash_key(hnode.string, name);
 
-   //
-   // Sometimes download requests may come in severely shuffled. For example, 
-   // all these requests came from the same IP address. The first one failed
-   // (sc-bytes is zero), the other two retrieved the file, but the initial 
-   // request (200) took a bit longer and was logged after the second one (206)
-   // was finished. 
-   //
-   // time cs-method cs-uri-stem cs(User-Agent) sc-status sc-bytes cs-bytes time-taken 
-   // 12:29:09 GET /.../webalizer_win.zip Mozilla/5.0+(...)+Firefox/1.5.0.1 200 0      710 15234
-   // 12:36:43 GET /.../webalizer_win.zip Download+Master                   206 530125 360 436546
-   // 12:36:48 GET /.../webalizer_win.zip Download+Master                   200 524613 338 448765
-   //
    if((nptr = state.dl_htab.find_node(hashval, OBJ_REG, htab_tstamp, hnode.string, name)) == nullptr) {
       nptr = new storable_t<dlnode_t>(name, hnode);
       if(!state.database.get_dlnode_by_value<void *, const storable_t<hnode_t>&>(*nptr, &state_t::unpack_dlnode_cached_host_cb, &state, (const storable_t<hnode_t>&) hnode)) {
