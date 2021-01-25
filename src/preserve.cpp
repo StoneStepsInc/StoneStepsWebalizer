@@ -593,8 +593,8 @@ void state_t::database_info(void) const
    printf("\n");
    
    printf("Database        : %s\n", config.get_db_path().c_str());
-   printf("Created by      : %s\n", state_t::get_version(get_sysnode().appver).c_str());
-   printf("Last updated by : %s\n", state_t::get_version(get_sysnode().appver_last).c_str());
+   printf("Created by      : %s\n", state_t::get_hr_version(get_sysnode().appver).c_str());
+   printf("Last updated by : %s\n", state_t::get_hr_version(get_sysnode().appver_last).c_str());
    
    // cannot read totals or data counters from a database created prior to v4
    if(sysnode.appver_last >= MIN_APP_DB_VERSION) {
@@ -1169,14 +1169,27 @@ void state_t::unpack_active_hnode_cb(hnode_t& hnode, bool active, void *arg)
       throw std::runtime_error(string_t::_format("A host node (ID: %" PRIu64 ") has no indicator of an active visit", hnode.nodeid));
 }
 
-string_t state_t::get_app_version(void)
+string_t state_t::get_app_version(bool build)
 {
-   return string_t::_format("%u.%u.%u-%u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, BUILD_NUMBER);
+   if(build)
+      return string_t::_format("%u.%u.%u+%u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, BUILD_NUMBER);
+
+   return string_t::_format("%u.%u.%u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+}
+
+string_t state_t::get_app_hr_version(void)
+{
+   return string_t::_format("%u.%u.%u build %u", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, BUILD_NUMBER);
 }
 
 string_t state_t::get_version(u_int version)
 {
-   return string_t::_format("%u.%u.%u-%u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), VERSION_PATCH_EX(version), BUILD_NUMBER_EX(version));
+   return string_t::_format("%u.%u.%u+%u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), VERSION_PATCH_EX(version), BUILD_NUMBER_EX(version));
+}
+
+string_t state_t::get_hr_version(u_int version)
+{
+   return string_t::_format("%u.%u.%u build %u", VERSION_MAJOR_EX(version), VERSION_MINOR_EX(version), VERSION_PATCH_EX(version), BUILD_NUMBER_EX(version));
 }
 
 //

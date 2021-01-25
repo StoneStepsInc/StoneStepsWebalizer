@@ -150,9 +150,17 @@ class state_t {
       static void unpack_dlnode_and_host_cb(dlnode_t& dlnode, uint64_t hostid, bool active, void *_this, storable_t<hnode_t>& hnode);
       /// @}
 
-      static string_t get_app_version(void);
+      /// Returns application version with or without the build number.
+      static string_t get_app_version(bool build = true);
 
+      /// Returns human-readable application version.
+      static string_t get_app_hr_version(void);
+
+      /// Returns a string representation of the specified application version.
       static string_t get_version(u_int version);
+
+      /// Returns a human-readable string representation of the specified application version.
+      static string_t get_hr_version(u_int version);
 };
 
 #endif  // _PRESERVE_H

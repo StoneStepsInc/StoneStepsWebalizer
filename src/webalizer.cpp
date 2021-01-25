@@ -329,7 +329,7 @@ void webalizer_t::print_intro(void)
       uname(&system_info);
 
       printf("\nStone Steps Webalizer v%s (%s %s)\n\n", 
-               state_t::get_app_version().c_str(), 
+               state_t::get_app_version(false).c_str(), 
                system_info.sysname, 
                system_info.release);
    }
@@ -354,7 +354,7 @@ void webalizer_t::print_version()
    uname(&system_info);
 
    printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n",   
-               state_t::get_app_version().c_str(),
+               state_t::get_app_hr_version().c_str(),
                system_info.sysname,system_info.release,
                config.lang.language,copyright);
    printf("\nThis program is based on The Webalizer v2.01-10\nCopyright 1997-2001 by Bradford L. Barrett (www.webalizer.com)\n\n");
