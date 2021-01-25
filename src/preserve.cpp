@@ -662,14 +662,14 @@ void state_t::restore_state(void)
    if(sysnode.appver_last < MIN_APP_DB_VERSION && !config.db_info)
       throw exception_t(0, string_t::_format("%s (incompatible database)\n", config.lang.msg_bad_data));
 
-   // no need to restore the rest if we just need database information
-   if(config.db_info)
-      return;
-   
    // restore current totals
    if(!database.get_tgnode_by_id(totals))
       throw exception_t(0, string_t::_format("%s (totals)\n", config.lang.msg_bad_data));
 
+   // no need to restore the rest if we just need database information
+   if(config.db_info)
+      return;
+   
    // keep the serial time stamp to avoid doing math in every put_node call
    int64_t htab_tstamp = totals.cur_tstamp.mktime();
 
