@@ -56,7 +56,7 @@ variables:
   TMP_DIR: $(Agent.TempDirectory)
 
 #
-# Pipeline run label (used only for display purposes in this pipeline)
+# Pipeline run label that can be accessed via $(Build.BuildNumber).
 #
 name: $(VERSION)+$(BUILD_NUMBER)
 
