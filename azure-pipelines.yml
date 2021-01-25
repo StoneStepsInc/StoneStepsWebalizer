@@ -58,7 +58,7 @@ variables:
 #
 # Pipeline run label (used only for display purposes in this pipeline)
 #
-name: $(VERSION)-$(BUILD_NUMBER)
+name: $(VERSION)+$(BUILD_NUMBER)
 
 stages:
 - stage: BuildPackages
