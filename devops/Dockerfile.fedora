@@ -11,7 +11,4 @@ WORKDIR /root
 #
 # Dependencies
 #
-# `findutils` are for `find` used in `make clean`
-#
-RUN dnf install -y findutils gcc-c++ make libdb-cxx-devel zlib libmaxminddb-devel gd-devel gtest-devel
-
+RUN dnf install -y gcc-c++ make libdb-cxx-devel zlib libmaxminddb-devel gd-devel gtest-devel

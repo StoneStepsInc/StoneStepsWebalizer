@@ -2,7 +2,7 @@
 #
 #   Makefile
 # 	 
-#   Copyright (c) 2004-2020, Stone Steps Inc. (www.stonesteps.ca)
+#   Copyright (c) 2004-2021, Stone Steps Inc. (www.stonesteps.ca)
 #
 #   See COPYING and Copyright files for additional licensing and copyright information 
 # 
@@ -263,16 +263,18 @@ install:
 
 clean:
 	@echo "Removing object files..."
-	@find $(BLDDIR)/ -name '*.o' -type f -delete
+	@rm -f $(addprefix $(BLDDIR)/, $(OBJS))
+	@rm -f $(addprefix $(BLDDIR)/, $(TEST_OBJS))
 	@echo "Removing dependency files..."
-	@find $(BLDDIR)/ -name '*.d' -type f -delete
+	@rm -f $(addprefix $(BLDDIR)/, $(DEPS))
+	@rm -f $(addprefix $(BLDDIR)/, $(TEST_DEPS))
 	@echo "Removing the precompiled header..."
-	@find $(BLDDIR)/ -name '$(PCHOUT)' -type f -delete
+	@rm -f $(BLDDIR)/$(PCHOUT) $(BLDDIR)/test/$(PCHOUT)
 	@echo "Removing executables..."
-	@if [[ -e $(BLDDIR)/$(WEBALIZER) ]]; then rm $(BLDDIR)/$(WEBALIZER); fi
-	@if [[ -e $(BLDDIR)/$(TEST) ]]; then rm $(BLDDIR)/$(TEST); fi
+	@rm -f $(BLDDIR)/$(WEBALIZER)
+	@rm -f $(BLDDIR)/$(TEST)
 	@echo "Removing test results..."
-	@if [[ -e $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE) ]]; then rm $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE); fi
+	@rm -f $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
 	@echo "Done"
 
 #
