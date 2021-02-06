@@ -16,6 +16,10 @@ SHELL := /bin/bash
 #           make test
 #           make package
 #           make clean
+#           make clean-deps
+#           make install
+#           make install-info
+#           make uninstall
 #
 #   Parameters:
 #     all targets:
@@ -40,7 +44,7 @@ SHELL := /bin/bash
 # Remove all standard suffix rules and declare phony targets
 #
 .SUFFIXES:
-.PHONY: all clean clean-deps install test package
+.PHONY: all clean clean-deps install install-info uninstall test package
 
 # ------------------------------------------------------------------------
 #
@@ -48,6 +52,24 @@ SHELL := /bin/bash
 #
 # ------------------------------------------------------------------------
 WEBALIZER   := webalizer
+
+#
+# webalizer            -> /usr/local/bin/webalizer-stonesteps
+# webalizer (sym.link) -> /usr/local/bin
+# webalizer.css, etc   -> /usr/local/share/webalizer-stonesteps/www
+# language files       -> /usr/local/share/webalizer-stonesteps/lang
+# dir for MaxMind DBs  -> /usr/local/share/webalizer-stonesteps/maxmind
+# README.md, etc       -> /usr/local/share/doc/webalizer-stonesteps
+# webalizer.db         -> /var/local/lib/webalizer-stonesteps
+#
+INSTDIR_BIN := /usr/local/bin/webalizer-stonesteps
+INSTDIR_BNL := /usr/local/bin
+INSTDIR_SHR := /usr/local/share/webalizer-stonesteps
+INSTDIR_WWW := /usr/local/share/webalizer-stonesteps/www
+INSTDIR_LNG := /usr/local/share/webalizer-stonesteps/lang
+INSTDIR_MDB := /usr/local/share/webalizer-stonesteps/maxmind
+INSTDIR_DOC := /usr/local/share/doc/webalizer-stonesteps
+INSTDIR_VAR := /var/local/lib/webalizer-stonesteps
 
 #
 # Precompiled header file names.
@@ -67,7 +89,6 @@ PCHOBJ	 := $(PCHHDR:.h=.o)
 # define the configuration directory
 ifndef ETCDIR
 ETCDIR   := /etc
-export   ETCDIR
 endif
 
 # source and build directories
@@ -256,11 +277,6 @@ $(BLDDIR):
 test: $(BLDDIR)/$(TEST)
 	$(BLDDIR)/$(TEST) --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
 
-install:
-	@echo
-	@echo "The install target is not implemented"
-	@echo
-
 clean:
 	@echo "Removing object files..."
 	@rm -f $(addprefix $(BLDDIR)/, $(OBJS))
@@ -298,6 +314,110 @@ package: $(BLDDIR)/$(WEBALIZER)
 	@echo "Compressing..."
 	@gzip $(PKG_DIR)/$(PKG_NAME)
 	@echo "Done"
+
+#
+# The symbolic link in /usr/local/bin is not created if a file with this
+# name already exists because it may be the original webalizer executable.
+#
+install: $(BLDDIR)/$(WEBALIZER)
+	@echo ''
+	@if [ ! -d $(INSTDIR_BIN) ]; \
+	then \
+		mkdir -p $(INSTDIR_BIN); \
+	fi
+	@cp -f $(BLDDIR)/$(WEBALIZER) $(INSTDIR_BIN)
+	@if [ ! -f $(INSTDIR_BNL)/$(WEBALIZER) ]; \
+	then \
+		ln -s $(INSTDIR_BIN)/$(WEBALIZER) $(INSTDIR_BNL)/$(WEBALIZER); \
+	else \
+		echo 'Leaving existing symbolic link $(INSTDIR_BNL)/$(WEBALIZER) alone'; \
+		echo ''; \
+	fi
+	@mkdir -p $(INSTDIR_VAR)
+	@mkdir -p $(INSTDIR_WWW)
+	@for file in webalizer.css webalizer.js webalizer_highcharts.js; \
+	do \
+		cp -f src/$$file $(INSTDIR_WWW); \
+	done
+	@mkdir -p $(INSTDIR_LNG)
+	@cp -f lang/webalizer_lang.* $(INSTDIR_LNG)
+	@mkdir -p $(INSTDIR_MDB)
+	@mkdir -p $(INSTDIR_DOC)
+	@for file in README.md CHANGES Copyright COPYING; \
+	do \
+		cp -f $$file $(INSTDIR_DOC); \
+	done
+
+install-info:
+	@echo ''
+	@echo 'Set DbPath to $(INSTDIR_VAR)'
+	@echo ''
+	@echo 'Copy files from $(INSTDIR_WWW)'
+	@echo 'to a directory where they can be referenced from HTML reports.'
+	@echo 'Set HTMLCssPath and HTMLJsPath to point to that directory.'
+	@echo ''
+	@echo 'Set LanguageFile to point to a language file of your choice in'
+	@echo '$(INSTDIR_LNG)'
+	@echo ''
+	@echo 'If you enabled GeoIP and/or ASN, copy MaxMind databases to'
+	@echo '$(INSTDIR_MDB)'
+	@echo 'Set GeoIPDBPath and ASNDBPath to point to the corresponding'
+	@echo 'databases.'
+	@echo ''
+	@echo 'See README.md in $(INSTDIR_DOC)'
+	@echo 'for more details.'
+	@echo ''
+
+#
+# The directory with state databases and MaxMind databases may be
+# left behind because they may contain data that cannot be recovered.
+#
+uninstall:
+	@if [ -d $(INSTDIR_DOC) ]; \
+	then \
+		for file in README.md CHANGES Copyright COPYING; \
+		do \
+			rm -f $(INSTDIR_DOC)/$$file; \
+		done; \
+		rmdir $(INSTDIR_DOC); \
+	fi
+	@if [ -d $(INSTDIR_LNG)/ ]; \
+	then \
+		rm -f $(INSTDIR_LNG)/webalizer_lang.*; \
+		rmdir $(INSTDIR_LNG); \
+	fi
+	@if [ -d $(INSTDIR_WWW) ]; \
+	then \
+		for file in webalizer.css webalizer.js webalizer_highcharts.js; \
+		do \
+			rm -f $(INSTDIR_WWW)/$$file; \
+		done; \
+		rmdir $(INSTDIR_WWW); \
+	fi
+	@if [ -d $(INSTDIR_MDB) ]; \
+	then \
+		rmdir --ignore-fail-on-non-empty $(INSTDIR_MDB); \
+	fi
+	@if [ -d $(INSTDIR_VAR) ]; \
+	then \
+		rmdir --ignore-fail-on-non-empty $(INSTDIR_VAR); \
+	fi
+	@if [ -d $(INSTDIR_SHR) ]; \
+	then \
+		rmdir $(INSTDIR_SHR); \
+	fi
+	@if [ -f $(INSTDIR_BNL)/$(WEBALIZER) ]; \
+	then \
+		if [ $$(ls -l /usr/local/bin | sed -r -n -e 's/^.+ $(WEBALIZER) -> ([-/a-z]+)/\1/p') = '$(INSTDIR_BIN)/$(WEBALIZER)' ]; \
+		then \
+			rm -f $(INSTDIR_BNL)/$(WEBALIZER); \
+		fi; \
+	fi
+	@rm -f $(INSTDIR_BIN)/$(WEBALIZER)
+	@if [ -d $(INSTDIR_BIN) ]; \
+	then \
+		rmdir $(INSTDIR_BIN); \
+	fi
 
 # ------------------------------------------------------------------------
 #
