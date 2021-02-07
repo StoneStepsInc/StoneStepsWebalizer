@@ -478,6 +478,10 @@ $(BLDDIR)/$(PCHOUT) $(BLDDIR)/test/$(PCHOUT): $(BLDDIR)/%$(PCHOUT): $(SRCDIR)/%$
 # webalizer dependencies
 ifeq ($(MAKECMDGOALS),)
 include $(addprefix $(BLDDIR)/, $(DEPS))
+else ifneq ($(filter package,$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(DEPS))
+else ifneq ($(filter install,$(MAKECMDGOALS)),)
+include $(addprefix $(BLDDIR)/, $(DEPS))
 else ifneq ($(filter $(BLDDIR)/$(WEBALIZER),$(MAKECMDGOALS)),)
 include $(addprefix $(BLDDIR)/, $(DEPS))
 endif
