@@ -81,7 +81,17 @@ all dependencies. See `devops/Docker.*` files for development package
 names for some common Linux flavors.
 
 Once all dependencies are installed, change to the source directory 
-and run `make`. Compiled binaries are generated in the `build` directory.
+and run `make`.
+
+Compiled binaries are generated in the `build` directory, if you want
+to copy them into directories of your choice.
+
+You can also install all files into directories described in the
+installation section above by running `sudo make install`. A short
+reference for installation directories and configuration variables
+is available via `make install-info`.
+
+Run `sudo make uninstall` to uninstall.
 
 ## Running the Webalizer
 
