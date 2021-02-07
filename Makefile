@@ -356,9 +356,9 @@ install: $(BLDDIR)/$(WEBALIZER)
 	@cp -f lang/webalizer_lang.* $(INSTDIR_LNG)
 	@mkdir -p $(INSTDIR_MDB)
 	@mkdir -p $(INSTDIR_DOC)
-	@for file in README.md CHANGES Copyright COPYING; \
+	@for doc in README.md CHANGES Copyright COPYING; \
 	do \
-		cp -f $$file $(INSTDIR_DOC); \
+		cp -f $$doc $(INSTDIR_DOC); \
 	done
 
 install-info:
@@ -394,7 +394,7 @@ uninstall:
 		done; \
 		rmdir $(INSTDIR_DOC); \
 	fi
-	@if [ -d $(INSTDIR_LNG)/ ]; \
+	@if [ -d $(INSTDIR_LNG) ]; \
 	then \
 		rm -f $(INSTDIR_LNG)/webalizer_lang.*; \
 		rmdir $(INSTDIR_LNG); \
@@ -417,7 +417,7 @@ uninstall:
 	fi
 	@if [ -d $(INSTDIR_SHR) ]; \
 	then \
-		rmdir $(INSTDIR_SHR); \
+		rmdir --ignore-fail-on-non-empty $(INSTDIR_SHR); \
 	fi
 	@if [ -L $(INSTDIR_BNL)/$(WEBALIZER) ]; \
 	then \
