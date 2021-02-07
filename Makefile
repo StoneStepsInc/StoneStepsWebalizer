@@ -326,11 +326,11 @@ install: $(BLDDIR)/$(WEBALIZER)
 		mkdir -p $(INSTDIR_BIN); \
 	fi
 	@cp -f $(BLDDIR)/$(WEBALIZER) $(INSTDIR_BIN)
-	@if [ ! -f $(INSTDIR_BNL)/$(WEBALIZER) ]; \
+	@if [ ! -e $(INSTDIR_BNL)/$(WEBALIZER) ]; \
 	then \
 		ln -s $(INSTDIR_BIN)/$(WEBALIZER) $(INSTDIR_BNL)/$(WEBALIZER); \
 	else \
-		echo 'Leaving existing symbolic link $(INSTDIR_BNL)/$(WEBALIZER) alone'; \
+		echo 'Leaving existing file $(INSTDIR_BNL)/$(WEBALIZER) alone'; \
 		echo ''; \
 	fi
 	@mkdir -p $(INSTDIR_VAR)
@@ -406,7 +406,7 @@ uninstall:
 	then \
 		rmdir $(INSTDIR_SHR); \
 	fi
-	@if [ -f $(INSTDIR_BNL)/$(WEBALIZER) ]; \
+	@if [ -L $(INSTDIR_BNL)/$(WEBALIZER) ]; \
 	then \
 		if [ $$(ls -l /usr/local/bin | sed -r -n -e 's/^.+ $(WEBALIZER) -> ([-/a-z]+)/\1/p') = '$(INSTDIR_BIN)/$(WEBALIZER)' ]; \
 		then \
