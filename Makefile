@@ -44,7 +44,7 @@ SHELL := /bin/bash
 # Remove all standard suffix rules and declare phony targets
 #
 .SUFFIXES:
-.PHONY: all clean clean-deps install install-info uninstall test package
+.PHONY: all clean clean-deps install install-info uninstall test package install-scripts
 
 # ------------------------------------------------------------------------
 #
@@ -195,8 +195,9 @@ endif
 
 PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q).tar
 PKG_OWNER := --owner=root --group=root
-PKG_FILES := sample.conf $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css \
-	$(SRCDIR)/webalizer.js README.md CHANGES COPYING Copyright
+PKG_DOCS := README.md CHANGES COPYING Copyright sample.conf
+PKG_SRC := $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css $(SRCDIR)/webalizer.js
+PKG_INST := install uninstall
 PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
 	galician german greek hungarian icelandic indonesian italian japanese \
 	korean latvian malay norwegian polish portuguese portuguese_brazilian \
@@ -304,16 +305,28 @@ clean-deps:
 	@rm -f $(addprefix $(BLDDIR)/,$(DEPS)) $(addprefix $(BLDDIR)/,$(TEST_DEPS))
 	@echo 'Done'
 
-package: $(BLDDIR)/$(WEBALIZER)
-	@echo "Adding Webalizer files..." 
+install-scripts: devops/install devops/uninstall
+	@echo 'Copying installation scripts to $(BLDDIR)'
+	@cp -f devops/install $(BLDDIR)/
+	@chmod a+x $(BLDDIR)/install
+	@cp -f devops/uninstall $(BLDDIR)/
+	@chmod a+x $(BLDDIR)/uninstall
+
+package: $(BLDDIR)/$(WEBALIZER)	install-scripts
+	@echo 'Adding Webalizer files'
 	@strip --strip-debug $(BLDDIR)/$(WEBALIZER)
 	@tar $(PKG_OWNER) -cf $(PKG_DIR)/$(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
-	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_FILES) 
-	@echo "Adding language files..."
+	@echo 'Adding CSS and JavaScript source'
+	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_SRC)
+	@echo 'Adding documentation'
+	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_DOCS)
+	@echo 'Adding installation scripts'
+	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) -C $(BLDDIR) $(PKG_INST)
+	@echo "Adding language files"
 	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) lang/webalizer_lang.$$lang; done
-	@echo "Compressing..."
+	@echo 'Compressing'
 	@gzip $(PKG_DIR)/$(PKG_NAME)
-	@echo "Done"
+	@echo 'Done'
 
 #
 # The symbolic link in /usr/local/bin is not created if a file with this

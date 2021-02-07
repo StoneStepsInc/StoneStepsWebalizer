@@ -1,0 +1,75 @@
+#!/bin/bash
+
+INSTDIR_BIN=/usr/local/bin/webalizer-stonesteps
+INSTDIR_BNL=/usr/local/bin
+INSTDIR_SHR=/usr/local/share/webalizer-stonesteps
+INSTDIR_WWW=/usr/local/share/webalizer-stonesteps/www
+INSTDIR_LNG=/usr/local/share/webalizer-stonesteps/lang
+INSTDIR_MDB=/usr/local/share/webalizer-stonesteps/maxmind
+INSTDIR_DOC=/usr/local/share/doc/webalizer-stonesteps
+INSTDIR_VAR=/var/local/lib/webalizer-stonesteps
+
+#
+# webalizer
+#
+if [ ! -d $INSTDIR_BIN ]
+then
+    mkdir -p $INSTDIR_BIN
+fi
+
+cp -f webalizer $INSTDIR_BIN
+
+#
+# Create a symbolic link only if there's no file named `webalizer`
+# in the target directory to avoid overwriting a possible original
+# Webalizer installation. 
+#
+if [ ! -e $INSTDIR_BNL/webalizer ]
+then
+    ln -s $INSTDIR_BIN/webalizer $INSTDIR_BNL/webalizer
+else
+    echo "Leaving existing file $INSTDIR_BNL/webalizer alone"
+fi
+
+#
+# A directory for state and IP address cache database files (DbPath).
+#
+mkdir -p $INSTDIR_VAR
+
+#
+# Shared CSS and JavaScript source files should be copied from
+# this location to a directory where they can be referenced by
+# HTML reports (HTMLCssPath, HTMLJsPath).
+#
+mkdir -p $INSTDIR_WWW
+
+for file in webalizer.css webalizer.js webalizer_highcharts.js
+do
+    cp -f src/$file $INSTDIR_WWW
+done
+
+#
+# Language files (LanguageFile)
+#
+mkdir -p $INSTDIR_LNG
+
+cp -f lang/webalizer_lang.* $INSTDIR_LNG
+
+#
+# A directory for MaxMind database files (GeoIPDBPath and ASNDBPath).
+# See README.md for download links.
+#
+mkdir -p $INSTDIR_MDB
+
+#
+# Documentation
+#
+mkdir -p $INSTDIR_DOC
+
+for doc in README.md CHANGES Copyright COPYING
+do
+    cp -f $doc $INSTDIR_DOC
+done
+
+echo "See README.md in $INSTDIR_DOC"
+echo 'for a description of installation directorues'

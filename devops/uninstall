@@ -1,0 +1,94 @@
+#!/bin/bash
+
+INSTDIR_BIN=/usr/local/bin/webalizer-stonesteps
+INSTDIR_BNL=/usr/local/bin
+INSTDIR_SHR=/usr/local/share/webalizer-stonesteps
+INSTDIR_WWW=/usr/local/share/webalizer-stonesteps/www
+INSTDIR_LNG=/usr/local/share/webalizer-stonesteps/lang
+INSTDIR_MDB=/usr/local/share/webalizer-stonesteps/maxmind
+INSTDIR_DOC=/usr/local/share/doc/webalizer-stonesteps
+INSTDIR_VAR=/var/local/lib/webalizer-stonesteps
+
+#
+# Documentation
+#
+if [ -d $INSTDIR_DOC ]
+then
+    for file in README.md CHANGES Copyright COPYING
+    do
+        rm -f $INSTDIR_DOC/$file
+    done
+    rmdir $INSTDIR_DOC
+fi
+
+#
+# Languages
+#
+if [ -d $INSTDIR_LNG ]
+then
+    rm -f $INSTDIR_LNG/webalizer_lang.*
+    rmdir $INSTDIR_LNG
+fi
+
+#
+# Shared CSS and JavaScript source
+#
+if [ -d $INSTDIR_WWW ]
+then
+    for file in webalizer.css webalizer.js webalizer_highcharts.js
+    do
+        rm -f $INSTDIR_WWW/$file
+    done
+    rmdir $INSTDIR_WWW
+fi
+
+#
+# Remove the MaxMind database directory only if it is empty
+# because it may contain files that cannot be recovered.
+#
+if [ -d $INSTDIR_MDB ]
+then
+    rmdir --ignore-fail-on-non-empty $INSTDIR_MDB
+fi
+
+#
+# Remove the state and IP address cache directory only if it is
+# empty, in case the user wants to use these databases later. The
+# contents of these files cannot be recovered without processing
+# the same set of log files again.
+#
+if [ -d $INSTDIR_VAR ]
+then
+    rmdir --ignore-fail-on-non-empty $INSTDIR_VAR
+fi
+
+#
+# Now we can try to remove the shared directory, which may fail
+# because the MaxMind database directory was left behind.
+#
+if [ -d $INSTDIR_SHR ]
+then
+    rmdir --ignore-fail-on-non-empty $INSTDIR_SHR
+fi
+
+#
+# Remove the symbolic link only if it points to our installation directory
+#
+if [ -L $INSTDIR_BNL/webalizer ]
+then
+    if [ $(ls -l /usr/local/bin | sed -r -n -e 's/^.+ webalizer -> ([-/a-z]+)/\1/p') = "$INSTDIR_BIN/webalizer" ]
+    then
+        rm -f $INSTDIR_BNL/webalizer
+    fi
+fi
+
+#
+# webalizer
+#
+rm -f $INSTDIR_BIN/webalizer
+
+if [ -d $INSTDIR_BIN ]
+then
+    rmdir $INSTDIR_BIN
+fi
+
