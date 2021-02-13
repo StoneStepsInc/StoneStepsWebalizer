@@ -87,7 +87,7 @@ The script makes use of the following set of directories.
 * `/usr/local/share/webalizer-stonesteps/lang`
 
   Contains language localization files. Set `LanguageFile` to point to a
-  file of your choice.
+  language file of your choice.
 
 * `/usr/local/share/webalizer-stonesteps/maxmind`
 

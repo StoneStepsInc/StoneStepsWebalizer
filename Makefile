@@ -279,20 +279,22 @@ test: $(BLDDIR)/$(TEST)
 	$(BLDDIR)/$(TEST) --gtest_output=xml:$(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
 
 clean:
-	@echo "Removing object files..."
+	@echo 'Removing object files...'
 	@rm -f $(addprefix $(BLDDIR)/, $(OBJS))
 	@rm -f $(addprefix $(BLDDIR)/, $(TEST_OBJS))
-	@echo "Removing dependency files..."
+	@echo 'Removing dependency files...'
 	@rm -f $(addprefix $(BLDDIR)/, $(DEPS))
 	@rm -f $(addprefix $(BLDDIR)/, $(TEST_DEPS))
-	@echo "Removing the precompiled header..."
+	@echo 'Removing the precompiled header...'
 	@rm -f $(BLDDIR)/$(PCHOUT) $(BLDDIR)/test/$(PCHOUT)
-	@echo "Removing executables..."
+	@echo 'Removing executables...'
 	@rm -f $(BLDDIR)/$(WEBALIZER)
 	@rm -f $(BLDDIR)/$(TEST)
-	@echo "Removing test results..."
+	@echo 'Removing test results...'
 	@rm -f $(TEST_RSLT_DIR)/$(TEST_RSLT_FILE)
-	@echo "Done"
+	@echo 'Removing installation scripts'
+	@rm -f $(addprefix $(BLDDIR)/, $(PKG_INST))
+	@echo 'Done'
 
 #
 # When a source file is moved or renamed, the next build may fail
