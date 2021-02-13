@@ -73,9 +73,20 @@ stages:
       BIN_OUT_DIR: $(BUILD_DIR)\webalizer
       BIN_INT_DIR: $(BUILD_DIR)\webalizer\obj
 
-      # package directories must be one level below BIN_OUT_DIR for scripts to access build files via parent paths
-      PKG_OUT_DIR: $(BIN_OUT_DIR)\package-$(Build.BuildNumber)
-      PKG_INT_DIR: $(BIN_OUT_DIR)\package-tmp
+      #
+      # MSBuild package target merely copies package files into output
+      # directory and doesn't archive them, which is done by an archive
+      # task in this pipeline. Give the package output directory the
+      # same name as will be used for the archive file name, so we can
+      # include the output directory as the top-level directory in the
+      # archive.
+      #
+      # Package directories must be one level below BIN_OUT_DIR for
+      # scripts to access build files via parent paths.
+      #
+      PKG_NAME: webalizer-win-x64-$(Build.BuildNumber)
+      PKG_OUT_DIR: $(BIN_OUT_DIR)\$(PKG_NAME)
+      PKG_INT_DIR: $(BIN_OUT_DIR)\$(PKG_NAME)-tmp
   
     pool:
       vmImage: windows-2019
@@ -134,12 +145,12 @@ stages:
       displayName: Make Package
       inputs:
         rootFolderOrFile: '$(PKG_OUT_DIR)'
-        includeRootFolder: false
+        includeRootFolder: true
         archiveType: 'zip'
-        archiveFile: '$(ARTIFACT_DIR)/webalizer-win-x64-$(Build.BuildNumber).zip'
+        archiveFile: '$(ARTIFACT_DIR)/$(PKG_NAME).zip'
         replaceExistingArchive: true
 
-    - publish: '$(ARTIFACT_DIR)/webalizer-win-x64-$(Build.BuildNumber).zip'
+    - publish: '$(ARTIFACT_DIR)/$(PKG_NAME).zip'
       artifact: Windows package
 
     #
