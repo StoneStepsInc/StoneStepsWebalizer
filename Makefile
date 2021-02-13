@@ -193,16 +193,15 @@ ifeq ($(strip $(PKG_ARCH_ABBR)),)
 PKG_ARCH_ABBR := $$(uname -p)
 endif
 
-PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q).tar
-PKG_OWNER := --owner=root --group=root
+PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q)
+
+# inject the package name as the top-level directory in the package archive
+PKG_TAR_FLAGS := --owner=root --group=root --transform="s|^|$(PKG_NAME)/|"
+
 PKG_DOCS := README.md CHANGES COPYING Copyright sample.conf
 PKG_SRC := $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css $(SRCDIR)/webalizer.js
+PKG_LANG := lang/webalizer_lang.*
 PKG_INST := install uninstall
-PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
-	galician german greek hungarian icelandic indonesian italian japanese \
-	korean latvian malay norwegian polish portuguese portuguese_brazilian \
-	romanian russian serbian simplified_chinese slovak slovene spanish \
-	swedish turkish ukrainian
 
 # ------------------------------------------------------------------------
 #
@@ -317,17 +316,17 @@ install-scripts: devops/install devops/uninstall
 package: $(BLDDIR)/$(WEBALIZER)	install-scripts
 	@echo 'Adding Webalizer files'
 	@strip --strip-debug $(BLDDIR)/$(WEBALIZER)
-	@tar $(PKG_OWNER) -cf $(PKG_DIR)/$(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
+	@tar $(PKG_TAR_FLAGS) -cf $(PKG_DIR)/$(PKG_NAME).tar -C $(BLDDIR) $(WEBALIZER)
 	@echo 'Adding CSS and JavaScript source'
-	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_SRC)
+	@tar $(PKG_TAR_FLAGS) -rf $(PKG_DIR)/$(PKG_NAME).tar $(PKG_SRC)
 	@echo 'Adding documentation'
-	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) $(PKG_DOCS)
+	@tar $(PKG_TAR_FLAGS) -rf $(PKG_DIR)/$(PKG_NAME).tar $(PKG_DOCS)
 	@echo 'Adding installation scripts'
-	@tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) -C $(BLDDIR) $(PKG_INST)
-	@echo "Adding language files"
-	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_DIR)/$(PKG_NAME) lang/webalizer_lang.$$lang; done
+	@tar $(PKG_TAR_FLAGS) -rf $(PKG_DIR)/$(PKG_NAME).tar -C $(BLDDIR) $(PKG_INST)
+	@echo 'Adding language files'
+	@tar $(PKG_TAR_FLAGS) -rf $(PKG_DIR)/$(PKG_NAME).tar $(PKG_LANG)
 	@echo 'Compressing'
-	@gzip $(PKG_DIR)/$(PKG_NAME)
+	@gzip $(PKG_DIR)/$(PKG_NAME).tar
 	@echo 'Done'
 
 #
