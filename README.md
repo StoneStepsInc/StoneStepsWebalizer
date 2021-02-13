@@ -155,12 +155,12 @@ Where `options` can be one or more of the supported command line
 switches described below.
 
 `logfile` is the name of the log file to process. Log file names are
-collected from three distinct sources:
+collected from these distinct sources:
 
   * `LogFile` variables in the default configuration file and its
     includes.
-  * Command line, configuration files specified with the `-c` option
-    and its includes.
+  * Command line, `LogFile` variables in configuration files specified
+    with the `-c` option and its includes.
   * If the `--pipe-log-names` option was used, log file names are
     read from the standard input.
 
