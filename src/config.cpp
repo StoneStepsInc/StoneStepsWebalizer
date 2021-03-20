@@ -1652,7 +1652,7 @@ void config_t::set_enable_phrase_values(bool enable)
 ///
 uint32_t config_t::get_db_cache_size(const char *value) const
 {
-   uint32_t cachesize;
+   unsigned long cachesize;
    char *cp1;
 
    if(value == nullptr)
@@ -1683,7 +1683,7 @@ uint32_t config_t::get_db_cache_size(const char *value) const
       }
    }
 
-   return cachesize < DB_MIN_CACHE_SIZE ? DB_MIN_CACHE_SIZE : cachesize;
+   return cachesize < DB_MIN_CACHE_SIZE ? DB_MIN_CACHE_SIZE : (uint32_t) cachesize;
 }
 
 string_t config_t::get_db_path(void) const
