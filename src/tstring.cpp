@@ -87,6 +87,15 @@ template<typename char_t> const char string_base<char_t>::ex_bad_self_assign[] =
 //
 
 template <typename char_t>
+string_base<char_t>::string_base(void) :
+   string(empty_string),
+   bufsize(0),
+   slen(0),
+   holder(false)
+{
+}
+
+template <typename char_t>
 string_base<char_t>::string_base(const string_base& str) :
    string_base(str.c_str(), str.length())
 {
