@@ -146,7 +146,7 @@ class string_base {
       static const size_t npos;
 
    public:
-      string_base(void) : string(empty_string), bufsize(0), slen(0), holder(false) {}
+      string_base(void);
 
       string_base(const string_base& str);
 
