@@ -1,0 +1,25 @@
+CVS/*
+
+/build/
+
+# Nuget packages
+/src/packages/
+
+# test directories and files
+/logfiles/
+/reports/
+/temp/
+/reports_/
+/release_/
+/webalizer.conf
+
+# Intellisense precompiled headers
+/src/ipch/
+
+# Visual Studio auto-generated files
+/src/webalizer.vcxproj.user
+/src/copylibs.vcxproj.user
+/src/package.vcxproj.user
+
+# Visual Studio 2015 auto-generated files
+/src/.vs/
