@@ -1,0 +1,25 @@
+#
+# Run freebsd-pkgs from the same directory first to install all build
+# tools and dependencies.
+#
+# This script grabs the latest v6-0 source from Github and builds it
+# in a directory called webalizer-6-0 in the current directory.
+#
+
+# make sure we don't install  HTTP client without asking
+pkg install wget
+
+# get the latest source on the 6-0 branch
+wget -O webalizer-6-0.zip https://github.com/StoneStepsInc/StoneStepsWebalizer/archive/refs/heads/v6-0.zip
+
+unzip webalizer-6-0.zip && mv StoneStepsWebalizer-6-0 webalizer-6-0 && cd webalizer-6-0
+
+# patch up Makefile to build on FreeBSD
+patch < patches/freebsd-build.patch
+
+# build and run unit tests
+gmake
+gmake test
+
+# create webalizer-6-0-x-x.tar.gz in the current directory
+gmake package
