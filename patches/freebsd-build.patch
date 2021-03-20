@@ -1,0 +1,96 @@
+diff --git a/Makefile b/Makefile
+index 75eec92..ad429cc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,11 @@
+ # 
+ # ------------------------------------------------------------------------
+ 
+-SHELL := /bin/bash
++# FreeBSD installs all pre-built packages under /usr/local
++SHELL := /usr/local/bin/bash
++
++# pre-installed CLang v10 fails to compile template parameter packs following default arguments
++CXX := /usr/local/bin/clang++11
+ 
+ # ------------------------------------------------------------------------
+ #
+@@ -88,7 +92,7 @@ PCHOBJ	 := $(PCHHDR:.h=.o)
+ 
+ # define the configuration directory
+ ifndef ETCDIR
+-ETCDIR   := /etc
++ETCDIR   := /usr/local/etc
+ endif
+ 
+ # source and build directories
+@@ -100,8 +104,8 @@ BLDDIR   := build
+ endif
+ 
+ # include and library search paths
+-INCDIRS  := 
+-LIBDIRS  := 
++INCDIRS  := /usr/local/include /usr/local/include/db5
++LIBDIRS  := /usr/local/lib
+ 
+ # webalizer source files, relative to $(SRCDIR)
+ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
+@@ -125,7 +129,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
+ 	util_time.cpp util_url.cpp
+ 
+ # webalizer libraries
+-LIBS     := dl pthread db_cxx gd z maxminddb
++LIBS     := dl pthread db_cxx-5 gd z maxminddb
+ 
+ OBJS := $(patsubst %.c,%.o,$(filter %.c,$(SRCS))) \
+ 	$(patsubst %.cpp,%.o,$(filter %.cpp,$(SRCS)))
+@@ -195,8 +199,8 @@ endif
+ 
+ PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q)
+ 
+-# inject the package name as the top-level directory in the package archive
+-PKG_TAR_FLAGS := --owner=root --group=root --transform="s|^|$(PKG_NAME)/|"
++# FreeBSD tar does not support --owner, --group or --transform
++PKG_TAR_FLAGS :=
+ 
+ PKG_DOCS := README.md CHANGES COPYING Copyright sample.conf
+ PKG_SRC := $(SRCDIR)/webalizer_highcharts.js $(SRCDIR)/webalizer.css $(SRCDIR)/webalizer.js
+@@ -223,6 +227,8 @@ CXXFLAGS := -std=c++17 \
+ 	-fexceptions \
+ 	-Wno-multichar \
+ 	-Winvalid-pch \
++	-Wno-dtor-name \
++	-Wno-switch \
+ 	$(MYCCFLAGS)
+ 
+ # turn on optimization for non-debug builds
+@@ -386,6 +392,10 @@ install-info:
+ # The directory with state databases and MaxMind databases may be
+ # left behind because they may contain data that cannot be recovered.
+ #
++# FreeBSD rmdir doesn't support --ignore-fail-on-non-empty, so rmdir
++# will fail if maxMind databases were installed or any reports generated
++# under /var.
++#
+ uninstall:
+ 	@if [ -d $(INSTDIR_DOC) ]; \
+ 	then \
+@@ -410,15 +420,15 @@ uninstall:
+ 	fi
+ 	@if [ -d $(INSTDIR_MDB) ]; \
+ 	then \
+-		rmdir --ignore-fail-on-non-empty $(INSTDIR_MDB); \
++		rmdir $(INSTDIR_MDB); \
+ 	fi
+ 	@if [ -d $(INSTDIR_VAR) ]; \
+ 	then \
+-		rmdir --ignore-fail-on-non-empty $(INSTDIR_VAR); \
++		rmdir $(INSTDIR_VAR); \
+ 	fi
+ 	@if [ -d $(INSTDIR_SHR) ]; \
+ 	then \
+-		rmdir --ignore-fail-on-non-empty $(INSTDIR_SHR); \
++		rmdir $(INSTDIR_SHR); \
+ 	fi
+ 	@if [ -L $(INSTDIR_BNL)/$(WEBALIZER) ]; \
+ 	then \
