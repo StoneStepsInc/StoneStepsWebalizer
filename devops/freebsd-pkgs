@@ -1,0 +1,18 @@
+#
+# GCC can be installed on FreeBSD, but v9 and v10 crash when
+# building this project, so CLang must be used. 
+#
+# The pre-installed Clang v10 has a bug around C++ template
+# parameter packs following default arguments and fails to
+# build this project. This bug was fixed in CLang v11.
+#
+# Project Makefile uses requires bash and uses GNU syntax.
+# After installing these packages a Makefile patch must be
+# applied before building binaries.
+#
+
+# build tools
+pkg install -y bash gmake llvm11
+
+# dependencies (zlib is already installed)
+pkg install -y libgd libmaxminddb db5 googletest
