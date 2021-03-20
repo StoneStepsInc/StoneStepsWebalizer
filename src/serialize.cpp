@@ -392,7 +392,6 @@ template void *serializer_t::serialize<short, int>(void *ptr, int value) const;
 template void *serializer_t::serialize<u_short, u_int>(void *ptr, u_int value) const;
 template void *serializer_t::serialize<u_int, uint64_t>(void *ptr, uint64_t value) const;
 
-template void *serializer_t::serialize(void *ptr, const char (&chars)[2]) const;
 template void *serializer_t::serialize(void *ptr, u_char value) const;
 template void *serializer_t::serialize(void *ptr, u_short value) const;
 template void *serializer_t::serialize(void *ptr, u_int value) const;
@@ -404,7 +403,6 @@ template const void *serializer_t::deserialize<short, int>(const void *ptr, int&
 template const void *serializer_t::deserialize<u_short, u_int>(const void *ptr, u_int& value) const;
 template const void *serializer_t::deserialize<u_int, uint64_t>(const void *ptr, uint64_t& value) const;
 
-template const void *serializer_t::deserialize(const void *ptr, char (&chars)[2]) const;
 template const void *serializer_t::deserialize(const void *ptr, u_char& value) const;
 template const void *serializer_t::deserialize(const void *ptr, u_short& value) const;
 template const void *serializer_t::deserialize(const void *ptr, u_int& value) const;
