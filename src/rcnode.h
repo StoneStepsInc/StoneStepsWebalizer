@@ -37,7 +37,7 @@ struct rcnode_t : public htab_obj_t<u_short, const string_t&, const string_t&>, 
 
          nodetype_t get_type(void) const override {return OBJ_REG;}
 
-         bool match_key(u_short respcode, const string_t& method, const string_t& url) const;
+         bool match_key(u_short respcode, const string_t& method, const string_t& url) const override;
 
          static uint64_t hash_key(u_short respcode, const string_t& method, const string_t& url) 
          {
