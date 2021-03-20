@@ -458,7 +458,7 @@ uninstall:
 #   build/webalizer.o build/webalizer.d: src/webalizer.cpp src/webalizer.h ...
 #
 $(BLDDIR)/%.d : $(SRCDIR)/%.cpp
-	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); fi
+	@if [ ! -e $(@D) ]; then mkdir -p $(@D); fi
 	set -e; $(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< | \
 	sed 's|^[ \t]*$(*F)\.o|$(BLDDIR)/$*.o $(BLDDIR)/$*.d|g' > $@
 
@@ -480,7 +480,7 @@ $(BLDDIR)/%.o : $(SRCDIR)/%.cpp	$(BLDDIR)/$(PCHOUT)
 
 # webalizer and unit test precompiled header files
 $(BLDDIR)/$(PCHOUT) $(BLDDIR)/test/$(PCHOUT): $(BLDDIR)/%$(PCHOUT): $(SRCDIR)/%$(PCHSRC)
-	@if [[ ! -e $(@D) ]]; then mkdir -p $(@D); elif [[ -e $@ ]]; then rm $@; fi
+	@if [ ! -e $(@D) ]; then mkdir -p $(@D); elif [ -e $@ ]; then rm $@; fi
 	$(CXX) -c -x c++-header $(CPPFLAGS) $(CXXFLAGS) $(addprefix -I,$(INCDIRS)) $< -o $@
 
 # ------------------------------------------------------------------------
