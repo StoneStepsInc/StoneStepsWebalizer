@@ -1,0 +1,77 @@
+diff --git a/Makefile b/Makefile
+index e37af64..1b5db73 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,11 @@
+ # 
+ # ------------------------------------------------------------------------
+ 
+-SHELL := /bin/bash
++# FreeBSD installs all pre-built packages under /usr/local
++SHELL := /usr/local/bin/bash
++
++# pre-installed CLang v10 fails to compile template parameter packs following default arguments
++CXX := /usr/local/bin/clang++11
+ 
+ # ------------------------------------------------------------------------
+ #
+@@ -50,7 +54,7 @@ PCHOBJ	 := $(PCHHDR:.h=.o)
+ 
+ # define the configuration directory
+ ifndef ETCDIR
+-ETCDIR   := /etc
++ETCDIR   := /usr/local/etc
+ export   ETCDIR
+ endif
+ 
+@@ -59,8 +63,8 @@ SRCDIR   := src
+ BLDDIR   := build
+ 
+ # include and library search paths
+-INCDIRS  := 
+-LIBDIRS  := 
++INCDIRS  := /usr/local/include /usr/local/include/db5
++LIBDIRS  := /usr/local/lib
+ 
+ # list of source files (the src/ prefix is assumed in build rules)
+ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
+@@ -84,7 +88,7 @@ SRCS     := $(PCHSRC) tstring.cpp linklist.cpp hashtab.cpp \
+ 	util_time.cpp util_url.cpp
+ 
+ # list all libraries we use
+-LIBS     := dl pthread db_cxx gd z maxminddb
++LIBS     := dl pthread db_cxx-5 gd z maxminddb
+ 
+ # generate a list of object files for .c and .cpp source files
+ OBJS := $(patsubst %.c,%.o,$(filter %.c,$(SRCS))) \
+@@ -142,7 +146,6 @@ TEST_RPOS := $(TEST_OBJS:.o=.rpo)
+ #
+ # ------------------------------------------------------------------------
+ PKG_NAME  := webalizer-$$(build/webalizer -v -Q | sed -e s/\\./-/g).tar
+-PKG_OWNER := --owner=root --group=root
+ PKG_FILES := sample.conf src/webalizer_highcharts.js src/webalizer.css \
+ 	src/webalizer.js README CHANGES COPYING Copyright
+ PKG_LANG  := catalan croatian czech danish dutch english estonian finnish french \
+@@ -171,6 +174,8 @@ CXXFLAGS := -std=c++17 \
+ 	-fexceptions \
+ 	-Wno-multichar \
+ 	-Winvalid-pch \
++	-Wno-dtor-name \
++	-Wno-switch \
+ 	$(MYCCFLAGS)
+ 
+ # turn on optimization for non-debug builds
+@@ -236,10 +241,10 @@ clean:
+ package: $(BLDDIR)/$(WEBALIZER)
+ 	@echo "Adding Webalizer files..." 
+ 	@strip --strip-debug build/webalizer
+-	@tar $(PKG_OWNER) -cf $(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
+-	@tar $(PKG_OWNER) -rf $(PKG_NAME) $(PKG_FILES) 
++	@tar -cf $(PKG_NAME) -C $(BLDDIR) $(WEBALIZER)
++	@tar -rf $(PKG_NAME) $(PKG_FILES)
+ 	@echo "Adding language files..."
+-	@for lang in $(PKG_LANG); do tar $(PKG_OWNER) -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
++	@for lang in $(PKG_LANG); do tar -rf $(PKG_NAME) lang/webalizer_lang.$$lang; done
+ 	@echo "Compressing..."
+ 	@gzip $(PKG_NAME)
+ 	@echo "Done"
