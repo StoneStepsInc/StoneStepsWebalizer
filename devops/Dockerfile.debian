@@ -7,10 +7,11 @@
 #
 
 #
-# docker build --network=host \
-#               --tag=stonesteps/webalizer-debian:latest \
-#               --file=/path/to/Dockerfile.debian \
-#                   /path/to/context
+# Run from the project's top directory:
+#
+# docker build  --tag=stonesteps/webalizer-debian:latest \
+#               --file=devops/Dockerfile.debian \
+#                   devops
 #
 FROM debian
 

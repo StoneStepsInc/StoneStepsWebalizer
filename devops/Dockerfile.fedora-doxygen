@@ -7,10 +7,11 @@
 #
 
 #
-# docker build --network=host \
-#               --tag=stonesteps/webalizer-fedora-doxygen:latest \
-#               --file=/path/to/Dockerfile.fedora-doxygen \
-#                   /path/to/context
+# Run from the project's top directory:
+#
+# docker build  --tag=stonesteps/webalizer-fedora-doxygen:latest \
+#               --file=devops/Dockerfile.fedora-doxygen \
+#                   devops
 #
 FROM stonesteps/webalizer-fedora
 

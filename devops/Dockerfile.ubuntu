@@ -7,10 +7,11 @@
 #
 
 #
-# docker build --network=host \
-#               --tag=stonesteps/webalizer-ubuntu:latest \
-#               --file=/path/to/Dockerfile.ubuntu \
-#                   /path/to/context
+# Run from the project's top directory:
+#
+# docker build  --tag=stonesteps/webalizer-ubuntu:latest \
+#               --file=devops/Dockerfile.ubuntu \
+#                   devops
 #
 FROM ubuntu
 
