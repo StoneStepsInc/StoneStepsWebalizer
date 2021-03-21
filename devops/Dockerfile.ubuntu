@@ -14,8 +14,6 @@
 #
 FROM ubuntu
 
-WORKDIR /root
-
 #
 # If the time zone is not set, `apt-get` installs `tzdata`, which asks
 # to select the time zone when dependencies are installed.

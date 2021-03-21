@@ -14,8 +14,6 @@
 #
 FROM debian
 
-WORKDIR /root
-
 #
 # Need to update apt repositories or none of the packages will be found.
 #

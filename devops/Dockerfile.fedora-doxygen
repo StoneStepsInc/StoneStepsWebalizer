@@ -14,8 +14,6 @@
 #
 FROM stonesteps/webalizer-fedora
 
-WORKDIR /root
-
 #
 # Add Doxygen and Graphviz to the Fedora image for Doxygen diagrams
 #

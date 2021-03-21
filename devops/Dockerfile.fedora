@@ -6,8 +6,6 @@
 #
 FROM fedora
 
-WORKDIR /root
-
 #
 # Dependencies
 #
