@@ -47,7 +47,8 @@ be used as-is. Extract package contents to any directory, such as
 
 If you intend to use just one configuration file, the installation
 directory is probably the best place for it. Otherwise, you can use
-the `-c` option to specify any configuration file.
+the `-c` option to specify any configuration file. See _Configuration
+Files_ for details on how configuration files are processed.
 
 ### Linux
 
@@ -111,7 +112,8 @@ The script makes use of the following set of directories.
 
 If you intend to use just one configuration file, `/etc` is the best place
 for it. Otherwise, you can use the `-c` option to specify any configuration
-file.
+file. See _Configuration Files_ for details on how configuration files are
+processed.
 
 Run `sudo ./uninstall` from the directory where this script is located
 to remove all of the directories above. Note that existing state databases
@@ -160,7 +162,7 @@ collected from these distinct sources:
   * `LogFile` variables in the default configuration file and its
     includes.
   * Command line, `LogFile` variables in configuration files specified
-    with the `-c` option and its includes.
+    with the `-c` option and `Include` directives.
   * If the `--pipe-log-names` option was used, log file names are
     read from the standard input.
 
@@ -185,19 +187,28 @@ or file extension, that will be used to generate a report.
 
 Once executed, the general flow of the program follows:
 
+* The default configuration file is searched for in these locations:
+
+    * current directory
+    * system configuration directory (`/etc` on Linux or `c:\windows`
+      on Windows)
+    * the directory where `webalizer` or `webalizer.exe` is located
+
+  If found, the default configuration file will be processed regardless
+  of whether one or more `-c` options are used on the command line.
+  
 * Any command line arguments given to the program are parsed. This
   may include the specification of a configuration file (`-c`), which
   is processed at the time it is encountered.
 
-* If there was no configuration file specified on the command line
-  with the `-c` option, the default configuration file is scanned for.
-  The following directories are searched, in the specified order:
-  current directory, the system directory (`/etc` on Unix or
-  `c:\windows` on Windows), the directory where the executable
-  (`webalizer` or `webalizer.exe`) is located.
-
-* If either of the configuration files contained `Include` directives,
+* If any of the configuration files contains `Include` directives,
   all included configuration files are processed as well.
+
+* All configuration files are processed in the order they are specified
+  on the command line or via `Include` directories. Single-value variables
+  overwrite those seen erarlier, but those that take multiple values,
+  such as `IgnoreURL` or `SearchEngine`, will all be collected in the
+  order they are encountered.
 
 * If `--prepare-report` was specified on the command line, the last
   argument will be interpreted as a database file name. In this case a
@@ -248,7 +259,7 @@ Once executed, the general flow of the program follows:
 
 Incremental processing preserves current log items and numbers that you
 see in all reports, such as URLs, IP addresses, request counts, transfer
-amounts, etc., in a database file called webalizer.db and adds new items
+amounts, etc., in a database file called `webalizer.db` and adds new items
 to this database or updates numbers for existing items when new log files
 are processed.
 
@@ -543,11 +554,11 @@ and `-f` are different options.
 
 * `-c file`
 
-    This option specifies a configuration file to use.  Configuration
+    This option specifies a configuration file to use. Configuration
     files allow greater control over how The Webalizer behaves, and
-    there are several ways to use them. If a configuration file
-    is specified with this option, the default configuration
-    file will not be processed.
+    there are several ways to use them. Note that the default
+    configuration file is processed regardless of whether any `-c`
+    option is specified.
 
 * `-n name`
 
@@ -934,19 +945,20 @@ by the Webalizer.  When The Webalizer first executes, it looks for a
 default configuration file named `webalizer.conf` in the following
 directories, in this order:
 
-  * current directory,
-  * the system directory (`/etc` on Unix or `c:\windows` on
-    Windows),
-  * the directory where the executable (`webalizer` or
-    `webalizer.exe`) is located.
+  * current directory
+  * system configuration directory (`/etc` on Linux or `c:\windows`
+    on Windows)
+  * the directory where the `webalizer` or `webalizer.exe` is
+    located
 
-Alternatively, configuration files may be specified on the command
-line with the `-c` option. If the `-c` option is used, the default
-configuration file will not be processed.
+Custom configuration files may be specified on the command line with
+the `-c` option. Custom configuration files will be processed after
+the default configuration file, in the order they are encountered on the
+command line.
 
-In addition to the custom and default configuration files, other
-configuration files may be processed conditionally using the `Include`
-configuration parameter.
+The default configuration file and custom configuration files may
+include additional configuration files via the `Include` directive,
+which may contain an optional domain name as a condition.
 
 For example, the following configuration parameter will instruct
 Stone Steps Webalizer to read the configuration file called
@@ -956,7 +968,7 @@ Stone Steps Webalizer to read the configuration file called
 
 Configuration files may be included based on the domain name. That is,
 if a domain name is specified with the `-n` option, the domain name in
-the Include directive will be compared with the command line domain
+the `Include` directive will be compared with the command line domain
 name.
 
 For example, given these two configuration lines:
@@ -977,39 +989,27 @@ There are lots of different ways you can combine the use of
 configuration files and command line options to produce various
 results. The evaluation order is as follows:
 
-  * Command line arguments are processed. If a configuration file has
-    been specified with the `-c` option, it will be processed
-    immediately. Options that are further on the command line override
-    earlier options, including those that have been processed in the
-    configuration file specified with the `-c` option. Any include
-    files found in the configuration file are queued for further
-    processing.
+  * The default configuration file, if found, is processed.
 
-  * If there was no `-c` option used on the command line, the default
-    configuration file is processed. Any include files found in the
-    configuration file are queued for further processing.
+  * Configuration files specified with the `-c` option, are processed
+    as they are encountered. Values for options that are further on the
+    command line override earlier options, including those found in any
+    configuration files.
 
-  * All queued include files are processed in the order they appear in
-    the configuration file(s).
+  * Configuration files specified in `Include` directives are queued
+    for further processing.
+
+  * After all custom configuration files are processed, queued include
+    files are processed in the order they appeared in their configuration
+    files.
 
 If you specify a configuration file on the command line, you
-can override options in it by additional command line options which
+can override those options by additional command line options which
 follow.
 
-For example, most users will most likely want to create the default
-file `/etc/webalizer.conf` and place options in it to specify the
-hostname, log file, table options, etc.
-
-At the end of the month when a different log file is to be used (the
-end of month log), you can run The Webalizer as usual, but put the
-different filename on the end of the command line, which will override
-the log file specified in the configuration file. It should be noted
-that you cannot override some configuration file options by the use
-of command line arguments.
-
-For example, if you specify `Quiet yes` in a configuration file, you
-cannot override this with a command line argument, as the command line
-option only _enables_ the feature (`-q` option).
+Some options cannot be overridden, such as `Quiet yes` because the
+command line option `-q` only _enables_ this behavior and there is
+no option to disable it.
 
 The configuration files are standard ASCII text files that may be created
 or edited using any standard editor.  Blank lines and lines that begin
@@ -2914,20 +2914,20 @@ or more lines.  There are no command line counterparts to these keywords.
     for server-side scripting capabilities, such as php3, to
     insert scripting files and other directives.
 
-    It is an error to have the `<!doctype>` tag in any HTMLPre
+    It is an error to have the `<!DOCTYPE>` tag in any `HTMLPre`
     entries.
 
 * `HTMLHead`
 
     Allows you to insert HTML code between the `<head></head>`
     block.  There is no default.  Useful for adding scripts
-    to the HTML page, such as Javascript or php3, or even
+    to the HTML page, such as JavaScript or php3, or even
     just for adding a few META tags to the document.
 
 * `HTMLBody`
 
     This keyword defines HTML code to be placed immediately
-    after the start <body> tag of the report, just before the
+    after the start `<body>` tag of the report, just before the
     title and "summary period/generated on" lines. Keep in
     mind the placement of this code in relation to the title
     and other aspects of the web page.  A typical use is to
