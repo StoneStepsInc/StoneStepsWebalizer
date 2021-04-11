@@ -114,22 +114,16 @@ class berkeleydb_t {
 
          public:
             ///
-            /// @brief  A special template constructor that triggers a compiler error 
-            ///         if it was used.
-            ///
-            /// A specialization of this constructor that takes an `int` argument, which is 
-            /// how Berkeley DB error is defined, follows the definition of the `berkeleydb_t` 
-            /// class. 
-            ///
+            /// @brief  A template constructor that triggers a compiler error, if used
+            ///         instead of the one that takes `int`.
+            /// 
             template <typename T>
             status_t(T value)
             {
                static_assert(sizeof(T) != 0, "Cannot initialize berkeleydb_t::status_t with this value");
             }
 
-            ///
-            /// @brief  Constructs a status object from a Berkeley DB error code.
-            ///
+            /// Constructs a status object from a Berkeley DB error code.
             status_t(int error) : error(error)
             {
                if(error)
