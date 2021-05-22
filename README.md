@@ -2561,12 +2561,12 @@ length.
 
 ### Group Object Keywords
 
-The Group* keywords allow object grouping based on Host, URL,
-Referrer, User Agent and Usernames.  Combined with the Hide* keywords,
+The `Group*` keywords allow object grouping based on Host, URL,
+Referrer, User Agent and Usernames. Combined with the `Hide*` keywords,
 you can customize exactly what will be displayed in the `Top` tables.
 
 For example, to only display totals for a particular directory, use a
-GroupURL and HideURL with the same value (ie: `/help/*`).  Group
+`GroupURL` and `HideURL` with the same value (ie: `/help/*`).  Group
 processing is only done after the individual record has been fully
 processed, so name mangling and site total updates have already been
 performed. Because of this, groups are not counted in the main site
@@ -2575,14 +2575,14 @@ bold and shaded as well. Grouped records are not, by default, hidden
 from the report.  This allows you to display a grouped total, while
 still being able to see the individual records, even if they are part
 of the group.  If you want to hide the detail records, follow the
-Group* directive with a Hide* one using the same value. There
-are no command line switches for these keywords.  The Group* keywords
+`Group*` directive with a `Hide*` one using the same value. There
+are no command line switches for these keywords.  The `Group*` keywords
 also accept an optional label to be displayed instead of the actual
 value used. This label should be separated from the value by at least
 one whitespace character, such as a space or tab character.  See the
 sample.conf file for examples.
 
-GroupReferrer Allows grouping Referrers.  Can be handy for some of the
+`GroupReferrer` Allows grouping Referrers.  Can be handy for some of the
 major search engines that have multiple host names a
 referral could come from.
 
