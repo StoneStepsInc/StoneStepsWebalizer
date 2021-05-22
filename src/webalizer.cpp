@@ -2360,7 +2360,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, OBJ_REG, htab_tstamp, ipaddr)) == nullptr) {
       /* not hashed */
-      cptr = new storable_t<hnode_t>(ipaddr);
+      cptr = new storable_t<hnode_t>(ipaddr, OBJ_REG);
       if(!state.database.get_hnode_by_value<void*>(*cptr, &unpack_inactive_hnode_cb, this)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag = OBJ_REG;
@@ -2473,7 +2473,7 @@ storable_t<hnode_t> *webalizer_t::put_hnode(
    /* check if hashed */
    if((cptr = state.hm_htab.find_node(hashval, OBJ_GRP, htab_tstamp, grpname)) == nullptr) {
       /* not hashed */
-      cptr = new storable_t<hnode_t>(grpname);
+      cptr = new storable_t<hnode_t>(grpname, OBJ_GRP);
       if(!state.database.get_hnode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_hnode_id();
          cptr->flag  = OBJ_GRP;
@@ -2530,7 +2530,7 @@ rnode_t *webalizer_t::put_rnode(const string_t& str, int64_t htab_tstamp, nodety
    /* check if hashed */
    if((nptr = state.rm_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
-      nptr = new storable_t<rnode_t>(str);
+      nptr = new storable_t<rnode_t>(str, type);
       if(!state.database.get_rnode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_rnode_id();
          nptr->flag  = type;
@@ -2578,7 +2578,7 @@ storable_t<unode_t> *webalizer_t::put_unode(const string_t& str, int64_t htab_ts
    /* check if hashed */
    if((cptr = state.um_htab.find_node(hashval, type, htab_tstamp, str, srchargs)) == nullptr) {
       /* not hashed */
-      cptr = new storable_t<unode_t>(str, srchargs);
+      cptr = new storable_t<unode_t>(str, type, srchargs);
       // check if in the database
       if(!state.database.get_unode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_unode_id();
@@ -2685,7 +2685,7 @@ anode_t *webalizer_t::put_anode(const string_t& str, int64_t htab_tstamp, nodety
    /* check if hashed */
    if((cptr = state.am_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
-      cptr = new storable_t<anode_t>(str, robot);
+      cptr = new storable_t<anode_t>(str, type, robot);
       if(!state.database.get_anode_by_value(*cptr)) {
          cptr->nodeid = state.database.get_anode_id();
          cptr->flag = type;
@@ -2736,7 +2736,7 @@ snode_t *webalizer_t::put_snode(const string_t& str, int64_t htab_tstamp, u_shor
    /* check if hashed */
    if((nptr = state.sr_htab.find_node(hashval, OBJ_REG, htab_tstamp, str)) == nullptr) {
       /* not hashed */
-      nptr = new storable_t<snode_t>(str);
+      nptr = new storable_t<snode_t>(str, OBJ_REG);
       if(!state.database.get_snode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_snode_id();
          nptr->count = 1;
@@ -2792,7 +2792,7 @@ inode_t *webalizer_t::put_inode(const string_t& str,   /* ident str */
    /* check if hashed */
    if((nptr = state.im_htab.find_node(hashval, type, htab_tstamp, str)) == nullptr) {
       /* not hashed */
-      nptr = new storable_t<inode_t>(str);
+      nptr = new storable_t<inode_t>(str, type);
       if(!state.database.get_inode_by_value(*nptr)) {
          nptr->nodeid = state.database.get_inode_id();
          nptr->flag  = type;

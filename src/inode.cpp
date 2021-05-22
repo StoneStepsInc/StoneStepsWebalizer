@@ -19,7 +19,8 @@ inode_t::inode_t(void) : base_node<inode_t>()
    avgtime = maxtime = .0;
 }
 
-inode_t::inode_t(const string_t& ident) : base_node<inode_t>(ident) 
+inode_t::inode_t(const string_t& ident, nodetype_t type) :
+      base_node<inode_t>(ident, type) 
 {
    count = 1; 
    visit = 1; 

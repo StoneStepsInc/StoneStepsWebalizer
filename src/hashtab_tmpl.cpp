@@ -147,8 +147,11 @@ node_t *hash_table<node_t>::put_node(uint64_t hashval, node_t *node, int64_t tst
    }
    else {
       // enforce time stamp order for new regular nodes
-      if(!tmlist.empty() && tmlist.back()->tstamp > tstamp)
-         throw std::logic_error("Nodes must be linserted in the ascending time stamp order");
+      if(!tmlist.empty() && tmlist.back()->tstamp > tstamp) {
+         throw std::logic_error(string_t::_format(
+                     "Nodes must be inserted in the ascending time stamp order (%" PRIx64 ", %" PRIx64 ", %s)",
+                     tmlist.back()->tstamp, tstamp, typeid(node).name()));
+      }
 
       //
       // Insert a new list node with a nullptr value at the end of the list and allocate 
@@ -249,8 +252,11 @@ node_t *hash_table<node_t>::find_node(uint64_t hashval, nodetype_t type, int64_t
    bucket_t& bucket = htab[hashval % maxhash];
    
    // enforce time stamp order for pre-insert look-ups 
-   if(type == OBJ_REG && !tmlist.empty() && tmlist.back()->tstamp > tstamp)
-      throw std::logic_error("Nodes must be looked up in the ascending time stamp order when inserting");
+   if(type == OBJ_REG && !tmlist.empty() && tmlist.back()->tstamp > tstamp) {
+      throw std::logic_error(string_t::_format(
+                  "Nodes must be looked up in the ascending time stamp order when inserting (%" PRIx64 ", %" PRIx64 ", %s)",
+                  tmlist.back()->tstamp, tstamp, typeid(node_t).name()));
+   }
 
    u_int nodeidx = 0;
 

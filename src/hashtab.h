@@ -74,23 +74,30 @@ template <typename node_t> using node_list_t = std::list<htab_node_t<node_t>*>;
 /// Hash table node and objects historically were combined in a single object in 
 /// this project. Consequently, all objects within a hash table were called nodes 
 /// (e.g. `hnode_t` for a host object or a `unode_t` for a URL object). Later on, 
-/// the hash table node object was split onto the base object for hash table content 
-/// objects (`htab_obj_t`) and the hash table node object (`htab_node_t`) maintains
-/// content objects within a hash table.
+/// the hash table node object was split onto the base object for hash table
+/// content objects (`htab_obj_t`) and the hash table node object (`htab_node_t`).
 ///
 /// Hash table nodes may be identified by an arbitrary key defined by `K` template
 /// parameters. Derived classes must also define a static member function matching
 /// this signature:
-/// ```
-///   static uint64_t hash_key_ex(K ... kp);
-/// ```
-/// This key defined via this interface is enforced via virtual functions declared
-/// in this class, but the hash table interface is not limited to just that key.
-/// Additional key component combinations may be defined as long as derived classes
-/// provide matching `match_key` and `hash_key` methods for new key components.
-/// Note, however, that `hash_key` must produce the exact same hash value for all
-/// `hash_key` overloads, which in turn must be the same as the one returned
-/// from `get_hash`. See `unode_t` for an example.
+///
+///     static uint64_t hash_key_ex(K ... kp);
+///
+/// Derived classes must provide matching `match_key` and `hash_key` methods for
+/// key components. `hash_key` must produce the exact same hash value for all
+/// `hash_key` overloads, which in turn must be the same as the one returned from
+/// `get_hash`. See `unode_t` for an example.
+/// 
+/// Technically, node type returned from `get_type` should be a part of the key
+/// and `get_type` should not exist and instead `match_key` should take a key
+/// and a type, as if via this comparison:
+/// 
+///     match_key("ABC", OBJ_REG) != match_key("ABC", OBJ_GRP)
+/// 
+/// , but historically key matching is done as if via a logical AND of key and
+/// type (i.e. `node.get_type() == type && node.match_key() == key`). This is
+/// not likely to change at this point, but for a node in a hash table to be
+/// found, it must match both, the key and the node type.
 ///
 template <typename ... K>
 struct htab_obj_t {

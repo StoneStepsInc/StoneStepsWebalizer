@@ -12,6 +12,7 @@
 #include "exception.h"
 
 #include <typeinfo>
+#include <stdexcept>
 
 template <typename node_t> 
 base_node<node_t>::base_node(uint64_t nodeid) : keynode_t<uint64_t>(nodeid) 
@@ -25,7 +26,8 @@ base_node<node_t>::base_node(base_node&& node) : keynode_t<uint64_t>(std::move(n
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(const string_t& str) : keynode_t<uint64_t>(0), flag(OBJ_REG), string(str) 
+base_node<node_t>::base_node(const string_t& str, nodetype_t type) :
+      keynode_t<uint64_t>(0), flag(type), string(str) 
 {
 }
 
@@ -83,6 +85,18 @@ uint64_t base_node<node_t>::s_hash_value(void) const
    return hash_str(0, string, string.length());
 }
 
+///
+/// This method is called by the database to skip node values that produce
+/// the same database hash returned from `s_hash_value` and used as a key
+/// in value tables.
+/// 
+/// The `s_hash_value` method does not include node type in the hash, which
+/// means that we need to include node type in value comparisons in this
+/// method. This is done for historical reasons, because adding node type
+/// into the hashing method would require node versioning propagated into
+/// all methods involved in value lookups, which would be a more intrusive
+/// change.
+/// 
 template <typename node_t>
 int64_t base_node<node_t>::s_compare_value(const void *buffer, size_t bufsize) const
 {
@@ -92,7 +106,14 @@ int64_t base_node<node_t>::s_compare_value(const void *buffer, size_t bufsize) c
    string_t tstr;
 
    if(bufsize < s_data_size(buffer, bufsize))
-      throw exception_t(0, string_t::_format("Record size is smaller than expected (node: %s; size: %zu; expected: %zu)", typeid(*this).name(), bufsize, s_data_size(buffer, bufsize)));
+      throw std::runtime_error(string_t::_format("Record size is smaller than expected (node: %s; size: %zu; expected: %zu)", typeid(*this).name(), bufsize, s_data_size(buffer, bufsize)));
+
+   // make sure node types match, as group names may be equal to regular item values
+   bool is_group = s_is_group(buffer, bufsize);
+
+   // order regular items before groups, in case if this method is used for sorting
+   if(is_group != (flag == OBJ_GRP))
+      return is_group ? 1 : -1;
 
    sr.deserialize(s_field_value(buffer, bufsize, datasize), tstr);
 
@@ -136,8 +157,9 @@ template <typename node_t>
 bool base_node<node_t>::s_is_group(const void *buffer, size_t bufsize)
 {
    if(!buffer && bufsize < s_data_size(buffer, bufsize))
-      return false;
+      throw std::runtime_error(string_t::_format("Record size is smaller than expected (node: %s; size: %zu; expected: %zu)", typeid(node_t).name(), bufsize, s_data_size(buffer, bufsize)));
 
-   return (*((u_char*) buffer + datanode_t<node_t>::s_data_size(buffer, bufsize)) == OBJ_GRP) ? true : false;
+   // node type is the first serialized value for this node, so just compare it in-place
+   return (*((u_char*) buffer + datanode_t<node_t>::s_data_size(buffer, bufsize)) == (u_char) OBJ_GRP);
 }
 

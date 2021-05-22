@@ -103,7 +103,7 @@ struct hnode_t : public base_node<hnode_t> {
       public:
          hnode_t(void);
          hnode_t(hnode_t&& tmp) noexcept;
-         hnode_t(const string_t& ipaddr);
+         hnode_t(const string_t& ipaddr, nodetype_t type);
 
          ~hnode_t(void);
 

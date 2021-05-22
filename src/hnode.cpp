@@ -84,7 +84,8 @@ hnode_t::hnode_t(hnode_t&& hnode) noexcept : base_node<hnode_t>(std::move(hnode)
    hnode.visit = nullptr;
 }
 
-hnode_t::hnode_t(const string_t& ipaddr) : base_node<hnode_t>(ipaddr),
+hnode_t::hnode_t(const string_t& ipaddr, nodetype_t type) :
+      base_node<hnode_t>(ipaddr, type),
       geoname_id(0),
       as_num(0)
 {

@@ -39,7 +39,7 @@ struct anode_t : public base_node<anode_t> {
          anode_t(void);
 
          /// Constructs an instance of a user agent node with the `agent` string.
-         anode_t(const string_t& agent, bool robot);
+         anode_t(const string_t& agent, nodetype_t type, bool robot);
 
          ///
          /// @name   Serialization

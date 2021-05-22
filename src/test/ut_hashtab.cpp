@@ -28,14 +28,14 @@ TEST(HashTableTest, NodeTimeStampOrder)
 {
    hash_table<storable_t<anode_t>> htab(10);
 
-   htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 1"), false), 1);
+   htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 1"), OBJ_REG, false), 1);
 
-   EXPECT_NO_THROW(htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 2"), false), 1)) << "Same time stamp should not throw an exception when inserting";
-   EXPECT_NO_THROW(htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 3"), false), 10)) << "Same time stamp should not throw an exception when inserting";
+   EXPECT_NO_THROW(htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 2"), OBJ_REG, false), 1)) << "Same time stamp should not throw an exception when inserting";
+   EXPECT_NO_THROW(htab.put_node(new storable_t<anode_t>(string_t::hold("Agent 3"), OBJ_REG, false), 10)) << "Same time stamp should not throw an exception when inserting";
 
    {
       // keep the node pointer, so we don't leak while throwing
-      storable_t<anode_t> *anode = new storable_t<anode_t>(string_t::hold("Agent 4"), false);
+      storable_t<anode_t> *anode = new storable_t<anode_t>(string_t::hold("Agent 4"), OBJ_REG, false);
 
       // do not release the pointer because it never is inserted
       EXPECT_THROW(htab.put_node(anode, 5), std::logic_error) << "Cannot insert a node with an earlier time stamp";
@@ -70,7 +70,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithKey)
          ASSERT_EQ(nullptr, anode) << "Every even agent number should not be found in the hash table";
 
          // insert a new node and test equal and greater-than time stamps
-         ASSERT_NO_THROW((anode = htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp)));
+         ASSERT_NO_THROW((anode = htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), tstamp)));
 
          ASSERT_TRUE(anode != nullptr) << "A newly inserted node cannot be nullptr";
 
@@ -144,7 +144,7 @@ TEST(HashTableTest, NodeInsertBaseNodeStorableWithParamBlock)
       std::string download = "Download " + std::to_string(tstamp);
       std::string ipaddr = "127.0.0." + std::to_string(tstamp);
 
-      hnode_t *host = hosts.insert(hosts.end(), std::make_unique<hnode_t>(string_t::hold(ipaddr.c_str(), ipaddr.length())))->get();
+      hnode_t *host = hosts.insert(hosts.end(), std::make_unique<hnode_t>(string_t::hold(ipaddr.c_str(), ipaddr.length()), OBJ_REG))->get();
 
       uint64_t hashval = dlnode_t::hash_key(string_t::hold(ipaddr.c_str()), string_t::hold(download.c_str()));
 
@@ -197,7 +197,7 @@ TEST(HashTableTest, TimeStampRange)
       std::string agent = "Agent " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
+      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), tstamp));
    }
 
    EXPECT_EQ(98, htab.tm_range()) << "The difference between the newest and oldest time stamps should be 98";
@@ -226,14 +226,13 @@ TEST(HashTableTest, SwapOut)
       std::string agent = "Agent " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, false), tstamp));
+      ASSERT_NO_THROW(htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), tstamp));
 
       // every 10 iterations insert a group entry with a zero time stamp, which should be ignored
       if(i % 10 == 0) {
          std::string agent_group = "Agent Group " + std::to_string(i);
 
-         storable_t<anode_t> *anode_group = new storable_t<anode_t>(string_t::hold(agent_group.c_str(), agent_group.length()), false);
-         anode_group->flag = OBJ_GRP;
+         storable_t<anode_t> *anode_group = new storable_t<anode_t>(string_t::hold(agent_group.c_str(), agent_group.length()), OBJ_GRP, false);
 
          // pass a zero time stamp because group nodes do not participate in time stamp ordering
          ASSERT_NO_THROW(htab.put_node(anode_group, 0));
@@ -302,7 +301,7 @@ TEST(HashTableTest, SwapOutByMemSize)
       std::string agent = "Agent " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, false);
+      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, OBJ_REG, false);
 
       nodesize += (anode->s_data_size() + sizeof(storable_t<anode_t>));
 
@@ -341,7 +340,7 @@ TEST(HashTableTest, SwapOutByMemSizeLessThan)
       std::string agent = "Agent " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, false);
+      storable_t<anode_t> *anode = new storable_t<anode_t>(agent_key, OBJ_REG, false);
 
       // simulate nodes reduced in size after they have been inserted into the hash table
       nodesize += anode->s_data_size() + sizeof(storable_t<anode_t>);
@@ -370,7 +369,7 @@ TEST(HashTableTest, MultipleLookUps)
       std::string agent = "Agent " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, false), 0)));
+      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), 0)));
    }
 
    // nodes that are looked up are moved to the beginning of the list - make sure we can still find them
@@ -417,14 +416,13 @@ TEST(HashTableTest, IteratorAllTypes)
 
       agent_node_names.insert(agent_key);
 
-      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, false), 0)));
+      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), 0)));
 
       if(i % 10 == 0) {
          std::string agent = "Agent Group " + std::to_string(i);
          string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-         storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, false);
-         agent_grp->flag = OBJ_GRP;
+         storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, OBJ_GRP, false);
 
          agent_node_names.insert(agent_key);
 
@@ -469,7 +467,7 @@ TEST(HashTableTest, IteratorRegularObjects)
 
       agent_node_names.insert(agent_key);
 
-      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, false), 0)));
+      ASSERT_NO_THROW((htab.put_node(new storable_t<anode_t>(agent_key, OBJ_REG, false), 0)));
    }
 
    hash_table<storable_t<anode_t>>::iterator iter = htab.begin();
@@ -506,8 +504,7 @@ TEST(HashTableTest, IteratorGroupObjects)
       std::string agent = "Agent Group " + std::to_string(i);
       string_t agent_key(string_t::hold(agent.c_str(), agent.length()));
 
-      storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, false);
-      agent_grp->flag = OBJ_GRP;
+      storable_t<anode_t> *agent_grp = new storable_t<anode_t>(agent_key, OBJ_GRP, false);
 
       agent_node_names.insert(agent_key);
 
@@ -559,8 +556,8 @@ TEST(HashTableTest, URLMultiKey)
    string_t url_psa(urlpath + '?' + srchargs);     // URL path + search args
    string_t url_p(urlpath);                        // URL path without search args
 
-   unode_t unode_psa(urlpath, srchargs);
-   unode_t unode_p(urlpath, string_t());
+   unode_t unode_psa(urlpath, OBJ_REG, srchargs);
+   unode_t unode_p(urlpath, OBJ_REG, string_t());
 
    ASSERT_TRUE(unode_psa.match_key(urlpath, srchargs)) << "Separate URL key components must match for non-empty search args";
    ASSERT_TRUE(unode_psa.match_key(url_psa)) << "Single URL key must match for non-empty search args";
