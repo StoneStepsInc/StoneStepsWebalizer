@@ -3198,7 +3198,11 @@ int main(int argc, char *argv[])
       // read configuration files
       config.initialize(get_cur_path(), argc, argv);
       
-      webalizer_t logproc(config);
+      //
+      // Use a unique pointer because sizeof(webalizer_t) is 10K+ and VS complains
+      // that it cannot analyze it on stack.
+      //
+      std::unique_ptr<webalizer_t> logproc = std::make_unique<webalizer_t>(config);
 
       //
       // Route commands that don't require webalizer_t initialized right away. Note
@@ -3210,24 +3214,24 @@ int main(int argc, char *argv[])
 
       // check if version is requested
       if(config.print_version) {
-         logproc.print_version();
+         logproc->print_version();
          return EXIT_SUCCESS;
       }
 
       // check if warranty is requested
       if(config.print_warranty) {
-         logproc.print_warranty();
+         logproc->print_warranty();
          return EXIT_SUCCESS;
       }
 
       // check if help is requested
       if(config.print_options) {
-         logproc.print_options(argv[0]);
+         logproc->print_options(argv[0]);
          return EXIT_SUCCESS;
       }
 
       // be polite and announce yourself...
-      logproc.print_intro();
+      logproc->print_intro();
 
       if(config.is_bad()) {
          config.report_errors();
@@ -3235,7 +3239,7 @@ int main(int argc, char *argv[])
       }
 
       // print current configuration
-      logproc.print_config();
+      logproc->print_config();
 
       //
       // Initialize the log processor outside of the run time try/catch block, so if
@@ -3243,17 +3247,17 @@ int main(int argc, char *argv[])
       // could attempt to close the state database even though we failed to open it,
       // and cause issues with table allocations.
       //
-      logproc.initialize();
+      logproc->initialize();
 
       try {
          // set the Ctrl-C handler
          set_ctrl_c_handler(webalizer_t::ctrl_c_handler);
 
          // run the log processor 
-         retcode = logproc.run();
+         retcode = logproc->run();
 
          // clean up
-         logproc.cleanup();
+         logproc->cleanup();
 
          // remove the Ctrl-C handler
          reset_ctrl_c_handler();
@@ -3278,7 +3282,7 @@ int main(int argc, char *argv[])
       // any exception is thrown at this point, report it and just exit.
       //
 
-      logproc.cleanup();
+      logproc->cleanup();
    }
    catch(const os_ex_t& err) {
       fprintf(stderr, "%s\n", err.desc().c_str());
