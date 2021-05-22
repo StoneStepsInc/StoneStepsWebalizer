@@ -30,7 +30,7 @@ struct base_node : public htab_obj_t<const string_t&>, public keynode_t<uint64_t
       public:
          base_node(uint64_t nodeid = 0);
          base_node(const base_node& node) = delete;
-         base_node(base_node&& node);
+         base_node(base_node&& node) noexcept;
          base_node(const string_t& str, nodetype_t type);
 
          virtual ~base_node(void) {}

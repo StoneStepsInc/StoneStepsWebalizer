@@ -108,7 +108,7 @@ struct dns_db_record_t {
       }
 
       /// Constructs a DNS cache record by moving resources from anoher instance.
-      dns_db_record_t(dns_db_record_t&& other);
+      dns_db_record_t(dns_db_record_t&& other) noexcept;
 
       /// Returns a serialized size of this instance, in bytes.
       size_t s_data_size(void) const;
@@ -195,7 +195,7 @@ class dns_resolver_t::dnode_t {
 // DNS DB record
 //
 
-dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) :
+dns_db_record_t::dns_db_record_t(dns_db_record_t&& other) noexcept :
    spammer(other.spammer),
    tstamp(other.tstamp),
    city(std::move(other.city)),

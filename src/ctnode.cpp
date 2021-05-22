@@ -27,7 +27,7 @@ ctnode_t::ctnode_t(uint32_t geoname_id, const string_t& city, const string_t& cc
 {
 }
 
-ctnode_t::ctnode_t(ctnode_t&& ctnode) :
+ctnode_t::ctnode_t(ctnode_t&& ctnode) noexcept :
       keynode_t<uint64_t>(std::move(ctnode)),
       ccode(std::move(ctnode.ccode)),
       city(std::move(ctnode.city)),

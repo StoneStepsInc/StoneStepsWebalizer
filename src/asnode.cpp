@@ -25,7 +25,7 @@ asnode_t::asnode_t(uint32_t as_num, const string_t& as_org) :
 {
 }
 
-asnode_t::asnode_t(asnode_t&& asnode) :
+asnode_t::asnode_t(asnode_t&& asnode) noexcept :
       keynode_t<uint32_t>(std::move(asnode)),
       as_org(std::move(asnode.as_org)),
       hits(asnode.hits),

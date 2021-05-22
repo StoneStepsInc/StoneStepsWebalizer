@@ -40,7 +40,7 @@ struct asnode_t : htab_obj_t<uint32_t>, keynode_t<uint32_t>, datanode_t<asnode_t
 
       asnode_t(uint32_t as_num, const string_t& as_org);
 
-      asnode_t(asnode_t&& ctnode);
+      asnode_t(asnode_t&& ctnode) noexcept;
 
       ///
       /// @name   Hash table interface

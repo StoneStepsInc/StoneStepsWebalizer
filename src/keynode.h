@@ -36,7 +36,7 @@ struct keynode_t {
 
       public:
          keynode_t(type_t nodeid);
-         keynode_t(keynode_t&& keynode);
+         keynode_t(keynode_t&& keynode) noexcept;
          keynode_t(const keynode_t& keynode);
 
          void reset(type_t nodeid);

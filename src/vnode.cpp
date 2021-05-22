@@ -25,7 +25,8 @@ vnode_t::vnode_t(uint64_t nodeid) : keynode_t<uint64_t>(nodeid),
    hostref = 0;
 }
 
-vnode_t::vnode_t(vnode_t&& vnode) : keynode_t<uint64_t>(std::move(vnode)),
+vnode_t::vnode_t(vnode_t&& vnode) noexcept :
+   keynode_t<uint64_t>(std::move(vnode)),
    next(vnode.next)
 {
    entry_url = vnode.entry_url;

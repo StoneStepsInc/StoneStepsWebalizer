@@ -58,7 +58,7 @@ struct ctnode_t : htab_obj_t<uint32_t, const string_t&>, keynode_t<uint64_t>, da
 
       ctnode_t(uint32_t geoname_id, const string_t& city, const string_t& ccode);
 
-      ctnode_t(ctnode_t&& ctnode);
+      ctnode_t(ctnode_t&& ctnode) noexcept;
 
       /// Returns the GeoName ID for this city.
       uint32_t geoname_id(void) const {return (uint32_t) nodeid;}

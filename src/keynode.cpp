@@ -18,7 +18,7 @@ keynode_t<type_t>::keynode_t(type_t nodeid) : nodeid(nodeid)
 }
 
 template <typename type_t>
-keynode_t<type_t>::keynode_t(keynode_t&& keynode) : nodeid(keynode.nodeid)
+keynode_t<type_t>::keynode_t(keynode_t&& keynode) noexcept : nodeid(keynode.nodeid)
 {
    keynode.nodeid = 0;
 }

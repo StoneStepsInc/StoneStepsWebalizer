@@ -129,7 +129,7 @@ struct storable_t : public object_t {
    }
 
    /// Constructs an instance of a storable object by moving the underlying object from the supplied reference.
-   storable_t(storable_t<object_t>&& other) : storage_info(other.storage_info), object_t(std::move(other)) 
+   storable_t(storable_t<object_t>&& other) noexcept : storage_info(other.storage_info), object_t(std::move(other)) 
    {
    }
 

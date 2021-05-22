@@ -74,7 +74,7 @@ struct vnode_t : public keynode_t<uint64_t>, public datanode_t<vnode_t> {
 
       public:
          vnode_t(uint64_t nodeid = 0);
-         vnode_t(vnode_t&& vnode);
+         vnode_t(vnode_t&& vnode) noexcept;
 
          ~vnode_t(void);
 

@@ -32,7 +32,8 @@ unode_t::unode_t(uint64_t nodeid) : base_node<unode_t>(nodeid)
    vstref = 0;
 }
 
-unode_t::unode_t(unode_t&& unode) : base_node<unode_t>(std::move(unode)) 
+unode_t::unode_t(unode_t&& unode) noexcept :
+      base_node<unode_t>(std::move(unode)) 
 {
    target = unode.target;
    count = unode.count;

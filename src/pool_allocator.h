@@ -59,7 +59,7 @@ class memory_pool_t {
             {
             }
 
-            bucket_t(bucket_t&& other) : lifept(other.lifept), blocks(std::move(other.blocks))
+            bucket_t(bucket_t&& other) noexcept : lifept(other.lifept), blocks(std::move(other.blocks))
             {
                other.lifept = 0;
             }

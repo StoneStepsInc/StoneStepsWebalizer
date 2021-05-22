@@ -49,7 +49,7 @@ dlnode_t::dlnode_t(const string_t& name, hnode_t& nptr) :
    hnode->dlref++;
 }
 
-dlnode_t::dlnode_t(dlnode_t&& tmp) :
+dlnode_t::dlnode_t(dlnode_t&& tmp) noexcept :
       keynode_t<uint64_t>(std::move(tmp)),
       name(std::move(tmp.name))
 {

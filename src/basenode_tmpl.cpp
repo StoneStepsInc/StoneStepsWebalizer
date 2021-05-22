@@ -21,7 +21,8 @@ base_node<node_t>::base_node(uint64_t nodeid) : keynode_t<uint64_t>(nodeid)
 }
 
 template <typename node_t> 
-base_node<node_t>::base_node(base_node&& node) : keynode_t<uint64_t>(std::move(node)), flag(node.flag), string(std::move(node.string))
+base_node<node_t>::base_node(base_node&& node) noexcept :
+      keynode_t<uint64_t>(std::move(node)), flag(node.flag), string(std::move(node.string))
 {
 }
 

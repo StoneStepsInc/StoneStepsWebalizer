@@ -71,7 +71,7 @@ struct dlnode_t : public htab_obj_t<const string_t&, const string_t&>, public ke
 
       public:
          dlnode_t(void);
-         dlnode_t(dlnode_t&& tmp);
+         dlnode_t(dlnode_t&& tmp) noexcept;
          dlnode_t(const string_t& name, hnode_t& hnode);
 
          ~dlnode_t(void);
