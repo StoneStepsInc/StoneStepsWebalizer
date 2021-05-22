@@ -49,7 +49,8 @@ unode_t::unode_t(unode_t&& unode) : base_node<unode_t>(std::move(unode))
    unode.vstref = 0;
 }
 
-unode_t::unode_t(const string_t& urlpath, const string_t& srchargs) : base_node<unode_t>(urlpath) 
+unode_t::unode_t(const string_t& urlpath, nodetype_t type, const string_t& srchargs) :
+      base_node<unode_t>(urlpath, type) 
 {
    pathlen = (u_short) string.length();
 

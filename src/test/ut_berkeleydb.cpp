@@ -160,7 +160,7 @@ TEST_F(BerkeleyDBTest, LookUpAgentNodes)
 {
    berkeleydb_t::status_t status;
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, OBJ_REG, false);
 
    // look up agent nodes with IDs we just inserted
    storable_t<anode_t> anode;
@@ -186,7 +186,7 @@ TEST_F(BerkeleyDBTest, LookUpHostNodes)
 {
    berkeleydb_t::status_t status;
 
-   PopulateTable<hnode_t>("hosts", hosts, "Host ", 200, 400, HitCountValueX10);
+   PopulateTable<hnode_t>("hosts", hosts, "Host ", 200, 400, HitCountValueX10, OBJ_REG);
 
    // look up a few agent nodes with IDs we just inserted
    storable_t<hnode_t> hnode;
@@ -216,7 +216,7 @@ TEST_F(BerkeleyDBTest, ForwardIndexTraversal)
                &sc_extract_cb<anode_t::s_field_hits>))) << "A table index should associate without throwing any exceptions";
    ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, OBJ_REG, false);
 
    storable_t<anode_t> anode;
 
@@ -248,7 +248,7 @@ TEST_F(BerkeleyDBTest, ReverseIndexTraversal)
                &sc_extract_cb<anode_t::s_field_hits>))) << "A table index should associate without throwing any exceptions";
    ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, OBJ_REG, false);
 
    storable_t<anode_t> anode;
 
@@ -281,7 +281,7 @@ TEST_F(BerkeleyDBTest, BuildNewIndex)
    ASSERT_EQ(0, status.err_num()) << "A table index should associate without an error";
 
    // populate the table with data without an index and assign 25 distinct hit counts in the order reverse to node IDs
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueDescX10Div4, OBJ_REG, false);
 
    // build a new index against the table we just populated
    ASSERT_NO_THROW((status = agents.associate("agents.hits", 
@@ -308,7 +308,7 @@ TEST_F(BerkeleyDBTest, AgentNodeReadCallback)
 {
    berkeleydb_t::status_t status;
 
-   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, false);
+   PopulateTable<anode_t>("agents", agents, "Agent ", 1, 100, HitCountValueX10, OBJ_REG, false);
 
    // use the void pointer to pass in a node ID, so we don't have to instantiate read templates just for this test
    auto read_agent_cb = [] (anode_t& anode, void *arg) -> void

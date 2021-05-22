@@ -50,7 +50,7 @@ struct unode_t : public base_node<unode_t> {
       public:
          unode_t(uint64_t nodeid = 0);
          unode_t(unode_t&& unode);
-         unode_t(const string_t& urlpath, const string_t& srchargs);
+         unode_t(const string_t& urlpath, nodetype_t type, const string_t& srchargs);
 
          void reset(uint64_t nodeid = 0);
 

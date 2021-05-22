@@ -34,7 +34,7 @@ struct inode_t : public base_node<inode_t> {
 
       public:
          inode_t(void);
-         inode_t(const string_t& ident);
+         inode_t(const string_t& ident, nodetype_t type);
 
          //
          // serialization

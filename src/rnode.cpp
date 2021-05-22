@@ -16,7 +16,8 @@
 //
 //
 
-rnode_t::rnode_t(const string_t& ref) : base_node<rnode_t>(ref) 
+rnode_t::rnode_t(const string_t& ref, nodetype_t type) :
+      base_node<rnode_t>(ref, type)
 {
    count = 0;
    visits = 0;

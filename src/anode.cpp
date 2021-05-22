@@ -20,7 +20,8 @@ anode_t::anode_t(void) : base_node<anode_t>()
    robot = false;
 }
 
-anode_t::anode_t(const string_t& agent, bool robot) : base_node<anode_t>(agent), robot(robot)
+anode_t::anode_t(const string_t& agent, nodetype_t type, bool robot) :
+      base_node<anode_t>(agent, type), robot(robot)
 {
    count = 1;
    visits = 0; 

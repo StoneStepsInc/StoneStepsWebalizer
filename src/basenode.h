@@ -31,7 +31,7 @@ struct base_node : public htab_obj_t<const string_t&>, public keynode_t<uint64_t
          base_node(uint64_t nodeid = 0);
          base_node(const base_node& node) = delete;
          base_node(base_node&& node);
-         base_node(const string_t& str);
+         base_node(const string_t& str, nodetype_t type);
 
          virtual ~base_node(void) {}
 
@@ -61,6 +61,7 @@ struct base_node : public htab_obj_t<const string_t&>, public keynode_t<uint64_t
 
          size_t s_hash_value_size(void) {return sizeof(uint64_t);}
 
+         /// Compares node value and node type against those stored in the node buffer.
          int64_t s_compare_value(const void *buffer, size_t bufsize) const;
 
          static size_t s_data_size(const void *buffer, size_t bufsize);
