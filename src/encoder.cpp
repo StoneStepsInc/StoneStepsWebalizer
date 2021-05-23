@@ -81,6 +81,10 @@ char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc)
    }
 
    switch (*cp) {
+      case '\\':
+         obc = 2;
+         memcpy(op, "\\\\", 2);
+         break;
       case '\'':
          obc = 2;
          memcpy(op, "\\'", 2);

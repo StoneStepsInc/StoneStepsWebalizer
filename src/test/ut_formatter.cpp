@@ -242,9 +242,10 @@ TEST_F(FormatterTest, FormatterEncodeXML)
 TEST_F(FormatterTest, FormatterEncodeJavaScript)
 {
    // use hex representation for UTF-8 bytes to make the transformation more visible
-   formatter.format(encode_string<encode_char_js>, "\"'\r\n\xE2\x80\xA8\xE2\x80\xA9");
+   formatter.format(encode_string<encode_char_js>, "\"'\\\r\n\xE2\x80\xA8\xE2\x80\xA9");
 
-   EXPECT_STREQ(R"==(\"\'\r\n\u2028\u2029)==", buffer) << "All JavaScript special characters must be encoded";
+   EXPECT_STREQ(R"==(\"\'\\\r\n\u2028\u2029)==", buffer) << "All JavaScript special characters must be encoded";
+
 
    formatter.format(encode_string<encode_char_js>, R"==(123"abc"456)==");
 
