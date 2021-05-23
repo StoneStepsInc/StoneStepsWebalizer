@@ -187,6 +187,10 @@ TEST_F(FormatterTest, FormatterEncodeHTML)
 
    EXPECT_STREQ("123&lt;abc&gt;456", buffer) << "Characters that are not HTML-special should not be changed";
 
+   formatter.format(encode_string<encode_char_html>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
+
+   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
+
    //
    // The encoder expects to have enough room at the end of the buffer for the maximum encoded
    // sequence length for the last character, which is 6 for HTML encoding, plus the null character.
@@ -225,6 +229,10 @@ TEST_F(FormatterTest, FormatterEncodeXML)
 
    EXPECT_STREQ("123&lt;abc&gt;456", buffer) << "Characters that are not XML-special should not be changed";
 
+   formatter.format(encode_string<encode_char_xml>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
+
+   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
+
    //
    // See the comment in the HTML formatter
    //
@@ -256,6 +264,9 @@ TEST_F(FormatterTest, FormatterEncodeJavaScript)
 
    EXPECT_STREQ(R"==(\"\'\\\r\n\u2028\u2029)==", buffer) << "All JavaScript special characters must be encoded";
 
+   formatter.format(encode_string<encode_char_js>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
+
+   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
 
    formatter.format(encode_string<encode_char_js>, R"==(123"abc"456)==");
 
