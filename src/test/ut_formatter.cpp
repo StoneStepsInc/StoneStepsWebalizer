@@ -267,6 +267,50 @@ TEST_F(FormatterTest, FormatterEncodeJavaScript)
 }
 
 ///
+/// @brief  Tests a JSON encoder formatter.
+///
+TEST_F(FormatterTest, FormatterEncodeJSON)
+{
+   formatter.format(encode_string<encode_char_json>, "\"\\\r\n\t");
+   EXPECT_STREQ(R"==(\"\\\r\n\t)==", buffer) << "Special JSON characters must be escaped";
+
+   formatter.format(encode_string<encode_char_json>, "\b\f");
+   EXPECT_STREQ(u8"\uE008\uE00C", buffer) << "\b and \f should be treated as control characters and encoded as private-use code points";
+
+   // use hex representation for UTF-8 bytes to make the transformation more visible.
+   formatter.format(encode_string<encode_char_json>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
+   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be escaped";
+
+   // single quote and forward slash should not be escaped
+   formatter.format(encode_string<encode_char_json>, R"==(abc'123/XYZ)==");
+   EXPECT_STREQ(R"==(abc'123/XYZ)==", buffer) << "Printable ASCII characters, expect those above, should not be escaped";
+
+   //
+   // See the comment in the HTML formatter
+   //
+   // Unlike other encoders, the longest encoded JSON sequence is shorter
+   // than the longest UTF-8 character, which changes the bounds in tests
+   // below. For 1 and 2 byte characters there must be at least 2 (max
+   // encoded sequence) + 1 (null character) bytes at the end. For 3 and
+   // 4 byte characters there should be 3 + 1 and 4 + 1 bytes at the end,
+   // respectively.
+   //
+
+   // check that the maximum encoded sequence size is 2 bytes (not output)
+   size_t mbenc_size = 0;
+   encode_char_json(nullptr, 0, nullptr, mbenc_size);
+   ASSERT_EQ(2, mbenc_size);
+
+   // 1-byte character at the end
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_json>, "123456789012345678901234567890")) << "30 + null character should fit into a 32-byte buffer";
+   ASSERT_THROW(formatter.format(encode_string<encode_char_json>, "1234567890123456789012345678901"), exception_t) << "29 characters should not fit into a 32-byte buffer";
+
+   // 3-byte character at the end
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_json>, "1234567890123456789012345678\xE4\xB8\x82")) << "28 + 3-byte character + null character should fit into a 32-byte buffer";
+   ASSERT_THROW(formatter.format(encode_string<encode_char_json>, "12345678901234567890123456789\xE4\xB8\x82"), exception_t) << "29 + 3-byte character + null character, should not fit into a 32-byte buffer";
+}
+
+///
 /// @brief  Tests that control characters are converted into Unicode private-range characters.
 ///
 TEST_F(FormatterTest, FormatterEncodeCtrlChars)

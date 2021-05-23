@@ -53,6 +53,11 @@ char *encode_char_xml(const char *cp, size_t cbc, char *op, size_t& obc);
 char *encode_char_js(const char *cp, size_t cbc, char *op, size_t& obc);
 
 ///
+/// @brief  JSON character encoding function for `encode_string`
+///
+char *encode_char_json(const char *cp, size_t cbc, char *op, size_t& obc);
+
+///
 /// @brief  Encodes each UTF-8 character in `str` so it can be safely embedded
 ///         within some formatted text, such as HTML or JavaScript string.
 ///

@@ -18,7 +18,7 @@ formatter.h
 #include <vector>
 
 ///
-/// @brief  A generic formatter class that uses the spefcied formatting function to 
+/// @brief  A generic formatter class that uses the specified formatting function to 
 ///         render one or more strings within the specified buffer
 ///
 /// `buffer_formatter_t` uses a formatting function passed into the format method to 
