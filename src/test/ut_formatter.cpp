@@ -195,16 +195,21 @@ TEST_F(FormatterTest, FormatterEncodeHTML)
    // it leaves 5 bytes empty.
    //
 
+   // check that the maximum encoded size is 6 bytes
+   size_t mbenc_size = 0;
+   encode_char_html(nullptr, 0, nullptr, mbenc_size);
+   ASSERT_EQ(6, mbenc_size);
+
    // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
    ASSERT_NO_THROW(formatter.format(encode_string<encode_char_html>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
 
    ASSERT_THROW(formatter.format(encode_string<encode_char_html>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
 
    // a single quote will expand to the end of the buffer, minus the null character
-   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_html>, "1234567890123456789012345'")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_html>, "1234567890123456789012345'")) << "25 + 6-byte encoded character + null character should fit into a 32-byte buffer";
 
    // one more character leaves no room for the null character
-   ASSERT_THROW(formatter.format(encode_string<encode_char_html>, "12345678901234567890123456'"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+   ASSERT_THROW(formatter.format(encode_string<encode_char_html>, "12345678901234567890123456'"), exception_t) << "26 + 6-byte encoded character + null character should not fit into a 32-byte buffer";
 }
 
 ///
@@ -224,16 +229,21 @@ TEST_F(FormatterTest, FormatterEncodeXML)
    // See the comment in the HTML formatter
    //
 
+   // check that the maximum encoded size is 6 bytes
+   size_t mbenc_size = 0;
+   encode_char_xml(nullptr, 0, nullptr, mbenc_size);
+   ASSERT_EQ(6, mbenc_size);
+
    // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
    ASSERT_NO_THROW(formatter.format(encode_string<encode_char_xml>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
 
    ASSERT_THROW(formatter.format(encode_string<encode_char_xml>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
 
    // a single quote will expand to the end of the buffer, minus the null character
-   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_xml>, "1234567890123456789012345'")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_xml>, "1234567890123456789012345'")) << "25 + 6-byte encoded character + null character should fit into a 32-byte buffer";
 
    // one more character leaves no room for the null character
-   ASSERT_THROW(formatter.format(encode_string<encode_char_xml>, "12345678901234567890123456'"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+   ASSERT_THROW(formatter.format(encode_string<encode_char_xml>, "12345678901234567890123456'"), exception_t) << "26 + 6-byte encoded character + null character should not fit into a 32-byte buffer";
 }
 
 ///
@@ -255,16 +265,21 @@ TEST_F(FormatterTest, FormatterEncodeJavaScript)
    // See the comment in the HTML formatter
    //
 
+   // check that the maximum encoded sequence size is 6 bytes
+   size_t mbenc_size = 0;
+   encode_char_js(nullptr, 0, nullptr, mbenc_size);
+   ASSERT_EQ(6, mbenc_size);
+
    // try without special characters first (this leaves 5 empty bytes at the end of the buffer)
    ASSERT_NO_THROW(formatter.format(encode_string<encode_char_js>, "12345678901234567890123456")) << "26 characters should fit into a 32-byte buffer";
 
    ASSERT_THROW(formatter.format(encode_string<encode_char_js>, "123456789012345678901234567"), exception_t) << "27 characters should not fit into a 32-byte buffer";
 
-   // a single quote will expand to the end of the buffer, minus the null character
-   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_js>, "1234567890123456789012345\xE2\x80\xA8")) << "26 characters, with one 6-byte special character, should fit into a 32-byte buffer";
+   // encoded \u2028 expands to the end of the buffer, minus the null character
+   ASSERT_NO_THROW(formatter.format(encode_string<encode_char_js>, "1234567890123456789012345\xE2\x80\xA8")) << "25 + 6-byte encoded character + null character should fit into a 32-byte buffer";
 
    // one more character leaves no room for the null character
-   ASSERT_THROW(formatter.format(encode_string<encode_char_js>, "12345678901234567890123456\xE2\x80\xA8"), exception_t) << "26 characters, with one 6-byte special character, should not fit into a 32-byte buffer";
+   ASSERT_THROW(formatter.format(encode_string<encode_char_js>, "12345678901234567890123456\xE2\x80\xA8"), exception_t) << "26 + 6-byte encoded character + null character should not fit into a 32-byte buffer";
 }
 
 ///
