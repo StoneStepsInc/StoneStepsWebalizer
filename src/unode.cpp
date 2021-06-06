@@ -109,6 +109,18 @@ char unode_t::get_url_type_ind(void) const
             (urltype & URL_TYPE_OTHER) ? '+' : ' ';
 }
 
+const char *unode_t::get_query(void) const
+{
+   // skip the question mark
+   return string.length() > pathlen ? string.c_str() + pathlen + 1 : "";
+}
+
+size_t unode_t::get_query_len(void) const
+{
+   // account for the question mark
+   return string.length() > pathlen ? string.length() - pathlen - 1 : 0;
+}
+
 bool unode_t::match_key(const string_t& url, const string_t& srchargs) const
 {
    const char *eopath;

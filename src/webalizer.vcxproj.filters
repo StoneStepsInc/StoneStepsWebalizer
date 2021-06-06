@@ -274,6 +274,9 @@
     <ClCompile Include="asnode.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
+    <ClCompile Include="json_output.cpp">
+      <Filter>Source Files\output</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -464,6 +467,9 @@
     </ClInclude>
     <ClInclude Include="asnode.h">
       <Filter>Header Files\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="json_output.h">
+      <Filter>Header Files\output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -202,6 +202,7 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/wd4146 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/wd4146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="json_output.cpp" />
     <ClCompile Include="p2_buffer_allocator.cpp" />
     <ClCompile Include="platform\console_win.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
@@ -318,6 +319,7 @@
     <ClInclude Include="hckdel.h" />
     <ClInclude Include="history.h" />
     <ClInclude Include="html_output.h" />
+    <ClInclude Include="json_output.h" />
     <ClInclude Include="lang.h" />
     <ClInclude Include="linklist.h" />
     <ClInclude Include="logfile.h" />

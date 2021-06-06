@@ -58,6 +58,10 @@ struct unode_t : public base_node<unode_t> {
 
          char get_url_type_ind(void) const;
 
+         const char *get_query(void) const;
+
+         size_t get_query_len(void) const;
+
          // make the single-string match_key visible for full URL look-ups
          using base_node<unode_t>::match_key;
 

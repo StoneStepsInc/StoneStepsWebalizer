@@ -76,8 +76,8 @@ class totals_t : public keynode_t<uint32_t>, public datanode_t<totals_t> {
       uint64_t t_shosts;                           ///< Spammer hosts
       uint64_t t_sxfer;                            ///< Spammer transfer
 
-      double t_visit_avg;                          ///< Average human visit length
-      uint64_t t_visit_max;                        ///< Maximum human visit length
+      double t_visit_avg;                          ///< Average human visit length, in seconds
+      uint64_t t_visit_max;                        ///< Maximum human visit length, in seconds
 
       double t_vconv_avg;                          ///< Average converted visit length
       uint64_t t_vconv_max;                        ///< Maximum converted visit length

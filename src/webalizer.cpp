@@ -35,6 +35,7 @@
 #include "tstring.h"
 #include "exception.h"
 #include "dump_output.h"
+#include "json_output.h"
 #include "html_output.h"
 #include "console.h"
 #include "init_seq_guard.h"
@@ -211,6 +212,8 @@ bool webalizer_t::init_output_engines(void)
          optr.reset(new html_output_t(config, state));
       else if(iter->string == "tsv") 
          optr.reset(new dump_output_t(config, state));
+      else if(iter->string == "json") 
+         optr.reset(new json_output_t(config, state));
       else {
          fprintf(stderr, "Unrecognized output format (%s)\n", iter->string.c_str());
          continue;
