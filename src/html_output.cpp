@@ -851,6 +851,7 @@ void html_output_t::month_total_table()
             state.totals.max_hv_xfer,
             fmt_xfer(state.totals.max_hv_xfer));
          
+         // avg/max visit length, in minutes
          fprintf(out_fp,"<tr><th>%s</th><td>%.02f</td><td>%.02f</td></tr>\n", config.lang.msg_mtot_mdv, state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
 
          if(state.totals.t_visits_conv)
@@ -937,6 +938,8 @@ void html_output_t::month_total_table()
 
    /* Max/Avg Visits per Day */
    fprintf(out_fp,"<tr><th>%s</th>\n<td>%" PRIu64 "</td>\n<td>%" PRIu64 "</td></tr>\n", config.lang.msg_mtot_mvd, state.totals.t_visits/days_in_month, max_visits);
+
+   // avg/max visit length, in minutes
    fprintf(out_fp,"<tr><th>%s</th>\n<td>%.02f</td>\n<td>%.02f</td></tr>\n", config.lang.msg_mtot_mdv, state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
    if(state.totals.t_visits_conv)
       fprintf(out_fp,"<tr><th>%s</th>\n<td>%.02f</td>\n<td>%.02f</td></tr>\n", config.lang.msg_mtot_cvd, state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
