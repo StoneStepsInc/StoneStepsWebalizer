@@ -213,52 +213,52 @@ char *encode_char_json(const char *cp, size_t cbc, char *op, size_t& obc)
 /// the buffer, including the null character.
 ///
 template <encode_char_t encode_char>
-size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
+size_t encode_string_impl(string_t::char_buffer_t& buffer, const char *str, const size_t *len)
 {
    const char *cptr = str;
-   size_t slen = 0;
+   size_t blen = 0;        // number of encoded characters in the buffer
    size_t cbc, ebc, mebc;  // character byte count, encoded byte count and maximum encoded byte count
 
    // hold onto the size of the longest encoded sequence
    encode_char(nullptr, 0, nullptr, mebc);
 
-   while(*cptr) {
+   while(*cptr && (!len || cptr - str < (intptr_t) *len)) {
       // get the input character size in bytes (may be zero, if invalid)
       cbc = utf8size(cptr);
 
       // always require that any encoded sequence or any UTF-8 character fits in the buffer and there's room for the null character
-      if(buffer == nullptr || (slen + std::max(cbc, mebc)) >= buffer.capacity())
+      if(buffer == nullptr || (blen + std::max(cbc, mebc)) >= buffer.capacity())
          throw exception_t(0, "Insufficient buffer capacity");
       
       // check for invalid UTF-8 sequences and control characters, except \t, \r and \n
       if(cbc == 0 || cbc == 1 && (((unsigned char) *cptr < '\x20' && !strchr("\t\r\n", *cptr)) || *cptr == '\x7F')) {
          // replace the bad character with a private-use code point [Unicode v5 ch.3 p.91]
-         slen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+slen);
+         blen += ucs2utf8((wchar_t) (0xE000 + ((u_char) *cptr)), buffer+blen);
          cptr++;
          continue;
       }
          
       // encode one UTF-8 character
-      encode_char(cptr, cbc, buffer+slen, ebc);
+      encode_char(cptr, cbc, buffer+blen, ebc);
 
       // bump up the encoded length 
-      slen += ebc;
+      blen += ebc;
 
       // and move the pointer to the next UTF-8 character
       cptr += cbc;
    }
 
    // the >= check inside the loop guarantees that the buffer has room for the null character
-   buffer[slen] = '\x0';
+   buffer[blen] = '\x0';
    
    // include the null character in the returned size
-   return slen + 1;
+   return blen + 1;
 }
 
 //
 // Instantiate templates
 //
-template size_t encode_string<encode_char_html>(string_t::char_buffer_t& buffer, const char *str);
-template size_t encode_string<encode_char_xml>(string_t::char_buffer_t& buffer, const char *str);
-template size_t encode_string<encode_char_js>(string_t::char_buffer_t& buffer, const char *str);
-template size_t encode_string<encode_char_json>(string_t::char_buffer_t& buffer, const char *str);
+template size_t encode_string_impl<encode_char_html>(string_t::char_buffer_t& buffer, const char *str, const size_t *len);
+template size_t encode_string_impl<encode_char_xml>(string_t::char_buffer_t& buffer, const char *str, const size_t *len);
+template size_t encode_string_impl<encode_char_js>(string_t::char_buffer_t& buffer, const char *str, const size_t *len);
+template size_t encode_string_impl<encode_char_json>(string_t::char_buffer_t& buffer, const char *str, const size_t *len);

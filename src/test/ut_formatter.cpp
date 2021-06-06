@@ -365,6 +365,30 @@ TEST_F(FormatterTest, FormatterEncodeCtrlChars)
 
 }
 
+///
+/// @brief  Tests an encoder formatter with explicit string lengths.
+///
+TEST_F(FormatterTest, FormatterEncodeLen)
+{
+   formatter.format(encode_string<encode_char_html>, "");
+   EXPECT_STREQ("", buffer) << "Encoding empty string should return an empty string";
+
+   formatter.format(encode_string_len<encode_char_html>, "<<<<<<", 0);
+   EXPECT_STREQ("", buffer) << "Encoding zero characters of an empty string should return an empty string";
+
+   formatter.format(encode_string_len<encode_char_html>, "<<<<<<", 3);
+   EXPECT_STREQ("&lt;&lt;&lt;", buffer) << "Only requested part of the string should be encoded";
+
+   formatter.format(encode_string<encode_char_html>, "<<<<<<");
+   EXPECT_STREQ("&lt;&lt;&lt;&lt;&lt;&lt;", buffer) << "Without length value, entire string should be encoded";
+
+   formatter.format(encode_string_len<encode_char_html>, "<<<<<<", 10);
+   EXPECT_STREQ("&lt;&lt;&lt;&lt;&lt;&lt;", buffer) << "Requested length past the null character is ignored";
+
+   formatter.format(encode_string_len<encode_char_html>, "<<<<<<", 6);
+   EXPECT_STREQ("&lt;&lt;&lt;&lt;&lt;&lt;", buffer) << "Requested length may be the length of a C-style string";
+}
+
 }
 
 #include "../formatter_tmpl.cpp"

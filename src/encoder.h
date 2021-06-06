@@ -61,6 +61,29 @@ char *encode_char_json(const char *cp, size_t cbc, char *op, size_t& obc);
 /// @brief  Encodes each UTF-8 character in `str` so it can be safely embedded
 ///         within some formatted text, such as HTML or JavaScript string.
 ///
-template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str);
+template <encode_char_t encode_char> size_t encode_string(string_t::char_buffer_t& buffer, const char *str)
+{
+   return encode_string_impl<encode_char>(buffer, str, nullptr);
+}
+
+///
+/// @brief  Encodes each UTF-8 character in `str` up to `len` characters or
+///         until a null character is encountered.
+/// 
+/// This function is not named `encode_string` because it makes it simpler to
+/// use it as a template argument, compared to having to cast it explicitly
+/// in order to select the correct overload.
+///
+template <encode_char_t encode_char> size_t encode_string_len(string_t::char_buffer_t& buffer, const char *str, size_t len)
+{
+   return encode_string_impl<encode_char>(buffer, str, &len);
+}
+
+///
+/// @brief  Encoding implementation function that can encode all UTF-8 characters
+///         of a null-terminated string or the number of characters specified via
+///         `len`.
+/// 
+template <encode_char_t encode_char> size_t encode_string_impl(string_t::char_buffer_t& buffer, const char *str, const size_t *len);
 
 #endif // ENCODER_H
