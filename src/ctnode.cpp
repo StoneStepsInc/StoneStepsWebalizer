@@ -49,8 +49,36 @@ uint64_t ctnode_t::make_nodeid(uint32_t geoname_id, const char *ccode)
    if(!*(ccode + 1) || *(ccode + 2))
       throw std::logic_error("Country code must be two characters long");
 
-   // there is enough room to just shift characters without additional bit packing (e.g. ccnode_t::ctry_idx)
+   // 
+   // Pack country code characters into the high-order 32 bits as shown
+   // below, where 75 and 73 are character codes for "us" and the lower
+   // 32 bit are the geoname ID.
+   // 
+   //   0075'0073'006EC67A
+   // 
    return (uint64_t) (u_char) *ccode << 48 | (uint64_t) (u_char) *(ccode + 1) << 32 | geoname_id;
+}
+
+uint64_t ctnode_t::compact_nodeid(void) const
+{
+   // take a shortcut for nodes without country information
+   if(!((~(uint64_t) 0 << 32) & nodeid))
+      return nodeid;
+
+   //
+   // In hindsight, it would be better if the country code was packed
+   // into the smallest possible space, which is 5 bits per character,
+   // but since node keys cannot be versioned in the current app, make
+   // a smallest possible node ID for components that may need high
+   // order bits for something else.
+   // 
+   // Pack each country code character into 5 bits and place them into
+   // the least significant bits of the high-order 32-bit word, which
+   // yields a 42-bit node identifier.
+   //
+   return ((((nodeid >> 48) & 0xffu) - (uint64_t) 'a' + 1) << (32 + 5))
+            | ((((nodeid >> 32) & 0xffu) - (uint64_t) 'a' + 1) << 32)
+            | (nodeid & ~(uint32_t) 0);
 }
 
 ///

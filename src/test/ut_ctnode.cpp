@@ -46,5 +46,24 @@ TEST(CityNode, UsableCityInfo)
    EXPECT_FALSE(ctnode_t::is_usable_city(123, string_t(), string_t())) << "Not usable: non-zero GeoName ID, empty city name, empty country code";
 }
 
+///
+/// @brief  Tests compact node identifiers for city nodes.
+///
+TEST(CityNode, CompactNodeId)
+{
+   // check first all technically possible country codes
+   for(char c1 = 'a'; c1 <= 'z'; c1++) {
+      for(char c2 = 'a'; c2 <= 'z'; c2++) {
+         char ccode[3] = {c1, c2, '\x0'};
+         ctnode_t ctnode(0x12345678, string_t(), string_t::hold(ccode));
+         ASSERT_EQ((((uint64_t) (c1 - 'a' + 1) << (32 + 5)) + ((uint64_t) (c2 - 'a' + 1) << 32) + 0x12345678u), ctnode.compact_nodeid());
+      }
+   }
+
+   // test a special country code for unknown countries
+   ctnode_t ctnode(0x12345678, string_t(), string_t::hold("*"));
+   ASSERT_EQ(0x12345678, ctnode.compact_nodeid());
+}
+
 }
 

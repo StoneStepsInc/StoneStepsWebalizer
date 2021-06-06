@@ -63,6 +63,9 @@ struct ctnode_t : htab_obj_t<uint32_t, const string_t&>, keynode_t<uint64_t>, da
       /// Returns the GeoName ID for this city.
       uint32_t geoname_id(void) const {return (uint32_t) nodeid;}
 
+      /// Returns `nodeid` packed into `42` least-significant bits.
+      uint64_t compact_nodeid(void) const;
+
       /// Indicates whether this city was found in the GeoIP database or not.
       bool unknown_city(void) const {return geoname_id() == 0;}
 
