@@ -26,9 +26,6 @@ class database_t;
 ///
 class dump_output_t : public output_t {
    private:
-      FILE *out_fp;
-      
-   private:
       void dump_all_hosts(void);
       void dump_all_urls(void);
       void dump_all_refs(void);
