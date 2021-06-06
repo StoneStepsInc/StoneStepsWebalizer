@@ -147,6 +147,9 @@ void json_output_t::dump_totals(void)
    // there's plenty of room in a 32-bit integer for a simple combined year/month identifier
    fprintf(out_fp, "\"_id\": %u,\n", state.totals.cur_tstamp.year * 100 + state.totals.cur_tstamp.month);
 
+   fprintf(out_fp, "\"appver\": \"%s\",\n", state.get_version(state.get_sysnode().appver).c_str());
+   fprintf(out_fp, "\"appver_last\": \"%s\",\n", state.get_version(state.get_sysnode().appver_last).c_str());
+
    fprintf(out_fp, "\"year\": %u,\n", state.totals.cur_tstamp.year);
    fprintf(out_fp, "\"month\": %u,\n", state.totals.cur_tstamp.month);
 
