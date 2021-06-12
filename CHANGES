@@ -1,7 +1,8 @@
 --------------------------------------------------------------------
-6.0.1 [22-May-2021] -- Stone Steps Inc. (www.stonesteps.ca)
+6.1.0 [20-Jun-2021] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
+ * [AB-62] Implemented JSON output for Mongo DB imports
  * [BUG][AB-61] Fixed "Nodes must be linserted in the ascending time stamp order" error
 
 --------------------------------------------------------------------
