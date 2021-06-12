@@ -1,84 +1,83 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="obj">
+      <UniqueIdentifier>{6f16ce7d-c732-470d-887f-726cad06b012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="obj">
-      <UniqueIdentifier>{6f16ce7d-c732-470d-887f-726cad06b012}</UniqueIdentifier>
+    <Filter Include="lib">
+      <UniqueIdentifier>{28bf1cd1-310c-42e4-8993-02a300e2e6e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ut_caseconv.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_hostname.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_formatter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_strsrch.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_ipaddr.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_strcmp.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_strfmt.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_normurl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_lang.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_tstamp.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_linklist.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_config.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_poolalloc.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_hashtab.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_strcreate.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_initseqguard.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_berkeleydb.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_unicode.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_serialize.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="ut_ctnode.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,11 +209,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib" />
+    <ClInclude Include="pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
+      <Filter>lib</Filter>
+    </Library>
   </ItemGroup>
 </Project>

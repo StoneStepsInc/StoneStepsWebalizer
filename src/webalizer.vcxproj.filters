@@ -1,494 +1,466 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="src">
       <UniqueIdentifier>{7900dabe-38df-4e97-ad56-c855009c4854}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
-    <Filter Include="Source Files\nodes">
+    <Filter Include="src\nodes">
       <UniqueIdentifier>{5cf2d737-e59e-47a7-9364-313e7551d12c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\platform">
+    <Filter Include="src\platform">
       <UniqueIdentifier>{bd3beaa6-db9a-44fd-bec7-f4703e4c6913}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\util">
+    <Filter Include="src\util">
       <UniqueIdentifier>{bf5d4b42-f5bf-482a-9d06-00c5d94f4be9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{172363da-957b-47ec-9d45-17c7a536af2a}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    <Filter Include="src\templates">
+      <UniqueIdentifier>{edb4d8ba-9fda-4d44-98b2-1470a8fe28bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{14056bfb-9222-49d0-9c0b-849bf3c6d6e7}</UniqueIdentifier>
-      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    <Filter Include="src\output">
+      <UniqueIdentifier>{0937fac1-baa6-4e19-84a8-8dd8d4321def}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Libraries">
+    <Filter Include="lib">
       <UniqueIdentifier>{5fb64b85-8852-4da4-8831-17b0a093b9ad}</UniqueIdentifier>
       <Extensions>lib</Extensions>
     </Filter>
-    <Filter Include="Source Files\templates">
-      <UniqueIdentifier>{edb4d8ba-9fda-4d44-98b2-1470a8fe28bc}</UniqueIdentifier>
+    <Filter Include="res">
+      <UniqueIdentifier>{14056bfb-9222-49d0-9c0b-849bf3c6d6e7}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
-    <Filter Include="Header Files\platform">
-      <UniqueIdentifier>{607ebc22-a0ff-43f0-bc44-ec2c882f48e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\nodes">
-      <UniqueIdentifier>{759bb623-e842-4f5b-a561-8be6695349c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\output">
-      <UniqueIdentifier>{0937fac1-baa6-4e19-84a8-8dd8d4321def}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\output">
-      <UniqueIdentifier>{ad4b79f2-c2bc-4fdb-ba58-8f469460262a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\util">
-      <UniqueIdentifier>{611c384c-bedb-4ce2-9901-8aa6384a8861}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\lib">
-      <UniqueIdentifier>{4afed78a-66ca-43ee-a742-b1c24784cb71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\lib\3rd-party">
+    <Filter Include="src\util\3rd-party">
       <UniqueIdentifier>{ad756fb4-db36-441e-9e99-32ea1fa376cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\lib">
-      <UniqueIdentifier>{79a07431-9509-497f-9344-5ea2ece9e4a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\lib\3rd-party">
-      <UniqueIdentifier>{3cec164b-e3eb-40cd-b2db-fa270b8b2d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\lib\templates">
-      <UniqueIdentifier>{ba8eb2e4-d1e3-4541-b029-d10f034b35e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="database.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="dns_resolv.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="graphs.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="history.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="lang.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="linklist.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="logfile.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="logrec.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="parser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="preserve.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="webalizer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="anode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="ccnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="daily.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="danode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="dlnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="hashtab_nodes.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="hnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="hourly.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="inode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="keynode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="queue_nodes.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="rcnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="rnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="scnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="snode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="sysnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="totals.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="unode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="vnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="platform\thread_win.cpp">
-      <Filter>Source Files\platform</Filter>
+      <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="platform\sys\utsname.cpp">
-      <Filter>Source Files\platform</Filter>
+      <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="tmranges.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="basenode_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
+      <Filter>src\templates</Filter>
     </ClCompile>
     <ClCompile Include="datanode_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
+      <Filter>src\templates</Filter>
     </ClCompile>
     <ClCompile Include="hashtab_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
+      <Filter>src\templates</Filter>
     </ClCompile>
     <ClCompile Include="queue_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
+      <Filter>src\templates</Filter>
     </ClCompile>
     <ClCompile Include="serialize.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="html_output.cpp">
-      <Filter>Source Files\output</Filter>
+      <Filter>src\output</Filter>
     </ClCompile>
     <ClCompile Include="dump_output.cpp">
-      <Filter>Source Files\output</Filter>
+      <Filter>src\output</Filter>
     </ClCompile>
     <ClCompile Include="output.cpp">
-      <Filter>Source Files\output</Filter>
+      <Filter>src\output</Filter>
     </ClCompile>
     <ClCompile Include="platform\event_win.cpp">
-      <Filter>Source Files\platform</Filter>
+      <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="hashtab.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="platform\exception_win.cpp">
-      <Filter>Source Files\platform</Filter>
+      <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="hckdel.cpp">
-      <Filter>Source Files\lib\3rd-party</Filter>
+      <Filter>src\util\3rd-party</Filter>
     </ClCompile>
     <ClCompile Include="platform\console_win.cpp">
-      <Filter>Source Files\platform</Filter>
+      <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="util_http.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="util_url.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="util_time.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="util_ipaddr.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="util_path.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="util_string.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="char_buffer.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="char_buffer_stack.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="cp1252.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="cp1252_ucs2.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="formatter.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="p2_buffer_allocator.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="tstring.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="unicode.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="fmt_impl.cpp">
-      <Filter>Source Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="encoder.cpp">
-      <Filter>Header Files\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="formatter_tmpl.cpp">
-      <Filter>Source Files\lib\templates</Filter>
-    </ClCompile>
-    <ClCompile Include="berkeleydb_tmpl.cpp">
-      <Filter>Source Files\lib\templates</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="tstamp.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClCompile>
     <ClCompile Include="ctnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="database_tmpl.cpp">
-      <Filter>Source Files\templates</Filter>
+      <Filter>src\templates</Filter>
     </ClCompile>
     <ClCompile Include="berkeleydb.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="asnode.cpp">
-      <Filter>Source Files\nodes</Filter>
+      <Filter>src\nodes</Filter>
     </ClCompile>
     <ClCompile Include="json_output.cpp">
-      <Filter>Source Files\output</Filter>
+      <Filter>src\output</Filter>
+    </ClCompile>
+    <ClCompile Include="char_buffer.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="char_buffer_stack.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="cp1252.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="cp1252_ucs2.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="fmt_impl.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="formatter.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="p2_buffer_allocator.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="tstring.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="unicode.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="berkeleydb_tmpl.cpp">
+      <Filter>src\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="formatter_tmpl.cpp">
+      <Filter>src\templates</Filter>
+    </ClCompile>
+    <ClCompile Include="encoder.cpp">
+      <Filter>src\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="database.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="dns_resolv.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="graphs.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="hashtab.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="history.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="lang.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="linklist.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="logfile.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="logrec.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="preserve.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="webalizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="anode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="basenode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="ccnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="daily.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="danode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="dlnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="hnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="hourly.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="inode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="rcnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="rnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="snode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="sysnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="totals.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="unode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="vnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="scnode.h">
-      <Filter>Header Files\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="event.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="html_output.h">
-      <Filter>Header Files\output</Filter>
-    </ClInclude>
-    <ClInclude Include="output.h">
-      <Filter>Header Files\output</Filter>
-    </ClInclude>
-    <ClInclude Include="dump_output.h">
-      <Filter>Header Files\output</Filter>
-    </ClInclude>
-    <ClInclude Include="queue.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="tmranges.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="serialize.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="thread.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>Header Files\util</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="platform\sys\utsname.h">
-      <Filter>Header Files\platform</Filter>
+    <ClInclude Include="preserve.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="hckdel.h">
-      <Filter>Header Files\lib\3rd-party</Filter>
+    <ClInclude Include="types.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="util_http.h">
-      <Filter>Header Files\util</Filter>
+    <ClInclude Include="version.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="util_math.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util_path.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util_string.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util_time.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util_url.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="char_buffer.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="char_buffer_stack.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="encoder.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="formatter.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="p2_buffer_allocator.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="pool_allocator.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="tstring.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="unicode.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="fmt_impl.h">
-      <Filter>Header Files\lib</Filter>
+    <ClInclude Include="webalizer.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="berkeleydb.h">
-      <Filter>Header Files\lib</Filter>
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="char_buffer.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="char_buffer_stack.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="encoder.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt_impl.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="formatter.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="p2_buffer_allocator.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="pool_allocator.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="tmranges.h">
+      <Filter>src\util</Filter>
     </ClInclude>
     <ClInclude Include="tstamp.h">
-      <Filter>Header Files\util</Filter>
+      <Filter>src\util</Filter>
     </ClInclude>
-    <ClInclude Include="ctnode.h">
-      <Filter>Header Files\nodes</Filter>
+    <ClInclude Include="tstring.h">
+      <Filter>src\util</Filter>
     </ClInclude>
-    <ClInclude Include="asnode.h">
-      <Filter>Header Files\nodes</Filter>
+    <ClInclude Include="unicode.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_http.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_math.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_path.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_string.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_time.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_url.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="hckdel.h">
+      <Filter>src\util\3rd-party</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="thread.h">
+      <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\sys\utsname.h">
+      <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="dump_output.h">
+      <Filter>src\output</Filter>
+    </ClInclude>
+    <ClInclude Include="html_output.h">
+      <Filter>src\output</Filter>
     </ClInclude>
     <ClInclude Include="json_output.h">
-      <Filter>Header Files\output</Filter>
+      <Filter>src\output</Filter>
+    </ClInclude>
+    <ClInclude Include="output.h">
+      <Filter>src\output</Filter>
+    </ClInclude>
+    <ClInclude Include="anode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="asnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="basenode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ccnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ctnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="daily.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="danode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="dlnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="hnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="hourly.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="inode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="rcnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="rnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="scnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="snode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="sysnode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="totals.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="unode.h">
+      <Filter>src\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="vnode.h">
+      <Filter>src\nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="webalizer.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>res</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(ZLibDir)lib\$(Platform)\$(Configuration)\$(ZLibName).lib">
-      <Filter>Libraries</Filter>
+      <Filter>lib</Filter>
     </Library>
     <Library Include="$(MaxMindDBDir)lib\$(Platform)\$(Configuration)\$(MaxMindDBLibName).lib">
-      <Filter>Libraries</Filter>
+      <Filter>lib</Filter>
     </Library>
     <Library Include="$(GDDir)lib\$(Platform)\$(Configuration)\$(GDLibName).lib">
-      <Filter>Libraries</Filter>
+      <Filter>lib</Filter>
     </Library>
     <Library Include="$(BDBDir)lib\$(Platform)\$(Configuration)\$(BDBLibName).lib">
-      <Filter>Libraries</Filter>
+      <Filter>lib</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
