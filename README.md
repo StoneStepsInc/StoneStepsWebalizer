@@ -332,15 +332,29 @@ url_YYYYMM.html         | All urls listing (if enabled)
 ref_YYYYMM.html         | All referrers listing (if enabled)
 agent_YYYYMM.html       | All user agents listing (if enabled)
 search_YYYYMM.html      | All search strings listing (if enabled)
-webalizer.hist          | Previous month history (may be changed)
-webalizer.db            | Incremental Data (may be changed)
-webalizer_YYYYMM.db     | Incremental Data (may be changed)
 site_YYYYMM.tab         | tab delimited hosts file
 url_YYYYMM.tab          | tab delimited urls file
 ref_YYYYMM.tab          | tab delimited referrers file
 agent_YYYYMM.tab        | tab delimited user agents file
 user_YYYYMM.tab         | tab delimited usernames file
 search_YYYYMM.tab       | tab delimited search string file
+agent_YYYYMM.json       | JSON array of user agents
+asn_YYYYMM.json         | JSON array of Autonomous System Numbers (ASN)
+city_YYYYMM.json        | JSON array of Cities
+country_YYYYMM.json     | JSON array of Countries
+daily_YYYYMM.json       | JSON array of days
+dl_YYYYMM.json          | JSON array of downloads
+err_YYYYMM.json         | JSON array of errors
+host_YYYYMM.json        | JSON array of hosts
+hourly_YYYYMM.json      | JSON array of hours
+ref_YYYYMM.json         | JSON array of referrers
+search_YYYYMM.json      | JSON array of searches
+url_YYYYMM.json         | JSON array of URLs
+usage_YYYYMM.json       | JSON object for the named month
+user_YYYYMM.json        | JSON array of users
+webalizer.hist          | Previous month history (may be changed)
+webalizer.db            | Incremental Data (may be changed)
+webalizer_YYYYMM.db     | Incremental Data (may be changed)
 
 The yearly (index) report shows statistics for a number of months
 specified by the `HistoryLength` configuration parameter and links to
@@ -464,6 +478,185 @@ and will report the first page URL, if any, as an entry URL. For
 example, if an HTML page contained two linked image files, these files
 may be logged before the page itself. Nevertheless, the page URL will
 be reported as the entry page.
+
+## JSON Output
+
+JSON output is similar to TSV output in that it is intended for
+importing data into a database, except that JSON output is formatted
+using the Mongo DB flavor of JSON in order to deal with the lack of
+support for 64-bit integers in native JSON and to accommodate
+repeated imports within the same database.
+
+### Extended JSON
+
+JavaScript natively supports double-precision floating point numbers,
+which limits integer values in JavaScript and, consequently, in JSON
+to 52 bits allocated for the significand. Mongo DB defines
+[Extended JSON][] syntax, which introduces special syntax for types
+that cannot be expressed natively in JSON, including 64-bit numbers,
+which look like this in JSON output:
+
+    {
+      "hits": { "$numberLong": "12345678" }
+    }
+
+When imported into Mongo DB, data fields formatted this way will
+have the type `Int64`.
+
+[Extended JSON]: https://docs.mongodb.com/manual/reference/mongodb-extended-json/#mongodb-bsontype-Int64
+
+### The `_id` Field
+
+Each log record item is represented in JSON as an object and each
+of those objects is identified via the `_id` field, which Mongo DB
+recognizes as a special unique document identifier. This identifier
+is structured in JSON output to keep all data items within the year
+and month of their log files.
+
+For example, a host with an IP address `12.34.56.78` may be tracked
+within the monthly state database, `webalizer.db`, for April under
+a sequential identifier `321`. The same IP address may be tracked
+in the state database for May under a sequential identifier `654`.
+When this host is exported as a JSON object for each of these months,
+their `_id` fields will be constructed from the year, month and item
+ID from their monthly state database, packed into a 64-bit integer,
+and would look like this in the Mongo DB collection storing hosts.
+
+JSON output `host_202104.json`:
+
+    {
+      "_id": { "$numberLong": "4551450373411307841" },
+      "item_id": { "$numberLong": "321" },
+      "year": 2021,
+      "month": 4,
+      "ipaddr": "12.34.56.78",
+      ...
+    }
+
+JSON output `host_202105.json`:
+
+    {
+      "_id": { "$numberLong": "4551591110899663502" },
+      "item_id": { "$numberLong": "654" },
+      "year": 2021,
+      "month": 5,
+      "ipaddr": "12.34.56.78",
+      ...
+    }
+
+This means that `host_202104.json` and `host_202105.json` may be
+imported into the same Mongo DB collection without collisions for
+their monthly state database identifiers. Morover, the same JSON
+output file may be imported repeatedly into the same Mongo DB
+collection, as more log files are processed for the same month,
+using Mongo DB insert-or-update operation, which is known as
+_upsert_.
+
+The value of the `_id` field for most items is comprised of 12
+bits for year, shifted left to follow the sign bit, 4 bits for
+the month shifted left to follow the year and the rest used
+for the item ID, which means that data items sorted by `_id`
+will sort by year and month first and only then by their item
+ID.
+
+The `_id` field for daily and hourly objects is comprised of
+the year, month and either day or hour, respectively,
+represented as a 32-bit integer (e.g. `"_id": 20210308`).
+
+The `_id` field for monthly usage data is simply a year and
+a month reporented as a 32-bit integer (e.g. `"_id": 202105`).
+
+### Data Units
+
+All counts are reported as-is, so 1000 hits means that the item
+for which this value is reported was requested 1000 times.
+
+Transfer amounts are reported in bytes, so the `12304` in `xfer`
+means that 12304 bytes were transferred for that item.
+
+Visit duration is reported in minutes.
+
+URL response times are reported in seconds.
+
+Percentages are reported against the corresponding total number
+in monthly stats. For example, `10%` in daily hits means that
+the day for which this number is reported accounts for 10% of
+all requests reported for the corresponding month.
+
+### Data Layout
+
+Data item objects described in this section may have different
+structure, depending on data being processed, which may affect
+database queries issued against these collections.
+
+Simple searches are reported as plain strings, such as this:
+
+    {
+      ...
+      "hits": { "$numberLong": "2" },
+      "visits": { "$numberLong": "1" },
+      "search": "webalizer setup aspx sample"
+    }
+
+Advanced searches that capture additional search details, such as
+whether all words must match, may be reported as an array of search
+terms and their types, such as this:
+
+    "hits": { "$numberLong": "1" },
+    "visits": { "$numberLong": "1" },
+    "termcnt": 2,
+    "search": [
+      {
+        "type": "All Words",
+        "term": "stone steps"
+      },
+      {
+        "type": "Any Word",
+        "term": "webalizer"
+      }
+    ]
+
+### Importing JSON Output
+
+JSON output may be imported into a Mobo DB using the [mongoimport][]
+utility provided by Mongo DB.
+
+[mongoimport]: http://docs.mongodb.com/database-tools/mongoimport/
+
+Command line examples below use simplified Mongo DB connection syntax,
+assuming the database server is running locally. See `mongoimport`
+documentation for connecting to a remote database with authentication.
+
+All examples should appear as single-line commands and are split onto
+multiple lines via the `\` character for visiblity. This character
+will work as a line continuation on Linux, but will not on Windows.
+Either remove these characters or use the `^` character for Windows
+command prompt.
+
+All data items, as well as hourly and daily data, are structured as
+JSON arrays and may be imported using following syntax.
+
+    mongoimport --db:webalizer_db \
+                --collection=agents \
+                --mode=upsert \
+                --type=json \
+                --jsonFormat=canonical \
+                --jsonArray \
+                mongodb://localhost agent_202105.json
+
+Monthly usage data in JSON output contains a single JSON object and
+must be imported without the `--jsonArray` option.
+
+    mongoimport --db:webalizer_db \
+                --collection=usage \
+                --mode=upsert \
+                --type=json \
+                --jsonFormat=canonical \
+                mongodb://localhost usage_202105.json
+
+Database and collection names can be anything, as long as they are
+they same for all imports. The `--mode=upsert` option will update
+existing documents with matching `_id` fields and insert new ones.
 
 ## Command Line Options
 
@@ -1070,14 +1263,18 @@ will be used (which should be sufficient for most sites).
 
      * HTML
      * TSV
+     * JSON
 
     HTML is the default format and will be used if no other format
     is specified.
 
     TSV stands for "tab-separated values" and will instruct Stone
-    Steps Webalizer to generate .tab files, as if all `DumpX` options
+    Steps Webalizer to generate `.tab` files, as if all `DumpX` options
     were set to `yes`. Note that if at least one `DumpX` option is used,
     TSV report is added automatically to the list of output formats.
+
+    JSON stands for JavaScript Object Notation and outputs all items
+    with the intent of importing them into Mongo DB.
 
     Multiple `OutputFormat` entries may be used in order to generate
     reports in more than one format.
