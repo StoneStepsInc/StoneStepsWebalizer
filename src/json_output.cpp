@@ -321,7 +321,7 @@ void json_output_t::dump_daily(void)
    wday = tstamp_t::wday(state.totals.cur_tstamp.year, state.totals.cur_tstamp.month, 1);
 
    /* skip beginning blank days in a month */
-   for(i = 0; i < hptr->lday; i++) {
+   for(i = 0; i < (u_int) hptr->lday; i++) {
       if (state.t_daily[i].tm_hits != 0)
          break;
    }
@@ -331,7 +331,7 @@ void json_output_t::dump_daily(void)
 
    fputs("[\n", out_fp);
 
-   for(; i < hptr->lday; i++) {
+   for(; i < (u_int) hptr->lday; i++) {
       if(count++)
          fputs(",\n", out_fp);
 
