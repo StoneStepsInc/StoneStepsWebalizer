@@ -1,6 +1,11 @@
 @echo off
 
 rem
+rem This script copies GD binaries from their build directories
+rem into Nuget package staging directories.
+rem
+
+rem
 rem Keep all variables created in this batch file local
 rem
 setlocal

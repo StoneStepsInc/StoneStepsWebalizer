@@ -1,6 +1,10 @@
 @echo off
 
 rem
+rem This script creates Nuget packages in the package staging area.
+rem
+
+rem
 rem Keep all variables created in this batch file local
 rem
 setlocal
