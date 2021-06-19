@@ -3,6 +3,7 @@
 --------------------------------------------------------------------
 
  * [AB-62] Implemented JSON output for Mongo DB imports
+ * [AB-46] Added install/uninstall targets to Makefile
  * [BUG][AB-61] Fixed "Nodes must be linserted in the ascending time stamp order" error
 
 --------------------------------------------------------------------
