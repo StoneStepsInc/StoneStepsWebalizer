@@ -179,7 +179,7 @@ stages:
 
     pool:
       vmImage: ubuntu-latest
-    container: stonesteps/webalizer-$(DIST_NAME):latest
+    container: stonesteps/webalizer-$(DIST_NAME):20210620
 
     steps:
     - script: |
