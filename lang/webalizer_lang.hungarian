@@ -45,7 +45,7 @@ msg_records = rekord
 msg_addresses=addresses
 msg_ignored = mellőzött
 msg_bad     = rossz
-char *msg_in      = "";
+msg_in      = "";
 msg_seconds = másodperc alatt
 
 #/* progress and setup error messages */
@@ -120,41 +120,41 @@ msg_no_open = Hiba: Nem tudom megnyítni a file-t
 h_usage1 = Használat
 h_usage2 = [options] [log file [[ log file ]...] | report database]
 h_msg=   -h        = Kiírja ezt a sugó üzenetet,
-         -v -V     = Kiírja a verziószámot
-         -d        = Kiírja a további debug infót
-         -F type   = Log type.  type= (clf | squid | iis | apache | w3c)
-         -i        = Mellőzi a history file-t
-         -p        = Megőrzi az állapotott  (incremental)
-         -q        = suppress informational messages
-         -Q        = suppress _ALL_ messages
-         -Y        = suppress country graph
-         -G        = suppress hourly graph
-         -H        = suppress hourly stats
-         -L        = suppress color coded graph legends
-         -l num    = use num background lines on graph
-         -m num    = Visit timout value (seconds)
-         -T        = print timing information
-         -c file   = Használja a konfigurációs file-t 'file'
-         -n name   = Hostnév amit használjon
-         -o dir    = Kimeneti könyvtár
-         -t name   = Report címe 'name'
-         -a name   = Rejtse a felhasználó böngészőjét 'name'
-         -r name   = Rejtse a hivatkozást 'name'
-         -s name   = Rejtse az oldalt 'name'
-         -u name   = Rejtse az URL-t 'name'
-         -x name   = Használja a filenév kiterjesztését 'name'
-         -P name   = Oldal tipusának a kiterjesztése 'name'
-         -I name   = Index alias 'name'
-         -A num    = Display num top agents
-         -C num    = Display num top countries
-         -R num    = Display num top referrers
-         -S num    = Display num top hosts
-         -U num    = Display num top URLs
-         -e num    = Display num top Entry Pages
-         -E num    = Display num top Exit Pages
-         -g num    = Group Domains to 'num' levels
-         -X        = Hide individual hosts
-         -D name   = Használja a DNS Cache file-t 'name'
+         -v -V     = Kiírja a verziószámot,
+         -d        = Kiírja a további debug infót,
+         -F type   = Log type.  type= (clf | squid | iis | apache | w3c),
+         -i        = Mellőzi a history file-t,
+         -p        = Megőrzi az állapotott  (incremental),
+         -q        = suppress informational messages,
+         -Q        = suppress _ALL_ messages,
+         -Y        = suppress country graph,
+         -G        = suppress hourly graph,
+         -H        = suppress hourly stats,
+         -L        = suppress color coded graph legends,
+         -l num    = use num background lines on graph,
+         -m num    = Visit timout value (seconds),
+         -T        = print timing information,
+         -c file   = Használja a konfigurációs file-t 'file',
+         -n name   = Hostnév amit használjon,
+         -o dir    = Kimeneti könyvtár,
+         -t name   = Report címe 'name',
+         -a name   = Rejtse a felhasználó böngészőjét 'name',
+         -r name   = Rejtse a hivatkozást 'name',
+         -s name   = Rejtse az oldalt 'name',
+         -u name   = Rejtse az URL-t 'name',
+         -x name   = Használja a filenév kiterjesztését 'name',
+         -P name   = Oldal tipusának a kiterjesztése 'name',
+         -I name   = Index alias 'name',
+         -A num    = Display num top agents,
+         -C num    = Display num top countries,
+         -R num    = Display num top referrers,
+         -S num    = Display num top hosts,
+         -U num    = Display num top URLs,
+         -e num    = Display num top Entry Pages,
+         -E num    = Display num top Exit Pages,
+         -g num    = Group Domains to 'num' levels,
+         -X        = Hide individual hosts,
+         -D name   = Használja a DNS Cache file-t 'name',
          -N num    = Number of DNS processes (0=disable),
          ,
          Long options:,
