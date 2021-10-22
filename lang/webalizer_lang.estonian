@@ -34,7 +34,8 @@ msg_records = kirjet
 msg_addresses=addresses
 msg_ignored = ignoreeritud
 msg_bad     = vigast
-char *msg_in      = "";
+# msg_in is empty on purpose, in favor of how msg_seconds is constructed
+msg_in      = 
 msg_seconds = sekundi jooksul
 
 #/* progress and setup error messages */
@@ -184,7 +185,7 @@ msg_hmth_du = Kasutuspäevad
 msg_hmth_hu = Kasutustunnid
 
 #/* table header strings */
-char *msg_h_by    = "";
+msg_h_by    = by
 msg_h_avg   = Keskm
 msg_h_max   = Maks
 msg_h_total = Kokku

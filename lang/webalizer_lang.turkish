@@ -44,8 +44,8 @@ language_code = tr
 msg_records = kayit
 msg_addresses=addres
 msg_ignored = islenmedi
-msg_bad     = kotu
-char *msg_in      = "";
+msg_bad = kotu
+msg_in= in
 msg_seconds = saniyede
 
 #/* progress and setup error messages */
