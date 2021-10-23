@@ -45,7 +45,8 @@ msg_records = rekord
 msg_addresses=addresses
 msg_ignored = mellőzött
 msg_bad     = rossz
-msg_in      = "";
+# msg_in is empty on purpose, in favor of how msg_seconds is constructed
+msg_in      = 
 msg_seconds = másodperc alatt
 
 #/* progress and setup error messages */

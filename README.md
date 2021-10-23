@@ -546,7 +546,7 @@ JSON output `host_202105.json`:
 
 This means that `host_202104.json` and `host_202105.json` may be
 imported into the same Mongo DB collection without collisions for
-their monthly state database identifiers. Morover, the same JSON
+their monthly state database identifiers. Moreover, the same JSON
 output file may be imported repeatedly into the same Mongo DB
 collection, as more log files are processed for the same month,
 using Mongo DB insert-or-update operation, which is known as

@@ -307,7 +307,7 @@ msg_ctry_use= Pengaksesan oleh negara untuk
 
 #/* top tables */
 #/* Formatted as "Top xxx of xxx Total something" */
-char *msg_top_top = "";
+msg_top_top = top
 msg_top_of  = urutan teratas dari sejumlah
 msg_top_s   = situs
 msg_top_u   = URL
