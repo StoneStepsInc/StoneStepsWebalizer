@@ -1132,9 +1132,16 @@ void lang_t::parse_lang_file(const char *fname, char *buffer, std::vector<string
       // skip the whitespace before the value
       while(*cptr == ' ' || *cptr == '\t') cptr++;
 
-      // ignore language variables with empty values
-      if(!*cptr || iseolchar(*cptr))
-         continue;
+      //
+      // Allow empty values for plain strings and ignore them for
+      // all other variable types. This will set text language
+      // variables to empty strings, but will keep other types as
+      // NULL pointers.
+      //
+      if(lnode->vartype != LANG_VAR_CHAR) {
+         if(!*cptr || iseolchar(*cptr))
+            continue;
+      }
 
       //
       // Assign new values
