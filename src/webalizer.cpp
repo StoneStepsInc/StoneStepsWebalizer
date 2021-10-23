@@ -306,7 +306,7 @@ void webalizer_t::print_options(const char *pname)
    int i;
 
    printf("%s: %s %s\n", config.lang.h_usage1, pname, config.lang.h_usage2);
-   for (i=0; config.lang.h_msg[i]; i++) printf("%s\n", config.lang.h_msg[i]);
+   for (i=0; i < config.lang.h_msg.size(); i++) printf("%s\n", config.lang.h_msg[i]);
 }
 
 ///
