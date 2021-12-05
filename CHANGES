@@ -1,4 +1,11 @@
 --------------------------------------------------------------------
+6.1.1 [05-Dec-2021] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * [BUG][AB-70] Fixed stale city/ASN counts, country pages between months
+ * [BUG] Fixed malformed language files (Danish, Dutch, Estonian, Hungarian, Indonesian, Turkish)
+
+--------------------------------------------------------------------
 6.1.0 [20-Jun-2021] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
