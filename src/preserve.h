@@ -49,22 +49,58 @@ class state_t {
 
       sc_table_t response;                      // HTTP status codes
 
-      // hash tables
-      h_hash_table hm_htab;                      // hosts (monthly)
-      u_hash_table um_htab;                      // URLS
-      r_hash_table rm_htab;                      // referrers
-      a_hash_table am_htab;                      // user agents
-      s_hash_table sr_htab;                      // search string table
-      i_hash_table im_htab;                      // ident table (username)
-      rc_hash_table rc_htab;                     // HTTP status codes
-      dl_hash_table dl_htab;                     // active download jobs
+      ///
+      /// @name   Monthly state hash tables
+      ///
+      /// These hash tables serve as a cache between Berkeley DB and
+      /// the log analyzer. Each value from a log file is looked up
+      /// first in the database and then is inserted into one of the
+      /// hash tables, which is either the one found in the database
+      /// or the new one created from the log item value.
+      /// 
+      /// Each hash table is saved to the database either at the end
+      /// of the run or, for select hash tables, when they become too
+      /// large to be kept in memory. The latter is performed via the
+      /// swap-out interface.
+      /// 
+      /// When the state is being initialized, only data items that
+      /// are likely to be referenced are loaded from the database,
+      /// such as hosts and URLs associated with active visits.
+      /// 
+      /// Historically, these hash tables were loaded from the state
+      /// file and contained all entries for the current month, which
+      /// were traversed by report generators to output hosts, URLs
+      /// and other items. Because of this pattern, the state was
+      /// saved first in the state file, then reports were generated,
+      /// and then hash tables were cleared before the next month
+      /// could be processed. All current report generators traverse
+      /// state database tables instead and most hash tables may be
+      /// cleared when the state is being saved to the Berkeley DB
+      /// database. Country, city and ASN hash tables are still being
+      /// accessed during report generation and can only be cleared
+      /// after reports have been generated.
+      /// 
+      /// @{
+
+      h_hash_table hm_htab;                      ///< A hash table for hosts.
+      u_hash_table um_htab;                      ///< A hash table for URLS.
+      r_hash_table rm_htab;                      ///< A hash table for referrers.
+      a_hash_table am_htab;                      ///< A hash table for user agents.
+      s_hash_table sr_htab;                      ///< A hash table for search string table.
+      i_hash_table im_htab;                      ///< A hash table for user names.
+      rc_hash_table rc_htab;                     ///< A hash table for HTTP status codes.
+      dl_hash_table dl_htab;                     ///< A hash table for active download jobs.
+
+      cc_hash_table cc_htab;                     ///< A hash table for countries.
+      ct_hash_table ct_htab;                     ///< A hash table for cities.
+
+      as_hash_table as_htab;                     ///< A hash table for ASN data (autonomous system numbers).
+
+      /// @}
 
       std::unordered_set<string_t, hash_string> sp_htab; ///< Spammer hosts
 
-      cc_hash_table cc_htab;                     // countries
-      ct_hash_table ct_htab;                     ///< City hash table
-
-      as_hash_table as_htab;                     ///< Autonomous system table.
+      std::vector<hash_table_base*> cleared_htabs; ///< A vector or hash tables to clear on month switch (order is important).
 
       std::vector<uint64_t> v_ended;             // ended active visit node IDs
       std::vector<uint64_t> dl_ended;            // ended active download node IDs
@@ -86,8 +122,6 @@ class state_t {
    private:
       template <typename type_t>
       void update_avg_max(double& avg, type_t& max, type_t value, uint64_t newcnt) const;
-
-      void del_htabs(void);
 
       void init_counters(void);
 

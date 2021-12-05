@@ -177,11 +177,16 @@ class hash_table_base {
       };
 
    public:
+      virtual ~hash_table_base(void) {}
+
       /// Returns estimated memory size for this hash table.
       virtual size_t get_memsize(void) const = 0;
 
       /// Swaps out oldest nodes with time stamps less than or equal `tstamp` to some external storage.
       virtual void swap_out(int64_t tstamp, size_t maxsize = 0) = 0;
+
+      /// Deletes all hash table nodes.
+      virtual void clear(void) = 0;
 };
 
 ///
@@ -480,7 +485,7 @@ class hash_table : public hash_table_base {
       /// @{
 
       /// Deletes all hash table nodes.
-      void clear(void);
+      void clear(void) override;
 
       /// Looks for a node with a string key and does not move the node to the end of the time stamp list.
       template <typename ... K>
