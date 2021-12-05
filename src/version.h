@@ -16,7 +16,7 @@
 //
 #define VERSION_MAJOR           6
 #define VERSION_MINOR           1
-#define VERSION_PATCH           1
+#define VERSION_PATCH           2
 
 //
 // BUILD_NUMBER is assigned in webalizer_release.props from the value of
