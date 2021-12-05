@@ -52,7 +52,7 @@ struct ccnode_t : public htab_obj_t<const string_t&>, public keynode_t<uint64_t>
 
       nodetype_t get_type(void) const override {return OBJ_REG;}
 
-      void reset(void) {count = 0; files = 0; xfer = 0; visits = 0;}
+      void reset(void) {count = 0; files = 0; pages = 0; xfer = 0; visits = 0;}
       
       void update(const ccnode_t& ccnode);
 

@@ -38,7 +38,8 @@
 
 state_t::state_t(const config_t& config, end_visit_cb_t end_visit_cb, end_download_cb_t end_download_cb, void *end_cb_arg) : 
    config(config), history(config), database(config),
-   end_visit_cb(end_visit_cb), end_download_cb(end_download_cb), end_cb_arg(end_cb_arg)
+   end_visit_cb(end_visit_cb), end_download_cb(end_download_cb), end_cb_arg(end_cb_arg),
+   cleared_htabs{&dl_htab, &hm_htab, &um_htab, &rm_htab, &am_htab, &sr_htab, &im_htab, &rc_htab, &ct_htab, &as_htab}
 {
    buffer = new char[BUFSIZE];
 
@@ -48,7 +49,17 @@ state_t::state_t(const config_t& config, end_visit_cb_t end_visit_cb, end_downlo
 
 state_t::~state_t(void)
 {
-   // these hash tables cannot be deleted in the declaration order (see save_state)
+   //
+   // In most cases these hash tables will be empty because they are
+   // cleared when state is saved to the database, but sometimes they
+   // may contain items (e.g. items loaded on start-up, if all new
+   // records were skipped). In this case, we need to clear them in
+   // specific order (see save_state for a diagram) before hash table
+   // destructors run, which will clear hash tables in the declaration
+   // order and may result in trying to access dangling pointers
+   // (e.g. if URL hash table is cleared, but active visits in hosts
+   // still reference some of the URLs that are gone).
+   //
    dl_htab.clear();
    hm_htab.clear();
    um_htab.clear();
@@ -265,6 +276,17 @@ void state_t::save_state(void)
       if(!database.put_scnode(response[i], response[i].storage_info))
          throw exception_t(0, string_t::_format("%s (response codes)", config.lang.msg_data_err));
    }
+
+   //
+   // Countries, cities and ASN hash tables cannot be cleared
+   // after saving them to the database because their hash tables
+   // are referenced in reports. All three are needed to obtain the
+   // total number of items for report titles, and the country hash
+   // table is also accessed to look up country names from country
+   // codes in other reports. Other items have totals and don't
+   // need hash tables in reports. City and ASN counts should be
+   // in totals as well, but were missed when implemented.
+   //
 
    // country codes
    hash_table<storable_t<ccnode_t>>::iterator cc_iter = cc_htab.begin();
@@ -561,11 +583,8 @@ bool state_t::initialize(void)
    for(index = 0; index < (u_int) config.lang.ctry.size(); index++)
       cc_htab.put_ccnode(config.lang.ctry[index].ccode, config.lang.ctry[index].desc, 0);
 
-   // initalize main counters
+   // initalize counters and hash tables
    init_counters();                      
-
-   // initalize hash tables
-   del_htabs();
 
    dl_htab.set_swap_out_cb(&swap_out_node_cb<dlnode_t, &database_t::put_dlnode>, this);
    hm_htab.set_swap_out_cb(&swap_out_node_cb<hnode_t, &database_t::put_hnode>, this, eval_hnode_cb);
@@ -848,25 +867,17 @@ void state_t::init_counters(void)
    for(i=0; i < 24; i++) 
       t_hourly[i].reset(i);
 
-   // country codes
+   //
+   // Unlike other hash tables, country code nodes are inserted once
+   // on start-up and just reset at the end of each month because
+   // there's no reason to track active countries in a fixed set of
+   // a couple of hundred possible entries.
+   //
    cc_htab.reset();
-}
 
-/*********************************************/
-/* DEL_HTABS - clear out our hash tables     */
-/*********************************************/
-
-void state_t::del_htabs()
-{
-   // Clear out our various hash tables here
-   dl_htab.clear();
-   hm_htab.clear();
-   um_htab.clear();
-   rm_htab.clear();
-   am_htab.clear();
-   sr_htab.clear();
-   im_htab.clear();
-   rc_htab.clear();
+   // clear out all hash tables except country codes
+   for(hash_table_base *htab : cleared_htabs) 
+      htab->clear();
 
    sp_htab.clear();
 }
@@ -925,9 +936,8 @@ void state_t::clear_month()
       sysnode.reset(config);
    }
 
-   init_counters();            /* reset monthly counters  */
-   del_htabs();                /* clear hash tables       */
-   cc_htab.reset();
+   // reset monthly counters and clear hash tables
+   init_counters();
 }
 
 template <typename type_t>
