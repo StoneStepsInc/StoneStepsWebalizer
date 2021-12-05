@@ -195,7 +195,7 @@ const struct database_t::table_desc_t {
 /// most tables with indexes (secondary databases) is a node ID, which means that the
 /// duplicate compare callback will only have node IDs in the data items passed into the
 /// callback. This makes it impossible to sort duplicate secondary database values by
-/// anything, but their order of insertion in the pkrimary database, which is how the 
+/// anything, but their order of insertion in the primary database, which is how the 
 /// node ID works out. 
 ///
 const struct database_t::index_desc_t {
