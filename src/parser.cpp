@@ -1189,8 +1189,6 @@ std::vector<parser_t::TLogFieldId> parser_t::parse_nginx_log_format(const char *
       {string_t("time_local"), eClfTime},
       {string_t("remote_addr"), eClientIpAddress},
       {string_t("remote_user"), eUserName},
-      {string_t("server_name"), eWebsiteName},
-      {string_t("server_addr"), eWebsiteIpAddress},
       {string_t("server_port"), eWebsitePort},
       {string_t("request_method"), eHttpMethod},
       {string_t("request_uri"), eUri},
@@ -1218,8 +1216,8 @@ std::vector<parser_t::TLogFieldId> parser_t::parse_nginx_log_format(const char *
    // Nginx log format allows any characters between fields and a
    // full-blown parser would track chunks of text between fields.
    // This simplified parser, however, will attempt to parse only
-   // common characters and sequences and will fails more complex
-   // formats.
+   // common characters and sequences and will fail with more
+   // complex formats.
    //
    while(*ecp) {
       // skip whitespaces and characters fmt_logrec is aware of
