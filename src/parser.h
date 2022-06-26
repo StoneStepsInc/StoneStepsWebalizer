@@ -35,7 +35,8 @@ struct field_desc;
 class parser_t {
    private:
       enum TLogFieldId {
-         eDateTime,
+         eISOLocalTime,             // local time in the ISO-8601 format
+         eClfTime,
          eDate,
          eTime,
          eClientIpAddress,
@@ -44,8 +45,9 @@ class parser_t {
          eWebsiteIpAddress,
          eWebsitePort,
          eHttpMethod,
-         eUriStem,
+         eUriStem,                  // a part of the URI before the query
          eUriQuery,
+         eUri,                      // a complete URI, including the query
          eHttpStatus,
          eBytesReceived,
          eBytesSent,
@@ -56,10 +58,30 @@ class parser_t {
          eUserAgent,
          eReferrer,
          eCookie,
-         eHttpRequestLine,         // GET / HTTP/1.1
+         eHttpRequestLine,          // GET /a?b=c HTTP/1.1
          eRemoteLoginName,         // remote logname (from identd, if supplied). 
          eUnknown = -1            // must be last
       };
+
+      ///
+      /// @brief  A log record field value descriptor.
+      /// 
+      /// The meaning of the field is defined positionally by the value
+      /// of the `log_rec_fields` element.
+      /// 
+      struct field_desc {
+         const char  *field;     // a pointer to a log record field
+         size_t      length;     // field length
+
+         public:
+            field_desc(void) :
+                  field(nullptr),
+                  length(0)
+            {
+            }
+      };
+
+      static constexpr u_int SQUID_FIELD_COUNT = 10;
 
    private:
       const config_t& config;
@@ -75,7 +97,7 @@ class parser_t {
    private:
       const char *parse_http_req_line(const char *cp1, log_struct& log_rec);
 
-      char *proc_apache_escape_seq(char *cp1);
+      static char *proc_bsesc_seq(char *cp1);
 
       bool parse_clf_tstamp(const char *dt, tstamp_t& ts);
 
@@ -83,13 +105,17 @@ class parser_t {
 
       int parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec);
 
-      bool parse_apache_log_format(const char *format);
+      static std::vector<TLogFieldId> parse_apache_log_format(const char *format);
       int parse_record_apache(char *buffer, size_t reclen, log_struct& log_rec);
 
       int parse_w3c_log_directive(const char *buffer);
       int parse_record_w3c(char *buffer, size_t reclen, log_struct& log_rec, bool iis);
 
       int parse_record_squid(char *buffer, size_t reclen, log_struct& log_rec);
+
+      static std::vector<TLogFieldId> parse_nginx_log_format(const char *format);
+
+      int parse_record_nginx(char *buffer, size_t reclen, log_struct& log_rec);
 
    public:
       parser_t(const config_t& _config);

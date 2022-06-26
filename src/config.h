@@ -175,6 +175,7 @@ class config_t {
       u_int graph_lines;                        ///< Number of horizontal graph lines (PNG only)     
 
       log_type_t log_type;                      ///< Log file type
+      string_t log_type_opt;                    ///< Log file type option value.
 
       u_int graph_border_width;                 ///< PNG graph border width, in pixels
 
@@ -224,6 +225,7 @@ class config_t {
       double font_size_medium;                  ///< PNG graph medium font size, in points
 
       string_t apache_log_format;               ///< Apache log line format   
+      string_t nginx_log_format;                ///< Nginx log line format.
       string_t font_file_normal;                ///< Normal True Type font file path
       string_t font_file_bold;                  ///< Bold True Type font file path
 

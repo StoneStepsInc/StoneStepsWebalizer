@@ -23,7 +23,8 @@ enum log_type_t {
    LOG_SQUID   = 2,                 // squid proxy log
    LOG_IIS     = 3,                 // IIS (W3C, with some deviations)
    LOG_APACHE  = 4,                 // Apache
-   LOG_W3C     = 5                  // W3C
+   LOG_W3C     = 5,                 // W3C
+   LOG_NGINX   = 6                  // Nginx
 };
 
 ///

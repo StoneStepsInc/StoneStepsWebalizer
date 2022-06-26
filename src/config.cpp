@@ -577,6 +577,16 @@ void config_t::prep_and_validate(void)
    }
 
    //
+   // LOG_IIS is being set if none other log types match, even if an invalid
+   // option value is used. Check here that the option value begins with 'i'
+   // to make sure it is the intended log type. This avoids having to add an
+   // invalid log type value or use std::optional, which is not available in
+   // C++14.
+   //
+   if(log_type == LOG_IIS && string_t::tolower(*log_type_opt) != 'i')
+      errors.push_back(string_t::_format("Unknown log type: %s", log_type_opt.c_str()));
+
+   //
    // If the UTC offset wasn't set and we weren't asked to skip this step, 
    // find out and use the UTC offset of the local machine.
    //
@@ -843,7 +853,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 194; empty slots:
+                     // max key: 195; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -1010,6 +1020,7 @@ void config_t::get_config(const char *fname)
                      {"MaxUsers",            178},          // Maximum Users
                      {"MaxVisitLength",      187},          // Maximum visit length
                      {"MonthlyTotals",       127},          // Output monthly totals report?
+                     {"NginxLogFormat",      195},          // Nginx log file format
                      {"NoDefaultIndexAlias", 92},           // Ignore default index alias?
                      {"OutputDir",           1},            // Output directory
                      {"OutputFormat",        171},          // Output format
@@ -1177,11 +1188,12 @@ void config_t::get_config(const char *fname)
          case 57: ntop_entry  = atoi(value); break;               // Top Entry pgs
          case 58: ntop_exit   = atoi(value); break;               // Top Exit pages
          case 59: ntop_search = atoi(value); break;               // Top Search pgs
-         case 60: log_type=(string_t::tolower(value[0])=='s')?
+         case 60: log_type_opt = value; log_type=(string_t::tolower(value[0])=='s')?
               LOG_SQUID:(string_t::tolower(value[0])=='c')?
               LOG_CLF: (string_t::tolower(value[0])=='a')?
               LOG_APACHE : (string_t::tolower(value[0])=='w')?
-              LOG_W3C : LOG_IIS;
+              LOG_W3C : (string_t::tolower(value[0])=='n')?
+              LOG_NGINX : LOG_IIS;
               break;                                              // LogType
          case 61: search_list.add_glist(value, true); break;      // SearchEngine
          case 62: group_domains=atoi(value); break;               // GroupDomains
@@ -1316,6 +1328,7 @@ void config_t::get_config(const char *fname)
          case 192: ntop_asn = atoi(value); break;
          case 193: dump_asn = (string_t::tolower(value[0]) == 'y'); break;
          case 194: page_titles.add_glist(value); break;
+         case 195: nginx_log_format = value;
       }
    }
 
@@ -1572,11 +1585,12 @@ void config_t::proc_cmd_line(int argc, const char * const argv[])
           case 'D': set_dns_db_path(vptr); break;                    // DNS Cache filename
           case 'e': ntop_entry=atoi(vptr); break;                    // Top entry pages
           case 'E': ntop_exit=atoi(vptr); break;                     // Top exit pages
-          case 'F': log_type=(string_t::tolower(vptr[0])=='s')?
+          case 'F': log_type_opt = vptr; log_type=(string_t::tolower(vptr[0])=='s')?
                LOG_SQUID: (string_t::tolower(vptr[0])=='c')?
                LOG_CLF: (string_t::tolower(vptr[0])=='a')?
                LOG_APACHE: (string_t::tolower(vptr[0])=='w')?
-               LOG_W3C: LOG_IIS; 
+               LOG_W3C: (string_t::tolower(vptr[0])=='n')?
+               LOG_NGINX : LOG_IIS; 
             break;                            // define log type
           case 'g': group_domains=atoi(vptr);break;                  // GroupDomains (0=no)
           case 'G': hourly_graph=false; break;                       // no hourly graph
@@ -1902,6 +1916,8 @@ const char *config_t::get_log_type_desc(void) const
          return "IIS";
       case LOG_W3C:
          return "W3C";
+      case LOG_NGINX:
+         return "Nginx";
       default:
          return "Unknown";
    }

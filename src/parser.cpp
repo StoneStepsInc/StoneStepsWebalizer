@@ -30,26 +30,6 @@
 #include <cctype>
 
 //
-//
-//
-#define SQUID_FIELD_COUNT     ((u_int) 10)
-
-//
-//
-//
-struct field_desc {
-   const char  *field;     // a pointer to a log record field
-   size_t      length;     // field length
-
-   public:
-      field_desc(void)
-      {
-         field = nullptr;
-         length = 0;
-      }
-};
-
-//
 // Global data
 //
 
@@ -83,16 +63,34 @@ bool parser_t::init_parser(int logtype)
          break;
 
       case LOG_APACHE:
-         if(!parse_apache_log_format(config.apache_log_format)) {
+         log_rec_fields = parse_apache_log_format(config.apache_log_format);
+
+         if(!log_rec_fields.empty())
+            fields = new field_desc[log_rec_fields.size()];
+         else {
             fprintf(stderr, "%s\n", config.lang.msg_afm_err);
             return false;
          }
          break;
 
+      // these parse log record format directives in the log files
       case LOG_IIS:
       case LOG_W3C:
+         break;
+
+      // CLF has a fixed layout and the fields vector is not used
       case LOG_CLF:
-      default:
+         break;
+
+      case LOG_NGINX:
+         log_rec_fields = parse_nginx_log_format(config.nginx_log_format);
+
+         if(!log_rec_fields.empty())
+            fields = new field_desc[log_rec_fields.size()];
+         else {
+            fprintf(stderr, "%s\n", config.lang.msg_afm_err);
+            return false;
+         }
          break;
    }
 
@@ -107,27 +105,30 @@ void parser_t::cleanup_parser(void)
 }
 
 //
-// Apache encodes quotes, back slashes and binary sequences with a back 
-// slash. proc_apache_escape_seq processes these sequences as follows:
+// Apache and Nginx (by default) encode quotes, back slashes, binary
+// octets and some other bytes with a back slash. This function leaves
+// characters that were not escaped unchanged and otherwise modifies
+// characters in place and returns the pointer to the first character
+// that should be included in the output. The caller must fill in the
+// gap by moving characters left.
 // 
 //    \\     ->      \
 //    \"     ->      "
-//    \xhh   ->      %hh
 // 
-// Other escape sequences (e.g. \t, \n, etc) will be left unchanged for 
-// performance reasons.
-//
-inline char *parser_t::proc_apache_escape_seq(char *cp1)
+//    \xhh   ->      \%hh
+//    ^--cp1          ^--returned
+// 
+inline char *parser_t::proc_bsesc_seq(char *cp1)
 {
-   switch(*++cp1) {
+   switch(*(cp1+1)) {
       case '\\':
       case '"':
          return cp1;
       case 'x':
-         *cp1 = '%';
+         *++cp1 = '%';
          return cp1;
    }
-   return --cp1;
+   return cp1;
 }
 
 //
@@ -163,7 +164,7 @@ bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc,
    while(*cp1 && (!fieldcnt || index < fieldcnt)) {
       /* break record up, terminate fields with '\0' */
       switch (*cp1) {
-         case '\\': if(bsesc) cp1 = proc_apache_escape_seq(cp1); break;
+         case '\\': if(bsesc) cp1 = proc_bsesc_seq(cp1); break;
          case '\t':
          case ' ': if (b || q || p) break; *cp1 = 0; break;
          case '"': if(noquotes) break; q^=1;  break;
@@ -190,17 +191,22 @@ bool parser_t::fmt_logrec(char *buffer, bool noparen, bool noquotes, bool bsesc,
          }
       }
       
-      // if processing escape sequences and found one or more,
+      // if processing escape sequences and found any
       if(bsesc && cp1 != cp2)
          *cp2++ = *cp1++;           // move the character
       else
          cp1++, cp2++;              // otherwise, just advance both pointers
    }
 
-   // if the last field has a trailing space, replace it with a zero
-   if(*cp1 == ' ' || *cp1 == '\t') *cp1 = 0;
+   //
+   // The last field may have trailing whitespace, which may be a result
+   // of having a few spaces in a log format line. We already have the
+   // null terminator in place of the first space and just need to make
+   // sure there are no other fields following the last one.
+   //
+   while(*cp1 == ' ' || *cp1 == '\t' || *cp1 == '\r' || *cp1 == '\n') cp1++;
 
-   return (*cp1 == 0 && (!fieldcnt || index == fieldcnt)) ? true : false;
+   return (*cp1 == '\x0' && (!fieldcnt || index == fieldcnt));
 }
 
 //
@@ -333,6 +339,9 @@ int parser_t::parse_record(char *buffer, size_t reclen, log_struct& log_rec)
          break;
       case LOG_SQUID: 
          retval = parse_record_squid(buffer, reclen, log_rec);
+         break;
+      case LOG_NGINX:
+         retval = parse_record_nginx(buffer, reclen, log_rec);
          break;
    }
 
@@ -516,20 +525,15 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
    return PARSE_CODE_OK;     /* maybe a valid record, return with TRUE */
 }
 
-bool parser_t::parse_apache_log_format(const char *format)
+std::vector<parser_t::TLogFieldId> parser_t::parse_apache_log_format(const char *format)
 {
    const char *cptr = format;
    const char *param;
    u_int paramlen;
-
-   if(fields)
-      delete [] fields;
-   fields = nullptr;
-
-   log_rec_fields.clear();
+   std::vector<TLogFieldId> log_rec_fields;
 
    if(format == nullptr || *format == 0)
-      return false;
+      return log_rec_fields;
 
    while(*cptr && (*cptr == ' ' || *cptr == '\t')) cptr++;
 
@@ -581,7 +585,7 @@ bool parser_t::parse_apache_log_format(const char *format)
                fprintf(stderr, "Error parsing Apache log format - \"%%{format}t\" is not supported\n");
                goto errexit;
             }
-            log_rec_fields.push_back(eDateTime);
+            log_rec_fields.push_back(eClfTime);
             break;
 
          case 'r':
@@ -656,13 +660,11 @@ bool parser_t::parse_apache_log_format(const char *format)
       cptr++;
    }
 
-   fields = new field_desc[log_rec_fields.size()];
-
-   return (log_rec_fields.size()) ? true : false;
+   return log_rec_fields;
 
 errexit:
    log_rec_fields.clear();
-   return false;
+   return log_rec_fields;
 }
 
 int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_rec)
@@ -702,7 +704,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
                log_rec.ident.assign(cp1, slen);
             break;
 
-         case eDateTime:
+         case eClfTime:
             if(!parse_clf_tstamp(cp1, log_rec.tstamp))
                return PARSE_CODE_ERROR;
 
@@ -1108,7 +1110,7 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
    // calculate end of buffer
    eob = buffer + reclen;                         
 
-   // seperate fields with \0's
+   // separate fields with \0's
    if(!fmt_logrec(buffer, true, true, false, SQUID_FIELD_COUNT)) 
       return PARSE_CODE_ERROR;
 
@@ -1175,4 +1177,210 @@ int parser_t::parse_record_squid(char *buffer, size_t reclen, log_struct& log_re
 
    /* we have no interest in the remaining fields */
    return PARSE_CODE_OK;
+}
+
+std::vector<parser_t::TLogFieldId> parser_t::parse_nginx_log_format(const char *format)
+{
+   static const struct nginx_log_field_t {
+      const string_t    nginx_var;
+      TLogFieldId       field_type;
+   } nginx_log_fields[] = {
+      {string_t("time_iso8601"), eISOLocalTime},
+      {string_t("time_local"), eClfTime},
+      {string_t("remote_addr"), eClientIpAddress},
+      {string_t("remote_user"), eUserName},
+      {string_t("server_name"), eWebsiteName},
+      {string_t("server_addr"), eWebsiteIpAddress},
+      {string_t("server_port"), eWebsitePort},
+      {string_t("request_method"), eHttpMethod},
+      {string_t("request_uri"), eUri},
+      {string_t("uri"), eUriStem},
+      {string_t("args"), eUriQuery},
+      {string_t("query_string"), eUriQuery},
+      {string_t("status"), eHttpStatus},
+      {string_t("request_length"), eBytesReceived},
+      {string_t("bytes_received"), eBytesReceived},
+      {string_t("bytes_sent"), eBytesSent},
+      {string_t("request_time"), eTimeTaken},
+      {string_t("http_user_agent"), eUserAgent},
+      {string_t("http_referer"), eReferrer},
+      {string_t("request"), eHttpRequestLine},
+   };
+
+   std::vector<TLogFieldId> log_rec_fields;
+
+   if(!format || !*format)
+      return log_rec_fields;
+
+   const char *ecp = format;
+
+   //
+   // Nginx log format allows any characters between fields and a
+   // full-blown parser would track chunks of text between fields.
+   // This simplified parser, however, will attempt to parse only
+   // common characters and sequences and will fails more complex
+   // formats.
+   //
+   while(*ecp) {
+      // skip whitespaces and characters fmt_logrec is aware of
+      while(*ecp && (*ecp == ' ' || *ecp == '\t' || *ecp == '\"' || *ecp == '[')) ecp++;
+
+      const char *scp = ecp;
+
+      // advance to the end of the field, looking for whitespace or what fmt_logrec considers a delimeter
+      while(*ecp && (*ecp != ' ' && *ecp != '\t' && *ecp != '\"' && *ecp != ']')) ecp++;
+
+      if(*scp != '$')
+         log_rec_fields.push_back(eUnknown);
+      else {
+         size_t i;
+
+         scp++;
+
+         // look for a field by name
+         for(i = 0; i < sizeof(nginx_log_fields)/sizeof(nginx_log_fields[0]); i++) {
+            if(nginx_log_fields[i].nginx_var.length() == ecp-scp && !nginx_log_fields[i].nginx_var.compare(scp, ecp-scp)) {
+               log_rec_fields.push_back(nginx_log_fields[i].field_type);
+               break;
+            }
+         }
+
+         // if none was found, track it as unknown type
+         if(i == sizeof(nginx_log_fields)/sizeof(nginx_log_fields[0]))
+            log_rec_fields.push_back(eUnknown);
+      }
+
+      ecp++;
+   }
+
+   return log_rec_fields;
+}
+
+int parser_t::parse_record_nginx(char *buffer, size_t reclen, log_struct& log_rec)
+{
+   size_t slen;
+   size_t fldindex = 0, fieldcnt;
+   const char *cp1;
+   u_int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0, offset = 0;
+
+   if(!buffer || !*buffer)
+      return PARSE_CODE_ERROR;
+
+   fieldcnt = log_rec_fields.size();
+
+   if(!fields || !fieldcnt)
+      return PARSE_CODE_ERROR;
+
+   if(!fmt_logrec(buffer, false, false, true, fieldcnt))
+      return PARSE_CODE_ERROR;
+
+   while(fldindex < fieldcnt) {
+      slen = fields[fldindex].length;
+      cp1 = fields[fldindex].field;
+
+      if(!cp1 || !slen)
+         return PARSE_CODE_ERROR;
+
+      // unwrap double quotes and adjust the length
+      if(*cp1 == '"' && slen >= 2) {
+         cp1++; slen -= 2;
+      }
+
+      switch (log_rec_fields[fldindex]) {
+         case eISOLocalTime:
+            //
+            // Nginx always records ISO-8601 time stamps in local time, so
+            // the time offset component is always present and we can avoid
+            // checking for the UTC indicator at the end. These are the
+            // expected formats (the top one is for systems running in UTC).
+            // 
+            // 2022-06-25T21:13:03+00:00
+            // 2022-06-25T12:24:17-04:00
+            //
+            year = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
+            month = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != '-') return PARSE_CODE_ERROR;
+            day = (u_int) str2ul(cp1, &cp1);
+
+            if(!cp1 || *cp1++ != 'T') return PARSE_CODE_ERROR;
+
+            hour = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != ':') return PARSE_CODE_ERROR;
+            min = (u_int) str2ul(cp1, &cp1);
+            if(!cp1 || *cp1++ != ':') return PARSE_CODE_ERROR;
+            sec = (u_int) str2ul(cp1, &cp1);
+
+            if(!cp1 || (*cp1++ != '-' && *cp1++ != '+')) return PARSE_CODE_ERROR;
+            offset = (u_int) str2ul(cp1, &cp1) * 60;
+            if(!cp1 || (*cp1++ != ':')) return PARSE_CODE_ERROR;
+            offset += (u_int) str2ul(cp1, &cp1);
+
+            log_rec.tstamp.reset(year, month, day, hour, min, sec, offset);
+            break;
+         case eClfTime:
+            // [25/Jun/2022:12:24:17 -0400]
+            if(!parse_clf_tstamp(cp1, log_rec.tstamp))
+               return PARSE_CODE_ERROR;
+            break;
+         case eClientIpAddress:
+            if(slen > 1 || *cp1 != '-')
+               log_rec.hostname.assign(cp1, slen);
+            break;
+         case eUserName:
+            if(slen > 1 || *cp1 != '-')
+               log_rec.ident.assign(cp1, slen);
+            break;
+         case eWebsitePort:
+            log_rec.port = (u_short) atoi(cp1);
+            break;
+         case eHttpMethod:
+            log_rec.method.assign(cp1, slen);
+            break;
+         case eUri: {
+            const char *cp2 = strchr(cp1, '?');
+            if(cp2)
+               log_rec.url.assign(cp1, cp2-cp1);
+            else
+               log_rec.url.assign(cp1, slen);
+            }
+            break;
+         case eUriStem:
+            log_rec.url.assign(cp1, slen);
+            break;
+         case eUriQuery:
+            if(slen > 1 || *cp1 != '-')
+               log_rec.srchargs.assign(cp1, slen);
+            break;
+         case eHttpStatus:
+            log_rec.resp_code = (u_short) atoi(cp1);
+            break;
+         case eBytesReceived:
+            if(config.upstream_traffic)
+               log_rec.xfer_size += strtoul(cp1,nullptr,10);
+            break;
+         case eBytesSent:
+            log_rec.xfer_size += strtoul(cp1, nullptr, 10);
+            break;
+         case eTimeTaken:
+            log_rec.proc_time = (uint64_t) (strtod(cp1, nullptr) * 1000. + .5);
+            break;
+         case eUserAgent:
+            if(slen > 1 || *cp1 != '-')
+               log_rec.agent.assign(cp1, slen);
+            break;
+         case eReferrer:
+            if(slen > 1 || *cp1 != '-')
+               log_rec.refer.assign(cp1, slen);
+            break;
+         case eHttpRequestLine:
+            if((cp1 = parse_http_req_line(cp1, log_rec)) == nullptr)
+               return PARSE_CODE_ERROR;
+            break;
+      }
+
+      fldindex++;
+   }
+
+   return fldindex == log_rec_fields.size() ? PARSE_CODE_OK : PARSE_CODE_ERROR;
 }
