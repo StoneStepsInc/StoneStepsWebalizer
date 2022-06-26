@@ -178,7 +178,7 @@ stages:
       BUILD_DIST_DIR: $(BUILD_DIR)/$(DIST_NAME)
 
     pool:
-      vmImage: ubuntu-latest
+      vmImage: ubuntu-20.04
     container: stonesteps/webalizer-$(DIST_NAME):20210620
 
     steps:
@@ -215,8 +215,8 @@ stages:
       DOCYGEN_OUTPUT: '$(Build.BinariesDirectory)/webalizer-doxygen/$(System.JobId)'
 
     pool:
-      vmImage: ubuntu-latest
-    container: stonesteps/webalizer-fedora-doxygen:latest
+      vmImage: ubuntu-20.04
+    container: stonesteps/webalizer-fedora-doxygen:20210321
 
     steps:
       # Doxygen can only create one missing directory segment
