@@ -1,4 +1,11 @@
 --------------------------------------------------------------------
+6.2.0 [xx-Xxx-2022] -- Stone Steps Inc. (www.stonesteps.ca)
+--------------------------------------------------------------------
+
+ * [AB-103] Added an Nginx log parser and NginxLogFormat configuration variable
+ * Increased font sizes in reports by 2-3 points in a few places
+
+--------------------------------------------------------------------
 6.1.0 [20-Jun-2021] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
