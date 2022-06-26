@@ -9,8 +9,8 @@
 /*
  * Basic HTML Styles
  */
-body {background-color: white; color: black; font: 10pt Arial, sans-serif; margin: 0; padding: 0;}
-table {font: 9pt Arial, sans-serif;}
+body {background-color: white; color: black; font: 12pt Arial, sans-serif; margin: 0; padding: 0;}
+table {font: 11pt Arial, sans-serif;}
 h1 {font-size: 14pt; margin: 0.5em 0;}
 a {color: blue;}
 a:visited {color: red;}
@@ -19,8 +19,8 @@ img {margin: 0 auto; display: block;}
 /*
  * Shared Classes
  */
-pre.details_pre {font-size: 9pt; margin-left: 10px;}
-p.note_p {margin: 1em 30px; color: #606060; font: 8pt Arial, sans-serif; text-align: center;}
+pre.details_pre {font-size: 11pt; margin-left: 1.5em; line-height: 1.5em}
+p.note_p {margin: 1em 30px; color: #606060; font: 10pt Arial, sans-serif; text-align: center;}
 span.help_span {cursor: help;}
 
 /*
@@ -94,8 +94,8 @@ span.search_type {color: gray;}
  */
 div.page_header_div {background-color: #E5E5E5; border-bottom: 1px solid #CCCCCC; margin: 0; padding: .5em;}
 
-div.usage_summary_div {font-size: 8pt; margin: 0;}
-div.usage_summary_div em {font-size: 10pt; font-weight: bold; font-style: normal;}
+div.usage_summary_div {font-size: 10pt; margin: 0; line-height: 1.5em}
+div.usage_summary_div em {font-size: 12pt; font-weight: bold; font-style: normal;}
 
 div.page_footer_div {border-top: 1px solid #CCCCCC; margin-top: 1em; padding: .5em 1em;}
 div.page_footer_div div {float: right;}
@@ -106,9 +106,9 @@ div.page_footer_div a:hover {color: red;}
 /*
  * Page Links
  */
-table.page_links_table {font-size: 9pt; margin: 1em auto 0; border-collapse: collapse; text-align: center; border-style: none;}
+table.page_links_table {font-size: 12pt; margin: 1.5em auto 1.7em; border-collapse: collapse; text-align: center; border-style: none;}
 table.page_links_table td {padding: 0; border: 1px solid #578EBE; background: #EEE linear-gradient(#FFF, #DCDCDC);}
-table.page_links_table a {color: blue; text-decoration: none; border-style: none; display: block; padding: 1px 5px; margin: 0;}
+table.page_links_table a {color: blue; text-decoration: none; border-style: none; display: block; padding: .3em 0.8em; margin: 0;}
 table.page_links_table a:visited {color: blue;}
 table.page_links_table a:hover {color: red; background: #FFF6BF linear-gradient(#FFF, #FFF6BF);}
 
@@ -118,13 +118,13 @@ table.page_links_table a:hover {color: red; background: #FFF6BF linear-gradient(
 table.report_table {border-collapse: collapse; background-color: #FAFAFA; margin: 1em auto; border-spacing: 1px;}
 table.report_table thead {background-color: #CCC;}
 table.report_table th,
-table.report_table td {padding: 2px 4px; border: 1px solid #888;}
+table.report_table td {padding: .3em .4em; border: 1px solid #888;}
 table.report_table thead th {border-color: #333;}
 table.report_table tr.table_title_tr {text-align: center; font-size: 12pt; background-color: #DDD;}
 table.report_table tr.table_footer_tr {background-color: #DDD;}
 table.report_table tr.all_items_tr {background-color: #D8D9E6;}
 
-table.report_table th.small_font_th {font-size: 7pt;}
+table.report_table th.small_font_th {font-size: 10pt;}
 table.report_table tr.group_shade_tr {background-color: #D8D9E6;}
 
 /*
@@ -152,14 +152,14 @@ table.monthly_totals_table col.totals_data_col {width: 65px;}
  */
 table.totals_table {width: 510px;}
 table.totals_table tbody.totals_data_tbody td {text-align: right; font-weight: bold;}
-table.totals_table tbody.totals_data_tbody td.data_percent_td {font-size: 7pt; font-weight: normal;}
+table.totals_table tbody.totals_data_tbody td.data_percent_td {font-size: 10pt; font-weight: normal;}
 
 /*
  * Stats Table (all top N tables)
  */
 table.stats_table {width: 510px;}
 table.stats_table tbody.stats_data_tbody td {text-align: right; font-weight: bold;}
-table.stats_table tbody.stats_data_tbody td.data_percent_td {font-size: 7pt; font-weight: normal;}
+table.stats_table tbody.stats_data_tbody td.data_percent_td {font-size: 10pt; font-weight: normal;}
 table.stats_table tbody.stats_data_tbody td.stats_data_item_td {font-weight: normal; text-align: left; white-space: nowrap;}
 table.stats_table tbody.stats_data_tbody td.stats_data_item_td {font-weight: normal; text-align: left; white-space: nowrap;}
 table.stats_table tbody.stats_data_tbody td.stats_data_num_td {font-weight: normal; text-align: right; white-space: nowrap;}
