@@ -205,6 +205,7 @@ class lang_t {
       const char *msg_data_err;
       const char *msg_dup_data;
       const char *msg_afm_err;
+      const char *msg_nfm_err;
       const char *msg_pars_err;
       const char *msg_use_conf;
       const char *msg_use_lang;

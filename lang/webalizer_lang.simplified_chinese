@@ -70,6 +70,7 @@ msg_bad_data= 错误: 不能读取上次运行数据
 msg_data_err= 错误: 不能保存当前运行数据
 msg_dup_data= 警告: 发现可能的重复数据
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

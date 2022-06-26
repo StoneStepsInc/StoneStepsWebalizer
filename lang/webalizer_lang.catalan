@@ -80,6 +80,7 @@ msg_bad_data= Error: no puc recuperar les dades de funcionament
 msg_data_err= Error: no puc guardar les dades de l'execució en curs
 msg_dup_data= Avís: He trobat dades que potser són duplicades
 msg_afm_err = Error: Invalid o erroni ApacheLogFormat
+msg_nfm_err = Error: Invalid o erroni NginxLogFormat
 msg_ctrl_c  = Ctrl-C detectat. Abortant...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

@@ -74,6 +74,7 @@ msg_bad_data= Error: Unable to restore run data
 msg_data_err= Erro: Impossível guardar dados da execução atual
 msg_dup_data= Aviso: Encontrados dados possívelmente duplicados
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detectado. Abortando...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processando arquivo de configuração

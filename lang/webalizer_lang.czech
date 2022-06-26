@@ -79,6 +79,7 @@ msg_bad_data= Chyba: Nemohu obnovit data aktualniho zpracovani
 msg_data_err= Chyba: Nemohu ulozit udaje aktualniho zpracovani
 msg_dup_data= Pozor: Nalezeny pravdepodobne duplicitni udaje
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

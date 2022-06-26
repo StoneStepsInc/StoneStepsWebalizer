@@ -88,7 +88,7 @@ bool parser_t::init_parser(int logtype)
          if(!log_rec_fields.empty())
             fields = new field_desc[log_rec_fields.size()];
          else {
-            fprintf(stderr, "%s\n", config.lang.msg_afm_err);
+            fprintf(stderr, "%s\n", config.lang.msg_nfm_err);
             return false;
          }
          break;

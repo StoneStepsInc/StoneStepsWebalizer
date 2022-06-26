@@ -506,6 +506,7 @@ lang_t::lang_t(void) :
    msg_data_err= "Error: Unable to save current run data";
    msg_dup_data= "Warning: Possible duplicate data found";
    msg_afm_err = "Error: Invalid or missing ApacheLogFormat";
+   msg_nfm_err = "Error: Invalid or missing NginxLogFormat";
    msg_pars_err= "Cannot initialize log file parser";
    msg_use_conf= "Processed configuration file";
    msg_use_lang= "Processed language file";
@@ -825,6 +826,7 @@ void lang_t::init_lang_htab(void)
    ln_htab.emplace(string_t("msg_data_err"), &msg_data_err);
    ln_htab.emplace(string_t("msg_dup_data"), &msg_dup_data);
    ln_htab.emplace(string_t("msg_afm_err"), &msg_afm_err);
+   ln_htab.emplace(string_t("msg_nfm_err"), &msg_afm_err);
    ln_htab.emplace(string_t("msg_ctrl_c"), &msg_ctrl_c);
    ln_htab.emplace(string_t("msg_pars_err"), &msg_pars_err);
    ln_htab.emplace(string_t("msg_use_conf"), &msg_use_conf);

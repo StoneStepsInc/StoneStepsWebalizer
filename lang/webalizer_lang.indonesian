@@ -77,6 +77,7 @@ msg_bad_data= Salah: Tak dapat memulihkan data yang dijalankan
 msg_data_err= Salah: Tak dapat menyimpan data yang dijalankan saat ini
 msg_dup_data= Peringatan: Kemungkinan ditemukan data yang terduplikasi
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

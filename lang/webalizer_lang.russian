@@ -80,6 +80,7 @@ msg_bad_data= Ошибка: нельзя восстановить данные �
 msg_data_err= Ошибка: нельзя сохранить данные текущего запуска
 msg_dup_data= Предупреждение: обнаружено возможное дублирование данных
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

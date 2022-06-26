@@ -77,6 +77,7 @@ msg_bad_data= Error: Nav iespįjams atjaunot iepriekđįjos datus
 msg_data_err= Error: Nav iespįjams saglabât pađreizįjos datus
 msg_dup_data= Warning: Iespįjams, ka dati atkârtojas
 msg_afm_err = Error: Invalid or missing ApacheLogFormat
+msg_nfm_err = Error: Invalid or missing NginxLogFormat
 msg_ctrl_c  = Ctrl-C detected. Aborting...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file

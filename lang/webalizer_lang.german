@@ -95,6 +95,7 @@ msg_bad_data= Fehler: Kann Daten des letzten Programmlaufes nicht wiederherstell
 msg_data_err= Fehler: Kann Daten des letzten Programmlaufes nicht speichern
 msg_dup_data= Warnung: Möglicherweise doppelte Daten gelesen.
 msg_afm_err = Fehler: Ungültiges oder fehlendes ApacheLogFormat
+msg_nfm_err = Fehler: Ungültiges oder fehlendes NginxLogFormat
 msg_ctrl_c  = Ctrl-C festgestellt. Breche ab ...
 msg_pars_err= Logdatei-Analysator kann nicht initialisiert werden
 msg_use_conf= Fahre mit Konfigurationsdatei fort

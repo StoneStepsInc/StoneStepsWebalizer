@@ -86,6 +86,7 @@ msg_bad_data= Error: No puedo cargar los datos de la corrida
 msg_data_err= Error: No puedo grabar los datos de la ejecucion actual
 msg_dup_data= Aviso: Posibles datos duplicados encontrados
 msg_afm_err = Error: Invalido o inexistente ApacheLogFormat
+msg_nfm_err = Error: Invalido o inexistente NginxLogFormat
 msg_ctrl_c  = Ctrl-C detectado. Abortando...
 msg_pars_err= Cannot initialize log file parser
 msg_use_conf= Processed configuration file
