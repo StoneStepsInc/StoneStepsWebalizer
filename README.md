@@ -26,10 +26,10 @@ user agent (browser), search string, entry/exit page, username and country
 files being processed).  Processed data may also be exported into most
 database and spreadsheet programs that support tab delimited data formats.
 
-The Webalizer supports IIS, Apache (custom format), Squid (HTTP proxy),
-CLF (common log format) log files, as well as Combined log formats as
-defined by NCSA and others, and variations of these which it attempts to
-handle intelligently.
+The Webalizer supports W3C, IIS, Nginx, Apache, Squid, Common Log Format,
+as well as Combined Log Format. The latter two are referred to as CLF in
+this document and the difference between them is handled trasparently
+when log files are being processed.
 
 Gzip compressed logs may be used as input directly. Any log filename
 that ends with a `.gz` extension will be assumed to be in gzip format and
@@ -451,10 +451,10 @@ a fairly accurate representation of the amount of traffic the server
 had, regardless of the web servers reporting quirks.
 
 By default, most servers only log outgoing amounts (i.e. response
-sizes). IIS and Apache may log incoming amounts as well (i.e.
-request sizes). Stone Steps Webalizer will include this type of
-traffic into the amount reported as `Transfer` if `UpstreamTraffic` is
-set to `yes` in the configuration file.
+sizes). IIS, Nginx and Apache may log incoming amounts as well
+(i.e. request sizes). Stone Steps Webalizer will include this type
+of traffic into the amount reported as `Transfer` if `UpstreamTraffic`
+is set to `yes` in the configuration file.
 
 Transfer amounts are reported since v4.2 with a unit suffix, such as
 `12.3 GB`, or as a number kilobytes. This behavior may be changed by
@@ -699,7 +699,7 @@ and `-f` are different options.
 
     Specify that the log file format. By default, Stone Steps
     Webalizer expects IIS log file, but may be instructed to
-    process other formats: W3C, IIS, Apache, CLF, Squid.
+    process other formats: W3C, IIS, Nginx, Apache, CLF, Squid.
 
     Config file keyword: `LogType`
 
@@ -1728,10 +1728,8 @@ will be used (which should be sufficient for most sites).
 * `ApacheLogFormat`
 
     Defines the format Stone Steps Webalizer will use when
-    parsing custom Apache log files. This configuration
-    parameter will only be evaluated when the current log file
-    type is Apache. Search this document for `CustomLog` for more
-    details about Apache custom log format.
+    parsing Apache log files. This configuration variable will
+    only be evaluated when the current log file type is Apache.
 
     Default value: none
 
@@ -1747,9 +1745,7 @@ will be used (which should be sufficient for most sites).
 * `ConvURLsLowerCase`
 
     Controls whether URL characters will be converted to lower
-    case (`yes`) or not (`no`). This option is evaluated only when
-    Stone Steps Webalizer is processing IIS or Apache custom log
-    files.
+    case (`yes`) or not (`no`).
 
     Default value: `no`
 
@@ -1904,6 +1900,14 @@ will be used (which should be sufficient for most sites).
     monthly totals report or not.
 
     Default value: `yes`
+
+* `NginxLogFormat`
+
+    Defines the format Stone Steps Webalizer will use when
+    parsing Nginx log files. This configuration variable will
+    only be evaluated when the current log file type is Nginx.
+
+    Default value: none
 
 * `NoDefaultIndexAlias`
 
@@ -3199,7 +3203,8 @@ or more lines.  There are no command line counterparts to these keywords.
 
 ## Notes on Web Log Files
 
-Stone Steps Webalizer supports W3C, IIS, Apache, CLF and Squid log formats.
+Stone Steps Webalizer supports W3C, IIS, Nginx, Apache, CLF and Squid
+log formats.
 
 Avoid processing the same log files more than once because in every subsequent
 run Stone Steps Webalizer will use the latest processed log time stamp to skip
@@ -3284,6 +3289,35 @@ This instructs the Apache web server to produce a `combined` log
 that includes the referrer and user agent information on the end of
 each record, enclosed in quotes (This is the standard recommended
 by both Apache and NCSA).
+
+### Nginx
+
+Nginx logs can be customized using `log_format` directive. Stone
+Steps Webalizer will recognize a limited set of Nginx variables
+that can be used in `log_format` via the `NginxLogFormat`
+configuration variable, which enables the `nginx` log type in `-F`
+and `LogType`.
+
+Following Nginx variables are recognized in `NginxLogFormat`.
+
+  * `time_iso8601`, `time_local`
+  * `remote_addr`
+  * `remote_user`
+  * `server_port`
+  * `request_method`
+  * `request`
+  * `request_uri`, `uri`, `args`, `query_string`
+  * `request_time`
+  * `status`
+  * `request_length`, `bytes_received`, `bytes_sent`
+  * `http_user_agent`
+  * `http_referer`
+
+For information on `log_format` and what these variables represent,
+see Nginx documentation:
+
+http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format
+http://nginx.org/en/docs/varindex.html
 
 ## Referrers
 
@@ -3402,10 +3436,10 @@ Sometimes URL characters may be encoded incorrectly, which may be because of var
 historical reasons, or because of bugs in user agents, or in an attempt to avoid simple
 spam filters that do not percent-decode URL sequences before looking for spam keywords.
 In either case, having the same URL encoded differently fragments reports by creating
-aliases (e.g. `/xAy/` and `/x%41y/` are counted as two URLs) and makes spam detection more
-difficult because all possible aliases must be filtered individually. In order to deal
-with these issues, Stone Steps Webalizer normalizes all URLs extracted from log files
-to reduce aliasing and improve report readability.
+aliases (e.g. `/xAy/` and `/x%41y/` are counted as two URLs) and makes spam detection
+more difficult because all possible aliases must be filtered individually. In order
+to deal with these issues, Stone Steps Webalizer normalizes all URLs extracted from
+log files to reduce aliasing and improve report readability.
 
 IMPORTANT: A normalized URL is not a well-formed URL in the sense that it should not
 be used verbatim in HTML as a copy-and-paste href link, but it could be used in the
@@ -3413,7 +3447,7 @@ URL field in a web browser because URL normalization does not change the meaning
 existing URL components, but merely makes them more readable.
 
 For example, a normalized URL `/?q="abc"` is more readable than the equivalent
-well-formed URL `/?q=%22abc%22`, but if it is copy-pasted into an href attribute
+well-formed URL `/?q=%22abc%22`, but if it is copy-pasted into an `href` attribute
 in HTML without proper HTML encoding, it will break that HTML because the double
 quotes in the URL will interfere with double quotes in the HTML attribute.
 
