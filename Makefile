@@ -193,7 +193,7 @@ ifeq ($(strip $(PKG_ARCH_ABBR)),)
 PKG_ARCH_ABBR := $$(uname -p)
 endif
 
-PKG_NAME  := webalizer-$(PKG_OS_ABBR)-$(PKG_ARCH_ABBR)-$$($(BLDDIR)/$(WEBALIZER) -v -Q)
+PKG_NAME  := webalizer-stonesteps-$$($(BLDDIR)/$(WEBALIZER) -v -Q).$(PKG_OS_ABBR).$(PKG_ARCH_ABBR)
 
 # inject the package name as the top-level directory in the package archive
 PKG_TAR_FLAGS := --owner=root --group=root --transform="s|^|$(PKG_NAME)/|"
