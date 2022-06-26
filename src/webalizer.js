@@ -80,54 +80,6 @@ function onPageKeyUpDispatcher(event)
    return true;
 }
 
-// ----------------------------------------------------------------------------
-//
-// Common code
-//
-// ----------------------------------------------------------------------------
-
-//
-// findParentNode
-//
-// Returns the parent node with the matching tag name of the specified node
-//
-function findParentNode(node, tagname)
-{
-   do {
-      node = node.parentNode;
-   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
-   
-   return node;
-}
-
-//
-// findNextSibling
-//
-// Returns the next sibling node with the matching tag name of the specified node
-//
-function findNextSibling(node, tagname)
-{
-   do {
-      node = node.nextSibling;
-   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
-   
-   return node;
-}
-
-//
-// findPrevSibling
-//
-// Returns the previous sibling node with the matching tag name of the specified node
-//
-function findPrevSibling(node, tagname)
-{
-   do {
-      node = node.previousSibling;
-   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
-   
-   return node;
-}
-
 ///
 /// @name   Report functions
 ///
@@ -907,6 +859,33 @@ function onpagekeyup(event)
 function onclickmenu(a)
 {
 	return true;
+}
+
+function findParentNode(node, tagname)
+{
+   do {
+      node = node.parentNode;
+   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
+   
+   return node;
+}
+
+function findNextSibling(node, tagname)
+{
+   do {
+      node = node.nextSibling;
+   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
+   
+   return node;
+}
+
+function findPrevSibling(node, tagname)
+{
+   do {
+      node = node.previousSibling;
+   } while(node.nodeType != ELEMENT_NODE || node.tagName.toLowerCase() != tagname);
+   
+   return node;
 }
 
 /// @}
