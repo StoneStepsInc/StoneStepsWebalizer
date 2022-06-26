@@ -1228,6 +1228,15 @@ std::vector<parser_t::TLogFieldId> parser_t::parse_nginx_log_format(const char *
       // advance to the end of the field, looking for whitespace or what fmt_logrec considers a delimeter
       while(*ecp && (*ecp != ' ' && *ecp != '\t' && *ecp != '\"' && *ecp != ']')) ecp++;
 
+      //
+      // log_format may use a single dash character to mimic an unknown field
+      // value, such as the ident field in CLF logs, which has no matching
+      // Nginx variable. This dash character, effectively, is the field value
+      // that would be used if there was a variable and the value would be
+      // unavailable. Treat anything that is not a $ character as such
+      // placeholder variable instead of enforcing strict parsing. Note that
+      // this will fail if more than one character is used, such as --.
+      //
       if(*scp != '$')
          log_rec_fields.push_back(eUnknown);
       else {
@@ -1333,7 +1342,8 @@ int parser_t::parse_record_nginx(char *buffer, size_t reclen, log_struct& log_re
             log_rec.port = (u_short) atoi(cp1);
             break;
          case eHttpMethod:
-            log_rec.method.assign(cp1, slen);
+            if(slen > 1 || *cp1 != '-')
+               log_rec.method.assign(cp1, slen);
             break;
          case eUri: {
             const char *cp2 = strchr(cp1, '?');
