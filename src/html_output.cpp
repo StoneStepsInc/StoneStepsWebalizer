@@ -1,7 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
-   Copyright (c) 2004-2021, Stone Steps Inc. (www.stonesteps.ca)
+   Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)
    Copyright (C) 1997-2001  Bradford L. Barrett (brad@mrunix.net)
 
    See COPYING and Copyright files for additional licensing and copyright information 
@@ -348,7 +348,7 @@ void html_output_t::write_html_head(const char *report_title, FILE *out_fp, page
 
    /* Standard header comments */
    fprintf(out_fp,"<!--  Stone Steps Webalizer  Ver. %s\n\n", state_t::get_app_version(false).c_str());
-   fputs("     Copyright (c) 2004-2021, Stone Steps Inc.\n", out_fp);
+   fputs("     Copyright (c) 2004-2022, Stone Steps Inc.\n", out_fp);
    fputs("             http://www.stonesteps.ca\n\n", out_fp);
    fputs("       Based on v2.01.10 of The Webalizer\n", out_fp);
    fputs("     Copyright 1997-2000 Bradford L. Barrett\n", out_fp);
