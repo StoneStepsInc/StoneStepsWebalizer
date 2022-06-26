@@ -3298,6 +3298,26 @@ that can be used in `log_format` via the `NginxLogFormat`
 configuration variable, which enables the `nginx` log type in `-F`
 and `LogType`.
 
+Note that `log_format` cannot be used verbatim in `NginxLogFormat`,
+which expects only variable names listed on a single line, without
+the single quotes that allow `log_format` spam multiple lines. For
+example, the following `log_format` configuration:
+
+
+    log_format combined '$remote_addr - $remote_user [$time_local] '
+                      '"$request" $status $body_bytes_sent '
+                      '"$http_referer" "$http_user_agent"';
+
+, would appear as follows in `NginxLogFormat`, separated by a single
+space character:
+
+    NginxLogFormat  $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"
+
+The `-` represents the `ident` field in a CLF log format, which has
+no matching variable in Nginx, so a dash is used to represent a
+non-existent field value. Such field will be treated as an unknown
+field and will be ignored.
+
 Following Nginx variables are recognized in `NginxLogFormat`.
 
   * `time_iso8601`, `time_local`
