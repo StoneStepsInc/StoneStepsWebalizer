@@ -58,6 +58,9 @@ variables:
 #
 # Pipeline run label that can be accessed via $(Build.BuildNumber).
 #
+# Additional build metadata may be added after $(Build.BuildNumber)
+# using dot separators, with a mandatory leading dot.
+#
 name: $(VERSION)+$(BUILD_NUMBER)
 
 stages:
@@ -84,7 +87,7 @@ stages:
       # Package directories must be one level below BIN_OUT_DIR for
       # scripts to access build files via parent paths.
       #
-      PKG_NAME: webalizer-win-x64-$(Build.BuildNumber)
+      PKG_NAME: webalizer-stonesteps-$(Build.BuildNumber).win.x64
       PKG_OUT_DIR: $(BIN_OUT_DIR)\$(PKG_NAME)
       PKG_INT_DIR: $(BIN_OUT_DIR)\$(PKG_NAME)-tmp
   
@@ -202,7 +205,7 @@ stages:
     - script: |
         make BLDDIR=$(BUILD_DIST_DIR) PKG_DIR=$(ARTIFACT_DIR) PKG_OS_ABBR=$(DIST_ABBR) PKG_ARCH_ABBR=x64 package
       displayName: Package
-    - publish: '$(ARTIFACT_DIR)/webalizer-$(DIST_ABBR)-x64-$(Build.BuildNumber).tar.gz'
+    - publish: '$(ARTIFACT_DIR)/webalizer-stonesteps-$(Build.BuildNumber).$(DIST_ABBR).x64.tar.gz'
       artifact: $(System.JobName) package
 
     #
@@ -238,12 +241,12 @@ stages:
         includeRootFolder: false
         archiveType: 'tar'
         tarCompression: 'gz'
-        archiveFile: '$(ARTIFACT_DIR)/webalizer-doxygen-$(Build.BuildNumber).tar.gz'
+        archiveFile: '$(ARTIFACT_DIR)/webalizer-stonesteps-$(Build.BuildNumber).doxygen.tar.gz'
         replaceExistingArchive: true
 
     - script: >
         rm -rf $(DOCYGEN_OUTPUT)
       displayName: Remove Doxygen output
 
-    - publish: '$(ARTIFACT_DIR)/webalizer-doxygen-$(Build.BuildNumber).tar.gz'
+    - publish: '$(ARTIFACT_DIR)/webalizer-stonesteps-$(Build.BuildNumber).doxygen.tar.gz'
       artifact: Doxygen docs
