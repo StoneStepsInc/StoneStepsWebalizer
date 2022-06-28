@@ -3300,7 +3300,7 @@ and `LogType`.
 
 Note that `log_format` cannot be used verbatim in `NginxLogFormat`,
 which expects only variable names listed on a single line, without
-the single quotes that allow `log_format` spam multiple lines. For
+the single quotes that allow `log_format` span multiple lines. For
 example, the following `log_format` configuration:
 
 
@@ -3337,6 +3337,7 @@ For information on `log_format` and what these variables represent,
 see Nginx documentation:
 
 http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format
+
 http://nginx.org/en/docs/varindex.html
 
 ## Referrers
