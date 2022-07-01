@@ -837,10 +837,9 @@ void webalizer_t::filter_user_agent(string_t& agent)
       // form a new user agent string
       cp1 = ua2;
       for(size_t i = 0; i < ua_args.size(); i++) {
-         if(i) {
-            for(size_t j = 0; j < sizeof(o_arg); j++) 
-               *cp1++ = o_arg[j];
-         }
+         // reserve room for output separators (may still contain token characters)
+         if(i)
+            cp1 += sizeof(o_arg);
          
          // if a version token, use mangle level to output version length
          if(ua_args[i].argtype == vertok) {
@@ -856,9 +855,16 @@ void webalizer_t::filter_user_agent(string_t& agent)
          else
             arglen = ua_args[i].arglen;
          
-         // copy the token and advance the pointer   
+         // move/copy the token if output pointer is different from the original
          if(cp1 != ua_args[i].start)
             memmove(cp1, ua_args[i].start, arglen);
+
+         if(i) {
+            // output separator into the reserved space
+            for(size_t j = 0; j < sizeof(o_arg); j++) 
+               *(cp1-sizeof(o_arg)+j) = o_arg[j];
+         }
+
          cp1 += arglen;
       }
       *cp1 = 0;
