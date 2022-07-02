@@ -638,24 +638,34 @@ void webalizer_t::mangle_user_agent(string_t& agent)
 void webalizer_t::filter_user_agent(string_t& agent)
 {
    //
-   // Typical user agent strings:
+   // User agent string is quite messy to begin with in that the RFC
+   // allows comments within comments.
+   // 
+   // User-Agent      = product *( RWS ( product / comment ) )
+   // product         = token ["/" product-version]
+   // product-version = token
+   // comment         = "(" *( ctext / quoted-pair / comment ) ")"
+   // 
+   // On top of that, user agent developers don't follow the RFC very
+   // well, and may place significant strings into comments, instead
+   // of using product/version strings, which makes it impossible to
+   // just filter out comments at any filtering level. For example,
+   // these user agents would be reported as Mozilla if comments were
+   // ignored:
+   // 
+   //   Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)
+   //   Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
+   // 
+   // Other RFC guideines, such as listing more significant product
+   // versions first, are also ignored and many web browsers list
+   // their names at the end.
+   // 
+   // With all of this in mind, a very simplistic parser is used here
+   // to identify three types of tokens - generic strings, versioned
+   // products and URLs and apply filters against each token.
    //
-   // Opera/9.25 (Windows NT 5.1; U; de)
-   // Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.7) Gecko/20070914 Firefox/2.0.0.7
-   // Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727)
-   // Mozilla/5.0 (compatible; Googlebot/2.1;  http://www.google.com/bot.html)
-   // Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)
-   //
-   // The parser interprets various delimiters as follows:
-   //
-   // "();"    - end all tokens
-   // '/'      - changes string token into a version token
-   // 'h'      - if the following string is "http://", changes token into a URL token
-   // '.'      - the first dot of a version token marks the end of the major version number
-   // " \t"    - ends version and URL tokens
-   //
-   static const char *str_delims = "h/();";     // string token delimiters
-   static const char *ver_delims = ". \t();";   // version token end delimiters
+   static const char *str_delims = "+h/();";    // string token delimiters
+   static const char *ver_delims = ". \t();";   // product version token end delimiters
    static const char *url_delims = " \t();";    // URL token end delimiters
    static const char *wht_delims = " \t();";    // whitespace delimiters
    
@@ -701,11 +711,15 @@ void webalizer_t::filter_user_agent(string_t& agent)
 
    token.reset(cp1, strtok);
 
+   //
+   // Walk the user agent string and identify each sequence of characters
+   // as either a generic string token, a version token or a URL token.
+   //
    while(*cp2) {
-      // find the next delimiter based on the current token type
+      // advance cp2 to the first delimiter for the current token type
       while(*cp2 && !strchr(delims, *cp2)) cp2++;
       
-      // if the token type is still a string, check if we need to change it
+      // if the token type is still a string, check if we need to promote it
       if(token.argtype == strtok) {
          if(*cp2 == '/') {
             // make it a version token
@@ -721,6 +735,33 @@ void webalizer_t::filter_user_agent(string_t& agent)
                token.argtype = urltok;
                delims = url_delims;
                cp2 += 6;
+            }
+            else if(!string_t::compare_ci(cp2, "ttps://", 7)) {
+               // make it a URL token
+               token.argtype = urltok;
+               delims = url_delims;
+               cp2 += 7;
+            }
+            continue;
+         }
+         else if(*cp2 == '+') {
+            //
+            // Some user agents started to prefix their URLs with a plus
+            // character, which seems to indicate that it's a project URL,
+            // but this is inconclusive. Track it as a URL token and keep
+            // the plus character for visibility.
+            //
+            if(!string_t::compare_ci(++cp2, "http://", 7)) {
+               // make it a URL token
+               token.argtype = urltok;
+               delims = url_delims;
+               cp2 += 7;
+            }
+            else if(!string_t::compare_ci(cp2, "https://", 8)) {
+               // make it a URL token
+               token.argtype = urltok;
+               delims = url_delims;
+               cp2 += 8;
             }
             continue;
          }
@@ -745,11 +786,20 @@ void webalizer_t::filter_user_agent(string_t& agent)
       // skip trailing spaces
       while(arglen && cp1[arglen-1] == ' ') arglen--;
       
-      if(arglen) {
-         // push a copy of a non-empty argument into the vector
+      //
+      // Drop URL tokens at mangle level 5 and apply filters against other
+      // token types. Note that filters are applied at the entire token
+      // length, so ABC/1.2.3 won't be filtered out by an exclude filter
+      // ABC, even if mangle level is 4 and the token appears as ABC in
+      // the output.
+      //
+      if(arglen && (token.argtype != urltok || config.mangle_agent < 5)) {
+         //
+         // push a copy of a non-empty argument into the ua_args vector
          //    if the exclude list is empty OR
          //    if the argument is in the include list OR
          //    if the argument is not in the exclude list
+         //
          if(config.excl_agent_args.isempty() || 
                config.incl_agent_args.isinlistex(cp1, arglen, false) || 
                !config.excl_agent_args.isinlistex(cp1, arglen, false)) {
@@ -760,10 +810,15 @@ void webalizer_t::filter_user_agent(string_t& agent)
 
             token.arglen = arglen;
 
-            // update the total length
-            t_arglen += arglen + sizeof(o_arg); // account for ';' and ' ' in the output
+            // update the total length to account for ';' and ' ' in the output
+            t_arglen += arglen + sizeof(o_arg);
 
-            // check if there's a matching group pattern for string tokens
+            //
+            // Apply group pattern against string tokens. Product version
+            // tokens are not included in this step because it would create
+            // very confusing sequences, effectively introducing arbitrary
+            // string tokens that replace somewhat more stable product tokens.
+            //
             if(token.argtype == strtok && config.group_agent_args.size()) {
                if((str = config.group_agent_args.isinglist(cp1, arglen, false)) != nullptr) {
                   // make sure there are no duplicates
@@ -818,6 +873,10 @@ void webalizer_t::filter_user_agent(string_t& agent)
       }
    }
    
+   //
+   // Reconstruct the user agent string with new strings, which may
+   // be truncated original trings or aliases from configuration.
+   //
    if(t_arglen) {
       // there are extra ';' and ' ' at the end
       t_arglen -= sizeof(o_arg);
