@@ -722,10 +722,17 @@ void webalizer_t::filter_user_agent(string_t& agent)
       // if the token type is still a string, check if we need to promote it
       if(token.argtype == strtok) {
          if(*cp2 == '/') {
-            // make it a version token
-            token.namelen = cp2 - cp1;
-            token.argtype = vertok;
-            delims = ver_delims;
+            //
+            // Use a simple first digit check to start a version, which
+            // avoids treating tokens like NetType/WIFI as product
+            // versions.
+            //
+            if(string_t::isdigit(*(cp2+1))) {
+               // make it a version token
+               token.namelen = cp2 - cp1;
+               token.argtype = vertok;
+               delims = ver_delims;
+            }
             cp2++;
             continue;
          }
