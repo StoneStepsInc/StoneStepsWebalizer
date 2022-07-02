@@ -375,8 +375,6 @@ class config_t {
 
       void add_def_ua_filters(void);
 
-      void add_def_srch_list(void);
-
       void prep_and_validate(void);
 
       void add_grp_item(glist& grplist, nlist& hidlist, const char *value);

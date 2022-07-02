@@ -417,24 +417,6 @@ void config_t::add_def_ua_filters(void)
 }
 
 ///
-/// @brief  Populate the search engine list with a few most commonly used search 
-///         engine domain patterns and their search arguments.
-///
-void config_t::add_def_srch_list(void)
-{
-   search_list.add_glist("www.google.\t   q=");
-   search_list.add_glist("www.google.\t   as_q=All Words",        true);
-   search_list.add_glist("www.google.\t   as_epq=Exact Phrase",   true);
-   search_list.add_glist("www.google.\t   as_oq=Any Word",        true);
-   search_list.add_glist("www.google.\t   as_eq=Without Words",   true);
-   search_list.add_glist("www.google.\t   as_filetype=File Type", true);
-   search_list.add_glist("duckduckgo.com\t q=");
-   search_list.add_glist("www.bing.\t     q=");
-   search_list.add_glist("search.yahoo.\t p=");
-   search_list.add_glist("ask.com\t       q=");
-}
-
-///
 /// @brief  Reads configuration files and processes command line options to
 ///         initialize the configuration object.
 ///
@@ -789,9 +771,6 @@ void config_t::prep_and_validate(void)
    if(max_users < ntop_users) max_users = ntop_users;
    if(max_errors < ntop_errors) max_errors = ntop_errors;
    if(max_downloads < ntop_downloads) max_downloads = ntop_downloads;
-
-   if(search_list.isempty())
-      add_def_srch_list();
 
    if(!use_classic_mangler) {
       //
