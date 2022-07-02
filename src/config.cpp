@@ -316,107 +316,6 @@ void config_t::proc_dst_ranges(void)
 }
 
 ///
-/// @brief  Adds default user agent filters based on the current mangle level.
-///
-void config_t::add_def_ua_filters(void)
-{
-   //
-   // At the lowest level, remove cryptic or strings that have been
-   // overused to the point they lost their meaning.
-   //
-   // Version numbers are not truncated at this level.
-   //
-   if(mangle_agent > 0) {
-      excl_agent_args.add_nlist(".NET CLR*");      // .NET Common Language Runtime version
-      excl_agent_args.add_nlist("compatible");     // IE's silly platform string
-      excl_agent_args.add_nlist("T312461");        // IE's security patch (KB312461)
-      excl_agent_args.add_nlist("Mozilla/*");      // overused Mozilla product version
-      excl_agent_args.add_nlist("rv:*");           // Mozilla's source control revision number
-   }
-
-   //
-   // Then remove various service pack versions, less-known component
-   // names, HTML layout engines and Mozilla's security level
-   // identifiers.
-   //
-   // Version numbers are truncated at this level to include the
-   // minor version number.
-   //
-   if(mangle_agent > 1) {
-      excl_agent_args.add_nlist("U");              // strong security (Mozilla)
-      excl_agent_args.add_nlist("I");              // weak security (Mozilla)
-      excl_agent_args.add_nlist("N");              // no security (Mozilla)
-
-      excl_agent_args.add_nlist("Gecko/*");        // Mozilla's layout engine
-      excl_agent_args.add_nlist("like Gecko");     // KHTML (like Gecko)
-      excl_agent_args.add_nlist("KHTML/*");        // KHTML version
-      excl_agent_args.add_nlist("KHTML, like Gecko");// KDE's layout engine
-
-      // AppleWebKit/523.10.6 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6
-      excl_agent_args.add_nlist("AppleWebKit*");   // AppleWebKit version
-      excl_agent_args.add_nlist("Version/*");      //
-
-      excl_agent_args.add_nlist("InfoPath*");      // MS Office InfoPath
-      excl_agent_args.add_nlist("SLCC1");          // Vista SP?
-      excl_agent_args.add_nlist("SV1");            // WinXP SP1
-   }
-
-   //
-   // Rename Windows NT x.y sequences to the corresponding Windows
-   // version names and remove the word Windows, which is reported
-   // by FireFox as a platform identifier, along with the actual
-   // Windows version.
-   //
-   // Versions are truncated at this level to include only the major
-   // version number.
-   //
-   if(mangle_agent > 2) {
-      excl_agent_args.add_nlist("Windows");        // Mozilla's Windows platform identifier
-
-      // if phrase values are not enabled, enable them temporarily
-      if(!enable_phrase_values)
-         group_agent_args.set_enable_phrase_values(true);
-
-      group_agent_args.add_glist("Windows NT 10.0\t Windows 10");
-      group_agent_args.add_glist("Windows NT 6.2\t Windows 8");
-      group_agent_args.add_glist("Windows NT 6.1\t Windows 7");
-      group_agent_args.add_glist("Windows NT 6.0\t Windows Vista");
-      group_agent_args.add_glist("Windows NT 5.1\t Windows XP");
-      group_agent_args.add_glist("Windows NT 5.2\t Windows Server 2003");
-      group_agent_args.add_glist("Windows NT 5.0\t Windows 2000");
-
-      // restore the global setting
-      group_agent_args.set_enable_phrase_values(enable_phrase_values);
-   }
-
-   //
-   // Remove all platform and CPU identifiers. Versions at this level
-   // are truncated to include only the product name.
-   //
-   if(mangle_agent > 3) {
-      excl_agent_args.add_nlist("Windows*");       // Windows flavors
-      excl_agent_args.add_nlist("WOW64");          // 32-bit IE running on a 64-bit Windows
-      excl_agent_args.add_nlist("Media Center PC*");//
-      excl_agent_args.add_nlist("Tablet PC*");     //
-
-
-      excl_agent_args.add_nlist("X11");            // Mozilla's Unix platform identifier
-      excl_agent_args.add_nlist("Debian*");        // Debian flavors
-      excl_agent_args.add_nlist("Fedora*");        // Fedora flavors
-      excl_agent_args.add_nlist("Red Hat*");       // Red Hat flavors
-      excl_agent_args.add_nlist("SUSE*");          // SUSE flavors
-      excl_agent_args.add_nlist("Linux*");         // Mozilla's Linux OS/CPU identifier
-      excl_agent_args.add_nlist("x86_64");         // Linux i686 (x86_64)
-      excl_agent_args.add_nlist("Ubuntu*");        // Ubuntu flavors
-      excl_agent_args.add_nlist("gutsy");          // Ubuntu/7.10 (gutsy)
-
-      excl_agent_args.add_nlist("Intel Mac OS X*");// Mozilla's Mac OS X OS/CPU identifier
-      excl_agent_args.add_nlist("PPC Mac OS X*");  // Mozilla's PPC OS/CPU identifier
-      excl_agent_args.add_nlist("Macintosh");      // Mozilla's Mac platform identifier
-   }
-}
-
-///
 /// @brief  Reads configuration files and processes command line options to
 ///         initialize the configuration object.
 ///
@@ -771,15 +670,6 @@ void config_t::prep_and_validate(void)
    if(max_users < ntop_users) max_users = ntop_users;
    if(max_errors < ntop_errors) max_errors = ntop_errors;
    if(max_downloads < ntop_downloads) max_downloads = ntop_downloads;
-
-   if(!use_classic_mangler) {
-      //
-      // If the user agent argument exclusion and group lists are empty
-      // and mangle_agent is a non-zero value, add some filters.
-      //
-      if(excl_agent_args.isempty() && group_agent_args.isempty())
-         add_def_ua_filters();
-   }
 
    // convert all site aliases to lower case
    for(nlist::iterator site_alias_it = site_aliases.begin(); site_alias_it != site_aliases.end(); site_alias_it++)
