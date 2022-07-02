@@ -1625,50 +1625,88 @@ will be used (which should be sufficient for most sites).
 
     **User Agent Name Mangling Filters**
 
-    If `UseClassicMangleAgents` is set to `no`, filter-based mangling
-    method will be used instead, in which case if exclude and group
-    agent argument lists are empty and `MangleAgents` is set to a
-    non-zero value, a few predefined exclude and group filters will be
-    added for each of the 4 supported levels of `MangleAgents`.
+    If `UseClassicMangleAgents` is set to `no`, which is the default
+    setting, filter-based mangling will be used. In this mode, user
+    agent arguments are classified as product versions, URLs or
+    generic arguments and may be manipulated via mangle level or via
+    user agent include, exclude and group filters.
 
-    When user agent arguments are being processed, Stone Steps
-    Webalizer recognizes product versions, which are expressed
-    as `product/x.y.z`, where `x.y.z` is the product version. Version
-    number will be truncated by different levels of `MangleAgents`.
+    Before v6.2.0 setting mangle level to a non-zero value resulted
+    in a few predefined filters added automatically. Starting from
+    this version, there are no default filters added. If you would
+    like to mimic the pre-v6.2.0 behavior, you can add the same
+    filters into your configuration, which makes them more visible
+    and easier to maintain.
 
-    Note that some products (most notably Internet Explorer) do
-    not follow HTTP RFC and do not separate version numbers from
-    the product using a slash character. As a result, the current
-    implementation of Stone Steps Webalizer does not truncate
-    these version numbers as described below.
+    `MangleAgents` level values are interpreted as follows. Examples
+    are shown with the assumption that user agent include, exclude
+    and group filters are empty.
 
-    * Level 1 will filter out overused and cryptic strings, such as
-      `.NET CLR x.y.z` or `Mozilla/5.0`. The former has little value
-      for analysis and the latter is overused to the point when its
-      presence or format is far from the truth (e.g. IE identifies
-      itself as `Mozilla/4.0`).
+    * Level `0`: At this level user agent values are not modified
+      and are reported as they appear in the log file.
 
-    * Level 2 will filter out less-known component identifiers,
-      such as Gecko (Mozilla's HTML rendering engine), and Mozilla's
-      security level identifiers (i.e. U, I and E). At this level,
-      product version numbers are truncated to include only the minor
-      version.
+      * _Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)_
+      * _Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0_
 
-    * Level 3 will filter out the word Windows, which is used by
-      Mozilla browsers to identify Windows platform, in addition to
-      reporting Windows version, such as Windows NT 5.1, and name
-      popular Windows versions (e.g. Windows NT 5.1 as Windows XP).
-      Version numbers are truncated to the major version number at
-      this level.
+    * Levels `1`, `2`: At these levels user agent arguments are reported
+      as individual arguments separated with `; ` sequences.
 
-    * Level 4 will filter out many platform and CPU identifiers,
-      such as `Red Hat/1.2.3.4` or `PPC Mac OS X`. Version numbers
-      are truncated to include only the product name at this level.
+      * _Mozilla/5.0; compatible; Googlebot/2.1; +http://www.google.com/bot.html_
+      * _Mozilla/5.0; Windows NT 10.0; Win64; x64; rv:100.0; Gecko/20100101; Firefox/100.0_
 
-    Note that if exclude or group agent argument lists are not
-    empty, the default filters described above will not be added.
-    However, version truncation will still be performed, as
-    described for each level above.
+
+    * Level `3`: At this level product versions are truncated to the
+      major version.
+
+      * _Mozilla/5; compatible; Googlebot/2; +http://www.google.com/bot.html_
+      * _Mozilla/5; Windows NT 10.0; Win64; x64; rv:100.0; Gecko/20100101; Firefox/100_
+
+    * Level `4`: At this level product versions are removed.
+    
+      * _Mozilla; compatible; Googlebot; +http://www.google.com/bot.html_
+      * _Mozilla; Windows NT 10.0; Win64; x64; rv:100.0; Gecko; Firefox_
+
+    * Level `5`: At this level URL tokens are removed.
+    
+      * _Mozilla; compatible; Googlebot_
+      * _Mozilla; Windows NT 10.0; Win64; x64; rv:100.0; Gecko; Firefox_
+      
+    In addition to mangle levels described above, you can use
+    `IncludeAgentArgs` and `ExcludeAgentArgs` to remove individual
+    user agent arguments, regarless of their type.
+
+    These filters work the same way as search argument filters and
+    when text without an asterisk is specified, the entire argument
+    must match. For example `ExcludeAgentArgs KHTML` will not filter
+    out `KHTML, like Gecko`, but the one shown below will.
+
+        ExcludeAgentArgs    KHTML, like Gecko
+
+    `EnablePhraseValues` must be set to `yes` to allow spaces
+    in configuration values, like in this example.
+
+    Generic user agent arguments (i.e. not product versions
+    or URLs) may also be rewritten using `GroupAgentArgs`. For
+    example, to avoid fragmentation for various versions of Mac
+    OS 10, such as `Intel Mac OS X 10_15_7` and `Intel Mac
+    OS X 10_11_6`, this group agent argument filter may be used.
+
+        GroupAgentArgs		Intel Mac OS X*		Intel Mac OS X
+
+    `GroupAgentArgs` is ignored for product version and URL
+    arguments, so Edge product version `Edg/101.0.1210.53`
+    cannot be rewritten as `Edge` or `Edge/101.0.1210.53`.
+
+    User agent values often do not follow HTTP RFC guidelines
+    and may have product versions in field comments, which is
+    the text between `(` and `)` characters, or may use product
+    versions for arbitrary text, such as `Version/7.0` or
+    `Language/zh_CN`. You may want to experiment with include,
+    exclude and group user agent argument filter that work
+    best for you. Keep in mind, however, that changing filters
+    permanently should not be done in the middle of the month
+    in the log processing cycle because it will produce
+    arbitrarily fragmented groupings.
 
     Command line argument: `-M`
 
@@ -1873,16 +1911,21 @@ will be used (which should be sufficient for most sites).
 * `IncludeAgentArgs`, `ExcludeAgentArgs`
 
     These filters are implemented in the same way as are include
-    and exclude search argument filters, except that they are
-    applied to the user agent name.
+    and exclude search argument filters in that each filter without
+    an asterisk must match the entire argument.
 
 * `GroupAgentArgs`
 
     This filter makes it possible to rename matching user agent
-    arguments. For example, this filter replaces "Windows NT 5.1"
-    with "Windows XP" in the final output:
+    arguments that are not classified as product versions or URLs.
+    For example, this filter replaces "Windows NT 5.1" with "Windows
+    XP" in the final output:
 
         GroupAgentArgs   Windows NT 5.1  Windows XP
+
+    Group filters are not applied against product version and URL
+    arguments. In other words, "Edg/*" cannot be replaced with
+    "Edge".
 
     Note that if the pattern contains spaces (e.g. Windows NT 5.1),
     there must be a tab character between the pattern and the alias
