@@ -1,5 +1,5 @@
 --------------------------------------------------------------------
-6.2.0 [02-Jul-2022] -- Stone Steps Inc. (www.stonesteps.ca)
+6.2.0 [03-Jul-2022] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
  * [AB-103] Added an Nginx log parser and NginxLogFormat configuration variable
@@ -8,6 +8,8 @@
  * [AB-107] Removed all default search engine arguments
  * [BUG][AB-104] First character in user agents is dropped when all filters are empty
  * Increased font sizes in reports by 2-3 points in a few places
+ * [BUG][AB-70] Fixed stale city/ASN counts, country pages between months
+ * [BUG] Fixed malformed language files (Danish, Dutch, Estonian, Hungarian, Indonesian, Turkish)
 
 --------------------------------------------------------------------
 6.1.0 [20-Jun-2021] -- Stone Steps Inc. (www.stonesteps.ca)
