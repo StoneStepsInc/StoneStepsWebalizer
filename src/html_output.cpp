@@ -1293,7 +1293,7 @@ void html_output_t::top_hosts_table(int flag)
            hptr->files, (state.totals.t_file==0)?0:((double)hptr->files/state.totals.t_file)*100.0,
            hptr->pages, (state.totals.t_page==0)?0:((double)hptr->pages/state.totals.t_page)*100.0,
            hptr->xfer, fmt_xfer(hptr->xfer),
-           (state.totals.t_xfer==0)?0:(hptr->xfer/state.totals.t_xfer)*100.0,
+           (state.totals.t_xfer==0)?0:((double)hptr->xfer/state.totals.t_xfer)*100.0,
            hptr->visits,(state.totals.t_visits==0)?0:((double)hptr->visits/state.totals.t_visits)*100.0,
            hptr->visit_avg/60., hptr->visit_max/60.);
 
@@ -1705,7 +1705,7 @@ int html_output_t::all_urls_page(void)
                unode.count,
                (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
                unode.xfer, fmt_xfer(unode.xfer, true),
-               (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
+               (state.totals.t_xfer==0)?0:((double)unode.xfer/state.totals.t_xfer)*100.0,
                unode.avgtime, unode.maxtime,
                html_encode(unode.string.c_str()));
          }
@@ -1736,7 +1736,7 @@ int html_output_t::all_urls_page(void)
             unode.count,
             (state.totals.t_hit==0)?0:((double)unode.count/state.totals.t_hit)*100.0,
             unode.xfer, fmt_xfer(unode.xfer, true),
-            (state.totals.t_xfer==0)?0:(unode.xfer/state.totals.t_xfer)*100.0,
+            (state.totals.t_xfer==0)?0:((double)unode.xfer/state.totals.t_xfer)*100.0,
             unode.avgtime, unode.maxtime,
             unode.get_url_type_ind());
 
@@ -3237,7 +3237,7 @@ void html_output_t::top_ctry_table()
             ccnode.pages,
             (t_page==0)?0:((double)ccnode.pages/t_page)*100.0,
             ccnode.xfer, fmt_xfer(ccnode.xfer),
-            (t_xfer==0)?0:(ccnode.xfer/t_xfer)*100.0,
+	      (t_xfer==0)?0:((double)ccnode.xfer/t_xfer)*100.0,
             ccnode.visits,
             (t_visits==0)?0:((double)ccnode.visits/t_visits)*100.0,
             ccnode.ccode.c_str(),
@@ -3306,9 +3306,9 @@ void html_output_t::top_city_table()
               ctnode.pages,
               (state.totals.t_page==0)?0:((double)ctnode.pages/state.totals.t_page)*100.0,
               ctnode.xfer, fmt_xfer(ctnode.xfer),
-              (state.totals.t_xfer==0)?0:(ctnode.xfer/state.totals.t_xfer)*100.0,
+              (state.totals.t_xfer==0)?0:((double)ctnode.xfer/state.totals.t_xfer)*100.0,
               ctnode.visits,
-              (state.totals.t_visits==0)?0:(ctnode.visits/state.totals.t_visits)*100.0,
+              (state.totals.t_visits==0)?0:((double)ctnode.visits/state.totals.t_visits)*100.0,
               ctnode.ccode.c_str(), 
               html_encode(state.cc_htab.get_ccnode(ctnode.ccode).cdesc.c_str()),
               ctnode.geoname_id(),
@@ -3376,9 +3376,9 @@ void html_output_t::top_asn_table()
               asnode.pages,
               (state.totals.t_page==0)?0:((double)asnode.pages/state.totals.t_page)*100.0,
               asnode.xfer, fmt_xfer(asnode.xfer),
-              (state.totals.t_xfer==0)?0:(asnode.xfer/state.totals.t_xfer)*100.0,
+              (state.totals.t_xfer==0)?0:((double)asnode.xfer/state.totals.t_xfer)*100.0,
               asnode.visits,
-              (state.totals.t_visits==0)?0:(asnode.visits/state.totals.t_visits)*100.0);
+              (state.totals.t_visits==0)?0:((double)asnode.visits/state.totals.t_visits)*100.0);
 
          fputs("<td class=\"stats_data_item_td\">", out_fp);
          if(asnode.nodeid)
