@@ -260,9 +260,9 @@ void json_output_t::dump_totals(void)
       fprintf(out_fp,"\"files\": {\"avg\": %.6f, \"max\": {\"$numberLong\": \"%" PRIu64 "\"}},\n", (double) state.totals.t_file/state.totals.t_visits, state.totals.max_v_files);
       fprintf(out_fp,"\"pages\": {\"avg\": %.6f, \"max\": {\"$numberLong\": \"%" PRIu64 "\"}},\n", (double) state.totals.t_page/state.totals.t_visits, state.totals.max_v_pages);
       fprintf(out_fp,"\"xfer\": {\"avg\": %.6f, \"max\": {\"$numberLong\": \"%" PRIu64 "\"}},\n", (double) state.totals.t_xfer/state.totals.t_visits, state.totals.max_v_xfer);
-      fprintf(out_fp,"\"duration\": {\"avg\": %.6f, \"max\": %.6f},\n", state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
+      fprintf(out_fp,"\"duration\": {\"avg\": %.6f, \"max\": %.6f}", state.totals.t_visit_avg/60., state.totals.t_visit_max/60.);
       if(state.totals.t_visits_conv)
-         fprintf(out_fp,"\"duration_converted\": {\"avg\": %.6f, \"max\": %.6f}\n", state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
+         fprintf(out_fp,",\n\"duration_converted\": {\"avg\": %.6f, \"max\": %.6f}\n", state.totals.t_vconv_avg/60., state.totals.t_vconv_max/60.);
 
       fputs("}\n", out_fp);
    }
