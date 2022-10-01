@@ -3237,7 +3237,7 @@ void html_output_t::top_ctry_table()
             ccnode.pages,
             (t_page==0)?0:((double)ccnode.pages/t_page)*100.0,
             ccnode.xfer, fmt_xfer(ccnode.xfer),
-	      (t_xfer==0)?0:((double)ccnode.xfer/t_xfer)*100.0,
+            (t_xfer==0)?0:((double)ccnode.xfer/t_xfer)*100.0,
             ccnode.visits,
             (t_visits==0)?0:((double)ccnode.visits/t_visits)*100.0,
             ccnode.ccode.c_str(),
