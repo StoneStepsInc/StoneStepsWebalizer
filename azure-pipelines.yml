@@ -92,7 +92,7 @@ stages:
       PKG_INT_DIR: $(BIN_OUT_DIR)\$(PKG_NAME)-tmp
   
     pool:
-      vmImage: windows-2019
+      vmImage: windows-2022
 
     steps:
     - task: NuGetCommand@2
