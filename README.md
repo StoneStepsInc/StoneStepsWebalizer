@@ -636,22 +636,20 @@ command prompt.
 All data items, as well as hourly and daily data, are structured as
 JSON arrays and may be imported using following syntax.
 
-    mongoimport --db:webalizer_db \
+    mongoimport --db=webalizer_db \
                 --collection=agents \
                 --mode=upsert \
                 --type=json \
-                --jsonFormat=canonical \
                 --jsonArray \
                 mongodb://localhost agent_202105.json
 
 Monthly usage data in JSON output contains a single JSON object and
 must be imported without the `--jsonArray` option.
 
-    mongoimport --db:webalizer_db \
+    mongoimport --db=webalizer_db \
                 --collection=usage \
                 --mode=upsert \
                 --type=json \
-                --jsonFormat=canonical \
                 mongodb://localhost usage_202105.json
 
 Database and collection names can be anything, as long as they are
