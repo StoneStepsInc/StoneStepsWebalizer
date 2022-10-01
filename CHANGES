@@ -1,4 +1,11 @@
 --------------------------------------------------------------------
+6.3.0
+--------------------------------------------------------------------
+
+ * [BUG] JSON output for monthly usage has an erroneous comma (github.com/YasuhiroABE)
+ * [BUG] Percentages for some transfer amounts are computed incorrectly as zeros (github.com/YasuhiroABE)
+
+--------------------------------------------------------------------
 6.2.0 [03-Jul-2022] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
