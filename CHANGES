@@ -2,6 +2,7 @@
 6.3.0
 --------------------------------------------------------------------
 
+ * [BUG] JSON output is erroneously encoded as JavaScript
  * [BUG] JSON output for monthly usage has an erroneous comma (github.com/YasuhiroABE)
  * [BUG] Percentages for some transfer amounts are computed incorrectly as zeros (github.com/YasuhiroABE)
 
