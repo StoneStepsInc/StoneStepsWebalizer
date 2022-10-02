@@ -56,12 +56,12 @@ void json_output_t::cleanup_output_engine(void)
 
 const char *json_output_t::json_encode(const char *str)
 {
-   return buffer_formatter.format(encode_string<encode_char_js>, str);
+   return buffer_formatter.format(encode_string<encode_char_json>, str);
 }
 
 const char *json_output_t::json_encode(const char *str, size_t len)
 {
-   return buffer_formatter.format(encode_string_len<encode_char_js>, str, len);
+   return buffer_formatter.format(encode_string_len<encode_char_json>, str, len);
 }
 
 uint64_t json_output_t::get_json_id(u_int year, u_int day, uint64_t node_id)
