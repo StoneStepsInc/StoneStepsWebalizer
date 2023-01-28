@@ -165,6 +165,7 @@ config_t::config_t(void)
 
    visit_timeout = 1800;                      /* visit timeout (seconds)  */
    max_visit_length = 0;
+   min_visit_length = 0;
    download_timeout = 180;                    // download job timeout (seconds)
 
    ntop_hosts = 30;                           /* top n sites to display   */
@@ -722,7 +723,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 195; empty slots:
+                     // max key: 196; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -888,6 +889,7 @@ void config_t::get_config(const char *fname)
                      {"MaxURLs",             174},          // Maximum URLs
                      {"MaxUsers",            178},          // Maximum Users
                      {"MaxVisitLength",      187},          // Maximum visit length
+                     {"MinVisitLength",      196},          // Minimum visit length for human visitors
                      {"MonthlyTotals",       127},          // Output monthly totals report?
                      {"NginxLogFormat",      195},          // Nginx log file format
                      {"NoDefaultIndexAlias", 92},           // Ignore default index alias?
@@ -1198,6 +1200,7 @@ void config_t::get_config(const char *fname)
          case 193: dump_asn = (string_t::tolower(value[0]) == 'y'); break;
          case 194: page_titles.add_glist(value); break;
          case 195: nginx_log_format = value; break;
+         case 196: min_visit_length = get_interval(value, errors); break;
       }
    }
 

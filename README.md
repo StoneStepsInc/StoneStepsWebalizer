@@ -1461,6 +1461,24 @@ will be used (which should be sufficient for most sites).
 
     Command line argument: `-m`
 
+* `MaxVisitLength`
+
+    Sets the maximum visit length, which will forcibly end long
+    visits, regardless of the `VisitTimeout` value.
+    
+    Default value: `0`.
+
+* `MinVisitLength`
+
+    Sets the minimum visit value for human visitors. Intended to
+    account for people searching for specific things and clicking
+    the Back button soon after skimming or scanning through some
+    of the page text. Used only if the visit length would be
+    computed as zero otherwise and if the visit has a successful
+    page or a file request.
+
+    Default value: `0`
+
 * `PageType`
 
     Allows you to define the `page` type extension.  Normally,
@@ -1505,7 +1523,7 @@ will be used (which should be sufficient for most sites).
 
     This keyword is used to either enable or disable the creation
     and display of the Country Usage graph.  Values may be either
-`yes` or `no`, with the default being `yes`.
+    `yes` or `no`, with the default being `yes`.
 
     Command line argument: `-Y`
 
@@ -1519,7 +1537,7 @@ will be used (which should be sufficient for most sites).
 
     This keyword is used to either enable or disable the creation
     and display of the Daily Usage graph.  Values may be either
-`yes` or `no`, with the default being `yes`.
+    `yes` or `no`, with the default being `yes`.
 
 * `DailyStats`
 

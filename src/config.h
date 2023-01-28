@@ -203,6 +203,7 @@ class config_t {
 
       u_int visit_timeout;                      ///< visit timeout, in seconds (30 min)   
       u_int max_visit_length;                   ///< maximum visit length, in seconds
+      u_int min_visit_length;                   ///< Minimum visit length for human users, in seconds.
       u_int download_timeout;                   ///< download job timeout (seconds)
 
       uint32_t ntop_hosts;                      ///< top n hostss to display   

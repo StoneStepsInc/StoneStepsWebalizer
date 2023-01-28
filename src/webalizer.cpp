@@ -1909,7 +1909,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
             // Use the database cache size as a guiding number for the combined size of
             // our hash tables or 10 MB if the former was not set.
             //
-            state.swap_out(htab_tstamp - config.visit_timeout * 2, config.db_cache_size);
+            state.swap_out(htab_tstamp - static_cast<int64_t>(config.visit_timeout) * 2, config.db_cache_size);
             ptms.mnt_time += elapsed(stime, msecs());
          }
       }
@@ -3037,6 +3037,14 @@ storable_t<vnode_t> *webalizer_t::end_visit(storable_t<hnode_t> *hptr)
 
    // get visit length
    vlen = (uint64_t) visit->end.elapsed(visit->start);
+
+   //
+   // If the minimum visit length is configured for human users, apply
+   // it to zero-length visits with a successful page or a file request,
+   // as if the person skimmed or scanned the page and left right after.
+   //
+   if(!vlen && config.min_visit_length && !hptr->spammer && !hptr->robot && (visit->files > 0 || visit->pages > 0))
+      vlen = config.min_visit_length;
 
    // update maximum and average visit duration for this host
    hptr->visit_avg = AVG(hptr->visit_avg, vlen, hptr->visits);
