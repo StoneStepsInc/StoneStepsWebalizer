@@ -88,10 +88,6 @@ struct tstamp_t {
       };
 
    private:
-      enum uninitialized_t {
-         uninitialized
-      };
-
       // the internal serial time in seconds (see class description)
       typedef int64_t intime_t;
 
