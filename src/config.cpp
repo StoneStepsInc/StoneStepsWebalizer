@@ -1197,7 +1197,7 @@ void config_t::get_config(const char *fname)
          case 192: ntop_asn = atoi(value); break;
          case 193: dump_asn = (string_t::tolower(value[0]) == 'y'); break;
          case 194: page_titles.add_glist(value); break;
-         case 195: nginx_log_format = value;
+         case 195: nginx_log_format = value; break;
       }
    }
 
