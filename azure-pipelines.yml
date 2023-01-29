@@ -17,7 +17,7 @@ variables:
   # 7.0.0, whichever is planned. Once 6.1.1 is released, pipeline YAML
   # on branch v6-1 should be changed to use version 6.1.2, and so on.
   #
-  VERSION: 6.3.0
+  VERSION: 6.4.0
   BUILD_NUMBER: $[counter(variables.VERSION, 1)]
   
   #
