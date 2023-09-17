@@ -1356,13 +1356,16 @@ bool dns_resolver_t::dns_db_get(dnode_t& dnode, Db *dns_db, void *buffer, size_t
          dns_db_record_t dnsrec;
 
          if(dnsrec.s_unpack_data(recdata.get_data(), recdata.get_size()) == recdata.get_size()) {
-            if(runtime.elapsed(dnsrec.tstamp) <= dns_cache_ttl) {
+            // hold onto the elapsed time in case if we need to report it (dnode_t doesn't keep the time stamp when it was resolved)
+            uint64_t elapsed = runtime.elapsed(dnsrec.tstamp);
+
+            if(elapsed <= dns_cache_ttl) {
                dnode = std::move(dnsrec);
                retval = true;
             }
 
             if (retval && config.debug_mode)
-               fprintf(stderr,"[%04lx] ... found: %s (age: %0.2f days)\n", thread_id(), dnode.hostname.isempty() ? "NXDOMAIN" : dnode.hostname.c_str(), runtime.elapsed(dnsrec.tstamp) / 86400.);
+               fprintf(stderr,"[%04lx] ... found: %s (age: %0.2f days)\n", thread_id(), dnode.hostname.isempty() ? "NXDOMAIN" : dnode.hostname.c_str(), elapsed/86400.);
          }
          }
 
