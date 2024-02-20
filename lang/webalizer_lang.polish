@@ -15,6 +15,8 @@
 #   30-Jan-2000 Country code corrections by Bohdan Horst (nexus@hoth.amu.edu.pl)
 #   22-Feb-2000 Modified for level 2.0 support (brad@mrunix.net)
 #   20-Mar-2000 Translation updates by Piotr Klaban (makler@man.torun.pl)
+#   20-Feb-2024 Translation updates by Lukasz Gorski (lukasz.gorski@iq.pl)
+#
 #
 #
 #   Language files are named using the following convention:
@@ -24,7 +26,7 @@
 #   where 'LANGUAGE' is the name of the language the file is
 #   translated into (ie: webalizer_lang.russian for russian).
 #
-# Copyright (c) 2004-2019, Stone Steps Inc. (www.stonesteps.ca)
+# Copyright (c) 2004-2024, Stone Steps Inc. (www.stonesteps.ca)
 #-------------------------------------------------------------------------
 
 #/***********************************************************************/
@@ -215,8 +217,8 @@ msg_h_visits= Wizyty
 msg_h_files = Pliki
 msg_h_hosts = Lokalizacje
 msg_h_xfer  = Transfer
-msg_h_avgtime = AvgTime
-msg_h_maxtime = MaxTime
+msg_h_avgtime = Średni czas
+msg_h_maxtime = Makmsymalny czas
 msg_h_hname = Nazwa hosta
 msg_h_host = Host
 msg_h_ipaddr = IP Address
@@ -224,21 +226,22 @@ msg_h_url   = URL
 msg_h_agent = Przeglądarka
 msg_h_ref   = Odnośniki
 msg_h_ctry  = Kraj
+msg_h_city  = Miasto
 msg_h_ccode = Country Code
 msg_h_search= Wyszukiwany ciąg znaków
 msg_h_uname = Użytkownik
 msg_h_type  = Type
 msg_h_status= Status
-msg_h_duration = Duration
-msg_h_method= Method
+msg_h_duration = Czas wizyty
+msg_h_method= Metoda
 msg_h_download = Download
 msg_h_count = Count
-msg_h_time  = Time
+msg_h_time  = Czas
 msg_h_spammer = Spammer
 msg_h_latitude = Latitude
 msg_h_longitude = Longitude
-msg_h_as_num = AS Number
-msg_h_as_org = AS Organization
+msg_h_as_num = Numer AS
+msg_h_as_org = Nazwa AS
 msg_h_urls = URLs
 msg_h_refs = Referrers
 msg_h_agents = User Agents
@@ -254,51 +257,51 @@ msg_hlnk_s  = Lokalizacje
 msg_hlnk_asn  = ASN
 msg_hlnk_a  = Przeglądarki
 msg_hlnk_c  = Kraje
-msg_hlnk_ct  = Cities
+msg_hlnk_ct  = Miasta
 msg_hlnk_r  = Odnośniki
 msg_hlnk_en = Wejścia
 msg_hlnk_ex = Wyjścia
 msg_hlnk_sr = Poszukiwane
 msg_hlnk_i  = Użytkownicy
-msg_hlnk_err= Errors
+msg_hlnk_err= Błędy
 
 #/* monthly total table */
 msg_mtot_ms = Statystyka w miesiącu:
 msg_mtot_th = Całkowita liczba wywołań
 msg_mtot_tf = Całkowita liczba plików
-msg_mtot_tp = Total Pages
-msg_mtot_tv = Total Visits
-msg_mtot_tx = Total Transfer
+msg_mtot_tp = Wszystkie strony
+msg_mtot_tv = Wszystkie wizyty
+msg_mtot_tx = Transfer
 msg_mtot_us = Całkowita liczba unikalnych lokalizacji
 msg_mtot_ur = Całkowita liczba unikalnych odnośników
 msg_mtot_ua = Całkowita liczba unikalnych przeglądarek
-msg_mtot_uu = Całkowita liczba unikalnych URLi
+msg_mtot_uu = Całkowita liczba unikalnych adresów URL
 msg_mtot_ui = Całkowita liczba unikalnych użytkowników
 msg_mtot_mhd= Wywołań dziennie
 msg_mtot_mhh= Wywołań na godzinę
 msg_mtot_mfd= Plików dziennie
 msg_mtot_mpd= Stron dziennie
 msg_mtot_mvd= Wizyt dziennie
-msg_mtot_mkd= Transfer per Day
+msg_mtot_mkd= Transfer dziennie
 msg_mtot_rc = Wywołania według kodu odpowiedzi
-msg_mtot_sph = Seconds per Hit
-msg_mtot_spf = Seconds per File
-msg_mtot_spp = Seconds per Page
-msg_mtot_mhv = Hits per Visit
-msg_mtot_mfv = Files per Visit
-msg_mtot_mpv = Pages per Visit
-msg_mtot_mdv = Visit Duration
-msg_mtot_mkv = Transfer per Visit
-msg_mtot_dl  = Total Downloads
-msg_mtot_terr = Total Errors
+msg_mtot_sph = Czas w sekundach pojedynczego wywołania
+msg_mtot_spf = Czas w sekundach pojedynczego wywołania pliku
+msg_mtot_spp = Czas w sekundach pojedynczego wywołania strony
+msg_mtot_mhv = Wywołania w trakcie wizyty
+msg_mtot_mfv = Pliki w trakcie wizyty
+msg_mtot_mpv = Strony w trakcie wizyty
+msg_mtot_mdv = Czas wizyty
+msg_mtot_mkv = Transfer w trakcie wizyty
+msg_mtot_dl  = Całkowita liczba pobranych danych
+msg_mtot_terr = Całkowita liczba błędów
 msg_mtot_tcv = Total Converted Visits
 msg_mtot_tch = Total Converted Hosts
 msg_mtot_hcr = Host Converstion Rate
 msg_mtot_cvd = Visit Duration (Converted)
 msg_mtot_conv = Conversion
 msg_mtot_rtot = Robot Totals
-msg_mtot_perf = Performance
-msg_mtot_hdt = Hourly/Daily Totals
+msg_mtot_perf = Wydajność
+msg_mtot_hdt = Godzinowe / Dzienne podsumowanie
 msg_mtot_htot = Human Totals
 
 #/* daily total table */
@@ -319,106 +322,102 @@ msg_top_u   = URLi
 msg_top_r   = odnośników
 msg_top_a   = przeglądarek
 msg_top_c   = krajów
-msg_top_ct = Total Cities
-msg_top_asn = Total ASN
+msg_top_ct  = miast
+msg_top_asn = ASN
 msg_top_en  = stron wejściowych
 msg_top_ex  = stron wyjściowych
 msg_top_sr  = szukanych ciągów znaków
 msg_top_i   = użytkowników
 msg_v_hosts = Podgląd wszystkich lokalizacji
-msg_v_urls  = Podgląd wszystkich URL'i
+msg_v_urls  = Podgląd wszystkich adresów URL
 msg_v_refs  = Podgląd wszystkich odnośników
 msg_v_agents= Podgląd wszystkich przeglądarek
 msg_v_search= Podgląd wszystkich ciągów znaków
 msg_v_users = Podgląd wszystkich użytkowników
-msg_misc_pages = Pages - document requests (e.g. html, asp, txt); Files - successful requests of all types (e.g. html, gif, css); Hits - all requests, including errors;
-msg_misc_visitors = Visitors are identified by IP addresses. Two or more visitors sharing the same IP address (e.g. firewall address) will be counted as a single visitor.
-msg_misc_robots = Robot activity is excluded from the Country, Entry and Exit URL reports
-msg_h_errors = Errors
+msg_misc_pages = Strony - żądania dokumentów (na przykład html, asp, txt); Pliki - żądania zakończone sukcesem (na przykład html, gif, css); Wywołania - wszystkie żądania, łącznie z błędami;
+msg_misc_visitors = Odwiedzający są indentyfikowani na podstawie adresu IP. Dwóch lub więcej odwiedzających posiadających współdzielony ten sam adres Ip (na przykład adres IP Firewall) zostaną zliczeni jako pojedynczy odwiedzający.
+msg_misc_robots = Aktywność robotów nie jest uwzględniana w statystykach wg krajów oraz wg adresów URL
+msg_h_errors = Błędy
 msg_v_errors= View All Errors
 msg_h_downloads = Downloads
 msg_v_downloads = View All Downloads
-msg_ref_dreq = - (Direct Request)
+msg_ref_dreq = - (Bezpośrednie wywołanie)
 msg_max_items = Maximum number of items is displayed
 
 msg_unit_pfx = K, M, G, T, P, E, Z
 msg_xfer_unit = B
 
 #/* short month names MUST BE 3 CHARS in size...*/
-s_month=  Sty, Lut, Mar,
-                    Kwi, Maj, Cze,
-                    Lip, Sie, Wrz,
-                    Paź, Lis, Gru
+s_month=  Sty, Lut, Mar, Kwi, Maj, Cze, Lip, Sie, Wrz, Paź, Lis, Gru
 
 #/* long month names - can be any length */
-l_month=  styczeń,  luty,		marzec,	kwiecień,
-                    maj,      czerwiec,     lipiec,	sierpień,
-                    wrzesień,	październik, 	listopad,	grudzień
+l_month=  styczeń, luty, marzec, kwiecień, maj, czerwiec, lipiec, sierpień, wrzesień, październik, listopad, grudzień
 
 #/* response code descriptions... order IS important!      */
 response = Niezdefiniowany kod odpowiedzi,
-           Code 100 - Kontynuuj,
-           Code 101 - Zmieniam protokoły,
-           Code 102 - Processing,
-           Code 103 - Early Hints,
-           Code 200 - OK,
-           Code 201 - Utworzono,
-           Code 202 - Zaakceptowano,
-           Code 203 - Niewiarygodna informacja,
-           Code 204 - Brak zawartości,
-           Code 205 - Kasuję zawartość,
-           Code 206 - Częściowa zawartość,
-           Code 207 - Multi-Status,
-           Code 208 - Already Reported,
-           Code 226 - IM Used,
-           Code 300 - Wielokrotny wybór,
-           Code 301 - Przeniesiono na stałe,
-           Code 302 - Przeniesiono tymczasowo,
-           Code 303 - Zobacz inne,
-           Code 304 - Niezmodyfikowany,
-           Code 305 - Użyj proxy,
-           Code 306 - (Unused),
-           Code 307 - Tymczasowe przekierowanie,
-           Code 308 - Permanent Redirect,
-           Code 400 - Błędne żądanie,
-           Code 401 - Nieautoryzowany,
-           Code 402 - Żądana zapłata,
-           Code 403 - Zakazane,
-           Code 404 - Nie znaleziono,
-           Code 405 - Nieuznawana metoda,
-           Code 406 - Nie akceptowane,
-           Code 407 - Niezbędna autentykacja przez proxy,
-           Code 408 - Czas zapytania minął,
-           Code 409 - Konflikt,
-           Code 410 - Już niedostępne,
-           Code 411 - Wymagana długość,
-           Code 412 - Warunki niespełnione,
-           Code 413 - Zapytanie za duże,
-           Code 414 - Zapytanie URI za długie,
-           Code 415 - Nieobsługiwany typ nośnika,
-           Code 416 - Zapytanie-Zakres niedostępny,
-           Code 417 - Warunek niespełniony,
-           Code 421 - Misdirected Request,
-           Code 422 - Unprocessable Entity,
-           Code 423 - Locked,
-           Code 424 - Failed Dependency,
-           Code 425 - Too Early,
-           Code 426 - Upgrade Required,
-           Code 428 - Precondition Required,
-           Code 429 - Too Many Requests,
-           Code 431 - Request Header Fields Too Large,
-           Code 451 - Unavailable For Legal Reasons,
-           Code 500 - Wewnętrzny błąd serwera,
-           Code 501 - Niezaimplementowane,
-           Code 502 - Zła brama,
-           Code 503 - Serwis niedostępny,
-           Code 504 - Upłynął czas bramkowania,
-           Code 505 - Nieobsługiwana wersja HTTP,
-           Code 506 - Variant Also Negotiates,
-           Code 507 - Insufficient Storage,
-           Code 508 - Loop Detected,
-           Code 510 - Not Extended,
-           Code 511 - Network Authentication Required
+           Kod 100 - Kontynuuj,
+           Kod 101 - Zmieniam protokoły,
+           Kod 102 - Processing,
+           Kod 103 - Early Hints,
+           Kod 200 - OK,
+           Kod 201 - Utworzono,
+           Kod 202 - Zaakceptowano,
+           Kod 203 - Niewiarygodna informacja,
+           Kod 204 - Brak zawartości,
+           Kod 205 - Kasuję zawartość,
+           Kod 206 - Częściowa zawartość,
+           Kod 207 - Multi-Status,
+           Kod 208 - Already Reported,
+           Kod 226 - IM Used,
+           Kod 300 - Wielokrotny wybór,
+           Kod 301 - Przekierowanie stałe,
+           Kod 302 - Przekierowanie tymczasowe,
+           Kod 303 - Zobacz inne,
+           Kod 304 - Niezmodyfikowany,
+           Kod 305 - Użyj proxy,
+           Kod 306 - (Unused),
+           Kod 307 - Przekierowanie tymczasowe,
+           Kod 308 - Przekierowanie stałe,
+           Kod 400 - Błędne żądanie,
+           Kod 401 - Nieautoryzowany,
+           Kod 402 - Żądana zapłata,
+           Kod 403 - Zakazane,
+           Kod 404 - Nie znaleziono,
+           Kod 405 - Nieuznawana metoda,
+           Kod 406 - Nie akceptowane,
+           Kod 407 - Niezbędna autentykacja przez proxy,
+           Kod 408 - Czas zapytania minął,
+           Kod 409 - Konflikt,
+           Kod 410 - Już niedostępne,
+           Kod 411 - Wymagana długość,
+           Kod 412 - Warunki niespełnione,
+           Kod 413 - Zapytanie za duże,
+           Kod 414 - Zapytanie URI za długie,
+           Kod 415 - Nieobsługiwany typ nośnika,
+           Kod 416 - Zapytanie-Zakres niedostępny,
+           Kod 417 - Warunek niespełniony,
+           Kod 421 - Misdirected Request,
+           Kod 422 - Unprocessable Entity,
+           Kod 423 - Locked,
+           Kod 424 - Failed Dependency,
+           Kod 425 - Too Early,
+           Kod 426 - Upgrade Required,
+           Kod 428 - Precondition Required,
+           Kod 429 - Too Many Requests,
+           Kod 431 - Request Header Fields Too Large,
+           Kod 451 - Unavailable For Legal Reasons,
+           Kod 500 - Wewnętrzny błąd serwera,
+           Kod 501 - Niezaimplementowane,
+           Kod 502 - Zła brama,
+           Kod 503 - Serwis niedostępny,
+           Kod 504 - Przekroczony czas oczekiwania na odpowiedź,
+           Kod 505 - Nieobsługiwana wersja HTTP,
+           Kod 506 - Variant Also Negotiates,
+           Kod 507 - Insufficient Storage,
+           Kod 508 - Pętla przekierowań,
+           Kod 510 - Not Extended,
+           Kod 511 - Network Authentication Required
+           Kod 509 - Przekroczona liczba procesow
 
 msg_title   = Statystyki serwera dla
 msg_h_other = Inne
@@ -426,7 +425,7 @@ msg_h_other = Inne
 #/* Country codes (previously in ctry.h header file) */
 
 ctry = *,	Nieznany,
-        ac,       Ascension Island,
+        ac,	Ascension Island,
 	ad,	Andorra,
 	ae,	Zjednoczone Emiraty Arabskie,
 	af,	Afganistan,
@@ -442,8 +441,8 @@ ctry = *,	Nieznany,
 	au,	Australia,
 	aw,	Aruba,
 	az,	Azerbejdżan,
-        ax,       Aland Islands,
-	bl,     Saint Barthelemy,
+        ax,	Aland Islands,
+	bl,	Saint Barthelemy,
 	ba,	Bośnia i Hercegowina,
 	bb,	Barbados,
 	bd,	Bangladesz,
@@ -465,7 +464,7 @@ ctry = *,	Nieznany,
 	bz,	Belize,
 	ca,	Kanada,
 	cc,	Wyspy Kokosowe,
-        cd,       Congo,
+        cd,	Kongo,
 	cf,	Republika Środkowoafrykańska,
 	cg,	Kongo,
 	ch,	Szwajcaria,
@@ -495,7 +494,7 @@ ctry = *,	Nieznany,
 	er,	Erytrea,
 	es,	Hiszpania,
 	et,	Etiopia,
-        eu,       European Union,
+        eu,	Unia Europejska,
 	fi,	Finlandia,
 	fj,	Fidżi,
 	fk,	Falklandy,
@@ -503,11 +502,11 @@ ctry = *,	Nieznany,
 	fo,	Wyspy Owcze,
 	fr,	Francja,
 	ga,	Gabon,
-        gb,       United Kingdom,
+        gb,	Wielka Brytania,
 	gd,	Grenada,
 	ge,	Gruzja,
 	gf,	Gujana Francuska,
-        gg,       Guernsey,
+        gg,	Guernsey,
 	gh,	Ghana,
 	gi,	Gibraltar,
 	gl,	Grenlandia,
@@ -524,20 +523,20 @@ ctry = *,	Nieznany,
 	hk,	Hong Kong,
 	hm,	Wyspy Heard i McDonald,
 	hn,	Honduras,
-	hr,     Croatia,
+	hr,	Chorwacja,
 	ht,	Haiti,
 	hu,	Węgry,
 	id,	Indonezja,
 	ie,	Irlandia,
 	il,	Izrael,
-        im,       Isle of Man,
+        im,	Wyspa  Man,
 	in,	Indie,
 	io,	Bryt. Teryt. Oceanu Indyjskiego,
 	iq,	Irak,
 	ir,	Iran,
 	is,	Islandia,
 	it,	Włochy,
-        je,       Jersey,
+        je,	Jersey,
 	jm,	Jamajka,
 	jo,	Jordania,
 	jp,	Japonia,
@@ -566,15 +565,15 @@ ctry = *,	Nieznany,
 	ma,	Maroko,
 	mc,	Monako,
 	md,	Mołdawia,
-	me,    Montenegro,
-	mf,    Saint Martin,
+	me,	Czarnogóra,
+	mf,	Saint Martin,
 	mg,	Madagaskar,
 	mh,	Wyspy Marshalla,
-	mk,	Macedonia,
+	mk,	Macedonia Północna,
 	ml,	Mali,
 	mm,	Myanmar,
 	mn,	Mongolia,
-	mo,    Macao,
+	mo,	Macao,
 	mp,	Mariany Północne,
 	mq,	Martynika,
 	mr,	Mauretania,
@@ -597,7 +596,7 @@ ctry = *,	Nieznany,
 	np,	Nepal,
 	nr,	Nauru,
 	nu,	Niue,
-        nz,       New Zealand,
+        nz,	Nowa Zelandia,
 	om,	Oman,
 	pa,	Panama,
 	pe,	Peru,
@@ -609,7 +608,7 @@ ctry = *,	Nieznany,
 	pm,	St. Pierre i Miquelon,
 	pn,	Pitcairn,
 	pr,	Puerto Rico,
-        ps,       Palestinian Territories,
+        ps,	Palestinian Territories,
 	pt,	Portugalia,
 	pw,	Palau,
 	py,	Paragwaj,
@@ -620,7 +619,7 @@ ctry = *,	Nieznany,
 	ru,	Rosja,
 	rw,	Rwanda,
 	sa,	Arabia Saudyjska,
-        sb,       Solomon Islands,
+        sb,	Solomon Islands,
 	sc,	Seszele,
 	sd,	Sudan,
 	se,	Szwecja,
@@ -645,7 +644,7 @@ ctry = *,	Nieznany,
 	th,	Tajlandia,
 	tj,	Tadżykistan,
 	tk,	Tokelau,
-        tl,       Timor-Leste,
+        tl,	Timor Wschodni,
 	tm,	Turkmenistan,
 	tn,	Tunezja,
 	to,	Tonga,
