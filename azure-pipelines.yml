@@ -181,7 +181,7 @@ stages:
       BUILD_DIST_DIR: $(BUILD_DIR)/$(DIST_NAME)
 
     pool:
-      vmImage: ubuntu-22.04
+      vmImage: ubuntu-24.04
     container: stonesteps/webalizer-$(DIST_NAME):20210620
 
     steps:
@@ -218,7 +218,7 @@ stages:
       DOCYGEN_OUTPUT: '$(Build.BinariesDirectory)/webalizer-doxygen/$(System.JobId)'
 
     pool:
-      vmImage: ubuntu-20.04
+      vmImage: ubuntu-24.04
     container: stonesteps/webalizer-fedora-doxygen:20210321
 
     steps:
