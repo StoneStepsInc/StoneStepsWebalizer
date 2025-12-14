@@ -12,6 +12,8 @@
 #include "cp1252.h"
 #include "unicode.h"
 
+#include <cstdint>
+
 char *cp1252utf8(const char *str, char *out, size_t bsize, size_t *olen)
 {
    return cp1252utf8(str, SIZE_MAX, out, bsize, olen);

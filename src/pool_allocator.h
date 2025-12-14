@@ -15,6 +15,7 @@
 #include <stack>
 #include <map>
 #include <climits>
+#include <cstdint>
 
 ///
 /// @brief  A memory block pool that caches memory blocks of frequently used 

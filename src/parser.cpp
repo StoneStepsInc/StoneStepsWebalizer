@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cstdint>
 
 //
 // Global data

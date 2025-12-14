@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
+#include <cstdint>
 #include <memory>
 
 #include "char_buffer.h"
