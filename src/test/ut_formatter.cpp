@@ -189,7 +189,7 @@ TEST_F(FormatterTest, FormatterEncodeHTML)
 
    formatter.format(encode_string<encode_char_html>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
 
-   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"\u00A7\u4E01\u4E02\U0001D160"), buffer) << "Multibyte UTF-8 sequences should not be encoded";
 
    //
    // The encoder expects to have enough room at the end of the buffer for the maximum encoded
@@ -231,7 +231,7 @@ TEST_F(FormatterTest, FormatterEncodeXML)
 
    formatter.format(encode_string<encode_char_xml>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
 
-   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"\u00A7\u4E01\u4E02\U0001D160"), buffer) << "Multibyte UTF-8 sequences should not be encoded";
 
    //
    // See the comment in the HTML formatter
@@ -266,7 +266,7 @@ TEST_F(FormatterTest, FormatterEncodeJavaScript)
 
    formatter.format(encode_string<encode_char_js>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
 
-   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be encoded";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"\u00A7\u4E01\u4E02\U0001D160"), buffer) << "Multibyte UTF-8 sequences should not be encoded";
 
    formatter.format(encode_string<encode_char_js>, R"==(123"abc"456)==");
 
@@ -302,11 +302,11 @@ TEST_F(FormatterTest, FormatterEncodeJSON)
    EXPECT_STREQ(R"==(\"\\\r\n\t)==", buffer) << "Special JSON characters must be escaped";
 
    formatter.format(encode_string<encode_char_json>, "\b\f");
-   EXPECT_STREQ(u8"\uE008\uE00C", buffer) << "\b and \f should be treated as control characters and encoded as private-use code points";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"\uE008\uE00C"), buffer) << "\b and \f should be treated as control characters and encoded as private-use code points";
 
    // use hex representation for UTF-8 bytes to make the transformation more visible.
    formatter.format(encode_string<encode_char_json>, "\xC2\xA7\xE4\xB8\x81\xE4\xB8\x82\xF0\x9D\x85\xA0");
-   EXPECT_STREQ(u8"\u00A7\u4E01\u4E02\U0001D160", buffer) << "Multibyte UTF-8 sequences should not be escaped";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"\u00A7\u4E01\u4E02\U0001D160"), buffer) << "Multibyte UTF-8 sequences should not be escaped";
 
    // single quote and forward slash should not be escaped
    formatter.format(encode_string<encode_char_json>, R"==(abc'123/XYZ)==");
@@ -361,7 +361,7 @@ TEST_F(FormatterTest, FormatterEncodeCtrlChars)
 
    *ctlchr = '\x7f';
    formatter.format(encode_string<encode_char_html>, ctlchr);
-   ASSERT_STREQ(u8"\uE07F", buffer);
+   ASSERT_STREQ(reinterpret_cast<const char*>(u8"\uE07F"), buffer);
 
 }
 

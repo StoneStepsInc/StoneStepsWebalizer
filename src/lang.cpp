@@ -226,7 +226,7 @@
          {"cr",        "Costa Rica"                        }, \
          {"cu",        "Cuba"                              }, \
          {"cv",        "Cape Verde"                        }, \
-         {"cw",      u8"Cura\u00E7ao"                      }, \
+         {"cw",        "Cura\u00E7ao"                      }, \
          {"cx",        "Christmas Island"                  }, \
          {"cy",        "Cyprus"                            }, \
          {"cz",        "Czech Republic"                    }, \

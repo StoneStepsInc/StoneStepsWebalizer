@@ -16,6 +16,8 @@
 
 #include <ctime>
 
+namespace sswtest {
+
 ///
 /// @brief  Tests sizes of fields stored in the buffer.
 ///
@@ -348,4 +350,6 @@ TEST(Serialization, BufferBoundstest)
 
    // a local time stamp is 11 bytes long and will not fit in the 10-byte buffer
    ASSERT_THROW(sr.serialize(buffer.get_buffer() + 10, lcl_ts), std::invalid_argument);
+}
+
 }

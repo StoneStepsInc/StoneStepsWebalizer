@@ -75,12 +75,12 @@ TEST(StringCompareTest, CompareStringsNoCase)
    EXPECT_TRUE(string_t::compare_ci("abc", "") > 0) << "Any string is greater than an empty one";
    EXPECT_TRUE(string_t::compare_ci("", "abc") < 0) << "An empty string is less than any other string";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u898Bxyz") == 0) << "Two equal strings with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc") > 0) << "A string with a Kanji character is greater than a shorter one with same initial characters";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc", u8"abc\u898Bxyz") < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz")) == 0) << "Two equal strings with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc")) > 0) << "A string with a Kanji character is greater than a shorter one with same initial characters";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc"), reinterpret_cast<const char*>(u8"abc\u898Bxyz")) < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u00c3xyz", u8"abc\u898Bxyz") < 0) << "A string with a Latin character is less than one with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u00c3xyz") > 0) << "A string with with a Kanji character is greater than one with a Latin character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u00c3xyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz")) < 0) << "A string with a Latin character is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u00c3xyz")) > 0) << "A string with with a Kanji character is greater than one with a Latin character";
 }
 
 ///
@@ -102,12 +102,12 @@ TEST(StringCompareTest, CompareStringsNCharsNoCase)
    EXPECT_TRUE(string_t::compare_ci("abc", "", 6) > 0) << "Any string is greater than an empty one";
    EXPECT_TRUE(string_t::compare_ci("", "abc", 6) < 0) << "An empty string is less than any other string";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u898Bxyz", 6) == 0) << "Two equal strings with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc", 6) > 0) << "A string with a Kanji character is greater than a shorter one with same initial characters";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc", u8"abc\u898Bxyz", 6) < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) == 0) << "Two equal strings with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc"), 6) > 0) << "A string with a Kanji character is greater than a shorter one with same initial characters";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u00c3xyz", u8"abc\u898Bxyz", 6) < 0) << "A string with a Latin character is less than one with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u00c3xyz", 6) > 0) << "A string with with a Kanji character is greater than one with a Latin character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u00c3xyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) < 0) << "A string with a Latin character is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u00c3xyz"), 6) > 0) << "A string with with a Kanji character is greater than one with a Latin character";
 
    // tests with N shorter than one or both strings (Kanji is 3 code units, Latin is 2 code units)
    EXPECT_TRUE(string_t::compare_ci("abcdef", "abcxyz", 3) == 0) << "Two strings with equal initial characters";
@@ -115,12 +115,12 @@ TEST(StringCompareTest, CompareStringsNCharsNoCase)
    EXPECT_TRUE(string_t::compare_ci("abcdef", "abc", 4) > 0) << "The second string is shorter than the first and shorter than N";
    EXPECT_TRUE(string_t::compare_ci("abc", "abcdef", 4) < 0) << "The first string is shorter than the second and shorter than N";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u898Bxyz", 6) == 0) << "First six code units of two equal strings with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc", 6) > 0) << "First six code units of a string with a Kanji character is greater than a shorter one with same initial characters";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc", u8"abc\u898Bxyz", 6) < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) == 0) << "First six code units of two equal strings with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc"), 6) > 0) << "First six code units of a string with a Kanji character is greater than a shorter one with same initial characters";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) < 0) << "A shorter string with the same initial characters is less than one with a Kanji character";
 
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u00c3xyz", u8"abc\u898Bxyz", 6) < 0) << "A string with a Latin character is less than one with a Kanji character";
-   EXPECT_TRUE(string_t::compare_ci(u8"abc\u898Bxyz", u8"abc\u00c3xyz", 6) > 0) << "A string with with a Kanji character is greater than one with a Latin character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u00c3xyz"), reinterpret_cast<const char*>(u8"abc\u898Bxyz"), 6) < 0) << "A string with a Latin character is less than one with a Kanji character";
+   EXPECT_TRUE(string_t::compare_ci(reinterpret_cast<const char*>(u8"abc\u898Bxyz"), reinterpret_cast<const char*>(u8"abc\u00c3xyz"), 6) > 0) << "A string with with a Kanji character is greater than one with a Latin character";
 }
 
 ///

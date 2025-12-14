@@ -300,4 +300,10 @@ string_base<char>& string_base<char>::transform(char (*convchar)(char), size_t s
 //
 typedef string_base<char> string_t;
 
+#ifdef __cpp_char8_t
+#define CHAR8_T char8_t
+#else
+#define CHAR8_T char
+#endif
+
 #endif // TSTRING_H

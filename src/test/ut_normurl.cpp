@@ -117,15 +117,15 @@ TEST(URLNormalizerTest, NormalizeURLEncodedKanji)
 
    str = "abc%E8%A8%98xyz";
    norm_url_str(str, strbuf);
-   EXPECT_STREQ(u8"abc\u8A18xyz", str) << "Normalize a string with a URL-encoded Kanji character";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"abc\u8A18xyz"), str) << "Normalize a string with a URL-encoded Kanji character";
 
    str = "abcA=%E8%A8%98xyz";
    norm_url_str(str, strbuf);
-   EXPECT_STREQ(u8"abcA=\u8A18xyz", str) << "Normalize a string with a URL-encoded Kanji character and an equal sign";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"abcA=\u8A18xyz"), str) << "Normalize a string with a URL-encoded Kanji character and an equal sign";
 
    str = "abcA=%26%E8%A8%98xyz";
    norm_url_str(str, strbuf);
-   EXPECT_STREQ(u8"abcA=%26\u8A18xyz", str) << "Normalize a string with a URL-encoded Kanji character and a URL-encoded ampersand";
+   EXPECT_STREQ(reinterpret_cast<const char*>(u8"abcA=%26\u8A18xyz"), str) << "Normalize a string with a URL-encoded Kanji character and a URL-encoded ampersand";
 }
 
 ///
@@ -136,11 +136,11 @@ TEST(URLNormalizerTest, NormalizeUTF8)
    string_t str;
    string_t::char_buffer_t strbuf;
 
-   str = u8"abc\u68A1xyz\u6890";
+   str = reinterpret_cast<const char*>(u8"abc\u68A1xyz\u6890");
    norm_url_str(str, strbuf);
    EXPECT_STREQ("abc\xE6\xA2\xA1xyz\xE6\xA2\x90", str) << "Normalize a string with a Kanji character encoded in UTF-8";
 
-   str = u8"abc\u00A3xyz";
+   str = reinterpret_cast<const char*>(u8"abc\u00A3xyz");
    norm_url_str(str, strbuf);
    EXPECT_STREQ("abc\xC2\xA3xyz", str) << "Normalize a string with a Latin1 character encoded in UTF-8";
 }

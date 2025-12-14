@@ -83,6 +83,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -95,6 +97,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -188,7 +192,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets" Condition="Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" />
-    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
+    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -196,6 +200,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.props'))" />
     <Error Condition="!Exists('..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.18.1.25-rev5\build\native\StoneStepsWebalizer.BerkeleyDB.DLL.VS2017.WinSDK.81.CRT.Dynamic.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
   </Target>
 </Project>

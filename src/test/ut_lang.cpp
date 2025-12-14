@@ -52,7 +52,7 @@ TEST(LangTest, MatchPartialLangeCode)
 ///
 TEST(LangTest, AssignCharLangVarSpace)
 {
-   char buffer[] = u8"msg_processed=A1\n"
+   CHAR8_T buffer[] = u8"msg_processed=A1\n"
                      "msg_records= A2\n"
                      "msg_addresses =A3\n"
                      "msg_ignored = A4\n"
@@ -61,7 +61,7 @@ TEST(LangTest, AssignCharLangVarSpace)
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -77,7 +77,7 @@ TEST(LangTest, AssignCharLangVarSpace)
 ///
 TEST(LangTest, AssignCharLangVarLineEnding)
 {
-   char buffer[] = u8"msg_processed = ABC1\n"
+   CHAR8_T buffer[] = u8"msg_processed = ABC1\n"
                   u8"msg_records = ABC2\r\n"
                   u8"msg_addresses = ABC3\r"
                   u8"msg_ignored = ABC4";
@@ -85,7 +85,7 @@ TEST(LangTest, AssignCharLangVarLineEnding)
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -100,13 +100,13 @@ TEST(LangTest, AssignCharLangVarLineEnding)
 ///
 TEST(LangTest, AssignCharArrLangVarOneLine)
 {
-   char buffer[] = u8"s_month = A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12\n"
+   CHAR8_T buffer[] = u8"s_month = A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12\n"
                    u8"l_month = X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -125,7 +125,7 @@ TEST(LangTest, AssignCharArrLangVarOneLine)
 ///
 TEST(LangTest, AssignCharArrLangVarMultiLine)
 {
-   char buffer[] = u8"s_month = A1,A2,A3,A4,\n"
+   CHAR8_T buffer[] = u8"s_month = A1,A2,A3,A4,\n"
                                "A5,A6,A7,A8,\n"
                                "A9,A10,A11,A12\n"
                    u8"l_month = X1, X2, X3, X4, \n"
@@ -135,7 +135,7 @@ TEST(LangTest, AssignCharArrLangVarMultiLine)
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -154,13 +154,13 @@ TEST(LangTest, AssignCharArrLangVarMultiLine)
 ///
 TEST(LangTest, AssignCharArrLangVarQuoted)
 {
-   char buffer[] = u8"h_msg = A, \"B, C\", D,\n"
+   CHAR8_T buffer[] = u8"h_msg = A, \"B, C\", D,\n"
                               "\"E, F\", G\n";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -179,13 +179,13 @@ TEST(LangTest, AssignCharArrLangVarQuoted)
 ///
 TEST(LangTest, AssignCharArrLangVarUnbalancedQuotes)
 {
-   char buffer[] = u8"h_msg = A, \"B, C, D,\n"
+   CHAR8_T buffer[] = u8"h_msg = A, \"B, C, D,\n"
                               "\"E, F\", G\n";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(1, errors.size()) << "Language file should be parsed with an error";
 
@@ -198,7 +198,7 @@ TEST(LangTest, AssignCharArrLangVarUnbalancedQuotes)
 ///
 TEST(LangTest, AssignCharArrTrailingComma)
 {
-   char buffer[] = u8"h_msg = A, B,\n"
+   CHAR8_T buffer[] = u8"h_msg = A, B,\n"
                               "C, D,\n"
                               "\n"
                               "msg_processed = X";
@@ -206,7 +206,7 @@ TEST(LangTest, AssignCharArrTrailingComma)
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -225,13 +225,13 @@ TEST(LangTest, AssignCharArrTrailingComma)
 ///
 TEST(LangTest, AssignCharArrTrailingCommaNoLineEnding)
 {
-   char buffer[] = u8"h_msg = A, B,\n"
+   CHAR8_T buffer[] = u8"h_msg = A, B,\n"
                               "C, D,";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -249,12 +249,12 @@ TEST(LangTest, AssignCharArrTrailingCommaNoLineEnding)
 ///
 TEST(LangTest, AssignRespArrLangVarOneLine)
 {
-   char buffer[] = u8"response = X, C-123 - A, Code 456 - B\n";
+   CHAR8_T buffer[] = u8"response = X, C-123 - A, Code 456 - B\n";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -276,14 +276,14 @@ TEST(LangTest, AssignRespArrLangVarOneLine)
 ///
 TEST(LangTest, AssignRespArrLangVarMultiLine)
 {
-   char buffer[] = u8"response = X, \n"
+   CHAR8_T buffer[] = u8"response = X, \n"
                                 "C-123 - A, \n"
                                 "Code 456 - B\n";
 
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
@@ -305,7 +305,7 @@ TEST(LangTest, AssignRespArrLangVarMultiLine)
 ///
 TEST(LangTest, AssignCountryArrLangVarMultiLine)
 {
-   char buffer[] = u8"ctry = *, \tX,\r"
+   CHAR8_T buffer[] = u8"ctry = *, \tX,\r"
                             "ab,\tAB, \r\n"
                             "cd,   CD,\n"
                             "ef,\t EF";
@@ -313,7 +313,7 @@ TEST(LangTest, AssignCountryArrLangVarMultiLine)
    lang_t lang;
    std::vector<string_t> errors;
 
-   lang.parse_lang_file("LangTest", buffer, errors);
+   lang.parse_lang_file("LangTest", reinterpret_cast<char*>(buffer), errors);
 
    ASSERT_EQ(0, errors.size()) << "Language file should be parsed without any errors";
 
