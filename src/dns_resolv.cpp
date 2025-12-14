@@ -998,8 +998,8 @@ void dns_resolver_t::dns_abort(void)
 ///
 /// @return `true` if any work was done, even unsuccessful, `false` otherwise
 ///
-/// Picks up the next dnode_t instance from the ueue, looks it up in the DNS resolver
-/// database and, if not found, looks up its GeoIP informatin and attempts to resolve
+/// Picks up the next dnode_t instance from the queue, looks it up in the DNS resolver
+/// database and, if not found, looks up its GeoIP information and attempts to resolve
 /// the IP address via DNS, if either of activities is enabled. 
 ///
 bool dns_resolver_t::process_node(Db *dns_db, void *buffer, size_t bufsize)

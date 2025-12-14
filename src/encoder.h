@@ -23,7 +23,7 @@
 /// This function should not evaluate any bytes beyond the size of the character.
 ///
 /// If `cp` is `nullptr`, the function should return the length of the longest encoded
-/// character sequence in `obc`. In this case the input character size (`cbc`) and
+/// character sequence in `obc`. In this case, the input character size (`cbc`) and
 /// the output character pointer (`op`) are not evaluated and may be zero and `nullptr`.
 ///
 /// The size of the output buffer pointed to by `op` must be large enough to

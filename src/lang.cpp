@@ -425,7 +425,7 @@
          {"zw",        "Zimbabwe"                          }
 
 ///
-/// @brief  Performs a quick test whether `ch` is any of new line characters.
+/// @brief  Performs a quick test whether `ch` is any of the new line characters.
 ///
 /// This function is intended for quick tests for new line characters where it is not 
 /// necessary to know how many new line characters are there exactly. For example, it 

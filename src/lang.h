@@ -43,7 +43,7 @@ class lang_t {
 
    public:
       ///
-      /// #brief  A localized HTTP response code and its description
+      /// @brief  A localized HTTP response code and its description
       ///
       struct resp_code_t {
          u_int         code;

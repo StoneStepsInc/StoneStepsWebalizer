@@ -28,9 +28,9 @@
 #define CHLT(c) select_char_literal<char_t>(c, L ## c)
 
 ///
-/// @brief  A genric character string object
+/// @brief  A generic character string object
 ///
-/// @tparam chart_t  Character type (char or wchar_t)
+/// @tparam char_t  Character type (char or wchar_t)
 ///
 /// 1. string_base may be used to manage three kinds of strings:
 ///
@@ -53,7 +53,7 @@
 ///
 /// 4. Unlike with `const_char_buffer_t`, which can be used independently from `char_buffer_t`,
 /// having a distinct `string_base` class defined with a `const` character type would make it 
-/// imposible to pass such string instances into functions that take `string_t` arguments. 
+/// impossible to pass such string instances into functions that take `string_t` arguments. 
 /// Read-only string_t instances are used instead to wrap string literals or other data that 
 /// cannot be modified.
 ///

@@ -146,9 +146,9 @@ char *encode_char_json(const char *cp, size_t cbc, char *op, size_t& obc)
    }
 
    //
-   // Encode accorting to the rules at www.json.org, but leave the
-   // forward slash slash character as is (it makes sense to encode
-   // it only in HTML context, when attackers can get end the script
+   // Encode according to the rules at www.json.org, but leave the
+   // forward slash character as is (it makes sense to encode
+   // it only in HTML context, when attackers can exit the script
    // context). JSON spec only requires control characters, double
    // quote and backslash escaped with a backslash.
    // 
