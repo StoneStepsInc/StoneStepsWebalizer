@@ -45,6 +45,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cerrno>
 
 #include <list>
 #include <memory>
@@ -1100,36 +1101,212 @@ int webalizer_t::run(void)
 ///
 void webalizer_t::prep_logfiles(logfile_list_t& logfiles)
 {
-   //
-   // Walk through the list of log files and test if each one is readable. Do not 
-   // open files at this point, so we don't exceed the limit on the total number 
-   // of open files.
-   //
-   std::vector<string_t>::const_iterator iter = config.log_fnames.begin();
-   while(iter != config.log_fnames.end()) {
-      const string_t& fname = *iter++;
-      // VC++ Intellisense erroneously highlights make_path as trying to create a string with `const string_t&&`
-      std::unique_ptr<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? (const string_t&) make_path(config.cur_dir, fname) : fname));
-      
-      // check if we can read the file
-      if(!logfile->is_readable()) {
-         /* Error: Can't open log file ... */
-         throw exception_t(0, string_t::_format("%s %s\n",config.lang.msg_log_err, fname.c_str()));
-      }
+    //
+    // Walk through the list of log files and test if each one is readable. Do not
+    // open files at this point, so we don't exceed the limit on the total number
+    // of open files.
+    // Fix wildcard support in Windows. Allow '*' wildcards in both filename and directory.
+    //
+#ifdef _WIN32
+    std::vector<string_t> source_fnames;
+    source_fnames.reserve(config.log_fnames.size());
 
-      // set a one-based log file ID, so we can identify log files when we report bad log records
-      logfile->set_id((u_int) (logfiles.size() + 1));
-      
-      /* Using logfile ... */
+    auto has_wildcards = [](const char* str) -> bool
+    {
+        return str && (strchr(str, '*') || strchr(str, '?'));
+    };
+
+    auto join_path = [](const std::string& base, const std::string& part) -> std::string
+    {
+        if (base.empty())
+            return part;
+
+        if (base.back() == '\\' || base.back() == '/')
+            return base + part;
+
+        return base + "\\" + part;
+    };
+
+    std::vector<string_t>::const_iterator src_iter = config.log_fnames.begin();
+    while (src_iter != config.log_fnames.end()) {
+        const string_t& src_fname = *src_iter++;
+        bool expanded = false;
+
+        if (!src_fname.isempty() && has_wildcards(src_fname.c_str())) {
+            std::string pattern(src_fname.c_str());
+            std::replace(pattern.begin(), pattern.end(), '/', '\\');
+
+            std::string root;
+            std::vector<std::string> parts;
+            size_t pos = 0;
+
+            // Parse drive root (e.g. C:\)
+            if (pattern.length() >= 2 && pattern[1] == ':') {
+                root.assign(pattern, 0, 2);
+                pos = 2;
+                if (pos < pattern.length() && (pattern[pos] == '\\' || pattern[pos] == '/')) {
+                    root.push_back('\\');
+                    pos++;
+                }
+            }
+
+            // Split path into segments
+            while (pos < pattern.length()) {
+                while (pos < pattern.length() && (pattern[pos] == '\\' || pattern[pos] == '/'))
+                    pos++;
+
+                if (pos >= pattern.length())
+                    break;
+
+                size_t end = pos;
+                while (end < pattern.length() && pattern[end] != '\\' && pattern[end] != '/')
+                    end++;
+
+                parts.push_back(pattern.substr(pos, end - pos));
+                pos = end;
+            }
+
+            if (!parts.empty()) {
+                std::vector<std::string> dirs;
+                dirs.push_back(root);
+
+                // Expand directory segments, leaving the last segment as the file pattern.
+                for (size_t i = 0; i + 1 < parts.size() && !dirs.empty(); i++) {
+                    const std::string& seg = parts[i];
+                    const bool seg_has_wildcards = has_wildcards(seg.c_str());
+                    std::vector<std::string> next_dirs;
+
+                    for (size_t d = 0; d < dirs.size(); d++) {
+                        const std::string& base_dir = dirs[d];
+
+                        if (seg_has_wildcards) {
+                            const std::string dir_pattern = join_path(base_dir, seg);
+
+                            _finddata_t fdata;
+                            intptr_t hfind = _findfirst(dir_pattern.c_str(), &fdata);
+                            if (hfind != -1L) {
+                                do {
+                                    if ((fdata.attrib & _A_SUBDIR) &&
+                                        strcmp(fdata.name, ".") != 0 &&
+                                        strcmp(fdata.name, "..") != 0) {
+                                        std::string dir_path = join_path(base_dir, fdata.name);
+
+                                        errno = 0;
+                                        if (access(dir_path.c_str(), R_OK) != 0) {
+                                            fprintf(stderr, "%s %s (%s)\n", config.lang.msg_dir_err, dir_path.c_str(), strerror(errno));
+                                            continue;
+                                        }
+
+                                        next_dirs.push_back(dir_path);
+                                    }
+                                } while (_findnext(hfind, &fdata) == 0);
+
+                                _findclose(hfind);
+                            }
+                        }
+                        else {
+                            const std::string subdir = join_path(base_dir, seg);
+
+                            _finddata_t fdata;
+                            intptr_t hfind = _findfirst(subdir.c_str(), &fdata);
+                            if (hfind != -1L) {
+                                if (fdata.attrib & _A_SUBDIR) {
+                                    errno = 0;
+                                    if (access(subdir.c_str(), R_OK) != 0)
+                                        fprintf(stderr, "%s %s (%s)\n", config.lang.msg_dir_err, subdir.c_str(), strerror(errno));
+                                    else
+                                        next_dirs.push_back(subdir);
+                                }
+
+                                _findclose(hfind);
+                            }
+                        }
+                    }
+
+                    std::sort(next_dirs.begin(), next_dirs.end());
+                    dirs.swap(next_dirs);
+                }
+
+                // Restore filename wildcard expansion for each matched directory.
+                if (!dirs.empty()) {
+                    const std::string& file_seg = parts.back();
+                    const bool file_has_wildcards = has_wildcards(file_seg.c_str());
+
+                    for (size_t d = 0; d < dirs.size(); d++) {
+                        const std::string& base_dir = dirs[d];
+
+                        errno = 0;
+                        if (access(base_dir.c_str(), R_OK) != 0) {
+                            fprintf(stderr, "%s %s (%s)\n", config.lang.msg_dir_err, base_dir.c_str(), strerror(errno));
+                            continue;
+                        }
+
+                        if (file_has_wildcards) {
+                            const std::string file_pattern = join_path(base_dir, file_seg);
+                            std::vector<std::string> matched_files;
+
+                            _finddata_t fdata;
+                            intptr_t hfind = _findfirst(file_pattern.c_str(), &fdata);
+                            if (hfind != -1L) {
+                                do {
+                                    if (!(fdata.attrib & _A_SUBDIR))
+                                        matched_files.push_back(join_path(base_dir, fdata.name));
+                                } while (_findnext(hfind, &fdata) == 0);
+
+                                _findclose(hfind);
+                            }
+
+                            std::sort(matched_files.begin(), matched_files.end());
+                            for (size_t i = 0; i < matched_files.size(); i++) {
+                                source_fnames.push_back(string_t(matched_files[i].c_str()));
+                                expanded = true;
+                            }
+                        }
+                        else {
+                            source_fnames.push_back(string_t(join_path(base_dir, file_seg).c_str()));
+                            expanded = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // keep unmatched wildcard as-is for existing error reporting
+        if (!expanded)
+            source_fnames.push_back(src_fname);
+    }
+
+    std::vector<string_t>::const_iterator iter = source_fnames.begin();
+    std::vector<string_t>::const_iterator end = source_fnames.end();
+#else
+    std::vector<string_t>::const_iterator iter = config.log_fnames.begin();
+    std::vector<string_t>::const_iterator end = config.log_fnames.end();
+#endif
+
+    while (iter != end) {
+        const string_t& fname = *iter++;
+        // VC++ Intellisense erroneously highlights make_path as trying to create a string with `const string_t&&`
+        std::unique_ptr<logfile_t> logfile(new logfile_t(fname.length() && !is_abs_path(fname) ? (const string_t&)make_path(config.cur_dir, fname) : fname));
+
+        // check if we can read the file
+        if (!logfile->is_readable()) {
+            /* Error: Can't open log file ... */
+            throw exception_t(0, string_t::_format("%s %s\n", config.lang.msg_log_err, fname.c_str()));
+        }
+
+        // set a one-based log file ID, so we can identify log files when we report bad log records
+        logfile->set_id((u_int)(logfiles.size() + 1));
+
+        /* Using logfile ... */
       if (config.verbose>1)
       {
-         printf("%s %s (",config.lang.msg_log_use, !fname.isempty() ? make_path(config.cur_dir, fname).c_str() : "STDIN");
-         if (logfile->is_gzip()) printf("gzip-");
-         printf("%s)\n", config.get_log_type_desc());
-      }
+            printf("%s %s (", config.lang.msg_log_use, !fname.isempty() ? make_path(config.cur_dir, fname).c_str() : "STDIN");
+            if (logfile->is_gzip()) printf("gzip-");
+            printf("%s)\n", config.get_log_type_desc());
+        }
 
-      logfiles.push_back(logfile.release());
-   }
+        logfiles.push_back(logfile.release());
+    }
 }
 
 ///
