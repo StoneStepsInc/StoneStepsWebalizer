@@ -1,5 +1,5 @@
 **************************************************************************
-Stone Steps Webalizer (v6.5.2)
+Stone Steps Webalizer (v6.6.0)
 
 Copyright (c) 2006, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/, Email: Sebastian.Enger@artikelschreiber.com)
 
