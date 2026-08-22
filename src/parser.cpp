@@ -1,6 +1,7 @@
 /*
    webalizer - a web server log analysis program
 
+   Copyright (c) 2006, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/, Email: Sebastian.Enger@artikelschreiber.com) 
    Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)
    Copyright (C) 1997-2001  Bradford L. Barrett (brad@mrunix.net)
 
@@ -476,6 +477,18 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
 
    /* response code */
    log_rec.resp_code = (u_short) atoi(cp1);
+
+   /*
+      Sebastian Enger, 2026-08-22: 
+      Purpose: Ignore all Log Entries that hold the HTTP Status Code 444 so they do not get added to your analyzed log and falsely inflate your visitor statistics
+      See: https://http.dev/444
+      Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
+   */ 
+   if (log_rec.resp_code == 444) {
+      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_clf()\n");
+      return PARSE_CODE_IGNORE;
+   }
+
    while(*cp1 && cp1 < eob) cp1++;
    if(++cp1 >= eob) return PARSE_CODE_ERROR;
 
@@ -784,6 +797,17 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
       }
 
       fldindex++;
+   }
+
+   /*
+      Sebastian Enger, 2026-08-22: 
+      Purpose: Ignore all Log Entries that hold the HTTP Status Code 444 so they do not get added to your analyzed log and falsely inflate your visitor statistics
+      See: https://http.dev/444
+      Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
+   */ 
+   if (log_rec.resp_code == 444) {
+      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_apache()\n");
+      return PARSE_CODE_IGNORE;   // skip this record with a HTTP Status value of 444 entirely
    }
 
    return PARSE_CODE_OK;     
@@ -1389,6 +1413,17 @@ int parser_t::parse_record_nginx(char *buffer, size_t reclen, log_struct& log_re
       }
 
       fldindex++;
+   }
+
+   /*
+      Sebastian Enger, 2026-08-22: 
+      Purpose: Ignore all Log Entries that hold the HTTP Status Code 444 so they do not get added to your analyzed log and falsely inflate your visitor statistics
+      See: https://http.dev/444
+      Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
+   */ 
+   if (log_rec.resp_code == 444) {
+      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_nginx()\n");
+      return PARSE_CODE_IGNORE;   // skip this record with a HTTP Status value of 444 entirely
    }
 
    return fldindex == log_rec_fields.size() ? PARSE_CODE_OK : PARSE_CODE_ERROR;

@@ -72,7 +72,7 @@
 /*********************************************/
 
 static const char *copyright   = "Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)";
-
+static const char *copyright_se   = "Copyright (c) 2026, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/)";
 bool webalizer_t::abort_signal = false;   // true if Ctrl-C was pressed
 
 ///
@@ -356,10 +356,10 @@ void webalizer_t::print_version()
 
    uname(&system_info);
 
-   printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n",   
+   printf("\nStone Steps Webalizer v%s (%s %s) %s\n%s\n%s\n",   
                state_t::get_app_hr_version().c_str(),
                system_info.sysname,system_info.release,
-               config.lang.language,copyright);
+               config.lang.language,copyright_se,copyright);
    printf("\nThis program is based on The Webalizer v2.01-10\nCopyright 1997-2001 by Bradford L. Barrett (www.webalizer.com)\n\n");
 
    if (config.debug_mode) {
