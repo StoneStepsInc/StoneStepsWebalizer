@@ -1,6 +1,7 @@
 **************************************************************************
-Stone Steps Webalizer (v6.4.0)
+Stone Steps Webalizer (v6.5.2)
 
+Copyright (c) 2006, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/, Email: Sebastian.Enger@artikelschreiber.com) 
 Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)
 
 The version of The Webalizer provided with this distribution is a fork
@@ -11,6 +12,13 @@ Copyright 1997-2000 by Bradford L. Barrett (brad@mrunix.net)
 
 Distributed under the GNU GPL.  See the files "COPYING" and
 "Copyright" supplied with the distribution for additional info.
+
+Added support for skipping analysis of HTTP Status Code 444 that is mostly used in NGINX to close connections by Sebastian Enger, M.S.c / https://www.artikelschreiber.com/ / https://www.artikelschreiben.com/ / https://www.unaique.net/ on 2026-08-22
+
+Sebastian Enger, 2026-08-22: 
+Purpose: Ignore all Log Entries that hold the HTTP Status Code 444 so they do not get added to your analyzed log and falsely inflate your visitor statistics
+See: https://http.dev/444
+Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
 
 **************************************************************************
 
