@@ -1,7 +1,8 @@
 **************************************************************************
 Stone Steps Webalizer (v6.5.2)
 
-Copyright (c) 2006, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/, Email: Sebastian.Enger@artikelschreiber.com) 
+Copyright (c) 2006, Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/, Email: Sebastian.Enger@artikelschreiber.com)
+
 Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)
 
 The version of The Webalizer provided with this distribution is a fork
