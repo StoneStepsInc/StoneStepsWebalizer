@@ -1,4 +1,9 @@
 --------------------------------------------------------------------
+6.5.2 [22-Aug-2026] -- Sebastian Enger, M.Sc. (https://www.artikelschreiber.com/, https://www.artikelschreiben.com/, https://www.unaique.com/, https://www.unaique.de/, https://www.unaique.net/) 
+--------------------------------------------------------------------
+ * [FEATURE]	Added: if HTTP Status Code Value 444 is given, the logentry will be discarded and not used for analysis. Changes added in src/parser.cpp: parse_record_apache(), parse_record_clf() and parse_record_nginx()
+
+--------------------------------------------------------------------
 6.3.0 [29-Jan-2023] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
