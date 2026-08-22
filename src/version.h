@@ -16,8 +16,8 @@
 // Current application version components
 //
 #define VERSION_MAJOR           6
-#define VERSION_MINOR           5
-#define VERSION_PATCH           2
+#define VERSION_MINOR           6
+#define VERSION_PATCH           0
 
 //
 // BUILD_NUMBER is assigned in webalizer_release.props from the value of

@@ -485,7 +485,7 @@ int parser_t::parse_record_clf(char *buffer, size_t reclen, log_struct& log_rec)
       Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
    */ 
    if (log_rec.resp_code == 444) {
-      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_clf()\n");
+      //fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_clf()\n");
       return PARSE_CODE_IGNORE;
    }
 
@@ -806,7 +806,7 @@ int parser_t::parse_record_apache(char *buffer, size_t reclen, log_struct& log_r
       Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
    */ 
    if (log_rec.resp_code == 444) {
-      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_apache()\n");
+      //fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_apache()\n");
       return PARSE_CODE_IGNORE;   // skip this record with a HTTP Status value of 444 entirely
    }
 
@@ -1228,6 +1228,7 @@ std::vector<parser_t::TLogFieldId> parser_t::parse_nginx_log_format(const char *
       {string_t("http_user_agent"), eUserAgent},
       {string_t("http_referer"), eReferrer},
       {string_t("request"), eHttpRequestLine},
+      {string_t("body_bytes_sent"), eBytesSent},
    };
 
    std::vector<TLogFieldId> log_rec_fields;
@@ -1422,7 +1423,7 @@ int parser_t::parse_record_nginx(char *buffer, size_t reclen, log_struct& log_re
       Background: I use the HTTP Status Code 444 in my Nginx to immediately close a connection to save resources, for example for malicous crawlers or scrapers.
    */ 
    if (log_rec.resp_code == 444) {
-      fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_nginx()\n");
+      //fprintf(stderr, "FILTER: Ignoring 444 record in parser.cpp->parse_record_nginx()\n");
       return PARSE_CODE_IGNORE;   // skip this record with a HTTP Status value of 444 entirely
    }
 
