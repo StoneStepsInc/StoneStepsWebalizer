@@ -1529,11 +1529,30 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          state.set_tstamp(log_rec.tstamp);
 
          /*********************************************/
-         /* DO SOME PRE-PROCESS FORMATTING            */
+         /* DO SOME PRE-PROCESSING                    */
          /*********************************************/
 
+         spammer = false;
+
+         //
+         // The Nginx rewrite module interprets `return 444` as a special
+         // non-standard HTTP status code that instructs Nginx to close
+         // the connection immediately, without anything ever being sent
+         // to the client. Depending on the actual setup, this status code
+         // may indicate malicious activity or something innocuous, such
+         // as a timed-out connection.
+         //
+         if(log_rec.resp_code == RC_NG_NO_RESPONSE) {
+            if(config.no_response_mode == NRM_SPAMMER)
+               spammer = true;
+            else if(config.no_response_mode == NRM_IGNORE) {
+               lrcnt.total_ignore++;
+               continue;
+            }
+         }
+
          // check non-proxy requests against the spam referrers list
-         if(config.log_type != LOG_SQUID)
+         if(!spammer && config.log_type != LOG_SQUID)
             spammer = config.spam_refs.isinlist(log_rec.refer) != nullptr;
 
          // reset search terms
@@ -1645,7 +1664,7 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          }
 
          /* Do we need to mangle? */
-         if(config.mangle_agent) {
+         if(!spammer && config.mangle_agent) {
             if (config.use_classic_mangler)
                mangle_user_agent(log_rec.agent);
             else
@@ -1667,12 +1686,12 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          
          // do not check proxy requests for spammers
          if(config.log_type != LOG_SQUID) {
-            // if appears to be not a spammer, check their past
+            // if appears not to be a spammer, check their past
             if(!spammer)
                spammer = state.sp_htab.find(log_rec.hostname) != state.sp_htab.end();
          }
          
-         // initialize those that may be not set otherwise (e.g. if URL is not added)
+         // initialize those indicators that may not be set otherwise (e.g. if URL is not added)
          newurl = newagent = newuser = newerr = newref = newdl = newrgrp = newugrp = newagrp = newigrp = false;
 
          //
@@ -1766,13 +1785,17 @@ int webalizer_t::proc_logfile(proc_times_t& ptms, logrec_counts_t& lrcnt)
          // User agents must be processed after client host addresses
          // because visits for a user agent are counted based on the
          // value of newvisit populated by put_hnode.
+         // 
+         // Ignore spammers because spamming and scraping requests
+         // often contain random user agent strings, which will only
+         // distort legitimate user agent stats.
          //
          // Ignore the robot flag if user agents are mangled to avoid  
          // mixing up robots and non-robots (i.e. if the mangled agent
          // string matches both).
          //
          /* user agent hash table */
-         if (config.ntop_agents)
+         if(!spammer && config.ntop_agents)
          {
             if(!log_rec.agent.isempty())
                put_anode(log_rec.agent, htab_tstamp, OBJ_REG, log_rec.xfer_size, newvisit, !config.use_classic_mangler && robot, newagent);

@@ -12,7 +12,7 @@
 
 #include "util_http.h"
 
-bool is_http_redirect(size_t respcode)
+bool is_http_redirect(std::underlying_type<rc_t>::type respcode)
 {
    switch (respcode) {
       case RC_MOVEDPERM:         // 301
@@ -25,8 +25,8 @@ bool is_http_redirect(size_t respcode)
    return false;
 }
 
-bool is_http_error(size_t respcode)
+bool is_http_error(std::underlying_type<rc_t>::type respcode)
 {
-   size_t code = respcode / 100;
+   std::underlying_type<rc_t>::type code = respcode / 100;
    return code == 4 || code == 5;
 }

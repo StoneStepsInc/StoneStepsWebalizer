@@ -32,6 +32,12 @@
 
 #define BUFSIZE  16384                 /* Max buffer size for log record   */
 
+enum no_response_mode_t {
+   NRM_PROCESS,
+   NRM_IGNORE,
+   NRM_SPAMMER
+};
+
 /// Unit test classes that need access to private members.
 namespace sswtest {
    class ConfigTest_GetInterval_Test;
@@ -265,6 +271,8 @@ class config_t {
 
       bool dns_lookups;                         ///< Perform DNS look-ups for host addresses?
 
+      no_response_mode_t no_response_mode;
+
       //
       // "Group" lists
       //
@@ -378,6 +386,8 @@ class config_t {
 
       void add_grp_item(glist& grplist, nlist& hidlist, const char *value);
       
+      no_response_mode_t get_no_response_mode(const char *value);
+
    public:
       config_t(void);
 

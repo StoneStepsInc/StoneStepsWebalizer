@@ -229,6 +229,8 @@ config_t::config_t(void)
    debug_mode = 0;
 
    js_charts_map = false;
+
+   no_response_mode = NRM_PROCESS;
 }
 
 ///
@@ -723,7 +725,7 @@ void config_t::get_config(const char *fname)
                      //
                      // This array *must* be sorted alphabetically
                      //
-                     // max key: 196; empty slots:
+                     // max key: 197; empty slots:
                      //
                      {"AcceptHostNames",     186},          // Accept host names instead of IP addresses?
                      {"AllAgents",           67},           // List all User Agents?
@@ -893,6 +895,7 @@ void config_t::get_config(const char *fname)
                      {"MonthlyTotals",       127},          // Output monthly totals report?
                      {"NginxLogFormat",      195},          // Nginx log file format
                      {"NoDefaultIndexAlias", 92},           // Ignore default index alias?
+                     {"NoResponseAction",    197},          // How to handle Nginx 444 (No Response) status codes
                      {"OutputDir",           1},            // Output directory
                      {"OutputFormat",        171},          // Output format
                      {"PageEntryURL",        170},          // Show only pages in the entry report?
@@ -1201,6 +1204,7 @@ void config_t::get_config(const char *fname)
          case 194: page_titles.add_glist(value); break;
          case 195: nginx_log_format = value; break;
          case 196: min_visit_length = get_interval(value, errors); break;
+         case 197: no_response_mode = get_no_response_mode(value); break;
       }
    }
 
@@ -1820,4 +1824,20 @@ int config_t::get_utc_offset(const tstamp_t& tstamp, tm_ranges_t::iterator& dst_
 void config_t::deprecated_p_option(void)
 {
    messages.emplace_back("Option -p is deprecated. Incremental processing is the default mode now.");
+}
+
+no_response_mode_t config_t::get_no_response_mode(const char *value)
+{
+   switch(string_t::tolower(*value)) {
+      case 'p':
+         return NRM_PROCESS;
+      case 'i':
+         return NRM_IGNORE;
+      case 's':
+         return NRM_SPAMMER;
+   }
+
+   errors.push_back(string_t::_format("Invalid NoResponseAction value (%s)", value));
+
+   return NRM_PROCESS;
 }

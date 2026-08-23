@@ -1549,7 +1549,7 @@ will be used (which should be sufficient for most sites).
 
     This keyword is used to either enable or disable the creation
     and display of the Hourly Usage graph.  Values may be either
-`yes` or `no`, with the default being `yes`.
+    `yes` or `no`, with the default being `yes`.
 
     Command line argument: `-G`
 
@@ -2013,6 +2013,24 @@ will be used (which should be sufficient for most sites).
     spam.
 
     Default value: none
+
+* `NoResponseAction`
+
+    Defines how to process log records with the Nginx-specific
+    status code `444`, which is commonly used to terminate unwanted
+    requests without sending back any response. May be set to one
+    of these values: `Process`, `Ignore`, `Spammer`.
+
+    The first value will process the log record normally and will
+    report `444` as an error. The second one will ignore the log
+    record completely. The last option will mark the request as
+    a spamming request and will process it as such. Note that
+    marking the request as a spammer will permanently register
+    the IP address of this request as a spammer, which may have
+    a broader effect than intended if `444` is logged for innocuous
+    activities.
+
+    Default value: `Process`
 
 * `UpstreamTraffic`
 

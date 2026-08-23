@@ -157,6 +157,7 @@
          {428, "Code 428 - Precondition Required"           }, \
          {429, "Code 429 - Too Many Requests"               }, \
          {431, "Code 431 - Request Header Fields Too Large" }, \
+         {444, "Code 444 - No Response"                     }, \
          {451, "Code 451 - Unavailable For Legal Reasons"   }, \
          {500, "Code 500 - Internal Server Error"           }, \
          {501, "Code 501 - Not Implemented"                 }, \
