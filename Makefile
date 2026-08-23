@@ -212,11 +212,11 @@ PKG_INST := install uninstall
 # compiler options shared between C and C++ source
 CCFLAGS_COMMON := -Werror -pedantic
 
-CFLAGS := -std=gnu99 \
+CFLAGS := -std=c17 \
 	$(CCFLAGS_COMMON) \
 	$(MYCCFLAGS)
 
-CXXFLAGS := -std=c++17 \
+CXXFLAGS := -std=c++20 \
 	$(CCFLAGS_COMMON) \
 	-DHAVE_CXX_STDHEADERS \
 	-DETCDIR=\"$(ETCDIR)\" \
