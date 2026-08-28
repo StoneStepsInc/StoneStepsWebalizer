@@ -2,6 +2,7 @@
 6.4.0 [23-Aug-2026] -- Stone Steps Inc. (www.stonesteps.ca)
 --------------------------------------------------------------------
 
+ * Updated _webalizer_lang.polish_ (github.com/lukaszpl92)
  * Excluded spammers from user agent analysis
  * [AB-192] Added NoResponseAction for Nginx status code 444 (suggested by github.com/sebastianenger1981)
 
