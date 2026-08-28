@@ -1,5 +1,5 @@
 **************************************************************************
-Stone Steps Webalizer (v6.4.0)
+Stone Steps Webalizer (v6.5.0)
 
 Copyright (c) 2004-2022, Stone Steps Inc. (www.stonesteps.ca)
 
