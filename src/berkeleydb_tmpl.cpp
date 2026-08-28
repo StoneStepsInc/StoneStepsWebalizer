@@ -120,6 +120,9 @@ berkeleydb_t::iterator<node_t>::iterator(buffer_allocator_t& buffer_allocator, c
 
 template <typename node_t>
 template <typename ... param_t>
+#ifdef __cpp_concepts
+requires s_iterable_t<node_t, param_t...>
+#endif
 bool berkeleydb_t::iterator<node_t>::next(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, param_t ... param)
 {
    Dbt key, data, pkey;
@@ -172,6 +175,9 @@ berkeleydb_t::reverse_iterator<node_t>::reverse_iterator(buffer_allocator_t& buf
 
 template <typename node_t>
 template <typename ... param_t>
+#ifdef __cpp_concepts
+requires s_iterable_t<node_t, param_t...>
+#endif
 bool berkeleydb_t::reverse_iterator<node_t>::prev(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, param_t ... param)
 {
    Dbt key, data, pkey;
@@ -215,6 +221,9 @@ bool berkeleydb_t::reverse_iterator<node_t>::prev(storable_t<node_t>& node, type
 // -----------------------------------------------------------------------
 
 template <typename node_t>
+#ifdef __cpp_concepts
+requires s_writable_t<node_t>
+#endif
 bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage_info)
 {
    Dbt key, data;
@@ -247,6 +256,9 @@ bool berkeleydb_t::table_t::put_node(const node_t& node, storage_info_t& storage
 }
 
 template <typename node_t, typename ... param_t>
+#ifdef __cpp_concepts
+requires s_queriable_by_key_t<node_t, param_t ...>
+#endif
 bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, param_t ... param) const
 {
    Dbt key, pkey, data;
@@ -281,11 +293,14 @@ bool berkeleydb_t::table_t::get_node_by_id(storable_t<node_t>& node, typename no
 }
 
 template <typename node_t, typename ... param_t>
+#ifdef __cpp_concepts
+requires s_queriable_by_value_t<node_t, param_t ...>
+#endif
 bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb, param_t ... param) const
 {
    Dbt key, pkey, data;
    u_int32_t keysize = (u_int32_t) node.s_key_size();
-   uint64_t hashkey;
+
    buffer_holder_t buffer_holder(*buffer_allocator);
    buffer_t& buffer = buffer_holder.buffer; 
 
@@ -296,7 +311,7 @@ bool berkeleydb_t::table_t::get_node_by_value(storable_t<node_t>& node, typename
       return false;
 
    // make a value key
-   hashkey = node.s_hash_value();
+   uint64_t hashkey = node.s_hash_value();
    keysize = (u_int32_t) node.s_hash_value_size();
 
    key.set_data(&hashkey);

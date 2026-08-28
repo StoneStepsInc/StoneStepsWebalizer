@@ -468,10 +468,16 @@ class berkeleydb_t {
 
             /// inserts a new node or updates the existing node in the primary database
             template <typename node_t>
+            #ifdef __cpp_concepts
+            requires s_writable_t<node_t>
+            #endif
             bool put_node(const node_t& unode, storage_info_t& storage_info);
 
             /// retrieves a node by its unique ID
             template <typename node_t, typename ... param_t>
+            #ifdef __cpp_concepts
+            requires s_queriable_by_key_t<node_t, param_t ...>
+            #endif
             bool get_node_by_id(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, param_t ... param) const;
 
             /// deletes a node by its key
@@ -479,6 +485,9 @@ class berkeleydb_t {
 
             /// retrieves a node by its value
             template <typename node_t, typename ... param_t>
+            #ifdef __cpp_concepts
+            requires s_queriable_by_value_t<node_t, param_t ...>
+            #endif
             bool get_node_by_value(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, param_t ... param) const;
 
             /// returns a forward table iterator
@@ -547,6 +556,9 @@ class berkeleydb_t {
             iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             template <typename ... param_t>
+            #ifdef __cpp_concepts
+            requires s_iterable_t<node_t, param_t...>
+            #endif
             bool next(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t ...> upcb = nullptr, param_t ... param);
       };
 
@@ -574,6 +586,9 @@ class berkeleydb_t {
             reverse_iterator(buffer_allocator_t& buffer_allocator, const table_t& table, const char *dbname);
 
             template <typename ... param_t>
+            #ifdef __cpp_concepts
+            requires s_iterable_t<node_t, param_t...>
+            #endif
             bool prev(storable_t<node_t>& node, typename node_t::template s_unpack_cb_t<param_t...> upcb = nullptr, param_t ... param);
       };
 

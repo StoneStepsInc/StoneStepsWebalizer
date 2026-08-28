@@ -293,4 +293,52 @@ inline int64_t s_compare<string_t>(const void *buf1, size_t buf1size, const void
 
 /// @}
 
+#ifdef __cpp_concepts
+
+template <typename node_t>
+concept s_writable_t = requires(const node_t cnode, void *buf, size_t bufsize) {
+   { cnode.s_key_size() } -> std::same_as<size_t>;
+   { cnode.s_pack_key(buf, bufsize) } -> std::same_as<size_t>;
+
+   { cnode.s_data_size() } -> std::same_as<size_t>;
+   { cnode.s_pack_data(buf, bufsize) } -> std::same_as<size_t>;
+};
+
+template <typename node_t, typename ... param_t>
+concept s_iterable_t = requires(node_t node, void *buf, const void *cbuf, size_t bufsize,
+                                    typename node_t::template s_unpack_cb_t<param_t ...> uncb, param_t ... param) {
+   { node.s_unpack_key(buf, bufsize) } -> std::same_as<size_t>;
+
+   // see s_queriable_by_key_t
+   { node.template s_unpack_data<param_t...>(cbuf, bufsize, uncb, param...) } -> std::same_as<size_t>;
+};
+
+template <typename node_t, typename ... param_t>
+concept s_queriable_by_key_t = requires(const node_t cnode, node_t node, void *buf, const void *cbuf, size_t bufsize,
+                                    typename node_t::template s_unpack_cb_t<param_t ...> uncb, param_t ... param) {
+   { cnode.s_key_size() } -> std::same_as<size_t>;
+   { cnode.s_pack_key(buf, bufsize) } -> std::same_as<size_t>;
+
+   // must use explicit type arguments because some callback types are lvalue references
+   { node.template s_unpack_data<param_t...>(cbuf, bufsize, uncb, param...) } -> std::same_as<size_t>;
+};
+
+template <typename node_t, typename ... param_t>
+concept s_queriable_by_value_t = requires(const node_t cnode, node_t node, void *buf, const void *cbuf, size_t bufsize,
+                                    typename node_t::template s_unpack_cb_t<param_t ...> uncb, param_t ... param) {
+   { cnode.s_key_size() } -> std::same_as<size_t>;
+
+   { node.s_unpack_key(buf, bufsize) } -> std::same_as<size_t>;
+
+   { cnode.s_hash_value() } -> std::same_as<uint64_t>;
+   { cnode.s_hash_value_size() } -> std::same_as<size_t>;
+
+   { cnode.s_compare_value(cbuf, bufsize) } -> std::same_as<int64_t>;
+
+   // see s_queriable_by_key_t
+   { node.template s_unpack_data<param_t...>(cbuf, bufsize, uncb, param...) } -> std::same_as<size_t>;
+};
+
+#endif
+
 #endif // SERIALIZE_H

@@ -491,11 +491,11 @@ class hash_table : public hash_table_base {
       template <typename ... K>
       const node_t *find_node(nodetype_t type, K&& ... kp) const;
 
-      /// Look up a node with a hash value and a key and, if found, moves the node to the end of the time stamp list.
+      /// Look up a node with a hash value and a key and, if found, move the node to the end of the time stamp list.
       template <typename ... K>
       node_t *find_node(nodetype_t type, int64_t tstamp, K&& ... kp);
 
-      /// Look up a node with a hash value and a key and, if found, moves the node to the end of the time stamp list.
+      /// Look up a node with a hash value and a key and, if found, move the node to the end of the time stamp list.
       template <typename ... K>
       node_t *find_node(uint64_t hashval, nodetype_t type, int64_t tstamp, K&& ... kp);
 
